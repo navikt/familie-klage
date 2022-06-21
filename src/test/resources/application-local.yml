@@ -1,0 +1,44 @@
+server:
+  port: 8094
+
+spring:
+  datasource:
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+    url: ${DATASOURCE_URL}
+    driver-class-name: org.postgresql.Driver
+
+no.nav.security.jwt:
+  issuer.azuread:
+    discoveryurl: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
+    accepted_audience: ${AZURE_CLIENT_ID}
+    cookie_name: azure_token
+    proxy_url: #Default satt, skal være null lokalt
+
+AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
+FAMILIE_INTEGRASJONER_URL: http://localhost:8385
+FAMILIE_BREV_API_URL: http://localhost:8001
+FAMILIE_DOKUMENT_URL: http://localhost:8082
+
+AZURE_APP_TENANT_ID: navq.onmicrosoft.com
+AZURE_APP_CLIENT_ID: ${AZURE_CLIENT_ID}
+AZURE_APP_CLIENT_SECRET: ${AZURE_CLIENT_SECRET}
+
+CREDENTIAL_USERNAME: not-a-real-srvuser
+CREDENTIAL_PASSWORD: not-a-real-pw
+
+rolle:
+  veileder: "19dcbfde-4cdb-4c64-a1ea-ac9802b03339"
+  saksbehandler: "ee5e0b5e-454c-4612-b931-1fe363df7c2c"
+  beslutter: "01166863-22f1-4e16-9785-d7a05a22df74"
+  kode6: "5ef775f2-61f8-4283-bf3d-8d03f428aa14" # 0000-GA-Strengt_Fortrolig_Adresse
+  kode7: "ea930b6b-9397-44d9-b9e6-f4cf527a632a" # 0000-GA-Fortrolig_Adresse
+
+funksjonsbrytere:
+  enabled: false
+  unleash:
+    uri: http://localhost:4242/api
+    environment: local
+    applicationName: familie-ef-sak
+
+NAIS_APP_NAME: familie-klage

@@ -1,0 +1,131 @@
+application:
+  name: familie-klage
+server:
+  servlet:
+    context-path: /
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
+
+springdoc:
+  packagesToScan: no.nav.familie.klage
+  pathsToMatch: /v3/api-docs,/api/**
+  swagger-ui:
+    disable-swagger-default-url: true
+
+no.nav.security.jwt:
+  issuer.azuread:
+    discoveryurl: ${AZURE_APP_WELL_KNOWN_URL}
+    accepted_audience: ${AZURE_APP_CLIENT_ID}
+    cookie_name: azure_token
+  client:
+    registration:
+      familie-integrasjoner:
+        resource-url: ${FAMILIE_INTEGRASJONER_URL}
+        token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        scope: ${FAMILIE_INTEGRASJONER_SCOPE}
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_basic
+      familie-integrasjoner-clientcredentials:
+        resource-url: ${FAMILIE_INTEGRASJONER_URL}
+        token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+        grant-type: client_credentials
+        scope: ${FAMILIE_INTEGRASJONER_SCOPE}
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_basic
+      pdl:
+        resource-url: ${PDL_URL}
+        token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        scope: ${PDL_SCOPE}
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_basic
+      pdl-clientcredentials:
+        resource-url: ${PDL_URL}
+        token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+        grant-type: client_credentials
+        scope: ${PDL_SCOPE}
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_basic
+
+PDL_SCOPE: api://${DEPLOY_ENV}-fss.pdl.pdl-api/.default
+
+spring:
+  mvc:
+    format:
+      date: iso
+      date-time: iso
+  autoconfigure.exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
+  data:
+    jdbc:
+      repositories:
+        enabled: true
+  main:
+    allow-bean-definition-overriding: true
+    banner-mode: "off"
+  flyway:
+    enabled: true
+    placeholders:
+      ignoreIfProd:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/familie-klage
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 20
+      connection-test-query: "select 1"
+      max-lifetime: 30000
+      minimum-idle: 1
+
+management:
+  endpoint.health.show-details: always
+  endpoints.web:
+    exposure.include: info, health, metrics, prometheus
+    base-path: "/internal"
+    path-mapping:
+      info: "status/isAlive"
+  metrics.export.prometheus.enabled: true
+  metrics.web.server.auto-time-requests: true
+
+DEPLOY_ENV: prod
+ON_PREM_URL_ENV: prod
+
+AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
+
+FAMILIE_BREV_API_URL: http://familie-brev
+FAMILIE_DOKUMENT_URL: http://familie-dokument
+
+FAMILIE_INTEGRASJONER_URL: https://familie-integrasjoner.${ON_PREM_URL_ENV}-fss-pub.nais.io
+PDL_URL: https://pdl-api.${ON_PREM_URL_ENV}-fss-pub.nais.io
+
+rolle:
+  veileder: "31778fd8-3b71-4867-8db6-a81235fbe001"
+  saksbehandler: "6406aba2-b930-41d3-a85b-dd13731bc974"
+  beslutter: "5fcc0e1d-a4c2-49f0-93dc-27c9fea41e54"
+  kode6: "ad7b87a6-9180-467c-affc-20a566b0fec0" # 0000-GA-Strengt_Fortrolig_Adresse
+  kode7: "9ec6487d-f37a-4aad-a027-cd221c1ac32b" # 0000-GA-Fortrolig_Adresse
+
+funksjonsbrytere:
+  enabled: true
+  unleash:
+    uri: https://unleash.nais.io/api/
+    environment: ${NAIS_CLUSTER_NAME}
+    applicationName: ${NAIS_APP_NAME}
+
+prosessering:
+  continuousRunning.enabled: true
+  fixedDelayString:
+    in:
+      milliseconds: 15000
+  delete:
+    after:
+      weeks: 16

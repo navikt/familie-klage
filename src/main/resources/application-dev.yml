@@ -1,0 +1,24 @@
+spring:
+  autoconfigure.exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
+
+DEPLOY_ENV: dev
+ON_PREM_URL_ENV: dev
+
+# Q1
+FAMILIE_INTEGRASJONER_URL: https://familie-integrasjoner-q1.dev-fss-pub.nais.io
+PDL_URL: https://pdl-api-q1.dev-fss-pub.nais.io
+PDL_SCOPE: api://dev-fss.pdl.pdl-api-q1/.default
+no.nav.security.jwt:
+  client:
+    registration:
+      familie-integrasjoner:
+        scope: api://dev-fss.teamfamilie.familie-integrasjoner-q1/.default
+      familie-integrasjoner-clientcredentials:
+        scope: api://dev-fss.teamfamilie.familie-integrasjoner-q1/.default
+
+rolle:
+  veileder: "19dcbfde-4cdb-4c64-a1ea-ac9802b03339"
+  beslutter: "01166863-22f1-4e16-9785-d7a05a22df74"
+  saksbehandler: "ee5e0b5e-454c-4612-b931-1fe363df7c2c"
+  kode6: "5ef775f2-61f8-4283-bf3d-8d03f428aa14" # 0000-GA-Strengt_Fortrolig_Adresse
+  kode7: "ea930b6b-9397-44d9-b9e6-f4cf527a632a" # 0000-GA-Fortrolig_Adresse

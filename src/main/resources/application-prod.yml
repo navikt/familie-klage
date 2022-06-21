@@ -1,0 +1,4 @@
+spring:
+  flyway:
+    placeholders:
+      ignoreIfProd: --

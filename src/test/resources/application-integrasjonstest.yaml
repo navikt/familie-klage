@@ -1,0 +1,24 @@
+server:
+  port: 9093
+
+no.nav.security.jwt:
+  issuer.azuread:
+    discoveryurl: http://localhost:${mock-oauth2-server.port}/azuread/.well-known/openid-configuration
+    accepted_audience: aud-localhost
+    cookie_name: localhost-idtoken
+    proxy_url: #Default satt, skal være null i integrasjonstest
+
+funksjonsbrytere:
+  enabled: false
+  unleash:
+    uri: http://localhost:4242/api
+    environment: local
+    applicationName: familie-ef-sak
+
+FAMILIE_INTEGRASJONER_URL: http://localhost:8385
+FAMILIE_BREV_API_URL: http://localhost:8001
+
+AZURE_APP_TENANT_ID: navq.onmicrosoft.com
+
+CREDENTIAL_USERNAME: not-a-real-srvuser
+CREDENTIAL_PASSWORD: not-a-real-pw

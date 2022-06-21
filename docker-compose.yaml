@@ -1,0 +1,22 @@
+version: '3.7'
+services:
+
+  # SQL database
+  postgres:
+    image: "postgres:11.5"
+    volumes:
+      - "familie-klage-data:/var/lib/postgresql/data"
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "test"
+      POSTGRES_DB: "familie-klage"
+
+  familie-brev:
+    image: "ghcr.io/navikt/familie-brev:latest"
+    ports:
+      - "8001:8001"
+
+volumes:
+  familie-klage-data:
