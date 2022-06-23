@@ -50,36 +50,36 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
 
     private val responses =
         listOf(
-                get(urlEqualTo(integrasjonerConfig.pingUri.path))
+            get(urlEqualTo(integrasjonerConfig.pingUri.path))
                 .willReturn(aResponse().withStatus(200)),
-                post(urlEqualTo(integrasjonerConfig.egenAnsattUri.path))
+            post(urlEqualTo(integrasjonerConfig.egenAnsattUri.path))
                 .willReturn(okJson(objectMapper.writeValueAsString(egenAnsatt))),
-                post(urlEqualTo(integrasjonerConfig.tilgangRelasjonerUri.path))
+            post(urlEqualTo(integrasjonerConfig.tilgangRelasjonerUri.path))
                 .withRequestBody(matching(".*ikkeTilgang.*"))
                 .atPriority(1)
                 .willReturn(okJson(objectMapper.writeValueAsString(lagIkkeTilgangResponse()))),
-                post(urlEqualTo(integrasjonerConfig.tilgangRelasjonerUri.path))
+            post(urlEqualTo(integrasjonerConfig.tilgangRelasjonerUri.path))
                 .willReturn(okJson(objectMapper.writeValueAsString(Tilgang(true, null)))),
-                post(urlEqualTo(integrasjonerConfig.tilgangPersonUri.path))
+            post(urlEqualTo(integrasjonerConfig.tilgangPersonUri.path))
                 .withRequestBody(matching(".*ikkeTilgang.*"))
                 .atPriority(1)
                 .willReturn(okJson(objectMapper.writeValueAsString(listOf(lagIkkeTilgangResponse())))),
-                post(urlEqualTo(integrasjonerConfig.tilgangPersonUri.path))
+            post(urlEqualTo(integrasjonerConfig.tilgangPersonUri.path))
                 .willReturn(okJson(objectMapper.writeValueAsString(listOf(Tilgang(true, null))))),
-                post(urlEqualTo(integrasjonerConfig.arbeidsfordelingUri.path))
+            post(urlEqualTo(integrasjonerConfig.arbeidsfordelingUri.path))
                 .willReturn(okJson(objectMapper.writeValueAsString(arbeidsfordeling))),
-                post(urlEqualTo(integrasjonerConfig.arbeidsfordelingMedRelasjonerUri.path))
+            post(urlEqualTo(integrasjonerConfig.arbeidsfordelingMedRelasjonerUri.path))
                 .willReturn(okJson(objectMapper.writeValueAsString(arbeidsfordeling))),
 
-                get(urlPathEqualTo(integrasjonerConfig.journalPostUri.path))
+            get(urlPathEqualTo(integrasjonerConfig.journalPostUri.path))
                 .withQueryParam("journalpostId", equalTo("1234"))
                 .willReturn(okJson(objectMapper.writeValueAsString(journalpost))),
-                get(urlPathEqualTo(integrasjonerConfig.journalPostUri.path))
+            get(urlPathEqualTo(integrasjonerConfig.journalPostUri.path))
                 .withQueryParam("journalpostId", equalTo("2345"))
                 .willReturn(okJson(objectMapper.writeValueAsString(journalpostPapirsøknad))),
-                post(urlPathEqualTo(integrasjonerConfig.journalPostUri.path))
+            post(urlPathEqualTo(integrasjonerConfig.journalPostUri.path))
                 .willReturn(okJson(objectMapper.writeValueAsString(journalposter))),
-                get(urlPathMatching("${integrasjonerConfig.journalPostUri.path}/hentdokument/([0-9]*)/([0-9]*)"))
+            get(urlPathMatching("${integrasjonerConfig.journalPostUri.path}/hentdokument/([0-9]*)/([0-9]*)"))
                 .withQueryParam("variantFormat", equalTo("ORIGINAL"))
                 .willReturn(
                     okJson(
@@ -90,16 +90,16 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                         )
                     )
                 ),
-                get(urlPathMatching("${integrasjonerConfig.journalPostUri.path}/hentdokument/([0-9]*)/([0-9]*)"))
+            get(urlPathMatching("${integrasjonerConfig.journalPostUri.path}/hentdokument/([0-9]*)/([0-9]*)"))
                 .withQueryParam("variantFormat", equalTo("ARKIV"))
                 .willReturn(okJson(objectMapper.writeValueAsString(Ressurs.success(pdfAsBase64String)))),
-                put(urlMatching("${integrasjonerConfig.dokarkivUri.path}.*"))
+            put(urlMatching("${integrasjonerConfig.dokarkivUri.path}.*"))
                 .willReturn(okJson(objectMapper.writeValueAsString(oppdatertJournalpostResponse))),
-                post(urlMatching("${integrasjonerConfig.dokarkivUri.path}.*"))
+            post(urlMatching("${integrasjonerConfig.dokarkivUri.path}.*"))
                 .willReturn(okJson(objectMapper.writeValueAsString(arkiverDokumentResponse))),
-                post(urlEqualTo(integrasjonerConfig.navKontorUri.path))
+            post(urlEqualTo(integrasjonerConfig.navKontorUri.path))
                 .willReturn(okJson(objectMapper.writeValueAsString(navKontorEnhet))),
-                post(urlEqualTo(integrasjonerConfig.adressebeskyttelse.path))
+            post(urlEqualTo(integrasjonerConfig.adressebeskyttelse.path))
                 .willReturn(
                     okJson(
                         objectMapper.writeValueAsString(
@@ -111,7 +111,7 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                     )
                 ),
 
-                )
+        )
 
     private fun lagIkkeTilgangResponse() = Tilgang(
         false,

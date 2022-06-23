@@ -1,6 +1,5 @@
 package no.nav.familie.klage.personopplysninger.pdl
 
-
 fun Navn.visningsnavn(): String {
     return if (mellomnavn == null) "$fornavn $etternavn"
     else "$fornavn $mellomnavn $etternavn"

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 class FeatureToggleController(private val featureToggleService: FeatureToggleService) {
 
     private val funksjonsbrytere = setOf(
-            Toggle.START_BEHANDLING
+        Toggle.START_BEHANDLING
     )
 
     @GetMapping

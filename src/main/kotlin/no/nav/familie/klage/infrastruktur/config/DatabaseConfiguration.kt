@@ -45,17 +45,17 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
     @Bean
     override fun jdbcCustomConversions(): JdbcCustomConversions {
         return JdbcCustomConversions(
-                listOf(
-                        PropertiesWrapperTilStringConverter(),
-                        StringTilPropertiesWrapperConverter()
-                )
+            listOf(
+                PropertiesWrapperTilStringConverter(),
+                StringTilPropertiesWrapperConverter()
+            )
         )
     }
 
     @Bean
     fun verifyIgnoreIfProd(
-            @Value("\${spring.flyway.placeholders.ignoreIfProd}") ignoreIfProd: String,
-            environment: Environment
+        @Value("\${spring.flyway.placeholders.ignoreIfProd}") ignoreIfProd: String,
+        environment: Environment
     ): FlywayConfigurationCustomizer {
         val isProd = environment.activeProfiles.contains("prod")
         val ignore = ignoreIfProd == "--"
@@ -68,5 +68,4 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
             }
         }
     }
-
 }

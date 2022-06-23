@@ -13,10 +13,10 @@ import java.net.URI
 
 @Component
 class BrevClient(
-        @Value("\${FAMILIE_BREV_API_URL}")
-        private val familieBrevUri: String,
-        @Qualifier("utenAuth")
-        private val restOperations: RestOperations
+    @Value("\${FAMILIE_BREV_API_URL}")
+    private val familieBrevUri: String,
+    @Qualifier("utenAuth")
+    private val restOperations: RestOperations
 ) : AbstractPingableRestClient(restOperations, "familie.brev") {
 
     override val pingUri: URI = URI.create("$familieBrevUri/api/status")
@@ -28,14 +28,14 @@ class BrevClient(
     fun genererHtmlFritekstbrev(fritekstBrev: FritekstBrevRequestDto, saksbehandlerNavn: String, enhet: String): String {
         val url = URI.create("$familieBrevUri/api/fritekst-brev/html")
         return postForEntity(
-                url,
-                FritekstBrevRequestMedSignatur(
-                        fritekstBrev,
-                        saksbehandlerNavn,
-                        "BESLUTTER_SIGNATUR",
-                        enhet
-                ),
-                HttpHeaders().medContentTypeJsonUTF8()
+            url,
+            FritekstBrevRequestMedSignatur(
+                fritekstBrev,
+                saksbehandlerNavn,
+                "BESLUTTER_SIGNATUR",
+                enhet
+            ),
+            HttpHeaders().medContentTypeJsonUTF8()
         )
     }
 
@@ -47,16 +47,16 @@ class BrevClient(
 }
 
 data class BrevRequestMedSignaturer(
-        val brevFraSaksbehandler: JsonNode,
-        val saksbehandlersignatur: String,
-        val besluttersignatur: String?,
-        val enhet: String?,
-        val skjulBeslutterSignatur: Boolean
+    val brevFraSaksbehandler: JsonNode,
+    val saksbehandlersignatur: String,
+    val besluttersignatur: String?,
+    val enhet: String?,
+    val skjulBeslutterSignatur: Boolean
 )
 
 data class FritekstBrevRequestMedSignatur(
-        val brevFraSaksbehandler: FritekstBrevRequestDto,
-        val saksbehandlersignatur: String,
-        val besluttersignatur: String?,
-        val enhet: String
+    val brevFraSaksbehandler: FritekstBrevRequestDto,
+    val saksbehandlersignatur: String,
+    val besluttersignatur: String?,
+    val enhet: String
 )

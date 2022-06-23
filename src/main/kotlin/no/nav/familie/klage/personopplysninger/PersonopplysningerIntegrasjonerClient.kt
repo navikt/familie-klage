@@ -18,28 +18,28 @@ import java.net.URI
 
 @Component
 class PersonopplysningerIntegrasjonerClient(
-        @Qualifier("azure") restOperations: RestOperations,
-        private val integrasjonerConfig: IntegrasjonerConfig
+    @Qualifier("azure") restOperations: RestOperations,
+    private val integrasjonerConfig: IntegrasjonerConfig
 ) :
-        AbstractPingableRestClient(restOperations, "familie.integrasjoner") {
+    AbstractPingableRestClient(restOperations, "familie.integrasjoner") {
 
     override val pingUri: URI = integrasjonerConfig.pingUri
 
     fun sjekkTilgangTilPerson(personIdent: String): Tilgang {
         return postForEntity<List<Tilgang>>(
-                integrasjonerConfig.tilgangPersonUri, listOf(personIdent),
-                HttpHeaders().also {
-                    it.set(HEADER_NAV_TEMA, HEADER_NAV_TEMA_ENF)
-                }
+            integrasjonerConfig.tilgangPersonUri, listOf(personIdent),
+            HttpHeaders().also {
+                it.set(HEADER_NAV_TEMA, HEADER_NAV_TEMA_ENF)
+            }
         ).single()
     }
 
     fun sjekkTilgangTilPersonMedRelasjoner(personIdent: String): Tilgang {
         return postForEntity(
-                integrasjonerConfig.tilgangRelasjonerUri, PersonIdent(personIdent),
-                HttpHeaders().also {
-                    it.set(HEADER_NAV_TEMA, HEADER_NAV_TEMA_ENF)
-                }
+            integrasjonerConfig.tilgangRelasjonerUri, PersonIdent(personIdent),
+            HttpHeaders().also {
+                it.set(HEADER_NAV_TEMA, HEADER_NAV_TEMA_ENF)
+            }
         )
     }
 
@@ -50,11 +50,11 @@ class PersonopplysningerIntegrasjonerClient(
 
     fun hentStrengesteAdressebeskyttelseForPersonMedRelasjoner(personIdent: String): ADRESSEBESKYTTELSEGRADERING {
         return postForEntity<Ressurs<ADRESSEBESKYTTELSEGRADERING>>(
-                integrasjonerConfig.adressebeskyttelse,
-                PersonIdent(personIdent),
-                HttpHeaders().also {
-                    it.set(HEADER_NAV_TEMA, HEADER_NAV_TEMA_ENF)
-                }
+            integrasjonerConfig.adressebeskyttelse,
+            PersonIdent(personIdent),
+            HttpHeaders().also {
+                it.set(HEADER_NAV_TEMA, HEADER_NAV_TEMA_ENF)
+            }
         ).getDataOrThrow()
     }
 
@@ -72,8 +72,8 @@ class PersonopplysningerIntegrasjonerClient(
 
     fun egenAnsatt(ident: String): Boolean {
         return postForEntity<Ressurs<EgenAnsattResponse>>(
-                integrasjonerConfig.egenAnsattUri,
-                EgenAnsattRequest(ident)
+            integrasjonerConfig.egenAnsattUri,
+            EgenAnsattRequest(ident)
         ).data!!.erEgenAnsatt
     }
 

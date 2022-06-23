@@ -7,17 +7,16 @@ import no.nav.familie.klage.felles.domain.Sporingsdata
 import no.nav.familie.klage.felles.dto.Tilgang
 import no.nav.familie.klage.infrastruktur.config.RolleConfig
 import no.nav.familie.klage.infrastruktur.exception.ManglerTilgang
-import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext.hentGrupperFraToken
 import no.nav.familie.klage.personopplysninger.PersonopplysningerIntegrasjonerClient
 import org.springframework.cache.CacheManager
 import org.springframework.stereotype.Service
 
 @Service
 class TilgangService(
-        private val personopplysningerIntegrasjonerClient: PersonopplysningerIntegrasjonerClient,
-        private val rolleConfig: RolleConfig,
-        private val cacheManager: CacheManager,
-        private val auditLogger: AuditLogger
+    private val personopplysningerIntegrasjonerClient: PersonopplysningerIntegrasjonerClient,
+    private val rolleConfig: RolleConfig,
+    private val cacheManager: CacheManager,
+    private val auditLogger: AuditLogger
 ) {
 
     /**
@@ -28,9 +27,9 @@ class TilgangService(
         auditLogger.log(Sporingsdata(event, personIdent, tilgang))
         if (!tilgang.harTilgang) {
             throw ManglerTilgang(
-                    melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
-                              "har ikke tilgang til $personIdent",
-                    frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}"
+                melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
+                    "har ikke tilgang til $personIdent",
+                frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}"
             )
         }
     }
@@ -40,9 +39,9 @@ class TilgangService(
         auditLogger.log(Sporingsdata(event, personIdent, tilgang))
         if (!tilgang.harTilgang) {
             throw ManglerTilgang(
-                    melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
-                              "har ikke tilgang til $personIdent eller dets barn",
-                    frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}"
+                melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
+                    "har ikke tilgang til $personIdent eller dets barn",
+                frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}"
             )
         }
     }
@@ -84,9 +83,9 @@ class TilgangService(
     fun validerTilgangTilRolle(minimumsrolle: BehandlerRolle) {
         if (!harTilgangTilRolle(minimumsrolle)) {
             throw ManglerTilgang(
-                    melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} har ikke tilgang " +
-                              "til å utføre denne operasjonen som krever minimumsrolle $minimumsrolle",
-                    frontendFeilmelding = "Mangler nødvendig saksbehandlerrolle for å utføre handlingen"
+                melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} har ikke tilgang " +
+                    "til å utføre denne operasjonen som krever minimumsrolle $minimumsrolle",
+                frontendFeilmelding = "Mangler nødvendig saksbehandlerrolle for å utføre handlingen"
             )
         }
     }

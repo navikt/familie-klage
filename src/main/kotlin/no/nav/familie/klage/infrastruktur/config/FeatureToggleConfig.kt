@@ -6,8 +6,8 @@ import no.finn.unleash.UnleashContextProvider
 import no.finn.unleash.util.UnleashConfig
 import no.nav.familie.klage.infrastruktur.featuretoggle.ByEnvironmentStrategy
 import no.nav.familie.klage.infrastruktur.featuretoggle.ByUserIdStrategy
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -45,12 +45,12 @@ class FeatureToggleConfig(
 
     private fun lagUnleashFeatureToggleService(): FeatureToggleService {
         val unleash = DefaultUnleash(
-                UnleashConfig.builder()
+            UnleashConfig.builder()
                 .appName(unleash.applicationName)
                 .unleashAPI(unleash.uri)
                 .unleashContextProvider(lagUnleashContextProvider())
                 .build(),
-                ByEnvironmentStrategy(), ByUserIdStrategy()
+            ByEnvironmentStrategy(), ByUserIdStrategy()
         )
 
         return object : FeatureToggleService {

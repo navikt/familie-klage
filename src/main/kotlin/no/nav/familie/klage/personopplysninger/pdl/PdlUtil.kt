@@ -9,9 +9,9 @@ val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 val logger: Logger = LoggerFactory.getLogger(PdlClient::class.java)
 
 inline fun <reified DATA : Any, reified T : Any> feilsjekkOgReturnerData(
-        ident: String?,
-        pdlResponse: PdlResponse<DATA>,
-        dataMapper: (DATA) -> T?
+    ident: String?,
+    pdlResponse: PdlResponse<DATA>,
+    dataMapper: (DATA) -> T?
 ): T {
 
     if (pdlResponse.harFeil()) {
