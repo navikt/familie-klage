@@ -47,8 +47,8 @@ interface PdlPerson {
 }
 
 data class PdlIdentBolkResponse(
-        val data: IdentBolk?,
-        val errors: List<PdlError>?
+    val data: IdentBolk?,
+    val errors: List<PdlError>?
 ) {
 
     fun errorMessages(): String {
@@ -77,64 +77,64 @@ data class PdlIdenter(val identer: List<PdlIdent>) {
 data class PdlHentIdenter(val hentIdenter: PdlIdenter?)
 
 data class PdlPersonKort(
-        val adressebeskyttelse: List<Adressebeskyttelse>,
-        val navn: List<Navn>,
-        @JsonProperty("doedsfall") val dødsfall: List<Dødsfall>
+    val adressebeskyttelse: List<Adressebeskyttelse>,
+    val navn: List<Navn>,
+    @JsonProperty("doedsfall") val dødsfall: List<Dødsfall>
 )
 
 data class PdlSøkerKort(
-        @JsonProperty("kjoenn") val kjønn: List<Kjønn>,
-        val navn: List<Navn>
+    @JsonProperty("kjoenn") val kjønn: List<Kjønn>,
+    val navn: List<Navn>
 )
 
 data class PdlSøker(
-        val adressebeskyttelse: List<Adressebeskyttelse>,
-        override val bostedsadresse: List<Bostedsadresse>,
-        @JsonProperty("doedsfall") val dødsfall: List<Dødsfall>,
-        val forelderBarnRelasjon: List<ForelderBarnRelasjon>,
-        @JsonProperty("foedsel") override val fødsel: List<Fødsel>,
-        val folkeregisterpersonstatus: List<Folkeregisterpersonstatus>,
-        val fullmakt: List<Fullmakt>,
-        @JsonProperty("kjoenn") val kjønn: List<Kjønn>,
-        val kontaktadresse: List<Kontaktadresse>,
-        val navn: List<Navn>,
-        val opphold: List<Opphold>,
-        val oppholdsadresse: List<Oppholdsadresse>,
-        val sivilstand: List<Sivilstand>,
-        val statsborgerskap: List<Statsborgerskap>,
-        val telefonnummer: List<Telefonnummer>,
-        val tilrettelagtKommunikasjon: List<TilrettelagtKommunikasjon>,
-        val innflyttingTilNorge: List<InnflyttingTilNorge>,
-        val utflyttingFraNorge: List<UtflyttingFraNorge>,
-        val vergemaalEllerFremtidsfullmakt: List<VergemaalEllerFremtidsfullmakt>
+    val adressebeskyttelse: List<Adressebeskyttelse>,
+    override val bostedsadresse: List<Bostedsadresse>,
+    @JsonProperty("doedsfall") val dødsfall: List<Dødsfall>,
+    val forelderBarnRelasjon: List<ForelderBarnRelasjon>,
+    @JsonProperty("foedsel") override val fødsel: List<Fødsel>,
+    val folkeregisterpersonstatus: List<Folkeregisterpersonstatus>,
+    val fullmakt: List<Fullmakt>,
+    @JsonProperty("kjoenn") val kjønn: List<Kjønn>,
+    val kontaktadresse: List<Kontaktadresse>,
+    val navn: List<Navn>,
+    val opphold: List<Opphold>,
+    val oppholdsadresse: List<Oppholdsadresse>,
+    val sivilstand: List<Sivilstand>,
+    val statsborgerskap: List<Statsborgerskap>,
+    val telefonnummer: List<Telefonnummer>,
+    val tilrettelagtKommunikasjon: List<TilrettelagtKommunikasjon>,
+    val innflyttingTilNorge: List<InnflyttingTilNorge>,
+    val utflyttingFraNorge: List<UtflyttingFraNorge>,
+    val vergemaalEllerFremtidsfullmakt: List<VergemaalEllerFremtidsfullmakt>
 ) : PdlPerson
 
 data class PdlBarn(
-        val adressebeskyttelse: List<Adressebeskyttelse>,
-        override val bostedsadresse: List<Bostedsadresse>,
-        val deltBosted: List<DeltBosted>,
-        @JsonProperty("doedsfall") val dødsfall: List<Dødsfall>,
-        val forelderBarnRelasjon: List<ForelderBarnRelasjon>,
-        @JsonProperty("foedsel") override val fødsel: List<Fødsel>,
-        val navn: List<Navn>
+    val adressebeskyttelse: List<Adressebeskyttelse>,
+    override val bostedsadresse: List<Bostedsadresse>,
+    val deltBosted: List<DeltBosted>,
+    @JsonProperty("doedsfall") val dødsfall: List<Dødsfall>,
+    val forelderBarnRelasjon: List<ForelderBarnRelasjon>,
+    @JsonProperty("foedsel") override val fødsel: List<Fødsel>,
+    val navn: List<Navn>
 ) : PdlPerson
 
 data class PdlAnnenForelder(
-        val adressebeskyttelse: List<Adressebeskyttelse>,
-        override val bostedsadresse: List<Bostedsadresse>,
-        @JsonProperty("doedsfall") val dødsfall: List<Dødsfall>,
-        @JsonProperty("foedsel") override val fødsel: List<Fødsel>,
-        val navn: List<Navn>
+    val adressebeskyttelse: List<Adressebeskyttelse>,
+    override val bostedsadresse: List<Bostedsadresse>,
+    @JsonProperty("doedsfall") val dødsfall: List<Dødsfall>,
+    @JsonProperty("foedsel") override val fødsel: List<Fødsel>,
+    val navn: List<Navn>
 ) : PdlPerson
 
 data class Metadata(val historisk: Boolean)
 
 data class DeltBosted(
-        val startdatoForKontrakt: LocalDate,
-        val sluttdatoForKontrakt: LocalDate?,
-        val vegadresse: Vegadresse?,
-        val ukjentBosted: UkjentBosted?,
-        val metadata: Metadata
+    val startdatoForKontrakt: LocalDate,
+    val sluttdatoForKontrakt: LocalDate?,
+    val vegadresse: Vegadresse?,
+    val ukjentBosted: UkjentBosted?,
+    val metadata: Metadata
 )
 
 data class Folkeregistermetadata(
@@ -143,15 +143,15 @@ data class Folkeregistermetadata(
 )
 
 data class Bostedsadresse(
-        val angittFlyttedato: LocalDate?,
-        val gyldigFraOgMed: LocalDate?,
-        val gyldigTilOgMed: LocalDate?,
-        val coAdressenavn: String?,
-        val utenlandskAdresse: UtenlandskAdresse?,
-        val vegadresse: Vegadresse?,
-        val ukjentBosted: UkjentBosted?,
-        val matrikkeladresse: Matrikkeladresse?,
-        val metadata: Metadata
+    val angittFlyttedato: LocalDate?,
+    val gyldigFraOgMed: LocalDate?,
+    val gyldigTilOgMed: LocalDate?,
+    val coAdressenavn: String?,
+    val utenlandskAdresse: UtenlandskAdresse?,
+    val vegadresse: Vegadresse?,
+    val ukjentBosted: UkjentBosted?,
+    val matrikkeladresse: Matrikkeladresse?,
+    val metadata: Metadata
 ) {
 
     val matrikkelId get() = matrikkeladresse?.matrikkelId ?: vegadresse?.matrikkelId
@@ -160,25 +160,25 @@ data class Bostedsadresse(
 }
 
 data class Oppholdsadresse(
-        val gyldigFraOgMed: LocalDate?,
-        val gyldigTilOgMed: LocalDate? = null,
-        val coAdressenavn: String?,
-        val utenlandskAdresse: UtenlandskAdresse?,
-        val vegadresse: Vegadresse?,
-        val oppholdAnnetSted: String?,
-        val metadata: Metadata
+    val gyldigFraOgMed: LocalDate?,
+    val gyldigTilOgMed: LocalDate? = null,
+    val coAdressenavn: String?,
+    val utenlandskAdresse: UtenlandskAdresse?,
+    val vegadresse: Vegadresse?,
+    val oppholdAnnetSted: String?,
+    val metadata: Metadata
 )
 
 data class Kontaktadresse(
-        val coAdressenavn: String?,
-        val gyldigFraOgMed: LocalDate?,
-        val gyldigTilOgMed: LocalDate?,
-        val postadresseIFrittFormat: PostadresseIFrittFormat?,
-        val postboksadresse: Postboksadresse?,
-        val type: KontaktadresseType,
-        val utenlandskAdresse: UtenlandskAdresse?,
-        val utenlandskAdresseIFrittFormat: UtenlandskAdresseIFrittFormat?,
-        val vegadresse: Vegadresse?
+    val coAdressenavn: String?,
+    val gyldigFraOgMed: LocalDate?,
+    val gyldigTilOgMed: LocalDate?,
+    val postadresseIFrittFormat: PostadresseIFrittFormat?,
+    val postboksadresse: Postboksadresse?,
+    val type: KontaktadresseType,
+    val utenlandskAdresse: UtenlandskAdresse?,
+    val utenlandskAdresseIFrittFormat: UtenlandskAdresseIFrittFormat?,
+    val vegadresse: Vegadresse?
 )
 
 @Suppress("unused")
@@ -202,15 +202,15 @@ data class PostadresseIFrittFormat(
 )
 
 data class Vegadresse(
-        val husnummer: String?,
-        val husbokstav: String?,
-        val bruksenhetsnummer: String?,
-        val adressenavn: String?,
-        val kommunenummer: String?,
-        val tilleggsnavn: String?,
-        val postnummer: String?,
-        val koordinater: Koordinater?,
-        val matrikkelId: Long?
+    val husnummer: String?,
+    val husbokstav: String?,
+    val bruksenhetsnummer: String?,
+    val adressenavn: String?,
+    val kommunenummer: String?,
+    val tilleggsnavn: String?,
+    val postnummer: String?,
+    val koordinater: Koordinater?,
+    val matrikkelId: Long?
 )
 
 data class UkjentBosted(val bostedskommune: String?)
@@ -225,7 +225,7 @@ data class Koordinater(
 data class Adressebeskyttelse(val gradering: AdressebeskyttelseGradering, val metadata: Metadata) {
 
     fun erStrengtFortrolig(): Boolean = this.gradering == AdressebeskyttelseGradering.STRENGT_FORTROLIG ||
-                                        this.gradering == AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND
+        this.gradering == AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND
 }
 
 enum class AdressebeskyttelseGradering {
@@ -252,9 +252,9 @@ data class Fødsel(
 data class Dødsfall(@JsonProperty("doedsdato") val dødsdato: LocalDate?)
 
 data class ForelderBarnRelasjon(
-        val relatertPersonsIdent: String?,
-        val relatertPersonsRolle: Familierelasjonsrolle,
-        val minRolleForPerson: Familierelasjonsrolle?
+    val relatertPersonsIdent: String?,
+    val relatertPersonsRolle: Familierelasjonsrolle,
+    val minRolleForPerson: Familierelasjonsrolle?
 )
 
 enum class Familierelasjonsrolle {
@@ -271,11 +271,11 @@ data class Folkeregisterpersonstatus(
 )
 
 data class Fullmakt(
-        val gyldigFraOgMed: LocalDate,
-        val gyldigTilOgMed: LocalDate,
-        val motpartsPersonident: String,
-        val motpartsRolle: MotpartsRolle,
-        val omraader: List<String>
+    val gyldigFraOgMed: LocalDate,
+    val gyldigTilOgMed: LocalDate,
+    val motpartsPersonident: String,
+    val motpartsRolle: MotpartsRolle,
+    val omraader: List<String>
 )
 
 enum class MotpartsRolle {
@@ -311,8 +311,8 @@ data class Telefonnummer(
 )
 
 data class TilrettelagtKommunikasjon(
-        @JsonProperty("talespraaktolk") val talespråktolk: Tolk?,
-        @JsonProperty("tegnspraaktolk") val tegnspråktolk: Tolk?
+    @JsonProperty("talespraaktolk") val talespråktolk: Tolk?,
+    @JsonProperty("tegnspraaktolk") val tegnspråktolk: Tolk?
 )
 
 data class Tolk(@JsonProperty("spraak") val språk: String?)
@@ -324,9 +324,9 @@ data class Statsborgerskap(
 )
 
 data class Opphold(
-        val type: Oppholdstillatelse,
-        val oppholdFra: LocalDate?,
-        val oppholdTil: LocalDate?
+    val type: Oppholdstillatelse,
+    val oppholdFra: LocalDate?,
+    val oppholdTil: LocalDate?
 )
 
 enum class Oppholdstillatelse {
@@ -336,11 +336,11 @@ enum class Oppholdstillatelse {
 }
 
 data class Sivilstand(
-        val type: Sivilstandstype,
-        val gyldigFraOgMed: LocalDate?,
-        val relatertVedSivilstand: String?,
-        val bekreftelsesdato: LocalDate?,
-        val metadata: Metadata
+    val type: Sivilstandstype,
+    val gyldigFraOgMed: LocalDate?,
+    val relatertVedSivilstand: String?,
+    val bekreftelsesdato: LocalDate?,
+    val metadata: Metadata
 )
 
 enum class Sivilstandstype {
@@ -396,15 +396,15 @@ data class UtenlandskAdresseIFrittFormat(
 )
 
 data class VergeEllerFullmektig(
-        val motpartsPersonident: String?,
-        val navn: Personnavn?,
-        val omfang: String?,
-        val omfangetErInnenPersonligOmraade: Boolean
+    val motpartsPersonident: String?,
+    val navn: Personnavn?,
+    val omfang: String?,
+    val omfangetErInnenPersonligOmraade: Boolean
 )
 
 data class VergemaalEllerFremtidsfullmakt(
-        val embete: String?,
-        val folkeregistermetadata: Folkeregistermetadata?,
-        val type: String?,
-        val vergeEllerFullmektig: VergeEllerFullmektig
+    val embete: String?,
+    val folkeregistermetadata: Folkeregistermetadata?,
+    val type: String?,
+    val vergeEllerFullmektig: VergeEllerFullmektig
 )

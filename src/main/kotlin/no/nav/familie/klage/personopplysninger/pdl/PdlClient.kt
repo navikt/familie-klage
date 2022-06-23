@@ -12,8 +12,8 @@ import java.net.URI
 
 @Service
 class PdlClient(
-        val pdlConfig: PdlConfig,
-        @Qualifier("azureClientCredential") restTemplate: RestOperations
+    val pdlConfig: PdlConfig,
+    @Qualifier("azureClientCredential") restTemplate: RestOperations
 ) :
     AbstractPingableRestClient(restTemplate, "pdl.personinfo") {
 
@@ -26,8 +26,8 @@ class PdlClient(
 
     fun hentSøker(personIdent: String): PdlSøker {
         val pdlPersonRequest = PdlPersonRequest(
-                variables = PdlPersonRequestVariables(personIdent),
-                query = PdlConfig.søkerQuery
+            variables = PdlPersonRequestVariables(personIdent),
+            query = PdlConfig.søkerQuery
         )
         val pdlResponse: PdlResponse<PdlSøkerData> = postForEntity(
             pdlConfig.pdlUri,
@@ -40,8 +40,8 @@ class PdlClient(
     fun hentBarn(personIdenter: List<String>): Map<String, PdlBarn> {
         if (personIdenter.isEmpty()) return emptyMap()
         val pdlPersonRequest = PdlPersonBolkRequest(
-                variables = PdlPersonBolkRequestVariables(personIdenter),
-                query = PdlConfig.barnQuery
+            variables = PdlPersonBolkRequestVariables(personIdenter),
+            query = PdlConfig.barnQuery
         )
         val pdlResponse: PdlBolkResponse<PdlBarn> = postForEntity(
             pdlConfig.pdlUri,
@@ -54,8 +54,8 @@ class PdlClient(
     fun hentAndreForeldre(personIdenter: List<String>): Map<String, PdlAnnenForelder> {
         if (personIdenter.isEmpty()) return emptyMap()
         val pdlPersonRequest = PdlPersonBolkRequest(
-                variables = PdlPersonBolkRequestVariables(personIdenter),
-                query = PdlConfig.annenForelderQuery
+            variables = PdlPersonBolkRequestVariables(personIdenter),
+            query = PdlConfig.annenForelderQuery
         )
         val pdlResponse: PdlBolkResponse<PdlAnnenForelder> = postForEntity(
             pdlConfig.pdlUri,
@@ -68,8 +68,8 @@ class PdlClient(
     fun hentPersonKortBolk(personIdenter: List<String>): Map<String, PdlPersonKort> {
         require(personIdenter.size <= 100) { "Liste med personidenter må være færre enn 100 st" }
         val pdlPersonRequest = PdlPersonBolkRequest(
-                variables = PdlPersonBolkRequestVariables(personIdenter),
-                query = PdlConfig.personBolkKortQuery
+            variables = PdlPersonBolkRequestVariables(personIdenter),
+            query = PdlConfig.personBolkKortQuery
         )
         val pdlResponse: PdlBolkResponse<PdlPersonKort> = postForEntity(
             pdlConfig.pdlUri,
@@ -85,8 +85,8 @@ class PdlClient(
      */
     fun hentAktørIder(ident: String): PdlIdenter {
         val pdlPersonRequest = PdlIdentRequest(
-                variables = PdlIdentRequestVariables(ident, "AKTORID"),
-                query = PdlConfig.hentIdentQuery
+            variables = PdlIdentRequestVariables(ident, "AKTORID"),
+            query = PdlConfig.hentIdentQuery
         )
         val pdlResponse: PdlResponse<PdlHentIdenter> = postForEntity(
             pdlConfig.pdlUri,
@@ -104,8 +104,8 @@ class PdlClient(
     @Cacheable("personidenter", cacheManager = "shortCache")
     fun hentPersonidenter(ident: String, historikk: Boolean = false): PdlIdenter {
         val pdlIdentRequest = PdlIdentRequest(
-                variables = PdlIdentRequestVariables(ident, "FOLKEREGISTERIDENT", historikk),
-                query = PdlConfig.hentIdentQuery
+            variables = PdlIdentRequestVariables(ident, "FOLKEREGISTERIDENT", historikk),
+            query = PdlConfig.hentIdentQuery
         )
         val pdlResponse: PdlResponse<PdlHentIdenter> = postForEntity(
             pdlConfig.pdlUri,
@@ -125,8 +125,8 @@ class PdlClient(
             "Feil i spørring mot PDL. Antall identer i spørring overstiger $MAKS_ANTALL_IDENTER"
         }
         val pdlIdentBolkRequest = PdlIdentBolkRequest(
-                variables = PdlIdentBolkRequestVariables(identer, "FOLKEREGISTERIDENT"),
-                query = PdlConfig.hentIdenterBolkQuery
+            variables = PdlIdentBolkRequestVariables(identer, "FOLKEREGISTERIDENT"),
+            query = PdlConfig.hentIdenterBolkQuery
         )
         val pdlResponse: PdlIdentBolkResponse = postForEntity(
             pdlConfig.pdlUri,

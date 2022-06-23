@@ -17,12 +17,12 @@ import javax.servlet.http.HttpServletRequest
  * Kan brukes med eks CustomKeyValue(key=fagsak, value=fagsakId)
  */
 data class Sporingsdata(
-        val event: AuditLoggerEvent,
-        val personIdent: String,
-        val tilgang: Tilgang,
-        val custom1: CustomKeyValue? = null,
-        val custom2: CustomKeyValue? = null,
-        val custom3: CustomKeyValue? = null
+    val event: AuditLoggerEvent,
+    val personIdent: String,
+    val tilgang: Tilgang,
+    val custom1: CustomKeyValue? = null,
+    val custom2: CustomKeyValue? = null,
+    val custom3: CustomKeyValue? = null
 )
 
 enum class AuditLoggerEvent(val type: String) {
@@ -63,14 +63,14 @@ class AuditLogger(@Value("\${NAIS_APP_NAME}") private val applicationName: Strin
         val timestamp = System.currentTimeMillis()
         val name = "Saksbehandling"
         return "CEF:0|$applicationName|auditLog|1.0|audit:${data.event.type}|$name|INFO|end=$timestamp " +
-               "suid=${SikkerhetContext.hentSaksbehandler(strict = true)} " +
-               "duid=${data.personIdent} " +
-               "sproc=${getCallId()} " +
-               "requestMethod=${request.method} " +
-               "request=${request.requestURI} " +
-               "flexString1Label=Decision flexString1=${formatHarTilgang(data.tilgang)} " +
-               formatDenyPolicy(data.tilgang) +
-               createCustomString(data)
+            "suid=${SikkerhetContext.hentSaksbehandler(strict = true)} " +
+            "duid=${data.personIdent} " +
+            "sproc=${getCallId()} " +
+            "requestMethod=${request.method} " +
+            "request=${request.requestURI} " +
+            "flexString1Label=Decision flexString1=${formatHarTilgang(data.tilgang)} " +
+            formatDenyPolicy(data.tilgang) +
+            createCustomString(data)
     }
 
     private fun formatHarTilgang(tilgang: Tilgang): String = if (tilgang.harTilgang) "Permit" else "Deny"

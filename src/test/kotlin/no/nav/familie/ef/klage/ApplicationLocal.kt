@@ -14,11 +14,12 @@ fun main(args: Array<String>) {
     SpringApplicationBuilder(ApplicationConfig::class.java)
         .initializers(DbContainerInitializer())
         .profiles(
-                "local",
-                "mock-integrasjoner",
-                "mock-auditlogger",
-                "mock-pdl",
-                "mock-brev",
-                "mock-dokument")
+            "local",
+            "mock-integrasjoner",
+            "mock-auditlogger",
+            "mock-pdl",
+            "mock-brev",
+            "mock-dokument"
+        )
         .run(*args)
 }

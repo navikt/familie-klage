@@ -15,14 +15,14 @@ data class PdlIdentBolkRequestVariables(
 )
 
 data class PdlPersonSøkRequestVariables(
-        val paging: Paging,
-        val criteria: List<SøkeKriterier>
+    val paging: Paging,
+    val criteria: List<SøkeKriterier>
 )
 
 data class SøkeKriterier(
-        val fieldName: String,
-        val searchRule: SearchRule,
-        val searchHistorical: Boolean = false
+    val fieldName: String,
+    val searchRule: SearchRule,
+    val searchHistorical: Boolean = false
 )
 
 data class Paging(val pageNumber: Int, val resultsPerPage: Int)

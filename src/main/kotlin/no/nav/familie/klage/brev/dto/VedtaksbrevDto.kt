@@ -1,6 +1,5 @@
 package no.nav.familie.ef.sak.brev.dto
 
-
 data class VedtaksbrevDto(
     val saksbehandlerBrevrequest: String,
     val brevmal: String,
