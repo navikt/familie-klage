@@ -10,16 +10,17 @@ data class Behandling(
     val fagsakId: UUID,
     val steg: BehandlingSteg,
     val status: BehandlingStatus,
-    val sistEndret: LocalDateTime,
-    val resultat: BehandlingResultat? = null,
-    val opprettet: LocalDateTime,
+    val endretTid: LocalDateTime,
+    val resultat: BehandlingResultat? = BehandlingResultat.IKKE_SATT,
+    val opprettetTid: LocalDateTime,
     val fagsystem: Fagsystem,
-    val vedtaksdato: LocalDateTime? = null
+    val vedtakDato: LocalDateTime? = null
 )
 
 enum class BehandlingResultat(val displayName: String) {
     MEDHOLD(displayName = "Medhold"),
     IKKE_MEDHOLD(displayName = "Ikke medhold"),
+    IKKE_SATT(displayName = "Ikke satt"),
 }
 
 enum class BehandlingStatus {

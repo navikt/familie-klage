@@ -22,8 +22,8 @@ class BehandlingService(private val behandlingsRepository: BehandlingsRepository
                 fagsakId = fagsakId,
                 steg = BehandlingSteg.FORMALKRAV,
                 status = BehandlingStatus.OPPRETTET,
-                sistEndret = LocalDateTime.now(),
-                opprettet = LocalDateTime.now(),
+                endretTid = LocalDateTime.now(),
+                opprettetTid = LocalDateTime.now(),
                 fagsystem = fagsystem
             )
         )
