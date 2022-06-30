@@ -9,8 +9,4 @@ import java.util.UUID
 
 @Repository
 interface FormRepository : RepositoryInterface<Form, UUID>, InsertUpdateRepository<Form> {
-
-    fun findByBehandlingsId(behandlingsId: UUID): Form
-
-    fun findByFagsakId(fagsakId: UUID): List<Form>
 }

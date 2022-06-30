@@ -1,28 +1,28 @@
 package no.nav.familie.klage.formkrav.domain
 
+import org.springframework.data.annotation.Id
 import java.time.LocalDateTime
 import java.util.UUID
 
 data class Form(
-    val behandlingsId: UUID,
+    @Id
+    val id: UUID = UUID.randomUUID(),
     val fagsakId: UUID,
     val vedtaksdato: LocalDateTime,
-
     val klageMottat: LocalDateTime,
-    val klageÅrsak: String,
+    val klageaarsak: String,
     val klageBeskrivelse: String,
-
-    val klagePart: Boolean,
-    val klageKonkret: Boolean,
-    val klagefristOverholdt: Boolean,
-    val klageSignert: Boolean,
-
+    val klagePart: FormVilkår,
+    val klageKonkret: FormVilkår,
+    val klagefristOverholdt: FormVilkår,
+    val klageSignert: FormVilkår,
     val saksbehandlerBegrunnelse: String,
     val sakSistEndret: LocalDateTime,
+    val vilkaarStatus: FormVilkår
+)
 
-    val fullført: Boolean
-) {
-
-    fun oppfyllerFormkrav(): Boolean = klagePart && klageKonkret && klagefristOverholdt && klageSignert
-
+enum class FormVilkår {
+    OPPFYLT,
+    IKKE_OPPFYLT
 }
+

@@ -1,11 +1,12 @@
 package no.nav.familie.klage.formkrav.dto
 
 import no.nav.familie.klage.formkrav.domain.Form
+import no.nav.familie.klage.formkrav.domain.FormVilkår
 import java.time.LocalDateTime
 import java.util.UUID
 
 data class FormDto (
-    val behandlingsId: UUID,
+    val id: UUID,
     val fagsakId: UUID,
     val vedtaksdato: LocalDateTime,
 
@@ -13,25 +14,25 @@ data class FormDto (
     val klageÅrsak: String,
     val klageBeskrivelse: String,
 
-    val klagePart: Boolean,
-    val klageKonkret: Boolean,
-    val klagefristOverholdt: Boolean,
-    val klageSignert: Boolean,
+    val klagePart: FormVilkår,
+    val klageKonkret: FormVilkår,
+    val klagefristOverholdt: FormVilkår,
+    val klageSignert: FormVilkår,
 
     val saksbehandlerBegrunnelse: String,
     val sakSistEndret: LocalDateTime,
 
-    val fullført: Boolean
+    val vilkårStatus: FormVilkår
 )
 
 fun Form.tilDto():  FormDto =
     FormDto(
-        behandlingsId = this.behandlingsId,
+        id = this.id,
         fagsakId = this.fagsakId,
         vedtaksdato = this.vedtaksdato,
 
         klageMottat = this.klageMottat,
-        klageÅrsak = this.klageÅrsak,
+        klageÅrsak = this.klageaarsak,
         klageBeskrivelse = this.klageBeskrivelse,
 
         klagePart = this.klagePart,
@@ -42,5 +43,5 @@ fun Form.tilDto():  FormDto =
         saksbehandlerBegrunnelse = this.saksbehandlerBegrunnelse,
         sakSistEndret = this.sakSistEndret,
 
-        fullført = this.fullført
+        vilkårStatus = this.vilkaarStatus
     )
