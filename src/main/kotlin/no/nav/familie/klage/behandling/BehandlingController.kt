@@ -26,7 +26,7 @@ class BehandlingController(
         return Ressurs.success(behandlingService.opprettBehandlingDto(behandlingId))
     }
 
-    @PostMapping("{behandlingId}")
+    @PostMapping("{fagsakId}")
     fun opprettBehandling(@PathVariable fagsakId: UUID): Ressurs<Behandling> {
         return Ressurs.success(behandlingService.opprettBehandling(fagsakId, Fagsystem.EF))
     }
