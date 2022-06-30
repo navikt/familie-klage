@@ -1,31 +1,32 @@
 package no.nav.familie.klage.behandling.domain
 
-enum class BehandlingType(val visningsnavn: String) {
-    FØRSTEGANGSBEHANDLING("Førstegangsbehandling"),
-    BLANKETT("Blankett"),
-    REVURDERING("Revurdering"),
-    TEKNISK_OPPHØR("Teknisk opphør")
-}
+import org.springframework.data.annotation.Id
+import java.time.LocalDateTime
+import java.util.UUID
+
+data class Behandling(
+    @Id
+    val id: UUID = UUID.randomUUID(),
+    val fagsakId: UUID,
+    val steg: BehandlingSteg,
+    val status: BehandlingStatus,
+    val sistEndret: LocalDateTime,
+    val resultat: BehandlingResultat? = null,
+    val opprettet: LocalDateTime,
+    val fagsystem: Fagsystem,
+    val vedtaksdato: LocalDateTime? = null
+)
 
 enum class BehandlingResultat(val displayName: String) {
-    INNVILGET(displayName = "Innvilget"),
-    OPPHØRT(displayName = "Opphørt"),
-    AVSLÅTT(displayName = "Avslått"),
-    IKKE_SATT(displayName = "Ikke satt"),
-    HENLAGT(displayName = "Henlagt"),
+    MEDHOLD(displayName = "Medhold"),
+    IKKE_MEDHOLD(displayName = "Ikke medhold"),
 }
 
 enum class BehandlingStatus {
     OPPRETTET,
     UTREDES,
-    FATTER_VEDTAK,
-    IVERKSETTER_VEDTAK,
     FERDIGSTILT,
-    SATT_PÅ_VENT,
     ;
-
-    fun behandlingErLåstForVidereRedigering(): Boolean =
-            setOf(FATTER_VEDTAK, IVERKSETTER_VEDTAK, FERDIGSTILT).contains(this)
 }
 
 enum class BehandlingSteg {
@@ -33,4 +34,10 @@ enum class BehandlingSteg {
     VURDERING,
     KABAL,
     BEHANDLING_FERDIGSTILT,
+}
+
+enum class Fagsystem {
+    EF,
+    BA,
+    KS
 }
