@@ -21,7 +21,6 @@ class VurderingController(
 
     @PostMapping
     fun opprettVurdering(@RequestBody vurdering: Vurdering): Ressurs<Vurdering> {
-        logger.info("$vurdering")
         return Ressurs.success(vurderingService.opprettVurdering(vurdering))
     }
 

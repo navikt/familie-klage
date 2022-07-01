@@ -12,6 +12,7 @@ data class Vurdering(
     val muligFormkrav: Int,
     val begrunnelse: String,
     val vedtakValg: VedtakValg,
+    @Column("årsak")
     val årsak: Årsak? = null,
     val hjemmel: Hjemmel? = null,
     val beskrivelse: String,

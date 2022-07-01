@@ -1,5 +1,5 @@
 CREATE TABLE vurdering (
-    behandling_id         UUID PRIMARY KEY,
+    behandling_id         UUID PRIMARY KEY REFERENCES behandling (id),
 
     oppfylt_formkrav     INT NOT NULL,
     mulig_formkrav       INT NOT NULL,

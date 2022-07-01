@@ -36,6 +36,5 @@ class VurderingService(private val vurderingRepository: VurderingRepository) {
         if (vurdering.muligFormkrav == null) {
             throw ApiFeil("muligFormkrav kan ikke være null", HttpStatus.BAD_REQUEST)
         }
-        logger.info("${vurdering}")
     }
 }
