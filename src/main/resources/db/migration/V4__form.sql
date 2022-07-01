@@ -12,6 +12,5 @@ CREATE TABLE form (
     klage_signert               VARCHAR      NOT NULL,
     klagefrist_overholdt        VARCHAR      NOT NULL,
     saksbehandler_begrunnelse   VARCHAR      NOT NULL,
-    sak_sist_endret             TIMESTAMP    DEFAULT LOCALTIMESTAMP,
-    vilkaar_status              VARCHAR      NOT NULL
+    sak_sist_endret             TIMESTAMP    DEFAULT LOCALTIMESTAMP
 );

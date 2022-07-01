@@ -1,7 +1,6 @@
 package no.nav.familie.klage.formkrav
 
 import no.nav.familie.klage.formkrav.domain.Form
-import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.formkrav.dto.FormDto
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -16,21 +15,20 @@ class FormService(
         return formDto(behandlingId)
     }
 
-    fun opprettForm(fagsakId: UUID): Form {
+    fun opprettForm(form: Form): Form {
         return formRepository.insert(
             Form(
-                fagsakId = fagsakId,
-                vedtaksdato = LocalDateTime.now(),
+                fagsakId = form.fagsakId,
+                vedtaksdato = form.vedtaksdato,
                 klageMottat = LocalDateTime.now(),
-                klageaarsak = "min klage",
-                klageBeskrivelse = "min klagebeskrivelse",
-                klagePart = FormVilkår.IKKE_OPPFYLT,
-                klageKonkret = FormVilkår.IKKE_OPPFYLT,
-                klagefristOverholdt = FormVilkår.IKKE_OPPFYLT,
-                klageSignert = FormVilkår.IKKE_OPPFYLT,
-                saksbehandlerBegrunnelse = "det er greit",
-                sakSistEndret = LocalDateTime.now(),
-                vilkaarStatus = FormVilkår.IKKE_OPPFYLT
+                klageaarsak = form.klageaarsak,
+                klageBeskrivelse = form.klageBeskrivelse,
+                klagePart = form.klagePart,
+                klageKonkret = form.klageKonkret,
+                klagefristOverholdt = form.klagefristOverholdt,
+                klageSignert = form.klageSignert,
+                saksbehandlerBegrunnelse = form.saksbehandlerBegrunnelse,
+                sakSistEndret = LocalDateTime.now()
             )
         )
     }

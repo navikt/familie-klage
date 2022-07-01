@@ -7,20 +7,18 @@ import java.util.UUID
 data class Form(
     @Id
     val id: UUID = UUID.randomUUID(),
-    val fagsakId: UUID,
-    val vedtaksdato: LocalDateTime,
-    val klageMottat: LocalDateTime,
-    val klageaarsak: String,
-    val klageBeskrivelse: String,
+    val fagsakId: UUID = UUID.randomUUID(),
+    val vedtaksdato: LocalDateTime = LocalDateTime.now(),
+    val klageMottat: LocalDateTime = LocalDateTime.now(),
+    val klageaarsak: String = "min klage",
+    val klageBeskrivelse: String = "beskrivelse kommer her",
     val klagePart: FormVilkår,
     val klageKonkret: FormVilkår,
     val klagefristOverholdt: FormVilkår,
     val klageSignert: FormVilkår,
-    val saksbehandlerBegrunnelse: String,
-    val sakSistEndret: LocalDateTime,
-    val vilkaarStatus: FormVilkår
+    val saksbehandlerBegrunnelse: String = "begrunnelsen kommer her",
+    val sakSistEndret: LocalDateTime = LocalDateTime.now()
 )
-
 enum class FormVilkår {
     OPPFYLT,
     IKKE_OPPFYLT

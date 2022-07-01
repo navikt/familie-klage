@@ -18,8 +18,7 @@ fun formDto(
     klagefristOverholdt: FormVilkår = FormVilkår.IKKE_OPPFYLT,
     klageSignert: FormVilkår = FormVilkår.IKKE_OPPFYLT,
     saksbehandlerBegrunnelse: String = "OK HAN SKAL FÅ MER PEGNER",
-    sakSistEndret: LocalDateTime = LocalDateTime.now().minusDays(1),
-    vilkaarStatus: FormVilkår = FormVilkår.IKKE_OPPFYLT
+    sakSistEndret: LocalDateTime = LocalDateTime.now().minusDays(1)
 ): FormDto =
     FormDto(
         id,
@@ -33,6 +32,5 @@ fun formDto(
         klagefristOverholdt,
         klageSignert,
         saksbehandlerBegrunnelse,
-        sakSistEndret,
-        vilkaarStatus
+        sakSistEndret
     )

@@ -9,20 +9,15 @@ data class FormDto (
     val id: UUID,
     val fagsakId: UUID,
     val vedtaksdato: LocalDateTime,
-
     val klageMottat: LocalDateTime,
-    val klageÅrsak: String,
+    val klageaarsak: String,
     val klageBeskrivelse: String,
-
     val klagePart: FormVilkår,
     val klageKonkret: FormVilkår,
     val klagefristOverholdt: FormVilkår,
     val klageSignert: FormVilkår,
-
     val saksbehandlerBegrunnelse: String,
-    val sakSistEndret: LocalDateTime,
-
-    val vilkårStatus: FormVilkår
+    val sakSistEndret: LocalDateTime
 )
 
 fun Form.tilDto():  FormDto =
@@ -30,18 +25,13 @@ fun Form.tilDto():  FormDto =
         id = this.id,
         fagsakId = this.fagsakId,
         vedtaksdato = this.vedtaksdato,
-
         klageMottat = this.klageMottat,
-        klageÅrsak = this.klageaarsak,
+        klageaarsak = this.klageaarsak,
         klageBeskrivelse = this.klageBeskrivelse,
-
         klagePart = this.klagePart,
         klageKonkret = this.klageKonkret,
         klagefristOverholdt = this.klagefristOverholdt,
         klageSignert = this.klageSignert,
-
         saksbehandlerBegrunnelse = this.saksbehandlerBegrunnelse,
-        sakSistEndret = this.sakSistEndret,
-
-        vilkårStatus = this.vilkaarStatus
+        sakSistEndret = this.sakSistEndret
     )
