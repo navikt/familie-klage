@@ -2,6 +2,7 @@ package no.nav.familie.klage.formkrav
 
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.dto.FormDto
+import no.nav.familie.klage.formkrav.dto.tilDto
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
@@ -21,13 +22,15 @@ class FormController(
     private val formService: FormService
 ) {
 
-    @GetMapping("{behandlingId}")
-    fun hentForm(@PathVariable behandlingId: String): Ressurs<FormDto> {
-        return Ressurs.success(formService.opprettFormDto(UUID.randomUUID()))
+    @GetMapping("{formId}")
+    fun hentForm(@PathVariable formId: String): Ressurs<FormDto> {
+        println("==> Oppretter formDto i hentForm")
+        return Ressurs.success(formService.opprettFormDto())
     }
 
     @PostMapping
     fun opprettFormkravVilkår(@RequestBody form: Form): Ressurs<Form> {
+        println(form)
         return Ressurs.success(formService.opprettForm(form))
     }
 }

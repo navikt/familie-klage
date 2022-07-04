@@ -6,7 +6,7 @@ import java.util.UUID
 
 data class Form(
     @Id
-    val id: UUID = UUID.randomUUID(),
+    val id: UUID,
     val fagsakId: UUID = UUID.randomUUID(),
     val vedtaksdato: LocalDateTime = LocalDateTime.now(),
     val klageMottat: LocalDateTime = LocalDateTime.now(),

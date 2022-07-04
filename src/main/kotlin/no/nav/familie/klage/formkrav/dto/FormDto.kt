@@ -20,7 +20,7 @@ data class FormDto (
     val sakSistEndret: LocalDateTime
 )
 
-fun Form.tilDto():  FormDto =
+fun Form.tilDto(): FormDto =
     FormDto(
         id = this.id,
         fagsakId = this.fagsakId,
