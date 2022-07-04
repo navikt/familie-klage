@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.util.UUID
 
 @RestController
 @RequestMapping(path = ["/api/formkrav"])
@@ -21,9 +20,9 @@ class FormController(
     private val formService: FormService
 ) {
 
-    @GetMapping("{behandlingId}")
-    fun hentForm(@PathVariable behandlingId: String): Ressurs<FormDto> {
-        return Ressurs.success(formService.opprettFormDto(UUID.randomUUID()))
+    @GetMapping("{formId}")
+    fun hentForm(@PathVariable formId: String): Ressurs<FormDto> {
+        return Ressurs.success(formService.opprettFormDto())
     }
 
     @PostMapping
