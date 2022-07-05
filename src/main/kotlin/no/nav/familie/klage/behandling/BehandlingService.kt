@@ -16,7 +16,8 @@ class BehandlingService(private val behandlingsRepository: BehandlingsRepository
         return behandlingDto(behandlingId)
     }
 
-    fun opprettBehandling(fagsakId: UUID, fagsystem: Fagsystem): Behandling {
+    fun opprettBehandling(): Behandling {
+        val fagsakId = UUID.randomUUID()
         return behandlingsRepository.insert(
             Behandling(
                 fagsakId = fagsakId,
@@ -24,7 +25,7 @@ class BehandlingService(private val behandlingsRepository: BehandlingsRepository
                 status = BehandlingStatus.OPPRETTET,
                 endretTid = LocalDateTime.now(),
                 opprettetTid = LocalDateTime.now(),
-                fagsystem = fagsystem
+                fagsystem = Fagsystem.EF,
             )
         )
     }
