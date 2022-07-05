@@ -6,26 +6,30 @@ import java.util.UUID
 
 data class Vurdering(
     @Id
-    val behandlingId: UUID = UUID.randomUUID(),
+    val behandlingId: UUID,
     val vedtak: Vedtak,
-    val arsak: Årsak? = null,
+    val arsak: Arsak? = null,
     val hjemmel: Hjemmel? = null,
     val beskrivelse: String,
     val fullfortDato: LocalDateTime? = LocalDateTime.now()
-)
+) {
+}
 
 enum class Vedtak {
+    VELG,
     OMGJØR_VEDTAK,
     OPPRETTHOLD_VEDTAK,
 }
 
-enum class Årsak {
+enum class Arsak {
+    VELG,
     SAKSBEHANDLINGSFEIL,
     TODO1,
     TODO2,
 }
 
 enum class Hjemmel {
+    VELG,
     FEMTEN_TO,
     FEMTEN_TRE,
     FEMTEN_FIRE,
