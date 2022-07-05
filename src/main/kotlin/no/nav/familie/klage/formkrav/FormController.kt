@@ -20,8 +20,8 @@ class FormController(
     private val formService: FormService
 ) {
 
-    @GetMapping("{formId}")
-    fun hentForm(@PathVariable formId: String): Ressurs<FormDto> {
+    @GetMapping("{behandlingId}")
+    fun hentForm(@PathVariable behandlingId: String): Ressurs<FormDto> {
         return Ressurs.success(formService.opprettFormDto())
     }
 

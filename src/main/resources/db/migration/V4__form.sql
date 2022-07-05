@@ -1,5 +1,5 @@
 CREATE TABLE form (
-    id                          UUID PRIMARY KEY,
+    behandling_id               UUID PRIMARY KEY,
     fagsak_id                   VARCHAR      NOT NULL,
 
     vedtaksdato                 TIMESTAMP    NOT NULL DEFAULT LOCALTIMESTAMP,
@@ -7,10 +7,10 @@ CREATE TABLE form (
     klageaarsak                 VARCHAR      NOT NULL,
 
     klage_beskrivelse           VARCHAR      NOT NULL,
-    klage_part                  VARCHAR      NOT NULL,
-    klage_konkret               VARCHAR      NOT NULL,
-    klage_signert               VARCHAR      NOT NULL,
-    klagefrist_overholdt        VARCHAR      NOT NULL,
-    saksbehandler_begrunnelse   VARCHAR      NOT NULL,
+    klage_part                  VARCHAR      DEFAULT 'IKKE_SATT',
+    klage_konkret               VARCHAR      DEFAULT 'IKKE_SATT',
+    klage_signert               VARCHAR      DEFAULT 'IKKE_SATT',
+    klagefrist_overholdt        VARCHAR      DEFAULT 'IKKE_SATT',
+    saksbehandler_begrunnelse   VARCHAR      DEFAULT 'IKKE_SATT',
     sak_sist_endret             TIMESTAMP    DEFAULT LOCALTIMESTAMP
 );

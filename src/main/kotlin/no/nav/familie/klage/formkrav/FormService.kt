@@ -20,12 +20,12 @@ class FormService(
     }
 
     fun opprettForm(form: Form): Form {
-        if(sjekkOmFormEksiterer(form.id)){
+        if(sjekkOmFormEksiterer(form.behandlingId)){
             return oppdaterForm(form)
         } else {
             return formRepository.insert(
                 Form(
-                    id = form.id,
+                    behandlingId = form.behandlingId,
                     fagsakId = form.fagsakId,
                     vedtaksdato = form.vedtaksdato,
                     klageMottat = LocalDateTime.now(),

@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 data class FormDto (
-    val id: UUID,
+    val behandlingId: UUID,
     val fagsakId: UUID,
     val vedtaksdato: LocalDateTime,
     val klageMottat: LocalDateTime,
@@ -22,7 +22,7 @@ data class FormDto (
 
 fun Form.tilDto(): FormDto =
     FormDto(
-        id = this.id,
+        behandlingId = this.behandlingId,
         fagsakId = this.fagsakId,
         vedtaksdato = this.vedtaksdato,
         klageMottat = this.klageMottat,

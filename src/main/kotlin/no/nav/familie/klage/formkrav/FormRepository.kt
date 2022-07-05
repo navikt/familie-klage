@@ -12,6 +12,6 @@ import java.util.UUID
 @Repository
 interface FormRepository : RepositoryInterface<Form, UUID>, InsertUpdateRepository<Form> {
 
-    fun findAllById(id: UUID): List<Form>
+
 
 }
