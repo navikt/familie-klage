@@ -11,6 +11,6 @@ CREATE TABLE form (
     klage_konkret               VARCHAR      DEFAULT 'IKKE_SATT',
     klage_signert               VARCHAR      DEFAULT 'IKKE_SATT',
     klagefrist_overholdt        VARCHAR      DEFAULT 'IKKE_SATT',
-    saksbehandler_begrunnelse   VARCHAR      DEFAULT 'Begrunnelse kommer her',
+    saksbehandler_begrunnelse   VARCHAR      DEFAULT 'IKKE_SATT',
     sak_sist_endret             TIMESTAMP    DEFAULT LOCALTIMESTAMP
 );
