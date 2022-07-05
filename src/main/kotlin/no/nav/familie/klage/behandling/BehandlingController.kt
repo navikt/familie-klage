@@ -1,7 +1,6 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
-import no.nav.familie.klage.behandling.domain.Fagsystem
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
@@ -26,9 +25,9 @@ class BehandlingController(
         return Ressurs.success(behandlingService.opprettBehandlingDto(behandlingId))
     }
 
-    @PostMapping("{fagsakId}")
-    fun opprettBehandling(@PathVariable fagsakId: UUID): Ressurs<Behandling> {
-        return Ressurs.success(behandlingService.opprettBehandling(fagsakId, Fagsystem.EF))
+    @PostMapping
+    fun opprettBehandling(): Ressurs<Behandling> {
+        return Ressurs.success(behandlingService.opprettBehandling())
     }
 
 }
