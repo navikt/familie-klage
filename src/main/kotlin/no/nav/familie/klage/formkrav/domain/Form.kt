@@ -6,7 +6,7 @@ import java.util.UUID
 
 data class Form(
     @Id
-    val id: UUID,
+    val behandlingId: UUID,
     val fagsakId: UUID = UUID.randomUUID(),
     val vedtaksdato: LocalDateTime = LocalDateTime.now(),
     val klageMottat: LocalDateTime = LocalDateTime.now(),
@@ -21,6 +21,7 @@ data class Form(
 )
 enum class FormVilkår {
     OPPFYLT,
-    IKKE_OPPFYLT
+    IKKE_OPPFYLT,
+    IKKE_SATT
 }
 

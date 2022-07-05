@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 fun formDto(
-    id: UUID = UUID.randomUUID(),
+    behandlingId: UUID = UUID.randomUUID(),
     fagsakId: UUID = UUID.randomUUID(),
     vedtaksdato: LocalDateTime = LocalDateTime.now(), // TODO: endre til mulig nullverdi
     klageMottat: LocalDateTime = LocalDateTime.now().minusDays(10),
@@ -21,7 +21,7 @@ fun formDto(
     sakSistEndret: LocalDateTime = LocalDateTime.now().minusDays(1)
 ): FormDto =
     FormDto(
-        id,
+        behandlingId,
         fagsakId,
         vedtaksdato,
         klageMottat,
