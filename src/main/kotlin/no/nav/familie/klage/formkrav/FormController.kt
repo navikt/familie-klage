@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.util.UUID
 
 @RestController
 @RequestMapping(path = ["/api/formkrav"])
@@ -23,6 +24,11 @@ class FormController(
     @GetMapping("{behandlingId}")
     fun hentForm(@PathVariable behandlingId: String): Ressurs<FormDto> {
         return Ressurs.success(formService.opprettFormDto())
+    }
+
+    @GetMapping("vilkar/{behandlingId}")
+    fun hentVilkår(@PathVariable behandlingId: String): Ressurs<Form> {
+        return Ressurs.success(formService.hentForm(UUID.fromString(behandlingId)))
     }
 
     @PostMapping
