@@ -11,14 +11,13 @@ import java.util.UUID
 class FormService(
     private val formRepository: FormRepository
 ) {
-    fun hentForm(id: UUID): Form = formRepository.findByIdOrThrow(id)
+    fun hentForm(behandlingId: UUID): Form = formRepository.findByIdOrThrow(behandlingId)
 
-    fun opprettFormDto(): FormDto {
+    fun hentMockFormDto(behandlingId: UUID): FormDto{
         return formDto()
     }
 
     fun opprettForm(form: Form): Form {
-        println("oppretter form: " + form)
         if(sjekkOmFormEksiterer(form.behandlingId)){
             return oppdaterForm(form)
         } else {
@@ -27,7 +26,7 @@ class FormService(
                     behandlingId = form.behandlingId,
                     fagsakId = form.fagsakId,
                     vedtaksdato = form.vedtaksdato,
-                    klageMottat = LocalDate.now(),
+                    klageMottat = form.klageMottat,
                     klageaarsak = form.klageaarsak,
                     klageBeskrivelse = form.klageBeskrivelse,
                     klagePart = form.klagePart,
@@ -35,7 +34,7 @@ class FormService(
                     klagefristOverholdt = form.klagefristOverholdt,
                     klageSignert = form.klageSignert,
                     saksbehandlerBegrunnelse = form.saksbehandlerBegrunnelse,
-                    sakSistEndret = LocalDate.now()
+                    sakSistEndret = form.sakSistEndret
                 )
             )
         }
