@@ -8,6 +8,9 @@ import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
 import no.nav.familie.klage.behandlingshistorikk.domain.Steg
+import no.nav.familie.klage.personopplysninger.PersonopplysningerService
+import no.nav.familie.klage.personopplysninger.domain.Personopplysninger
+import no.nav.familie.klage.personopplysninger.domain.Kjønn
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.UUID
@@ -16,6 +19,7 @@ import java.util.UUID
 class BehandlingService(
         private val behandlingsRepository: BehandlingsRepository,
         private val behandlingshistorikkService: BehandlingshistorikkService,
+        private val personopplysningerService: PersonopplysningerService,
     ) {
 
     fun opprettBehandlingDto(behandlingId: UUID): BehandlingDto {
@@ -40,6 +44,29 @@ class BehandlingService(
                 behandlingId = behandling.id,
                 steg = Steg.OPPRETTET,
                 opprettetAv = "Juni Leirvik"
+            )
+        )
+
+        /*val navn = Navn(
+            fornavn = "Juni",
+            mellomnavn = "Leirvik",
+            etternavn = "Larsen",
+            visningsnavn = "Juni Leirvik"
+        )*/
+
+        /*val telefon = Telefonnummer(
+            landskode = "+47",
+            nummer = "46840856"
+        )*/
+
+        personopplysningerService.opprettPersonopplysninger(
+            personopplysninger = Personopplysninger(
+                behandlingId = behandling.id,
+                personId = "1",
+                navn = "Juni",
+                kjønn = Kjønn.KVINNE,
+                adresse = "Korsgata 21A",
+                telefonnummer = "46840856"
             )
         )
 

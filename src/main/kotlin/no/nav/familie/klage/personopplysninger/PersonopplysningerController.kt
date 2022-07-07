@@ -18,9 +18,9 @@ import java.util.UUID
 @Validated
 class PersonopplysningerController(private val personopplysningerService: PersonopplysningerService) {
 
-    @GetMapping("{personIdent}")
-    fun hentPersonopplysninger(@PathVariable personIdent: UUID): Ressurs<Personopplysninger> {
-        return Ressurs.success(personopplysningerService.hentPersonopplysninger(personIdent))
+    @GetMapping("{behandlingId}")
+    fun hentPersonopplysninger(@PathVariable behandlingId: UUID): Ressurs<Personopplysninger> {
+        return Ressurs.success(personopplysningerService.hentPersonopplysninger(behandlingId))
     }
 
     @PostMapping
