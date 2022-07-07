@@ -9,7 +9,7 @@ fun formDto(
     behandlingId: UUID = UUID.randomUUID(),
     fagsakId: UUID = UUID.randomUUID(),
     vedtaksdato: LocalDate = LocalDate.now(), // TODO: endre til mulig nullverdi
-    klageMottat: LocalDate = LocalDate.now(),
+    klageMottatt: LocalDate = LocalDate.now(),
     klageaarsak: String = "Årsak",
     klageBeskrivelse: String = "jeg er sinna",
     sakSistEndret: LocalDate = LocalDate.now()
@@ -18,7 +18,7 @@ fun formDto(
         behandlingId,
         fagsakId,
         vedtaksdato,
-        klageMottat,
+        klageMottatt,
         klageaarsak,
         klageBeskrivelse,
         sakSistEndret,

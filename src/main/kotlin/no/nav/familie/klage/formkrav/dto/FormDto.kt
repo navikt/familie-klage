@@ -8,7 +8,7 @@ data class FormDto(
     val behandlingId: UUID,
     val fagsakId: UUID,
     val vedtaksdato: LocalDate = LocalDate.now(),
-    val klageMottat: LocalDate = LocalDate.now(),
+    val klageMottatt: LocalDate = LocalDate.now(),
     val klageaarsak: String,
     val klageBeskrivelse: String,
     val sakSistEndret: LocalDate = LocalDate.now()
@@ -19,7 +19,7 @@ fun Form.tilDto(): FormDto =
         behandlingId = this.behandlingId,
         fagsakId = this.fagsakId,
         vedtaksdato = this.vedtaksdato,
-        klageMottat = this.klageMottat,
+        klageMottatt = this.klageMottatt,
         klageaarsak = this.klageaarsak,
         klageBeskrivelse = this.klageBeskrivelse,
         sakSistEndret = this.sakSistEndret

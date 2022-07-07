@@ -9,7 +9,7 @@ data class Form(
     val behandlingId: UUID,
     val fagsakId: UUID = UUID.randomUUID(),
     val vedtaksdato: LocalDate = LocalDate.now(),
-    val klageMottat: LocalDate = LocalDate.now(),
+    val klageMottatt: LocalDate = LocalDate.now(),
     val klageaarsak: String = "min klage",
     val klageBeskrivelse: String = "beskrivelse kommer her",
     val klagePart: FormVilkår,

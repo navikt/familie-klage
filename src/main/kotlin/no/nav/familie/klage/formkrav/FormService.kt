@@ -26,7 +26,7 @@ class FormService(
                     behandlingId = form.behandlingId,
                     fagsakId = form.fagsakId,
                     vedtaksdato = form.vedtaksdato,
-                    klageMottat = form.klageMottat,
+                    klageMottatt = form.klageMottatt,
                     klageaarsak = form.klageaarsak,
                     klageBeskrivelse = form.klageBeskrivelse,
                     klagePart = form.klagePart,
