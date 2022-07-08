@@ -19,4 +19,3 @@ enum class FormVilkår {
     IKKE_OPPFYLT,
     IKKE_SATT
 }
-

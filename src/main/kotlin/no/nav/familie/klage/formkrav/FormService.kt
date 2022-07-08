@@ -1,7 +1,6 @@
 package no.nav.familie.klage.formkrav
 
 import no.nav.familie.klage.formkrav.domain.Form
-import no.nav.familie.klage.repository.findByIdOrThrow
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -9,10 +8,9 @@ import java.util.UUID
 class FormService(
     private val formRepository: FormRepository
 ) {
-    fun hentForm(id: UUID): Form = formRepository.findByIdOrThrow(id)
+    fun hentForm(behandlingId: UUID): Form = formRepository.findByBehandlingId(behandlingId)
 
     fun opprettForm(form: Form): Form {
-        println("oppretter form: " + form)
         if(sjekkOmFormEksiterer(form.behandlingId)){
             return oppdaterForm(form)
         } else {
