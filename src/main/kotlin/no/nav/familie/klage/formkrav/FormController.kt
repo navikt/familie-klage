@@ -23,15 +23,15 @@ class FormController(
 ) {
 
     @GetMapping("{behandlingId}")
-    fun hentKlage(@PathVariable behandlingId: String): Ressurs<FormDto> {
+    fun hentKlage(@PathVariable behandlingId: UUID): Ressurs<FormDto> {
         //Ikke slett kommentert linje under
-        //return Ressurs.success(formService.hentForm(UUID.fromString(behandlingId)).tilDto())
-        return Ressurs.success(formService.hentMockFormDto(UUID.fromString(behandlingId)))
+        return Ressurs.success(formService.hentForm(behandlingId).tilDto())
+        // return Ressurs.success(formService.hentMockFormDto(UUID.fromString(behandlingId)))
     }
 
     @GetMapping("vilkar/{behandlingId}")
-    fun hentVilkår(@PathVariable behandlingId: String): Ressurs<Form> {
-        return Ressurs.success(formService.hentForm(UUID.fromString(behandlingId)))
+    fun hentVilkår(@PathVariable behandlingId: UUID): Ressurs<Form> {
+        return Ressurs.success(formService.hentForm(behandlingId))
     }
 
     @PostMapping

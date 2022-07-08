@@ -1,25 +1,26 @@
 package no.nav.familie.klage.formkrav
 
 
-import no.nav.familie.klage.formkrav.dto.FormDto
-import java.time.LocalDate
+import no.nav.familie.klage.formkrav.domain.Form
+import no.nav.familie.klage.formkrav.domain.FormVilkår
 import java.util.UUID
 
-fun formDto(
-    behandlingId: UUID = UUID.randomUUID(),
+fun form(
+    behandlingId: UUID,
     fagsakId: UUID = UUID.randomUUID(),
-    vedtaksdato: LocalDate = LocalDate.now(), // TODO: endre til mulig nullverdi
-    klageMottatt: LocalDate = LocalDate.now(),
-    klageaarsak: String = "Årsak",
-    klageBeskrivelse: String = "jeg er sinna",
-    sakSistEndret: LocalDate = LocalDate.now()
-): FormDto =
-    FormDto(
+    klagePart: FormVilkår = FormVilkår.IKKE_SATT,
+    klageKonkret: FormVilkår = FormVilkår.IKKE_SATT,
+    klagefristOverholdt: FormVilkår = FormVilkår.IKKE_SATT,
+    klageSignert: FormVilkår = FormVilkår.IKKE_SATT,
+    saksbehandlerBegrunnelse: String = "begrunnelsen kommer her",
+
+    ): Form =
+    Form(
         behandlingId,
         fagsakId,
-        vedtaksdato,
-        klageMottatt,
-        klageaarsak,
-        klageBeskrivelse,
-        sakSistEndret,
+        klagePart,
+        klageKonkret,
+        klagefristOverholdt,
+        klageSignert,
+        saksbehandlerBegrunnelse
     )
