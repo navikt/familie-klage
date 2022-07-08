@@ -3,19 +3,17 @@ package no.nav.familie.klage.formkrav
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.dto.FormDto
 import no.nav.familie.klage.repository.findByIdOrThrow
-import no.nav.familie.kontrakter.felles.Ressurs
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
+import java.time.LocalDate
 import java.util.UUID
 
 @Service
 class FormService(
     private val formRepository: FormRepository
 ) {
-    fun hentForm(id: UUID): Form = formRepository.findByIdOrThrow(id)
+    fun hentForm(behandlingId: UUID): Form = formRepository.findByIdOrThrow(behandlingId)
 
-    fun opprettFormDto(): FormDto {
+    fun hentMockFormDto(behandlingId: UUID): FormDto{
         return formDto()
     }
 
@@ -28,7 +26,7 @@ class FormService(
                     behandlingId = form.behandlingId,
                     fagsakId = form.fagsakId,
                     vedtaksdato = form.vedtaksdato,
-                    klageMottat = LocalDateTime.now(),
+                    klageMottatt = form.klageMottatt,
                     klageaarsak = form.klageaarsak,
                     klageBeskrivelse = form.klageBeskrivelse,
                     klagePart = form.klagePart,
@@ -36,7 +34,7 @@ class FormService(
                     klagefristOverholdt = form.klagefristOverholdt,
                     klageSignert = form.klageSignert,
                     saksbehandlerBegrunnelse = form.saksbehandlerBegrunnelse,
-                    sakSistEndret = LocalDateTime.now()
+                    sakSistEndret = form.sakSistEndret
                 )
             )
         }

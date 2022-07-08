@@ -1,15 +1,15 @@
 package no.nav.familie.klage.formkrav.domain
 
 import org.springframework.data.annotation.Id
-import java.time.LocalDateTime
+import java.time.LocalDate
 import java.util.UUID
 
 data class Form(
     @Id
     val behandlingId: UUID,
     val fagsakId: UUID = UUID.randomUUID(),
-    val vedtaksdato: LocalDateTime = LocalDateTime.now(),
-    val klageMottat: LocalDateTime = LocalDateTime.now(),
+    val vedtaksdato: LocalDate = LocalDate.now(),
+    val klageMottatt: LocalDate = LocalDate.now(),
     val klageaarsak: String = "min klage",
     val klageBeskrivelse: String = "beskrivelse kommer her",
     val klagePart: FormVilkår,
@@ -17,7 +17,7 @@ data class Form(
     val klagefristOverholdt: FormVilkår,
     val klageSignert: FormVilkår,
     val saksbehandlerBegrunnelse: String = "begrunnelsen kommer her",
-    val sakSistEndret: LocalDateTime = LocalDateTime.now()
+    val sakSistEndret: LocalDate = LocalDate.now()
 )
 enum class FormVilkår {
     OPPFYLT,

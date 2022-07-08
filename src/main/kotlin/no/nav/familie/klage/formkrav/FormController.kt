@@ -2,6 +2,7 @@ package no.nav.familie.klage.formkrav
 
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.dto.FormDto
+import no.nav.familie.klage.formkrav.dto.tilDto
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
@@ -22,8 +23,10 @@ class FormController(
 ) {
 
     @GetMapping("{behandlingId}")
-    fun hentForm(@PathVariable behandlingId: String): Ressurs<FormDto> {
-        return Ressurs.success(formService.opprettFormDto())
+    fun hentKlage(@PathVariable behandlingId: String): Ressurs<FormDto> {
+        //Ikke slett kommentert linje under
+        //return Ressurs.success(formService.hentForm(UUID.fromString(behandlingId)).tilDto())
+        return Ressurs.success(formService.hentMockFormDto(UUID.fromString(behandlingId)))
     }
 
     @GetMapping("vilkar/{behandlingId}")
