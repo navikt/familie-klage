@@ -31,7 +31,6 @@ class FormController(
 
     @GetMapping("vilkar/{behandlingId}")
     fun hentVilkår(@PathVariable behandlingId: String): Ressurs<Form> {
-        println("HEI: " + formService.hentForm(UUID.fromString(behandlingId)))
         return Ressurs.success(formService.hentForm(UUID.fromString(behandlingId)))
     }
 
