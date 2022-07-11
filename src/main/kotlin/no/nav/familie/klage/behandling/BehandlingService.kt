@@ -3,7 +3,9 @@ package no.nav.familie.klage.behandling
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.BehandlingStatus
 import no.nav.familie.klage.behandling.domain.BehandlingSteg
+import no.nav.familie.klage.behandling.domain.BehandlingsÅrsak
 import no.nav.familie.klage.behandling.domain.Fagsystem
+import no.nav.familie.klage.behandling.domain.StønadsType
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
@@ -36,6 +38,8 @@ class BehandlingService(
                 endretTid = LocalDateTime.now(),
                 opprettetTid = LocalDateTime.now(),
                 fagsystem = Fagsystem.EF,
+                stonadsType = StønadsType.BARNETILSYN,
+                behandlingsArsak = BehandlingsÅrsak.KLAGE
             )
         )
 

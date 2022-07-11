@@ -3,7 +3,9 @@ package no.nav.familie.klage.behandling
 import no.nav.familie.klage.behandling.domain.BehandlingResultat
 import no.nav.familie.klage.behandling.domain.BehandlingStatus
 import no.nav.familie.klage.behandling.domain.BehandlingSteg
+import no.nav.familie.klage.behandling.domain.BehandlingsÅrsak
 import no.nav.familie.klage.behandling.domain.Fagsystem
+import no.nav.familie.klage.behandling.domain.StønadsType
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import java.time.LocalDateTime
 import java.util.UUID
@@ -17,7 +19,9 @@ fun behandlingDto(
         resultat: BehandlingResultat? = null,
         opprettet: LocalDateTime = LocalDateTime.now().minusDays(2),
         fagsystem: Fagsystem = Fagsystem.EF,
-        vedtaksdato: LocalDateTime? = null
+        vedtaksdato: LocalDateTime? = null,
+        stonadsType: StønadsType = StønadsType.BARNETILSYN,
+        behandlingsArsak: BehandlingsÅrsak = BehandlingsÅrsak.KLAGE,
 ): BehandlingDto =
         BehandlingDto(
                 id,
@@ -28,5 +32,7 @@ fun behandlingDto(
                 resultat,
                 opprettet,
                 fagsystem,
-                vedtaksdato
+                vedtaksdato,
+                stonadsType,
+                behandlingsArsak
         )

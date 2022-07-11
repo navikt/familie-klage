@@ -9,5 +9,7 @@ CREATE TABLE behandling (
     steg                 VARCHAR      NOT NULL,
     fagsystem            VARCHAR      NOT NULL,
     resultat             VARCHAR      NOT NULL,
-    vedtak_dato          TIMESTAMP    DEFAULT LOCALTIMESTAMP
+    vedtak_dato          TIMESTAMP    DEFAULT LOCALTIMESTAMP,
+    stonads_type         VARCHAR      NOT NULL,
+    behandlings_arsak    VARCHAR      NOT NULL
 );

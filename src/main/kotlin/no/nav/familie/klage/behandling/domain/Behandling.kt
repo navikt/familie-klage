@@ -14,7 +14,9 @@ data class Behandling(
     val resultat: BehandlingResultat? = BehandlingResultat.IKKE_SATT,
     val opprettetTid: LocalDateTime,
     val fagsystem: Fagsystem,
-    val vedtakDato: LocalDateTime? = null
+    val vedtakDato: LocalDateTime? = null,
+    val stonadsType: StønadsType,
+    val behandlingsArsak: BehandlingsÅrsak,
 )
 
 enum class BehandlingResultat(val displayName: String) {
@@ -41,4 +43,21 @@ enum class Fagsystem {
     EF,
     BA,
     KS
+}
+
+enum class StønadsType {
+    OVERGANGSSTØNAD,
+    SKOLEPENGER,
+    BARNETILSYN
+}
+
+enum class BehandlingsÅrsak {
+    KLAGE,
+    NYE_OPPLYSNINGER,
+    SANKSJON_1_MND,
+    SØKNAD,
+    MIGRERING,
+    G_OMREGNING,
+    KORRIGERING_UTEN_BREV,
+    PAPIRSØKNAD
 }
