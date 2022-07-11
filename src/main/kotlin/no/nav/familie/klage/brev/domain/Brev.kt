@@ -1,18 +1,10 @@
 package no.nav.familie.klage.brev.domain
 
-import org.springframework.data.annotation.Id
-import java.util.UUID
+import no.nav.familie.klage.brev.dto.FrittståendeBrevAvsnitt
 
 data class Brev(
-    @Id
-    val behandlingId: UUID,
-    val fagsakId: UUID = UUID.randomUUID(),
-    val klagePart: FormVilkår,
-    val klagefristOverholdt: FormVilkår,
-    val klageKonkret: FormVilkår,
-    val klageSignert: FormVilkår,
-    val saksbehandlerBegrunnelse: String = "begrunnelsen kommer her",
-)
+    val overskrift: String,
+    val avsnitt: List<FrittståendeBrevAvsnitt>)
 
 enum class FormVilkår {
     OPPFYLT,
