@@ -16,7 +16,7 @@ funksjonsbrytere:
     applicationName: familie-ef-sak
 
 FAMILIE_INTEGRASJONER_URL: http://localhost:8385
-FAMILIE_BREV_API_URL: http://localhost:8001
+FAMILIE_BREV_API_URL: http://localhost:8002
 
 AZURE_APP_TENANT_ID: navq.onmicrosoft.com
 
