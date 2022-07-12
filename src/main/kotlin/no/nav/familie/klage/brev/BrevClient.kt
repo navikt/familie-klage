@@ -25,6 +25,24 @@ class BrevClient(
         operations.optionsForAllow(pingUri)
     }
 
+    fun genererBrev(
+        fritekstBrev: FritekstBrevRequestDto,
+        saksbehandlerNavn: String,
+        enhet: String = "NAV Arbeid og ytelser"
+    ): ByteArray {
+        val url = URI.create("$familieBrevUri/api/fritekst-brev")
+        return postForEntity(
+            url,
+            FritekstBrevRequestMedSignatur(
+                fritekstBrev,
+                saksbehandlerNavn,
+                null,
+                enhet
+            ),
+            HttpHeaders().medContentTypeJsonUTF8()
+        )
+    }
+
     fun genererHtmlFritekstbrev(fritekstBrev: FritekstBrevRequestDto, saksbehandlerNavn: String, enhet: String): String {
         val url = URI.create("$familieBrevUri/api/fritekst-brev/html")
         return postForEntity(

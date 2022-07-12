@@ -31,6 +31,13 @@ class BrevController (
     fun lagBrev(@RequestBody brevInnhold: FritekstBrevDto): Ressurs<ByteArray> {
         return Ressurs.success(brevService.lagBrev(brevInnhold))
     }
+
+    @PostMapping("/{behandlingId}")
+    fun forhåndsviFritekstBrev(@RequestBody brevInnhold: FritekstBrevDto): Ressurs<ByteArray>{
+        return Ressurs.success(brevService.forhåndsvisFritekstBrev(brevInnhold))
+    }
+
+    /*
     @PostMapping("/{behandlingId}")
     fun forhåndsvisBeslutterbrev(@PathVariable behandlingId: UUID): Ressurs<ByteArray>{
         return forhåndsvis(behandlingId)
@@ -39,5 +46,5 @@ class BrevController (
     private fun forhåndsvis(behandlingId: UUID): Ressurs<ByteArray>{
         val behandling = behandlingService.hentBehandling(behandlingId)
         return Ressurs.success(brevService.forhåndsvisBrev(behandling))
-    }
+    }*/
 }

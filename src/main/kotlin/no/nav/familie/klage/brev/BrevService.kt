@@ -1,13 +1,11 @@
 package no.nav.familie.klage.brev
 
 import Fil
-import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevMedAvsnitt
 import no.nav.familie.klage.brev.dto.Avsnitt
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
-import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.repository.findByIdOrThrow
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -68,8 +66,7 @@ class BrevService(
         return familieDokumentClient.genererPdfFraHtml(html)
 
     }
-
-
+    /*
     fun forhåndsvisBrev(behandling: Behandling): ByteArray {
         val brev = brevRepository.findByIdOrThrow(behandling.id)
 
@@ -80,6 +77,24 @@ class BrevService(
         return lagBeslutterPdfMedSignatur(
             brev.saksbehandlerHtml
         ).bytes
+    }*/
+
+    fun forhåndsvisFritekstBrev(fritekstBrevDto: FritekstBrevDto): ByteArray{
+        return lagFritekstbredMedSignatur(fritekstBrevDto)
+    }
+
+    fun lagFritekstbredMedSignatur(fritekstbrevDto: FritekstBrevDto):ByteArray{
+        val request = lagFritekstBrevRequest(fritekstbrevDto)
+        return brevClient.genererBrev(request, "sakbehandlernavn")
+    }
+
+    fun lagFritekstBrevRequest(fritekstBrevDto: FritekstBrevDto): FritekstBrevRequestDto{
+        return FritekstBrevRequestDto(
+            overskrift = fritekstBrevDto.overskrift,
+            avsnitt = fritekstBrevDto.avsnitt,
+            personIdent = "ident",
+            navn = "navn"
+        )
     }
     fun lagBeslutterPdfMedSignatur(
         saksbehandlerHtml: String,

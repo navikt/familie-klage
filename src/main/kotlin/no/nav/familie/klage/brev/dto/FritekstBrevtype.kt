@@ -1,6 +1,6 @@
-package no.nav.familie.ef.sak.brev.dto
+package no.nav.familie.klage.brev.dto
 
-enum class FritekstBrevKategori {
+enum class FritekstBrevtype {
     SANKSJON,
     VEDTAK_INVILGELSE,
     VEDTAK_AVSLAG,
@@ -9,5 +9,5 @@ enum class FritekstBrevKategori {
     VEDTAK_INNVILGELSE_BARNETILSYN,
     VEDTAK_AVSLAG_BARNETILSYN,
     VEDTAK_INNVILGELSE_SKOLEPENGER,
-    VEDTAK_AVSLAG_SKOLEPENGER
+    VEDTAK_AVSLAG_SKOLEPENGER,
 }

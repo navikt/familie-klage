@@ -1,6 +1,5 @@
 package no.nav.familie.klage.brev.dto
 
-import no.nav.familie.ef.sak.brev.dto.FritekstBrevKategori
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import java.util.UUID
@@ -9,7 +8,7 @@ data class FritekstBrevDto(
     val overskrift: String,
     val avsnitt: List<AvsnittDto>,
     val behandlingId: UUID,
-    val brevType: FritekstBrevKategori
+    val brevType: FritekstBrevtype
 )
 
 data class AvsnittDto(
