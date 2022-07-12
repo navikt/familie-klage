@@ -2,6 +2,7 @@ package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.domain.Brev
+import no.nav.familie.klage.brev.domain.BrevMedAvsnitt
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
@@ -24,12 +25,11 @@ class BrevController (
     ){
 
     @GetMapping("/behandlingId")
-    fun hentBrev(@PathVariable behandlingId: UUID): Ressurs<Brev?> {
+    fun hentBrev(@PathVariable behandlingId: UUID): Ressurs<BrevMedAvsnitt?> {
         return Ressurs.success(brevService.hentBrev(behandlingId))
     }
-    @PostMapping("/fritekst")
+    @PostMapping
     fun lagBrev(@RequestBody brevInnhold: FritekstBrevDto): Ressurs<ByteArray> {
-        val behandling = behandlingService.hentBehandling(brevInnhold.behandlingId)
-        return Ressurs.success(brevService.lagBrev(brevInnhold, behandling))
+        return Ressurs.success(brevService.lagBrev(brevInnhold))
     }
 }
