@@ -1,5 +1,6 @@
 package no.nav.familie.klage.brev
 
+import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevMedAvsnitt
 import no.nav.familie.klage.brev.dto.Avsnitt
@@ -13,7 +14,9 @@ class BrevService(
     private val brevClient: BrevClient,
     private val brevRepository: BrevRepository,
     private val avsnittRepository: AvsnittRepository,
+    private val behandlingService: BehandlingService,
     private val familieDokumentClient: FamilieDokumentClient,
+    private val brevsignaturService: BrevsignaturService
 ){
 
 
@@ -25,6 +28,7 @@ class BrevService(
 
     fun lagBrev(fritekstbrevDto: FritekstBrevDto): ByteArray{
         //val navn = personopplysningerService.hentGjeldeneNavn(listOf(saksbehandling.ident)).getValue(saksbehandling.ident)
+        val behandling = behandlingService.hentBehandling(fritekstbrevDto.behandlingId)
 
         val request = FritekstBrevRequestDto(
             overskrift = fritekstbrevDto.overskrift,
@@ -33,14 +37,14 @@ class BrevService(
             navn = "ett navn"
         )
 
-        //val signaturMedEnhet = brevSignaturService.lagSignaturMedEnhet(saksbehandling)
+        val signaturMedEnhet = brevsignaturService.lagSignatur(behandling)
 
         val html = brevClient.genererHtmlFritekstbrev(
             fritekstBrev = request,
-            saksbehandlerNavn = "Maja", //TODO legge til ekte verdier
-            enhet = "min enhet"
-
+            saksbehandlerNavn = signaturMedEnhet.navn,
+            enhet = signaturMedEnhet.enhet
         )
+
         val brev =
             Brev(
             behandlingId = fritekstbrevDto.behandlingId,
