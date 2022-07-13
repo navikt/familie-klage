@@ -13,6 +13,7 @@ import no.nav.familie.klage.behandlingshistorikk.domain.Steg
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.personopplysninger.domain.Personopplysninger
 import no.nav.familie.klage.personopplysninger.domain.Kjønn
+import no.nav.familie.klage.repository.findByIdOrThrow
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.UUID
@@ -23,6 +24,8 @@ class BehandlingService(
         private val behandlingshistorikkService: BehandlingshistorikkService,
         private val personopplysningerService: PersonopplysningerService,
     ) {
+
+    fun hentBehandling(behandlingId: UUID): Behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
 
     fun opprettBehandlingDto(behandlingId: UUID): BehandlingDto {
         return behandlingDto(behandlingId)
