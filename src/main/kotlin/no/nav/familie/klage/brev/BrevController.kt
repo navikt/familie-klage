@@ -1,6 +1,5 @@
 package no.nav.familie.klage.brev
 
-import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.domain.BrevMedAvsnitt
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -20,7 +19,6 @@ import java.util.UUID
 @Validated
 class BrevController (
     private val brevService: BrevService,
-    private val behandlingService: BehandlingService
     ){
 
     @GetMapping("/{behandlingId}")
@@ -31,20 +29,4 @@ class BrevController (
     fun lagBrev(@RequestBody brevInnhold: FritekstBrevDto): Ressurs<ByteArray> {
         return Ressurs.success(brevService.lagBrev(brevInnhold))
     }
-
-    @PostMapping("/{behandlingId}")
-    fun forhåndsviFritekstBrev(@RequestBody brevInnhold: FritekstBrevDto): Ressurs<ByteArray>{
-        return Ressurs.success(brevService.forhåndsvisFritekstBrev(brevInnhold))
-    }
-
-    /*
-    @PostMapping("/{behandlingId}")
-    fun forhåndsvisBeslutterbrev(@PathVariable behandlingId: UUID): Ressurs<ByteArray>{
-        return forhåndsvis(behandlingId)
-    }
-
-    private fun forhåndsvis(behandlingId: UUID): Ressurs<ByteArray>{
-        val behandling = behandlingService.hentBehandling(behandlingId)
-        return Ressurs.success(brevService.forhåndsvisBrev(behandling))
-    }*/
 }

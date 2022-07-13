@@ -1,6 +1,5 @@
 package no.nav.familie.klage.brev
 
-import Fil
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevMedAvsnitt
 import no.nav.familie.klage.brev.dto.Avsnitt
@@ -49,7 +48,6 @@ class BrevService(
             overskrift = "Overskrift",
             saksbehandlerHtml = html
         )
-        println(brev)
         brevRepository.insert(brev)
 
         for (avsnitt in fritekstbrevDto.avsnitt){
@@ -62,46 +60,7 @@ class BrevService(
             )
             avsnittRepository.insert(a)
         }
-
         return familieDokumentClient.genererPdfFraHtml(html)
 
-    }
-    /*
-    fun forhåndsvisBrev(behandling: Behandling): ByteArray {
-        val brev = brevRepository.findByIdOrThrow(behandling.id)
-
-        feilHvis(brev.saksbehandlerHtml == null){
-            "Mangler saksbehandlerbrev"
-        }
-
-        return lagBeslutterPdfMedSignatur(
-            brev.saksbehandlerHtml
-        ).bytes
-    }*/
-
-    fun forhåndsvisFritekstBrev(fritekstBrevDto: FritekstBrevDto): ByteArray{
-        return lagFritekstbredMedSignatur(fritekstBrevDto)
-    }
-
-    fun lagFritekstbredMedSignatur(fritekstbrevDto: FritekstBrevDto):ByteArray{
-        val request = lagFritekstBrevRequest(fritekstbrevDto)
-        return brevClient.genererBrev(request, "sakbehandlernavn")
-    }
-
-    fun lagFritekstBrevRequest(fritekstBrevDto: FritekstBrevDto): FritekstBrevRequestDto{
-        return FritekstBrevRequestDto(
-            overskrift = fritekstBrevDto.overskrift,
-            avsnitt = fritekstBrevDto.avsnitt,
-            personIdent = "ident",
-            navn = "navn"
-        )
-    }
-    fun lagBeslutterPdfMedSignatur(
-        saksbehandlerHtml: String,
-    ): Fil {
-        return Fil(familieDokumentClient.genererPdfFraHtml(saksbehandlerHtml))
-    }
-    companion object {
-        const val BESLUTTER_SIGNATUR_PLACEHOLDER = "BESLUTTER_SIGNATUR"
     }
 }
