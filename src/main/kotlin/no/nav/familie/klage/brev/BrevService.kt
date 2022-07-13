@@ -30,8 +30,8 @@ class BrevService(
         val request = FritekstBrevRequestDto(
             overskrift = fritekstbrevDto.overskrift,
             avsnitt = fritekstbrevDto.avsnitt,
-            personIdent = "ident",//behandling.ident
-            navn = "navn"
+            personIdent = "en ident",//behandling.ident
+            navn = "ett navn"
         )
 
         //val signaturMedEnhet = brevSignaturService.lagSignaturMedEnhet(saksbehandling)

@@ -27,7 +27,7 @@ class BrevController (
     fun hentBrev(@PathVariable behandlingId: UUID): Ressurs<BrevMedAvsnitt?> {
         return Ressurs.success(brevService.hentBrev(behandlingId))
     }
-    @PostMapping
+    @PostMapping("")
     fun lagBrev(@RequestBody brevInnhold: FritekstBrevDto): Ressurs<ByteArray> {
         return Ressurs.success(brevService.lagBrev(brevInnhold))
     }
