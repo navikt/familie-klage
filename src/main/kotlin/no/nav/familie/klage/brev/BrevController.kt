@@ -27,7 +27,6 @@ class BrevController (
     }
     @PostMapping("")
     fun lagBrev(@RequestBody brevInnhold: FritekstBrevDto): Ressurs<ByteArray> {
-        println(brevInnhold)
         return Ressurs.success(brevService.lagBrev(brevInnhold))
     }
 }
