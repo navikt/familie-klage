@@ -20,7 +20,6 @@ import java.util.UUID
 class BrevController (
     private val brevService: BrevService,
     ){
-
     @GetMapping("/{behandlingId}")
     fun hentBrev(@PathVariable behandlingId: UUID): Ressurs<BrevMedAvsnitt?> {
         return Ressurs.success(brevService.hentBrev(behandlingId))

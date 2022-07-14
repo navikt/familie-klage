@@ -27,14 +27,15 @@ class BrevService(
     }
 
     fun lagBrev(fritekstbrevDto: FritekstBrevDto): ByteArray{
-        //val navn = personopplysningerService.hentGjeldeneNavn(listOf(saksbehandling.ident)).getValue(saksbehandling.ident)
+        val navn = behandlingService.hentNavnFraBehandlingsId(fritekstbrevDto.behandlingId)
+        val personIdent = brevRepository.findPersonIdByBehandlingId(fritekstbrevDto.behandlingId)
         val behandling = behandlingService.hentBehandling(fritekstbrevDto.behandlingId)
 
         val request = FritekstBrevRequestDto(
             overskrift = fritekstbrevDto.overskrift,
             avsnitt = fritekstbrevDto.avsnitt,
-            personIdent = "en ident",//behandling.ident
-            navn = "ett navn"
+            personIdent = personIdent,
+            navn = navn
         )
 
         val signaturMedEnhet = brevsignaturService.lagSignatur(behandling)

@@ -8,6 +8,7 @@ data class Behandling(
     @Id
     val id: UUID = UUID.randomUUID(),
     val fagsakId: UUID,
+    val personId: String,
     val steg: BehandlingSteg,
     val status: BehandlingStatus,
     val endretTid: LocalDateTime,
@@ -28,15 +29,14 @@ enum class BehandlingResultat(val displayName: String) {
 enum class BehandlingStatus {
     OPPRETTET,
     UTREDES,
-    FERDIGSTILT,
-    ;
+    FERDIGSTILT
 }
 
 enum class BehandlingSteg {
     FORMALKRAV,
     VURDERING,
     KABAL,
-    BEHANDLING_FERDIGSTILT,
+    BEHANDLING_FERDIGSTILT
 }
 
 enum class Fagsystem {
