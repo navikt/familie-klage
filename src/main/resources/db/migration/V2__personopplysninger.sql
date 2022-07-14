@@ -1,6 +1,5 @@
 CREATE TABLE personopplysninger (
-       behandling_id        UUID PRIMARY KEY REFERENCES behandling (id),
-       person_id            VARCHAR,
+       person_id            VARCHAR PRIMARY KEY NOT NULL,
        navn                 VARCHAR NOT NULL,
        kjonn                VARCHAR NOT NULL,
        telefonnummer        VARCHAR,
