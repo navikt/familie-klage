@@ -1,5 +1,6 @@
 package no.nav.familie.klage.vurdering
 
+import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -8,6 +9,12 @@ import java.util.UUID
 class VurderingService(private val vurderingRepository: VurderingRepository) {
 
     fun hentVurdering(id: UUID): Vurdering = vurderingRepository.findByBehandlingId(id)
+
+    fun hentVedtak(id: UUID): Vedtak{
+        val vedtak = vurderingRepository.findVedtakByBehandlingId(id)
+        println(vedtak)
+        return vedtak
+    }
 
     fun opprettVurdering(vurdering: Vurdering): Vurdering {
         if(sjekkOmVurderingEksiterer(vurdering.behandlingId)){
