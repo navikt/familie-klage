@@ -12,13 +12,14 @@ data class FritekstBrevDto(
 )
 
 data class AvsnittDto(
+    val avsnittId: UUID,
     val deloverskrift: String,
     val innhold: String,
     val skalSkjulesIBrevbygger: Boolean? = false)
 data class Avsnitt(
     @Id
     val avsnittId: UUID,
-    val brevId: UUID,
+    val behandlingId: UUID,
     val deloverskrift: String,
     val innhold: String,
     @Column("skal_skjules_i_brevbygger")
