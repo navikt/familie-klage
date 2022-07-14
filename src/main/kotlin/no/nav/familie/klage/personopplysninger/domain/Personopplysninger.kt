@@ -2,11 +2,8 @@ package no.nav.familie.klage.personopplysninger.domain
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
-import java.util.UUID
-
 data class Personopplysninger(
     @Id
-    val behandlingId: UUID,
     val personId: String,
     val navn: String,
     @Column("kjonn")

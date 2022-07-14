@@ -6,7 +6,6 @@ import no.nav.familie.klage.behandling.domain.BehandlingSteg
 import no.nav.familie.klage.behandling.domain.BehandlingsÅrsak
 import no.nav.familie.klage.behandling.domain.Fagsystem
 import no.nav.familie.klage.behandling.domain.StønadsType
-import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
 import no.nav.familie.klage.behandlingshistorikk.domain.Steg
@@ -27,15 +26,26 @@ class BehandlingService(
 
     fun hentBehandling(behandlingId: UUID): Behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
 
-    fun opprettBehandlingDto(behandlingId: UUID): BehandlingDto {
-        return behandlingDto(behandlingId)
-    }
+    fun hentNavnFraBehandlingsId(behandlingId: UUID): String = behandlingsRepository.findNavnByBehandlingId(behandlingId)
 
     fun opprettBehandling(): Behandling {
         val fagsakId = UUID.randomUUID()
+        val fødselsnummer = (0..999999999).random().toString() // TODO legge inn faktisk fødselsnummber
+
+        personopplysningerService.opprettPersonopplysninger(
+            personopplysninger = Personopplysninger(
+                personId = fødselsnummer,
+                navn = "Juni",
+                kjønn = Kjønn.KVINNE,
+                adresse = "Korsgata 21A",
+                telefonnummer = "46840856"
+            )
+        )
+
         val behandling = behandlingsRepository.insert(
             Behandling(
                 fagsakId = fagsakId,
+                personId = fødselsnummer,
                 steg = BehandlingSteg.FORMALKRAV,
                 status = BehandlingStatus.OPPRETTET,
                 endretTid = LocalDateTime.now(),
@@ -65,17 +75,6 @@ class BehandlingService(
             landskode = "+47",
             nummer = "46840856"
         )*/
-
-        personopplysningerService.opprettPersonopplysninger(
-            personopplysninger = Personopplysninger(
-                behandlingId = behandling.id,
-                personId = "1",
-                navn = "Juni",
-                kjønn = Kjønn.KVINNE,
-                adresse = "Korsgata 21A",
-                telefonnummer = "46840856"
-            )
-        )
 
         return behandling
     }

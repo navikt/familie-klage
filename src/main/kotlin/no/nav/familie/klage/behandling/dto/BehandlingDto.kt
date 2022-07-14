@@ -12,6 +12,7 @@ import java.util.UUID
 data class BehandlingDto(
         val id: UUID,
         val fagsakId: UUID,
+        val personId: String,
         val steg: BehandlingSteg,
         val status: BehandlingStatus,
         val sistEndret: LocalDateTime,
