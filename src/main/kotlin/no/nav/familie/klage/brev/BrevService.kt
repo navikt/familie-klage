@@ -14,8 +14,9 @@ class BrevService(
     private val brevClient: BrevClient,
     private val brevRepository: BrevRepository,
     private val avsnittRepository: AvsnittRepository,
+    private val behandlingService: BehandlingService,
     private val familieDokumentClient: FamilieDokumentClient,
-    private val behandlingService: BehandlingService
+    private val brevsignaturService: BrevsignaturService
 ){
 
 
@@ -28,6 +29,7 @@ class BrevService(
     fun lagBrev(fritekstbrevDto: FritekstBrevDto): ByteArray{
         val navn = behandlingService.hentNavnFraBehandlingsId(fritekstbrevDto.behandlingId)
         val personIdent = brevRepository.findPersonIdByBehandlingId(fritekstbrevDto.behandlingId)
+        val behandling = behandlingService.hentBehandling(fritekstbrevDto.behandlingId)
 
         val request = FritekstBrevRequestDto(
             overskrift = fritekstbrevDto.overskrift,
@@ -36,13 +38,12 @@ class BrevService(
             navn = navn
         )
 
-        //val signaturMedEnhet = brevSignaturService.lagSignaturMedEnhet(saksbehandling)
+        val signaturMedEnhet = brevsignaturService.lagSignatur(behandling)
 
         val html = brevClient.genererHtmlFritekstbrev(
             fritekstBrev = request,
-            saksbehandlerNavn = "Maja", //TODO legge til ekte verdier
-            enhet = "min enhet"
-
+            saksbehandlerNavn = signaturMedEnhet.navn,
+            enhet = signaturMedEnhet.enhet
         )
         val brev =
             Brev(
