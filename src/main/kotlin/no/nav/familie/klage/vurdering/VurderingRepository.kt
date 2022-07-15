@@ -13,9 +13,9 @@ interface VurderingRepository : RepositoryInterface<Vurdering, UUID>, InsertUpda
         fun findByBehandlingId(behandlingId: UUID): Vurdering
 
         @Query("""SELECT DISTINCT vurdering.vedtak FROM vurdering 
-              WHERE vurdering.behandling_id = :behandling_id"""
+              WHERE vurdering.behandling_id = :behandling_id AND vurdering.vedtak IS NOT NULL"""
         )
-        fun findVedtakByBehandlingId(behandling_id: UUID): Vedtak
+        fun findVedtakByBehandlingIdOrThrow(behandling_id: UUID): Vedtak?
 
 
 }

@@ -10,10 +10,8 @@ class VurderingService(private val vurderingRepository: VurderingRepository) {
 
     fun hentVurdering(id: UUID): Vurdering = vurderingRepository.findByBehandlingId(id)
 
-    fun hentVedtak(id: UUID): Vedtak{
-        val vedtak = vurderingRepository.findVedtakByBehandlingId(id)
-        println(vedtak)
-        return vedtak
+    fun hentVedtak(id: UUID): Vedtak?{
+        return vurderingRepository.findVedtakByBehandlingIdOrThrow(id)
     }
 
     fun opprettVurdering(vurdering: Vurdering): Vurdering {
