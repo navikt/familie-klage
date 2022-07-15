@@ -19,7 +19,6 @@ class BrevService(
     private val brevsignaturService: BrevsignaturService
 ){
 
-
     fun hentBrev(behandlingId: UUID): BrevMedAvsnitt? {
         val brev =  brevRepository.findByIdOrThrow(behandlingId)
         val avsnitt = avsnittRepository.findByIdOrThrow(behandlingId)
