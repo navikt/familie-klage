@@ -23,10 +23,12 @@ class BrevController (
 
     @GetMapping("/{behandlingId}")
     fun hentBrev(@PathVariable behandlingId: UUID): Ressurs<BrevMedAvsnitt?> {
+        println("Jeg er i hentbrev()")
         return Ressurs.success(brevService.hentBrev(behandlingId))
     }
-    @PostMapping("")
+    @PostMapping("/{behandlingId}")
     fun lagBrev(@RequestBody brevInnhold: FritekstBrevDto): Ressurs<ByteArray> {
+        println("Jeg er i lagBrev()")
         return Ressurs.success(brevService.lagBrev(brevInnhold))
     }
 }
