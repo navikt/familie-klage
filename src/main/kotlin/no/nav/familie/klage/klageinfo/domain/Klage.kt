@@ -8,9 +8,9 @@ data class Klage(
     @Id
     val behandlingId: UUID,
     val fagsakId: UUID = UUID.randomUUID(),
-    val vedtaksdato: LocalDate = LocalDate.now(),
+    val vedtaksDato: LocalDate = LocalDate.now(),
     val klageMottatt: LocalDate = LocalDate.now(),
-    val klageaarsak: String = "min klage",
+    val klageAarsak: String = "min klage",
     val klageBeskrivelse: String = "beskrivelse kommer her",
     val sakSistEndret: LocalDate = LocalDate.now()
 )
