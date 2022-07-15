@@ -1,6 +1,8 @@
 package no.nav.familie.klage.behandling.domain
 
+import no.nav.familie.klage.felles.domain.Sporbar
 import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Embedded
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -11,9 +13,9 @@ data class Behandling(
     val personId: String,
     val steg: BehandlingSteg,
     val status: BehandlingStatus,
-    val endretTid: LocalDateTime,
+    @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
+    val sporbar: Sporbar = Sporbar(),
     val resultat: BehandlingResultat? = BehandlingResultat.IKKE_SATT,
-    val opprettetTid: LocalDateTime,
     val fagsystem: Fagsystem,
     val vedtakDato: LocalDateTime? = null,
     val stonadsType: StønadsType,
