@@ -1,6 +1,6 @@
 package no.nav.familie.klage.brev
 
-import no.nav.familie.klage.brev.domain.Brev
+import no.nav.familie.klage.brev.domain.BrevMedAvsnitt
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
@@ -21,7 +21,7 @@ class BrevController (
     private val brevService: BrevService,
     ){
     @GetMapping("/{behandlingId}")
-    fun hentBrev(@PathVariable behandlingId: UUID): Ressurs<Brev?> {
+    fun hentBrev(@PathVariable behandlingId: UUID): Ressurs<BrevMedAvsnitt?> {
         return Ressurs.success(brevService.hentMellomlagretBrev(behandlingId))
     }
     @PostMapping("")

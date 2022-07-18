@@ -2,11 +2,12 @@ package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.domain.Brev
+import no.nav.familie.klage.brev.domain.BrevMedAvsnitt
 import no.nav.familie.klage.brev.dto.Avsnitt
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.brev.dto.FritekstBrevtype
-import org.springframework.data.repository.findByIdOrNull
+import no.nav.familie.klage.repository.findByIdOrThrow
 import org.springframework.stereotype.Service
 import java.util.UUID
 @Service
@@ -18,13 +19,12 @@ class BrevService(
     private val familieDokumentClient: FamilieDokumentClient,
     private val brevsignaturService: BrevsignaturService
 ){
-    fun hentMellomlagretBrev(behandlingId: UUID): Brev? {
-        return brevRepository.findByIdOrNull(behandlingId)
+    fun hentMellomlagretBrev(behandlingId: UUID): BrevMedAvsnitt? {
+        val brev = brevRepository.findByIdOrThrow(behandlingId)
+        val avsnitt = avsnittRepository.hentAvsnittPåBehandlingId(behandlingId)
+        return BrevMedAvsnitt(behandlingId, brev.overskrift, avsnitt)
     }
 
-    fun hentAvsnittPåBehandlingId(behandlingId: UUID): List<Avsnitt>?{
-        return brevRepository.hentAvsnittPåBehandlingId(behandlingId)
-    }
 
     fun lagBrev(fritekstbrevDto: FritekstBrevDto): ByteArray{
         val navn = behandlingService.hentNavnFraBehandlingsId(fritekstbrevDto.behandlingId)
