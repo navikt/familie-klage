@@ -2,7 +2,6 @@ package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.domain.Brev
-import no.nav.familie.klage.brev.domain.BrevMedAvsnitt
 import no.nav.familie.klage.brev.dto.Avsnitt
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
@@ -19,10 +18,12 @@ class BrevService(
     private val familieDokumentClient: FamilieDokumentClient,
     private val brevsignaturService: BrevsignaturService
 ){
-    fun hentBrev(behandlingId: UUID): BrevMedAvsnitt? {
-        val brev =  brevRepository.findByIdOrThrow(behandlingId)
-        val avsnitt = avsnittRepository.findByIdOrThrow(behandlingId)
-        return BrevMedAvsnitt(brev.behandlingId, brev.overskrift, listOf(avsnitt))
+    fun hentMellomlagretBrev(behandlingId: UUID): Brev {
+        return brevRepository.findByIdOrThrow(behandlingId)
+    }
+
+    fun hentAvsnittPåBehandlingId(behandlingId: UUID): List<Avsnitt>?{
+        return brevRepository.hentAvsnittPåBehandlingId(behandlingId)
     }
 
     fun lagBrev(fritekstbrevDto: FritekstBrevDto): ByteArray{
