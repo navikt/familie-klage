@@ -21,7 +21,7 @@ class BrevController (
     private val brevService: BrevService,
     ){
     @GetMapping("/{behandlingId}")
-    fun hentBrev(@PathVariable behandlingId: UUID): Ressurs<Brev>? {
+    fun hentBrev(@PathVariable behandlingId: UUID): Ressurs<Brev?> {
         return Ressurs.success(brevService.hentMellomlagretBrev(behandlingId))
     }
     @PostMapping("")

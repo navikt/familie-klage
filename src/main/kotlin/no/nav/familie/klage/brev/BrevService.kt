@@ -6,7 +6,7 @@ import no.nav.familie.klage.brev.dto.Avsnitt
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.brev.dto.FritekstBrevtype
-import no.nav.familie.klage.repository.findByIdOrThrow
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.util.UUID
 @Service
@@ -18,8 +18,8 @@ class BrevService(
     private val familieDokumentClient: FamilieDokumentClient,
     private val brevsignaturService: BrevsignaturService
 ){
-    fun hentMellomlagretBrev(behandlingId: UUID): Brev {
-        return brevRepository.findByIdOrThrow(behandlingId)
+    fun hentMellomlagretBrev(behandlingId: UUID): Brev? {
+        return brevRepository.findByIdOrNull(behandlingId)
     }
 
     fun hentAvsnittPåBehandlingId(behandlingId: UUID): List<Avsnitt>?{
