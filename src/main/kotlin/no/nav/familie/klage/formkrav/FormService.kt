@@ -29,7 +29,14 @@ class FormService(
     }
 
     fun oppdaterForm(form: Form): Form {
-        return formRepository.update(form.copy())
+        val formFraDb = formRepository.findByBehandlingId(form.behandlingId)
+        return formRepository.update(formFraDb.copy(
+            klagePart = form.klagePart,
+            klagefristOverholdt = form.klagefristOverholdt,
+            klageKonkret = form.klageKonkret,
+            klageSignert = form.klageSignert,
+            saksbehandlerBegrunnelse = form.saksbehandlerBegrunnelse
+        ))
     }
 
     fun sjekkOmFormEksiterer(id: UUID): Boolean{
