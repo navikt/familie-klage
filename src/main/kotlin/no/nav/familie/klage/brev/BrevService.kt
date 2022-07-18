@@ -6,6 +6,7 @@ import no.nav.familie.klage.brev.domain.BrevMedAvsnitt
 import no.nav.familie.klage.brev.dto.Avsnitt
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
+import no.nav.familie.klage.brev.dto.FritekstBrevtype
 import no.nav.familie.klage.repository.findByIdOrThrow
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -18,11 +19,12 @@ class BrevService(
     private val familieDokumentClient: FamilieDokumentClient,
     private val brevsignaturService: BrevsignaturService
 ){
-    fun hentBrev(behandlingId: UUID): BrevMedAvsnitt? {
-        val brev =  brevRepository.findByIdOrThrow(behandlingId)
-        val avsnitt = avsnittRepository.findByIdOrThrow(behandlingId)
-        return BrevMedAvsnitt(brev.behandlingId, brev.overskrift, listOf(avsnitt))
+    fun hentMellomlagretBrev(behandlingId: UUID): BrevMedAvsnitt? {
+        val brev = brevRepository.findByIdOrThrow(behandlingId)
+        val avsnitt = avsnittRepository.hentAvsnittPåBehandlingId(behandlingId)
+        return BrevMedAvsnitt(behandlingId, brev.overskrift, avsnitt)
     }
+
 
     fun lagBrev(fritekstbrevDto: FritekstBrevDto): ByteArray{
         val navn = behandlingService.hentNavnFraBehandlingsId(fritekstbrevDto.behandlingId)
@@ -47,7 +49,9 @@ class BrevService(
         lagEllerOppdaterBrev(
             behandlingId = fritekstbrevDto.behandlingId,
             overskrift = fritekstbrevDto.overskrift,
-            saksbehandlerHtml = html
+            saksbehandlerHtml = html,
+            brevtype = fritekstbrevDto.brevType
+
         )
 
         for (avsnitt in fritekstbrevDto.avsnitt){
@@ -64,13 +68,15 @@ class BrevService(
     fun lagEllerOppdaterBrev(
         behandlingId: UUID,
         overskrift: String,
-        saksbehandlerHtml: String
+        saksbehandlerHtml: String,
+        brevtype: FritekstBrevtype
     ): Brev {
         val brev =
             Brev(
                 behandlingId = behandlingId,
                 overskrift = overskrift,
                 saksbehandlerHtml = saksbehandlerHtml,
+                brevtype = brevtype
             )
 
         return when(brevRepository.existsById(brev.behandlingId)){

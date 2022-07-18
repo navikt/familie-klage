@@ -15,5 +15,4 @@ interface BrevRepository: RepositoryInterface<Brev, UUID>, InsertUpdateRepositor
               WHERE behandling.id = :behandling_id"""
     )
     fun findPersonIdByBehandlingId(behandling_id: UUID): String
-
 }
