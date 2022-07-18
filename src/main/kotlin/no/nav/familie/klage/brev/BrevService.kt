@@ -6,6 +6,7 @@ import no.nav.familie.klage.brev.domain.BrevMedAvsnitt
 import no.nav.familie.klage.brev.dto.Avsnitt
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
+import no.nav.familie.klage.brev.dto.FritekstBrevtype
 import no.nav.familie.klage.repository.findByIdOrThrow
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -47,7 +48,9 @@ class BrevService(
         lagEllerOppdaterBrev(
             behandlingId = fritekstbrevDto.behandlingId,
             overskrift = fritekstbrevDto.overskrift,
-            saksbehandlerHtml = html
+            saksbehandlerHtml = html,
+            brevtype = fritekstbrevDto.brevType
+
         )
 
         for (avsnitt in fritekstbrevDto.avsnitt){
@@ -64,13 +67,15 @@ class BrevService(
     fun lagEllerOppdaterBrev(
         behandlingId: UUID,
         overskrift: String,
-        saksbehandlerHtml: String
+        saksbehandlerHtml: String,
+        brevtype: FritekstBrevtype
     ): Brev {
         val brev =
             Brev(
                 behandlingId = behandlingId,
                 overskrift = overskrift,
                 saksbehandlerHtml = saksbehandlerHtml,
+                brevtype = brevtype
             )
 
         return when(brevRepository.existsById(brev.behandlingId)){

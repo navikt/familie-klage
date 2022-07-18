@@ -1,6 +1,7 @@
 package no.nav.familie.klage.brev.domain
 
 import no.nav.familie.klage.brev.dto.Avsnitt
+import no.nav.familie.klage.brev.dto.FritekstBrevtype
 import org.springframework.data.annotation.Id
 import java.util.UUID
 
@@ -15,6 +16,7 @@ data class Brev(
     val behandlingId: UUID,
     val overskrift: String,
     val saksbehandlerHtml: String,
+    val brevtype: FritekstBrevtype
 )
 
 enum class FormVilkår {
