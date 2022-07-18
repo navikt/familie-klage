@@ -1,6 +1,7 @@
 package no.nav.familie.klage.formkrav
 
 import no.nav.familie.klage.formkrav.domain.Form
+import no.nav.familie.klage.formkrav.dto.FormDto
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
@@ -21,7 +22,7 @@ class FormController(
 ) {
 
     @GetMapping("vilkar/{behandlingId}")
-    fun hentVilkår(@PathVariable behandlingId: UUID): Ressurs<Form> {
+    fun hentVilkår(@PathVariable behandlingId: UUID): Ressurs<FormDto> {
         return Ressurs.success(formService.hentForm(behandlingId))
     }
 
