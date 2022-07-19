@@ -7,14 +7,18 @@ import no.nav.familie.klage.behandling.domain.BehandlingsÅrsak
 import no.nav.familie.klage.behandling.domain.Fagsystem
 import no.nav.familie.klage.behandling.domain.StønadsType
 import no.nav.familie.klage.behandling.dto.BehandlingDto
+import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
 import no.nav.familie.klage.behandlingshistorikk.domain.Steg
+import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.personopplysninger.domain.Personopplysninger
 import no.nav.familie.klage.personopplysninger.domain.Kjønn
+import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 import java.util.UUID
 
 @Service
@@ -22,21 +26,44 @@ class BehandlingService(
         private val behandlingsRepository: BehandlingsRepository,
         private val behandlingshistorikkService: BehandlingshistorikkService,
         private val personopplysningerService: PersonopplysningerService,
+        private val fagsakService: FagsakService
     ) {
 
-    fun opprettBehandlingDto(behandlingId: UUID): BehandlingDto {
-        return behandlingDto(behandlingId)
+    fun hentBehandling(behandlingId: UUID): BehandlingDto {
+        val behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
+        return behandling.tilDto()
     }
+
+    fun hentNavnFraBehandlingsId(behandlingId: UUID): String = behandlingsRepository.findNavnByBehandlingId(behandlingId)
 
     fun opprettBehandling(): Behandling {
         val fagsakId = UUID.randomUUID()
+        val fødselsnummer = (0..999999999).random().toString() // TODO legge inn faktisk fødselsnummber
+
+        personopplysningerService.opprettPersonopplysninger(
+            personopplysninger = Personopplysninger(
+                personId = fødselsnummer,
+                navn = "Juni",
+                kjønn = Kjønn.KVINNE,
+                adresse = "Korsgata 21A",
+                telefonnummer = "46840856"
+            )
+        )
+
+        fagsakService.opprettFagsak(
+            fagsak = Fagsak(
+                id = fagsakId,
+                person_id =fødselsnummer,
+                søknadsType = SøknadType.BARNETILSYN
+            )
+        )
+
         val behandling = behandlingsRepository.insert(
             Behandling(
                 fagsakId = fagsakId,
+                personId = fødselsnummer,
                 steg = BehandlingSteg.FORMALKRAV,
                 status = BehandlingStatus.OPPRETTET,
-                endretTid = LocalDateTime.now(),
-                opprettetTid = LocalDateTime.now(),
                 fagsystem = Fagsystem.EF,
                 stonadsType = StønadsType.BARNETILSYN,
                 behandlingsArsak = BehandlingsÅrsak.KLAGE
@@ -62,17 +89,6 @@ class BehandlingService(
             landskode = "+47",
             nummer = "46840856"
         )*/
-
-        personopplysningerService.opprettPersonopplysninger(
-            personopplysninger = Personopplysninger(
-                behandlingId = behandling.id,
-                personId = "1",
-                navn = "Juni",
-                kjønn = Kjønn.KVINNE,
-                adresse = "Korsgata 21A",
-                telefonnummer = "46840856"
-            )
-        )
 
         return behandling
     }

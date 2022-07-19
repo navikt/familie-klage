@@ -22,7 +22,7 @@ class BehandlingController(
 
     @GetMapping("{behandlingId}")
     fun hentBehandling(@PathVariable behandlingId: UUID): Ressurs<BehandlingDto> {
-        return Ressurs.success(behandlingService.opprettBehandlingDto(behandlingId))
+        return Ressurs.success(behandlingService.hentBehandling(behandlingId))
     }
 
     @PostMapping

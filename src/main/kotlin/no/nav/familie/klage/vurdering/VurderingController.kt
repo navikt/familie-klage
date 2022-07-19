@@ -1,5 +1,6 @@
 package no.nav.familie.klage.vurdering
 
+import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
@@ -28,6 +29,11 @@ class VurderingController(
     @PostMapping
     fun opprettVurdering(@RequestBody vurdering: Vurdering): Ressurs<Vurdering> {
         return Ressurs.success(vurderingService.opprettVurdering(vurdering))
+    }
+
+    @GetMapping("{behandlingId}/vedtak")
+    fun hentVedtak(@PathVariable behandlingId: UUID): Ressurs<Vedtak?> {
+        return Ressurs.success(vurderingService.hentVedtak(behandlingId))
     }
 
 }

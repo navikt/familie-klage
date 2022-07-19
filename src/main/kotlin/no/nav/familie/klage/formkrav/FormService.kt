@@ -1,6 +1,8 @@
 package no.nav.familie.klage.formkrav
 
 import no.nav.familie.klage.formkrav.domain.Form
+import no.nav.familie.klage.formkrav.dto.FormDto
+import no.nav.familie.klage.formkrav.dto.tilDto
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -8,7 +10,10 @@ import java.util.UUID
 class FormService(
     private val formRepository: FormRepository
 ) {
-    fun hentForm(behandlingId: UUID): Form = formRepository.findByBehandlingId(behandlingId)
+    fun hentForm(behandlingId: UUID): FormDto{
+        val form = formRepository.findByBehandlingId(behandlingId)
+        return form.tilDto()
+    }
 
     fun opprettForm(form: Form): Form {
         if(sjekkOmFormEksiterer(form.behandlingId)){
@@ -29,7 +34,14 @@ class FormService(
     }
 
     fun oppdaterForm(form: Form): Form {
-        return formRepository.update(form.copy())
+        val formFraDb = formRepository.findByBehandlingId(form.behandlingId)
+        return formRepository.update(formFraDb.copy(
+            klagePart = form.klagePart,
+            klagefristOverholdt = form.klagefristOverholdt,
+            klageKonkret = form.klageKonkret,
+            klageSignert = form.klageSignert,
+            saksbehandlerBegrunnelse = form.saksbehandlerBegrunnelse
+        ))
     }
 
     fun sjekkOmFormEksiterer(id: UUID): Boolean{

@@ -32,7 +32,6 @@ class BrevClient(
             FritekstBrevRequestMedSignatur(
                 fritekstBrev,
                 saksbehandlerNavn,
-                "BESLUTTER_SIGNATUR",
                 enhet
             ),
             HttpHeaders().medContentTypeJsonUTF8()
@@ -49,7 +48,6 @@ class BrevClient(
 data class BrevRequestMedSignaturer(
     val brevFraSaksbehandler: JsonNode,
     val saksbehandlersignatur: String,
-    val besluttersignatur: String?,
     val enhet: String?,
     val skjulBeslutterSignatur: Boolean
 )
@@ -57,6 +55,5 @@ data class BrevRequestMedSignaturer(
 data class FritekstBrevRequestMedSignatur(
     val brevFraSaksbehandler: FritekstBrevRequestDto,
     val saksbehandlersignatur: String,
-    val besluttersignatur: String?,
     val enhet: String
 )
