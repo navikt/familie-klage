@@ -62,6 +62,7 @@ class BrevService(
                 innhold = avsnitt.innhold,
                 skalSkjulesIBrevBygger = avsnitt.skalSkjulesIBrevbygger)
         }
+
         return familieDokumentClient.genererPdfFraHtml(html)
     }
 
@@ -103,5 +104,17 @@ class BrevService(
             true -> avsnittRepository.update(avsnitt)
             false -> avsnittRepository.insert(avsnitt)
         }
+    }
+
+    fun slettAvsnitt(avsnittListe: List<Avsnitt>, behandlingId: UUID){
+        val eksisterendeAvsnitt = avsnittRepository.hentAvsnittPåBehandlingId(behandlingId)
+        if(eksisterendeAvsnitt != null){
+            for(e in eksisterendeAvsnitt) {
+                for(a in avsnittListe) {
+
+                }
+            }
+        }
+        //avsnittRepository.deleteById()
     }
 }
