@@ -21,5 +21,6 @@ data class Form(
 enum class FormVilkår {
     OPPFYLT,
     IKKE_OPPFYLT,
+    SKAL_IKKE_VURDERES,
     IKKE_SATT
 }
