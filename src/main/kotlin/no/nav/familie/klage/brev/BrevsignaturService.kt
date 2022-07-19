@@ -1,6 +1,6 @@
 package no.nav.familie.klage.brev
 
-import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.brev.dto.SignaturDto
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 class BrevsignaturService(
     val personopplysningerService: PersonopplysningerService
 ) {
-    fun lagSignatur(behandling: Behandling): SignaturDto {
+    fun lagSignatur(behandling: BehandlingDto): SignaturDto {
         return lagSignaturDto("ident") //TODO: endre til ekte data
         //return lagSignaturDto(behandling.ident)
     }

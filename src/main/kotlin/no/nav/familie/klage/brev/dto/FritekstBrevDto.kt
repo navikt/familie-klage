@@ -1,7 +1,9 @@
 package no.nav.familie.klage.brev.dto
 
+import no.nav.familie.klage.felles.domain.Sporbar
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
+import org.springframework.data.relational.core.mapping.Embedded
 import java.util.UUID
 
 data class FritekstBrevDto(
@@ -23,7 +25,10 @@ data class Avsnitt(
     val deloverskrift: String,
     val innhold: String,
     @Column("skal_skjules_i_brevbygger")
-    val skalSkjulesIBrevbygger: Boolean? = false)
+    val skalSkjulesIBrevbygger: Boolean? = false,
+    @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
+    val sporbar: Sporbar = Sporbar()
+)
 
 data class FritekstBrevRequestDto(
     val overskrift: String,

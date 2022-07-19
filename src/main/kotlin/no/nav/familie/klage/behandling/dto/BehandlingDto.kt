@@ -1,5 +1,6 @@
 package no.nav.familie.klage.behandling.dto
 
+import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.BehandlingResultat
 import no.nav.familie.klage.behandling.domain.BehandlingStatus
 import no.nav.familie.klage.behandling.domain.BehandlingSteg
@@ -22,7 +23,20 @@ data class BehandlingDto(
         val vedtaksdato: LocalDateTime? = null,
         val stonadsType: StønadsType = StønadsType.BARNETILSYN,
         val behandlingsArsak: BehandlingsÅrsak = BehandlingsÅrsak.KLAGE,
-
 )
+
+fun Behandling.tilDto(): BehandlingDto =
+        BehandlingDto(
+                id = this.id,
+                personId = this.personId,
+                fagsakId = this.fagsakId,
+                steg = this.steg,
+                status = this.status,
+                sistEndret = this.sporbar.endret.endretTid,
+                resultat = this.resultat,
+                opprettet = this.sporbar.opprettetTid,
+                stonadsType = this.stonadsType,
+                fagsystem = this.fagsystem
+        )
 
 

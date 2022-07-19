@@ -32,7 +32,13 @@ class VurderingService(private val vurderingRepository: VurderingRepository) {
     }
 
     fun oppdaterVurdering(vurdering: Vurdering): Vurdering {
-        return vurderingRepository.update(vurdering.copy())
+        val vurderingFraDb = vurderingRepository.findByBehandlingId(vurdering.behandlingId)
+        return vurderingRepository.update(vurderingFraDb.copy(
+            vedtak = vurdering.vedtak,
+            beskrivelse = vurdering.beskrivelse,
+            arsak = vurdering.arsak,
+            hjemmel = vurdering.hjemmel
+        ))
     }
 
     fun sjekkOmVurderingEksiterer(id: UUID): Boolean{
