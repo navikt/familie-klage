@@ -9,6 +9,7 @@ import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.brev.dto.FritekstBrevtype
 import no.nav.familie.klage.repository.findByIdOrThrow
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 @Service
 class BrevService(
@@ -25,11 +26,14 @@ class BrevService(
         return BrevMedAvsnitt(behandlingId, brev.overskrift, avsnitt)
     }
 
-
+    @Transactional
     fun lagBrev(fritekstbrevDto: FritekstBrevDto): ByteArray{
         val navn = behandlingService.hentNavnFraBehandlingsId(fritekstbrevDto.behandlingId)
         val personIdent = brevRepository.findPersonIdByBehandlingId(fritekstbrevDto.behandlingId)
         val behandling = behandlingService.hentBehandling(fritekstbrevDto.behandlingId)
+
+        println(fritekstbrevDto.behandlingId)
+        slettAvsnittOmEksisterer(fritekstbrevDto.behandlingId)
 
         val request = FritekstBrevRequestDto(
             overskrift = fritekstbrevDto.overskrift,
@@ -106,15 +110,7 @@ class BrevService(
         }
     }
 
-    fun slettAvsnitt(avsnittListe: List<Avsnitt>, behandlingId: UUID){
-        val eksisterendeAvsnitt = avsnittRepository.hentAvsnittPåBehandlingId(behandlingId)
-        if(eksisterendeAvsnitt != null){
-            for(e in eksisterendeAvsnitt) {
-                for(a in avsnittListe) {
-
-                }
-            }
-        }
-        //avsnittRepository.deleteById()
+    fun slettAvsnittOmEksisterer(behandlingId: UUID){
+        avsnittRepository.slettAvsnittMedBehanldingId(behandlingId)
     }
 }
