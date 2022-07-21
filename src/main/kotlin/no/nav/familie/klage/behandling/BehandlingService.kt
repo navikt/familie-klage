@@ -111,7 +111,6 @@ class BehandlingService(
     }
 
     fun ferdigstillBrev(behandlingId: UUID){
-        //journalføre og distribuere brev
 
         val brev = brevRepository.findByIdOrThrow(behandlingId)
         val avsnitt = avsnittRepository.hentAvsnittPåBehandlingId(behandlingId)
@@ -130,9 +129,13 @@ class BehandlingService(
 
         val respons = familieIntegrasjonerClient.arkiverDokument(arkiverDokumentRequest, "Maja") //TODO: Hente en saksbehandlere her
 
+        logger.info("Mottok id fra JoArk: ${respons.journalpostId}")
+
         val distnummer = familieIntegrasjonerClient.distribuerBrev(
             respons.journalpostId,
             Distribusjonstype.ANNET)
+
+        logger.info("Mottok distnummer fra DokDist: $distnummer")
     }
     private fun lagArkiverDokumentRequest(
         personIdent: String,
