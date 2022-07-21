@@ -29,4 +29,5 @@ class BehandlingshistorikkController(
     fun opprettBehandlingshistorikk(@RequestBody behandlingshistorikk: Behandlingshistorikk): Ressurs<Behandlingshistorikk> {
         return Ressurs.success(behandlingshistorikkService.opprettBehandlingshistorikk(behandlingshistorikk))
     }
+
 }

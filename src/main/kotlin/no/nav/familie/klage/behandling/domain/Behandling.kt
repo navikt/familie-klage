@@ -36,6 +36,18 @@ enum class BehandlingStatus {
     FERDIGSTILT
 }
 
+data class StegTypeDto(
+    val stegType: StegTypeNavn
+)
+enum class StegTypeNavn {
+    FORMKRAV,
+    VURDERING,
+    BREV,
+    SEND_TIL_BESLUTTER,
+    VENTE_PÅ_SVAR_FRA_BESLUTTER,
+    BEHANDLING_FERDIGSTILT
+}
+
 enum class StegType(
     val rekkefølge: Int,
     val tillattFor: BehandlerRolle,

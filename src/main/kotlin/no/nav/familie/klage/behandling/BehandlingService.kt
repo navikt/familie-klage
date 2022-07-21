@@ -5,12 +5,12 @@ import no.nav.familie.klage.behandling.domain.BehandlingStatus
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.BehandlingsÅrsak
 import no.nav.familie.klage.behandling.domain.Fagsystem
+import no.nav.familie.klage.behandling.domain.StegTypeDto
 import no.nav.familie.klage.behandling.domain.StønadsType
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
-import no.nav.familie.klage.behandlingshistorikk.domain.Steg
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
@@ -75,7 +75,7 @@ class BehandlingService(
         behandlingshistorikkService.opprettBehandlingshistorikk(
             behandlingshistorikk = Behandlingshistorikk(
                 behandlingId = behandling.id,
-                steg = Steg.OPPRETTET,
+                steg = StegType.FORMKRAV,
                 opprettetAv = "Juni Leirvik"
             )
         )
@@ -93,5 +93,17 @@ class BehandlingService(
         )*/
 
         return behandling
+    }
+
+    @Transactional
+    fun oppdaterSteg(behandlingId: UUID, steg: StegTypeDto){
+        behandlingsRepository.updateSteg(behandlingId, steg.stegType)
+        behandlingshistorikkService.opprettBehandlingshistorikk(
+            behandlingshistorikk = Behandlingshistorikk(
+                behandlingId = behandlingId,
+                steg = StegType.VURDERING,
+                opprettetAv = "Juni Leirvik"
+            )
+        )
     }
 }
