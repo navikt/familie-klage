@@ -55,7 +55,6 @@ class FamilieIntegrasjonerClient (
             dokumentProdApp = "FAMILIE_KLAGE",
             distribusjonstype = distribusjonstype
         )
-        logger.info("opprettet journalpostRequest")
 
         return postForEntity<Ressurs<String>>(
             integrasjonerConfig.distribuerDokumentUri,

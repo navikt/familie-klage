@@ -125,20 +125,12 @@ class BehandlingService(
             stønadstype = behandling.stonadsType,
             dokumenttype = Dokumenttype.BARNETRYGD_VEDTAK_INNVILGELSE,
         )
-        logger.info("opprettet arkiverDokumentRequest")
 
-        // arkiverer brev
         val respons = familieIntegrasjonerClient.arkiverDokument(arkiverDokumentRequest, "Maja") //TODO: Hente en saksbehandlere her
-
-        logger.info("arkiver brev respons: $respons")
 
         val distnummer = familieIntegrasjonerClient.distribuerBrev(
             respons.journalpostId,
             Distribusjonstype.ANNET)
-
-        logger.info("distribuer brev respons: $distnummer")
-
-
     }
     private fun lagArkiverDokumentRequest(
         personIdent: String,
