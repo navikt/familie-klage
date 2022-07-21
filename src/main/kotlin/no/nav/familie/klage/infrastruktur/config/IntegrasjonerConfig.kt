@@ -37,6 +37,9 @@ class IntegrasjonerConfig(@Value("\${FAMILIE_INTEGRASJONER_URL}") private val in
     val distribuerDokumentUri: URI =
         UriComponentsBuilder.fromUri(integrasjonUri).pathSegment(PATH_DOKDIST).build().toUri()
 
+    val sendTilKabalUri: URI =
+        UriComponentsBuilder.fromUri(integrasjonUri).pathSegment(PATH_KABAL).build().toUri()
+
     companion object {
 
         private const val PATH_PING = "api/ping"
@@ -56,6 +59,6 @@ class IntegrasjonerConfig(@Value("\${FAMILIE_INTEGRASJONER_URL}") private val in
         private const val PATH_MEDLEMSKAP = "api/medlemskap/v3"
         private const val PATH_NAV_KONTOR = "api/arbeidsfordeling/nav-kontor/ENF"
         private const val PATH_DOKDIST = "api/dist/v1"
-
+        private const val PATH_KABAL = "api/oversendelse/v3/sak"
     }
 }

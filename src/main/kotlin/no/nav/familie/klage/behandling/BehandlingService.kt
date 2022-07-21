@@ -16,6 +16,7 @@ import no.nav.familie.klage.brev.FamilieDokumentClient
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
+import no.nav.familie.klage.kabal.KabalClient
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.personopplysninger.domain.Personopplysninger
 import no.nav.familie.klage.personopplysninger.domain.Kjønn
@@ -42,6 +43,7 @@ class BehandlingService(
         private val avsnittRepository: AvsnittRepository,
         private val familieDokumentClient: FamilieDokumentClient,
         private val familieIntegrasjonerClient: FamilieIntegrasjonerClient,
+        private val kabalClient: KabalClient,
     ){
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -111,9 +113,12 @@ class BehandlingService(
     }
 
     fun ferdigstillBrev(behandlingId: UUID){
+        arkiverOgDistribuerBrev(behandlingId)
+        sendTilKaball()
+    }
 
+    fun arkiverOgDistribuerBrev(behandlingId: UUID){
         val brev = brevRepository.findByIdOrThrow(behandlingId)
-        val avsnitt = avsnittRepository.hentAvsnittPåBehandlingId(behandlingId)
         val behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
         val pdf = familieDokumentClient.genererPdfFraHtml(brev.saksbehandlerHtml)
 
@@ -136,6 +141,19 @@ class BehandlingService(
             Distribusjonstype.ANNET)
 
         logger.info("Mottok distnummer fra DokDist: $distnummer")
+        logger.info("Sender til kabal")
+        //TOOD: legge inn en sjekk på om skal sendes til kabal
+        val k = kabalClient.sendTilKabal()
+
+
+        logger.info("Mottok fra kabal: $k.")
+
+
+
+    }
+
+    fun sendTilKaball(){
+        kabalClient.sendTilKabal()
     }
     private fun lagArkiverDokumentRequest(
         personIdent: String,
