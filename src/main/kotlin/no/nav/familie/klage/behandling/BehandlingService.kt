@@ -2,7 +2,7 @@ package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.BehandlingStatus
-import no.nav.familie.klage.behandling.domain.BehandlingSteg
+import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.BehandlingsÅrsak
 import no.nav.familie.klage.behandling.domain.Fagsystem
 import no.nav.familie.klage.behandling.domain.StønadsType
@@ -64,7 +64,7 @@ class BehandlingService(
             Behandling(
                 fagsakId = fagsakId,
                 personId = fødselsnummer,
-                steg = BehandlingSteg.FORMALKRAV,
+                steg = StegType.FORMKRAV,
                 status = BehandlingStatus.OPPRETTET,
                 fagsystem = Fagsystem.EF,
                 stonadsType = StønadsType.BARNETILSYN,
