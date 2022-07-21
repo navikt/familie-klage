@@ -29,6 +29,7 @@ import no.nav.familie.kontrakter.felles.dokdist.Distribusjonstype
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
@@ -51,6 +52,7 @@ class BehandlingService(
 
     fun hentNavnFraBehandlingsId(behandlingId: UUID): String = behandlingsRepository.findNavnByBehandlingId(behandlingId)
 
+    @Transactional
     fun opprettBehandling(): Behandling {
         val fagsakId = UUID.randomUUID()
         val fødselsnummer = (0..999999999).random().toString() // TODO legge inn faktisk fødselsnummber
