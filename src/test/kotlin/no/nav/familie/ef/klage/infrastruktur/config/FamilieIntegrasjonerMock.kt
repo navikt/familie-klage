@@ -1,6 +1,7 @@
 package no.nav.familie.ef.klage.infrastruktur.config
 
 import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.equalTo
 import com.github.tomakehurst.wiremock.client.WireMock.get
@@ -110,6 +111,12 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                         )
                     )
                 ),
+            post(urlEqualTo(integrasjonerConfig.distribuerDokumentUri.path))
+                .willReturn(WireMock.okJson(objectMapper.writeValueAsString(
+                    Ressurs.success(
+                        "123"
+                    )
+                )).withStatus(200)),
 
         )
 

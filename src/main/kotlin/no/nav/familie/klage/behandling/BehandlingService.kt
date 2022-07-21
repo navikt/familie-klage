@@ -25,6 +25,7 @@ import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.Filtype
+import no.nav.familie.kontrakter.felles.dokdist.Distribusjonstype
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -126,9 +127,17 @@ class BehandlingService(
         )
         logger.info("opprettet arkiverDokumentRequest")
 
+        // arkiverer brev
         val respons = familieIntegrasjonerClient.arkiverDokument(arkiverDokumentRequest, "Maja") //TODO: Hente en saksbehandlere her
 
-        logger.info("familieIntegrasjonerClient respons: $respons")
+        logger.info("arkiver brev respons: $respons")
+
+        val distnummer = familieIntegrasjonerClient.distribuerBrev(
+            respons.journalpostId,
+            Distribusjonstype.ANNET)
+
+        logger.info("distribuer brev respons: $distnummer")
+
 
     }
     private fun lagArkiverDokumentRequest(
