@@ -17,7 +17,6 @@ import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
-import no.nav.familie.klage.kabal.KabalClient
 import no.nav.familie.klage.kabal.KabalService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.personopplysninger.domain.Personopplysninger
@@ -27,8 +26,6 @@ import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
-import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
-import no.nav.familie.kontrakter.felles.dokarkiv.v2.Filtype
 import no.nav.familie.kontrakter.felles.dokdist.Distribusjonstype
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -46,9 +43,8 @@ class BehandlingService(
         private val avsnittRepository: AvsnittRepository,
         private val familieDokumentClient: FamilieDokumentClient,
         private val familieIntegrasjonerClient: FamilieIntegrasjonerClient,
-        private val kabalClient: KabalClient,
         private val formService: FormService,
-        private val  vurderingService: VurderingService,
+        private val vurderingService: VurderingService,
         private val kabalService: KabalService,
     ){
 
@@ -128,7 +124,7 @@ class BehandlingService(
         val behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
         val pdf = familieDokumentClient.genererPdfFraHtml(brev.saksbehandlerHtml)
 
-        val arkiverDokumentRequest = lagArkiverDokumentRequest(
+        val arkiverDokumentRequest = familieIntegrasjonerClient.lagArkiverDokumentRequest(
             personIdent = behandling.personId,
             pdf = pdf,
             fagsakId = behandling.fagsakId.toString(),
@@ -153,34 +149,9 @@ class BehandlingService(
             formService.formkravErOppfylt(behandlingId) &&
             vurderingService.klageTasIkkeTilFølge(behandlingId)
         ){
-            val k = kabalService.sendTilKabal()
+            kabalService.sendTilKabal()
         }
     }
 
-    private fun lagArkiverDokumentRequest(
-        personIdent: String,
-        pdf: ByteArray,
-        fagsakId: String?,
-        behandlingId: UUID,
-        enhet: String,
-        stønadstype: StønadsType,
-        dokumenttype: Dokumenttype
-    ): ArkiverDokumentRequest {
-        val dokument = no.nav.familie.kontrakter.felles.dokarkiv.v2.Dokument(
-            pdf,
-            Filtype.PDFA,
-            null,
-            "Brev for ${stønadstype.name.lowercase()}",
-            dokumenttype
-        )
-        return ArkiverDokumentRequest(
-            fnr = personIdent,
-            forsøkFerdigstill = true,
-            hoveddokumentvarianter = listOf(dokument),
-            vedleggsdokumenter = listOf(),
-            fagsakId = fagsakId,
-            journalførendeEnhet = enhet,
-            eksternReferanseId = "$behandlingId-blankett"
-        )
-    }
+
 }

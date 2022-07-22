@@ -10,13 +10,13 @@ class KabalService(
 
 ){
     fun sendTilKabal(){
-        val oversendtKlageAnkeV3 = lagOversendtKlageAnkeV3()
+        val oversendtKlageAnkeV3 = lagOversendtKlageAnkeV3Mock()
         kabalClient.sendTilKabal(oversendtKlageAnkeV3)
     }
-    fun lagOversendtKlageAnkeV3(): OversendtKlageAnkeV3 {
+    fun lagOversendtKlageAnkeV3Mock(): OversendtKlageAnkeV3 {
 
-        val klager = lagKlager()
-        val fagsak = lagOversendtSak()
+        val klager = lagKlagerMock()
+        val fagsak = lagOversendtSakMock()
 
         return OversendtKlageAnkeV3(
             type = Type.KLAGE,
@@ -32,13 +32,13 @@ class KabalService(
         )
     }
 
-    fun lagKlager(): OversendtKlager{
+    fun lagKlagerMock(): OversendtKlager{
         val oversendtPartIdType = OversendtPartIdType.PERSON
         val oversendtPartId = OversendtPartId(oversendtPartIdType, "en verdi")
         return OversendtKlager(oversendtPartId, null)
     }
 
-    fun lagOversendtSak(): OversendtSak{
+    fun lagOversendtSakMock(): OversendtSak{
         return OversendtSak(
             fagsakId = UUID.randomUUID().toString(),
             fagsystem = KildeFagsystem.EF)

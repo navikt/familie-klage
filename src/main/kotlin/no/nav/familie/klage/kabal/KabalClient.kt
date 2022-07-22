@@ -23,8 +23,6 @@ class KabalClient(
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    //override val pingUri: URI = URI.create("/api/ping")
-
     private val dokuarkivUri: URI =
         UriComponentsBuilder.fromUri(integrasjonUri).pathSegment("api/oversendelse/v3/sak").build().toUri()
 

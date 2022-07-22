@@ -1,12 +1,15 @@
 package no.nav.familie.klage.integrasjoner
 
 import no.nav.familie.http.client.AbstractPingableRestClient
+import no.nav.familie.klage.behandling.domain.StønadsType
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import no.nav.familie.klage.infrastruktur.config.IntegrasjonerConfig
 import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
+import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
+import no.nav.familie.kontrakter.felles.dokarkiv.v2.Filtype
 import no.nav.familie.kontrakter.felles.dokdist.DistribuerJournalpostRequest
 import no.nav.familie.kontrakter.felles.dokdist.Distribusjonstype
 import no.nav.familie.kontrakter.felles.getDataOrThrow
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
+import java.util.UUID
 
 @Component
 class FamilieIntegrasjonerClient (
@@ -69,5 +73,32 @@ class FamilieIntegrasjonerClient (
             httpHeaders.set(NavHttpHeaders.NAV_USER_ID.asString(), saksbehandler)
         }
         return httpHeaders
+    }
+
+    fun lagArkiverDokumentRequest(
+        personIdent: String,
+        pdf: ByteArray,
+        fagsakId: String?,
+        behandlingId: UUID,
+        enhet: String,
+        stønadstype: StønadsType,
+        dokumenttype: Dokumenttype
+    ): ArkiverDokumentRequest {
+        val dokument = no.nav.familie.kontrakter.felles.dokarkiv.v2.Dokument(
+            pdf,
+            Filtype.PDFA,
+            null,
+            "Brev for ${stønadstype.name.lowercase()}",
+            dokumenttype
+        )
+        return ArkiverDokumentRequest(
+            fnr = personIdent,
+            forsøkFerdigstill = true,
+            hoveddokumentvarianter = listOf(dokument),
+            vedleggsdokumenter = listOf(),
+            fagsakId = fagsakId,
+            journalførendeEnhet = enhet,
+            eksternReferanseId = "$behandlingId-blankett"
+        )
     }
 }
