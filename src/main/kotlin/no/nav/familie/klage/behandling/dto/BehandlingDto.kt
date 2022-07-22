@@ -5,8 +5,8 @@ import no.nav.familie.klage.behandling.domain.BehandlingResultat
 import no.nav.familie.klage.behandling.domain.BehandlingStatus
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.BehandlingsÅrsak
-import no.nav.familie.klage.behandling.domain.Fagsystem
 import no.nav.familie.klage.behandling.domain.StønadsType
+import no.nav.familie.kontrakter.felles.Fagsystem
 import java.time.LocalDateTime
 import java.util.UUID
 

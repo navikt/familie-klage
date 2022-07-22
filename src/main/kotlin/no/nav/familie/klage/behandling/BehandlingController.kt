@@ -39,4 +39,10 @@ class BehandlingController(
         return Ressurs.success(behandlingId)
     }
 
+    //lagre brev
+    @PostMapping("/ferdigstill/{behandlingId}")
+    fun ferdigstillBrev(@PathVariable behandlingId: UUID){
+        behandlingService.ferdigstillBrev(behandlingId)
+    }
+
 }

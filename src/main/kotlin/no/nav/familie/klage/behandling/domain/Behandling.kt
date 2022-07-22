@@ -2,6 +2,7 @@ package no.nav.familie.klage.behandling.domain
 
 import no.nav.familie.klage.felles.domain.BehandlerRolle
 import no.nav.familie.klage.felles.domain.Sporbar
+import no.nav.familie.kontrakter.felles.Fagsystem
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Embedded
 import java.time.LocalDateTime
@@ -47,6 +48,12 @@ enum class StegTypeNavn {
     VENTE_PÅ_SVAR_FRA_BESLUTTER,
     BEHANDLING_FERDIGSTILT
 }
+/*
+enum class Fagsystem {
+    EF,
+    BA,
+    KS
+}*/
 
 enum class StegType(
     val rekkefølge: Int,
@@ -84,12 +91,6 @@ enum class StegType(
         tillattFor = BehandlerRolle.SYSTEM,
         gyldigIKombinasjonMedStatus = listOf(BehandlingStatus.FERDIGSTILT)
     );
-}
-
-enum class Fagsystem {
-    EF,
-    BA,
-    KS
 }
 
 enum class StønadsType {
