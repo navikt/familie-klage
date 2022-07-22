@@ -1,14 +1,23 @@
 package no.nav.familie.klage.vurdering
 
+import VurderingDto
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import tilDto
 import java.util.UUID
 
 @Service
 class VurderingService(private val vurderingRepository: VurderingRepository) {
 
-    fun hentVurdering(id: UUID): Vurdering = vurderingRepository.findByBehandlingId(id)
+    fun hentVurdering(id: UUID): VurderingDto{
+        val vurdering = vurderingRepository.findByIdOrNull(id)
+        if(vurdering == null){
+            return opprettVurdering(lagTomVurdering(id)).tilDto()
+        }
+        return vurdering.tilDto()
+    }
 
     fun hentVedtak(id: UUID): Vedtak?{
         return vurderingRepository.findVedtakByBehandlingIdOrThrow(id)
@@ -25,7 +34,6 @@ class VurderingService(private val vurderingRepository: VurderingRepository) {
                     arsak = vurdering.arsak,
                     hjemmel = vurdering.hjemmel,
                     beskrivelse = vurdering.beskrivelse,
-                    fullfortDato = vurdering.fullfortDato
                 )
             )
         }
@@ -43,5 +51,15 @@ class VurderingService(private val vurderingRepository: VurderingRepository) {
 
     fun sjekkOmVurderingEksiterer(id: UUID): Boolean{
         return vurderingRepository.findById(id).isPresent
+    }
+
+    fun lagTomVurdering(behandlingId: UUID): Vurdering{
+        return Vurdering(
+            behandlingId = behandlingId,
+            vedtak = Vedtak.VELG,
+            arsak = null,
+            hjemmel = null,
+            beskrivelse = ""
+        )
     }
 }
