@@ -27,7 +27,6 @@ class KabalClient(
         UriComponentsBuilder.fromUri(integrasjonUri).pathSegment("api/oversendelse/v3/sak").build().toUri()
 
     fun sendTilKabal(oversendtKlageAnkeV3: OversendtKlageAnkeV3){
-
         return postForEntity(
             integrasjonerConfig.sendTilKabalUri,
             oversendtKlageAnkeV3

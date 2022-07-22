@@ -17,6 +17,7 @@ import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
+import no.nav.familie.klage.integrasjoner.IntegrasjonerService
 import no.nav.familie.klage.kabal.KabalService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.personopplysninger.domain.Personopplysninger
@@ -46,6 +47,7 @@ class BehandlingService(
         private val formService: FormService,
         private val vurderingService: VurderingService,
         private val kabalService: KabalService,
+        private val integrasjonerService: IntegrasjonerService
     ){
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -124,7 +126,7 @@ class BehandlingService(
         val behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
         val pdf = familieDokumentClient.genererPdfFraHtml(brev.saksbehandlerHtml)
 
-        val arkiverDokumentRequest = familieIntegrasjonerClient.lagArkiverDokumentRequest(
+        val arkiverDokumentRequest = integrasjonerService.lagArkiverDokumentRequest(
             personIdent = behandling.personId,
             pdf = pdf,
             fagsakId = behandling.fagsakId.toString(),
@@ -149,9 +151,8 @@ class BehandlingService(
             formService.formkravErOppfylt(behandlingId) &&
             vurderingService.klageTasIkkeTilFølge(behandlingId)
         ){
-            kabalService.sendTilKabal()
+            val fagsakId = behandlingsRepository.findByIdOrThrow(behandlingId).fagsakId
+            kabalService.sendTilKabal(behandlingId, fagsakId)
         }
     }
-
-
 }

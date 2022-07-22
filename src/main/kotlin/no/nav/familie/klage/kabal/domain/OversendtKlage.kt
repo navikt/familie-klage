@@ -11,14 +11,14 @@ data class OversendtKlageAnkeV3(
     val kildeReferanse: String,
     val dvhReferanse: String? = null,
     val innsynUrl: String? = null, // url til vår løsning
-    val hjemler: List<Hjemmel>? = emptyList(),
+    val hjemler: List<KabalHjemmel>,
     val forrigeBehandlendeEnhet: String,
     val tilknyttedeJournalposter: List<OversendtDokumentReferanse> = emptyList(),
     val brukersHenvendelseMottattNavDato: LocalDate,
     val innsendtTilNav: LocalDate,
     val kilde: KildeFagsystem,
     val ytelse: Ytelse,
-    val kommentar: String? = null
+    val kommentar: String? = null,
 )
 
 enum class Type(override val id: String, override val navn: String, override val beskrivelse: String) : Kode {
@@ -32,38 +32,38 @@ enum class OversendtPartIdType {
 }
 
 data class OversendtPartId(
-val type: OversendtPartIdType,
-val verdi: String
+    val type: OversendtPartIdType,
+    val verdi: String
 )
 
 data class OversendtKlager(
-val id: OversendtPartId,
-val klagersProsessfullmektig: OversendtProsessfullmektig? = null
+    val id: OversendtPartId,
+    val klagersProsessfullmektig: OversendtProsessfullmektig? = null
 )
 
 data class OversendtProsessfullmektig(
-val id: OversendtPartId,
-val skalKlagerMottaKopi: Boolean
+    val id: OversendtPartId,
+    val skalKlagerMottaKopi: Boolean
 )
 
 data class OversendtSakenGjelder(
-val id: OversendtPartId,
-val skalMottaKopi: Boolean
+    val id: OversendtPartId,
+    val skalMottaKopi: Boolean
 )
 
 data class OversendtSak(
-val fagsakId: String? = null,
-val fagsystem: KildeFagsystem
+    val fagsakId: String? = null,
+    val fagsystem: KildeFagsystem
 )
 
-enum class Hjemmel(
+data class KabalHjemmel(
     val id: String,
     val lovKilde: LovKilde,
     val spesifikasjon: String
 )
 
 data class OversendtDokumentReferanse(
-val type: MottakDokumentType,
+    val type: MottakDokumentType,
 )
 
 enum class MottakDokumentType {
@@ -142,7 +142,7 @@ enum class LovKilde(override val id: String, override val navn: String, override
     AFP_62_OFFENTLIG("44", "AFP-62 Offentlig", "AFP-62 Offentlig"),
     FORSKRIFT_OM_ARBEIDS_OG_UTDANNINGSREISER("45", "Forskrift om arbeids- og utdanningsreiser", "Fors om arb- og utd.r."),
     TILLEGGSSTØNADSFORSKRIFTEN("46", "Tilleggsstønadforskriften", "Fors om till.stø."),
-    NAV_LOVEN("47", "NAV-loven", "NAV-L"),
+    NAV_LOVEN("47", "NA V-loven", "NAV-L"),
     MIDLERTIDIG_LOV_KOMP_SELVST_OG_FRILANS("48","Midlertidig lov om kompensasjonsytelse for selvstendig næringsdrivende og frilansere", "Midl. komp selv.næ og fril"),
     LØNNSKOMPENSASJON_FOR_PERMITTERTE("49", "Lønnskompensasjon for permitterte", "Lønn.komp perm"),
     MIDLERTIDIG_FORSKR_FORSKUDD_DAGPENGER("50", "Midlertidig forskrift om forskudd på dagpenger for å avhjelpe konsekvensene av covid-19", "Midlertidig forskrift om forskudd på dagpenger for å avhjelpe konsekvensene av covid-19"),
