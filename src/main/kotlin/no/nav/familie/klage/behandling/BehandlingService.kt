@@ -15,12 +15,15 @@ import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.brev.FamilieDokumentClient
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
+import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.kabal.KabalClient
+import no.nav.familie.klage.kabal.KabalService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.personopplysninger.domain.Personopplysninger
 import no.nav.familie.klage.personopplysninger.domain.Kjønn
 import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
@@ -44,6 +47,9 @@ class BehandlingService(
         private val familieDokumentClient: FamilieDokumentClient,
         private val familieIntegrasjonerClient: FamilieIntegrasjonerClient,
         private val kabalClient: KabalClient,
+        private val formService: FormService,
+        private val  vurderingService: VurderingService,
+        private val kabalService: KabalService,
     ){
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -114,7 +120,7 @@ class BehandlingService(
 
     fun ferdigstillBrev(behandlingId: UUID){
         arkiverOgDistribuerBrev(behandlingId)
-        sendTilKaball()
+        sendTilKaball(behandlingId)
     }
 
     fun arkiverOgDistribuerBrev(behandlingId: UUID){
@@ -133,7 +139,6 @@ class BehandlingService(
         )
 
         val respons = familieIntegrasjonerClient.arkiverDokument(arkiverDokumentRequest, "Maja") //TODO: Hente en saksbehandlere her
-
         logger.info("Mottok id fra JoArk: ${respons.journalpostId}")
 
         val distnummer = familieIntegrasjonerClient.distribuerBrev(
@@ -141,20 +146,17 @@ class BehandlingService(
             Distribusjonstype.ANNET)
 
         logger.info("Mottok distnummer fra DokDist: $distnummer")
-        logger.info("Sender til kabal")
-        //TOOD: legge inn en sjekk på om skal sendes til kabal
-        val k = kabalClient.sendTilKabal()
-
-
-        logger.info("Mottok fra kabal: $k.")
-
-
-
     }
 
-    fun sendTilKaball(){
-        kabalClient.sendTilKabal()
+    fun sendTilKaball(behandlingId: UUID){
+        if(
+            formService.formkravErOppfylt(behandlingId) &&
+            vurderingService.klageTasIkkeTilFølge(behandlingId)
+        ){
+            val k = kabalService.sendTilKabal()
+        }
     }
+
     private fun lagArkiverDokumentRequest(
         personIdent: String,
         pdf: ByteArray,
