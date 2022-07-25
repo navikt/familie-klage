@@ -24,7 +24,6 @@ import no.nav.familie.klage.personopplysninger.domain.Personopplysninger
 import no.nav.familie.klage.personopplysninger.domain.Kjønn
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
-import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
 import no.nav.familie.kontrakter.felles.dokdist.Distribusjonstype
@@ -81,7 +80,7 @@ class BehandlingService(
             fagsak = Fagsak(
                 id = fagsakId,
                 personId = fødselsnummer,
-                søknadsType = SøknadType.BARNETILSYN
+                stønadsType = StønadsType.BARNETILSYN
             )
         )
 

@@ -14,7 +14,7 @@ class FagsakService (
             Fagsak(
                 id = fagsak.id,
                 personId = fagsak.personId,
-                søknadsType = fagsak.søknadsType
+                stønadsType = fagsak.stønadsType
             )
         )
     }
