@@ -2,6 +2,7 @@ package no.nav.familie.klage.personopplysninger.domain
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
+
 data class Personopplysninger(
     @Id
     val personId: String,

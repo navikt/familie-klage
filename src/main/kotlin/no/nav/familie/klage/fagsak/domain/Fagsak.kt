@@ -11,7 +11,7 @@ data class Fagsak(
     @Id
     val id: UUID = UUID.randomUUID(),
     //val fagsystem: Fagsystem,
-    val person_id: String,
+    val personId: String,
     @Column("stonadstype")
     val søknadsType: SøknadType,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)

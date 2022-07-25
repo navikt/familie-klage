@@ -11,7 +11,6 @@ data class Behandling(
     @Id
     val id: UUID = UUID.randomUUID(),
     val fagsakId: UUID,
-    val personId: String,
     val steg: BehandlingSteg,
     val status: BehandlingStatus,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
