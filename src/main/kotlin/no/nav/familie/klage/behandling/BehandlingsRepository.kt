@@ -1,7 +1,7 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
-import no.nav.familie.klage.behandling.domain.StegTypeNavn
+import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.repository.InsertUpdateRepository
 import no.nav.familie.klage.repository.RepositoryInterface
 import org.springframework.data.jdbc.repository.query.Modifying
@@ -24,6 +24,11 @@ interface BehandlingsRepository : RepositoryInterface<Behandling, UUID>, InsertU
     @Query(
         """UPDATE behandling SET steg = :steg WHERE id = :behandling_id"""
     )
-    fun updateSteg(behandling_id: UUID, steg: StegTypeNavn)
+    fun updateSteg(behandling_id: UUID, steg: StegType)
+
+    @Query(
+        """SELECT steg FROM behandling WHERE id = :behandling_id"""
+    )
+    fun findStegById(behandling_id: UUID): StegType
 
 }

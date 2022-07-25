@@ -9,6 +9,6 @@ import java.util.UUID
 @Repository
 interface BehandlingshistorikkRepository : RepositoryInterface<Behandlingshistorikk, UUID>, InsertUpdateRepository<Behandlingshistorikk> {
 
-    fun findByBehandlingId(behandlingId: UUID): List<Behandlingshistorikk>
+    fun findByBehandlingIdOrderByEndretTidAsc(behandlingId: UUID): List<Behandlingshistorikk>
 
 }

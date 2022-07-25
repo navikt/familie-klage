@@ -1,21 +1,27 @@
 package no.nav.familie.klage.formkrav
 
+import no.nav.familie.klage.behandling.BehandlingService
+import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.dto.FormDto
 import no.nav.familie.klage.formkrav.dto.tilDto
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
 class FormService(
-    private val formRepository: FormRepository
+    private val formRepository: FormRepository,
+    private val behandlingService: BehandlingService
 ) {
     fun hentForm(behandlingId: UUID): FormDto{
         val form = formRepository.findByBehandlingId(behandlingId)
         return form.tilDto()
     }
 
+    @Transactional
     fun opprettForm(form: Form): Form {
+        behandlingService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV)
         if(sjekkOmFormEksiterer(form.behandlingId)){
             return oppdaterForm(form)
         } else {
@@ -33,6 +39,7 @@ class FormService(
         }
     }
 
+    @Transactional
     fun oppdaterForm(form: Form): Form {
         val formFraDb = formRepository.findByBehandlingId(form.behandlingId)
         return formRepository.update(formFraDb.copy(

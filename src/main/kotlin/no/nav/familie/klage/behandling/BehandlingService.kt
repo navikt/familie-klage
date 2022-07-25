@@ -4,14 +4,13 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.BehandlingStatus
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.BehandlingsÅrsak
-import no.nav.familie.klage.behandling.domain.StegTypeDto
 import no.nav.familie.klage.behandling.domain.StønadsType
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
-import no.nav.familie.klage.brev.AvsnittRepository
 import no.nav.familie.klage.brev.BrevRepository
+import no.nav.familie.klage.brev.BrevsignaturService
 import no.nav.familie.klage.brev.FamilieDokumentClient
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
@@ -39,9 +38,9 @@ class BehandlingService(
         private val personopplysningerService: PersonopplysningerService,
         private val fagsakService: FagsakService,
         private val brevRepository: BrevRepository,
-        private val avsnittRepository: AvsnittRepository,
         private val familieDokumentClient: FamilieDokumentClient,
         private val familieIntegrasjonerClient: FamilieIntegrasjonerClient,
+        private val brevsignaturService: BrevsignaturService
     ){
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -87,45 +86,29 @@ class BehandlingService(
             )
         )
 
-        behandlingshistorikkService.opprettBehandlingshistorikk(
-            behandlingshistorikk = Behandlingshistorikk(
-                behandlingId = behandling.id,
-                steg = StegType.FORMKRAV,
-                opprettetAv = "Juni Leirvik"
-            )
-        )
-
-        /*val navn = Navn(
-            fornavn = "Juni",
-            mellomnavn = "Leirvik",
-            etternavn = "Larsen",
-            visningsnavn = "Juni Leirvik"
-        )*/
-
-        /*val telefon = Telefonnummer(
-            landskode = "+47",
-            nummer = "46840856"
-        )*/
-
         return behandling
     }
 
     @Transactional
-    fun oppdaterSteg(behandlingId: UUID, steg: StegTypeDto){
-        behandlingsRepository.updateSteg(behandlingId, steg.stegType)
+    fun oppdaterSteg(behandlingId: UUID, steg: StegType){
+        val nesteSteg = steg.hentNesteSteg()
+        behandlingsRepository.updateSteg(behandlingId, nesteSteg)
+
+        val signatur = brevsignaturService.lagSignatur(behandlingId)
         behandlingshistorikkService.opprettBehandlingshistorikk(
             behandlingshistorikk = Behandlingshistorikk(
                 behandlingId = behandlingId,
-                steg = StegType.VURDERING,
-                opprettetAv = "Juni Leirvik"
+                steg = steg,
+                opprettetAv = signatur.navn
             )
         )
     }
-
+    @Transactional
     fun ferdigstillBrev(behandlingId: UUID){
 
+        oppdaterSteg(behandlingId, StegType.BREV)
+
         val brev = brevRepository.findByIdOrThrow(behandlingId)
-        val avsnitt = avsnittRepository.hentAvsnittPåBehandlingId(behandlingId)
         val behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
         val pdf = familieDokumentClient.genererPdfFraHtml(brev.saksbehandlerHtml)
 

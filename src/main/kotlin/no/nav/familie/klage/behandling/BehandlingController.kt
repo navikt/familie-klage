@@ -1,7 +1,6 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
-import no.nav.familie.klage.behandling.domain.StegTypeDto
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
@@ -9,7 +8,6 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
@@ -30,13 +28,6 @@ class BehandlingController(
     @PostMapping
     fun opprettBehandling(): Ressurs<Behandling> {
         return Ressurs.success(behandlingService.opprettBehandling())
-    }
-
-    @PostMapping("{behandlingId}")
-    fun oppdaterSteg(@RequestBody steg: StegTypeDto, @PathVariable behandlingId: UUID): Ressurs<UUID> {
-        println(steg)
-        behandlingService.oppdaterSteg(behandlingId, steg)
-        return Ressurs.success(behandlingId)
     }
 
     //lagre brev
