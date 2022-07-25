@@ -12,9 +12,9 @@ import java.util.UUID
 @Service
 class VurderingService(private val vurderingRepository: VurderingRepository) {
 
-    fun hentVurdering(id: UUID): VurderingDto{
-        val vurdering = vurderingRepository.findByIdOrNull(id)
-            ?: return opprettEllerOppdaterVurdering(lagTomVurdering(id)).tilDto()
+    fun hentVurdering(behandlingId: UUID): VurderingDto{
+        val vurdering = vurderingRepository.findByIdOrNull(behandlingId)
+            ?: return opprettEllerOppdaterVurdering(lagTomVurdering(behandlingId)).tilDto()
         return vurdering.tilDto()
     }
 
