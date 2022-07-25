@@ -28,9 +28,8 @@ class VurderingController(
     }
 
     @PostMapping
-    fun opprettVurdering(@RequestBody vurdering: Vurdering): Ressurs<Vurdering> {
-        println("oppreter vurdering: $vurdering")
-        return Ressurs.success(vurderingService.opprettVurdering(vurdering))
+    fun opprettELlerOppdaterVurdering(@RequestBody vurdering: Vurdering): Ressurs<Vurdering> {
+        return Ressurs.success(vurderingService.opprettEllerOppdaterVurdering(vurdering))
     }
 
     @GetMapping("{behandlingId}/vedtak")

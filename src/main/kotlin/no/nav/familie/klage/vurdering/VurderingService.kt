@@ -13,9 +13,7 @@ class VurderingService(private val vurderingRepository: VurderingRepository) {
 
     fun hentVurdering(id: UUID): VurderingDto{
         val vurdering = vurderingRepository.findByIdOrNull(id)
-        if(vurdering == null){
-            return opprettVurdering(lagTomVurdering(id)).tilDto()
-        }
+            ?: return opprettEllerOppdaterVurdering(lagTomVurdering(id)).tilDto()
         return vurdering.tilDto()
     }
 
@@ -23,7 +21,7 @@ class VurderingService(private val vurderingRepository: VurderingRepository) {
         return vurderingRepository.findVedtakByBehandlingIdOrThrow(id)
     }
 
-    fun opprettVurdering(vurdering: Vurdering): Vurdering {
+    fun opprettEllerOppdaterVurdering(vurdering: Vurdering): Vurdering {
         if(sjekkOmVurderingEksiterer(vurdering.behandlingId)){
             return oppdaterVurdering(vurdering)
         } else {
