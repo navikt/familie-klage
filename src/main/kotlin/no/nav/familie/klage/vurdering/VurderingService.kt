@@ -48,9 +48,6 @@ class VurderingService(private val vurderingRepository: VurderingRepository) {
 
     fun  klageTasIkkeTilFølge(behandlingId: UUID): Boolean{
         val vurdering = vurderingRepository.findByIdOrThrow(behandlingId)
-        if(vurdering.vedtak == Vedtak.OPPRETTHOLD_VEDTAK){
-            return true
-        }
-        return false
+        return (vurdering.vedtak == Vedtak.OPPRETTHOLD_VEDTAK)
     }
 }
