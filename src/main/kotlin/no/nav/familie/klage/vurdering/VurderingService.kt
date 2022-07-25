@@ -1,6 +1,7 @@
 package no.nav.familie.klage.vurdering
 
 import VurderingDto
+import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import org.springframework.data.repository.findByIdOrNull
@@ -59,5 +60,10 @@ class VurderingService(private val vurderingRepository: VurderingRepository) {
             hjemmel = null,
             beskrivelse = ""
         )
+    }
+
+    fun  klageTasIkkeTilFølge(behandlingId: UUID): Boolean{
+        val vurdering = vurderingRepository.findByIdOrThrow(behandlingId)
+        return (vurdering.vedtak == Vedtak.OPPRETTHOLD_VEDTAK)
     }
 }

@@ -1,8 +1,10 @@
 package no.nav.familie.klage.formkrav
 
 import no.nav.familie.klage.formkrav.domain.Form
+import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.formkrav.dto.FormDto
 import no.nav.familie.klage.formkrav.dto.tilDto
+import no.nav.familie.klage.repository.findByIdOrThrow
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -46,5 +48,15 @@ class FormService(
 
     fun sjekkOmFormEksiterer(id: UUID): Boolean{
         return formRepository.findById(id).isPresent
+    }
+
+    fun formkravErOppfylt(behandlingId: UUID): Boolean{
+        val form = formRepository.findByIdOrThrow(behandlingId)
+        return(
+            form.klageKonkret == FormVilkår.OPPFYLT &&
+            form.klagePart == FormVilkår.OPPFYLT &&
+            form.klageSignert == FormVilkår.OPPFYLT &&
+            form.klagefristOverholdt == FormVilkår.OPPFYLT &&
+            form.saksbehandlerBegrunnelse != "")
     }
 }
