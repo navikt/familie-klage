@@ -52,14 +52,11 @@ class FormService(
 
     fun formkravErOppfylt(behandlingId: UUID): Boolean{
         val form = formRepository.findByIdOrThrow(behandlingId)
-        if(
+        return(
             form.klageKonkret == FormVilkår.OPPFYLT &&
             form.klagePart == FormVilkår.OPPFYLT &&
             form.klageSignert == FormVilkår.OPPFYLT &&
             form.klagefristOverholdt == FormVilkår.OPPFYLT &&
-            !form.saksbehandlerBegrunnelse.equals("")){
-            return true
-        }
-        return false
+            form.saksbehandlerBegrunnelse != "")
     }
 }

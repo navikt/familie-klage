@@ -151,6 +151,7 @@ class BehandlingService(
             formService.formkravErOppfylt(behandlingId) &&
             vurderingService.klageTasIkkeTilFølge(behandlingId)
         ){
+            logger.info("send til kabal")
             val fagsakId = behandlingsRepository.findByIdOrThrow(behandlingId).fagsakId
             kabalService.sendTilKabal(behandlingId, fagsakId)
         }
