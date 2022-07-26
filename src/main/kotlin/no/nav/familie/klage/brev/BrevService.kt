@@ -32,7 +32,6 @@ class BrevService(
         val personIdent = brevRepository.findPersonIdByBehandlingId(fritekstbrevDto.behandlingId)
         val behandling = behandlingService.hentBehandling(fritekstbrevDto.behandlingId)
 
-        println(fritekstbrevDto.behandlingId)
         slettAvsnittOmEksisterer(fritekstbrevDto.behandlingId)
 
         val request = FritekstBrevRequestDto(
@@ -42,7 +41,7 @@ class BrevService(
             navn = navn
         )
 
-        val signaturMedEnhet = brevsignaturService.lagSignatur(behandling)
+        val signaturMedEnhet = brevsignaturService.lagSignatur(behandling.id)
 
         val html = brevClient.genererHtmlFritekstbrev(
             fritekstBrev = request,

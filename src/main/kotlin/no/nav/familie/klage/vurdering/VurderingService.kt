@@ -1,16 +1,22 @@
 package no.nav.familie.klage.vurdering
 
+import no.nav.familie.klage.behandling.domain.StegType
 import VurderingDto
+import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import tilDto
 import java.util.UUID
 
 @Service
-class VurderingService(private val vurderingRepository: VurderingRepository) {
+class VurderingService(
+        private val vurderingRepository: VurderingRepository,
+        private val stegService: StegService
+    ) {
 
     fun hentVurdering(behandlingId: UUID): VurderingDto{
         val vurdering = vurderingRepository.findByIdOrNull(behandlingId)
@@ -22,7 +28,10 @@ class VurderingService(private val vurderingRepository: VurderingRepository) {
         return vurderingRepository.findVedtakByBehandlingIdOrThrow(id)
     }
 
+    @Transactional
     fun opprettEllerOppdaterVurdering(vurdering: Vurdering): Vurdering {
+        stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING)
+
         if(sjekkOmVurderingEksiterer(vurdering.behandlingId)){
             return oppdaterVurdering(vurdering)
         } else {
