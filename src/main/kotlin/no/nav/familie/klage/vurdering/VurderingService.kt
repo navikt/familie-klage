@@ -1,8 +1,8 @@
 package no.nav.familie.klage.vurdering
 
-import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.StegType
 import VurderingDto
+import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
@@ -15,7 +15,7 @@ import java.util.UUID
 @Service
 class VurderingService(
         private val vurderingRepository: VurderingRepository,
-        private val behandlingService: BehandlingService
+        private val stegService: StegService
     ) {
 
     fun hentVurdering(behandlingId: UUID): VurderingDto{
@@ -30,7 +30,8 @@ class VurderingService(
 
     @Transactional
     fun opprettEllerOppdaterVurdering(vurdering: Vurdering): Vurdering {
-        behandlingService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING)
+        stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING)
+
         if(sjekkOmVurderingEksiterer(vurdering.behandlingId)){
             return oppdaterVurdering(vurdering)
         } else {

@@ -1,6 +1,6 @@
 package no.nav.familie.klage.formkrav
 
-import no.nav.familie.klage.behandling.BehandlingService
+import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
@@ -14,8 +14,8 @@ import java.util.UUID
 @Service
 class FormService(
     private val formRepository: FormRepository,
-    private val behandlingService: BehandlingService
-) {
+    private val stegService: StegService
+    ) {
     fun hentForm(behandlingId: UUID): FormDto{
         val form = formRepository.findByIdOrThrow(behandlingId)
         return form.tilDto()
@@ -23,7 +23,7 @@ class FormService(
 
     @Transactional
     fun opprettForm(form: Form): Form {
-        behandlingService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV)
+        stegService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV)
         if(sjekkOmFormEksiterer(form.behandlingId)){
             return oppdaterForm(form)
         } else {

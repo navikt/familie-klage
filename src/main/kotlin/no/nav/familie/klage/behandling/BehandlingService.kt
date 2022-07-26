@@ -7,10 +7,7 @@ import no.nav.familie.klage.behandling.domain.BehandlingsÅrsak
 import no.nav.familie.klage.behandling.domain.StønadsType
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.tilDto
-import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
-import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
 import no.nav.familie.klage.brev.BrevRepository
-import no.nav.familie.klage.brev.BrevsignaturService
 import no.nav.familie.klage.brev.FamilieDokumentClient
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
@@ -36,17 +33,16 @@ import java.util.UUID
 @Service
 class BehandlingService(
         private val behandlingsRepository: BehandlingsRepository,
-        private val behandlingshistorikkService: BehandlingshistorikkService,
         private val personopplysningerService: PersonopplysningerService,
         private val fagsakService: FagsakService,
         private val brevRepository: BrevRepository,
         private val familieDokumentClient: FamilieDokumentClient,
         private val familieIntegrasjonerClient: FamilieIntegrasjonerClient,
-        private val brevsignaturService: BrevsignaturService,
         private val formService: FormService,
         private val vurderingService: VurderingService,
         private val kabalService: KabalService,
-        private val integrasjonerService: IntegrasjonerService
+        private val integrasjonerService: IntegrasjonerService,
+        private val stegService: StegService
     ){
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -96,25 +92,11 @@ class BehandlingService(
     }
 
     @Transactional
-    fun oppdaterSteg(behandlingId: UUID, steg: StegType){
-        val nesteSteg = steg.hentNesteSteg()
-        behandlingsRepository.updateSteg(behandlingId, nesteSteg)
-
-        val signatur = brevsignaturService.lagSignatur(behandlingId)
-        behandlingshistorikkService.opprettBehandlingshistorikk(
-            behandlingshistorikk = Behandlingshistorikk(
-                behandlingId = behandlingId,
-                steg = steg,
-                opprettetAv = signatur.navn
-            )
-        )
-    }
-    @Transactional
     fun ferdigstillBrev(behandlingId: UUID){
-        oppdaterSteg(behandlingId, StegType.BREV)
+        stegService.oppdaterSteg(behandlingId, StegType.BREV)
 
         arkiverOgDistribuerBrev(behandlingId)
-        sendTilKaball(behandlingId)
+        sendTilKabal(behandlingId)
     }
 
 
@@ -143,7 +125,7 @@ class BehandlingService(
         logger.info("Mottok distnummer fra DokDist: $distnummer")
     }
 
-    fun sendTilKaball(behandlingId: UUID){
+    fun sendTilKabal(behandlingId: UUID){
         if(
             formService.formkravErOppfylt(behandlingId) &&
             vurderingService.klageTasIkkeTilFølge(behandlingId)
