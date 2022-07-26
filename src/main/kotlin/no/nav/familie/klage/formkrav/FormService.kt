@@ -13,7 +13,7 @@ class FormService(
     private val formRepository: FormRepository
 ) {
     fun hentForm(behandlingId: UUID): FormDto{
-        val form = formRepository.findByBehandlingId(behandlingId)
+        val form = formRepository.findByIdOrThrow(behandlingId)
         return form.tilDto()
     }
 
