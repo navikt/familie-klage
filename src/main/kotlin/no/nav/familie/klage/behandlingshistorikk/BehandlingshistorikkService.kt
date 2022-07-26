@@ -7,7 +7,7 @@ import java.util.UUID
 @Service
 class BehandlingshistorikkService(private val behandlingshistorikkRepository: BehandlingshistorikkRepository) {
 
-    fun hentBehandlingshistorikker(id: UUID): List<Behandlingshistorikk> = behandlingshistorikkRepository.findByBehandlingIdOrderByEndretTidAsc(id)
+    fun hentBehandlingshistorikker(id: UUID): List<Behandlingshistorikk> = behandlingshistorikkRepository.findByBehandlingIdOrderByEndretTidDesc(id)
 
 
     fun opprettBehandlingshistorikk(behandlingshistorikk: Behandlingshistorikk): Behandlingshistorikk = behandlingshistorikkRepository
