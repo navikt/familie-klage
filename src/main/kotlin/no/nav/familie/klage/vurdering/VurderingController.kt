@@ -28,7 +28,7 @@ class VurderingController(
     }
 
     @PostMapping
-    fun opprettELlerOppdaterVurdering(@RequestBody vurdering: Vurdering): Ressurs<Vurdering> {
+    fun opprettEllerOppdaterVurdering(@RequestBody vurdering: Vurdering): Ressurs<Vurdering> {
         return Ressurs.success(vurderingService.opprettEllerOppdaterVurdering(vurdering))
     }
 
