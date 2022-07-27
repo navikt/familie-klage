@@ -22,12 +22,12 @@ class FormController(
 ) {
 
     @GetMapping("vilkar/{behandlingId}")
-    fun hentVilkår(@PathVariable behandlingId: UUID): Ressurs<FormDto> {
+    fun hentVilkår(@PathVariable behandlingId: UUID): Ressurs<FormDto?> {
         return Ressurs.success(formService.hentForm(behandlingId))
     }
 
     @PostMapping
-    fun opprettFormkravVilkår(@RequestBody form: Form): Ressurs<Form> {
+    fun opprettFormkravVilkår(@RequestBody form: Form): Ressurs<FormDto> {
         return Ressurs.success(formService.opprettForm(form))
     }
 }
