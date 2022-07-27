@@ -2,7 +2,7 @@ package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.BehandlingResultat
 import no.nav.familie.klage.behandling.domain.BehandlingStatus
-import no.nav.familie.klage.behandling.domain.BehandlingSteg
+import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.BehandlingsÅrsak
 import no.nav.familie.klage.behandling.domain.StønadsType
 import no.nav.familie.klage.behandling.dto.BehandlingDto
@@ -13,7 +13,7 @@ import java.util.UUID
 fun behandlingDto(
         id: UUID = UUID.randomUUID(),
         fagsakId: UUID = UUID.randomUUID(),
-        steg: BehandlingSteg = BehandlingSteg.FORMALKRAV,
+        steg: StegType = StegType.FORMKRAV,
         status: BehandlingStatus = BehandlingStatus.UTREDES,
         sistEndret: LocalDateTime = LocalDateTime.now().minusDays(1),
         resultat: BehandlingResultat? = null,

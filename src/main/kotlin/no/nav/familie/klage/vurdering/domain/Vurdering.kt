@@ -3,7 +3,6 @@ package no.nav.familie.klage.vurdering.domain
 import no.nav.familie.klage.felles.domain.Sporbar
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Embedded
-import java.time.LocalDateTime
 import java.util.UUID
 
 data class Vurdering(
@@ -13,11 +12,9 @@ data class Vurdering(
     val arsak: Arsak? = null,
     val hjemmel: Hjemmel? = null,
     val beskrivelse: String,
-    val fullfortDato: LocalDateTime? = LocalDateTime.now(),
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar()
-) {
-}
+)
 
 enum class Vedtak {
     VELG,

@@ -46,7 +46,7 @@ class BrevService(
             navn = navn
         )
 
-        val signaturMedEnhet = brevsignaturService.lagSignatur(behandling)
+        val signaturMedEnhet = brevsignaturService.lagSignatur(behandling.id)
 
         val html = brevClient.genererHtmlFritekstbrev(
             fritekstBrev = request,

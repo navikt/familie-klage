@@ -1,5 +1,6 @@
 package no.nav.familie.klage.behandling.domain
 
+import no.nav.familie.klage.felles.domain.BehandlerRolle
 import no.nav.familie.klage.felles.domain.Sporbar
 import no.nav.familie.kontrakter.felles.Fagsystem
 import org.springframework.data.annotation.Id
@@ -11,7 +12,7 @@ data class Behandling(
     @Id
     val id: UUID = UUID.randomUUID(),
     val fagsakId: UUID,
-    val steg: BehandlingSteg,
+    val steg: StegType,
     val status: BehandlingStatus,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),
@@ -31,13 +32,16 @@ enum class BehandlingResultat(val displayName: String) {
 enum class BehandlingStatus {
     OPPRETTET,
     UTREDES,
+    VENTER,
     FERDIGSTILT
 }
-
-enum class BehandlingSteg {
-    FORMALKRAV,
+enum class StegTypeNavn {
+    OPPRETTET,
+    FORMKRAV,
     VURDERING,
-    KABAL,
+    BREV,
+    SEND_TIL_BESLUTTER,
+    VENTE_PÅ_SVAR_FRA_BESLUTTER,
     BEHANDLING_FERDIGSTILT
 }
 /*
@@ -46,6 +50,60 @@ enum class Fagsystem {
     BA,
     KS
 }*/
+
+enum class StegType(
+    val rekkefølge: Int,
+    val tillattFor: BehandlerRolle,
+    private val gyldigIKombinasjonMedStatus: List<BehandlingStatus>
+) {
+    OPPRETTET(
+        rekkefølge = 0,
+        tillattFor = BehandlerRolle.SAKSBEHANDLER,
+        gyldigIKombinasjonMedStatus = listOf(BehandlingStatus.OPPRETTET)
+    ),
+    FORMKRAV(
+        rekkefølge = 1,
+        tillattFor = BehandlerRolle.SAKSBEHANDLER,
+        gyldigIKombinasjonMedStatus = listOf(BehandlingStatus.OPPRETTET, BehandlingStatus.UTREDES)
+    ),
+    VURDERING(
+        rekkefølge = 2,
+        tillattFor = BehandlerRolle.SAKSBEHANDLER,
+        gyldigIKombinasjonMedStatus = listOf(BehandlingStatus.UTREDES)
+    ),
+    BREV(
+        rekkefølge = 3,
+        tillattFor = BehandlerRolle.SAKSBEHANDLER,
+        gyldigIKombinasjonMedStatus = listOf(BehandlingStatus.UTREDES)
+    ),
+    SEND_TIL_BESLUTTER(
+        rekkefølge = 4,
+        tillattFor = BehandlerRolle.SAKSBEHANDLER,
+        gyldigIKombinasjonMedStatus = listOf(BehandlingStatus.UTREDES)
+    ),
+    VENTE_PÅ_SVAR_FRA_BESLUTTER(
+        rekkefølge = 5,
+        tillattFor = BehandlerRolle.SYSTEM,
+        gyldigIKombinasjonMedStatus = listOf(BehandlingStatus.VENTER)
+    ),
+    BEHANDLING_FERDIGSTILT(
+        rekkefølge = 6,
+        tillattFor = BehandlerRolle.SYSTEM,
+        gyldigIKombinasjonMedStatus = listOf(BehandlingStatus.FERDIGSTILT)
+    );
+
+    fun hentNesteSteg(): StegType {
+        return when (this) {
+            OPPRETTET -> FORMKRAV
+            FORMKRAV -> VURDERING
+            VURDERING -> BREV
+            BREV -> SEND_TIL_BESLUTTER
+            SEND_TIL_BESLUTTER -> VENTE_PÅ_SVAR_FRA_BESLUTTER
+            VENTE_PÅ_SVAR_FRA_BESLUTTER -> BEHANDLING_FERDIGSTILT
+            BEHANDLING_FERDIGSTILT -> BEHANDLING_FERDIGSTILT
+        }
+    }
+}
 
 enum class StønadsType {
     OVERGANGSSTØNAD,

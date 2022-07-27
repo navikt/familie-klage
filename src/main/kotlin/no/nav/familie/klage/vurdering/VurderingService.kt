@@ -1,21 +1,37 @@
 package no.nav.familie.klage.vurdering
 
+import no.nav.familie.klage.behandling.domain.StegType
+import VurderingDto
+import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import tilDto
 import java.util.UUID
 
 @Service
-class VurderingService(private val vurderingRepository: VurderingRepository) {
+class VurderingService(
+        private val vurderingRepository: VurderingRepository,
+        private val stegService: StegService
+    ) {
 
-    fun hentVurdering(id: UUID): Vurdering = vurderingRepository.findByBehandlingId(id)
+    fun hentVurdering(behandlingId: UUID): VurderingDto{
+        val vurdering = vurderingRepository.findByIdOrNull(behandlingId)
+            ?: return opprettEllerOppdaterVurdering(lagTomVurdering(behandlingId)).tilDto()
+        return vurdering.tilDto()
+    }
 
     fun hentVedtak(id: UUID): Vedtak?{
         return vurderingRepository.findVedtakByBehandlingIdOrThrow(id)
     }
 
-    fun opprettVurdering(vurdering: Vurdering): Vurdering {
+    @Transactional
+    fun opprettEllerOppdaterVurdering(vurdering: Vurdering): Vurdering {
+        stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING)
+
         if(sjekkOmVurderingEksiterer(vurdering.behandlingId)){
             return oppdaterVurdering(vurdering)
         } else {
@@ -26,7 +42,6 @@ class VurderingService(private val vurderingRepository: VurderingRepository) {
                     arsak = vurdering.arsak,
                     hjemmel = vurdering.hjemmel,
                     beskrivelse = vurdering.beskrivelse,
-                    fullfortDato = vurdering.fullfortDato
                 )
             )
         }
@@ -44,6 +59,16 @@ class VurderingService(private val vurderingRepository: VurderingRepository) {
 
     fun sjekkOmVurderingEksiterer(id: UUID): Boolean{
         return vurderingRepository.findById(id).isPresent
+    }
+
+    fun lagTomVurdering(behandlingId: UUID): Vurdering{
+        return Vurdering(
+            behandlingId = behandlingId,
+            vedtak = Vedtak.VELG,
+            arsak = null,
+            hjemmel = null,
+            beskrivelse = ""
+        )
     }
 
     fun  klageTasIkkeTilFølge(behandlingId: UUID): Boolean{
