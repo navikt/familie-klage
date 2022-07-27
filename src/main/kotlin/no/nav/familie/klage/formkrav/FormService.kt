@@ -16,13 +16,17 @@ class FormService(
     private val formRepository: FormRepository,
     private val stegService: StegService
     ) {
-    fun hentForm(behandlingId: UUID): FormDto{
-        val form = formRepository.findByIdOrThrow(behandlingId)
-        return form.tilDto()
+    fun hentForm(behandlingId: UUID): FormDto?{
+        val eksisterer = formRepository.existsById(behandlingId)
+        if(eksisterer) {
+            val form = formRepository.findByIdOrThrow(behandlingId)
+            return form.tilDto()
+        }
+        return null
     }
 
     @Transactional
-    fun opprettForm(form: Form): Form {
+    fun opprettForm(form: Form): FormDto {
         stegService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV)
         if(sjekkOmFormEksiterer(form.behandlingId)){
             return oppdaterForm(form)
@@ -37,12 +41,12 @@ class FormService(
                     klageSignert = form.klageSignert,
                     saksbehandlerBegrunnelse = form.saksbehandlerBegrunnelse,
                 )
-            )
+            ).tilDto()
         }
     }
 
     @Transactional
-    fun oppdaterForm(form: Form): Form {
+    fun oppdaterForm(form: Form): FormDto {
         val formFraDb = formRepository.findByBehandlingId(form.behandlingId)
         return formRepository.update(formFraDb.copy(
             klagePart = form.klagePart,
@@ -50,7 +54,7 @@ class FormService(
             klageKonkret = form.klageKonkret,
             klageSignert = form.klageSignert,
             saksbehandlerBegrunnelse = form.saksbehandlerBegrunnelse
-        ))
+        )).tilDto()
     }
 
     fun sjekkOmFormEksiterer(id: UUID): Boolean{
