@@ -5,7 +5,7 @@ import org.springframework.data.relational.core.mapping.Column
 
 data class Personopplysninger(
     @Id
-    val personId: String,
+    val personIdent: String,
     val navn: String,
     @Column("kjonn")
     val kjønn: Kjønn,

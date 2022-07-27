@@ -10,7 +10,7 @@ import java.util.UUID
 data class Fagsak(
     @Id
     val id: UUID = UUID.randomUUID(),
-    val personId: String,
+    val personIdent: String,
     @Column("stonadstype")
     val stønadsType: StønadsType,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)

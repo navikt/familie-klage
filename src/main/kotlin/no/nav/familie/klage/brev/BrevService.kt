@@ -35,7 +35,7 @@ class BrevService(
         val navn = behandlingService.hentNavnFraBehandlingsId(fritekstbrevDto.behandlingId)
         val behandling = behandlingService.hentBehandling(fritekstbrevDto.behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
-        val personIdent = personopplysningerService.hentNavn(fagsak.personId)
+        val personIdent = personopplysningerService.hentNavn(fagsak.personIdent)
 
         slettAvsnittOmEksisterer(fritekstbrevDto.behandlingId)
 

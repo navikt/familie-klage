@@ -53,7 +53,7 @@ class BehandlingService(
     fun hentNavnFraBehandlingsId(behandlingId: UUID): String{
         val behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
-        return personopplysningerService.hentNavn(fagsak.personId)
+        return personopplysningerService.hentNavn(fagsak.personIdent)
     }
 
     @Transactional
@@ -63,7 +63,7 @@ class BehandlingService(
 
         personopplysningerService.opprettPersonopplysninger(
             personopplysninger = Personopplysninger(
-                personId = fødselsnummer,
+                personIdent = fødselsnummer,
                 navn = "Juni",
                 kjønn = Kjønn.KVINNE,
                 adresse = "Korsgata 21A",
@@ -74,7 +74,7 @@ class BehandlingService(
         fagsakService.opprettFagsak(
             fagsak = Fagsak(
                 id = fagsakId,
-                personId = fødselsnummer,
+                personIdent = fødselsnummer,
                 stønadsType = StønadsType.BARNETILSYN
             )
         )
@@ -109,7 +109,7 @@ class BehandlingService(
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
 
         val arkiverDokumentRequest = integrasjonerService.lagArkiverDokumentRequest(
-            personIdent = fagsak.personId,
+            personIdent = fagsak.personIdent,
             pdf = pdf,
             fagsakId = behandling.fagsakId.toString(),
             behandlingId = behandlingId,
