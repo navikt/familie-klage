@@ -30,21 +30,20 @@ class VurderingService(
 
     @Transactional
     fun opprettEllerOppdaterVurdering(vurdering: Vurdering): Vurdering {
-        stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING)
+        stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING, true)
 
         if(sjekkOmVurderingEksiterer(vurdering.behandlingId)){
             return oppdaterVurdering(vurdering)
-        } else {
-            return vurderingRepository.insert(
-                Vurdering(
-                    behandlingId = vurdering.behandlingId,
-                    vedtak = vurdering.vedtak,
-                    arsak = vurdering.arsak,
-                    hjemmel = vurdering.hjemmel,
-                    beskrivelse = vurdering.beskrivelse,
-                )
-            )
         }
+        return vurderingRepository.insert(
+            Vurdering(
+                behandlingId = vurdering.behandlingId,
+                vedtak = vurdering.vedtak,
+                arsak = vurdering.arsak,
+                hjemmel = vurdering.hjemmel,
+                beskrivelse = vurdering.beskrivelse,
+            )
+        )
     }
 
     fun oppdaterVurdering(vurdering: Vurdering): Vurdering {
