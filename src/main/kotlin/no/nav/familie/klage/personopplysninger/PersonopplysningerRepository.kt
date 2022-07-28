@@ -8,7 +8,6 @@ import java.util.UUID
 
 @Repository
 interface PersonopplysningerRepository : RepositoryInterface<Personopplysninger, UUID>, InsertUpdateRepository<Personopplysninger> {
-    fun findByPersonId(personId: String): Personopplysninger
+    fun findByPersonIdent(personIdent: String): Personopplysninger
 
-    fun findNavnByPersonId(personId: String): String
 }

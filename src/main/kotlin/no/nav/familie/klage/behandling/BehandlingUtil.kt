@@ -13,7 +13,6 @@ import java.util.UUID
 fun behandlingDto(
         id: UUID = UUID.randomUUID(),
         fagsakId: UUID = UUID.randomUUID(),
-        personId: String,
         steg: StegType = StegType.FORMKRAV,
         status: BehandlingStatus = BehandlingStatus.UTREDES,
         sistEndret: LocalDateTime = LocalDateTime.now().minusDays(1),
@@ -27,7 +26,6 @@ fun behandlingDto(
         BehandlingDto(
                 id,
                 fagsakId,
-                personId,
                 steg,
                 status,
                 sistEndret,

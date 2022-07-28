@@ -13,7 +13,6 @@ import java.util.UUID
 data class BehandlingDto(
         val id: UUID,
         val fagsakId: UUID,
-        val personId: String,
         val steg: StegType,
         val status: BehandlingStatus,
         val sistEndret: LocalDateTime,
@@ -28,7 +27,6 @@ data class BehandlingDto(
 fun Behandling.tilDto(): BehandlingDto =
         BehandlingDto(
                 id = this.id,
-                personId = this.personId,
                 fagsakId = this.fagsakId,
                 steg = this.steg,
                 status = this.status,

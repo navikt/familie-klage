@@ -13,8 +13,8 @@ class FagsakService (
         return fagsakRepository.insert(
             Fagsak(
                 id = fagsak.id,
-                person_id = fagsak.person_id,
-                søknadsType = fagsak.søknadsType
+                personIdent = fagsak.personIdent,
+                stønadsType = fagsak.stønadsType
             )
         )
     }

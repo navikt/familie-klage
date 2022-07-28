@@ -20,7 +20,6 @@ import no.nav.familie.klage.personopplysninger.domain.Personopplysninger
 import no.nav.familie.klage.personopplysninger.domain.Kjønn
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
-import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
 import no.nav.familie.kontrakter.felles.dokdist.Distribusjonstype
@@ -51,7 +50,11 @@ class BehandlingService(
         return behandling.tilDto()
     }
 
-    fun hentNavnFraBehandlingsId(behandlingId: UUID): String = behandlingsRepository.findNavnByBehandlingId(behandlingId)
+    fun hentNavnFraBehandlingsId(behandlingId: UUID): String{
+        val behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
+        val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
+        return personopplysningerService.hentNavn(fagsak.personIdent)
+    }
 
     @Transactional
     fun opprettBehandling(): Behandling {
@@ -60,7 +63,7 @@ class BehandlingService(
 
         personopplysningerService.opprettPersonopplysninger(
             personopplysninger = Personopplysninger(
-                personId = fødselsnummer,
+                personIdent = fødselsnummer,
                 navn = "Juni",
                 kjønn = Kjønn.KVINNE,
                 adresse = "Korsgata 21A",
@@ -71,15 +74,14 @@ class BehandlingService(
         fagsakService.opprettFagsak(
             fagsak = Fagsak(
                 id = fagsakId,
-                person_id =fødselsnummer,
-                søknadsType = SøknadType.BARNETILSYN
+                personIdent = fødselsnummer,
+                stønadsType = StønadsType.BARNETILSYN
             )
         )
 
         val behandling = behandlingsRepository.insert(
             Behandling(
                 fagsakId = fagsakId,
-                personId = fødselsnummer,
                 steg = StegType.FORMKRAV,
                 status = BehandlingStatus.OPPRETTET,
                 fagsystem = Fagsystem.EF,
@@ -104,9 +106,10 @@ class BehandlingService(
         val brev = brevRepository.findByIdOrThrow(behandlingId)
         val behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
         val pdf = familieDokumentClient.genererPdfFraHtml(brev.saksbehandlerHtml)
+        val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
 
         val arkiverDokumentRequest = integrasjonerService.lagArkiverDokumentRequest(
-            personIdent = behandling.personId,
+            personIdent = fagsak.personIdent,
             pdf = pdf,
             fagsakId = behandling.fagsakId.toString(),
             behandlingId = behandlingId,

@@ -1,7 +1,6 @@
 CREATE TABLE behandling (
     id                   UUID PRIMARY KEY,
     fagsak_id            UUID         NOT NULL REFERENCES fagsak(id),
-    person_id            VARCHAR      NOT NULL REFERENCES personopplysninger(person_id),
 
     opprettet_av        VARCHAR      NOT NULL DEFAULT 'VL',
     opprettet_tid       TIMESTAMP(3) NOT NULL DEFAULT LOCALTIMESTAMP,
