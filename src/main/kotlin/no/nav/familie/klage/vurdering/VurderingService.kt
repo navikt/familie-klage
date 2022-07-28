@@ -34,17 +34,16 @@ class VurderingService(
 
         if(sjekkOmVurderingEksiterer(vurdering.behandlingId)){
             return oppdaterVurdering(vurdering)
-        } else {
-            return vurderingRepository.insert(
-                Vurdering(
-                    behandlingId = vurdering.behandlingId,
-                    vedtak = vurdering.vedtak,
-                    arsak = vurdering.arsak,
-                    hjemmel = vurdering.hjemmel,
-                    beskrivelse = vurdering.beskrivelse,
-                )
-            )
         }
+        return vurderingRepository.insert(
+            Vurdering(
+                behandlingId = vurdering.behandlingId,
+                vedtak = vurdering.vedtak,
+                arsak = vurdering.arsak,
+                hjemmel = vurdering.hjemmel,
+                beskrivelse = vurdering.beskrivelse,
+            )
+        )
     }
 
     fun oppdaterVurdering(vurdering: Vurdering): Vurdering {
