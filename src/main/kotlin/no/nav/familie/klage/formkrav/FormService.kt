@@ -27,7 +27,11 @@ class FormService(
 
     @Transactional
     fun opprettForm(form: Form): FormDto {
-        stegService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV)
+        if (!arrayOf(form.klageKonkret, form.klagePart, form.klageSignert, form.klagefristOverholdt).contains(FormVilkår.IKKE_SATT)) {
+            stegService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV, true)
+        } else {
+            stegService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV, false)
+        }
         if(sjekkOmFormEksiterer(form.behandlingId)){
             return oppdaterForm(form)
         } else {

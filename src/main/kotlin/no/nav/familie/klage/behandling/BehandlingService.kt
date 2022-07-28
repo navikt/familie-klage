@@ -93,7 +93,7 @@ class BehandlingService(
 
     @Transactional
     fun ferdigstillBrev(behandlingId: UUID){
-        stegService.oppdaterSteg(behandlingId, StegType.BREV)
+        stegService.oppdaterSteg(behandlingId, StegType.BREV, true)
 
         arkiverOgDistribuerBrev(behandlingId)
         sendTilKabal(behandlingId)

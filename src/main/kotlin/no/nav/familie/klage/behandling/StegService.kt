@@ -15,9 +15,13 @@ class StegService(
     private val behandlingshistorikkService: BehandlingshistorikkService
 ) {
     @Transactional
-    fun oppdaterSteg(behandlingId: UUID, steg: StegType){
+    fun oppdaterSteg(behandlingId: UUID, steg: StegType, stegFremover: Boolean){
         val nesteSteg = steg.hentNesteSteg()
-        behandlingsRepository.updateSteg(behandlingId, nesteSteg)
+        if (stegFremover) {
+            behandlingsRepository.updateSteg(behandlingId, nesteSteg)
+        } else {
+            behandlingsRepository.updateSteg(behandlingId, steg)
+        }
 
         val signatur = brevsignaturService.lagSignatur(behandlingId)
         behandlingshistorikkService.opprettBehandlingshistorikk(
