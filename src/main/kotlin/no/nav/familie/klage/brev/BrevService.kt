@@ -8,7 +8,6 @@ import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.brev.dto.FritekstBrevtype
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,7 +20,6 @@ class BrevService(
     private val behandlingService: BehandlingService,
     private val familieDokumentClient: FamilieDokumentClient,
     private val brevsignaturService: BrevsignaturService,
-    private val personopplysningerService: PersonopplysningerService,
     private val fagsakService: FagsakService,
 ){
     fun hentMellomlagretBrev(behandlingId: UUID): BrevMedAvsnitt? {
@@ -35,14 +33,13 @@ class BrevService(
         val navn = behandlingService.hentNavnFraBehandlingsId(fritekstbrevDto.behandlingId)
         val behandling = behandlingService.hentBehandling(fritekstbrevDto.behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
-        val personIdent = personopplysningerService.hentNavn(fagsak.personIdent)
 
         slettAvsnittOmEksisterer(fritekstbrevDto.behandlingId)
 
         val request = FritekstBrevRequestDto(
             overskrift = fritekstbrevDto.overskrift,
             avsnitt = fritekstbrevDto.avsnitt,
-            personIdent = personIdent,
+            personIdent = fagsak.personIdent,
             navn = navn
         )
 
