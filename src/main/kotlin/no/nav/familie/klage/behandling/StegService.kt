@@ -16,13 +16,10 @@ class StegService(
 ) {
     @Transactional
     fun oppdaterSteg(behandlingId: UUID, steg: StegType, stegFremover: Boolean){
-        if (!(steg === StegType.OPPRETTET || steg === StegType.FORMKRAV || steg === StegType.VURDERING || steg === StegType.BREV))
-            return
+        if (!(steg === StegType.OPPRETTET || steg === StegType.FORMKRAV || steg === StegType.VURDERING || steg === StegType.BREV)) return
 
-        if (stegFremover)
-            behandlingsRepository.updateSteg(behandlingId, steg.hentNesteSteg())
-        else
-            behandlingsRepository.updateSteg(behandlingId, steg)
+        if (stegFremover) behandlingsRepository.updateSteg(behandlingId, steg.hentNesteSteg())
+        else behandlingsRepository.updateSteg(behandlingId, steg)
 
         val signatur = brevsignaturService.lagSignatur(behandlingId)
         behandlingshistorikkService.opprettBehandlingshistorikk(
