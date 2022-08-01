@@ -38,7 +38,7 @@ class VurderingService(
     fun opprettEllerOppdaterVurdering(vurdering: Vurdering): Vurdering {
         stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING, true)
 
-        if(sjekkOmVurderingEksiterer(vurdering.behandlingId)){
+        if(sjekkOmVurderingEksisterer(vurdering.behandlingId)){
             return oppdaterVurdering(vurdering)
         }
         return vurderingRepository.insert(
@@ -62,7 +62,7 @@ class VurderingService(
         ))
     }
 
-    fun sjekkOmVurderingEksiterer(id: UUID): Boolean{
+    fun sjekkOmVurderingEksisterer(id: UUID): Boolean{
         return vurderingRepository.findById(id).isPresent
     }
 
