@@ -21,7 +21,7 @@ class KabalService(
 
         val klager = lagKlagerMock(fagsakId)
         val fagsak = lagOversendtSakMock(behandlingId)
-        val vurdering = vurderingService.hentVurdering(behandlingId)
+        val vurdering = vurderingService.hentEksisterendeVurdering(behandlingId)
 
         return OversendtKlageAnkeV3(
             type = Type.KLAGE,
