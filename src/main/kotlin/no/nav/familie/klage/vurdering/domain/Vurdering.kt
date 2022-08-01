@@ -25,8 +25,9 @@ enum class Vedtak {
 enum class Arsak {
     VELG,
     SAKSBEHANDLINGSFEIL,
-    TODO1,
-    TODO2,
+    TRYKKET_FEIL,
+    LESTE_IKKE_GJENNOM,
+    ENDRET_REGELVERK,
 }
 
 enum class Hjemmel {

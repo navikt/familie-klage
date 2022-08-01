@@ -10,12 +10,13 @@ class BehandlingshistorikkService(private val behandlingshistorikkRepository: Be
     fun hentBehandlingshistorikker(id: UUID): List<Behandlingshistorikk> = behandlingshistorikkRepository.findByBehandlingIdOrderByEndretTidDesc(id)
 
 
-    fun opprettBehandlingshistorikk(behandlingshistorikk: Behandlingshistorikk): Behandlingshistorikk = behandlingshistorikkRepository
-        .insert(
+    fun opprettBehandlingshistorikk(behandlingshistorikk: Behandlingshistorikk): Behandlingshistorikk {
+        return behandlingshistorikkRepository.insert(
             Behandlingshistorikk(
                 behandlingId = behandlingshistorikk.behandlingId,
                 steg = behandlingshistorikk.steg,
                 opprettetAv = behandlingshistorikk.opprettetAv,
             )
         )
+    }
 }

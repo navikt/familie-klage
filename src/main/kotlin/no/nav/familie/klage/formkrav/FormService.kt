@@ -37,7 +37,7 @@ class FormService(
         } else {
             stegService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV, false)
         }
-        if(sjekkOmFormEksiterer(form.behandlingId)){
+        if(sjekkOmFormEksisterer(form.behandlingId)){
             return oppdaterForm(form)
         }
         return formRepository.insert(
@@ -65,7 +65,7 @@ class FormService(
         )).tilDto()
     }
 
-    fun sjekkOmFormEksiterer(id: UUID): Boolean{
+    fun sjekkOmFormEksisterer(id: UUID): Boolean{
         return formRepository.findById(id).isPresent
     }
 

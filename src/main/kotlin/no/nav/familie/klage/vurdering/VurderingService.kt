@@ -6,7 +6,6 @@ import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import tilDto
@@ -18,9 +17,16 @@ class VurderingService(
         private val stegService: StegService
     ) {
 
-    fun hentVurdering(behandlingId: UUID): VurderingDto{
-        val vurdering = vurderingRepository.findByIdOrNull(behandlingId)
-            ?: return opprettEllerOppdaterVurdering(lagTomVurdering(behandlingId)).tilDto()
+    fun hentVurdering(behandlingId: UUID): VurderingDto?{
+        val eksisterer = vurderingRepository.existsById(behandlingId)
+        if(eksisterer) {
+            return hentEksisterendeVurdering(behandlingId)
+        }
+        return null
+    }
+
+    fun hentEksisterendeVurdering(behandlingId: UUID): VurderingDto{
+        val vurdering = vurderingRepository.findByIdOrThrow(behandlingId)
         return vurdering.tilDto()
     }
 
@@ -32,7 +38,7 @@ class VurderingService(
     fun opprettEllerOppdaterVurdering(vurdering: Vurdering): Vurdering {
         stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING, true)
 
-        if(sjekkOmVurderingEksiterer(vurdering.behandlingId)){
+        if(sjekkOmVurderingEksisterer(vurdering.behandlingId)){
             return oppdaterVurdering(vurdering)
         }
         return vurderingRepository.insert(
@@ -56,7 +62,7 @@ class VurderingService(
         ))
     }
 
-    fun sjekkOmVurderingEksiterer(id: UUID): Boolean{
+    fun sjekkOmVurderingEksisterer(id: UUID): Boolean{
         return vurderingRepository.findById(id).isPresent
     }
 

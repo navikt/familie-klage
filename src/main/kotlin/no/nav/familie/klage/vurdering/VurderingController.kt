@@ -23,7 +23,7 @@ class VurderingController(
 ) {
 
     @GetMapping("{behandlingId}")
-    fun hentVurdering(@PathVariable behandlingId: UUID): Ressurs<VurderingDto> {
+    fun hentVurdering(@PathVariable behandlingId: UUID): Ressurs<VurderingDto?> {
         return Ressurs.success(vurderingService.hentVurdering(behandlingId))
     }
 
