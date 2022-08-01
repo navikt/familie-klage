@@ -25,9 +25,17 @@ class BrevService(
     private val fagsakService: FagsakService,
 ){
     fun hentMellomlagretBrev(behandlingId: UUID): BrevMedAvsnitt? {
-        val brev = brevRepository.findByIdOrThrow(behandlingId)
-        val avsnitt = avsnittRepository.hentAvsnittPåBehandlingId(behandlingId)
-        return BrevMedAvsnitt(behandlingId, brev.overskrift, avsnitt)
+        val eksisterer = sjekkOmBrevEksiterer(behandlingId)
+        if(eksisterer) {
+            val brev = brevRepository.findByIdOrThrow(behandlingId)
+            val avsnitt = avsnittRepository.hentAvsnittPåBehandlingId(behandlingId)
+            return BrevMedAvsnitt(behandlingId, brev.overskrift, avsnitt)
+        }
+        return null
+    }
+
+    fun sjekkOmBrevEksiterer(id: UUID): Boolean{
+        return brevRepository.findById(id).isPresent
     }
 
     @Transactional
