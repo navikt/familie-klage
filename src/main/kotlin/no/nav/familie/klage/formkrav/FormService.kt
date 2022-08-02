@@ -32,7 +32,8 @@ class FormService(
                 form.klagePart,
                 form.klageSignert,
                 form.klagefristOverholdt
-            ).contains(FormVilkår.IKKE_SATT)) {
+            ).contains(FormVilkår.IKKE_SATT) &&
+            form.saksbehandlerBegrunnelse.isNotEmpty()) {
             stegService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV, true)
         } else {
             stegService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV, false)
