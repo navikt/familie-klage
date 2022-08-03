@@ -34,7 +34,8 @@ class FormService(
                 form.klagefristOverholdt
             ).contains(FormVilkår.IKKE_SATT) &&
             form.saksbehandlerBegrunnelse.isNotEmpty()) {
-            stegService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV, true)
+            if (formkravErOppfylt(form)) stegService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV, true)
+            else stegService.oppdaterSteg(form.behandlingId, StegType.VURDERING, true)
         } else {
             stegService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV, false)
         }
@@ -70,8 +71,7 @@ class FormService(
         return formRepository.findById(id).isPresent
     }
 
-    fun formkravErOppfylt(behandlingId: UUID): Boolean{
-        val form = formRepository.findByIdOrThrow(behandlingId)
+    fun formkravErOppfylt(form: Form): Boolean{
         return(
             form.klageKonkret == FormVilkår.OPPFYLT &&
             form.klagePart == FormVilkår.OPPFYLT &&

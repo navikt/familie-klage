@@ -11,6 +11,7 @@ import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.brev.FamilieDokumentClient
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
+import no.nav.familie.klage.formkrav.FormRepository
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.integrasjoner.IntegrasjonerService
@@ -38,6 +39,7 @@ class BehandlingService(
         private val familieDokumentClient: FamilieDokumentClient,
         private val familieIntegrasjonerClient: FamilieIntegrasjonerClient,
         private val formService: FormService,
+        private val formRepository: FormRepository,
         private val vurderingService: VurderingService,
         private val kabalService: KabalService,
         private val integrasjonerService: IntegrasjonerService,
@@ -129,8 +131,9 @@ class BehandlingService(
     }
 
     fun sendTilKabal(behandlingId: UUID){
+        val form = formRepository.findByIdOrThrow(behandlingId)
         if(
-            formService.formkravErOppfylt(behandlingId) &&
+            formService.formkravErOppfylt(form) &&
             vurderingService.klageTasIkkeTilFølge(behandlingId)
         ){
             logger.info("send til kabal")
