@@ -1,6 +1,8 @@
 package no.nav.familie.klage.vurdering
 
 import VurderingDto
+import no.nav.familie.klage.felles.domain.AuditLoggerEvent
+import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -19,11 +21,14 @@ import java.util.UUID
 @ProtectedWithClaims(issuer = "azuread")
 @Validated
 class VurderingController(
-    private val vurderingService: VurderingService
+    private val vurderingService: VurderingService,
+    private val tilgangService: TilgangService,
+
 ) {
 
     @GetMapping("{behandlingId}")
     fun hentVurdering(@PathVariable behandlingId: UUID): Ressurs<VurderingDto?> {
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         return Ressurs.success(vurderingService.hentVurdering(behandlingId))
     }
 

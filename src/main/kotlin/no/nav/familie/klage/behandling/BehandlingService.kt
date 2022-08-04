@@ -141,4 +141,9 @@ class BehandlingService(
             kabalService.sendTilKabal(behandlingId, fagsakId)
         }
     }
+    fun hentAktivIdent(behandlingId: UUID): String {
+        val behandling = hentBehandling(behandlingId)
+
+         return fagsakService.hentFagsak(behandling.fagsakId).personIdent
+    }
 }
