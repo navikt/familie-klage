@@ -23,7 +23,6 @@ import java.util.UUID
 class VurderingController(
     private val vurderingService: VurderingService,
     private val tilgangService: TilgangService,
-
 ) {
 
     @GetMapping("{behandlingId}")
@@ -34,6 +33,8 @@ class VurderingController(
 
     @PostMapping
     fun opprettEllerOppdaterVurdering(@RequestBody vurdering: Vurdering): Ressurs<Vurdering> {
+        tilgangService.validerTilgangTilBehandling(vurdering.behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerHarSaksbehandlerrolle()
         return Ressurs.success(vurderingService.opprettEllerOppdaterVurdering(vurdering))
     }
 
