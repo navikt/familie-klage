@@ -40,7 +40,7 @@ class VurderingController(
 
     @GetMapping("{behandlingId}/vedtak")
     fun hentVedtak(@PathVariable behandlingId: UUID): Ressurs<Vedtak?> {
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         return Ressurs.success(vurderingService.hentVedtak(behandlingId))
     }
-
 }
