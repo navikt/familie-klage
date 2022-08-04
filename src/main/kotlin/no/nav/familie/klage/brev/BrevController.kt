@@ -2,6 +2,8 @@ package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.brev.domain.BrevMedAvsnitt
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
+import no.nav.familie.klage.felles.domain.AuditLoggerEvent
+import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
@@ -19,13 +21,17 @@ import java.util.UUID
 @Validated
 class BrevController (
     private val brevService: BrevService,
+    private val tilgangService: TilgangService,
     ){
     @GetMapping("/{behandlingId}")
     fun hentBrev(@PathVariable behandlingId: UUID): Ressurs<BrevMedAvsnitt?> {
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         return Ressurs.success(brevService.hentMellomlagretBrev(behandlingId))
     }
     @PostMapping("")
-    fun lagBrev(@RequestBody brevInnhold: FritekstBrevDto): Ressurs<ByteArray> {
-        return Ressurs.success(brevService.lagBrev(brevInnhold))
+    fun lagEllerOppdaterBrev(@RequestBody brevInnhold: FritekstBrevDto): Ressurs<ByteArray> {
+        tilgangService.validerTilgangTilBehandling(brevInnhold.behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerHarSaksbehandlerrolle()
+        return Ressurs.success(brevService.lagEllerOppdaterBrev(brevInnhold))
     }
 }

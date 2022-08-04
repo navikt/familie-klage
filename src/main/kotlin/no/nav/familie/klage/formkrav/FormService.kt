@@ -26,7 +26,7 @@ class FormService(
     }
 
     @Transactional
-    fun opprettForm(form: Form): FormDto {
+    fun opprettEllerOppdaterForm(form: Form): FormDto {
         if (!arrayOf(
                 form.klageKonkret,
                 form.klagePart,

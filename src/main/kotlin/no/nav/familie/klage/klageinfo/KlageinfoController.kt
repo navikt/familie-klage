@@ -1,5 +1,7 @@
 package no.nav.familie.klage.klageinfo
 
+import no.nav.familie.klage.felles.domain.AuditLoggerEvent
+import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.klageinfo.domain.Klage
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
@@ -15,10 +17,12 @@ import java.util.UUID
 @ProtectedWithClaims(issuer = "azuread")
 @Validated
 class KlageinfoController(
-    val klageinfoService: KlageinfoService
+    val klageinfoService: KlageinfoService,
+    private val tilgangService: TilgangService
 ) {
     @GetMapping("{behandlingId}")
     fun hentKlage(@PathVariable behandlingId: UUID): Ressurs<Klage> {
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         return Ressurs.success(klageinfoService.hentInfo(behandlingId))
     }
 }

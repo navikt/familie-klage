@@ -37,7 +37,7 @@ class BrevService(
     }
 
     @Transactional
-    fun lagBrev(fritekstbrevDto: FritekstBrevDto): ByteArray{
+    fun lagEllerOppdaterBrev(fritekstbrevDto: FritekstBrevDto): ByteArray{
         val navn = behandlingService.hentNavnFraBehandlingsId(fritekstbrevDto.behandlingId)
         val behandling = behandlingService.hentBehandling(fritekstbrevDto.behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)

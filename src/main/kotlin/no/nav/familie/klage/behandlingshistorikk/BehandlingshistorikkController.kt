@@ -1,6 +1,8 @@
 package no.nav.familie.klage.behandlingshistorikk
 
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
+import no.nav.familie.klage.felles.domain.AuditLoggerEvent
+import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
@@ -17,16 +19,20 @@ import java.util.UUID
 @ProtectedWithClaims(issuer = "azuread")
 @Validated
 class BehandlingshistorikkController(
-    private val behandlingshistorikkService: BehandlingshistorikkService
+    private val behandlingshistorikkService: BehandlingshistorikkService,
+    private val tilgangService: TilgangService,
 ) {
 
     @GetMapping("{behandlingId}")
     fun hentBehandlingshistorikker(@PathVariable behandlingId: UUID): Ressurs<List<Behandlingshistorikk>> {
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         return Ressurs.success(behandlingshistorikkService.hentBehandlingshistorikker(behandlingId))
     }
 
     @PostMapping
     fun opprettBehandlingshistorikk(@RequestBody behandlingshistorikk: Behandlingshistorikk): Ressurs<Behandlingshistorikk> {
+        tilgangService.validerTilgangTilBehandling(behandlingshistorikk.behandlingId, AuditLoggerEvent.CREATE)
+        tilgangService.validerHarSaksbehandlerrolle()
         return Ressurs.success(behandlingshistorikkService.opprettBehandlingshistorikk(behandlingshistorikk))
     }
 

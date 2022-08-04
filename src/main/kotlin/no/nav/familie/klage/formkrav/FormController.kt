@@ -31,9 +31,9 @@ class FormController(
     }
 
     @PostMapping
-    fun opprettFormkravVilkår(@RequestBody form: Form): Ressurs<FormDto> {
+    fun opprettEllerOppdaterFormkravVilkår(@RequestBody form: Form): Ressurs<FormDto> {
         tilgangService.validerTilgangTilBehandling(form.behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolle()
-        return Ressurs.success(formService.opprettForm(form))
+        return Ressurs.success(formService.opprettEllerOppdaterForm(form))
     }
 }
