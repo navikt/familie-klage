@@ -38,7 +38,8 @@ class BehandlingController(
 
     @PostMapping("/ferdigstill/{behandlingId}")
     fun ferdigstillBrev(@PathVariable behandlingId: UUID){
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.CREATE)
+        tilgangService.validerHarSaksbehandlerrolle()
         behandlingService.ferdigstillBrev(behandlingId)
     }
-
 }
