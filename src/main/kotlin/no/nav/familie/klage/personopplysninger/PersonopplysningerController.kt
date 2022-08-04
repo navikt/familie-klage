@@ -1,5 +1,6 @@
 package no.nav.familie.klage.personopplysninger
 
+import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
@@ -22,12 +23,14 @@ import java.util.UUID
 class PersonopplysningerController(
     private val personopplysningerService: PersonopplysningerService,
     private val tilgangService: TilgangService,
-    private val fagsakService: FagsakService
+    private val fagsakService: FagsakService,
+    private val behandlingService: BehandlingService,
     ) {
 
     @GetMapping("{behandlingId}")
     fun hentPersonopplysninger(@PathVariable behandlingId: UUID): Ressurs<Personopplysninger> {
-        val person = fagsakService.hentFagsak(behandlingId)
+        val behandling = behandlingService.hentBehandling(behandlingId)
+        val person = fagsakService.hentFagsak(behandling.fagsakId)
         tilgangService.validerTilgangTilPerson(person.personIdent, AuditLoggerEvent.ACCESS)
         return Ressurs.success(personopplysningerService.hentPersonopplysninger(behandlingId))
     }
