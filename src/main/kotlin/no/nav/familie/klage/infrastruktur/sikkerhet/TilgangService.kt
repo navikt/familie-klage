@@ -1,22 +1,27 @@
 package no.nav.familie.klage.infrastruktur.sikkerhet
 
+import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.felles.domain.AuditLogger
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.felles.domain.BehandlerRolle
+import no.nav.familie.klage.felles.domain.CustomKeyValue
 import no.nav.familie.klage.felles.domain.Sporingsdata
 import no.nav.familie.klage.felles.dto.Tilgang
 import no.nav.familie.klage.infrastruktur.config.RolleConfig
+import no.nav.familie.klage.infrastruktur.config.getValue
 import no.nav.familie.klage.infrastruktur.exception.ManglerTilgang
 import no.nav.familie.klage.personopplysninger.PersonopplysningerIntegrasjonerClient
 import org.springframework.cache.CacheManager
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class TilgangService(
     private val personopplysningerIntegrasjonerClient: PersonopplysningerIntegrasjonerClient,
     private val rolleConfig: RolleConfig,
     private val cacheManager: CacheManager,
-    private val auditLogger: AuditLogger
+    private val auditLogger: AuditLogger,
+    private val behandlingService: BehandlingService,
 ) {
 
     /**
@@ -46,25 +51,28 @@ class TilgangService(
         }
     }
 
-//    fun validerTilgangTilBehandling(behandlingId: UUID, event: AuditLoggerEvent) {
-//        val personIdent = cacheManager.getValue("behandlingPersonIdent", behandlingId) {
-//            behandlingService.hentAktivIdent(behandlingId)
-//        }
-//        val tilgang = harTilgangTilPersonMedRelasjoner(personIdent)
-//        auditLogger.log(
-//                Sporingsdata(
-//                        event, personIdent, tilgang,
-//                        custom1 = CustomKeyValue("behandling", behandlingId.toString())
-//                )
-//        )
-//        if (!tilgang.harTilgang) {
-//            throw ManglerTilgang(
-//                    melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
-//                              "har ikke tilgang til behandling=$behandlingId",
-//                    frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}"
-//            )
-//        }
-//    }
+    fun validerTilgangTilBehandling(behandlingId: UUID, event: AuditLoggerEvent){
+        val personIdent = cacheManager.getValue("behandlingPersonIdent", behandlingId) {
+            behandlingService.hentAktivIdent(behandlingId)
+        }
+
+        val tilgang = harTilgangTilPersonMedRelasjoner(personIdent)
+        auditLogger.log(
+            Sporingsdata(
+                event, personIdent, tilgang,
+                custom1 = CustomKeyValue("behandling", behandlingId.toString())
+            )
+        )
+
+        if(!tilgang.harTilgang){
+            throw ManglerTilgang(
+                melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
+                "har ikke tilgang til behandling=$behandlingId",
+                frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}"
+            )
+        }
+
+    }
 
     private fun harTilgangTilPersonMedRelasjoner(personIdent: String): Tilgang {
         return harSaksbehandlerTilgang("validerTilgangTilPersonMedBarn", personIdent) {
