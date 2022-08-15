@@ -10,12 +10,11 @@ import java.util.UUID
 
 @Repository
 interface VurderingRepository : RepositoryInterface<Vurdering, UUID>, InsertUpdateRepository<Vurdering> {
-        fun findByBehandlingId(behandlingId: UUID): Vurdering
+    fun findByBehandlingId(behandlingId: UUID): Vurdering
 
-        @Query("""SELECT DISTINCT vurdering.vedtak FROM vurdering 
+    @Query(
+        """SELECT DISTINCT vurdering.vedtak FROM vurdering 
               WHERE vurdering.behandling_id = :behandling_id AND vurdering.vedtak IS NOT NULL"""
-        )
-        fun findVedtakByBehandlingIdOrThrow(behandling_id: UUID): Vedtak?
-
-
+    )
+    fun findVedtakByBehandlingIdOrThrow(behandling_id: UUID): Vedtak?
 }

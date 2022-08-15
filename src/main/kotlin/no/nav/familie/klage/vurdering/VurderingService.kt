@@ -1,8 +1,8 @@
 package no.nav.familie.klage.vurdering
 
-import no.nav.familie.klage.behandling.domain.StegType
 import VurderingDto
 import no.nav.familie.klage.behandling.StegService
+import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
@@ -13,24 +13,24 @@ import java.util.UUID
 
 @Service
 class VurderingService(
-        private val vurderingRepository: VurderingRepository,
-        private val stegService: StegService
-    ) {
+    private val vurderingRepository: VurderingRepository,
+    private val stegService: StegService
+) {
 
-    fun hentVurdering(behandlingId: UUID): VurderingDto?{
+    fun hentVurdering(behandlingId: UUID): VurderingDto? {
         val eksisterer = vurderingRepository.existsById(behandlingId)
-        if(eksisterer) {
+        if (eksisterer) {
             return hentEksisterendeVurdering(behandlingId)
         }
         return null
     }
 
-    fun hentEksisterendeVurdering(behandlingId: UUID): VurderingDto{
+    fun hentEksisterendeVurdering(behandlingId: UUID): VurderingDto {
         val vurdering = vurderingRepository.findByIdOrThrow(behandlingId)
         return vurdering.tilDto()
     }
 
-    fun hentVedtak(id: UUID): Vedtak?{
+    fun hentVedtak(id: UUID): Vedtak? {
         return vurderingRepository.findVedtakByBehandlingIdOrThrow(id)
     }
 
@@ -38,7 +38,7 @@ class VurderingService(
     fun opprettEllerOppdaterVurdering(vurdering: Vurdering): Vurdering {
         stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING, true)
 
-        if(sjekkOmVurderingEksisterer(vurdering.behandlingId)){
+        if (sjekkOmVurderingEksisterer(vurdering.behandlingId)) {
             return oppdaterVurdering(vurdering)
         }
         return vurderingRepository.insert(
@@ -54,19 +54,21 @@ class VurderingService(
 
     fun oppdaterVurdering(vurdering: Vurdering): Vurdering {
         val vurderingFraDb = vurderingRepository.findByBehandlingId(vurdering.behandlingId)
-        return vurderingRepository.update(vurderingFraDb.copy(
-            vedtak = vurdering.vedtak,
-            beskrivelse = vurdering.beskrivelse,
-            arsak = vurdering.arsak,
-            hjemmel = vurdering.hjemmel
-        ))
+        return vurderingRepository.update(
+            vurderingFraDb.copy(
+                vedtak = vurdering.vedtak,
+                beskrivelse = vurdering.beskrivelse,
+                arsak = vurdering.arsak,
+                hjemmel = vurdering.hjemmel
+            )
+        )
     }
 
-    fun sjekkOmVurderingEksisterer(id: UUID): Boolean{
+    fun sjekkOmVurderingEksisterer(id: UUID): Boolean {
         return vurderingRepository.findById(id).isPresent
     }
 
-    fun lagTomVurdering(behandlingId: UUID): Vurdering{
+    fun lagTomVurdering(behandlingId: UUID): Vurdering {
         return Vurdering(
             behandlingId = behandlingId,
             vedtak = Vedtak.VELG,
@@ -76,7 +78,7 @@ class VurderingService(
         )
     }
 
-    fun  klageTasIkkeTilFølge(behandlingId: UUID): Boolean{
+    fun klageTasIkkeTilFølge(behandlingId: UUID): Boolean {
         val vurdering = vurderingRepository.findByIdOrThrow(behandlingId)
         return (vurdering.vedtak == Vedtak.OPPRETTHOLD_VEDTAK)
     }

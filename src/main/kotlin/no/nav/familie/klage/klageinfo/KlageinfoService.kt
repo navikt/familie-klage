@@ -22,5 +22,4 @@ class KlageinfoService(
     fun sjekkOmKlageEksisterer(behandlingId: UUID): Boolean {
         return klageRepository.findById(behandlingId).isPresent
     }
-
 }

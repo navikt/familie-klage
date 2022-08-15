@@ -51,7 +51,7 @@ class TilgangService(
         }
     }
 
-    fun validerTilgangTilBehandling(behandlingId: UUID, event: AuditLoggerEvent){
+    fun validerTilgangTilBehandling(behandlingId: UUID, event: AuditLoggerEvent) {
         val personIdent = cacheManager.getValue("behandlingPersonIdent", behandlingId) {
             behandlingService.hentAktivIdent(behandlingId)
         }
@@ -64,14 +64,13 @@ class TilgangService(
             )
         )
 
-        if(!tilgang.harTilgang){
+        if (!tilgang.harTilgang) {
             throw ManglerTilgang(
                 melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
-                "har ikke tilgang til behandling=$behandlingId",
+                    "har ikke tilgang til behandling=$behandlingId",
                 frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}"
             )
         }
-
     }
 
     private fun harTilgangTilPersonMedRelasjoner(personIdent: String): Tilgang {

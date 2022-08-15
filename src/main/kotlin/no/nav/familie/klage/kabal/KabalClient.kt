@@ -11,7 +11,6 @@ import org.springframework.web.client.RestOperations
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
-
 @Component
 class KabalClient(
     @Qualifier("azure")
@@ -19,18 +18,17 @@ class KabalClient(
     @Value("\${FAMILIE_INTEGRASJONER_URL}")
     private val integrasjonUri: URI,
     private val integrasjonerConfig: IntegrasjonerConfig,
-) : AbstractRestClient(restOperations, "familie.kabal"){
+) : AbstractRestClient(restOperations, "familie.kabal") {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     private val dokuarkivUri: URI =
         UriComponentsBuilder.fromUri(integrasjonUri).pathSegment("api/oversendelse/v3/sak").build().toUri()
 
-    fun sendTilKabal(oversendtKlageAnkeV3: OversendtKlageAnkeV3){
+    fun sendTilKabal(oversendtKlageAnkeV3: OversendtKlageAnkeV3) {
         return postForEntity(
             integrasjonerConfig.sendTilKabalUri,
             oversendtKlageAnkeV3
         )
     }
-
 }

@@ -12,7 +12,7 @@ class PersonopplysningerService(
     private val personopplysningerRepository: PersonopplysningerRepository,
     private val behandlingsRepository: BehandlingsRepository,
     private val fagsakService: FagsakService,
-    ) {
+) {
 
     fun hentPersonopplysninger(behandlingId: UUID): Personopplysninger {
         val behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
@@ -32,7 +32,7 @@ class PersonopplysningerService(
         )
     }
 
-    fun hentNavn(personIdent: String): String{ // TODO legg til slik at fornavn og etternavn hentes når db er oppdatert til navn-objekt
+    fun hentNavn(personIdent: String): String { // TODO legg til slik at fornavn og etternavn hentes når db er oppdatert til navn-objekt
         return personopplysningerRepository.findByPersonIdent(personIdent).navn
     }
 }

@@ -21,10 +21,10 @@ class BrevService(
     private val familieDokumentClient: FamilieDokumentClient,
     private val brevsignaturService: BrevsignaturService,
     private val fagsakService: FagsakService,
-){
+) {
     fun hentMellomlagretBrev(behandlingId: UUID): BrevMedAvsnitt? {
         val eksisterer = sjekkOmBrevEksisterer(behandlingId)
-        if(eksisterer) {
+        if (eksisterer) {
             val brev = brevRepository.findByIdOrThrow(behandlingId)
             val avsnitt = avsnittRepository.hentAvsnittPåBehandlingId(behandlingId)
             return BrevMedAvsnitt(behandlingId, brev.overskrift, avsnitt)
@@ -32,12 +32,12 @@ class BrevService(
         return null
     }
 
-    fun sjekkOmBrevEksisterer(id: UUID): Boolean{
+    fun sjekkOmBrevEksisterer(id: UUID): Boolean {
         return brevRepository.findById(id).isPresent
     }
 
     @Transactional
-    fun lagEllerOppdaterBrev(fritekstbrevDto: FritekstBrevDto): ByteArray{
+    fun lagEllerOppdaterBrev(fritekstbrevDto: FritekstBrevDto): ByteArray {
         val navn = behandlingService.hentNavnFraBehandlingsId(fritekstbrevDto.behandlingId)
         val behandling = behandlingService.hentBehandling(fritekstbrevDto.behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
@@ -67,13 +67,14 @@ class BrevService(
 
         )
 
-        for (avsnitt in fritekstbrevDto.avsnitt){
+        for (avsnitt in fritekstbrevDto.avsnitt) {
             lagEllerOppdaterAvsnitt(
                 avsnittId = avsnitt.avsnittId,
                 behandlingId = fritekstbrevDto.behandlingId,
                 deloverskrift = avsnitt.deloverskrift,
                 innhold = avsnitt.innhold,
-                skalSkjulesIBrevBygger = avsnitt.skalSkjulesIBrevbygger)
+                skalSkjulesIBrevBygger = avsnitt.skalSkjulesIBrevbygger
+            )
         }
 
         return familieDokumentClient.genererPdfFraHtml(html)
@@ -93,7 +94,7 @@ class BrevService(
                 brevtype = brevtype
             )
 
-        return when(brevRepository.existsById(brev.behandlingId)){
+        return when (brevRepository.existsById(brev.behandlingId)) {
             true -> brevRepository.update(brev)
             false -> brevRepository.insert(brev)
         }
@@ -109,17 +110,17 @@ class BrevService(
         val avsnitt = Avsnitt(
             avsnittId = avsnittId,
             behandlingId = behandlingId,
-            deloverskrift =deloverskrift,
+            deloverskrift = deloverskrift,
             innhold = innhold,
             skalSkjulesIBrevbygger = skalSkjulesIBrevBygger,
         )
-        return when(avsnittRepository.existsById(avsnittId)){
+        return when (avsnittRepository.existsById(avsnittId)) {
             true -> avsnittRepository.update(avsnitt)
             false -> avsnittRepository.insert(avsnitt)
         }
     }
 
-    fun slettAvsnittOmEksisterer(behandlingId: UUID){
+    fun slettAvsnittOmEksisterer(behandlingId: UUID) {
         avsnittRepository.slettAvsnittMedBehanldingId(behandlingId)
     }
 }

@@ -15,7 +15,7 @@ class StegService(
     private val behandlingshistorikkService: BehandlingshistorikkService
 ) {
     @Transactional
-    fun oppdaterSteg(behandlingId: UUID, steg: StegType, stegFremover: Boolean){
+    fun oppdaterSteg(behandlingId: UUID, steg: StegType, stegFremover: Boolean) {
         if (stegFremover) behandlingsRepository.updateSteg(behandlingId, steg.hentNesteSteg())
         else behandlingsRepository.updateSteg(behandlingId, steg)
 

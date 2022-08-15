@@ -22,21 +22,20 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 @Component
-class FamilieIntegrasjonerClient (
+class FamilieIntegrasjonerClient(
     @Qualifier("azure") restOperations: RestOperations,
     @Value("\${FAMILIE_INTEGRASJONER_URL}")
     private val integrasjonUri: URI,
     private val integrasjonerConfig: IntegrasjonerConfig
 
-    ): AbstractPingableRestClient(restOperations, "journalpost") {
+) : AbstractPingableRestClient(restOperations, "journalpost") {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     override val pingUri: URI = URI.create("/api/ping")
 
     private val dokuarkivUri: URI = UriComponentsBuilder.fromUri(integrasjonUri).pathSegment("api/arkiv").build().toUri()
 
-
-    //lagre brev
+    // lagre brev
     fun arkiverDokument(arkiverDokumentRequest: ArkiverDokumentRequest, saksbehandler: String?): ArkiverDokumentResponse {
         return postForEntity<Ressurs<ArkiverDokumentResponse>>(
             URI.create("$dokuarkivUri/v4/"),
@@ -44,11 +43,10 @@ class FamilieIntegrasjonerClient (
             headerMedSaksbehandler(saksbehandler)
         ).data
             ?: error("Kunne ikke arkivere dokument med fagsakid ${arkiverDokumentRequest.fagsakId}")
-
     }
 
-    //sende brev til bruker
-    fun distribuerBrev(journalpostId: String, distribusjonstype: Distribusjonstype): String{
+    // sende brev til bruker
+    fun distribuerBrev(journalpostId: String, distribusjonstype: Distribusjonstype): String {
         val journalpostRequest = DistribuerJournalpostRequest(
             journalpostId = journalpostId,
             bestillendeFagsystem = Fagsystem.EF,
@@ -63,12 +61,11 @@ class FamilieIntegrasjonerClient (
         ).getDataOrThrow()
     }
 
-    private fun headerMedSaksbehandler(saksbehandler: String?): HttpHeaders{
+    private fun headerMedSaksbehandler(saksbehandler: String?): HttpHeaders {
         val httpHeaders = HttpHeaders()
-        if(saksbehandler != null){
+        if (saksbehandler != null) {
             httpHeaders.set(NavHttpHeaders.NAV_USER_ID.asString(), saksbehandler)
         }
         return httpHeaders
     }
-
 }

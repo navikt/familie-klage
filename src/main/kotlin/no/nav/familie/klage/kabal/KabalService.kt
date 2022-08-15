@@ -12,8 +12,8 @@ class KabalService(
     private val fagsakService: FagsakService,
     private val vurderingService: VurderingService,
 
-){
-    fun sendTilKabal(behandlingId: UUID, fagsakId: UUID){
+) {
+    fun sendTilKabal(behandlingId: UUID, fagsakId: UUID) {
         val oversendtKlageAnkeV3 = lagOversendtKlageAnkeV3Mock(behandlingId, fagsakId)
         kabalClient.sendTilKabal(oversendtKlageAnkeV3)
     }
@@ -29,21 +29,24 @@ class KabalService(
             fagsak = fagsak,
             kildeReferanse = "kildereferansen kommer",
             dvhReferanse = "dvhReferanse",
-            innsynUrl = "https://familie-klage.dev.intern.nav.no/behandling/${behandlingId}",
+            innsynUrl = "https://familie-klage.dev.intern.nav.no/behandling/$behandlingId",
             forrigeBehandlendeEnhet = "forrige behandlende enhet",
             brukersHenvendelseMottattNavDato = LocalDate.now(),
             innsendtTilNav = LocalDate.now(),
             kilde = KildeFagsystem.EF,
             ytelse = Ytelse.ENF,
             kommentar = vurdering.beskrivelse,
-            hjemler = listOf(KabalHjemmel(
-                id = LovKilde.NAV_LOVEN.id,
-                lovKilde = LovKilde.NAV_LOVEN,
-                spesifikasjon = LovKilde.NAV_LOVEN.beskrivelse))
+            hjemler = listOf(
+                KabalHjemmel(
+                    id = LovKilde.NAV_LOVEN.id,
+                    lovKilde = LovKilde.NAV_LOVEN,
+                    spesifikasjon = LovKilde.NAV_LOVEN.beskrivelse
+                )
+            )
         )
     }
 
-    fun lagKlagerMock(fagsakId: UUID): OversendtKlager{
+    fun lagKlagerMock(fagsakId: UUID): OversendtKlager {
 
         val fnr = fagsakService.hentFagsak(fagsakId).personIdent
 
@@ -53,9 +56,10 @@ class KabalService(
         return OversendtKlager(oversendtPartId, null)
     }
 
-    fun lagOversendtSakMock(fagsakId: UUID): OversendtSak{
+    fun lagOversendtSakMock(fagsakId: UUID): OversendtSak {
         return OversendtSak(
             fagsakId = fagsakId.toString(),
-            fagsystem = KildeFagsystem.EF)
+            fagsystem = KildeFagsystem.EF
+        )
     }
 }

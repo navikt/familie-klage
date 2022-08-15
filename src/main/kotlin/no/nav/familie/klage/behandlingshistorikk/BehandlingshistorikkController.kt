@@ -35,5 +35,4 @@ class BehandlingshistorikkController(
         tilgangService.validerHarSaksbehandlerrolle()
         return Ressurs.success(behandlingshistorikkService.opprettBehandlingshistorikk(behandlingshistorikk))
     }
-
 }

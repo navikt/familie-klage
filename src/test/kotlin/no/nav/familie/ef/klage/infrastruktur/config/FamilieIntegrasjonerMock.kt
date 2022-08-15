@@ -112,17 +112,25 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                     )
                 ),
             post(urlEqualTo(integrasjonerConfig.distribuerDokumentUri.path))
-                .willReturn(WireMock.okJson(objectMapper.writeValueAsString(
-                    Ressurs.success(
-                        "123"
-                    )
-                )).withStatus(200)),
+                .willReturn(
+                    WireMock.okJson(
+                        objectMapper.writeValueAsString(
+                            Ressurs.success(
+                                "123"
+                            )
+                        )
+                    ).withStatus(200)
+                ),
             post(urlEqualTo(integrasjonerConfig.sendTilKabalUri.path))
-                .willReturn(WireMock.okJson(objectMapper.writeValueAsString(
-                    Ressurs.success(
-                        "123456"
-                    )
-                )).withStatus(200)),
+                .willReturn(
+                    WireMock.okJson(
+                        objectMapper.writeValueAsString(
+                            Ressurs.success(
+                                "123456"
+                            )
+                        )
+                    ).withStatus(200)
+                ),
 
         )
 

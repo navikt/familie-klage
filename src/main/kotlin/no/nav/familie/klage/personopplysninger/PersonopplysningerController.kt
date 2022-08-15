@@ -25,7 +25,7 @@ class PersonopplysningerController(
     private val tilgangService: TilgangService,
     private val fagsakService: FagsakService,
     private val behandlingService: BehandlingService,
-    ) {
+) {
 
     @GetMapping("{behandlingId}")
     fun hentPersonopplysninger(@PathVariable behandlingId: UUID): Ressurs<Personopplysninger> {

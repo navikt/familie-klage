@@ -14,4 +14,3 @@ data class Klage(
     val klageBeskrivelse: String = "beskrivelse kommer her",
     val sakSistEndret: LocalDate = LocalDate.now()
 )
-
