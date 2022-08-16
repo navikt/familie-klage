@@ -5,5 +5,4 @@ import no.nav.familie.klage.repository.InsertUpdateRepository
 import no.nav.familie.klage.repository.RepositoryInterface
 import java.util.UUID
 
-interface FagsakRepository : RepositoryInterface<Fagsak, UUID>, InsertUpdateRepository<Fagsak> {
-}
+interface FagsakRepository : RepositoryInterface<Fagsak, UUID>, InsertUpdateRepository<Fagsak>

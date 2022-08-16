@@ -11,7 +11,7 @@ data class BrevMedAvsnitt(
     val behandlingId: UUID,
     val overskrift: String,
     val avsnitt: List<Avsnitt>?,
-    )
+)
 
 data class Brev(
     @Id

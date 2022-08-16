@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service
 import java.util.UUID
 
 @Service
-class FagsakService (
+class FagsakService(
     private val fagsakRepository: FagsakRepository
-    ){
+) {
     fun opprettFagsak(fagsak: Fagsak): Fagsak {
         return fagsakRepository.insert(
             Fagsak(
@@ -19,7 +19,7 @@ class FagsakService (
         )
     }
 
-    fun hentFagsak(id: UUID): Fagsak{
+    fun hentFagsak(id: UUID): Fagsak {
         return fagsakRepository.findByIdOrThrow(id)
     }
 }

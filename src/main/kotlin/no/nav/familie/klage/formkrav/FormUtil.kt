@@ -1,6 +1,5 @@
 package no.nav.familie.klage.formkrav
 
-
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import java.util.UUID
@@ -14,7 +13,7 @@ fun form(
     klageSignert: FormVilkår = FormVilkår.IKKE_SATT,
     saksbehandlerBegrunnelse: String = "begrunnelsen kommer her",
 
-    ): Form =
+): Form =
     Form(
         behandlingId,
         fagsakId,

@@ -2,8 +2,8 @@ package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.BehandlingStatus
-import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.BehandlingsÅrsak
+import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.StønadsType
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.tilDto
@@ -17,8 +17,8 @@ import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.integrasjoner.IntegrasjonerService
 import no.nav.familie.klage.kabal.KabalService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
-import no.nav.familie.klage.personopplysninger.domain.Personopplysninger
 import no.nav.familie.klage.personopplysninger.domain.Kjønn
+import no.nav.familie.klage.personopplysninger.domain.Personopplysninger
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.Fagsystem
@@ -32,19 +32,19 @@ import java.util.UUID
 
 @Service
 class BehandlingService(
-        private val behandlingsRepository: BehandlingsRepository,
-        private val personopplysningerService: PersonopplysningerService,
-        private val fagsakService: FagsakService,
-        private val brevRepository: BrevRepository,
-        private val familieDokumentClient: FamilieDokumentClient,
-        private val familieIntegrasjonerClient: FamilieIntegrasjonerClient,
-        private val formService: FormService,
-        private val formRepository: FormRepository,
-        private val vurderingService: VurderingService,
-        private val kabalService: KabalService,
-        private val integrasjonerService: IntegrasjonerService,
-        private val stegService: StegService
-    ){
+    private val behandlingsRepository: BehandlingsRepository,
+    private val personopplysningerService: PersonopplysningerService,
+    private val fagsakService: FagsakService,
+    private val brevRepository: BrevRepository,
+    private val familieDokumentClient: FamilieDokumentClient,
+    private val familieIntegrasjonerClient: FamilieIntegrasjonerClient,
+    private val formService: FormService,
+    private val formRepository: FormRepository,
+    private val vurderingService: VurderingService,
+    private val kabalService: KabalService,
+    private val integrasjonerService: IntegrasjonerService,
+    private val stegService: StegService
+) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     fun hentBehandling(behandlingId: UUID): BehandlingDto {
@@ -52,7 +52,7 @@ class BehandlingService(
         return behandling.tilDto()
     }
 
-    fun hentNavnFraBehandlingsId(behandlingId: UUID): String{
+    fun hentNavnFraBehandlingsId(behandlingId: UUID): String {
         val behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
         return personopplysningerService.hentNavn(fagsak.personIdent)
@@ -96,15 +96,14 @@ class BehandlingService(
     }
 
     @Transactional
-    fun ferdigstillBrev(behandlingId: UUID){
+    fun ferdigstillBrev(behandlingId: UUID) {
         stegService.oppdaterSteg(behandlingId, StegType.BREV, true)
 
         arkiverOgDistribuerBrev(behandlingId)
         sendTilKabal(behandlingId)
     }
 
-
-    fun arkiverOgDistribuerBrev(behandlingId: UUID){
+    fun arkiverOgDistribuerBrev(behandlingId: UUID) {
         val brev = brevRepository.findByIdOrThrow(behandlingId)
         val behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
         val pdf = familieDokumentClient.genererPdfFraHtml(brev.saksbehandlerHtml)
@@ -120,22 +119,23 @@ class BehandlingService(
             dokumenttype = Dokumenttype.BARNETRYGD_VEDTAK_INNVILGELSE,
         )
 
-        val respons = familieIntegrasjonerClient.arkiverDokument(arkiverDokumentRequest, "Maja") //TODO: Hente en saksbehandlere her
+        val respons = familieIntegrasjonerClient.arkiverDokument(arkiverDokumentRequest, "Maja") // TODO: Hente en saksbehandlere her
         logger.info("Mottok id fra JoArk: ${respons.journalpostId}")
 
         val distnummer = familieIntegrasjonerClient.distribuerBrev(
             respons.journalpostId,
-            Distribusjonstype.ANNET)
+            Distribusjonstype.ANNET
+        )
 
         logger.info("Mottok distnummer fra DokDist: $distnummer")
     }
 
-    fun sendTilKabal(behandlingId: UUID){
+    fun sendTilKabal(behandlingId: UUID) {
         val form = formRepository.findByIdOrThrow(behandlingId)
-        if(
+        if (
             formService.formkravErOppfylt(form) &&
             vurderingService.klageTasIkkeTilFølge(behandlingId)
-        ){
+        ) {
             logger.info("send til kabal")
             val fagsakId = behandlingsRepository.findByIdOrThrow(behandlingId).fagsakId
             kabalService.sendTilKabal(behandlingId, fagsakId)
@@ -144,6 +144,6 @@ class BehandlingService(
     fun hentAktivIdent(behandlingId: UUID): String {
         val behandling = hentBehandling(behandlingId)
 
-         return fagsakService.hentFagsak(behandling.fagsakId).personIdent
+        return fagsakService.hentFagsak(behandling.fagsakId).personIdent
     }
 }

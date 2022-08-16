@@ -15,10 +15,10 @@ import java.util.UUID
 class FormService(
     private val formRepository: FormRepository,
     private val stegService: StegService
-    ) {
-    fun hentForm(behandlingId: UUID): FormDto?{
+) {
+    fun hentForm(behandlingId: UUID): FormDto? {
         val eksisterer = formRepository.existsById(behandlingId)
-        if(eksisterer) {
+        if (eksisterer) {
             val form = formRepository.findByIdOrThrow(behandlingId)
             return form.tilDto()
         }
@@ -33,13 +33,14 @@ class FormService(
                 form.klageSignert,
                 form.klagefristOverholdt
             ).contains(FormVilkår.IKKE_SATT) &&
-            form.saksbehandlerBegrunnelse.isNotEmpty()) {
+            form.saksbehandlerBegrunnelse.isNotEmpty()
+        ) {
             if (formkravErOppfylt(form)) stegService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV, true)
             else stegService.oppdaterSteg(form.behandlingId, StegType.VURDERING, true)
         } else {
             stegService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV, false)
         }
-        if(sjekkOmFormEksisterer(form.behandlingId)){
+        if (sjekkOmFormEksisterer(form.behandlingId)) {
             return oppdaterForm(form)
         }
         return formRepository.insert(
@@ -58,25 +59,28 @@ class FormService(
     @Transactional
     fun oppdaterForm(form: Form): FormDto {
         val formFraDb = formRepository.findByBehandlingId(form.behandlingId)
-        return formRepository.update(formFraDb.copy(
-            klagePart = form.klagePart,
-            klagefristOverholdt = form.klagefristOverholdt,
-            klageKonkret = form.klageKonkret,
-            klageSignert = form.klageSignert,
-            saksbehandlerBegrunnelse = form.saksbehandlerBegrunnelse
-        )).tilDto()
+        return formRepository.update(
+            formFraDb.copy(
+                klagePart = form.klagePart,
+                klagefristOverholdt = form.klagefristOverholdt,
+                klageKonkret = form.klageKonkret,
+                klageSignert = form.klageSignert,
+                saksbehandlerBegrunnelse = form.saksbehandlerBegrunnelse
+            )
+        ).tilDto()
     }
 
-    fun sjekkOmFormEksisterer(id: UUID): Boolean{
+    fun sjekkOmFormEksisterer(id: UUID): Boolean {
         return formRepository.findById(id).isPresent
     }
 
-    fun formkravErOppfylt(form: Form): Boolean{
+    fun formkravErOppfylt(form: Form): Boolean {
         return(
             form.klageKonkret == FormVilkår.OPPFYLT &&
-            form.klagePart == FormVilkår.OPPFYLT &&
-            form.klageSignert == FormVilkår.OPPFYLT &&
-            form.klagefristOverholdt == FormVilkår.OPPFYLT &&
-            form.saksbehandlerBegrunnelse != "")
+                form.klagePart == FormVilkår.OPPFYLT &&
+                form.klageSignert == FormVilkår.OPPFYLT &&
+                form.klagefristOverholdt == FormVilkår.OPPFYLT &&
+                form.saksbehandlerBegrunnelse != ""
+            )
     }
 }

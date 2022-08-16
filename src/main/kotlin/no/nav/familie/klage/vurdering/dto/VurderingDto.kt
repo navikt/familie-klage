@@ -22,4 +22,3 @@ fun Vurdering.tilDto(): VurderingDto =
         hjemmel = this.hjemmel,
         beskrivelse = this.beskrivelse,
     )
-

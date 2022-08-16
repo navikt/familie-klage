@@ -10,5 +10,4 @@ import java.util.UUID
 interface BehandlingshistorikkRepository : RepositoryInterface<Behandlingshistorikk, UUID>, InsertUpdateRepository<Behandlingshistorikk> {
 
     fun findByBehandlingIdOrderByEndretTidDesc(behandlingId: UUID): List<Behandlingshistorikk>
-
 }

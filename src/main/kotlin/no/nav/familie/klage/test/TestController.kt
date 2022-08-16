@@ -17,7 +17,7 @@ class TestController {
     @GetMapping
     fun hentSøknadDatoer(): Ressurs<String> {
         return Ressurs.success(
-                "Hentet tekst fra backend"
+            "Hentet tekst fra backend"
         )
     }
 }

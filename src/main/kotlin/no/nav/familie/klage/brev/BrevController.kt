@@ -19,10 +19,10 @@ import java.util.UUID
 @RequestMapping(path = ["/api/brev"])
 @ProtectedWithClaims(issuer = "azuread")
 @Validated
-class BrevController (
+class BrevController(
     private val brevService: BrevService,
     private val tilgangService: TilgangService,
-    ){
+) {
     @GetMapping("/{behandlingId}")
     fun hentBrev(@PathVariable behandlingId: UUID): Ressurs<BrevMedAvsnitt?> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)

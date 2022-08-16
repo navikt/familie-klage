@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping(path = ["/api/fagsak"])
 @ProtectedWithClaims(issuer = "azuread")
 @Validated
-class FagsakController (
+class FagsakController(
     private val fagsakService: FagsakService
-){
-
-}
+)

@@ -23,8 +23,8 @@ fun main(args: Array<String>) {
             "local",
             "mock-integrasjoner",
             "mock-pdl",
-            //"mock-brev",
-            //"mock-dokument"
+            // "mock-brev",
+            // "mock-dokument"
         )
         .properties(properties)
         .run(*args)

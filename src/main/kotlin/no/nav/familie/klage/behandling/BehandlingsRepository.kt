@@ -7,7 +7,6 @@ import no.nav.familie.klage.repository.RepositoryInterface
 import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.stereotype.Repository
-
 import java.util.UUID
 
 @Repository
@@ -30,5 +29,4 @@ interface BehandlingsRepository : RepositoryInterface<Behandling, UUID>, InsertU
         """SELECT steg FROM behandling WHERE id = :behandling_id"""
     )
     fun findStegById(behandling_id: UUID): StegType
-
 }

@@ -2,7 +2,7 @@ package no.nav.familie.klage.kabal
 
 import java.time.LocalDate
 
-//objektet som skal sendes til kabal
+// objektet som skal sendes til kabal
 data class OversendtKlageAnkeV3(
     val type: Type,
     val klager: OversendtKlager,
@@ -76,7 +76,7 @@ enum class MottakDokumentType {
     ANNET
 }
 
-enum class KildeFagsystem{
+enum class KildeFagsystem {
     EF,
     BA,
     KS
@@ -95,16 +95,16 @@ interface Kode {
 }
 
 enum class LovKilde(override val id: String, override val navn: String, override val beskrivelse: String) : Kode {
-    FOLKETRYGDLOVEN("1","Folketrygdloven", "Ftrl"),
-    FORSKRIFT_OM_AKTIVITETSHJELPEMIDLER_TIL_DE_OVER_26_ÅR("2","Forskrift om aktivitetshjelpemidler til de over 26 år","Forskrift om aktivitetshjelpemidler til de over 26 år"),
+    FOLKETRYGDLOVEN("1", "Folketrygdloven", "Ftrl"),
+    FORSKRIFT_OM_AKTIVITETSHJELPEMIDLER_TIL_DE_OVER_26_ÅR("2", "Forskrift om aktivitetshjelpemidler til de over 26 år", "Forskrift om aktivitetshjelpemidler til de over 26 år"),
     FORSKRIFT_OM_HJELPEMIDLER_MM("3", "Forskrift om hjelpemidler mm.", "Forskrift om hjelpemidler mm."),
     FORSKRIFT_OM_ORTOPEDISKE_HJELPEMIDLER_MM("4", "Forskrift om ortopediske hjelpemidler mm.", "Forskrift om ortopediske hjelpemidler mm."),
-    FORSKRIFT_OM_HØREAPPARATER_MM("5","Forskrift om høreapparater mm.", "Forskrift om høreapparater mm."),
-    FORSKRIFT_OM_SERVICEHUND("6","Forskrift om servicehund", "Forskrift om servicehund"),
-    FORSKRIFT_OM_MOTORKJØRETØY("7","Forskrift om motorkjøretøy", "Forskrift om motorkjøretøy"),
-    FORVALTNINGSLOVEN("8","Forvaltningsloven", "Fvl"),
-    TRYGDERETTSLOVEN("9","Trygderettsloven", "Trrl"),
-    FORELDELSESLOVEN("10","Foreldelsesloven", "Fl"),
+    FORSKRIFT_OM_HØREAPPARATER_MM("5", "Forskrift om høreapparater mm.", "Forskrift om høreapparater mm."),
+    FORSKRIFT_OM_SERVICEHUND("6", "Forskrift om servicehund", "Forskrift om servicehund"),
+    FORSKRIFT_OM_MOTORKJØRETØY("7", "Forskrift om motorkjøretøy", "Forskrift om motorkjøretøy"),
+    FORVALTNINGSLOVEN("8", "Forvaltningsloven", "Fvl"),
+    TRYGDERETTSLOVEN("9", "Trygderettsloven", "Trrl"),
+    FORELDELSESLOVEN("10", "Foreldelsesloven", "Fl"),
     EØS_FORORDNING_883_2004("11", "EØS forordning 883/2004", "EØS forordning 883/2004"),
     DAGPENGEFORSKRIFTEN("12", "Dagpengeforskriften", "Dagpengeforskriften"),
     FORSKRIFT_COVID_19("13", "Forskrift Covid-19", "Forskrift Covid-19"),
@@ -143,7 +143,7 @@ enum class LovKilde(override val id: String, override val navn: String, override
     FORSKRIFT_OM_ARBEIDS_OG_UTDANNINGSREISER("45", "Forskrift om arbeids- og utdanningsreiser", "Fors om arb- og utd.r."),
     TILLEGGSSTØNADSFORSKRIFTEN("46", "Tilleggsstønadforskriften", "Fors om till.stø."),
     NAV_LOVEN("47", "NA V-loven", "NAV-L"),
-    MIDLERTIDIG_LOV_KOMP_SELVST_OG_FRILANS("48","Midlertidig lov om kompensasjonsytelse for selvstendig næringsdrivende og frilansere", "Midl. komp selv.næ og fril"),
+    MIDLERTIDIG_LOV_KOMP_SELVST_OG_FRILANS("48", "Midlertidig lov om kompensasjonsytelse for selvstendig næringsdrivende og frilansere", "Midl. komp selv.næ og fril"),
     LØNNSKOMPENSASJON_FOR_PERMITTERTE("49", "Lønnskompensasjon for permitterte", "Lønn.komp perm"),
     MIDLERTIDIG_FORSKR_FORSKUDD_DAGPENGER("50", "Midlertidig forskrift om forskudd på dagpenger for å avhjelpe konsekvensene av covid-19", "Midlertidig forskrift om forskudd på dagpenger for å avhjelpe konsekvensene av covid-19"),
     BARNEBORTFØRINGSLOVEN("51", "Barnebortføringsloven", "Bbfl"),
@@ -156,5 +156,5 @@ enum class LovKilde(override val id: String, override val navn: String, override
     HOVEDNUMMER_42_TRYGDEAVTALER("58", "Hovednummer 42 - Trygdeavtaler", "Hnr. 42"),
     DEKNINGSLOVEN("59", "Dekningsloven", "Dekningsloven"),
 
-    UKJENT("999","Ukjent", "Ukjent")
+    UKJENT("999", "Ukjent", "Ukjent")
 }

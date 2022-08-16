@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface AvsnittRepository: RepositoryInterface<Avsnitt, UUID>, InsertUpdateRepository<Avsnitt>{
+interface AvsnittRepository : RepositoryInterface<Avsnitt, UUID>, InsertUpdateRepository<Avsnitt> {
 
     @Query(
         """
