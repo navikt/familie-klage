@@ -28,7 +28,7 @@
         <syslogConfig class="org.productivity.java.syslog4j.impl.net.tcp.TCPNetSyslogConfig">
             <host>audit.nais</host>
             <port>6514</port>
-            <ident>FAMILIE-EF-SAK</ident>
+            <ident>FAMILIE-KLAGE</ident>
             <maxMessageLength>128000</maxMessageLength>
         </syslogConfig>
     </appender>
