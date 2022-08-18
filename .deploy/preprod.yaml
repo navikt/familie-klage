@@ -50,7 +50,10 @@ spec:
   accessPolicy:
     inbound:
       rules:
+        - application: familie-klage-frontend
+        - application: familie-klage-frontend-lokal
         - application: familie-ef-sak-frontend
+        - application: familie-ef-sak-frontend-lokal
     outbound:
       rules:
         - application: familie-tilbake

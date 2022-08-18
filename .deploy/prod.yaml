@@ -51,6 +51,7 @@ spec:
   accessPolicy:
     inbound:
       rules:
+        - application: familie-klage-frontend
         - application: familie-ef-sak-frontend
     outbound:
       rules:

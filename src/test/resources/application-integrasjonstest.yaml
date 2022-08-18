@@ -13,7 +13,7 @@ funksjonsbrytere:
   unleash:
     uri: http://localhost:4242/api
     environment: local
-    applicationName: familie-ef-sak
+    applicationName: familie-klage
 
 FAMILIE_INTEGRASJONER_URL: http://localhost:8385
 FAMILIE_BREV_API_URL: http://localhost:8002
