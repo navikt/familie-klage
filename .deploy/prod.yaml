@@ -81,4 +81,3 @@ spec:
       value: prod
   envFrom:
     - secret: familie
-    - secret: familie-klage
