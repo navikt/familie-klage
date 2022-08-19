@@ -62,6 +62,7 @@ spec:
       external:
         - host: api-gw.oera.no
         - host: unleash.nais.io
+        - host: familie-integrasjoner.dev-fss-pub.nais.io
   azure:
     application:
       enabled: true
@@ -82,4 +83,3 @@ spec:
       value: prod
   envFrom:
     - secret: familie
-    - secret: familie-klage
