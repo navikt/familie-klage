@@ -52,7 +52,7 @@ spec:
     inbound:
       rules:
         - application: familie-klage-frontend
-        - application: familie-ef-sak-frontend
+        - application: familie-ef-sak
     outbound:
       rules:
         - application: familie-tilbake
@@ -62,7 +62,9 @@ spec:
       external:
         - host: api-gw.oera.no
         - host: unleash.nais.io
-        - host: familie-integrasjoner.dev-fss-pub.nais.io
+        - host: familie-oppdrag.prod-fss-pub.nais.io
+        - host: familie-integrasjoner.prod-fss-pub.nais.io
+        - host: familie-ef-infotrygd.prod-fss-pub.nais.io
   azure:
     application:
       enabled: true

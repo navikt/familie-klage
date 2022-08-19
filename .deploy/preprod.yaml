@@ -52,37 +52,19 @@ spec:
       rules:
         - application: familie-klage-frontend
         - application: familie-klage-frontend-lokal
-        - application: familie-ef-sak-frontend
-        - application: familie-ef-sak-frontend-lokal
-        - application: familie-prosessering
-        - application: familie-ef-personhendelse
-        - application: familie-prosessering-lokal
-        - application: familie-ef-proxy
-          namespace: teamfamilie
-          cluster: dev-fss
-        - application: familie-ef-proxy-test
-          namespace: teamfamilie
-          cluster: dev-fss
-        - application: familie-ba-sak
-        - application: bidrag-grunnlag-feature
-          namespace: bidrag
-          cluster: dev-gcp
+        - application: familie-ef-sak
     outbound:
       rules:
         - application: familie-tilbake
         - application: familie-brev
         - application: familie-ef-blankett
         - application: familie-dokument
-        - application: familie-ef-iverksett
-        - application: familie-ef-proxy
-          cluster: dev-fss
       external:
         - host: api-gw-q1.oera.no
         - host: unleash.nais.io
         - host: familie-oppdrag.dev-fss-pub.nais.io
         - host: familie-integrasjoner.dev-fss-pub.nais.io
         - host: familie-ef-infotrygd.dev-fss-pub.nais.io
-        - host: familie-ef-proxy.dev-fss-pub.nais.io
   azure:
     application:
       enabled: true
