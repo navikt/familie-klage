@@ -39,6 +39,6 @@ funksjonsbrytere:
   unleash:
     uri: http://localhost:4242/api
     environment: local
-    applicationName: familie-ef-sak
+    applicationName: familie-klage
 
 NAIS_APP_NAME: familie-klage
