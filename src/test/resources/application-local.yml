@@ -24,6 +24,8 @@ AZURE_APP_TENANT_ID: navq.onmicrosoft.com
 AZURE_APP_CLIENT_ID: ${AZURE_CLIENT_ID}
 AZURE_APP_CLIENT_SECRET: ${AZURE_CLIENT_SECRET}
 
+FAMILIE_INTEGRASJONER_SCOPE: api://dev-fss.teamfamilie.familie-integrasjoner/.default
+
 CREDENTIAL_USERNAME: not-a-real-srvuser
 CREDENTIAL_PASSWORD: not-a-real-pw
 
@@ -39,6 +41,6 @@ funksjonsbrytere:
   unleash:
     uri: http://localhost:4242/api
     environment: local
-    applicationName: familie-ef-sak
+    applicationName: familie-klage
 
 NAIS_APP_NAME: familie-klage

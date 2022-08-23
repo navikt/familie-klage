@@ -50,7 +50,9 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: familie-ef-sak-frontend
+        - application: familie-klage-frontend
+        - application: familie-klage-frontend-lokal
+        - application: familie-ef-sak
     outbound:
       rules:
         - application: familie-tilbake
@@ -60,6 +62,9 @@ spec:
       external:
         - host: api-gw-q1.oera.no
         - host: unleash.nais.io
+        - host: familie-oppdrag.dev-fss-pub.nais.io
+        - host: familie-integrasjoner.dev-fss-pub.nais.io
+        - host: familie-ef-infotrygd.dev-fss-pub.nais.io
   azure:
     application:
       enabled: true
