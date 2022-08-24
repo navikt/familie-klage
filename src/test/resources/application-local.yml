@@ -17,7 +17,7 @@ no.nav.security.jwt:
 
 AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
 FAMILIE_INTEGRASJONER_URL: http://localhost:8385
-FAMILIE_BREV_API_URL: http://localhost:8002
+FAMILIE_BREV_API_URL: http://localhost:8001
 FAMILIE_DOKUMENT_URL: http://localhost:8082
 
 AZURE_APP_TENANT_ID: navq.onmicrosoft.com
