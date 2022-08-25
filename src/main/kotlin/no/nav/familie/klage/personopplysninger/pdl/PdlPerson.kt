@@ -72,6 +72,7 @@ data class PdlIdent(val ident: String, val historisk: Boolean)
 data class PdlIdenter(val identer: List<PdlIdent>) {
 
     fun gjeldende(): PdlIdent = this.identer.first { !it.historisk }
+    fun identer(): Set<String> = this.identer.map { it.ident }.toSet()
 }
 
 data class PdlHentIdenter(val hentIdenter: PdlIdenter?)

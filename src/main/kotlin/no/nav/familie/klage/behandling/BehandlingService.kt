@@ -1,24 +1,19 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
-import no.nav.familie.klage.behandling.domain.BehandlingStatus
-import no.nav.familie.klage.behandling.domain.BehandlingsÅrsak
 import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.klage.behandling.domain.StønadsType
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.brev.FamilieDokumentClient
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.fagsak.domain.Fagsak
+import no.nav.familie.klage.fagsak.domain.Stønadstype
 import no.nav.familie.klage.formkrav.FormRepository
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.integrasjoner.IntegrasjonerService
 import no.nav.familie.klage.kabal.KabalService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
-import no.nav.familie.klage.personopplysninger.domain.Kjønn
-import no.nav.familie.klage.personopplysninger.domain.Personopplysninger
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.Fagsystem
@@ -28,6 +23,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 import java.util.UUID
 
 @Service
@@ -49,50 +45,33 @@ class BehandlingService(
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     fun hentBehandling(behandlingId: UUID): BehandlingDto {
         val behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
-        return behandling.tilDto()
+        val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
+        return behandling.tilDto(fagsak)
     }
 
     fun hentNavnFraBehandlingsId(behandlingId: UUID): String {
-        val behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
-        val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
-        return personopplysningerService.hentNavn(fagsak.personIdent)
+        return "Navn Navnesen"
     }
 
     @Transactional
-    fun opprettBehandling(): Behandling {
-        val fagsakId = UUID.randomUUID()
-        val fødselsnummer = (0..999999999).random().toString() // TODO legge inn faktisk fødselsnummber
+    fun opprettBehandling(
+        ident: String,
+        stønadsype: Stønadstype,
+        eksternBehandlingId: String,
+        eksternFagsakId: String,
+        fagsystem: Fagsystem,
+        klageMottatt: LocalDate
+    ): UUID { // TODO: Bruk et dto-objekt for disse fire feltene
 
-        personopplysningerService.opprettPersonopplysninger(
-            personopplysninger = Personopplysninger(
-                personIdent = fødselsnummer,
-                navn = "Juni",
-                kjønn = Kjønn.KVINNE,
-                adresse = "Korsgata 21A",
-                telefonnummer = "46840856"
-            )
-        )
+        val fagsak = fagsakService.hentEllerOpprettFagsak(ident, eksternFagsakId, fagsystem, stønadsype)
 
-        fagsakService.opprettFagsak(
-            fagsak = Fagsak(
-                id = fagsakId,
-                personIdent = fødselsnummer,
-                stønadsType = StønadsType.BARNETILSYN
-            )
-        )
-
-        val behandling = behandlingsRepository.insert(
+        return behandlingsRepository.insert(
             Behandling(
-                fagsakId = fagsakId,
-                steg = StegType.FORMKRAV,
-                status = BehandlingStatus.OPPRETTET,
-                fagsystem = Fagsystem.EF,
-                stonadsType = StønadsType.BARNETILSYN,
-                behandlingsArsak = BehandlingsÅrsak.KLAGE
+                fagsakId = fagsak.id,
+                eksternBehandlingId = eksternBehandlingId,
+                klageMottatt = klageMottatt
             )
-        )
-
-        return behandling
+        ).id
     }
 
     @Transactional
@@ -110,16 +89,17 @@ class BehandlingService(
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
 
         val arkiverDokumentRequest = integrasjonerService.lagArkiverDokumentRequest(
-            personIdent = fagsak.personIdent,
+            personIdent = fagsak.hentAktivIdent(),
             pdf = pdf,
-            fagsakId = behandling.fagsakId.toString(),
+            fagsakId = fagsak.eksternId,
             behandlingId = behandlingId,
             enhet = "enhet",
-            stønadstype = behandling.stonadsType,
-            dokumenttype = Dokumenttype.BARNETRYGD_VEDTAK_INNVILGELSE,
+            stønadstype = fagsak.stønadstype,
+            dokumenttype = Dokumenttype.BARNETRYGD_VEDTAK_INNVILGELSE // TODO: Riktig dokumenttype
         )
 
-        val respons = familieIntegrasjonerClient.arkiverDokument(arkiverDokumentRequest, "Maja") // TODO: Hente en saksbehandlere her
+        val respons =
+            familieIntegrasjonerClient.arkiverDokument(arkiverDokumentRequest, "Maja") // TODO: Hente en saksbehandlere her
         logger.info("Mottok id fra JoArk: ${respons.journalpostId}")
 
         val distnummer = familieIntegrasjonerClient.distribuerBrev(
@@ -141,9 +121,10 @@ class BehandlingService(
             kabalService.sendTilKabal(behandlingId, fagsakId)
         }
     }
+
     fun hentAktivIdent(behandlingId: UUID): String {
         val behandling = hentBehandling(behandlingId)
 
-        return fagsakService.hentFagsak(behandling.fagsakId).personIdent
+        return fagsakService.hentFagsak(behandling.fagsakId).hentAktivIdent()
     }
 }

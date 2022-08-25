@@ -47,7 +47,7 @@ class BrevService(
         val request = FritekstBrevRequestDto(
             overskrift = fritekstbrevDto.overskrift,
             avsnitt = fritekstbrevDto.avsnitt,
-            personIdent = fagsak.personIdent,
+            personIdent = fagsak.hentAktivIdent(),
             navn = navn
         )
 

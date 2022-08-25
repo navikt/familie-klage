@@ -62,7 +62,7 @@ class PdlClientMock {
 
         every { pdlClient.hentPersonKortBolk(any()) } answers { firstArg<List<String>>().associate { it to lagPersonKort(it) } }
 
-        every { pdlClient.hentSøker(any()) } returns opprettPdlSøker()
+        every { pdlClient.hentPerson(any()) } returns opprettPdlSøker()
 
         every { pdlClient.hentBarn(any()) } returns barn()
 

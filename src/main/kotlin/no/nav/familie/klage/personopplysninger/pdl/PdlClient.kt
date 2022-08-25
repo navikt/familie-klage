@@ -24,7 +24,7 @@ class PdlClient(
         operations.optionsForAllow(pingUri)
     }
 
-    fun hentSøker(personIdent: String): PdlSøker {
+    fun hentPerson(personIdent: String): PdlSøker {
         val pdlPersonRequest = PdlPersonRequest(
             variables = PdlPersonRequestVariables(personIdent),
             query = PdlConfig.søkerQuery
