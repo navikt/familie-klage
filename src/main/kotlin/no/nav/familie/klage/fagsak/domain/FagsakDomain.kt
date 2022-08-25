@@ -5,6 +5,7 @@ import no.nav.familie.kontrakter.felles.Fagsystem
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Embedded
+import org.springframework.data.relational.core.mapping.Table
 import java.util.UUID
 
 data class Fagsak(
@@ -21,6 +22,7 @@ data class Fagsak(
     }
 }
 
+@Table("fagsak")
 data class FagsakDomain(
     @Id
     val id: UUID = UUID.randomUUID(),

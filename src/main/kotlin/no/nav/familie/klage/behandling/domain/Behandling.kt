@@ -18,7 +18,6 @@ data class Behandling(
     val sporbar: Sporbar = Sporbar(),
     val resultat: BehandlingResultat? = BehandlingResultat.IKKE_SATT,
     val vedtakDato: LocalDateTime? = null,
-    val kaVedtakDato: LocalDateTime? = null,
     val eksternBehandlingId: String,
     val klageMottatt: LocalDate
 )

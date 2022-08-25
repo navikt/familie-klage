@@ -1,0 +1,1 @@
+ALTER TABLE behandling ADD COLUMN klage_mottatt VARCHAR NOT NULL;
