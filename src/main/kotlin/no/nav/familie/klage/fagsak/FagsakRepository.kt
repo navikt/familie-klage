@@ -9,7 +9,7 @@ import java.util.UUID
 
 interface FagsakRepository : RepositoryInterface<FagsakDomain, UUID>, InsertUpdateRepository<FagsakDomain> {
 
-    fun findByEksternIdAndFagsystemAndStønadsType(
+    fun findByEksternIdAndFagsystemAndStønadstype(
         eksternId: String,
         fagsystem: Fagsystem,
         stønadstype: Stønadstype
