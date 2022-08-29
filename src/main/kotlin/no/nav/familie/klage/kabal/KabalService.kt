@@ -48,7 +48,7 @@ class KabalService(
 
     fun lagKlagerMock(fagsakId: UUID): OversendtKlager {
 
-        val fnr = fagsakService.hentFagsak(fagsakId).personIdent
+        val fnr = fagsakService.hentFagsak(fagsakId).hentAktivIdent()
 
         val oversendtPartIdType = OversendtPartIdType.PERSON
         val oversendtPartId = OversendtPartId(oversendtPartIdType, fnr)

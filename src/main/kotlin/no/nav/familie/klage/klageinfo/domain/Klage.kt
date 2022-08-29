@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id
 import java.time.LocalDate
 import java.util.UUID
 
+@Deprecated("Denne trengs ikke")
 data class Klage(
     @Id
     val behandlingId: UUID,

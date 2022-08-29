@@ -1,25 +1,48 @@
 package no.nav.familie.klage.fagsak
 
 import no.nav.familie.klage.fagsak.domain.Fagsak
+import no.nav.familie.klage.fagsak.domain.FagsakDomain
+import no.nav.familie.klage.fagsak.domain.FagsakPerson
+import no.nav.familie.klage.fagsak.domain.Stønadstype
+import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.kontrakter.felles.Fagsystem
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
 class FagsakService(
-    private val fagsakRepository: FagsakRepository
+    private val fagsakRepository: FagsakRepository,
+    private val fagsakPersonService: FagsakPersonService,
+    private val pdlClient: PdlClient,
 ) {
-    fun opprettFagsak(fagsak: Fagsak): Fagsak {
-        return fagsakRepository.insert(
-            Fagsak(
-                id = fagsak.id,
-                personIdent = fagsak.personIdent,
-                stønadsType = fagsak.stønadsType
-            )
-        )
+
+    @Transactional
+    fun hentEllerOpprettFagsak(ident: String, eksternId: String, fagsystem: Fagsystem, stønadType: Stønadstype): Fagsak {
+        val personIdenter = pdlClient.hentPersonidenter(ident, true)
+        val gjeldendePersonIdent = personIdenter.gjeldende()
+        val person = fagsakPersonService.hentEllerOpprettPerson(personIdenter.identer(), gjeldendePersonIdent.ident)
+        val oppdatertPerson = fagsakPersonService.oppdaterIdent(person, gjeldendePersonIdent.ident)
+        val fagsak = fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(eksternId, fagsystem, stønadType)
+            ?: opprettFagsak(stønadType, eksternId, fagsystem, oppdatertPerson)
+
+        return fagsak.tilFagsakMedPerson(oppdatertPerson.identer)
     }
 
     fun hentFagsak(id: UUID): Fagsak {
-        return fagsakRepository.findByIdOrThrow(id)
+        val fagsak = fagsakRepository.findByIdOrThrow(id)
+        return fagsak.tilFagsakMedPerson(fagsakPersonService.hentIdenter(fagsak.fagsakPersonId))
+    }
+
+    private fun opprettFagsak(stønadType: Stønadstype, eksternId: String, fagsystem: Fagsystem, fagsakPerson: FagsakPerson): FagsakDomain {
+        return fagsakRepository.insert(
+            FagsakDomain(
+                fagsakPersonId = fagsakPerson.id,
+                stønadstype = stønadType,
+                eksternId = eksternId,
+                fagsystem = fagsystem
+            )
+        )
     }
 }
