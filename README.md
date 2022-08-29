@@ -49,7 +49,19 @@ Testbrukeren som opprettes i IDA må ha minst en av følgende roller:
 ## Testdata
 - Registering av arbeidssøker - https://arbeidssokerregistrering.dev.nav.no/
 
+### Koble til database i preprod:
+[Oppskrift på databasetilkobling](https://github.com/navikt/familie/blob/cb403dbf0e7e5af2f5b0d8168d89dae87ce318c4/doc/utvikling/gcp/gcp_kikke_i_databasen.md)
+
+For å koble til preprod kan du kjøre kommandoene:
+1. `gcloud auth login`
+2. `gcp-db teamfamilie-dev-ae07 familie-klage`
+3. Url: `jdbc:postgresql://localhost:5432/familie-klage`
+4. Brukernavn: `fornavn.etternavn@nav.no` som brukernavn
+5. Passord: Lim inn det som ligger i clipboard fra steg 2
+6. Har du ikke lagt til deg selv som database-bruker må du gjør [dette først](https://doc.nais.io/persistence/postgres/)
+
 # Henvendelser
+
 
 Spørsmål knyttet til koden eller prosjektet kan rettes til:
 
