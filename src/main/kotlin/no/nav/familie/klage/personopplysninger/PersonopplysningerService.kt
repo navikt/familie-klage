@@ -28,7 +28,6 @@ class PersonopplysningerService(
                 personIdent = fagsak.hentAktivIdent(),
                 navn = it.navn.gjeldende().visningsnavn(),
                 kjønn = Kjønn.valueOf(it.kjønn.gjelende().kjønn.toString()),
-                telefonnummer = it.telefonnummer.single().nummer,
                 adresse = "" // TODO
 
             )
