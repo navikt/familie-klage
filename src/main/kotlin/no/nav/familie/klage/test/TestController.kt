@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 import java.util.UUID
+import kotlin.random.Random
 
 @RestController
 @RequestMapping(path = ["/api/test"], produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -45,8 +46,8 @@ class TestController(private val behandlingService: BehandlingService) {
     data class DummybehandlingRequest(
         val ident: String,
         val stønadstype: Stønadstype,
-        val eksternBehandlingId: String = "3421",
-        val eksternFagsakId: String = "1234",
+        val eksternBehandlingId: String = Random.nextInt().toString(),
+        val eksternFagsakId: String = Random.nextInt().toString(),
         val fagsystem: Fagsystem = Fagsystem.EF,
         val klageMottatt: LocalDate = LocalDate.now()
     )
