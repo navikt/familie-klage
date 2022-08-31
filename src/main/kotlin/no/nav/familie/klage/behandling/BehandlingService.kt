@@ -76,10 +76,13 @@ class BehandlingService(
 
     @Transactional
     fun ferdigstillBrev(behandlingId: UUID) {
-        stegService.oppdaterSteg(behandlingId, StegType.BREV, true)
-
         arkiverOgDistribuerBrev(behandlingId)
-        sendTilKabal(behandlingId)
+        if (skalSendeTilKabal(behandlingId)) {
+            sendTilKabal(behandlingId)
+            stegService.oppdaterSteg(behandlingId, StegType.OVERFØRING_TIL_KABAL)
+        } else {
+            stegService.oppdaterSteg(behandlingId, StegType.BEHANDLING_FERDIGSTILT)
+        }
     }
 
     fun arkiverOgDistribuerBrev(behandlingId: UUID) {
@@ -111,15 +114,14 @@ class BehandlingService(
     }
 
     fun sendTilKabal(behandlingId: UUID) {
+        logger.info("send til kabal")
+        val fagsakId = behandlingsRepository.findByIdOrThrow(behandlingId).fagsakId
+        kabalService.sendTilKabal(behandlingId, fagsakId)
+    }
+
+    private fun skalSendeTilKabal(behandlingId: UUID): Boolean {
         val form = formRepository.findByIdOrThrow(behandlingId)
-        if (
-            formService.formkravErOppfylt(form) &&
-            vurderingService.klageTasIkkeTilFølge(behandlingId)
-        ) {
-            logger.info("send til kabal")
-            val fagsakId = behandlingsRepository.findByIdOrThrow(behandlingId).fagsakId
-            kabalService.sendTilKabal(behandlingId, fagsakId)
-        }
+        return formService.formkravErOppfylt(form) && vurderingService.klageTasIkkeTilFølge(behandlingId)
     }
 
     fun hentAktivIdent(behandlingId: UUID): String {

@@ -16,6 +16,7 @@ class FormService(
     private val formRepository: FormRepository,
     private val stegService: StegService
 ) {
+
     fun hentForm(behandlingId: UUID): FormDto? {
         val eksisterer = formRepository.existsById(behandlingId)
         if (eksisterer) {
@@ -27,18 +28,11 @@ class FormService(
 
     @Transactional
     fun opprettEllerOppdaterForm(form: Form): FormDto {
-        if (!arrayOf(
-                form.klageKonkret,
-                form.klagePart,
-                form.klageSignert,
-                form.klagefristOverholdt
-            ).contains(FormVilkår.IKKE_SATT) &&
-            form.saksbehandlerBegrunnelse.isNotEmpty()
-        ) {
-            if (formkravErOppfylt(form)) stegService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV, true)
-            else stegService.oppdaterSteg(form.behandlingId, StegType.VURDERING, true)
+        if (formkravErFerdigUtfyllt(form)) {
+            if (formkravErOppfylt(form)) stegService.oppdaterSteg(form.behandlingId, StegType.VURDERING)
+            else stegService.oppdaterSteg(form.behandlingId, StegType.BREV)
         } else {
-            stegService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV, false)
+            stegService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV)
         }
         if (sjekkOmFormEksisterer(form.behandlingId)) {
             return oppdaterForm(form)
@@ -55,6 +49,14 @@ class FormService(
             )
         ).tilDto()
     }
+
+    private fun formkravErFerdigUtfyllt(form: Form) = !arrayOf(
+        form.klageKonkret,
+        form.klagePart,
+        form.klageSignert,
+        form.klagefristOverholdt
+    ).contains(FormVilkår.IKKE_SATT) &&
+        form.saksbehandlerBegrunnelse.isNotEmpty()
 
     @Transactional
     fun oppdaterForm(form: Form): FormDto {
@@ -75,7 +77,7 @@ class FormService(
     }
 
     fun formkravErOppfylt(form: Form): Boolean {
-        return(
+        return (
             form.klageKonkret == FormVilkår.OPPFYLT &&
                 form.klagePart == FormVilkår.OPPFYLT &&
                 form.klageSignert == FormVilkår.OPPFYLT &&
