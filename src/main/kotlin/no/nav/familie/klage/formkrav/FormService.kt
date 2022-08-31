@@ -28,14 +28,7 @@ class FormService(
 
     @Transactional
     fun opprettEllerOppdaterForm(form: Form): FormDto {
-        if (!arrayOf(
-                form.klageKonkret,
-                form.klagePart,
-                form.klageSignert,
-                form.klagefristOverholdt
-            ).contains(FormVilkår.IKKE_SATT) &&
-            form.saksbehandlerBegrunnelse.isNotEmpty()
-        ) {
+        if (formkravErFerdigUtfyllt(form)) {
             if (formkravErOppfylt(form)) stegService.oppdaterSteg(form.behandlingId, StegType.VURDERING)
             else stegService.oppdaterSteg(form.behandlingId, StegType.BREV)
         } else {
@@ -56,6 +49,14 @@ class FormService(
             )
         ).tilDto()
     }
+
+    private fun formkravErFerdigUtfyllt(form: Form) = !arrayOf(
+        form.klageKonkret,
+        form.klagePart,
+        form.klageSignert,
+        form.klagefristOverholdt
+    ).contains(FormVilkår.IKKE_SATT) &&
+        form.saksbehandlerBegrunnelse.isNotEmpty()
 
     @Transactional
     fun oppdaterForm(form: Form): FormDto {
