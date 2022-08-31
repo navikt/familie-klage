@@ -6,7 +6,6 @@ import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
 import no.nav.familie.klage.felles.domain.BehandlerRolle
 import no.nav.familie.klage.infrastruktur.config.RolleConfig
-import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
