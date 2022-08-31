@@ -7,7 +7,7 @@ metadata:
     team: teamfamilie
 
 spec:
-  image: {{ image }}
+  image: { { image } }
   ingresses:
     - https://familie-klage-backend.intern.nav.no
   liveness:
@@ -59,6 +59,9 @@ spec:
         - application: familie-brev
         - application: familie-ef-blankett
         - application: familie-dokument
+        - application: kabal-api
+          namespace: klage
+
       external:
         - host: api-gw.oera.no
         - host: unleash.nais.io
