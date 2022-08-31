@@ -16,6 +16,7 @@ class FormService(
     private val formRepository: FormRepository,
     private val stegService: StegService
 ) {
+
     fun hentForm(behandlingId: UUID): FormDto? {
         val eksisterer = formRepository.existsById(behandlingId)
         if (eksisterer) {
@@ -35,10 +36,10 @@ class FormService(
             ).contains(FormVilkår.IKKE_SATT) &&
             form.saksbehandlerBegrunnelse.isNotEmpty()
         ) {
-            if (formkravErOppfylt(form)) stegService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV, true)
-            else stegService.oppdaterSteg(form.behandlingId, StegType.VURDERING, true)
+            if (formkravErOppfylt(form)) stegService.oppdaterSteg(form.behandlingId, StegType.VURDERING)
+            else stegService.oppdaterSteg(form.behandlingId, StegType.BREV)
         } else {
-            stegService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV, false)
+            stegService.oppdaterSteg(form.behandlingId, StegType.FORMKRAV)
         }
         if (sjekkOmFormEksisterer(form.behandlingId)) {
             return oppdaterForm(form)
@@ -75,7 +76,7 @@ class FormService(
     }
 
     fun formkravErOppfylt(form: Form): Boolean {
-        return(
+        return (
             form.klageKonkret == FormVilkår.OPPFYLT &&
                 form.klagePart == FormVilkår.OPPFYLT &&
                 form.klageSignert == FormVilkår.OPPFYLT &&

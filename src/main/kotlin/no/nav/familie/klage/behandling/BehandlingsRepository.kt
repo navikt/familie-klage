@@ -1,11 +1,13 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.BehandlingStatus
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.repository.InsertUpdateRepository
 import no.nav.familie.klage.repository.RepositoryInterface
 import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import java.util.UUID
 
@@ -29,4 +31,10 @@ interface BehandlingsRepository : RepositoryInterface<Behandling, UUID>, InsertU
         """SELECT steg FROM behandling WHERE id = :behandling_id"""
     )
     fun findStegById(behandling_id: UUID): StegType
+
+    @Modifying
+    @Query(
+        """UPDATE behandling SET status = :nyStatus WHERE id = :behandling_id"""
+    )
+    fun updateStatus(@Param("behandling_id") behandlingId: UUID, nyStatus: BehandlingStatus)
 }
