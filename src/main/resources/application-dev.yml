@@ -8,6 +8,9 @@ ON_PREM_URL_ENV: dev
 FAMILIE_INTEGRASJONER_URL: https://familie-integrasjoner-q1.dev-fss-pub.nais.io
 PDL_URL: https://pdl-api-q1.dev-fss-pub.nais.io
 PDL_SCOPE: api://dev-fss.pdl.pdl-api-q1/.default
+
+KABAL_URL: https://kabal-api.dev.intern.nav.no
+
 no.nav.security.jwt:
   client:
     registration:

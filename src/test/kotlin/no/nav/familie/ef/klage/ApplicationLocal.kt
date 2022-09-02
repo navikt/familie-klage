@@ -19,7 +19,8 @@ fun main(args: Array<String>) {
             "mock-auditlogger",
             "mock-pdl",
             "mock-brev",
-            "mock-dokument"
+            "mock-dokument",
+            "mock-kabal"
         )
         .run(*args)
 }
