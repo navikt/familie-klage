@@ -1,5 +1,6 @@
 package no.nav.familie.klage.kabal
 
+import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.vurdering.VurderingService
 import org.springframework.stereotype.Service
@@ -11,12 +12,45 @@ class KabalService(
     private val kabalClient: KabalClient,
     private val fagsakService: FagsakService,
     private val vurderingService: VurderingService,
+    private val behandlingService: BehandlingService
+    ) {
 
-) {
     fun sendTilKabal(behandlingId: UUID, fagsakId: UUID) {
         val oversendtKlageAnkeV3 = lagOversendtKlageAnkeV3Mock(behandlingId, fagsakId)
         kabalClient.sendTilKabal(oversendtKlageAnkeV3)
     }
+
+    fun lagKlageOversendelseV3(behandlingId: UUID, fagsakId: UUID): OversendtKlageAnkeV3 {
+
+        val fagsak = fagsakService.hentFagsak(fagsakId)
+        val behandling = behandlingService.hentBehandling(behandlingId)
+
+        val klagerIdent = fagsak.hentAktivIdent()
+
+
+        return OversendtKlageAnkeV3(
+            type = Type.KLAGE,
+            klager = OversendtKlager(
+                id = OversendtPartId(
+                    type = OversendtPartIdType.PERSON,
+                    verdi = klagerIdent
+                )
+            ),
+            fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem.tilKildeFagsystem()),
+            kildeReferanse = behandling.eksternBehandlingId,
+//            innsynUrl = null, TODO
+            hjemler = listOf(),
+            forrigeBehandlendeEnhet = "",
+            tilknyttedeJournalposter = listOf(),
+            brukersHenvendelseMottattNavDato =,
+            innsendtTilNav =,
+            kilde =,
+            ytelse =,
+            kommentar = null
+        )
+    }
+
+
     fun lagOversendtKlageAnkeV3Mock(behandlingId: UUID, fagsakId: UUID): OversendtKlageAnkeV3 {
 
         val klager = lagKlagerMock(fagsakId)

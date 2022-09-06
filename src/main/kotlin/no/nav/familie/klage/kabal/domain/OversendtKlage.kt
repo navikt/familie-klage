@@ -1,5 +1,7 @@
 package no.nav.familie.klage.kabal
 
+import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.kontrakter.felles.Fagsystem
 import java.time.LocalDate
 
 // objektet som skal sendes til kabal
@@ -81,6 +83,16 @@ enum class KildeFagsystem {
     BA,
     KS
 }
+
+fun Fagsystem.tilKildeFagsystem() =
+    when (this) {
+        Fagsystem.EF -> KildeFagsystem.EF
+        Fagsystem.BA -> KildeFagsystem.BA
+        Fagsystem.KS -> KildeFagsystem.KS
+        else -> {
+            throw Feil("Kan ikke utlede KildeFagSystem for fahsystem $this")
+        }
+    }
 
 enum class Ytelse {
     ENF,
