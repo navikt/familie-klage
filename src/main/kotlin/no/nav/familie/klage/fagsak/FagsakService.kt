@@ -4,6 +4,7 @@ import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.fagsak.domain.Stønadstype
+import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.Fagsystem
@@ -35,7 +36,18 @@ class FagsakService(
         return fagsak.tilFagsakMedPerson(fagsakPersonService.hentIdenter(fagsak.fagsakPersonId))
     }
 
-    private fun opprettFagsak(stønadType: Stønadstype, eksternId: String, fagsystem: Fagsystem, fagsakPerson: FagsakPerson): FagsakDomain {
+    fun hentFagsakForBehandling(behandlingId: UUID): Fagsak {
+        val fagsak = fagsakRepository.finnFagsakForBehandling(behandlingId)
+        return fagsak?.tilFagsakMedPerson(fagsakPersonService.hentIdenter(fagsak.fagsakPersonId))
+            ?: throw Feil("Finner ikke fagsak til behandlingId=$behandlingId")
+    }
+
+    private fun opprettFagsak(
+        stønadType: Stønadstype,
+        eksternId: String,
+        fagsystem: Fagsystem,
+        fagsakPerson: FagsakPerson
+    ): FagsakDomain {
         return fagsakRepository.insert(
             FagsakDomain(
                 fagsakPersonId = fagsakPerson.id,

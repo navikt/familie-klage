@@ -13,7 +13,6 @@ import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.integrasjoner.IntegrasjonerService
 import no.nav.familie.klage.kabal.KabalService
-import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.Fagsystem
@@ -29,7 +28,6 @@ import java.util.UUID
 @Service
 class BehandlingService(
     private val behandlingsRepository: BehandlingsRepository,
-    private val personopplysningerService: PersonopplysningerService,
     private val fagsakService: FagsakService,
     private val brevRepository: BrevRepository,
     private val familieDokumentClient: FamilieDokumentClient,
@@ -43,10 +41,12 @@ class BehandlingService(
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
-    fun hentBehandling(behandlingId: UUID): BehandlingDto {
-        val behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
-        val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
-        return behandling.tilDto(fagsak)
+
+    fun hentBehandling(behandlingId: UUID): Behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
+
+    fun hentBehandlingDto(behandlingId: UUID): BehandlingDto {
+        val stønadstype = fagsakService.hentFagsakForBehandling(behandlingId).stønadstype
+        return behandlingsRepository.findByIdOrThrow(behandlingId).tilDto(stønadstype)
     }
 
     fun hentNavnFraBehandlingsId(behandlingId: UUID): String {
