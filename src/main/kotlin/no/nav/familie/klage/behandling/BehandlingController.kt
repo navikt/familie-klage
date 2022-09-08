@@ -25,7 +25,7 @@ class BehandlingController(
     @GetMapping("{behandlingId}")
     fun hentBehandling(@PathVariable behandlingId: UUID): Ressurs<BehandlingDto> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
-        return Ressurs.success(behandlingService.hentBehandling(behandlingId))
+        return Ressurs.success(behandlingService.hentBehandlingDto(behandlingId))
     }
 
     @PostMapping("/ferdigstill/{behandlingId}")

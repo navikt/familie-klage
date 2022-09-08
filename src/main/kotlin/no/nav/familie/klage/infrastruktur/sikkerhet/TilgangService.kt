@@ -1,6 +1,7 @@
 package no.nav.familie.klage.infrastruktur.sikkerhet
 
 import no.nav.familie.klage.behandling.BehandlingService
+import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.domain.AuditLogger
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.felles.domain.BehandlerRolle
@@ -22,6 +23,7 @@ class TilgangService(
     private val cacheManager: CacheManager,
     private val auditLogger: AuditLogger,
     private val behandlingService: BehandlingService,
+    private val fagsakService: FagsakService
 ) {
 
     /**
@@ -135,5 +137,20 @@ class TilgangService(
 
     fun validerSaksbehandler(saksbehandler: String): Boolean {
         return SikkerhetContext.hentSaksbehandler() == saksbehandler
+    }
+
+    fun validerTilgangTilFagsak(fagsakId: UUID, event: AuditLoggerEvent) {
+        val personIdent = cacheManager.getValue("fagsakIdent", fagsakId) {
+            fagsakService.hentFagsak(fagsakId).hentAktivIdent()
+        }
+        val tilgang = harTilgangTilPersonMedRelasjoner(personIdent)
+        auditLogger.log(Sporingsdata(event, personIdent, tilgang, custom1 = CustomKeyValue("fagsak", fagsakId.toString())))
+        if (!tilgang.harTilgang) {
+            throw ManglerTilgang(
+                melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
+                    "har ikke tilgang til fagsak=$fagsakId",
+                frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}"
+            )
+        }
     }
 }
