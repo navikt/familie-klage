@@ -131,3 +131,7 @@ prosessering:
   delete:
     after:
       weeks: 16
+
+lenker:
+  EF_SAK_FRONTEND_URL: "https://ensligmorellerfar.intern.nav.no/ekstern"
+  BA_SAK_FRONTEND_URL: "https://barnetrygd.intern.nav.no"
