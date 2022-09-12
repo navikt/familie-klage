@@ -18,25 +18,6 @@ class KabalKafkaListener {
     }
 }
 
-data class KlagevedtakHendelse(
-    val id: UUID,
-    val behandlingId: UUID,
-    val kildeReferanse: String,
-    val kilde: String,
-    var status: UtsendingStatus,
-    val jsonPayload: String, // KlageAnke
-    var errorMessage: String?,
-    val created: LocalDateTime,
-    val type: EventType
-)
-
-enum class UtsendingStatus {
-    IKKE_SENDT, FEILET, SENDT
-}
-
-enum class EventType {
-    KLAGE_VEDTAK, STATS_DVH, BEHANDLING_EVENT
-}
 
 data class BehandlingEvent(
     val eventId: UUID,
