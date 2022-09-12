@@ -35,6 +35,7 @@ class BehandlingController(
         tilgangService.validerHarSaksbehandlerrolle()
         behandlingService.ferdigstillBrev(behandlingId)
     }
+
     @PostMapping("/opprett")
     fun ferdigstillBrev(@PathVariable opprettKlageBehandlingDto: OpprettKlagebehandlingRequest) {
         behandlingService.opprettBehandling(opprettKlageBehandlingDto)
