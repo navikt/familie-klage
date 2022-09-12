@@ -1,6 +1,6 @@
 package no.nav.familie.klage.integrasjoner
 
-import no.nav.familie.klage.fagsak.domain.Stønadstype
+import no.nav.familie.kontrakter.felles.Ytelsestype
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.Filtype
@@ -15,14 +15,14 @@ class IntegrasjonerService {
         fagsakId: String?,
         behandlingId: UUID,
         enhet: String,
-        stønadstype: Stønadstype,
+        ytelsestype: Ytelsestype,
         dokumenttype: Dokumenttype
     ): ArkiverDokumentRequest {
         val dokument = no.nav.familie.kontrakter.felles.dokarkiv.v2.Dokument(
             pdf,
             Filtype.PDFA,
             null,
-            "Brev for ${stønadstype.name.lowercase()}",
+            "Brev for ${ytelsestype.name.lowercase()}",
             dokumenttype
         )
         return ArkiverDokumentRequest(

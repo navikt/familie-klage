@@ -2,6 +2,7 @@ package no.nav.familie.klage.fagsak.domain
 
 import no.nav.familie.klage.felles.domain.Sporbar
 import no.nav.familie.kontrakter.felles.Fagsystem
+import no.nav.familie.kontrakter.felles.Ytelsestype
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Embedded
@@ -13,7 +14,7 @@ data class Fagsak(
     val fagsakPersonId: UUID,
     val personIdenter: Set<PersonIdent>,
     val eksternId: String,
-    val stønadstype: Stønadstype,
+    val ytelsestype: Ytelsestype,
     val fagsystem: Fagsystem,
     val sporbar: Sporbar
 ) {
@@ -28,7 +29,7 @@ data class FagsakDomain(
     val id: UUID = UUID.randomUUID(),
     val fagsakPersonId: UUID,
     @Column("stonadstype")
-    val stønadstype: Stønadstype,
+    val ytelsestype: Ytelsestype,
     val fagsystem: Fagsystem,
     val eksternId: String,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
@@ -40,16 +41,8 @@ data class FagsakDomain(
             fagsakPersonId = fagsakPersonId,
             personIdenter = identer,
             eksternId = eksternId,
-            stønadstype = stønadstype,
+            ytelsestype = ytelsestype,
             fagsystem = fagsystem,
             sporbar = sporbar
         )
-}
-
-enum class Stønadstype {
-    OVERGANGSSTØNAD,
-    SKOLEPENGER,
-    BARNETILSYN,
-    BARNETRYGD,
-    KONTANTSTØTTE
 }

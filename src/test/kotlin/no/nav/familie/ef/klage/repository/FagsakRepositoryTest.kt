@@ -7,7 +7,7 @@ import no.nav.familie.klage.behandling.BehandlingsRepository
 import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.PersonIdent
-import no.nav.familie.klage.fagsak.domain.Stønadstype
+import no.nav.familie.kontrakter.felles.Ytelsestype
 import no.nav.familie.klage.felles.domain.Endret
 import no.nav.familie.klage.felles.domain.Sporbar
 import no.nav.familie.kontrakter.felles.Fagsystem
@@ -56,29 +56,29 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
     }
 
     @Test
-    internal fun findByEksternIdAndFagsystemAndStønadstype() {
+    internal fun findByEksternIdAndFagsystemAndYtelsestype() {
         val eksternId = Random.nextInt().toString()
         val fagsystem = Fagsystem.EF
-        val stønadstype = Stønadstype.BARNETILSYN
+        val ytelsestype = Ytelsestype.BARNETILSYN
 
         val lagretFagsak = testoppsettService.lagreFagsak(
             fagsakDomain(
                 eksternId = eksternId,
                 fagsystem = fagsystem,
-                stønadstype = stønadstype
+                ytelsestype = ytelsestype
             ).tilFagsakMedPerson(setOf(PersonIdent("1")))
         )
 
-        val fagsak = fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(
+        val fagsak = fagsakRepository.findByEksternIdAndFagsystemAndYtelsestype(
             eksternId = eksternId,
             fagsystem = fagsystem,
-            stønadstype = stønadstype
+            ytelsestype = ytelsestype
         )!!
 
         assertThat(lagretFagsak.id).isEqualTo(fagsak.id)
         assertThat(lagretFagsak.eksternId).isEqualTo(fagsak.eksternId)
-        assertThat(lagretFagsak.stønadstype).isEqualTo(fagsak.stønadstype)
-        assertThat(lagretFagsak.stønadstype).isEqualTo(fagsak.stønadstype)
+        assertThat(lagretFagsak.ytelsestype).isEqualTo(fagsak.ytelsestype)
+        assertThat(lagretFagsak.ytelsestype).isEqualTo(fagsak.ytelsestype)
         assertThat(lagretFagsak.fagsakPersonId).isEqualTo(fagsak.fagsakPersonId)
     }
 

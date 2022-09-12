@@ -1,9 +1,10 @@
 package no.nav.familie.klage.test
 
 import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.fagsak.domain.Stønadstype
 import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.Ytelsestype
+import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.MediaType
 import org.springframework.validation.annotation.Validated
@@ -26,12 +27,14 @@ class TestController(private val behandlingService: BehandlingService) {
     fun opprettDummybehandling(@RequestBody request: DummybehandlingRequest): Ressurs<UUID> {
         return Ressurs.success(
             behandlingService.opprettBehandling(
-                ident = request.ident,
-                stønadsype = request.stønadstype,
-                eksternBehandlingId = request.eksternBehandlingId,
-                eksternFagsakId = request.eksternFagsakId,
-                fagsystem = request.fagsystem,
-                klageMottatt = request.klageMottatt
+                OpprettKlagebehandlingRequest(
+                    request.ident,
+                    request.ytelsestype,
+                    request.eksternBehandlingId,
+                    request.eksternFagsakId,
+                    request.fagsystem,
+                    request.klageMottatt
+                )
             )
         )
     }
@@ -45,7 +48,7 @@ class TestController(private val behandlingService: BehandlingService) {
 
     data class DummybehandlingRequest(
         val ident: String,
-        val stønadstype: Stønadstype,
+        val ytelsestype: Ytelsestype,
         val eksternBehandlingId: String = Random.nextInt().toString(),
         val eksternFagsakId: String = Random.nextInt().toString(),
         val fagsystem: Fagsystem = Fagsystem.EF,

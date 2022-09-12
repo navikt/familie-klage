@@ -6,13 +6,13 @@ import org.springframework.data.relational.core.mapping.Embedded
 import java.util.UUID
 
 data class Vurdering(
-        @Id
+    @Id
     val behandlingId: UUID,
-        val vedtak: Vedtak,
-        val arsak: Årsak? = null,
-        val hjemmel: Hjemmel? = null,
-        val beskrivelse: String,
-        @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
+    val vedtak: Vedtak,
+    val arsak: Årsak? = null,
+    val hjemmel: Hjemmel? = null,
+    val beskrivelse: String,
+    @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar()
 )
 

@@ -7,7 +7,6 @@ import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.brev.FamilieDokumentClient
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.fagsak.domain.Stønadstype
 import no.nav.familie.klage.formkrav.FormRepository
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
@@ -15,14 +14,13 @@ import no.nav.familie.klage.integrasjoner.IntegrasjonerService
 import no.nav.familie.klage.kabal.KabalService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
-import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
 import no.nav.familie.kontrakter.felles.dokdist.Distribusjonstype
+import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDate
 import java.util.UUID
 
 @Service
@@ -45,8 +43,8 @@ class BehandlingService(
     fun hentBehandling(behandlingId: UUID): Behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
 
     fun hentBehandlingDto(behandlingId: UUID): BehandlingDto {
-        val stønadstype = fagsakService.hentFagsakForBehandling(behandlingId).stønadstype
-        return behandlingsRepository.findByIdOrThrow(behandlingId).tilDto(stønadstype)
+        val ytelsestype = fagsakService.hentFagsakForBehandling(behandlingId).ytelsestype
+        return behandlingsRepository.findByIdOrThrow(behandlingId).tilDto(ytelsestype)
     }
 
     fun hentNavnFraBehandlingsId(behandlingId: UUID): String {
@@ -55,21 +53,21 @@ class BehandlingService(
 
     @Transactional
     fun opprettBehandling(
-        ident: String,
-        stønadsype: Stønadstype,
-        eksternBehandlingId: String,
-        eksternFagsakId: String,
-        fagsystem: Fagsystem,
-        klageMottatt: LocalDate
-    ): UUID { // TODO: Bruk et dto-objekt for disse fire feltene
+        opprettKlageBehandlingDto: OpprettKlagebehandlingRequest
+    ): UUID {
 
-        val fagsak = fagsakService.hentEllerOpprettFagsak(ident, eksternFagsakId, fagsystem, stønadsype)
+        val fagsak = fagsakService.hentEllerOpprettFagsak(
+            opprettKlageBehandlingDto.ident,
+            opprettKlageBehandlingDto.eksternFagsakId,
+            opprettKlageBehandlingDto.fagsystem,
+            opprettKlageBehandlingDto.ytelsestype
+        )
 
         return behandlingsRepository.insert(
             Behandling(
                 fagsakId = fagsak.id,
-                eksternBehandlingId = eksternBehandlingId,
-                klageMottatt = klageMottatt
+                eksternBehandlingId = opprettKlageBehandlingDto.eksternBehandlingId,
+                klageMottatt = opprettKlageBehandlingDto.klageMottatt
             )
         ).id
     }
@@ -97,12 +95,15 @@ class BehandlingService(
             fagsakId = fagsak.eksternId,
             behandlingId = behandlingId,
             enhet = "enhet",
-            stønadstype = fagsak.stønadstype,
+            ytelsestype = fagsak.ytelsestype,
             dokumenttype = Dokumenttype.BARNETRYGD_VEDTAK_INNVILGELSE // TODO: Riktig dokumenttype
         )
 
         val respons =
-            familieIntegrasjonerClient.arkiverDokument(arkiverDokumentRequest, "Maja") // TODO: Hente en saksbehandlere her
+            familieIntegrasjonerClient.arkiverDokument(
+                arkiverDokumentRequest,
+                "Maja"
+            ) // TODO: Hente en saksbehandlere her
         logger.info("Mottok id fra JoArk: ${respons.journalpostId}")
 
         val distnummer = familieIntegrasjonerClient.distribuerBrev(
