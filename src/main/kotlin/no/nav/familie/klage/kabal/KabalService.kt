@@ -24,6 +24,7 @@ class KabalService(
 
         val fagsak = fagsakService.hentFagsak(fagsakId)
         val behandling = behandlingService.hentBehandling(behandlingId)
+        val vurdering = vurderingService.hentVurdering(behandlingId)
 
         val klagerIdent = fagsak.hentAktivIdent()
 
@@ -39,7 +40,7 @@ class KabalService(
             fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem.tilKildeFagsystem()),
             kildeReferanse = behandling.eksternBehandlingId,
 //            innsynUrl = null, TODO
-            hjemler = listOf(),
+            hjemler = listOf(vurdering?.hjemmel.tilKabalHjemmel()),
             forrigeBehandlendeEnhet = "",
             tilknyttedeJournalposter = listOf(),
             brukersHenvendelseMottattNavDato =,
