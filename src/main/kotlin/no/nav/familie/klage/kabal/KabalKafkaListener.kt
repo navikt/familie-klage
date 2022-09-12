@@ -18,7 +18,6 @@ class KabalKafkaListener {
     }
 }
 
-
 data class BehandlingEvent(
     val eventId: UUID,
     val kildeReferanse: String,
