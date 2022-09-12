@@ -2,7 +2,10 @@ package no.nav.familie.klage.kabal
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.fagsak.domain.Fagsak
+import no.nav.familie.klage.infrastruktur.config.LenkeConfig
 import no.nav.familie.klage.vurdering.VurderingService
+import no.nav.familie.kontrakter.felles.Fagsystem
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.util.UUID
@@ -12,8 +15,9 @@ class KabalService(
     private val kabalClient: KabalClient,
     private val fagsakService: FagsakService,
     private val vurderingService: VurderingService,
-    private val behandlingService: BehandlingService
-    ) {
+    private val behandlingService: BehandlingService,
+    private val lenkeConfig: LenkeConfig
+) {
 
     fun sendTilKabal(behandlingId: UUID, fagsakId: UUID) {
         val oversendtKlageAnkeV3 = lagOversendtKlageAnkeV3Mock(behandlingId, fagsakId)
@@ -39,7 +43,7 @@ class KabalService(
             ),
             fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem.tilKildeFagsystem()),
             kildeReferanse = behandling.eksternBehandlingId,
-//            innsynUrl = null, TODO
+            innsynUrl = lagInnsynUrl(fagsak, behandling.eksternBehandlingId),
             hjemler = listOf(vurdering?.hjemmel.tilKabalHjemmel()),
             forrigeBehandlendeEnhet = "",
             tilknyttedeJournalposter = listOf(),
@@ -51,6 +55,17 @@ class KabalService(
         )
     }
 
+    private fun lagInnsynUrl(fagsak: Fagsak, eksternBehandlingId: String?): String {
+
+        val fagsystemUrl = when (fagsak.fagsystem) {
+            Fagsystem.EF -> lenkeConfig.efSakLenke
+            Fagsystem.BA -> lenkeConfig.baSakLenke
+            Fagsystem.KS -> error("Ikke implementert støtte for KS")
+            Fagsystem.IT01 -> error("Skal ikke ha infotrygd som fagsystem for klager")
+        }
+        return eksternBehandlingId?.let { "$fagsystemUrl/fagsak/${fagsak.eksternId}/$eksternBehandlingId" }
+            ?: "$fagsystemUrl/fagsak/${fagsak.eksternId}/saksoversikt"
+    }
 
     fun lagOversendtKlageAnkeV3Mock(behandlingId: UUID, fagsakId: UUID): OversendtKlageAnkeV3 {
 
