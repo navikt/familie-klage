@@ -48,7 +48,8 @@ class BehandlingService(
             Behandling(
                 fagsakId = fagsak.id,
                 eksternBehandlingId = opprettKlagebehandlingRequest.eksternBehandlingId,
-                klageMottatt = opprettKlagebehandlingRequest.klageMottatt
+                klageMottatt = opprettKlagebehandlingRequest.klageMottatt,
+                behandlendeEnhet = "4489" // TODO: Må inn i request
             )
         ).id
     }

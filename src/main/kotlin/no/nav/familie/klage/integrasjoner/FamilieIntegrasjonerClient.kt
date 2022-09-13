@@ -3,7 +3,6 @@ package no.nav.familie.klage.integrasjoner
 import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import no.nav.familie.klage.infrastruktur.config.IntegrasjonerConfig
-import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
@@ -49,7 +48,7 @@ class FamilieIntegrasjonerClient(
     fun distribuerBrev(journalpostId: String, distribusjonstype: Distribusjonstype): String {
         val journalpostRequest = DistribuerJournalpostRequest(
             journalpostId = journalpostId,
-            bestillendeFagsystem = Fagsystem.EF,
+            bestillendeFagsystem = no.nav.familie.kontrakter.felles.Fagsystem.EF,
             dokumentProdApp = "FAMILIE_KLAGE",
             distribusjonstype = distribusjonstype
         )

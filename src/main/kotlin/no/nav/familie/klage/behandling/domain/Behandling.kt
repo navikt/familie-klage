@@ -18,7 +18,8 @@ data class Behandling(
     val resultat: BehandlingResultat? = BehandlingResultat.IKKE_SATT,
     val vedtakDato: LocalDateTime? = null,
     val eksternBehandlingId: String,
-    val klageMottatt: LocalDate
+    val klageMottatt: LocalDate,
+    val behandlendeEnhet: String
 )
 
 enum class BehandlingResultat(val displayName: String) {

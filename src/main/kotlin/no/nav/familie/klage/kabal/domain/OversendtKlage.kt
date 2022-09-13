@@ -1,5 +1,6 @@
 package no.nav.familie.klage.kabal
 
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import java.time.LocalDate
 
 // objektet som skal sendes til kabal
@@ -16,7 +17,7 @@ data class OversendtKlageAnkeV3(
     val tilknyttedeJournalposter: List<OversendtDokumentReferanse> = emptyList(),
     val brukersHenvendelseMottattNavDato: LocalDate,
     val innsendtTilNav: LocalDate,
-    val kilde: KildeFagsystem,
+    val kilde: Fagsystem,
     val ytelse: Ytelse,
     val kommentar: String? = null,
 )
@@ -53,13 +54,7 @@ data class OversendtSakenGjelder(
 
 data class OversendtSak(
     val fagsakId: String? = null,
-    val fagsystem: KildeFagsystem
-)
-
-data class KabalHjemmel(
-    val id: String,
-    val lovKilde: LovKilde,
-    val spesifikasjon: String
+    val fagsystem: Fagsystem
 )
 
 data class OversendtDokumentReferanse(
@@ -74,12 +69,6 @@ enum class MottakDokumentType {
     OVERSENDELSESBREV,
     KLAGE_VEDTAK,
     ANNET
-}
-
-enum class KildeFagsystem {
-    EF,
-    BA,
-    KS
 }
 
 enum class Ytelse {

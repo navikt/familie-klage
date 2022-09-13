@@ -146,8 +146,11 @@ class BrevService(
 
     fun sendTilKabal(behandlingId: UUID) {
         logger.info("send til kabal")
-        val fagsakId = behandlingService.hentBehandling(behandlingId).fagsakId
-        kabalService.sendTilKabal(behandlingId, fagsakId)
+        val behandling = behandlingService.hentBehandling(behandlingId)
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
+        val vurdering = vurderingService.hentVurdering(behandlingId)
+
+        kabalService.sendTilKabal(fagsak, behandling, vurdering)
     }
 
     private fun skalSendeTilKabal(behandlingId: UUID): Boolean {

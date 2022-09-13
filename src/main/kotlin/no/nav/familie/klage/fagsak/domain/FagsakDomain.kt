@@ -1,7 +1,8 @@
 package no.nav.familie.klage.fagsak.domain
 
 import no.nav.familie.klage.felles.domain.Sporbar
-import no.nav.familie.kontrakter.felles.Fagsystem
+import no.nav.familie.klage.kabal.Ytelse
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
@@ -46,3 +47,12 @@ data class FagsakDomain(
             sporbar = sporbar
         )
 }
+
+fun Stønadstype.tilYtelse(): Ytelse =
+    when (this) {
+        Stønadstype.OVERGANGSSTØNAD -> Ytelse.ENF
+        Stønadstype.SKOLEPENGER -> Ytelse.ENF
+        Stønadstype.BARNETILSYN -> Ytelse.ENF
+        Stønadstype.BARNETRYGD -> Ytelse.BAR
+        Stønadstype.KONTANTSTØTTE -> Ytelse.KONT
+    }

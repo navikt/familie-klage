@@ -1,65 +1,53 @@
 package no.nav.familie.klage.kabal
 
-import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.vurdering.VurderingService
+import VurderingDto
+import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.fagsak.domain.Fagsak
+import no.nav.familie.klage.fagsak.domain.tilYtelse
+import no.nav.familie.klage.infrastruktur.config.LenkeConfig
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import org.springframework.stereotype.Service
-import java.time.LocalDate
-import java.util.UUID
 
 @Service
 class KabalService(
     private val kabalClient: KabalClient,
-    private val fagsakService: FagsakService,
-    private val vurderingService: VurderingService,
-
+    private val lenkeConfig: LenkeConfig
 ) {
-    fun sendTilKabal(behandlingId: UUID, fagsakId: UUID) {
-        val oversendtKlageAnkeV3 = lagOversendtKlageAnkeV3Mock(behandlingId, fagsakId)
+
+    fun sendTilKabal(fagsak: Fagsak, behandling: Behandling, vurdering: VurderingDto?) {
+        val oversendtKlageAnkeV3 = lagKlageOversendelseV3(fagsak, behandling, vurdering)
         kabalClient.sendTilKabal(oversendtKlageAnkeV3)
     }
-    fun lagOversendtKlageAnkeV3Mock(behandlingId: UUID, fagsakId: UUID): OversendtKlageAnkeV3 {
 
-        val klager = lagKlagerMock(fagsakId)
-        val fagsak = lagOversendtSakMock(behandlingId)
-        val vurdering = vurderingService.hentEksisterendeVurdering(behandlingId)
-
+    private fun lagKlageOversendelseV3(fagsak: Fagsak, behandling: Behandling, vurdering: VurderingDto?): OversendtKlageAnkeV3 {
         return OversendtKlageAnkeV3(
             type = Type.KLAGE,
-            klager = klager,
-            fagsak = fagsak,
-            kildeReferanse = "kildereferansen kommer",
-            dvhReferanse = "dvhReferanse",
-            innsynUrl = "https://familie-klage.dev.intern.nav.no/behandling/$behandlingId",
-            forrigeBehandlendeEnhet = "forrige behandlende enhet",
-            brukersHenvendelseMottattNavDato = LocalDate.now(),
-            innsendtTilNav = LocalDate.now(),
-            kilde = KildeFagsystem.EF,
-            ytelse = Ytelse.ENF,
-            kommentar = vurdering.beskrivelse,
-            hjemler = listOf(
-                KabalHjemmel(
-                    id = LovKilde.NAV_LOVEN.id,
-                    lovKilde = LovKilde.NAV_LOVEN,
-                    spesifikasjon = LovKilde.NAV_LOVEN.beskrivelse
+            klager = OversendtKlager(
+                id = OversendtPartId(
+                    type = OversendtPartIdType.PERSON,
+                    verdi = fagsak.hentAktivIdent()
                 )
-            )
+            ),
+            fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem),
+            kildeReferanse = behandling.eksternBehandlingId,
+            innsynUrl = lagInnsynUrl(fagsak, behandling.eksternBehandlingId),
+            hjemler = vurdering?.hjemmel?.let { listOf(it.kabalHjemmel) } ?: emptyList(),
+            forrigeBehandlendeEnhet = behandling.behandlendeEnhet,
+            tilknyttedeJournalposter = listOf(), // TODO: klagebrev kan puttes på automatisk, vedtaksbrev fra EF-sak må hentes fra iverksett, klage må velges ved ferdigstilling eller ved journalføring av klage
+            brukersHenvendelseMottattNavDato = behandling.klageMottatt,
+            innsendtTilNav = behandling.klageMottatt,
+            kilde = fagsak.fagsystem,
+            ytelse = fagsak.stønadstype.tilYtelse()
         )
     }
 
-    fun lagKlagerMock(fagsakId: UUID): OversendtKlager {
-
-        val fnr = fagsakService.hentFagsak(fagsakId).hentAktivIdent()
-
-        val oversendtPartIdType = OversendtPartIdType.PERSON
-        val oversendtPartId = OversendtPartId(oversendtPartIdType, fnr)
-
-        return OversendtKlager(oversendtPartId, null)
-    }
-
-    fun lagOversendtSakMock(fagsakId: UUID): OversendtSak {
-        return OversendtSak(
-            fagsakId = fagsakId.toString(),
-            fagsystem = KildeFagsystem.EF
-        )
+    private fun lagInnsynUrl(fagsak: Fagsak, eksternBehandlingId: String?): String {
+        val fagsystemUrl = when (fagsak.fagsystem) {
+            Fagsystem.EF -> lenkeConfig.efSakLenke
+            Fagsystem.BA -> lenkeConfig.baSakLenke
+            Fagsystem.KS -> error("Ikke implementert støtte for KS")
+        }
+        return eksternBehandlingId?.let { "$fagsystemUrl/fagsak/${fagsak.eksternId}/$eksternBehandlingId" }
+            ?: "$fagsystemUrl/fagsak/${fagsak.eksternId}/saksoversikt"
     }
 }
