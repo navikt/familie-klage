@@ -1,4 +1,4 @@
-package no.nav.familie.ef.klage
+package no.nav.familie.klage
 
 import no.nav.familie.klage.infrastruktur.config.ApplicationConfig
 import org.springframework.boot.autoconfigure.SpringBootApplication

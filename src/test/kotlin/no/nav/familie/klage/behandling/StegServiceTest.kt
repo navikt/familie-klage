@@ -5,8 +5,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
-import no.nav.familie.ef.klage.testutil.BrukerContextUtil.testWithBrukerContext
-import no.nav.familie.ef.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.behandling.domain.BehandlingStatus
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
@@ -14,6 +12,8 @@ import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
 import no.nav.familie.klage.infrastruktur.config.RolleConfig
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.klage.testutil.BrukerContextUtil.testWithBrukerContext
+import no.nav.familie.klage.testutil.DomainUtil.behandling
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
