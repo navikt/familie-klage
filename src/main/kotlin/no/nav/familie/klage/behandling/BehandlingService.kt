@@ -60,7 +60,8 @@ class BehandlingService(
         eksternBehandlingId: String,
         eksternFagsakId: String,
         fagsystem: Fagsystem,
-        klageMottatt: LocalDate
+        klageMottatt: LocalDate,
+        behandlendeENhet: String
     ): UUID { // TODO: Bruk et dto-objekt for disse fire feltene
 
         val fagsak = fagsakService.hentEllerOpprettFagsak(ident, eksternFagsakId, fagsystem, stønadsype)
@@ -69,7 +70,8 @@ class BehandlingService(
             Behandling(
                 fagsakId = fagsak.id,
                 eksternBehandlingId = eksternBehandlingId,
-                klageMottatt = klageMottatt
+                klageMottatt = klageMottatt,
+                behandlendeEnhet = behandlendeENhet
             )
         ).id
     }
@@ -115,8 +117,11 @@ class BehandlingService(
 
     fun sendTilKabal(behandlingId: UUID) {
         logger.info("send til kabal")
-        val fagsakId = behandlingsRepository.findByIdOrThrow(behandlingId).fagsakId
-        kabalService.sendTilKabal(behandlingId, fagsakId)
+        kabalService.sendTilKabal(
+            fagsak = fagsakService.hentFagsakForBehandling(behandlingId),
+            behandling = hentBehandling(behandlingId),
+            vurdering = vurderingService.hentVurdering(behandlingId)
+        )
     }
 
     private fun skalSendeTilKabal(behandlingId: UUID): Boolean {

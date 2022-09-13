@@ -33,8 +33,8 @@ object DomainUtil {
         eksternBehandlingId: String = Random.nextInt().toString(),
         klageMottatt: LocalDate = LocalDate.now(),
         status: BehandlingStatus = BehandlingStatus.OPPRETTET,
-        steg: StegType = StegType.FORMKRAV
-
+        steg: StegType = StegType.FORMKRAV,
+        behandlendeEnhet: String = "4489"
     ): Behandling =
         Behandling(
             id = id,
@@ -42,6 +42,7 @@ object DomainUtil {
             eksternBehandlingId = eksternBehandlingId,
             klageMottatt = klageMottatt,
             status = status,
-            steg = steg
+            steg = steg,
+            behandlendeEnhet = behandlendeEnhet
         )
 }

@@ -58,12 +58,6 @@ data class OversendtSak(
     val fagsystem: KildeFagsystem
 )
 
-data class KabalHjemmel(
-    val id: String,
-    val lovKilde: LovKilde,
-    val spesifikasjon: String
-)
-
 data class OversendtDokumentReferanse(
     val type: MottakDokumentType,
 )

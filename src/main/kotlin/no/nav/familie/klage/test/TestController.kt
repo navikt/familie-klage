@@ -31,7 +31,8 @@ class TestController(private val behandlingService: BehandlingService) {
                 eksternBehandlingId = request.eksternBehandlingId,
                 eksternFagsakId = request.eksternFagsakId,
                 fagsystem = request.fagsystem,
-                klageMottatt = request.klageMottatt
+                klageMottatt = request.klageMottatt,
+                behandlendeENhet = "4489"
             )
         )
     }

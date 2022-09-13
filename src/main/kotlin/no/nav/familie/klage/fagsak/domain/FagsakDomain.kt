@@ -1,6 +1,7 @@
 package no.nav.familie.klage.fagsak.domain
 
 import no.nav.familie.klage.felles.domain.Sporbar
+import no.nav.familie.klage.kabal.Ytelse
 import no.nav.familie.kontrakter.felles.Fagsystem
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
@@ -51,5 +52,14 @@ enum class Stønadstype {
     SKOLEPENGER,
     BARNETILSYN,
     BARNETRYGD,
-    KONTANTSTØTTE
+    KONTANTSTØTTE;
+
+    fun tilYtelse(): Ytelse =
+        when(this){
+            OVERGANGSSTØNAD -> Ytelse.ENF // TODO: OS/BT/SP
+            SKOLEPENGER -> Ytelse.ENF // TODO: OS/BT/SP
+            BARNETILSYN -> Ytelse.ENF // TODO: OS/BT/SP
+            BARNETRYGD -> Ytelse.BAR
+            KONTANTSTØTTE -> Ytelse.KONT
+        }
 }
