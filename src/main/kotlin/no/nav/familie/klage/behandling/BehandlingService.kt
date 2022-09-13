@@ -17,7 +17,7 @@ class BehandlingService(
     private val behandlingRepository: BehandlingRepository,
     private val fagsakService: FagsakService,
 
-    ) {
+) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
