@@ -43,8 +43,8 @@ class BehandlingService(
     fun hentBehandling(behandlingId: UUID): Behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
 
     fun hentBehandlingDto(behandlingId: UUID): BehandlingDto {
-        val ytelsestype = fagsakService.hentFagsakForBehandling(behandlingId).ytelsestype
-        return behandlingsRepository.findByIdOrThrow(behandlingId).tilDto(ytelsestype)
+        val stønadstype = fagsakService.hentFagsakForBehandling(behandlingId).stønadstype
+        return behandlingsRepository.findByIdOrThrow(behandlingId).tilDto(stønadstype)
     }
 
     fun hentNavnFraBehandlingsId(behandlingId: UUID): String {
@@ -60,7 +60,7 @@ class BehandlingService(
             opprettKlageBehandlingDto.ident,
             opprettKlageBehandlingDto.eksternFagsakId,
             opprettKlageBehandlingDto.fagsystem,
-            opprettKlageBehandlingDto.ytelsestype
+            opprettKlageBehandlingDto.stønadstype
         )
 
         return behandlingsRepository.insert(
@@ -95,7 +95,7 @@ class BehandlingService(
             fagsakId = fagsak.eksternId,
             behandlingId = behandlingId,
             enhet = "enhet",
-            ytelsestype = fagsak.ytelsestype,
+            stønadstype = fagsak.stønadstype,
             dokumenttype = Dokumenttype.BARNETRYGD_VEDTAK_INNVILGELSE // TODO: Riktig dokumenttype
         )
 

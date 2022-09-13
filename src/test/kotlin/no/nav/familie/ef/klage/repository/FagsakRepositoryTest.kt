@@ -7,10 +7,10 @@ import no.nav.familie.klage.behandling.BehandlingsRepository
 import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.PersonIdent
-import no.nav.familie.kontrakter.felles.Ytelsestype
 import no.nav.familie.klage.felles.domain.Endret
 import no.nav.familie.klage.felles.domain.Sporbar
 import no.nav.familie.kontrakter.felles.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -56,29 +56,29 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
     }
 
     @Test
-    internal fun findByEksternIdAndFagsystemAndYtelsestype() {
+    internal fun findByEksternIdAndFagsystemAndStønadstype() {
         val eksternId = Random.nextInt().toString()
         val fagsystem = Fagsystem.EF
-        val ytelsestype = Ytelsestype.BARNETILSYN
+        val stønadstype = Stønadstype.BARNETILSYN
 
         val lagretFagsak = testoppsettService.lagreFagsak(
             fagsakDomain(
                 eksternId = eksternId,
                 fagsystem = fagsystem,
-                ytelsestype = ytelsestype
+                stønadstype = stønadstype
             ).tilFagsakMedPerson(setOf(PersonIdent("1")))
         )
 
-        val fagsak = fagsakRepository.findByEksternIdAndFagsystemAndYtelsestype(
+        val fagsak = fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(
             eksternId = eksternId,
             fagsystem = fagsystem,
-            ytelsestype = ytelsestype
+            stønadstype = stønadstype
         )!!
 
         assertThat(lagretFagsak.id).isEqualTo(fagsak.id)
         assertThat(lagretFagsak.eksternId).isEqualTo(fagsak.eksternId)
-        assertThat(lagretFagsak.ytelsestype).isEqualTo(fagsak.ytelsestype)
-        assertThat(lagretFagsak.ytelsestype).isEqualTo(fagsak.ytelsestype)
+        assertThat(lagretFagsak.stønadstype).isEqualTo(fagsak.stønadstype)
+        assertThat(lagretFagsak.stønadstype).isEqualTo(fagsak.stønadstype)
         assertThat(lagretFagsak.fagsakPersonId).isEqualTo(fagsak.fagsakPersonId)
     }
 

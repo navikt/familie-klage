@@ -1,9 +1,9 @@
 package no.nav.familie.klage.integrasjoner
 
-import no.nav.familie.kontrakter.felles.Ytelsestype
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.Filtype
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -15,14 +15,14 @@ class IntegrasjonerService {
         fagsakId: String?,
         behandlingId: UUID,
         enhet: String,
-        ytelsestype: Ytelsestype,
+        stønadstype: Stønadstype,
         dokumenttype: Dokumenttype
     ): ArkiverDokumentRequest {
         val dokument = no.nav.familie.kontrakter.felles.dokarkiv.v2.Dokument(
             pdf,
             Filtype.PDFA,
             null,
-            "Brev for ${ytelsestype.name.lowercase()}",
+            "Brev for ${stønadstype.name.lowercase()}",
             dokumenttype
         )
         return ArkiverDokumentRequest(

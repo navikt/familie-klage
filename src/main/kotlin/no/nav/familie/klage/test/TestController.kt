@@ -3,8 +3,8 @@ package no.nav.familie.klage.test
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.Ressurs
-import no.nav.familie.kontrakter.felles.Ytelsestype
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.MediaType
 import org.springframework.validation.annotation.Validated
@@ -29,7 +29,7 @@ class TestController(private val behandlingService: BehandlingService) {
             behandlingService.opprettBehandling(
                 OpprettKlagebehandlingRequest(
                     request.ident,
-                    request.ytelsestype,
+                    request.stønadstype,
                     request.eksternBehandlingId,
                     request.eksternFagsakId,
                     request.fagsystem,
@@ -48,7 +48,7 @@ class TestController(private val behandlingService: BehandlingService) {
 
     data class DummybehandlingRequest(
         val ident: String,
-        val ytelsestype: Ytelsestype,
+        val stønadstype: Stønadstype,
         val eksternBehandlingId: String = Random.nextInt().toString(),
         val eksternFagsakId: String = Random.nextInt().toString(),
         val fagsystem: Fagsystem = Fagsystem.EF,

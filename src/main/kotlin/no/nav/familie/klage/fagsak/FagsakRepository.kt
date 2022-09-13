@@ -4,16 +4,16 @@ import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.repository.InsertUpdateRepository
 import no.nav.familie.klage.repository.RepositoryInterface
 import no.nav.familie.kontrakter.felles.Fagsystem
-import no.nav.familie.kontrakter.felles.Ytelsestype
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.data.jdbc.repository.query.Query
 import java.util.UUID
 
 interface FagsakRepository : RepositoryInterface<FagsakDomain, UUID>, InsertUpdateRepository<FagsakDomain> {
 
-    fun findByEksternIdAndFagsystemAndYtelsestype(
+    fun findByEksternIdAndFagsystemAndStønadstype(
         eksternId: String,
         fagsystem: Fagsystem,
-        ytelsestype: Ytelsestype
+        stønadstype: Stønadstype
     ): FagsakDomain?
 
     @Query(

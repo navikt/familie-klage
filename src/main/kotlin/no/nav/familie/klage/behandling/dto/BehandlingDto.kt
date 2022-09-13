@@ -4,7 +4,7 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.BehandlingResultat
 import no.nav.familie.klage.behandling.domain.BehandlingStatus
 import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.kontrakter.felles.Ytelsestype
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -17,10 +17,10 @@ data class BehandlingDto(
     val resultat: BehandlingResultat?,
     val opprettet: LocalDateTime,
     val vedtaksdato: LocalDateTime? = null,
-    val ytelsestype: Ytelsestype
+    val stønadstype: Stønadstype
 )
 
-fun Behandling.tilDto(ytelsestype: Ytelsestype): BehandlingDto =
+fun Behandling.tilDto(stønadstype: Stønadstype): BehandlingDto =
     BehandlingDto(
         id = this.id,
         fagsakId = this.fagsakId,
@@ -29,5 +29,5 @@ fun Behandling.tilDto(ytelsestype: Ytelsestype): BehandlingDto =
         sistEndret = this.sporbar.endret.endretTid,
         resultat = this.resultat,
         opprettet = this.sporbar.opprettetTid,
-        ytelsestype = ytelsestype
+        stønadstype = stønadstype
     )

@@ -7,7 +7,7 @@ import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.Fagsystem
-import no.nav.familie.kontrakter.felles.Ytelsestype
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -20,13 +20,13 @@ class FagsakService(
 ) {
 
     @Transactional
-    fun hentEllerOpprettFagsak(ident: String, eksternId: String, fagsystem: Fagsystem, ytelsestype: Ytelsestype): Fagsak {
+    fun hentEllerOpprettFagsak(ident: String, eksternId: String, fagsystem: Fagsystem, stønadstype: Stønadstype): Fagsak {
         val personIdenter = pdlClient.hentPersonidenter(ident, true)
         val gjeldendePersonIdent = personIdenter.gjeldende()
         val person = fagsakPersonService.hentEllerOpprettPerson(personIdenter.identer(), gjeldendePersonIdent.ident)
         val oppdatertPerson = fagsakPersonService.oppdaterIdent(person, gjeldendePersonIdent.ident)
-        val fagsak = fagsakRepository.findByEksternIdAndFagsystemAndYtelsestype(eksternId, fagsystem, ytelsestype)
-            ?: opprettFagsak(ytelsestype, eksternId, fagsystem, oppdatertPerson)
+        val fagsak = fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(eksternId, fagsystem, stønadstype)
+            ?: opprettFagsak(stønadstype, eksternId, fagsystem, oppdatertPerson)
 
         return fagsak.tilFagsakMedPerson(oppdatertPerson.identer)
     }
@@ -43,7 +43,7 @@ class FagsakService(
     }
 
     private fun opprettFagsak(
-        ytelsestype: Ytelsestype,
+        stønadstype: Stønadstype,
         eksternId: String,
         fagsystem: Fagsystem,
         fagsakPerson: FagsakPerson
@@ -51,7 +51,7 @@ class FagsakService(
         return fagsakRepository.insert(
             FagsakDomain(
                 fagsakPersonId = fagsakPerson.id,
-                ytelsestype = ytelsestype,
+                stønadstype = stønadstype,
                 eksternId = eksternId,
                 fagsystem = fagsystem
             )
