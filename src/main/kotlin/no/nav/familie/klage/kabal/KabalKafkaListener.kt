@@ -1,5 +1,6 @@
 package no.nav.familie.klage.kabal
 
+import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
@@ -9,19 +10,22 @@ import java.util.*
 @Component
 class KabalKafkaListener {
 
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     @KafkaListener(
         id = "familie-klage-test",
         topics = ["klage.vedtak-fattet.v1"]
     )
     fun listen(@Payload behandlingEvent: BehandlingEvent) {
-        println(behandlingEvent)
+        logger.info("Klage-kabal-event: $behandlingEvent")
     }
 }
 
+// se no.nav.familie.klage.kabal.OversendtKlageAnkeV3
 data class BehandlingEvent(
     val eventId: UUID,
     val kildeReferanse: String,
-    val kilde: String,
+    val kilde: String, //
     val kabalReferanse: String,
     val type: BehandlingEventType,
     val detaljer: BehandlingDetaljer,
