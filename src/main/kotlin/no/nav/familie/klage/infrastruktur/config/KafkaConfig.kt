@@ -1,6 +1,7 @@
 package no.nav.familie.klage.infrastruktur.config
 
 import no.nav.familie.kafka.KafkaErrorHandler
+import no.nav.familie.klage.kabal.BehandlingEvent
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -18,8 +19,8 @@ class KafkaConfig {
 
     @Bean
     fun kafkaPersonhendelseListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler):
-        ConcurrentKafkaListenerContainerFactory<String, String> {
-        val factory = ConcurrentKafkaListenerContainerFactory<String, String>()
+        ConcurrentKafkaListenerContainerFactory<String, BehandlingEvent> {
+        val factory = ConcurrentKafkaListenerContainerFactory<String, BehandlingEvent>()
         factory.consumerFactory = DefaultKafkaConsumerFactory(properties.buildConsumerProperties())
         factory.setCommonErrorHandler(kafkaErrorHandler)
         return factory
