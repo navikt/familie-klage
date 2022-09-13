@@ -1,22 +1,20 @@
-package no.nav.familie.ef.klage.infrastruktur.config
+package no.nav.familie.klage.infrastruktur.config
 
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import com.github.tomakehurst.wiremock.WireMockServer
-import no.nav.familie.ef.klage.ApplicationLocal
-import no.nav.familie.ef.klage.infrastruktur.db.DbContainerInitializer
-import no.nav.familie.ef.klage.testutil.TestoppsettService
-import no.nav.familie.ef.klage.testutil.TokenUtil
+import no.nav.familie.klage.ApplicationLocal
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
 import no.nav.familie.klage.brev.domain.Brev
-import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.formkrav.domain.Form
-import no.nav.familie.klage.infrastruktur.config.RolleConfig
+import no.nav.familie.klage.infrastruktur.db.DbContainerInitializer
 import no.nav.familie.klage.klageinfo.domain.Klage
+import no.nav.familie.klage.testutil.TestoppsettService
+import no.nav.familie.klage.testutil.TokenUtil
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskLogg

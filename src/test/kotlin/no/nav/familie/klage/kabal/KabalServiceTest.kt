@@ -6,10 +6,10 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
-import no.nav.familie.ef.klage.testutil.DomainUtil.behandling
-import no.nav.familie.ef.klage.testutil.DomainUtil.fagsakDomain
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
+import no.nav.familie.klage.testutil.DomainUtil.behandling
+import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import org.assertj.core.api.Assertions.assertThat

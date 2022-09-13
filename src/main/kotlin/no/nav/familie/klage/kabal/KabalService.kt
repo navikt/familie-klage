@@ -3,6 +3,7 @@ package no.nav.familie.klage.kabal
 import VurderingDto
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.fagsak.domain.Fagsak
+import no.nav.familie.klage.fagsak.domain.tilYtelse
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
 import no.nav.familie.kontrakter.felles.Fagsystem
 import org.springframework.stereotype.Service
@@ -19,7 +20,6 @@ class KabalService(
     }
 
     private fun lagKlageOversendelseV3(fagsak: Fagsak, behandling: Behandling, vurdering: VurderingDto?): OversendtKlageAnkeV3 {
-
         return OversendtKlageAnkeV3(
             type = Type.KLAGE,
             klager = OversendtKlager(
@@ -42,7 +42,6 @@ class KabalService(
     }
 
     private fun lagInnsynUrl(fagsak: Fagsak, eksternBehandlingId: String?): String {
-
         val fagsystemUrl = when (fagsak.fagsystem) {
             Fagsystem.EF -> lenkeConfig.efSakLenke
             Fagsystem.BA -> lenkeConfig.baSakLenke

@@ -1,4 +1,4 @@
-package no.nav.familie.ef.klage.testutil
+package no.nav.familie.klage.testutil
 
 import no.nav.familie.klage.personopplysninger.pdl.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.pdl.Bostedsadresse
