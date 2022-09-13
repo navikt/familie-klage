@@ -28,9 +28,9 @@ class KabalKafkaListener : ConsumerSeekAware {
     ) {
         logger.info("overrided onPartitionsAssigned seekToBeginning")
         assignments.keys.stream()
-            .filter { it.topic() == "behandling-events.v1" }
+            .filter { it.topic() == "klage.behandling-events.v1" }
             .forEach {
-                callback.seekToBeginning("behandling-events.v1", it.partition())
+                callback.seekToBeginning("klage.behandling-events.v1", it.partition())
             }
     }
 }
