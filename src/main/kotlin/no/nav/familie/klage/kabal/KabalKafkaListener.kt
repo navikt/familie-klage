@@ -11,13 +11,14 @@ import java.util.*
 class KabalKafkaListener {
 
     private val logger = LoggerFactory.getLogger(javaClass)
+    private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     @KafkaListener(
         id = "familie-klage-test",
         topics = ["klage.vedtak-fattet.v1"]
     )
     fun listen(@Payload behandlingEvent: BehandlingEvent) {
-        logger.info("Klage-kabal-event: $behandlingEvent")
+        secureLogger.info("Klage-kabal-event: $behandlingEvent")
     }
 }
 
