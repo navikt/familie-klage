@@ -1,14 +1,17 @@
 package no.nav.familie.klage.kabal
 
+import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.kafka.listener.ConsumerSeekAware
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.util.*
 
 @Component
-class KabalKafkaListener {
+class KabalKafkaListener : ConsumerSeekAware {
 
     private val logger = LoggerFactory.getLogger(javaClass)
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
@@ -17,9 +20,25 @@ class KabalKafkaListener {
         id = "familie-klage",
         topics = ["klage.behandling-events.v1"]
     )
-    fun listen(@Payload behandlingEvent: BehandlingEvent) {
-        secureLogger.info("Klage-kabal-event: $behandlingEvent")
+    fun listen(behandlingEventJson: String) {
+        secureLogger.info("Klage-kabal-event: $behandlingEventJson")
+        val behandlingEvent = objectMapper.readValue<BehandlingEvent>(behandlingEventJson)
+        secureLogger.info("Serialisert behandlingEvent: $behandlingEvent")
     }
+
+    /* Beholdes for å enkelt kunne lese fra start ved behov
+    override fun onPartitionsAssigned(
+        assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
+        callback: ConsumerSeekAware.ConsumerSeekCallback
+    ) {
+        logger.info("overrided onPartitionsAssigned seekToBeginning")
+        assignments.keys.stream()
+            .filter { it.topic() == "klage.behandling-events.v1" }
+            .forEach {
+                callback.seekToBeginning("klage.behandling-events.v1", it.partition())
+            }
+    }
+     */
 }
 
 // se no.nav.familie.klage.kabal.OversendtKlageAnkeV3
