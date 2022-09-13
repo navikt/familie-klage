@@ -15,7 +15,7 @@ class KabalKafkaListener {
 
     @KafkaListener(
         id = "familie-klage-test",
-        topics = ["klage.vedtak-fattet.v1"]
+        topics = ["klage.behandling-events.v1"]
     )
     fun listen(@Payload behandlingEvent: BehandlingEvent) {
         secureLogger.info("Klage-kabal-event: $behandlingEvent")
