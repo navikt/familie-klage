@@ -35,7 +35,7 @@ class BrevController(
         return Ressurs.success(brevService.lagEllerOppdaterBrev(brevInnhold))
     }
 
-    @PostMapping("/ferdigstill/{behandlingId}")
+    @PostMapping("/{behandlingId}/ferdigstill")
     fun ferdigstillBrev(@PathVariable behandlingId: UUID) {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.CREATE)
         tilgangService.validerHarSaksbehandlerrolle()
