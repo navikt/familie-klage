@@ -30,7 +30,7 @@ class BehandlingController(
     }
 
     @PostMapping("/opprett")
-    fun ferdigstillBrev(@PathVariable opprettKlageBehandlingDto: OpprettKlagebehandlingRequest) {
+    fun opprettBehandling(@PathVariable opprettKlageBehandlingDto: OpprettKlagebehandlingRequest) {
         behandlingService.opprettBehandling(opprettKlageBehandlingDto)
     }
 }
