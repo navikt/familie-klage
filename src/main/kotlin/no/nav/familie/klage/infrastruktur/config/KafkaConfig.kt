@@ -1,7 +1,6 @@
 package no.nav.familie.klage.infrastruktur.config
 
 import no.nav.familie.kafka.KafkaErrorHandler
-import no.nav.familie.klage.kabal.BehandlingEvent
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

@@ -1,8 +1,11 @@
 package no.nav.familie.klage.integrasjoner
 
 import no.nav.familie.http.client.AbstractPingableRestClient
+import no.nav.familie.klage.arbeidsfordeling.Arbeidsfordelingsenhet
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import no.nav.familie.klage.infrastruktur.config.IntegrasjonerConfig
+import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
@@ -16,6 +19,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
+import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestOperations
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
@@ -58,6 +62,16 @@ class FamilieIntegrasjonerClient(
             journalpostRequest,
             HttpHeaders().medContentTypeJsonUTF8()
         ).getDataOrThrow()
+    }
+
+    fun hentNavEnhet(ident: String): Arbeidsfordelingsenhet {
+        val uri = integrasjonerConfig.arbeidsfordelingMedRelasjonerUri
+        return try {
+            val response = postForEntity<Ressurs<List<Arbeidsfordelingsenhet>>>(uri, PersonIdent(ident))
+            response.data?.firstOrNull() ?: throw Feil("Objektet fra integrasjonstjenesten mot arbeidsfordeling er tomt uri=$uri")
+        } catch (e: RestClientException) {
+            throw Feil("Kall mot integrasjon feilet ved henting av arbeidsfordelingsenhet uri=$uri", e)
+        }
     }
 
     private fun headerMedSaksbehandler(saksbehandler: String?): HttpHeaders {

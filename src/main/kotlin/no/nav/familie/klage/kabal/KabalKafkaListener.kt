@@ -1,6 +1,7 @@
 package no.nav.familie.klage.kabal
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.klage.kabal.event.BehandlingEventService
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
@@ -10,7 +11,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Component
-class KabalKafkaListener : ConsumerSeekAware {
+class KabalKafkaListener(val behandlingEventService: BehandlingEventService) : ConsumerSeekAware {
 
     private val logger = LoggerFactory.getLogger(javaClass)
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
@@ -22,6 +23,9 @@ class KabalKafkaListener : ConsumerSeekAware {
     fun listen(behandlingEventJson: String) {
         secureLogger.info("Klage-kabal-event: $behandlingEventJson")
         val behandlingEvent = objectMapper.readValue<BehandlingEvent>(behandlingEventJson)
+        if (behandlingEvent.kilde == "EF") { // BA og KS kan legges til her ved behov
+            behandlingEventService.handleEvent(behandlingEvent)
+        }
         secureLogger.info("Serialisert behandlingEvent: $behandlingEvent")
     }
 
@@ -44,11 +48,24 @@ class KabalKafkaListener : ConsumerSeekAware {
 data class BehandlingEvent(
     val eventId: UUID,
     val kildeReferanse: String,
-    val kilde: String, //
+    val kilde: String,
     val kabalReferanse: String,
     val type: BehandlingEventType,
     val detaljer: BehandlingDetaljer,
-)
+) {
+
+    fun utfallErMedhold(): Boolean {
+        return detaljer.klagebehandlingAvsluttet?.utfall == ExternalUtfall.MEDHOLD ||
+            detaljer.ankebehandlingAvsluttet?.utfall == ExternalUtfall.MEDHOLD
+    }
+
+    fun lagOppgaveTekst(): String {
+        val utfall = detaljer.klagebehandlingAvsluttet?.utfall ?: detaljer.ankebehandlingAvsluttet?.utfall ?: "ukjent"
+        val tidspunkt = detaljer.klagebehandlingAvsluttet?.avsluttet ?: detaljer.ankebehandlingAvsluttet?.avsluttet ?: "ukjent"
+        val journalpostReferanser = detaljer.klagebehandlingAvsluttet?.journalpostReferanser
+        return "Hendelse fra klage av type $type har fått utfall $utfall den $tidspunkt. Journalpost referanser: ${journalpostReferanser?.joinToString(", ")}"
+    }
+}
 
 enum class BehandlingEventType {
     KLAGEBEHANDLING_AVSLUTTET, ANKEBEHANDLING_OPPRETTET, ANKEBEHANDLING_AVSLUTTET, ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET
