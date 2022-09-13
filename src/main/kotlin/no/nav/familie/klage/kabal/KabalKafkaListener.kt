@@ -26,7 +26,7 @@ class KabalKafkaListener : ConsumerSeekAware {
         secureLogger.info("Serialisert behandlingEvent: $behandlingEvent")
     }
 
-    /* Beholdes for å enkelt kunne lese fra start ved behov
+
     override fun onPartitionsAssigned(
         assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
         callback: ConsumerSeekAware.ConsumerSeekCallback
@@ -35,10 +35,9 @@ class KabalKafkaListener : ConsumerSeekAware {
         assignments.keys.stream()
             .filter { it.topic() == "klage.behandling-events.v1" }
             .forEach {
-                callback.seekToBeginning("klage.behandling-events.v1", it.partition())
+                callback.seekToEnd("klage.behandling-events.v1", it.partition())
             }
     }
-     */
 }
 
 // se no.nav.familie.klage.kabal.OversendtKlageAnkeV3
