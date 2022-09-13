@@ -5,7 +5,7 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.tilYtelse
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
-import no.nav.familie.kontrakter.felles.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import org.springframework.stereotype.Service
 
 @Service
@@ -28,7 +28,7 @@ class KabalService(
                     verdi = fagsak.hentAktivIdent()
                 )
             ),
-            fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem.tilKildeFagsystem()),
+            fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem),
             kildeReferanse = behandling.eksternBehandlingId,
             innsynUrl = lagInnsynUrl(fagsak, behandling.eksternBehandlingId),
             hjemler = vurdering?.hjemmel?.let { listOf(it.kabalHjemmel) } ?: emptyList(),
@@ -36,7 +36,7 @@ class KabalService(
             tilknyttedeJournalposter = listOf(), // TODO: klagebrev kan puttes på automatisk, vedtaksbrev fra EF-sak må hentes fra iverksett, klage må velges ved ferdigstilling eller ved journalføring av klage
             brukersHenvendelseMottattNavDato = behandling.klageMottatt,
             innsendtTilNav = behandling.klageMottatt,
-            kilde = fagsak.fagsystem.tilKildeFagsystem(),
+            kilde = fagsak.fagsystem,
             ytelse = fagsak.stønadstype.tilYtelse()
         )
     }
@@ -46,7 +46,6 @@ class KabalService(
             Fagsystem.EF -> lenkeConfig.efSakLenke
             Fagsystem.BA -> lenkeConfig.baSakLenke
             Fagsystem.KS -> error("Ikke implementert støtte for KS")
-            Fagsystem.IT01 -> error("Skal ikke ha infotrygd som fagsystem for klager")
         }
         return eksternBehandlingId?.let { "$fagsystemUrl/fagsak/${fagsak.eksternId}/$eksternBehandlingId" }
             ?: "$fagsystemUrl/fagsak/${fagsak.eksternId}/saksoversikt"

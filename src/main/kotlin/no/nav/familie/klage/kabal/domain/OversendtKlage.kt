@@ -1,7 +1,6 @@
 package no.nav.familie.klage.kabal
 
-import no.nav.familie.klage.infrastruktur.exception.Feil
-import no.nav.familie.kontrakter.felles.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import java.time.LocalDate
 
 // objektet som skal sendes til kabal
@@ -18,7 +17,7 @@ data class OversendtKlageAnkeV3(
     val tilknyttedeJournalposter: List<OversendtDokumentReferanse> = emptyList(),
     val brukersHenvendelseMottattNavDato: LocalDate,
     val innsendtTilNav: LocalDate,
-    val kilde: KildeFagsystem,
+    val kilde: Fagsystem,
     val ytelse: Ytelse,
     val kommentar: String? = null,
 )
@@ -55,7 +54,7 @@ data class OversendtSakenGjelder(
 
 data class OversendtSak(
     val fagsakId: String? = null,
-    val fagsystem: KildeFagsystem
+    val fagsystem: Fagsystem
 )
 
 data class OversendtDokumentReferanse(
@@ -71,22 +70,6 @@ enum class MottakDokumentType {
     KLAGE_VEDTAK,
     ANNET
 }
-
-enum class KildeFagsystem {
-    EF,
-    BA,
-    KS
-}
-
-fun Fagsystem.tilKildeFagsystem() =
-    when (this) {
-        Fagsystem.EF -> KildeFagsystem.EF
-        Fagsystem.BA -> KildeFagsystem.BA
-        Fagsystem.KS -> KildeFagsystem.KS
-        else -> {
-            throw Feil("Kan ikke utlede KildeFagSystem for fahsystem $this")
-        }
-    }
 
 enum class Ytelse {
     ENF,

@@ -1,8 +1,8 @@
 package no.nav.familie.klage.test
 
 import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.security.token.support.core.api.ProtectedWithClaims
@@ -34,7 +34,8 @@ class TestController(private val behandlingService: BehandlingService) {
                     request.eksternBehandlingId,
                     request.eksternFagsakId,
                     request.fagsystem,
-                    request.klageMottatt
+                    request.klageMottatt,
+                    request.behandlendeEnhet
                 )
             )
         )
@@ -53,6 +54,7 @@ class TestController(private val behandlingService: BehandlingService) {
         val eksternBehandlingId: String = Random.nextInt().toString(),
         val eksternFagsakId: String = Random.nextInt().toString(),
         val fagsystem: Fagsystem = Fagsystem.EF,
-        val klageMottatt: LocalDate = LocalDate.now()
+        val klageMottatt: LocalDate = LocalDate.now(),
+        val behandlendeEnhet: String = "4489"
     )
 }

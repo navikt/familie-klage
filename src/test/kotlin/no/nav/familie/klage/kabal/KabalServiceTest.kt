@@ -12,6 +12,7 @@ import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -39,7 +40,7 @@ internal class KabalServiceTest {
         kabalService.sendTilKabal(fagsak, behandling, vurdering)
 
         assertThat(oversendelseSlot.captured.fagsak?.fagsakId).isEqualTo(fagsak.eksternId)
-        assertThat(oversendelseSlot.captured.fagsak?.fagsystem).isEqualTo(KildeFagsystem.EF)
+        assertThat(oversendelseSlot.captured.fagsak?.fagsystem).isEqualTo(Fagsystem.EF)
         assertThat(oversendelseSlot.captured.hjemler).containsAll(listOf(hjemmel.kabalHjemmel))
         assertThat(oversendelseSlot.captured.kildeReferanse).isEqualTo(behandling.eksternBehandlingId)
         assertThat(oversendelseSlot.captured.innsynUrl).isEqualTo("${lenkeConfig.efSakLenke}/fagsak/${fagsak.eksternId}/${behandling.eksternBehandlingId}")
@@ -49,7 +50,7 @@ internal class KabalServiceTest {
         assertThat(oversendelseSlot.captured.innsendtTilNav).isEqualTo(behandling.klageMottatt)
         assertThat(oversendelseSlot.captured.klager.id.verdi).isEqualTo(fagsak.hentAktivIdent())
         assertThat(oversendelseSlot.captured.sakenGjelder).isNull()
-        assertThat(oversendelseSlot.captured.kilde).isEqualTo(KildeFagsystem.EF)
+        assertThat(oversendelseSlot.captured.kilde).isEqualTo(Fagsystem.EF)
         assertThat(oversendelseSlot.captured.ytelse).isEqualTo(Ytelse.ENF)
         assertThat(oversendelseSlot.captured.kommentar).isNull()
         assertThat(oversendelseSlot.captured.dvhReferanse).isNull()
