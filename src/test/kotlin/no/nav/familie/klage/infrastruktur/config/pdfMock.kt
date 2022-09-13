@@ -1,4 +1,4 @@
-package no.nav.familie.ef.klage.infrastruktur.config
+package no.nav.familie.klage.infrastruktur.config
 
 const val pdfAsBase64String =
     "JVBERi0xLjQKJdPr6eEKMSAwIG9iago8PC9UaXRsZSAoRG9rdW1lbnQgdXRlbiBuYXZuKQovUHJvZHVjZXIgKFNraWEvUERGIG05NiBHb29nbGUgRG9jcy" +

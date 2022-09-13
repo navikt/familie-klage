@@ -1,4 +1,4 @@
-package no.nav.familie.ef.klage.infrastruktur.config
+package no.nav.familie.klage.infrastruktur.config
 
 import io.mockk.every
 import io.mockk.mockk

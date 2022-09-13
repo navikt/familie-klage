@@ -1,15 +1,9 @@
-package no.nav.familie.ef.klage.infrastruktur.config
+package no.nav.familie.klage.infrastruktur.config
 
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
-import no.nav.familie.ef.klage.testutil.PdlTestdataHelper.fødsel
-import no.nav.familie.ef.klage.testutil.PdlTestdataHelper.lagKjønn
-import no.nav.familie.ef.klage.testutil.PdlTestdataHelper.lagNavn
-import no.nav.familie.ef.klage.testutil.PdlTestdataHelper.metadataGjeldende
-import no.nav.familie.ef.klage.testutil.PdlTestdataHelper.pdlBarn
-import no.nav.familie.ef.klage.testutil.PdlTestdataHelper.pdlSøker
 import no.nav.familie.klage.personopplysninger.pdl.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.pdl.AdressebeskyttelseGradering
 import no.nav.familie.klage.personopplysninger.pdl.Bostedsadresse
@@ -41,6 +35,12 @@ import no.nav.familie.klage.personopplysninger.pdl.UtflyttingFraNorge
 import no.nav.familie.klage.personopplysninger.pdl.Vegadresse
 import no.nav.familie.klage.personopplysninger.pdl.VergeEllerFullmektig
 import no.nav.familie.klage.personopplysninger.pdl.VergemaalEllerFremtidsfullmakt
+import no.nav.familie.klage.testutil.PdlTestdataHelper.fødsel
+import no.nav.familie.klage.testutil.PdlTestdataHelper.lagKjønn
+import no.nav.familie.klage.testutil.PdlTestdataHelper.lagNavn
+import no.nav.familie.klage.testutil.PdlTestdataHelper.metadataGjeldende
+import no.nav.familie.klage.testutil.PdlTestdataHelper.pdlBarn
+import no.nav.familie.klage.testutil.PdlTestdataHelper.pdlSøker
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary

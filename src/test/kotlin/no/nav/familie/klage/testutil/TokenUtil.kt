@@ -1,4 +1,4 @@
-package no.nav.familie.ef.klage.testutil
+package no.nav.familie.klage.testutil
 
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import java.util.UUID
