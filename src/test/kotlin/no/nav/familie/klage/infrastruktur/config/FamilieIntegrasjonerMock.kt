@@ -1,4 +1,4 @@
-package no.nav.familie.ef.klage.infrastruktur.config
+package no.nav.familie.klage.infrastruktur.config
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
@@ -16,7 +16,6 @@ import com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching
 import no.nav.familie.klage.arbeidsfordeling.Arbeidsfordelingsenhet
 import no.nav.familie.klage.felles.dto.EgenAnsattResponse
 import no.nav.familie.klage.felles.dto.Tilgang
-import no.nav.familie.klage.infrastruktur.config.IntegrasjonerConfig
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.ef.søknad.Testsøknad
 import no.nav.familie.kontrakter.felles.BrukerIdType

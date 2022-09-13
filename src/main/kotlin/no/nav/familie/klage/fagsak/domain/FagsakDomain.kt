@@ -2,6 +2,7 @@ package no.nav.familie.klage.fagsak.domain
 
 import no.nav.familie.klage.felles.domain.Sporbar
 import no.nav.familie.kontrakter.felles.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Embedded
@@ -44,12 +45,4 @@ data class FagsakDomain(
             fagsystem = fagsystem,
             sporbar = sporbar
         )
-}
-
-enum class Stønadstype {
-    OVERGANGSSTØNAD,
-    SKOLEPENGER,
-    BARNETILSYN,
-    BARNETRYGD,
-    KONTANTSTØTTE
 }

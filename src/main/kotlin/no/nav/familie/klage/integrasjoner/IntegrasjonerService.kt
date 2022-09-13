@@ -1,9 +1,9 @@
 package no.nav.familie.klage.integrasjoner
 
-import no.nav.familie.klage.fagsak.domain.Stønadstype
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.Filtype
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.stereotype.Service
 import java.util.UUID
 

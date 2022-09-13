@@ -4,6 +4,7 @@ import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -28,10 +29,8 @@ class BehandlingController(
         return Ressurs.success(behandlingService.hentBehandlingDto(behandlingId))
     }
 
-    @PostMapping("/ferdigstill/{behandlingId}")
-    fun ferdigstillBrev(@PathVariable behandlingId: UUID) {
-        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.CREATE)
-        tilgangService.validerHarSaksbehandlerrolle()
-        behandlingService.ferdigstillBrev(behandlingId)
+    @PostMapping("/opprett")
+    fun opprettBehandling(@PathVariable opprettKlageBehandlingDto: OpprettKlagebehandlingRequest) {
+        behandlingService.opprettBehandling(opprettKlageBehandlingDto)
     }
 }
