@@ -7,6 +7,12 @@ spring:
     password: ${DATASOURCE_PASSWORD}
     url: ${DATASOURCE_URL}
     driver-class-name: org.postgresql.Driver
+  kafka:
+    bootstrap-servers: http://localhost:9092
+    properties:
+      schema.registry.url: http://localhost:8081
+      security:
+        protocol: PLAINTEXT
 
 no.nav.security.jwt:
   issuer.azuread:

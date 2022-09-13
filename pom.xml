@@ -75,6 +75,10 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
 		</dependency>
@@ -129,6 +133,11 @@
 			<groupId>no.nav.familie.kontrakter</groupId>
 			<artifactId>felles</artifactId>
 			<version>${kontrakter.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.familie.felles</groupId>
+			<artifactId>kafka</artifactId>
+			<version>${felles.version}</version>
 		</dependency>
 		<!-- Logging og metrikker -->
 		<dependency>
