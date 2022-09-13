@@ -18,7 +18,7 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 class KafkaConfig {
 
     @Bean
-    fun kafkaPersonhendelseListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler):
+    fun klageEventListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler):
         ConcurrentKafkaListenerContainerFactory<String, BehandlingEvent> {
         val factory = ConcurrentKafkaListenerContainerFactory<String, BehandlingEvent>()
         factory.consumerFactory = DefaultKafkaConsumerFactory(properties.buildConsumerProperties())
