@@ -14,18 +14,18 @@ import java.util.UUID
 
 @Service
 class BehandlingService(
-    private val behandlingsRepository: BehandlingsRepository,
+    private val behandlingRepository: BehandlingRepository,
     private val fagsakService: FagsakService,
 
-) {
+    ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    fun hentBehandling(behandlingId: UUID): Behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
+    fun hentBehandling(behandlingId: UUID): Behandling = behandlingRepository.findByIdOrThrow(behandlingId)
 
     fun hentBehandlingDto(behandlingId: UUID): BehandlingDto {
         val stønadstype = fagsakService.hentFagsakForBehandling(behandlingId).stønadstype
-        return behandlingsRepository.findByIdOrThrow(behandlingId).tilDto(stønadstype)
+        return behandlingRepository.findByIdOrThrow(behandlingId).tilDto(stønadstype)
     }
 
     fun hentNavnFraBehandlingsId(behandlingId: UUID): String {
@@ -44,7 +44,7 @@ class BehandlingService(
             opprettKlagebehandlingRequest.stønadstype
         )
 
-        return behandlingsRepository.insert(
+        return behandlingRepository.insert(
             Behandling(
                 fagsakId = fagsak.id,
                 eksternBehandlingId = opprettKlagebehandlingRequest.eksternBehandlingId,
