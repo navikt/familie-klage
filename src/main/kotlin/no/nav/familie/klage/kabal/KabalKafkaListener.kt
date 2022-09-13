@@ -20,9 +20,9 @@ class KabalKafkaListener : ConsumerSeekAware {
         id = "familie-klage",
         topics = ["klage.behandling-events.v1"]
     )
-    fun listen(behandlingEvent: String) {
-        secureLogger.info("Klage-kabal-event: $behandlingEvent")
-        val behandlingEvent = objectMapper.readValue<BehandlingEvent>(behandlingEvent)
+    fun listen(behandlingEventJson: String) {
+        secureLogger.info("Klage-kabal-event: $behandlingEventJson")
+        val behandlingEvent = objectMapper.readValue<BehandlingEvent>(behandlingEventJson)
         secureLogger.info("Serialisert behandlingEvent: $behandlingEvent")
     }
 
