@@ -57,17 +57,17 @@ class BehandlingService(
     ): UUID {
 
         val fagsak = fagsakService.hentEllerOpprettFagsak(
-            opprettKlageBehandlingDto.ident,
-            opprettKlageBehandlingDto.eksternFagsakId,
-            opprettKlageBehandlingDto.fagsystem,
-            opprettKlageBehandlingDto.stønadstype
+            opprettKlagebehandlingRequest.ident,
+            opprettKlagebehandlingRequest.eksternFagsakId,
+            opprettKlagebehandlingRequest.fagsystem,
+            opprettKlagebehandlingRequest.stønadstype
         )
 
         return behandlingsRepository.insert(
             Behandling(
                 fagsakId = fagsak.id,
-                eksternBehandlingId = opprettKlageBehandlingDto.eksternBehandlingId,
-                klageMottatt = opprettKlageBehandlingDto.klageMottatt
+                eksternBehandlingId = opprettKlagebehandlingRequest.eksternBehandlingId,
+                klageMottatt = opprettKlagebehandlingRequest.klageMottatt
             )
         ).id
     }
