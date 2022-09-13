@@ -29,13 +29,6 @@ class BehandlingController(
         return Ressurs.success(behandlingService.hentBehandlingDto(behandlingId))
     }
 
-    @PostMapping("/ferdigstill/{behandlingId}")
-    fun ferdigstillBrev(@PathVariable behandlingId: UUID) {
-        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.CREATE)
-        tilgangService.validerHarSaksbehandlerrolle()
-        behandlingService.ferdigstillBrev(behandlingId)
-    }
-
     @PostMapping("/opprett")
     fun ferdigstillBrev(@PathVariable opprettKlageBehandlingDto: OpprettKlagebehandlingRequest) {
         behandlingService.opprettBehandling(opprettKlageBehandlingDto)

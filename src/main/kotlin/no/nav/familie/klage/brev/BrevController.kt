@@ -21,7 +21,7 @@ import java.util.UUID
 @Validated
 class BrevController(
     private val brevService: BrevService,
-    private val tilgangService: TilgangService,
+    private val tilgangService: TilgangService
 ) {
     @GetMapping("/{behandlingId}")
     fun hentBrev(@PathVariable behandlingId: UUID): Ressurs<BrevMedAvsnitt?> {
@@ -33,5 +33,12 @@ class BrevController(
         tilgangService.validerTilgangTilBehandling(brevInnhold.behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolle()
         return Ressurs.success(brevService.lagEllerOppdaterBrev(brevInnhold))
+    }
+
+    @PostMapping("/ferdigstill/{behandlingId}")
+    fun ferdigstillBrev(@PathVariable behandlingId: UUID) {
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.CREATE)
+        tilgangService.validerHarSaksbehandlerrolle()
+        brevService.ferdigstillBrev(behandlingId)
     }
 }
