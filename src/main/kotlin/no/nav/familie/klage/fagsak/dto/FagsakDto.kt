@@ -23,4 +23,3 @@ fun Fagsak.tilDto(): FagsakDto =
         eksternId = this.eksternId,
         fagsystem = this.fagsystem
     )
-

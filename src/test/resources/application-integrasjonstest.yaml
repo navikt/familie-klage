@@ -8,6 +8,15 @@ no.nav.security.jwt:
     cookie_name: localhost-idtoken
     proxy_url: #Default satt, skal være null i integrasjonstest
 
+
+spring:
+  kafka:
+    bootstrap-servers: http://localhost:9092
+    properties:
+      schema.registry.url: http://localhost:8081
+      security:
+        protocol: PLAINTEXT
+
 funksjonsbrytere:
   enabled: false
   unleash:

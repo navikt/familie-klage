@@ -134,6 +134,11 @@
 			<artifactId>felles</artifactId>
 			<version>${kontrakter.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>no.nav.familie.felles</groupId>
+			<artifactId>kafka</artifactId>
+			<version>${felles.version}</version>
+		</dependency>
 		<!-- Logging og metrikker -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
