@@ -37,7 +37,7 @@ class FagsakService(
     }
 
     fun hentFagsakForBehandling(behandlingId: UUID): Fagsak {
-        val fagsak = fagsakRepository.finnFagsakForBehandling(behandlingId)
+        val fagsak = fagsakRepository.finnFagsakForBehandlingId(behandlingId)
         return fagsak?.tilFagsakMedPerson(fagsakPersonService.hentIdenter(fagsak.fagsakPersonId))
             ?: throw Feil("Finner ikke fagsak til behandlingId=$behandlingId")
     }

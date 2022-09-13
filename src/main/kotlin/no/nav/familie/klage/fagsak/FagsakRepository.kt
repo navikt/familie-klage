@@ -23,5 +23,5 @@ interface FagsakRepository : RepositoryInterface<FagsakDomain, UUID>, InsertUpda
                         ON b.fagsak_id = f.id 
                     WHERE b.id = :behandlingId"""
     )
-    fun finnFagsakForBehandling(behandlingId: UUID): FagsakDomain?
+    fun finnFagsakForBehandlingId(behandlingId: UUID): FagsakDomain?
 }
