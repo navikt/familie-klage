@@ -84,7 +84,7 @@ fun Fagsystem.tilKildeFagsystem() =
         Fagsystem.BA -> KildeFagsystem.BA
         Fagsystem.KS -> KildeFagsystem.KS
         else -> {
-            throw Feil("Kan ikke utlede KildeFagSystem for fahsystem $this")
+            throw Feil("Kan ikke utlede KildeFagsystem for fagsystem $this")
         }
     }
 
