@@ -14,7 +14,7 @@ class KabalKafkaListener {
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     @KafkaListener(
-        id = "familie-klage-test",
+        id = "familie-klage",
         topics = ["klage.behandling-events.v1"]
     )
     fun listen(@Payload behandlingEvent: BehandlingEvent) {
