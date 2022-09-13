@@ -53,7 +53,7 @@ class BehandlingService(
 
     @Transactional
     fun opprettBehandling(
-        opprettKlageBehandlingDto: OpprettKlagebehandlingRequest
+        opprettKlagebehandlingRequest: OpprettKlagebehandlingRequest
     ): UUID {
 
         val fagsak = fagsakService.hentEllerOpprettFagsak(
