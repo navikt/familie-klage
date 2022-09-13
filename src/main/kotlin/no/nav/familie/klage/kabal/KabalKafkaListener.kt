@@ -2,13 +2,14 @@ package no.nav.familie.klage.kabal
 
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.kafka.listener.ConsumerSeekAware
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.util.*
 
 @Component
-class KabalKafkaListener {
+class KabalKafkaListener : ConsumerSeekAware {
 
     private val logger = LoggerFactory.getLogger(javaClass)
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
@@ -19,6 +20,18 @@ class KabalKafkaListener {
     )
     fun listen(@Payload behandlingEvent: BehandlingEvent) {
         secureLogger.info("Klage-kabal-event: $behandlingEvent")
+    }
+
+    override fun onPartitionsAssigned(
+        assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
+        callback: ConsumerSeekAware.ConsumerSeekCallback
+    ) {
+        logger.info("overrided onPartitionsAssigned seekToBeginning")
+        assignments.keys.stream()
+            .filter { it.topic() == "behandling-events.v1" }
+            .forEach {
+                callback.seekToBeginning("behandling-events.v1", it.partition())
+            }
     }
 }
 
