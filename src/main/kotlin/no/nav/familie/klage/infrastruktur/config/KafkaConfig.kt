@@ -19,8 +19,8 @@ class KafkaConfig {
 
     @Bean
     fun klageEventListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler):
-        ConcurrentKafkaListenerContainerFactory<String, BehandlingEvent> {
-        val factory = ConcurrentKafkaListenerContainerFactory<String, BehandlingEvent>()
+        ConcurrentKafkaListenerContainerFactory<String, String> {
+        val factory = ConcurrentKafkaListenerContainerFactory<String, String>()
         factory.consumerFactory = DefaultKafkaConsumerFactory(properties.buildConsumerProperties())
         factory.setCommonErrorHandler(kafkaErrorHandler)
         return factory

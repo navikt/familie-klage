@@ -1,5 +1,7 @@
 package no.nav.familie.klage.kabal
 
+import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.listener.ConsumerSeekAware
@@ -18,8 +20,10 @@ class KabalKafkaListener : ConsumerSeekAware {
         id = "familie-klage",
         topics = ["klage.behandling-events.v1"]
     )
-    fun listen(@Payload behandlingEvent: BehandlingEvent) {
+    fun listen(behandlingEvent: String) {
         secureLogger.info("Klage-kabal-event: $behandlingEvent")
+        val behandlingEvent = objectMapper.readValue<BehandlingEvent>(behandlingEvent)
+        secureLogger.info("Serialisert behandlingEvent: $behandlingEvent")
     }
 
     override fun onPartitionsAssigned(
