@@ -46,12 +46,11 @@ interface BehandlingsRepository : RepositoryInterface<Behandling, UUID>, InsertU
              b.id,
              b.fagsak_id,
              b.status,
-             v.arsak,
-             b.opprettet,
-             b.mottatt_dato,
+             b.opprettet_tid opprettet,
+             b.klage_mottatt mottatt_dato,
              b.resultat,
-             v.arsak ?,
-             v.endret_tid
+             v.arsak,
+             b.vedtak_dato vedtaksdato
             FROM behandling b
             JOIN fagsak f ON f.id = b.fagsak_id
             LEFT JOIN vurdering v ON v.behandling_id = b.id

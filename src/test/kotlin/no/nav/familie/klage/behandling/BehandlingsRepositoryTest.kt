@@ -120,5 +120,16 @@ class BehandlingsRepositoryTest : OppslagSpringRunnerTest() {
             assertThat(behandlinger).hasSize(2)
             assertThat(behandlinger.map { it.id }).containsExactlyInAnyOrder(behandling.id, behandling2.id)
         }
+
+        @Test
+        internal fun `skal finne mappe verdier fra repository til klageBehandling`() {
+            val behandling = behandlingRepository.insert(behandling(fagsakId = fagsak.id))
+            val behandling2 = behandlingRepository.insert(behandling(fagsakId = fagsak.id))
+
+            val behandlinger = behandlingRepository.finnBehandlinger(fagsak.eksternId, Fagsystem.EF)
+            assertThat(behandlinger).hasSize(2)
+            assertThat(behandlinger.map { it.id }).containsExactlyInAnyOrder(behandling.id, behandling2.id)
+        }
+
     }
 }
