@@ -1,9 +1,8 @@
 package no.nav.familie.klage.kabal.event
 
-import no.nav.familie.klage.behandling.BehandlingsRepository
+import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.fagsak.FagsakPersonRepository
 import no.nav.familie.klage.fagsak.FagsakRepository
-import no.nav.familie.klage.infrastruktur.config.getValue
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.integrasjoner.OppgaveClient
 import no.nav.familie.klage.kabal.BehandlingEvent
@@ -24,7 +23,7 @@ import java.util.UUID
 @Service
 class BehandlingEventService(
     private val oppgaveClient: OppgaveClient,
-    private val behandlingsRepository: BehandlingsRepository,
+    private val behandlingRepository: BehandlingRepository,
     private val fagsakRepository: FagsakRepository,
     private val personRepository: FagsakPersonRepository,
 ) {
@@ -38,8 +37,8 @@ class BehandlingEventService(
 
     private fun opprettOppgave(behandlingEvent: BehandlingEvent) {
 
-        val behandling = behandlingsRepository.findByEksternBehandlingId(UUID.fromString(behandlingEvent.kildeReferanse))
-        val fagsak = fagsakRepository.finnFagsakForBehandling(behandling.id)
+        val behandling = behandlingRepository.findByEksternBehandlingId(UUID.fromString(behandlingEvent.kildeReferanse))
+        val fagsak = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
         // TODO - hent aktørid
         val aktivIdent = personRepository.hentAktivIdent(
             fagsak?.fagsakPersonId
