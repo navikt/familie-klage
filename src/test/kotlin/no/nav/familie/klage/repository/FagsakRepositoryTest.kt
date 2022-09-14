@@ -49,7 +49,7 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
         testoppsettService.lagreFagsak(fagsak)
         val behandling = behandlingRepository.insert(behandling(fagsakId = fagsak.id))
 
-        val fagsakForBehandling = fagsakRepository.finnFagsakForBehandling(behandling.id)!!
+        val fagsakForBehandling = fagsakRepository.finnFagsakForBehandlingId(behandling.id)!!
 
         assertThat(fagsakForBehandling.id).isEqualTo(fagsak.id)
         assertThat(fagsakForBehandling.eksternId).isEqualTo(fagsak.eksternId)
