@@ -1,6 +1,8 @@
 package no.nav.familie.klage.behandling.domain
 
 import no.nav.familie.klage.felles.domain.Sporbar
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
+import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Embedded
 import java.time.LocalDate
@@ -21,21 +23,6 @@ data class Behandling(
     val klageMottatt: LocalDate,
     val behandlendeEnhet: String
 )
-
-enum class BehandlingResultat(val displayName: String) {
-    MEDHOLD(displayName = "Medhold"),
-    IKKE_MEDHOLD(displayName = "Ikke medhold"),
-    IKKE_SATT(displayName = "Ikke satt"),
-}
-
-enum class BehandlingStatus {
-    OPPRETTET,
-    UTREDES,
-    VENTER,
-    FERDIGSTILT;
-
-    fun erLåstForVidereBehandling(): Boolean = listOf(VENTER, FERDIGSTILT).contains(this)
-}
 
 enum class StegType(
     val rekkefølge: Int,

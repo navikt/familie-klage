@@ -23,16 +23,6 @@ enum class Vedtak {
     OPPRETTHOLD_VEDTAK,
 }
 
-enum class Årsak {
-    VELG,
-    FEIL_I_LOVANDVENDELSE,
-    FEIL_REGELVERKSFORSTÅELSE,
-    FEIL_ELLER_ENDRET_FAKTA,
-    FEIL_PROSESSUELL,
-    KØET_BEHANDLING,
-    ANNET
-}
-
 enum class Hjemmel(val kabalHjemmel: KabalHjemmel) {
     FT_FEMTEN_TO(KabalHjemmel.FTRL_15_2),
     FT_FEMTEN_TRE(KabalHjemmel.FTRL_15_3),

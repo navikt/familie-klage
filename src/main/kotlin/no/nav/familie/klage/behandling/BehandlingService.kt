@@ -5,6 +5,7 @@ import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -15,7 +16,7 @@ import java.util.UUID
 @Service
 class BehandlingService(
     private val behandlingsRepository: BehandlingsRepository,
-    private val fagsakService: FagsakService,
+    private val fagsakService: FagsakService
 
 ) {
 
@@ -52,6 +53,10 @@ class BehandlingService(
                 behandlendeEnhet = "4489" // TODO: Må inn i request
             )
         ).id
+    }
+
+    fun hentBehandlinger(eksternId: Long, fagsystem: Fagsystem): List<Behandling> {
+        return behandlingsRepository.finnBehandlinger(eksternId, fagsystem)
     }
 
     fun hentAktivIdent(behandlingId: UUID): String {
