@@ -2,6 +2,7 @@ package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.brev.domain.BrevMedAvsnitt
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
+import no.nav.familie.klage.distribusjon.FerdigstillBehandlingService
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -21,6 +22,7 @@ import java.util.UUID
 @Validated
 class BrevController(
     private val brevService: BrevService,
+    private val ferdigstillBehandlingService: FerdigstillBehandlingService,
     private val tilgangService: TilgangService
 ) {
     @GetMapping("/{behandlingId}")
@@ -35,10 +37,11 @@ class BrevController(
         return Ressurs.success(brevService.lagEllerOppdaterBrev(brevInnhold))
     }
 
+    @Deprecated("Bruk FerdigstillController")
     @PostMapping("/{behandlingId}/ferdigstill")
     fun ferdigstillBrev(@PathVariable behandlingId: UUID) {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.CREATE)
         tilgangService.validerHarSaksbehandlerrolle()
-        brevService.ferdigstillBrev(behandlingId)
+        ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
     }
 }
