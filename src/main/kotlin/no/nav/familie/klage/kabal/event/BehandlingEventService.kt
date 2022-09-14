@@ -5,20 +5,16 @@ import no.nav.familie.klage.fagsak.FagsakPersonRepository
 import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.infrastruktur.config.getValue
 import no.nav.familie.klage.infrastruktur.exception.Feil
-import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.integrasjoner.OppgaveClient
 import no.nav.familie.klage.kabal.BehandlingEvent
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
-import no.nav.familie.kontrakter.felles.oppgave.FinnMappeRequest
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
-import no.nav.familie.kontrakter.felles.oppgave.MappeDto
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import org.slf4j.LoggerFactory
-import org.springframework.cache.CacheManager
 import org.springframework.stereotype.Service
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -28,81 +24,46 @@ import java.util.UUID
 @Service
 class BehandlingEventService(
     private val oppgaveClient: OppgaveClient,
-    private val familieIntegrasjonerClient: FamilieIntegrasjonerClient,
     private val behandlingsRepository: BehandlingsRepository,
     private val fagsakRepository: FagsakRepository,
     private val personRepository: FagsakPersonRepository,
-    private val cacheManager: CacheManager
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
     fun handleEvent(behandlingEvent: BehandlingEvent) {
-        if (behandlingEvent.utfallErMedhold()) {
-            // Opprette revurderingsoppgave med url til klagesaken
-        } else {
-            opprettOppgave(behandlingEvent)
-            ferdigstillKlagebehandling()
-        }
+        opprettOppgave(behandlingEvent)
+        ferdigstillKlagebehandling()
     }
 
     private fun opprettOppgave(behandlingEvent: BehandlingEvent) {
 
         val behandling = behandlingsRepository.findByEksternBehandlingId(UUID.fromString(behandlingEvent.kildeReferanse))
         val fagsak = fagsakRepository.finnFagsakForBehandling(behandling.id)
-        val aktivIdent = personRepository.hentAktivIdent(fagsak?.fagsakPersonId ?: throw Feil("Finner ikke fagsak for behandling med eksternId ${behandlingEvent.kildeReferanse}"))
-        val enhetsnummer = familieIntegrasjonerClient.hentNavEnhet(aktivIdent).enhetId
+        // TODO - hent aktørid
+        val aktivIdent = personRepository.hentAktivIdent(
+            fagsak?.fagsakPersonId
+                ?: throw Feil("Finner ikke fagsak for behandling med eksternId ${behandlingEvent.kildeReferanse}")
+        )
+
         val opprettOppgaveRequest =
             OpprettOppgaveRequest(
                 ident = OppgaveIdentV2(ident = aktivIdent, gruppe = IdentGruppe.FOLKEREGISTERIDENT),
                 saksId = fagsak.eksternId,
-                tema = Tema.ENF,
+                tema = Tema.ENF, // TODO finn riktig tema (BA/EF osv)
                 oppgavetype = Oppgavetype.BehandleSak,
                 fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
-                beskrivelse = behandlingEvent.lagOppgaveTekst(),
-                enhetsnummer = enhetsnummer,
+                beskrivelse = behandlingEvent.detaljer.oppgaveTekst(),
+                enhetsnummer = behandling.behandlendeEnhet,
                 behandlingstema = finnBehandlingstema(fagsak.stønadstype).value,
                 tilordnetRessurs = null,
-                behandlesAvApplikasjon = "familie-ef-sak",
-                mappeId = finnHendelseMappeId(enhetsnummer)
+                behandlesAvApplikasjon = "familie-ef-sak"
             )
 
         oppgaveClient.opprettOppgave(opprettOppgaveRequest)
     }
 
     fun ferdigstillKlagebehandling() {
-    }
-
-    private fun finnHendelseMappeId(enhetsnummer: String?): Long? {
-        if ((enhetsnummer == "4489")) {
-            val mapper = finnMapper(enhetsnummer)
-            val mappeIdForGodkjenneVedtak = mapper.find {
-                it.navn.contains("62 Hendelser")
-            }?.id?.toLong()
-            return mappeIdForGodkjenneVedtak
-        }
-        return null
-    }
-
-    fun finnMapper(enhet: String): List<MappeDto> {
-        return cacheManager.getValue("oppgave-mappe", enhet) {
-            logger.info("Henter mapper på nytt")
-            val mappeRespons = oppgaveClient.finnMapper(
-                FinnMappeRequest(
-                    tema = listOf(),
-                    enhetsnr = enhet,
-                    opprettetFom = null,
-                    limit = 1000
-                )
-            )
-            if (mappeRespons.antallTreffTotalt > mappeRespons.mapper.size) {
-                logger.error(
-                    "Det finnes flere mapper (${mappeRespons.antallTreffTotalt}) " +
-                        "enn vi har hentet ut (${mappeRespons.mapper.size}). Sjekk limit. "
-                )
-            }
-            mappeRespons.mapper
-        }
     }
 
     private fun lagFristForOppgave(gjeldendeTid: LocalDateTime): LocalDate {
