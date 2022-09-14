@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface BehandlingsRepository : RepositoryInterface<Behandling, UUID>, InsertUpdateRepository<Behandling> {
+interface BehandlingRepository : RepositoryInterface<Behandling, UUID>, InsertUpdateRepository<Behandling> {
 
     @Query(
         """SELECT DISTINCT personopplysninger.navn FROM personopplysninger 
