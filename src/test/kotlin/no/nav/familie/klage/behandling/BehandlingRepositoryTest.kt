@@ -14,9 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
 import java.util.UUID
 
-class BehandlingsRepositoryTest : OppslagSpringRunnerTest() {
+class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
 
-    @Autowired private lateinit var behandlingRepository: BehandlingsRepository
+    @Autowired private lateinit var behandlingRepository: BehandlingRepository
 
     val fagsak = fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent("1")))
 

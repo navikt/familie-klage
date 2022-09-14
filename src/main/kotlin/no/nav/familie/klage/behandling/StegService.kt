@@ -16,20 +16,20 @@ import java.util.UUID
 
 @Service
 class StegService(
-    private val behandlingsRepository: BehandlingsRepository,
+    private val behandlingRepository: BehandlingRepository,
     private val behandlingshistorikkService: BehandlingshistorikkService,
     private val rolleConfig: RolleConfig,
 ) {
 
     @Transactional
     fun oppdaterSteg(behandlingId: UUID, nesteSteg: StegType) {
-        val behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
+        val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
 
         validerHarSaksbehandlerRolle()
         validerGyldigNesteSteg(behandling)
 
-        behandlingsRepository.updateSteg(behandlingId, nesteSteg)
-        behandlingsRepository.updateStatus(behandlingId, nesteSteg.gjelderStatus)
+        behandlingRepository.updateSteg(behandlingId, nesteSteg)
+        behandlingRepository.updateStatus(behandlingId, nesteSteg.gjelderStatus)
 
         behandlingshistorikkService.opprettBehandlingshistorikk(
             behandlingshistorikk = Behandlingshistorikk(
