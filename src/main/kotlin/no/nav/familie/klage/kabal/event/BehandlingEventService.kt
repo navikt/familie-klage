@@ -6,8 +6,8 @@ import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.integrasjoner.OppgaveClient
 import no.nav.familie.klage.kabal.BehandlingEvent
+import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.kontrakter.felles.Behandlingstema
-import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
@@ -23,6 +23,7 @@ import java.util.UUID
 @Service
 class BehandlingEventService(
     private val oppgaveClient: OppgaveClient,
+    private val pdlClient: PdlClient,
     private val behandlingRepository: BehandlingRepository,
     private val fagsakRepository: FagsakRepository,
     private val personRepository: FagsakPersonRepository,
@@ -38,28 +39,27 @@ class BehandlingEventService(
     private fun opprettOppgave(behandlingEvent: BehandlingEvent) {
 
         val behandling = behandlingRepository.findByEksternBehandlingId(UUID.fromString(behandlingEvent.kildeReferanse))
-        val fagsak = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
-        // TODO - hent aktørid
-        val aktivIdent = personRepository.hentAktivIdent(
-            fagsak?.fagsakPersonId
-                ?: throw Feil("Finner ikke fagsak for behandling med eksternId ${behandlingEvent.kildeReferanse}")
-        )
+        val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
+        val personId = fagsakDomain?.fagsakPersonId
+            ?: throw Feil("Feil ved henting av aktiv ident: Finner ikke fagsak for behandling med eksternId ${behandlingEvent.kildeReferanse}")
+
+        val aktivIdent = personRepository.hentAktivIdent(personId)
+        val aktørId = pdlClient.hentAktørIder(aktivIdent).identer.first().ident
 
         val opprettOppgaveRequest =
             OpprettOppgaveRequest(
-                ident = OppgaveIdentV2(ident = aktivIdent, gruppe = IdentGruppe.FOLKEREGISTERIDENT),
-                saksId = fagsak.eksternId,
-                tema = Tema.ENF, // TODO finn riktig tema (BA/EF osv)
-                oppgavetype = Oppgavetype.BehandleSak,
+                ident = OppgaveIdentV2(ident = aktørId, gruppe = IdentGruppe.AKTOERID),
+                saksId = fagsakDomain.eksternId,
+                tema = fagsakDomain.stønadstype.tilTema(),
+                oppgavetype = Oppgavetype.VurderKonsekvensForYtelse,
                 fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
-                beskrivelse = behandlingEvent.detaljer.oppgaveTekst(),
+                beskrivelse = " ${behandlingEvent.detaljer.oppgaveTekst()} Gjelder: ${fagsakDomain.stønadstype}",
                 enhetsnummer = behandling.behandlendeEnhet,
-                behandlingstema = finnBehandlingstema(fagsak.stønadstype).value,
-                tilordnetRessurs = null,
-                behandlesAvApplikasjon = "familie-ef-sak"
+                behandlingstema = finnBehandlingstema(fagsakDomain.stønadstype).value
             )
 
-        oppgaveClient.opprettOppgave(opprettOppgaveRequest)
+        val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
+        logger.info("Oppgave opprettet med id $oppgaveId")
     }
 
     fun ferdigstillKlagebehandling() {
