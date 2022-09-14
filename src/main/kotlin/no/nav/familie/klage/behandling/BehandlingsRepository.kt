@@ -1,6 +1,7 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.Klagebehandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.repository.InsertUpdateRepository
 import no.nav.familie.klage.repository.RepositoryInterface
@@ -39,12 +40,26 @@ interface BehandlingsRepository : RepositoryInterface<Behandling, UUID>, InsertU
     )
     fun updateStatus(@Param("behandling_id") behandlingId: UUID, nyStatus: BehandlingStatus)
 
-    @Modifying
     @Query(
-        """SELECT * FROM behandling bh, fagsak fs WHERE fs.ekstern_id = :eksternId AND fs.fagsystem = :fagsystem"""
+        """
+            SELECT 
+             b.id,
+             b.fagsak_id,
+             b.status,
+             v.arsak,
+             b.opprettet,
+             b.mottatt_dato,
+             b.resultat,
+             v.arsak ?,
+             v.endret_tid
+            FROM behandling b
+            JOIN fagsak f ON f.id = b.fagsak_id
+            LEFT JOIN vurdering v ON v.behandling_id = b.id
+            WHERE f.ekstern_id = :eksternId AND f.fagsystem = :fagsystem
+        """
     )
     fun finnBehandlinger(
-        @Param("eksternId") eksternId: Long,
+        @Param("eksternId") eksternId: String,
         @Param("fagsystem") fagsystem: Fagsystem
-    ): List<Behandling>
+    ): List<Klagebehandling>
 }
