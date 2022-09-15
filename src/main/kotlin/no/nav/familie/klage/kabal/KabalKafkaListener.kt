@@ -53,14 +53,7 @@ data class BehandlingEvent(
     val kabalReferanse: String,
     val type: BehandlingEventType,
     val detaljer: BehandlingDetaljer,
-) {
-
-    // DELVIS_MEDHOLD ?
-    fun utfallErMedhold(): Boolean {
-        return detaljer.klagebehandlingAvsluttet?.utfall == ExternalUtfall.MEDHOLD ||
-            detaljer.ankebehandlingAvsluttet?.utfall == ExternalUtfall.MEDHOLD
-    }
-}
+)
 
 enum class BehandlingEventType {
     KLAGEBEHANDLING_AVSLUTTET, ANKEBEHANDLING_OPPRETTET, ANKEBEHANDLING_AVSLUTTET, ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET // TODO ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET skal fjernes på sikt
