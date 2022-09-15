@@ -122,7 +122,7 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
         }
 
         @Test
-        internal fun `skal finne mappe verdier fra repository til klageBehandling`() {
+        internal fun `skal mappe verdier fra repository til klageBehandling`() {
             val behandling = behandlingRepository.insert(behandling(fagsakId = fagsak.id))
             val behandling2 = behandlingRepository.insert(behandling(fagsakId = fagsak.id))
 
@@ -130,6 +130,8 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
             assertThat(behandlinger).hasSize(2)
             assertThat(behandlinger.map { it.id }).containsExactlyInAnyOrder(behandling.id, behandling2.id)
         }
+
+        // TODO test som sjekker mapping av verdier
 
     }
 }

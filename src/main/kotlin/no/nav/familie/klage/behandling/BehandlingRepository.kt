@@ -45,6 +45,7 @@ interface BehandlingRepository : RepositoryInterface<Behandling, UUID>, InsertUp
             SELECT 
              b.id,
              b.fagsak_id,
+             f.fagsak_person_id,
              b.status,
              b.opprettet_tid opprettet,
              b.klage_mottatt mottatt_dato,
