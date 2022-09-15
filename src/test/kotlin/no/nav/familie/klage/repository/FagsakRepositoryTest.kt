@@ -1,6 +1,6 @@
 package no.nav.familie.klage.repository
 
-import no.nav.familie.klage.behandling.BehandlingsRepository
+import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.PersonIdent
@@ -24,7 +24,7 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
     private lateinit var fagsakRepository: FagsakRepository
 
     @Autowired
-    private lateinit var behandlingRepository: BehandlingsRepository
+    private lateinit var behandlingRepository: BehandlingRepository
 
     @Test
     internal fun findByFagsakId() {
@@ -49,7 +49,7 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
         testoppsettService.lagreFagsak(fagsak)
         val behandling = behandlingRepository.insert(behandling(fagsakId = fagsak.id))
 
-        val fagsakForBehandling = fagsakRepository.finnFagsakForBehandling(behandling.id)!!
+        val fagsakForBehandling = fagsakRepository.finnFagsakForBehandlingId(behandling.id)!!
 
         assertThat(fagsakForBehandling.id).isEqualTo(fagsak.id)
         assertThat(fagsakForBehandling.eksternId).isEqualTo(fagsak.eksternId)
