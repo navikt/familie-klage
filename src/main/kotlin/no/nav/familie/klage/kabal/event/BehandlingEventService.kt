@@ -3,12 +3,14 @@ package no.nav.familie.klage.kabal.event
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.BehandlingStatus
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakPersonRepository
 import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.integrasjoner.OppgaveClient
 import no.nav.familie.klage.kabal.BehandlingEvent
+import no.nav.familie.klage.kabal.BehandlingEventType
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
@@ -37,12 +39,25 @@ class BehandlingEventService(
             behandlingEvent.kildeReferanse,
             behandlingEvent.kilde
         )
+
+        when (behandlingEvent.type) {
+            BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> behandleKlageAvsluttet(behandling, behandlingEvent)
+            else -> behandleAnke(behandling, behandlingEvent)
+        }
+    }
+
+    private fun behandleAnke(behandling: Behandling, behandlingEvent: BehandlingEvent) {
         opprettOppgave(behandlingEvent, behandling)
-        ferdigstillKlagebehandling(behandling)
+    }
+
+    private fun behandleKlageAvsluttet(behandling: Behandling, behandlingEvent: BehandlingEvent) {
+        when (behandling.status) {
+            BehandlingStatus.FERDIGSTILT -> logger.error("Mottatt event på ferdigstilt behandling $behandlingEvent") // TODO korrigeringer - kan vi få det?
+            else -> opprettOppgave(behandlingEvent, behandling).also { ferdigstillKlagebehandling(behandling) }
+        }
     }
 
     private fun opprettOppgave(behandlingEvent: BehandlingEvent, behandling: Behandling) {
-
         val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
         val personId = fagsakDomain?.fagsakPersonId
             ?: throw Feil("Feil ved henting av aktiv ident: Finner ikke fagsak for behandling med eksternId ${behandlingEvent.kildeReferanse}")
