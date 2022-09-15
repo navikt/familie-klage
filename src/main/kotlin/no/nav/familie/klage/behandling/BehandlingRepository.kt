@@ -41,6 +41,11 @@ interface BehandlingRepository : RepositoryInterface<Behandling, UUID>, InsertUp
     fun updateStatus(@Param("behandling_id") behandlingId: UUID, nyStatus: BehandlingStatus)
 
     @Query(
+        """SELECT b.* FROM behandling b WHERE b.ekstern_behandling_id = :eksternBehandlingId"""
+    )
+    fun findByEksternBehandlingId(eksternBehandlingId: UUID): Behandling
+
+    @Query(
         """
             SELECT 
              b.id,
