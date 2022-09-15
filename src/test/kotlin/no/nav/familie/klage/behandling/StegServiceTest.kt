@@ -21,12 +21,12 @@ import java.util.UUID
 
 internal class StegServiceTest {
 
-    val behandlingsRepository = mockk<BehandlingsRepository>()
+    val behandlingRepository = mockk<BehandlingRepository>()
     val behandlingshistorikkService = mockk<BehandlingshistorikkService>()
 
     val veilederRolle = "veilederRolle"
     val stegService = StegService(
-        behandlingsRepository,
+        behandlingRepository,
         behandlingshistorikkService,
         RolleConfig(
             beslutterRolle = "",
@@ -49,9 +49,9 @@ internal class StegServiceTest {
 
         assertThat(behandling.steg).isEqualTo(StegType.FORMKRAV)
 
-        every { behandlingsRepository.findByIdOrThrow(behandlingId) } returns behandling
-        every { behandlingsRepository.updateSteg(behandlingId, capture(stegSlot)) } just Runs
-        every { behandlingsRepository.updateStatus(behandlingId, capture(statusSlot)) } just Runs
+        every { behandlingRepository.findByIdOrThrow(behandlingId) } returns behandling
+        every { behandlingRepository.updateSteg(behandlingId, capture(stegSlot)) } just Runs
+        every { behandlingRepository.updateStatus(behandlingId, capture(statusSlot)) } just Runs
         every { behandlingshistorikkService.opprettBehandlingshistorikk(capture(historikkSlot)) } returns mockk()
 
         val nesteSteg = StegType.VURDERING
@@ -65,7 +65,7 @@ internal class StegServiceTest {
 
     @Test
     fun `skal feile hvis saksbehandler mangler rolle`() {
-        every { behandlingsRepository.findByIdOrThrow(any()) } returns mockk()
+        every { behandlingRepository.findByIdOrThrow(any()) } returns mockk()
 
         testWithBrukerContext(groups = listOf(veilederRolle)) {
             val feil = assertThrows<Feil> { stegService.oppdaterSteg(UUID.randomUUID(), StegType.VURDERING) }
@@ -76,7 +76,7 @@ internal class StegServiceTest {
 
     @Test
     fun `skal feile hvis behandling er låst`() {
-        every { behandlingsRepository.findByIdOrThrow(any()) } returns behandling(status = BehandlingStatus.FERDIGSTILT)
+        every { behandlingRepository.findByIdOrThrow(any()) } returns behandling(status = BehandlingStatus.FERDIGSTILT)
 
         val feil = assertThrows<Feil> {
             stegService.oppdaterSteg(

@@ -6,8 +6,11 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.brev.dto.AvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.klage.brev.dto.FritekstBrevtype
+import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
+import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.fagsak.domain.PersonIdent
+import no.nav.familie.klage.felles.domain.Sporbar
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.vurdering.domain.Hjemmel
@@ -40,8 +43,8 @@ object DomainUtil {
         this.tilFagsakMedPerson(setOf(PersonIdent(ident = personIdent)))
 
     fun behandling(
+        fagsak: Fagsak = fagsak(),
         id: UUID = UUID.randomUUID(),
-        fagsakId: UUID = UUID.randomUUID(),
         eksternBehandlingId: String = Random.nextInt().toString(),
         klageMottatt: LocalDate = LocalDate.now(),
         status: BehandlingStatus = BehandlingStatus.OPPRETTET,
@@ -50,7 +53,7 @@ object DomainUtil {
     ): Behandling =
         Behandling(
             id = id,
-            fagsakId = fagsakId,
+            fagsakId = fagsak.id,
             eksternBehandlingId = eksternBehandlingId,
             klageMottatt = klageMottatt,
             status = status,
@@ -90,4 +93,32 @@ object DomainUtil {
         behandlingId = behandlingId,
         brevType = FritekstBrevtype.VEDTAK_INVILGELSE
     )
+
+    val defaultIdenter = setOf(PersonIdent("01010199999"))
+    fun fagsak(
+        identer: Set<PersonIdent> = defaultIdenter,
+        stønadstype: Stønadstype = Stønadstype.OVERGANGSSTØNAD,
+        id: UUID = UUID.randomUUID(),
+        sporbar: Sporbar = Sporbar(),
+        fagsakPersonId: UUID = UUID.randomUUID()
+    ): Fagsak {
+        return fagsak(stønadstype, id, FagsakPerson(id = fagsakPersonId, identer = identer), sporbar)
+    }
+
+    fun fagsak(
+        stønadstype: Stønadstype = Stønadstype.OVERGANGSSTØNAD,
+        id: UUID = UUID.randomUUID(),
+        person: FagsakPerson,
+        sporbar: Sporbar = Sporbar()
+    ): Fagsak {
+        return Fagsak(
+            id = id,
+            fagsakPersonId = person.id,
+            personIdenter = person.identer,
+            stønadstype = stønadstype,
+            sporbar = sporbar,
+            eksternId = "1",
+            fagsystem = Fagsystem.EF
+        )
+    }
 }

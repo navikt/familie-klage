@@ -1,6 +1,6 @@
 package no.nav.familie.klage.personopplysninger
 
-import no.nav.familie.klage.behandling.BehandlingsRepository
+import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.personopplysninger.domain.Kjønn
 import no.nav.familie.klage.personopplysninger.domain.PersonopplysningerDto
@@ -14,13 +14,13 @@ import java.util.UUID
 
 @Service
 class PersonopplysningerService(
-    private val behandlingsRepository: BehandlingsRepository,
+    private val behandlingRepository: BehandlingRepository,
     private val fagsakService: FagsakService,
     private val pdlClient: PdlClient
 ) {
 
     fun hentPersonopplysninger(behandlingId: UUID): PersonopplysningerDto {
-        val behandling = behandlingsRepository.findByIdOrThrow(behandlingId)
+        val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
 
         return pdlClient.hentPerson(fagsak.hentAktivIdent()).let {

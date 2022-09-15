@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface BehandlingsRepository : RepositoryInterface<Behandling, UUID>, InsertUpdateRepository<Behandling> {
+interface BehandlingRepository : RepositoryInterface<Behandling, UUID>, InsertUpdateRepository<Behandling> {
 
     @Query(
         """SELECT DISTINCT personopplysninger.navn FROM personopplysninger 
@@ -37,4 +37,11 @@ interface BehandlingsRepository : RepositoryInterface<Behandling, UUID>, InsertU
         """UPDATE behandling SET status = :nyStatus WHERE id = :behandling_id"""
     )
     fun updateStatus(@Param("behandling_id") behandlingId: UUID, nyStatus: BehandlingStatus)
+
+    @Query(
+        """SELECT b.* FROM behandling b 
+            JOIN fagsak f ON b.fagsak_id=f.id
+            WHERE b.ekstern_behandling_id = :eksternBehandlingId AND f.fagsystem = :fagsystem"""
+    )
+    fun findByEksternBehandlingIdAndFagsystem(eksternBehandlingId: String, fagsystem: String): Behandling
 }
