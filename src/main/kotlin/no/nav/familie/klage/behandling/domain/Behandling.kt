@@ -17,7 +17,7 @@ data class Behandling(
     val status: BehandlingStatus = BehandlingStatus.OPPRETTET,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),
-    val resultat: BehandlingResultat? = BehandlingResultat.IKKE_SATT,
+    val resultat: BehandlingResultat = BehandlingResultat.IKKE_SATT,
     val vedtakDato: LocalDateTime? = null,
     val eksternBehandlingId: String,
     val klageMottatt: LocalDate,

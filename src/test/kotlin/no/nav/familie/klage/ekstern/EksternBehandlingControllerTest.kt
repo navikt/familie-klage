@@ -7,6 +7,7 @@ import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Status
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.KlagebehandlingDto
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
@@ -54,7 +55,7 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
 
         @Test
         internal fun `skal returnere behandling når man spør etter eksternFagsakId`() {
-            val behandling = behandlingRepository.insert(behandling(fagsakId = fagsak.id, eksternBehandlingId = "123"))
+            val behandling = behandlingRepository.insert(behandling(fagsak, eksternBehandlingId = "123"))
 
             val url = "$hentBehandlingUrl?eksternFagsakId=${fagsak.eksternId}"
             val response = hentBehandlinger(url)
@@ -74,7 +75,7 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
             assertThat(klagebehandling.status).isEqualTo(behandling.status)
             assertThat(klagebehandling.mottattDato).isEqualTo(behandling.klageMottatt)
             assertThat(klagebehandling.opprettet).isEqualTo(behandling.sporbar.opprettetTid)
-            assertThat(klagebehandling.resultat).isNull()
+            assertThat(klagebehandling.resultat).isEqualTo(BehandlingResultat.IKKE_SATT)
             assertThat(klagebehandling.årsak).isNull()
             assertThat(klagebehandling.vedtaksdato).isNull()
         }
@@ -89,8 +90,8 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
             ).tilFagsakMedPerson(fagsak.personIdenter)
 
             testoppsettService.lagreFagsak(fagsak2)
-            behandlingRepository.insert(behandling(fagsakId = fagsak.id, eksternBehandlingId = "11"))
-            behandlingRepository.insert(behandling(fagsakId = fagsak2.id, eksternBehandlingId = "22"))
+            behandlingRepository.insert(behandling(fagsak, eksternBehandlingId = "11"))
+            behandlingRepository.insert(behandling(fagsak2, eksternBehandlingId = "22"))
 
             val url = "$hentBehandlingUrl?eksternFagsakId=${fagsak.eksternId},${fagsak2.eksternId},$fagsak3EksternId"
             val response = hentBehandlinger(url)

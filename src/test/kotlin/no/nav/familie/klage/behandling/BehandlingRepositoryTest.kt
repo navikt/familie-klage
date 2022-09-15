@@ -34,8 +34,8 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
 
         val behandling = behandlingRepository.insert(
             behandling(
+                fagsak = fagsak,
                 id = id,
-                fagsakId = fagsak.id,
                 eksternBehandlingId = "123",
                 klageMottatt = LocalDate.now()
             )
@@ -59,7 +59,7 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
 
         val id = UUID.randomUUID()
 
-        val behandling = behandlingRepository.insert(behandling(id, fagsakId = fagsak.id))
+        val behandling = behandlingRepository.insert(behandling(fagsak, id))
 
         assertThat(behandling.status).isEqualTo(BehandlingStatus.OPPRETTET)
 
@@ -75,7 +75,7 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
 
         val id = UUID.randomUUID()
 
-        val behandling = behandlingRepository.insert(behandling(id, fagsakId = fagsak.id))
+        val behandling = behandlingRepository.insert(behandling(fagsak, id))
 
         assertThat(behandling.steg).isEqualTo(StegType.FORMKRAV)
 
@@ -83,6 +83,30 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
         behandlingRepository.updateSteg(id, nyttSteg)
 
         assertThat(behandlingRepository.findByIdOrThrow(id).steg).isEqualTo(nyttSteg)
+    }
+
+    @Test
+    internal fun `findByEksternBehandlingIdAndFagsystem - forvent treff`() {
+
+        val fagsakPersistert = testoppsettService.lagreFagsak(
+            fagsakDomain().tilFagsakMedPerson(
+                setOf(PersonIdent("12345678901"))
+            )
+        )
+
+        val fagsakPersistert2 = testoppsettService.lagreFagsak(
+            fagsakDomain().tilFagsakMedPerson(
+                setOf(PersonIdent("12345678902"))
+            )
+        )
+
+        val behandlingPersistert = behandlingRepository.insert(behandling(fagsakPersistert, eksternBehandlingId = "1"))
+        behandlingRepository.insert(behandling(fagsakPersistert2, eksternBehandlingId = "2"))
+
+        val behandling = behandlingRepository.findByEksternBehandlingIdAndFagsystem(behandlingPersistert.eksternBehandlingId, Fagsystem.EF.name)
+        assertThat(behandling).isNotNull
+        assertThat(behandling.id).isEqualTo(behandlingPersistert.id)
+        assertThat(fagsakPersistert.id).isEqualTo(behandling.fagsakId)
     }
 
     @Nested
@@ -97,7 +121,7 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
         @Test
         internal fun `skal returnere tom liste når det kun finnes behandlinger på en annen fagsak`() {
             val fagsak2 = testoppsettService.lagreFagsak(fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent("2"))))
-            behandlingRepository.insert(behandling(fagsakId = fagsak2.id))
+            behandlingRepository.insert(behandling(fagsak2))
 
             assertThat(behandlingRepository.finnBehandlinger(fagsak.eksternId, Fagsystem.EF))
                 .isEmpty()
@@ -105,7 +129,7 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
 
         @Test
         internal fun `skal returnere tom liste når det kun finnes behandlinger et annet fagsystem`() {
-            behandlingRepository.insert(behandling(fagsakId = fagsak.id))
+            behandlingRepository.insert(behandling(fagsak))
 
             assertThat(behandlingRepository.finnBehandlinger(fagsak.eksternId, Fagsystem.BA))
                 .isEmpty()
@@ -113,8 +137,8 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
 
         @Test
         internal fun `skal finne alle behandlinger for eksternFagsakId`() {
-            val behandling = behandlingRepository.insert(behandling(fagsakId = fagsak.id))
-            val behandling2 = behandlingRepository.insert(behandling(fagsakId = fagsak.id))
+            val behandling = behandlingRepository.insert(behandling(fagsak))
+            val behandling2 = behandlingRepository.insert(behandling(fagsak))
 
             val behandlinger = behandlingRepository.finnBehandlinger(fagsak.eksternId, Fagsystem.EF)
             assertThat(behandlinger).hasSize(2)
@@ -123,8 +147,8 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
 
         @Test
         internal fun `skal mappe verdier fra repository til klageBehandling`() {
-            val behandling = behandlingRepository.insert(behandling(fagsakId = fagsak.id))
-            val behandling2 = behandlingRepository.insert(behandling(fagsakId = fagsak.id))
+            val behandling = behandlingRepository.insert(behandling(fagsak))
+            val behandling2 = behandlingRepository.insert(behandling(fagsak))
 
             val behandlinger = behandlingRepository.finnBehandlinger(fagsak.eksternId, Fagsystem.EF)
             assertThat(behandlinger).hasSize(2)
