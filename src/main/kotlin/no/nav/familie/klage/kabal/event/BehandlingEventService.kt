@@ -1,6 +1,9 @@
 package no.nav.familie.klage.kabal.event
 
 import no.nav.familie.klage.behandling.BehandlingRepository
+import no.nav.familie.klage.behandling.StegService
+import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakPersonRepository
 import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.infrastruktur.exception.Feil
@@ -24,21 +27,22 @@ class BehandlingEventService(
     private val behandlingRepository: BehandlingRepository,
     private val fagsakRepository: FagsakRepository,
     private val personRepository: FagsakPersonRepository,
+    private val stegService: StegService
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
     fun handleEvent(behandlingEvent: BehandlingEvent) {
-        opprettOppgave(behandlingEvent)
-        ferdigstillKlagebehandling()
-    }
-
-    private fun opprettOppgave(behandlingEvent: BehandlingEvent) {
-
         val behandling = behandlingRepository.findByEksternBehandlingIdAndFagsystem(
             behandlingEvent.kildeReferanse,
             behandlingEvent.kilde
         )
+        opprettOppgave(behandlingEvent, behandling)
+        ferdigstillKlagebehandling(behandling)
+    }
+
+    private fun opprettOppgave(behandlingEvent: BehandlingEvent, behandling: Behandling) {
+
         val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
         val personId = fagsakDomain?.fagsakPersonId
             ?: throw Feil("Feil ved henting av aktiv ident: Finner ikke fagsak for behandling med eksternId ${behandlingEvent.kildeReferanse}")
@@ -61,7 +65,9 @@ class BehandlingEventService(
         logger.info("Oppgave opprettet med id $oppgaveId")
     }
 
-    fun ferdigstillKlagebehandling() {
+    fun ferdigstillKlagebehandling(behandling: Behandling) {
+
+        stegService.oppdaterSteg(behandling.id, StegType.BEHANDLING_FERDIGSTILT)
     }
 
     private fun lagFristForOppgave(gjeldendeTid: LocalDateTime): LocalDate {
