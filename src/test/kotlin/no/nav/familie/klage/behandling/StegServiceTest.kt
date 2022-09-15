@@ -4,21 +4,28 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.slot
+import io.mockk.unmockkObject
 import no.nav.familie.klage.behandling.domain.BehandlingStatus
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
 import no.nav.familie.klage.infrastruktur.config.RolleConfig
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.BrukerContextUtil.testWithBrukerContext
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
 import java.util.UUID
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class StegServiceTest {
 
     val behandlingRepository = mockk<BehandlingRepository>()
@@ -37,6 +44,16 @@ internal class StegServiceTest {
         )
     )
 
+    @BeforeAll
+    fun setUp() {
+        mockkObject(SikkerhetContext)
+    }
+
+    @AfterAll
+    fun ryddOpp() {
+        unmockkObject(SikkerhetContext)
+    }
+
     @Test
     fun oppdaterSteg() {
         val behandlingId = UUID.randomUUID()
@@ -53,6 +70,8 @@ internal class StegServiceTest {
         every { behandlingRepository.updateSteg(behandlingId, capture(stegSlot)) } just Runs
         every { behandlingRepository.updateStatus(behandlingId, capture(statusSlot)) } just Runs
         every { behandlingshistorikkService.opprettBehandlingshistorikk(capture(historikkSlot)) } returns mockk()
+        every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler"
+        every { SikkerhetContext.harTilgangTilGittRolle(any(), any()) } returns true
 
         val nesteSteg = StegType.VURDERING
         stegService.oppdaterSteg(behandlingId, nesteSteg)
