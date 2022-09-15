@@ -53,7 +53,10 @@ class BehandlingEventService(
     private fun behandleKlageAvsluttet(behandling: Behandling, behandlingEvent: BehandlingEvent) {
         when (behandling.status) {
             BehandlingStatus.FERDIGSTILT -> logger.error("Mottatt event på ferdigstilt behandling $behandlingEvent") // TODO korrigeringer - kan vi få det?
-            else -> opprettOppgave(behandlingEvent, behandling).also { ferdigstillKlagebehandling(behandling) }
+            else -> {
+                opprettOppgave(behandlingEvent, behandling)
+                ferdigstillKlagebehandling(behandling)
+            }
         }
     }
 
