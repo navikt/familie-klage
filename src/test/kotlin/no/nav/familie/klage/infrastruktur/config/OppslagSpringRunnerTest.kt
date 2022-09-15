@@ -7,6 +7,8 @@ import no.nav.familie.klage.ApplicationLocal
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
 import no.nav.familie.klage.brev.domain.Brev
+import no.nav.familie.klage.brev.dto.Avsnitt
+import no.nav.familie.klage.distribusjon.Klageresultat
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.fagsak.domain.PersonIdent
@@ -43,6 +45,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
     "mock-pdl",
     "mock-integrasjoner",
     "mock-brev",
+    "mock-kabal",
     "mock-dokument"
 )
 @EnableMockOAuth2Server
@@ -97,16 +100,18 @@ abstract class OppslagSpringRunnerTest {
     private fun resetDatabase() {
         listOf(
             Behandlingshistorikk::class,
+            Avsnitt::class,
             Brev::class,
             Klage::class,
             Vurdering::class,
             Form::class,
+            Klageresultat::class,
             Behandling::class,
             FagsakDomain::class,
             FagsakPerson::class,
             PersonIdent::class,
             TaskLogg::class,
-            Task::class,
+            Task::class
 
         ).forEach { jdbcAggregateOperations.deleteAll(it.java) }
     }

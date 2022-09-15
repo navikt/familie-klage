@@ -37,7 +37,7 @@ class BrevController(
         return Ressurs.success(brevService.lagEllerOppdaterBrev(brevInnhold))
     }
 
-    @Deprecated("Bruk FerdigstillController")
+    @Deprecated("Bruk BehandlingController", ReplaceWith("BehandlingController.ferdigstill"))
     @PostMapping("/{behandlingId}/ferdigstill")
     fun ferdigstillBrev(@PathVariable behandlingId: UUID) {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.CREATE)

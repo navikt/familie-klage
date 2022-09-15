@@ -1,6 +1,7 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.dto.BehandlingDto
+import no.nav.familie.klage.distribusjon.FerdigstillBehandlingService
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -20,7 +21,8 @@ import java.util.UUID
 @Validated
 class BehandlingController(
     private val behandlingService: BehandlingService,
-    private val tilgangService: TilgangService
+    private val tilgangService: TilgangService,
+    private val ferdigstillBehandlingService: FerdigstillBehandlingService
 ) {
 
     @GetMapping("{behandlingId}")
@@ -32,5 +34,12 @@ class BehandlingController(
     @PostMapping("/opprett")
     fun opprettBehandling(@PathVariable opprettKlageBehandlingDto: OpprettKlagebehandlingRequest) {
         behandlingService.opprettBehandling(opprettKlageBehandlingDto)
+    }
+
+    @PostMapping("{behandlingId}/ferdigstill")
+    fun ferdigstillBehandling(@PathVariable behandlingId: UUID) {
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.CREATE)
+        tilgangService.validerHarSaksbehandlerrolle()
+        ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
     }
 }

@@ -2,11 +2,9 @@ import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import no.nav.familie.klage.vurdering.domain.Årsak
-import org.springframework.data.annotation.Id
 import java.util.UUID
 
 data class VurderingDto(
-    @Id
     val behandlingId: UUID,
     val vedtak: Vedtak,
     val arsak: Årsak? = null,
