@@ -6,7 +6,6 @@ import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.integrasjoner.OppgaveClient
 import no.nav.familie.klage.kabal.BehandlingEvent
-import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
@@ -18,12 +17,10 @@ import org.springframework.stereotype.Service
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.UUID
 
 @Service
 class BehandlingEventService(
     private val oppgaveClient: OppgaveClient,
-    private val pdlClient: PdlClient,
     private val behandlingRepository: BehandlingRepository,
     private val fagsakRepository: FagsakRepository,
     private val personRepository: FagsakPersonRepository,
@@ -38,17 +35,19 @@ class BehandlingEventService(
 
     private fun opprettOppgave(behandlingEvent: BehandlingEvent) {
 
-        val behandling = behandlingRepository.findByEksternBehandlingId(UUID.fromString(behandlingEvent.kildeReferanse))
+        val behandling = behandlingRepository.findByEksternBehandlingIdAndFagsystem(
+            behandlingEvent.kildeReferanse,
+            behandlingEvent.kilde
+        )
         val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
         val personId = fagsakDomain?.fagsakPersonId
             ?: throw Feil("Feil ved henting av aktiv ident: Finner ikke fagsak for behandling med eksternId ${behandlingEvent.kildeReferanse}")
 
         val aktivIdent = personRepository.hentAktivIdent(personId)
-        val aktørId = pdlClient.hentAktørIder(aktivIdent).identer.first().ident
 
         val opprettOppgaveRequest =
             OpprettOppgaveRequest(
-                ident = OppgaveIdentV2(ident = aktørId, gruppe = IdentGruppe.AKTOERID),
+                ident = OppgaveIdentV2(ident = aktivIdent, gruppe = IdentGruppe.FOLKEREGISTERIDENT),
                 saksId = fagsakDomain.eksternId,
                 tema = fagsakDomain.stønadstype.tilTema(),
                 oppgavetype = Oppgavetype.VurderKonsekvensForYtelse,

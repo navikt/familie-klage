@@ -47,7 +47,7 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
         val fagsak = fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent("1")))
 
         testoppsettService.lagreFagsak(fagsak)
-        val behandling = behandlingRepository.insert(behandling(fagsakId = fagsak.id))
+        val behandling = behandlingRepository.insert(behandling(fagsak))
 
         val fagsakForBehandling = fagsakRepository.finnFagsakForBehandlingId(behandling.id)!!
 
