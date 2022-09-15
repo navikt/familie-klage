@@ -80,8 +80,7 @@ class BehandlingEventService(
         logger.info("Oppgave opprettet med id $oppgaveId")
     }
 
-    fun ferdigstillKlagebehandling(behandling: Behandling) {
-
+    private fun ferdigstillKlagebehandling(behandling: Behandling) {
         stegService.oppdaterSteg(behandling.id, StegType.BEHANDLING_FERDIGSTILT)
     }
 
