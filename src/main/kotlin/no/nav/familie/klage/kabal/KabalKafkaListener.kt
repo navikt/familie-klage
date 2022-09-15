@@ -80,11 +80,9 @@ data class KlagebehandlingAvsluttetDetaljer(
 ) {
 
     fun oppgaveTekst(): String {
-        return "Hendelse fra klage av type klagebehandling avsluttet med utfall: $utfall mottatt. Avsluttet tidspunkt: $avsluttet. Journalpost referanser: ${
-        journalpostReferanser.joinToString(
-            ", "
-        )
-        }"
+        return "Hendelse fra klage av type klagebehandling avsluttet med utfall: $utfall mottatt. " +
+            "Avsluttet tidspunkt: $avsluttet. " +
+            "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
     }
 }
 
@@ -104,11 +102,9 @@ data class AnkebehandlingAvsluttetDetaljer(
 ) {
 
     fun oppgaveTekst(): String {
-        return "Hendelse fra klage av type ankebehandling avsluttet med utfall: $utfall mottatt. Avsluttet tidspunkt: $avsluttet. Journalpost referanser: ${
-        journalpostReferanser.joinToString(
-            ", "
-        )
-        }"
+        return "Hendelse fra klage av type ankebehandling avsluttet med utfall: $utfall mottatt. " +
+            "Avsluttet tidspunkt: $avsluttet. " +
+            "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
     }
 }
 
