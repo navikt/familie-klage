@@ -46,7 +46,7 @@ internal class FerdigstillBehandlingServiceTest {
         stegService = stegService
     )
     val fagsak = DomainUtil.fagsakDomain().tilFagsak()
-    val behandling = DomainUtil.behandling(fagsakId = fagsak.id, steg = StegType.BREV, status = BehandlingStatus.UTREDES)
+    val behandling = DomainUtil.behandling(fagsak = fagsak, steg = StegType.BREV, status = BehandlingStatus.UTREDES)
     val vurdering = vurdering(behandlingId = behandling.id)
     val journalpostId = "1234"
     val distribusjonId = "9876"

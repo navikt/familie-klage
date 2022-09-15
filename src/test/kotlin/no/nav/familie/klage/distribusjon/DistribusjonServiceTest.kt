@@ -45,7 +45,7 @@ internal class DistribusjonServiceTest {
         val ident = "1"
         val fagsak = fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent(ident)))
         val behandlendeEnhet = "enhet"
-        val behandling = behandling(fagsakId = fagsak.id, behandlendeEnhet = behandlendeEnhet)
+        val behandling = behandling(fagsak = fagsak, behandlendeEnhet = behandlendeEnhet)
 
         val journalpostSlot = slot<ArkiverDokumentRequest>()
 

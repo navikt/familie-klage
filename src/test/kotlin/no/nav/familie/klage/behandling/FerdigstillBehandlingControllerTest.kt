@@ -43,7 +43,7 @@ internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
     private lateinit var rolleConfig: RolleConfig
 
     val fagsak = fagsakDomain().tilFagsak()
-    val behandling = behandling(fagsakId = fagsak.id)
+    val behandling = behandling(fagsak = fagsak)
     val form = form(fagsakId = fagsak.id, behandlingId = behandling.id)
     val vurdering = vurdering(behandlingId = behandling.id)
     val fritekstbrev = fritekstbrev(behandlingId = behandling.id)

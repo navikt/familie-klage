@@ -20,7 +20,7 @@ internal class KlageresultatServiceTest : OppslagSpringRunnerTest() {
     private lateinit var klageresultatRepository: KlageresultatRepository
 
     val fagsak = DomainUtil.fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent("1")))
-    val behandling = DomainUtil.behandling(fagsakId = fagsak.id)
+    val behandling = DomainUtil.behandling(fagsak = fagsak)
 
     @BeforeEach
     fun setUp() {
