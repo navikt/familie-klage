@@ -32,16 +32,6 @@ class OppgaveClient(
         return pakkUtRespons(respons, uri, "opprettOppgave").oppgaveId
     }
 
-    fun finnMapper(finnMappeRequest: FinnMappeRequest): FinnMappeResponseDto {
-        val uri = UriComponentsBuilder.fromUri(oppgaveUri)
-            .pathSegment("mappe", "sok")
-            .queryParams(finnMappeRequest.toQueryParams())
-            .build()
-            .toUri()
-        val respons = getForEntity<Ressurs<FinnMappeResponseDto>>(uri)
-        return pakkUtRespons(respons, uri, "finnMappe")
-    }
-
     private fun <T> pakkUtRespons(
         respons: Ressurs<T>,
         uri: URI?,
