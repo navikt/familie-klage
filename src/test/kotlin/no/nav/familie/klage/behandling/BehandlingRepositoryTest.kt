@@ -110,11 +110,11 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
     }
 
     @Nested
-    inner class FinnBehandlingerPåFagsystemOgEksternId {
+    inner class FinnKlagebehandlingsresultat {
 
         @Test
         internal fun `skal returnere tom liste når det ikke finnes noen behandlinger`() {
-            assertThat(behandlingRepository.finnBehandlinger(fagsak.eksternId, Fagsystem.EF))
+            assertThat(behandlingRepository.finnKlagebehandlingsresultat(fagsak.eksternId, Fagsystem.EF))
                 .isEmpty()
         }
 
@@ -123,7 +123,7 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
             val fagsak2 = testoppsettService.lagreFagsak(fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent("2"))))
             behandlingRepository.insert(behandling(fagsak2))
 
-            assertThat(behandlingRepository.finnBehandlinger(fagsak.eksternId, Fagsystem.EF))
+            assertThat(behandlingRepository.finnKlagebehandlingsresultat(fagsak.eksternId, Fagsystem.EF))
                 .isEmpty()
         }
 
@@ -131,7 +131,7 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
         internal fun `skal returnere tom liste når det kun finnes behandlinger et annet fagsystem`() {
             behandlingRepository.insert(behandling(fagsak))
 
-            assertThat(behandlingRepository.finnBehandlinger(fagsak.eksternId, Fagsystem.BA))
+            assertThat(behandlingRepository.finnKlagebehandlingsresultat(fagsak.eksternId, Fagsystem.BA))
                 .isEmpty()
         }
 
@@ -140,7 +140,7 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
             val behandling = behandlingRepository.insert(behandling(fagsak))
             val behandling2 = behandlingRepository.insert(behandling(fagsak))
 
-            val behandlinger = behandlingRepository.finnBehandlinger(fagsak.eksternId, Fagsystem.EF)
+            val behandlinger = behandlingRepository.finnKlagebehandlingsresultat(fagsak.eksternId, Fagsystem.EF)
             assertThat(behandlinger).hasSize(2)
             assertThat(behandlinger.map { it.id }).containsExactlyInAnyOrder(behandling.id, behandling2.id)
         }
@@ -150,7 +150,7 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
             val behandling = behandlingRepository.insert(behandling(fagsak))
             val behandling2 = behandlingRepository.insert(behandling(fagsak))
 
-            val behandlinger = behandlingRepository.finnBehandlinger(fagsak.eksternId, Fagsystem.EF)
+            val behandlinger = behandlingRepository.finnKlagebehandlingsresultat(fagsak.eksternId, Fagsystem.EF)
             assertThat(behandlinger).hasSize(2)
             assertThat(behandlinger.map { it.id }).containsExactlyInAnyOrder(behandling.id, behandling2.id)
         }

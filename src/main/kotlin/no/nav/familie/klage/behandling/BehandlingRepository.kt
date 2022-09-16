@@ -65,7 +65,7 @@ interface BehandlingRepository : RepositoryInterface<Behandling, UUID>, InsertUp
             WHERE f.ekstern_id = :eksternFagsakId AND f.fagsystem = :fagsystem
         """
     )
-    fun finnBehandlinger(
+    fun finnKlagebehandlingsresultat(
         @Param("eksternFagsakId") eksternFagsakId: String,
         @Param("fagsystem") fagsystem: Fagsystem
     ): List<Klagebehandlingsesultat>
