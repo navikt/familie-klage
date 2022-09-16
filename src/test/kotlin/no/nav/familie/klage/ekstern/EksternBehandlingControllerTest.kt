@@ -37,7 +37,7 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
     }
 
     @Nested
-    inner class hentBehandlinger {
+    inner class finnKlagebehandlingsresultat {
 
         private val hentBehandlingUrl: String = localhost("/api/ekstern/behandling/${Fagsystem.EF}")
 

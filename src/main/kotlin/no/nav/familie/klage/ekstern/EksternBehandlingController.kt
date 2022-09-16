@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 class EksternBehandlingController(val tilgangService: TilgangService, val behandlingService: BehandlingService) {
 
     @GetMapping("{fagsystem}")
-    fun hentBehandlinger(
+    fun finnKlagebehandlingsresultat(
         @PathVariable fagsystem: Fagsystem,
         @RequestParam("eksternFagsakId") eksternFagsakIder: Set<String>
     ): Ressurs<Map<String, List<KlagebehandlingDto>>> {
@@ -36,7 +36,7 @@ class EksternBehandlingController(val tilgangService: TilgangService, val behand
          * TODO : Legg til sjekk via tilgangservice
          */
         val behandlinger = eksternFagsakIder.associateWith { eksternFagsakId ->
-            behandlingService.hentBehandlinger(eksternFagsakId, fagsystem).map { it.tilEksternKlagebehandlingDto() }
+            behandlingService.finnKlagebehandlingsresultat(eksternFagsakId, fagsystem).map { it.tilEksternKlagebehandlingDto() }
         }
         // TODO fiks validering av at behandlinger tilhører samme person
         return Ressurs.success(behandlinger)

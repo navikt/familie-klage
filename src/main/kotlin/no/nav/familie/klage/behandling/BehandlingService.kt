@@ -56,7 +56,7 @@ class BehandlingService(
         ).id
     }
 
-    fun hentBehandlinger(eksternFagsakId: String, fagsystem: Fagsystem): List<Klagebehandlingsesultat> {
+    fun finnKlagebehandlingsresultat(eksternFagsakId: String, fagsystem: Fagsystem): List<Klagebehandlingsesultat> {
         return behandlingRepository.finnKlagebehandlingsresultat(eksternFagsakId, fagsystem)
     }
 
