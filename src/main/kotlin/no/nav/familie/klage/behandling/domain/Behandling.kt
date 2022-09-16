@@ -24,6 +24,9 @@ data class Behandling(
     val behandlendeEnhet: String
 )
 
+fun BehandlingStatus.erLåstForVidereBehandling() =
+    setOf(BehandlingStatus.VENTER, BehandlingStatus.FERDIGSTILT).contains(this)
+
 enum class StegType(
     val rekkefølge: Int,
     val gjelderStatus: BehandlingStatus
