@@ -17,14 +17,7 @@ class FormService(
     private val stegService: StegService
 ) {
 
-    fun hentForm(behandlingId: UUID): FormDto? {
-        val eksisterer = formRepository.existsById(behandlingId)
-        if (eksisterer) {
-            val form = formRepository.findByIdOrThrow(behandlingId)
-            return form.tilDto()
-        }
-        return null
-    }
+    fun hentForm(behandlingId: UUID): Form = formRepository.findByIdOrThrow(behandlingId)
 
     @Transactional
     fun opprettEllerOppdaterForm(form: Form): FormDto {
