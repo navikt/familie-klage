@@ -62,11 +62,11 @@ interface BehandlingRepository : RepositoryInterface<Behandling, UUID>, InsertUp
             FROM behandling b
             JOIN fagsak f ON f.id = b.fagsak_id
             LEFT JOIN vurdering v ON v.behandling_id = b.id
-            WHERE f.ekstern_id = :eksternId AND f.fagsystem = :fagsystem
+            WHERE f.ekstern_id = :eksternFagsakId AND f.fagsystem = :fagsystem
         """
     )
     fun finnBehandlinger(
-        @Param("eksternId") eksternId: String,
+        @Param("eksternFagsakId") eksternFagsakId: String,
         @Param("fagsystem") fagsystem: Fagsystem
     ): List<Klagebehandling>
 }

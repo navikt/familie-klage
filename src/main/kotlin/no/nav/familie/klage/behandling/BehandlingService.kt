@@ -56,8 +56,8 @@ class BehandlingService(
         ).id
     }
 
-    fun hentBehandlinger(eksternId: String, fagsystem: Fagsystem): List<Klagebehandling> {
-        return behandlingRepository.finnBehandlinger(eksternId, fagsystem)
+    fun hentBehandlinger(eksternFagsakId: String, fagsystem: Fagsystem): List<Klagebehandling> {
+        return behandlingRepository.finnBehandlinger(eksternFagsakId, fagsystem)
     }
 
     fun hentAktivIdent(behandlingId: UUID): String {
