@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
 
-internal class BehandlingEventServiceTes {
+internal class BehandlingEventServiceTest {
 
     private val oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     private val behandlingRepository = mockk<BehandlingRepository>(relaxed = true)
