@@ -40,10 +40,10 @@ class BehandlingService(
     ): UUID {
 
         val fagsak = fagsakService.hentEllerOpprettFagsak(
-            opprettKlagebehandlingRequest.ident,
-            opprettKlagebehandlingRequest.eksternFagsakId,
-            opprettKlagebehandlingRequest.fagsystem,
-            opprettKlagebehandlingRequest.stønadstype
+            ident = opprettKlagebehandlingRequest.ident,
+            eksternId = opprettKlagebehandlingRequest.eksternFagsakId,
+            fagsystem = opprettKlagebehandlingRequest.fagsystem,
+            stønadstype = opprettKlagebehandlingRequest.stønadstype
         )
 
         return behandlingRepository.insert(
