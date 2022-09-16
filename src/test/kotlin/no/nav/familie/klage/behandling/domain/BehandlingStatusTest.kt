@@ -25,7 +25,6 @@ internal class BehandlingStatusTest {
 
     @Test
     fun `Skal være låst for vanlig saksbehandler når status er VENTER`() {
-
         every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler"
         assertThat(BehandlingStatus.VENTER.erLåstForVidereBehandling()).isTrue
     }
