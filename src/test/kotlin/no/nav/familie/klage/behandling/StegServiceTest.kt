@@ -18,6 +18,8 @@ import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.BrukerContextUtil.testWithBrukerContext
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.UUID
@@ -40,6 +42,16 @@ internal class StegServiceTest {
         )
     )
 
+    @BeforeEach
+    internal fun setUp() {
+        mockkObject(SikkerhetContext)
+    }
+
+    @AfterEach
+    internal fun tearDown() {
+        unmockkObject(SikkerhetContext)
+    }
+
     @Test
     fun oppdaterSteg() {
         val behandlingId = UUID.randomUUID()
@@ -56,7 +68,6 @@ internal class StegServiceTest {
         every { behandlingRepository.updateSteg(behandlingId, capture(stegSlot)) } just Runs
         every { behandlingRepository.updateStatus(behandlingId, capture(statusSlot)) } just Runs
         every { behandlingshistorikkService.opprettBehandlingshistorikk(capture(historikkSlot)) } returns mockk()
-        mockkObject(SikkerhetContext)
         every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler"
         every { SikkerhetContext.harTilgangTilGittRolle(any(), any()) } returns true
 
@@ -67,7 +78,6 @@ internal class StegServiceTest {
         assertThat(statusSlot.captured).isEqualTo(nesteSteg.gjelderStatus)
         assertThat(historikkSlot.captured.behandlingId).isEqualTo(behandling.id)
         assertThat(historikkSlot.captured.steg).isEqualTo(behandling.steg)
-        unmockkObject(SikkerhetContext)
     }
 
     @Test
