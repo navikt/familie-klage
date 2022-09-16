@@ -1,7 +1,7 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
-import no.nav.familie.klage.behandling.domain.Klagebehandling
+import no.nav.familie.klage.behandling.domain.Klagebehandlingsesultat
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.fagsak.FagsakService
@@ -56,7 +56,7 @@ class BehandlingService(
         ).id
     }
 
-    fun hentBehandlinger(eksternFagsakId: String, fagsystem: Fagsystem): List<Klagebehandling> {
+    fun hentBehandlinger(eksternFagsakId: String, fagsystem: Fagsystem): List<Klagebehandlingsesultat> {
         return behandlingRepository.finnBehandlinger(eksternFagsakId, fagsystem)
     }
 

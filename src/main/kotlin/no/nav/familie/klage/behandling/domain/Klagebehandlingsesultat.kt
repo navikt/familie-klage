@@ -8,7 +8,10 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-data class Klagebehandling(
+/**
+ * Aggregering av behandling, fagsak, vedtak for å hente ut relevant informasjon i en spørring
+ */
+data class Klagebehandlingsesultat(
     val id: UUID,
     val fagsakId: UUID,
     val fagsakPersonId: UUID,
@@ -20,7 +23,7 @@ data class Klagebehandling(
     val vedtaksdato: LocalDateTime?,
 )
 
-fun Klagebehandling.tilEksternKlagebehandlingDto() = KlagebehandlingDto(
+fun Klagebehandlingsesultat.tilEksternKlagebehandlingDto() = KlagebehandlingDto(
     id = this.id,
     fagsakId = this.fagsakId,
     status = this.status,

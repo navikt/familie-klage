@@ -1,7 +1,7 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
-import no.nav.familie.klage.behandling.domain.Klagebehandling
+import no.nav.familie.klage.behandling.domain.Klagebehandlingsesultat
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.repository.InsertUpdateRepository
 import no.nav.familie.klage.repository.RepositoryInterface
@@ -68,5 +68,5 @@ interface BehandlingRepository : RepositoryInterface<Behandling, UUID>, InsertUp
     fun finnBehandlinger(
         @Param("eksternFagsakId") eksternFagsakId: String,
         @Param("fagsystem") fagsystem: Fagsystem
-    ): List<Klagebehandling>
+    ): List<Klagebehandlingsesultat>
 }
