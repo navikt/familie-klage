@@ -1,10 +1,12 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.Klagebehandlingsesultat
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -52,6 +54,10 @@ class BehandlingService(
                 behandlendeEnhet = "4489" // TODO: Må inn i request
             )
         ).id
+    }
+
+    fun finnKlagebehandlingsresultat(eksternFagsakId: String, fagsystem: Fagsystem): List<Klagebehandlingsesultat> {
+        return behandlingRepository.finnKlagebehandlingsresultat(eksternFagsakId, fagsystem)
     }
 
     fun hentAktivIdent(behandlingId: UUID): String {

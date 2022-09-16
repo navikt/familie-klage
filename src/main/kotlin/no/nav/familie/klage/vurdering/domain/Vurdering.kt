@@ -2,6 +2,7 @@ package no.nav.familie.klage.vurdering.domain
 
 import no.nav.familie.klage.felles.domain.Sporbar
 import no.nav.familie.klage.kabal.KabalHjemmel
+import no.nav.familie.kontrakter.felles.klage.Årsak
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Embedded
 import java.util.UUID
@@ -21,16 +22,6 @@ enum class Vedtak {
     VELG,
     OMGJØR_VEDTAK,
     OPPRETTHOLD_VEDTAK,
-}
-
-enum class Årsak {
-    VELG,
-    FEIL_I_LOVANDVENDELSE,
-    FEIL_REGELVERKSFORSTÅELSE,
-    FEIL_ELLER_ENDRET_FAKTA,
-    FEIL_PROSESSUELL,
-    KØET_BEHANDLING,
-    ANNET
 }
 
 enum class Hjemmel(val kabalHjemmel: KabalHjemmel) {

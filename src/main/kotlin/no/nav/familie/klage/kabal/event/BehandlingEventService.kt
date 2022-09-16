@@ -3,7 +3,6 @@ package no.nav.familie.klage.kabal.event
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.Behandling
-import no.nav.familie.klage.behandling.domain.BehandlingStatus
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakPersonRepository
 import no.nav.familie.klage.fagsak.FagsakRepository
@@ -12,6 +11,7 @@ import no.nav.familie.klage.integrasjoner.OppgaveClient
 import no.nav.familie.klage.kabal.BehandlingEvent
 import no.nav.familie.klage.kabal.BehandlingEventType
 import no.nav.familie.kontrakter.felles.Behandlingstema
+import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2

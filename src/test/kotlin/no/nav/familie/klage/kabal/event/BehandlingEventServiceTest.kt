@@ -5,7 +5,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.StegService
-import no.nav.familie.klage.behandling.domain.BehandlingStatus
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakPersonRepository
 import no.nav.familie.klage.fagsak.FagsakRepository
@@ -16,6 +15,7 @@ import no.nav.familie.klage.kabal.BehandlingEventType
 import no.nav.familie.klage.kabal.ExternalUtfall
 import no.nav.familie.klage.kabal.KlagebehandlingAvsluttetDetaljer
 import no.nav.familie.klage.testutil.DomainUtil
+import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
