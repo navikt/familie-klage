@@ -37,8 +37,8 @@ enum class BehandlingStatus {
 
     fun erLåstForVidereBehandling(): Boolean {
         return when (SikkerhetContext.hentSaksbehandler()) {
-            "VL" -> this != VENTER
-            else -> listOf(VENTER, FERDIGSTILT).contains(this)
+            SikkerhetContext.SYSTEM_FORKORTELSE -> this != VENTER
+            else -> setOf(VENTER, FERDIGSTILT).contains(this)
         }
     }
 }
