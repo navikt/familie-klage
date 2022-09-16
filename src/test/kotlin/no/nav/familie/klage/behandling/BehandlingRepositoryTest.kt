@@ -1,15 +1,16 @@
 package no.nav.familie.klage.behandling
 
-import no.nav.familie.klage.behandling.domain.BehandlingStatus
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
+import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
@@ -106,5 +107,54 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
         assertThat(behandling).isNotNull
         assertThat(behandling.id).isEqualTo(behandlingPersistert.id)
         assertThat(fagsakPersistert.id).isEqualTo(behandling.fagsakId)
+    }
+
+    @Nested
+    inner class FinnKlagebehandlingsresultat {
+
+        @Test
+        internal fun `skal returnere tom liste når det ikke finnes noen behandlinger`() {
+            assertThat(behandlingRepository.finnKlagebehandlingsresultat(fagsak.eksternId, Fagsystem.EF))
+                .isEmpty()
+        }
+
+        @Test
+        internal fun `skal returnere tom liste når det kun finnes behandlinger på en annen fagsak`() {
+            val fagsak2 = testoppsettService.lagreFagsak(fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent("2"))))
+            behandlingRepository.insert(behandling(fagsak2))
+
+            assertThat(behandlingRepository.finnKlagebehandlingsresultat(fagsak.eksternId, Fagsystem.EF))
+                .isEmpty()
+        }
+
+        @Test
+        internal fun `skal returnere tom liste når det kun finnes behandlinger et annet fagsystem`() {
+            behandlingRepository.insert(behandling(fagsak))
+
+            assertThat(behandlingRepository.finnKlagebehandlingsresultat(fagsak.eksternId, Fagsystem.BA))
+                .isEmpty()
+        }
+
+        @Test
+        internal fun `skal finne alle behandlinger for eksternFagsakId`() {
+            val behandling = behandlingRepository.insert(behandling(fagsak))
+            val behandling2 = behandlingRepository.insert(behandling(fagsak))
+
+            val behandlinger = behandlingRepository.finnKlagebehandlingsresultat(fagsak.eksternId, Fagsystem.EF)
+            assertThat(behandlinger).hasSize(2)
+            assertThat(behandlinger.map { it.id }).containsExactlyInAnyOrder(behandling.id, behandling2.id)
+        }
+
+        @Test
+        internal fun `skal mappe verdier fra repository til klageBehandling`() {
+            val behandling = behandlingRepository.insert(behandling(fagsak))
+            val behandling2 = behandlingRepository.insert(behandling(fagsak))
+
+            val behandlinger = behandlingRepository.finnKlagebehandlingsresultat(fagsak.eksternId, Fagsystem.EF)
+            assertThat(behandlinger).hasSize(2)
+            assertThat(behandlinger.map { it.id }).containsExactlyInAnyOrder(behandling.id, behandling2.id)
+        }
+
+        // TODO test som sjekker mapping av verdier
     }
 }

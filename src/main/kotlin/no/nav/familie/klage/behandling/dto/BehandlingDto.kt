@@ -1,9 +1,9 @@
 package no.nav.familie.klage.behandling.dto
 
 import no.nav.familie.klage.behandling.domain.Behandling
-import no.nav.familie.klage.behandling.domain.BehandlingResultat
-import no.nav.familie.klage.behandling.domain.BehandlingStatus
 import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
+import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import java.time.LocalDateTime
 import java.util.UUID

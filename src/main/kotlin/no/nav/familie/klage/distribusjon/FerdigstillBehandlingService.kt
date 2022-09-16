@@ -3,17 +3,19 @@ package no.nav.familie.klage.distribusjon
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.Behandling
-import no.nav.familie.klage.behandling.domain.BehandlingResultat
-import no.nav.familie.klage.behandling.domain.BehandlingResultat.IKKE_MEDHOLD
-import no.nav.familie.klage.behandling.domain.BehandlingResultat.IKKE_SATT
-import no.nav.familie.klage.behandling.domain.BehandlingResultat.MEDHOLD
 import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.kabal.KabalService
 import no.nav.familie.klage.personopplysninger.pdl.logger
 import no.nav.familie.klage.vurdering.VurderingService
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_MEDHOLD
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_SATT
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.MEDHOLD
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.UUID
@@ -50,7 +52,7 @@ class FerdigstillBehandlingService(
 
     private fun stegForResultat(resultat: BehandlingResultat): StegType = when (resultat) {
         IKKE_MEDHOLD -> StegType.OVERFØRING_TIL_KABAL
-        MEDHOLD -> StegType.BEHANDLING_FERDIGSTILT // TODO: Legg inn IKKE_MEDHOLD_FORMALKRAV_AVVIST,
+        MEDHOLD, IKKE_MEDHOLD_FORMKRAV_AVVIST -> StegType.BEHANDLING_FERDIGSTILT
         IKKE_SATT -> error("Kan ikke utlede neste steg når behandlingsresultatet er IKKE_SATT")
     }
 
@@ -114,7 +116,7 @@ class FerdigstillBehandlingService(
                 MEDHOLD
             }
         } else {
-            IKKE_SATT // TODO: Bruk IKKE_MEDHOLD_FORMKRAV_AVVIST
+            IKKE_MEDHOLD_FORMKRAV_AVVIST
         }
     }
 }

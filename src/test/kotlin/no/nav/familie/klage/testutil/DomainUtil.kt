@@ -1,7 +1,6 @@
 package no.nav.familie.klage.testutil
 
 import no.nav.familie.klage.behandling.domain.Behandling
-import no.nav.familie.klage.behandling.domain.BehandlingStatus
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.brev.dto.AvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
@@ -16,6 +15,7 @@ import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
+import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import java.time.LocalDate

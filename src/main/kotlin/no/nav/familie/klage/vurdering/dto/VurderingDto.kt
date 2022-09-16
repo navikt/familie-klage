@@ -1,7 +1,7 @@
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
-import no.nav.familie.klage.vurdering.domain.Årsak
+import no.nav.familie.kontrakter.felles.klage.Årsak
 import java.util.UUID
 
 data class VurderingDto(

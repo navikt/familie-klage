@@ -2,6 +2,7 @@ package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
 import no.nav.familie.klage.felles.domain.BehandlerRolle

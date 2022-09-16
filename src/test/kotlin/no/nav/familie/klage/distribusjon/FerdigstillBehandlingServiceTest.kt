@@ -8,8 +8,6 @@ import io.mockk.slot
 import io.mockk.verify
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.StegService
-import no.nav.familie.klage.behandling.domain.BehandlingResultat
-import no.nav.familie.klage.behandling.domain.BehandlingStatus
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
@@ -19,6 +17,8 @@ import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.tilFagsak
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
 import no.nav.familie.klage.vurdering.VurderingService
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
+import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -148,7 +148,7 @@ internal class FerdigstillBehandlingServiceTest {
         every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), capture(behandlingsresultatSlot)) } just Runs
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
         assertThat(stegSlot.captured).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
-        assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_SATT) // TODO: Bytt til riktig resultat
+        assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST)
 
         verify(exactly = 1) { distribusjonService.journalførBrev(any()) }
         verify(exactly = 1) { distribusjonService.distribuerBrev(any()) }

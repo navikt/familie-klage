@@ -9,7 +9,7 @@ import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.listener.ConsumerSeekAware
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 @Component
 class KabalKafkaListener(val behandlingEventService: BehandlingEventService) : ConsumerSeekAware {

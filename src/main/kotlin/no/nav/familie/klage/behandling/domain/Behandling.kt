@@ -1,6 +1,9 @@
 package no.nav.familie.klage.behandling.domain
 
 import no.nav.familie.klage.felles.domain.Sporbar
+import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
+import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Embedded
 import java.time.LocalDate
@@ -15,32 +18,24 @@ data class Behandling(
     val status: BehandlingStatus = BehandlingStatus.OPPRETTET,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),
-    val resultat: BehandlingResultat? = BehandlingResultat.IKKE_SATT,
+    val resultat: BehandlingResultat = BehandlingResultat.IKKE_SATT,
     val vedtakDato: LocalDateTime? = null,
     val eksternBehandlingId: String,
     val klageMottatt: LocalDate,
     val behandlendeEnhet: String
 )
 
-enum class BehandlingResultat(val displayName: String) {
-    MEDHOLD(displayName = "Medhold"),
-    IKKE_MEDHOLD(displayName = "Ikke medhold"),
-    IKKE_SATT(displayName = "Ikke satt"),
-}
-
-enum class BehandlingStatus {
-    OPPRETTET,
-    UTREDES,
-    VENTER,
-    FERDIGSTILT;
-
-    fun erLåstForVidereBehandling(): Boolean = listOf(VENTER, FERDIGSTILT).contains(this)
-}
+fun BehandlingStatus.erLåstForVidereBehandling() =
+    when (SikkerhetContext.hentSaksbehandler()) {
+        SikkerhetContext.SYSTEM_FORKORTELSE -> this != BehandlingStatus.VENTER
+        else -> setOf(BehandlingStatus.VENTER, BehandlingStatus.FERDIGSTILT).contains(this)
+    }
 
 enum class StegType(
     val rekkefølge: Int,
     val gjelderStatus: BehandlingStatus
 ) {
+
     FORMKRAV(
         rekkefølge = 1,
         gjelderStatus = BehandlingStatus.UTREDES
