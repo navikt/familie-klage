@@ -8,7 +8,7 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.dto.Avsnitt
-import no.nav.familie.klage.distribusjon.Klageresultat
+import no.nav.familie.klage.distribusjon.DistribusjonResultat
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.fagsak.domain.PersonIdent
@@ -105,7 +105,7 @@ abstract class OppslagSpringRunnerTest {
             Klage::class,
             Vurdering::class,
             Form::class,
-            Klageresultat::class,
+            DistribusjonResultat::class,
             Behandling::class,
             FagsakDomain::class,
             FagsakPerson::class,

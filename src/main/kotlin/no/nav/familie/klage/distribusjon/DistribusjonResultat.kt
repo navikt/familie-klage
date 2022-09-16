@@ -6,11 +6,11 @@ import org.springframework.data.relational.core.mapping.Embedded
 import java.time.LocalDateTime
 import java.util.UUID
 
-data class Klageresultat(
+data class DistribusjonResultat(
     @Id
     val behandlingId: UUID,
     val journalpostId: String? = null,
-    val distribusjonId: String? = null,
+    val brevDistribusjonId: String? = null,
     val oversendtTilKabalTidspunkt: LocalDateTime? = null,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar()

@@ -31,7 +31,7 @@ internal class FerdigstillBehandlingServiceTest {
     val behandlingService = mockk<BehandlingService>()
     val distribusjonService = mockk<DistribusjonService>()
     val kabalService = mockk<KabalService>()
-    val klageresultatService = mockk<KlageresultatService>(relaxed = true)
+    val distribusjonResultatService = mockk<DistribusjonResultatService>(relaxed = true)
     val vurderingService = mockk<VurderingService>()
     val formService = mockk<FormService>()
     val stegService = mockk<StegService>()
@@ -41,7 +41,7 @@ internal class FerdigstillBehandlingServiceTest {
         behandlingService = behandlingService,
         distribusjonService = distribusjonService,
         kabalService = kabalService,
-        klageresultatService = klageresultatService,
+        distribusjonResultatService = distribusjonResultatService,
         vurderingService = vurderingService,
         formService = formService,
         stegService = stegService
@@ -50,15 +50,15 @@ internal class FerdigstillBehandlingServiceTest {
     val behandling = DomainUtil.behandling(fagsak = fagsak, steg = StegType.BREV, status = BehandlingStatus.UTREDES)
     val vurdering = vurdering(behandlingId = behandling.id)
     val journalpostId = "1234"
-    val distribusjonId = "9876"
+    val brevDistribusjonId = "9876"
 
     @BeforeEach
     internal fun setUp() {
         every { behandlingService.hentBehandling(any()) } returns behandling
         every { fagsakService.hentFagsakForBehandling(any()) } returns fagsak
-        every { klageresultatService.hentEllerOpprettKlageresultat(any()) } returns Klageresultat(behandlingId = behandling.id)
+        every { distribusjonResultatService.hentEllerOpprettDistribusjonResultat(any()) } returns DistribusjonResultat(behandlingId = behandling.id)
         every { distribusjonService.journalførBrev(any()) } returns journalpostId
-        every { distribusjonService.distribuerBrev(any()) } returns distribusjonId
+        every { distribusjonService.distribuerBrev(any()) } returns brevDistribusjonId
         every { vurderingService.hentVurdering(any()) } returns vurdering
         every { kabalService.sendTilKabal(any(), any(), any()) } just Runs
         every { stegService.oppdaterSteg(any(), any()) } just Runs
@@ -87,7 +87,7 @@ internal class FerdigstillBehandlingServiceTest {
         val behandlingsresultatSlot = slot<BehandlingResultat>()
 
         every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), capture(behandlingsresultatSlot)) } just Runs
-        every { klageresultatService.hentEllerOpprettKlageresultat(any()) } returns Klageresultat(
+        every { distribusjonResultatService.hentEllerOpprettDistribusjonResultat(any()) } returns DistribusjonResultat(
             behandlingId = behandling.id,
             journalpostId = journalpostId
         )
@@ -103,10 +103,10 @@ internal class FerdigstillBehandlingServiceTest {
     @Test
     internal fun `skal ikke distribuere på nytt hvis den allerede er distribuert`() {
         val stegSlot = slot<StegType>()
-        every { klageresultatService.hentEllerOpprettKlageresultat(any()) } returns Klageresultat(
+        every { distribusjonResultatService.hentEllerOpprettDistribusjonResultat(any()) } returns DistribusjonResultat(
             behandlingId = behandling.id,
             journalpostId = journalpostId,
-            distribusjonId = distribusjonId
+            brevDistribusjonId = brevDistribusjonId
         )
         every { stegService.oppdaterSteg(any(), capture(stegSlot)) } just Runs
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
@@ -123,10 +123,10 @@ internal class FerdigstillBehandlingServiceTest {
         val behandlingsresultatSlot = slot<BehandlingResultat>()
         every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), capture(behandlingsresultatSlot)) } just Runs
 
-        every { klageresultatService.hentEllerOpprettKlageresultat(any()) } returns Klageresultat(
+        every { distribusjonResultatService.hentEllerOpprettDistribusjonResultat(any()) } returns DistribusjonResultat(
             behandlingId = behandling.id,
             journalpostId = journalpostId,
-            distribusjonId = distribusjonId,
+            brevDistribusjonId = brevDistribusjonId,
             oversendtTilKabalTidspunkt = LocalDateTime.now()
         )
         every { stegService.oppdaterSteg(any(), capture(stegSlot)) } just Runs

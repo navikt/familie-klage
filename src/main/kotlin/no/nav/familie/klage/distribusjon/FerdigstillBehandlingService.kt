@@ -24,7 +24,7 @@ class FerdigstillBehandlingService(
     private val behandlingService: BehandlingService,
     private val distribusjonService: DistribusjonService,
     private val kabalService: KabalService,
-    private val klageresultatService: KlageresultatService,
+    private val distribusjonResultatService: DistribusjonResultatService,
     private val vurderingService: VurderingService,
     private val formService: FormService,
     private val stegService: StegService
@@ -34,16 +34,16 @@ class FerdigstillBehandlingService(
      * Skal ikke være @transactional fordi det er mulig å komme delvis igjennom løypa
      */
     fun ferdigstillKlagebehandling(behandlingId: UUID) {
-        val klageresultat = klageresultatService.hentEllerOpprettKlageresultat(behandlingId)
+        val distribusjonResultat = distribusjonResultatService.hentEllerOpprettDistribusjonResultat(behandlingId)
         val behandling = behandlingService.hentBehandling(behandlingId)
         val behandlingsresultat = utledBehandlingResultat(behandlingId)
 
         validerKanFerdigstille(behandling)
 
-        val journalpostId = journalførOgOppdaterKlageresultat(behandlingId, klageresultat)
-        distribuerOgOppdaterKlageresultat(journalpostId, behandlingId, klageresultat)
+        val journalpostId = journalførOgOppdaterResultat(behandlingId, distribusjonResultat)
+        distribuerOgOppdaterResultat(journalpostId, behandlingId, distribusjonResultat)
 
-        sendTilKabalOgOppdaterKlageresultat(behandling, klageresultat, behandlingsresultat)
+        sendTilKabalOgOppdaterResultat(behandling, distribusjonResultat, behandlingsresultat)
         behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(behandlingId, behandlingsresultat)
         stegService.oppdaterSteg(behandlingId, stegForResultat(behandlingsresultat))
     }
@@ -54,16 +54,16 @@ class FerdigstillBehandlingService(
         IKKE_SATT -> error("Kan ikke utlede neste steg når behandlingsresultatet er IKKE_SATT")
     }
 
-    private fun sendTilKabalOgOppdaterKlageresultat(
+    private fun sendTilKabalOgOppdaterResultat(
         behandling: Behandling,
-        klageresultat: Klageresultat,
+        distribusjonResultat: DistribusjonResultat,
         behandlingsresultat: BehandlingResultat
     ) {
         if (behandlingsresultat != IKKE_MEDHOLD) {
             logger.info("Skal ikke sende til kabal siden formkrav ikke er oppfylt eller saksbehandler har gitt medhold")
             return
         }
-        if (klageresultat.oversendtTilKabalTidspunkt != null) {
+        if (distribusjonResultat.oversendtTilKabalTidspunkt != null) {
             logger.info("Har allerede sendt til kabal")
             return
         }
@@ -72,7 +72,7 @@ class FerdigstillBehandlingService(
         val vurdering =
             vurderingService.hentVurdering(behandling.id) ?: error("Mangler vurdering på klagen - kan ikke oversendes til kabal")
         kabalService.sendTilKabal(fagsak, behandling, vurdering)
-        klageresultatService.oppdaterSendtTilKabalTid(
+        distribusjonResultatService.oppdaterSendtTilKabalTid(
             oversendtTilKabalTidspunkt = LocalDateTime.now(),
             behandlingId = behandling.id
         )
@@ -87,22 +87,22 @@ class FerdigstillBehandlingService(
         }
     }
 
-    private fun distribuerOgOppdaterKlageresultat(journalpostId: String, behandlingId: UUID, klageresultat: Klageresultat) {
-        if (klageresultat.distribusjonId != null) {
+    private fun distribuerOgOppdaterResultat(journalpostId: String, behandlingId: UUID, distribusjonResultat: DistribusjonResultat) {
+        if (distribusjonResultat.brevDistribusjonId != null) {
             logger.info("Distribuerer ikke dokument da dette er gjort fra før for behandling=$behandlingId")
         } else {
-            val distribusjonId = distribusjonService.distribuerBrev(journalpostId)
-            klageresultatService.oppdaterDistribusjonId(distribusjonId = distribusjonId, behandlingId = behandlingId)
+            val brevDistribusjonId = distribusjonService.distribuerBrev(journalpostId)
+            distribusjonResultatService.oppdaterBrevDistribusjonId(brevDistribusjonId = brevDistribusjonId, behandlingId = behandlingId)
         }
     }
 
-    private fun journalførOgOppdaterKlageresultat(behandlingId: UUID, klageresultat: Klageresultat): String {
-        if (klageresultat.journalpostId != null) {
+    private fun journalførOgOppdaterResultat(behandlingId: UUID, distribusjonResultat: DistribusjonResultat): String {
+        if (distribusjonResultat.journalpostId != null) {
             logger.info("Journalfører ikke da dette allerede er gjort for behandling=$behandlingId")
-            return klageresultat.journalpostId
+            return distribusjonResultat.journalpostId
         }
         val journalpostId = distribusjonService.journalførBrev(behandlingId)
-        klageresultatService.oppdaterJournalpostId(behandlingId = behandlingId, journalpostId = journalpostId)
+        distribusjonResultatService.oppdaterJournalpostId(behandlingId = behandlingId, journalpostId = journalpostId)
         return journalpostId
     }
 

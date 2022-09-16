@@ -6,4 +6,4 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface KlageresultatRepository : RepositoryInterface<Klageresultat, UUID>, InsertUpdateRepository<Klageresultat>
+interface DistribusjonResultatRepository : RepositoryInterface<DistribusjonResultat, UUID>, InsertUpdateRepository<DistribusjonResultat>
