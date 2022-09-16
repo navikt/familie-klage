@@ -127,5 +127,4 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
         private fun hentBehandlinger(url: String) =
             restTemplate.exchange<Ressurs<Map<String, List<KlagebehandlingDto>>>>(url, HttpMethod.GET, HttpEntity(null, headers))
     }
-
 }

@@ -6,6 +6,7 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import tilDto
@@ -17,18 +18,11 @@ class VurderingService(
     private val stegService: StegService
 ) {
 
-    fun hentVurdering(behandlingId: UUID): VurderingDto? {
-        val eksisterer = vurderingRepository.existsById(behandlingId)
-        if (eksisterer) {
-            return hentEksisterendeVurdering(behandlingId)
-        }
-        return null
-    }
+    fun hentVurdering(behandlingId: UUID): Vurdering? =
+        vurderingRepository.findByIdOrNull(behandlingId)
 
-    fun hentEksisterendeVurdering(behandlingId: UUID): VurderingDto {
-        val vurdering = vurderingRepository.findByIdOrThrow(behandlingId)
-        return vurdering.tilDto()
-    }
+    fun hentVurderingDto(behandlingId: UUID): VurderingDto? =
+        hentVurdering(behandlingId)?.tilDto()
 
     fun hentVedtak(id: UUID): Vedtak? {
         return vurderingRepository.findVedtakByBehandlingIdOrThrow(id)
@@ -47,7 +41,7 @@ class VurderingService(
                 vedtak = vurdering.vedtak,
                 arsak = vurdering.arsak,
                 hjemmel = vurdering.hjemmel,
-                beskrivelse = vurdering.beskrivelse,
+                beskrivelse = vurdering.beskrivelse
             )
         )
     }

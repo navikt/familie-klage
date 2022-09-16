@@ -1,5 +1,7 @@
 package no.nav.familie.klage.testutil
 
+import no.nav.familie.klage.behandling.BehandlingRepository
+import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.fagsak.FagsakPersonRepository
 import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.fagsak.domain.Fagsak
@@ -14,7 +16,8 @@ import org.springframework.stereotype.Service
 @Service
 class TestoppsettService(
     private val fagsakPersonRepository: FagsakPersonRepository,
-    private val fagsakRepository: FagsakRepository
+    private val fagsakRepository: FagsakRepository,
+    private val behandlingRepository: BehandlingRepository
 ) {
 
     fun opprettPerson(ident: String) = fagsakPersonRepository.insert(FagsakPerson(identer = setOf(PersonIdent(ident))))
@@ -33,6 +36,10 @@ class TestoppsettService(
                 sporbar = fagsak.sporbar
             )
         ).tilFagsakMedPerson(person.identer)
+    }
+
+    fun lagreBehandling(behandling: Behandling): Behandling {
+        return behandlingRepository.insert(behandling)
     }
 
     private fun hentEllerOpprettPerson(fagsak: Fagsak): FagsakPerson {
