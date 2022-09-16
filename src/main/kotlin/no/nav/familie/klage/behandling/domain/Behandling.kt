@@ -1,6 +1,7 @@
 package no.nav.familie.klage.behandling.domain
 
 import no.nav.familie.klage.felles.domain.Sporbar
+import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import org.springframework.data.annotation.Id
@@ -25,12 +26,16 @@ data class Behandling(
 )
 
 fun BehandlingStatus.erLåstForVidereBehandling() =
-    setOf(BehandlingStatus.VENTER, BehandlingStatus.FERDIGSTILT).contains(this)
+    when (SikkerhetContext.hentSaksbehandler()) {
+        SikkerhetContext.SYSTEM_FORKORTELSE -> this != BehandlingStatus.VENTER
+        else -> setOf(BehandlingStatus.VENTER, BehandlingStatus.FERDIGSTILT).contains(this)
+    }
 
 enum class StegType(
     val rekkefølge: Int,
     val gjelderStatus: BehandlingStatus
 ) {
+
     FORMKRAV(
         rekkefølge = 1,
         gjelderStatus = BehandlingStatus.UTREDES
