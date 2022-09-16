@@ -9,6 +9,7 @@ import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.KlagebehandlingDto
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import no.nav.security.token.support.core.api.ProtectedWithClaims
+import org.slf4j.LoggerFactory
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.RestController
 @Validated
 class EksternBehandlingController(val tilgangService: TilgangService, val behandlingService: BehandlingService) {
 
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     @GetMapping("{fagsystem}")
     fun finnKlagebehandlingsresultat(
         @PathVariable fagsystem: Fagsystem,
@@ -38,6 +41,8 @@ class EksternBehandlingController(val tilgangService: TilgangService, val behand
         val behandlinger = eksternFagsakIder.associateWith { eksternFagsakId ->
             behandlingService.finnKlagebehandlingsresultat(eksternFagsakId, fagsystem).map { it.tilEksternKlagebehandlingDto() }
         }
+        val antallTreff = behandlinger.entries.associate { it.key to it.value.size }
+        logger.info("Henter klagebehandlingsresultat for eksternFagsakIder=$eksternFagsakIder antallTreff=$antallTreff")
         // TODO fiks validering av at behandlinger tilhører samme person
         return Ressurs.success(behandlinger)
     }
