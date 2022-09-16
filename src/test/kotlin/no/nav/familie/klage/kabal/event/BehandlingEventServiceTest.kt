@@ -16,6 +16,7 @@ import no.nav.familie.klage.kabal.BehandlingEventType
 import no.nav.familie.klage.kabal.ExternalUtfall
 import no.nav.familie.klage.kabal.KlagebehandlingAvsluttetDetaljer
 import no.nav.familie.klage.testutil.DomainUtil
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
@@ -36,16 +37,31 @@ internal class BehandlingEventServiceTest {
         stegService = stegService
     )
 
+    val behandlingMedStatusVenter = DomainUtil.behandling(status = BehandlingStatus.VENTER)
+
+    @BeforeEach
+    fun setUp() {
+        every { behandlingRepository.findByEksternBehandlingIdAndFagsystem(any(), any()) } returns behandlingMedStatusVenter
+    }
+
     @Test
     fun `Skal lage oppgave og ferdigstille behandling for klage som er ikke er ferdigstilt`() {
         val behandlingEvent = lagBehandlingEvent()
-        val behandling = DomainUtil.behandling()
-        every { behandlingRepository.findByEksternBehandlingIdAndFagsystem(any(), any()) } returns behandling
 
         behandlingEventService.handleEvent(behandlingEvent)
 
         verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
-        verify(exactly = 1) { stegService.oppdaterSteg(behandling.id, StegType.BEHANDLING_FERDIGSTILT) }
+        verify(exactly = 1) { stegService.oppdaterSteg(behandlingMedStatusVenter.id, StegType.BEHANDLING_FERDIGSTILT) }
+    }
+
+    @Test
+    fun `Skal ikke ferdigstille behandling, bare lage oppgave, når event er av type anke`() {
+        val behandlingEvent = lagBehandlingEvent(behandlingEventType = BehandlingEventType.ANKEBEHANDLING_OPPRETTET)
+
+        behandlingEventService.handleEvent(behandlingEvent)
+
+        verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
+        verify(exactly = 0) { stegService.oppdaterSteg(any(), any()) }
     }
 
     @Test
@@ -53,22 +69,9 @@ internal class BehandlingEventServiceTest {
         val behandlingEvent = lagBehandlingEvent()
         val behandling = DomainUtil.behandling(status = BehandlingStatus.FERDIGSTILT)
         every { behandlingRepository.findByEksternBehandlingIdAndFagsystem(any(), any()) } returns behandling
-
         behandlingEventService.handleEvent(behandlingEvent)
 
         verify(exactly = 0) { oppgaveClient.opprettOppgave(any()) }
-        verify(exactly = 0) { stegService.oppdaterSteg(behandling.id, StegType.BEHANDLING_FERDIGSTILT) }
-    }
-
-    @Test
-    fun `Skal ikke ferdigstille behandling, bare lage oppgave, når event er av type anke`() {
-        val behandlingEvent = lagBehandlingEvent(behandlingEventType = BehandlingEventType.ANKEBEHANDLING_OPPRETTET)
-        val behandling = DomainUtil.behandling(status = BehandlingStatus.FERDIGSTILT)
-        every { behandlingRepository.findByEksternBehandlingIdAndFagsystem(any(), any()) } returns behandling
-
-        behandlingEventService.handleEvent(behandlingEvent)
-
-        verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
         verify(exactly = 0) { stegService.oppdaterSteg(behandling.id, StegType.BEHANDLING_FERDIGSTILT) }
     }
 
