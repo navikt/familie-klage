@@ -4,13 +4,16 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.slot
+import io.mockk.unmockkObject
 import no.nav.familie.klage.behandling.domain.BehandlingStatus
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
 import no.nav.familie.klage.infrastruktur.config.RolleConfig
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.BrukerContextUtil.testWithBrukerContext
 import no.nav.familie.klage.testutil.DomainUtil.behandling
@@ -53,6 +56,9 @@ internal class StegServiceTest {
         every { behandlingRepository.updateSteg(behandlingId, capture(stegSlot)) } just Runs
         every { behandlingRepository.updateStatus(behandlingId, capture(statusSlot)) } just Runs
         every { behandlingshistorikkService.opprettBehandlingshistorikk(capture(historikkSlot)) } returns mockk()
+        mockkObject(SikkerhetContext)
+        every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler"
+        every { SikkerhetContext.harTilgangTilGittRolle(any(), any()) } returns true
 
         val nesteSteg = StegType.VURDERING
         stegService.oppdaterSteg(behandlingId, nesteSteg)
@@ -61,6 +67,7 @@ internal class StegServiceTest {
         assertThat(statusSlot.captured).isEqualTo(nesteSteg.gjelderStatus)
         assertThat(historikkSlot.captured.behandlingId).isEqualTo(behandling.id)
         assertThat(historikkSlot.captured.steg).isEqualTo(behandling.steg)
+        unmockkObject(SikkerhetContext)
     }
 
     @Test

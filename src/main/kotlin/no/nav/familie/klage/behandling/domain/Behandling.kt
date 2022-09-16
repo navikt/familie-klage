@@ -1,6 +1,7 @@
 package no.nav.familie.klage.behandling.domain
 
 import no.nav.familie.klage.felles.domain.Sporbar
+import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Embedded
 import java.time.LocalDate
@@ -34,13 +35,19 @@ enum class BehandlingStatus {
     VENTER,
     FERDIGSTILT;
 
-    fun erLåstForVidereBehandling(): Boolean = listOf(VENTER, FERDIGSTILT).contains(this)
+    fun erLåstForVidereBehandling(): Boolean {
+        return when (SikkerhetContext.hentSaksbehandler()) {
+            SikkerhetContext.SYSTEM_FORKORTELSE -> this != VENTER
+            else -> setOf(VENTER, FERDIGSTILT).contains(this)
+        }
+    }
 }
 
 enum class StegType(
     val rekkefølge: Int,
     val gjelderStatus: BehandlingStatus
 ) {
+
     FORMKRAV(
         rekkefølge = 1,
         gjelderStatus = BehandlingStatus.UTREDES
