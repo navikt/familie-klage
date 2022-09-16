@@ -6,9 +6,7 @@ import io.mockk.verify
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.klage.fagsak.FagsakPersonRepository
 import no.nav.familie.klage.fagsak.FagsakRepository
-import no.nav.familie.klage.integrasjoner.OppgaveClient
 import no.nav.familie.klage.kabal.BehandlingDetaljer
 import no.nav.familie.klage.kabal.BehandlingEvent
 import no.nav.familie.klage.kabal.BehandlingEventType
@@ -16,6 +14,7 @@ import no.nav.familie.klage.kabal.ExternalUtfall
 import no.nav.familie.klage.kabal.KlagebehandlingAvsluttetDetaljer
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
+import no.nav.familie.prosessering.domene.TaskRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -23,24 +22,23 @@ import java.util.UUID
 
 internal class BehandlingEventServiceTest {
 
-    private val oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     private val behandlingRepository = mockk<BehandlingRepository>(relaxed = true)
     private val fagsakRepository = mockk<FagsakRepository>(relaxed = true)
-    private val fagsakPersonRepository = mockk<FagsakPersonRepository>(relaxed = true)
+    private val taskRepository = mockk<TaskRepository>(relaxed = true)
     private val stegService = mockk<StegService>(relaxed = true)
 
     val behandlingEventService = BehandlingEventService(
-        oppgaveClient = oppgaveClient,
         behandlingRepository = behandlingRepository,
         fagsakRepository = fagsakRepository,
-        personRepository = fagsakPersonRepository,
-        stegService = stegService
+        stegService = stegService,
+        taskRepository = taskRepository
     )
 
     val behandlingMedStatusVenter = DomainUtil.behandling(status = BehandlingStatus.VENTER)
 
     @BeforeEach
     fun setUp() {
+        every { taskRepository.save(any()) } answers { firstArg() }
         every { behandlingRepository.findByEksternBehandlingIdAndFagsystem(any(), any()) } returns behandlingMedStatusVenter
     }
 
@@ -50,7 +48,7 @@ internal class BehandlingEventServiceTest {
 
         behandlingEventService.handleEvent(behandlingEvent)
 
-        verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
+        verify(exactly = 1) { taskRepository.save(any()) }
         verify(exactly = 1) { stegService.oppdaterSteg(behandlingMedStatusVenter.id, StegType.BEHANDLING_FERDIGSTILT) }
     }
 
@@ -60,7 +58,7 @@ internal class BehandlingEventServiceTest {
 
         behandlingEventService.handleEvent(behandlingEvent)
 
-        verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
+        verify(exactly = 1) { taskRepository.save(any()) }
         verify(exactly = 0) { stegService.oppdaterSteg(any(), any()) }
     }
 
@@ -71,7 +69,7 @@ internal class BehandlingEventServiceTest {
         every { behandlingRepository.findByEksternBehandlingIdAndFagsystem(any(), any()) } returns behandling
         behandlingEventService.handleEvent(behandlingEvent)
 
-        verify(exactly = 0) { oppgaveClient.opprettOppgave(any()) }
+        verify(exactly = 0) { taskRepository.save(any()) }
         verify(exactly = 0) { stegService.oppdaterSteg(behandling.id, StegType.BEHANDLING_FERDIGSTILT) }
     }
 
