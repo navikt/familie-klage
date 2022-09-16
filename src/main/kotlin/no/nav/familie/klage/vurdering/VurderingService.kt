@@ -18,11 +18,11 @@ class VurderingService(
     private val stegService: StegService
 ) {
 
-    fun hentVurdering(behandlingId: UUID): Vurdering =
-        vurderingRepository.findByIdOrNull(behandlingId) ?: error("Kan ikke finne vurdering for behandling=$behandlingId")
+    fun hentVurdering(behandlingId: UUID): Vurdering? =
+        vurderingRepository.findByIdOrNull(behandlingId)
 
     fun hentVurderingDto(behandlingId: UUID): VurderingDto? =
-        vurderingRepository.findByIdOrNull(behandlingId)?.tilDto()
+        hentVurdering(behandlingId)?.tilDto()
 
     fun hentVedtak(id: UUID): Vedtak? {
         return vurderingRepository.findVedtakByBehandlingIdOrThrow(id)

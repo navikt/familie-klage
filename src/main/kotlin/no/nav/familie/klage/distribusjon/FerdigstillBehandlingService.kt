@@ -3,6 +3,10 @@ package no.nav.familie.klage.distribusjon
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.BehandlingResultat
+import no.nav.familie.klage.behandling.domain.BehandlingResultat.IKKE_MEDHOLD
+import no.nav.familie.klage.behandling.domain.BehandlingResultat.IKKE_SATT
+import no.nav.familie.klage.behandling.domain.BehandlingResultat.MEDHOLD
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
@@ -32,31 +36,41 @@ class FerdigstillBehandlingService(
     fun ferdigstillKlagebehandling(behandlingId: UUID) {
         val klageresultat = klageresultatService.hentEllerOpprettKlageresultat(behandlingId)
         val behandling = behandlingService.hentBehandling(behandlingId)
+        val behandlingsresultat = utledBehandlingResultat(behandlingId)
 
         validerKanFerdigstille(behandling)
 
         val journalpostId = journalførOgOppdaterKlageresultat(behandlingId, klageresultat)
         distribuerOgOppdaterKlageresultat(journalpostId, behandlingId, klageresultat)
 
-        val steg = if (skalSendeTilKabal(behandlingId)) {
-            sendTilKabalOgOppdaterKlageresultat(behandling, klageresultat)
-            StegType.OVERFØRING_TIL_KABAL
-        } else {
-            logger.info("Sender ikke videre til kabal")
-            StegType.BEHANDLING_FERDIGSTILT
-        }
-        stegService.oppdaterSteg(behandlingId, steg)
+        sendTilKabalOgOppdaterKlageresultat(behandling, klageresultat, behandlingsresultat)
+        behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(behandlingId, behandlingsresultat)
+        stegService.oppdaterSteg(behandlingId, stegForResultat(behandlingsresultat))
     }
 
-    private fun sendTilKabalOgOppdaterKlageresultat(behandling: Behandling, klageresultat: Klageresultat) {
-        logger.info("Sender klage videre til kabal")
+    private fun stegForResultat(resultat: BehandlingResultat): StegType = when (resultat) {
+        IKKE_MEDHOLD -> StegType.OVERFØRING_TIL_KABAL
+        MEDHOLD -> StegType.BEHANDLING_FERDIGSTILT // TODO: Legg inn IKKE_MEDHOLD_FORMALKRAV_AVVIST,
+        IKKE_SATT -> error("Kan ikke utlede neste steg når behandlingsresultatet er IKKE_SATT")
+    }
+
+    private fun sendTilKabalOgOppdaterKlageresultat(
+        behandling: Behandling,
+        klageresultat: Klageresultat,
+        behandlingsresultat: BehandlingResultat
+    ) {
+        if (behandlingsresultat != IKKE_MEDHOLD) {
+            logger.info("Skal ikke sende til kabal siden formkrav ikke er oppfylt eller saksbehandler har gitt medhold")
+            return
+        }
         if (klageresultat.oversendtTilKabalTidspunkt != null) {
             logger.info("Har allerede sendt til kabal")
             return
         }
+        logger.info("Sender klage videre til kabal")
         val fagsak = fagsakService.hentFagsakForBehandling(behandling.id)
-        val vurdering = vurderingService.hentVurdering(behandling.id)
-
+        val vurdering =
+            vurderingService.hentVurdering(behandling.id) ?: error("Mangler vurdering på klagen - kan ikke oversendes til kabal")
         kabalService.sendTilKabal(fagsak, behandling, vurdering)
         klageresultatService.oppdaterSendtTilKabalTid(
             oversendtTilKabalTidspunkt = LocalDateTime.now(),
@@ -92,7 +106,15 @@ class FerdigstillBehandlingService(
         return journalpostId
     }
 
-    private fun skalSendeTilKabal(behandlingId: UUID): Boolean {
-        return formService.formkravErOppfyltForBehandling(behandlingId) && vurderingService.klageTasIkkeTilFølge(behandlingId)
+    private fun utledBehandlingResultat(behandlingId: UUID): BehandlingResultat {
+        return if (formService.formkravErOppfyltForBehandling(behandlingId)) {
+            if (vurderingService.klageTasIkkeTilFølge(behandlingId)) {
+                IKKE_MEDHOLD
+            } else {
+                MEDHOLD
+            }
+        } else {
+            IKKE_SATT // TODO: Bruk IKKE_MEDHOLD_FORMKRAV_AVVIST
+        }
     }
 }

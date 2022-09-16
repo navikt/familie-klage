@@ -46,7 +46,7 @@ class FormService(
                 klageKonkret = form.klageKonkret,
                 klagefristOverholdt = form.klagefristOverholdt,
                 klageSignert = form.klageSignert,
-                saksbehandlerBegrunnelse = form.saksbehandlerBegrunnelse,
+                saksbehandlerBegrunnelse = form.saksbehandlerBegrunnelse
             )
         ).tilDto()
     }

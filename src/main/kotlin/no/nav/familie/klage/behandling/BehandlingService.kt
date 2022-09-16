@@ -1,6 +1,7 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.BehandlingResultat
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.fagsak.FagsakService
@@ -10,12 +11,13 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 import java.util.UUID
 
 @Service
 class BehandlingService(
     private val behandlingRepository: BehandlingRepository,
-    private val fagsakService: FagsakService,
+    private val fagsakService: FagsakService
 
 ) {
 
@@ -36,7 +38,6 @@ class BehandlingService(
     fun opprettBehandling(
         opprettKlagebehandlingRequest: OpprettKlagebehandlingRequest
     ): UUID {
-
         val fagsak = fagsakService.hentEllerOpprettFagsak(
             opprettKlagebehandlingRequest.ident,
             opprettKlagebehandlingRequest.eksternFagsakId,
@@ -57,5 +58,14 @@ class BehandlingService(
     fun hentAktivIdent(behandlingId: UUID): String {
         val behandling = hentBehandling(behandlingId)
         return fagsakService.hentFagsak(behandling.fagsakId).hentAktivIdent()
+    }
+
+    fun oppdaterBehandlingsresultatOgVedtaksdato(behandlingId: UUID, behandlingsresultat: BehandlingResultat) {
+        val behandling = hentBehandling(behandlingId)
+        if (behandling.resultat != BehandlingResultat.IKKE_SATT) {
+            error("Kan ikke endre på et resultat som allerede er satt")
+        }
+        val oppdatertBehandling = behandling.copy(resultat = behandlingsresultat, vedtakDato = LocalDateTime.now())
+        behandlingRepository.update(oppdatertBehandling)
     }
 }

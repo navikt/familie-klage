@@ -8,6 +8,7 @@ import io.mockk.slot
 import io.mockk.verify
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.StegService
+import no.nav.familie.klage.behandling.domain.BehandlingResultat
 import no.nav.familie.klage.behandling.domain.BehandlingStatus
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakService
@@ -63,14 +64,19 @@ internal class FerdigstillBehandlingServiceTest {
         every { stegService.oppdaterSteg(any(), any()) } just Runs
         every { formService.formkravErOppfyltForBehandling(any()) } returns true
         every { vurderingService.klageTasIkkeTilFølge(any()) } returns true
+        every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), any()) } just Runs
     }
 
     @Test
     internal fun `skal ferdigstille behandling`() {
         val stegSlot = slot<StegType>()
+        val behandlingsresultatSlot = slot<BehandlingResultat>()
         every { stegService.oppdaterSteg(any(), capture(stegSlot)) } just Runs
+        every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), capture(behandlingsresultatSlot)) } just Runs
+
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
 
+        assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD)
         assertThat(stegSlot.captured).isEqualTo(StegType.OVERFØRING_TIL_KABAL)
         verify { kabalService.sendTilKabal(fagsak, behandling, vurdering) }
     }
@@ -78,6 +84,9 @@ internal class FerdigstillBehandlingServiceTest {
     @Test
     internal fun `skal ikke journalføre på nytt hvis den allerede er journalført`() {
         val stegSlot = slot<StegType>()
+        val behandlingsresultatSlot = slot<BehandlingResultat>()
+
+        every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), capture(behandlingsresultatSlot)) } just Runs
         every { klageresultatService.hentEllerOpprettKlageresultat(any()) } returns Klageresultat(
             behandlingId = behandling.id,
             journalpostId = journalpostId
@@ -85,6 +94,7 @@ internal class FerdigstillBehandlingServiceTest {
         every { stegService.oppdaterSteg(any(), capture(stegSlot)) } just Runs
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
 
+        assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD)
         assertThat(stegSlot.captured).isEqualTo(StegType.OVERFØRING_TIL_KABAL)
         verify { kabalService.sendTilKabal(fagsak, behandling, vurdering) }
         verify(exactly = 0) { distribusjonService.journalførBrev(any()) }
@@ -110,6 +120,9 @@ internal class FerdigstillBehandlingServiceTest {
     @Test
     internal fun `skal ikke sende til kabal på nytt hvis den allerede er oversendt`() {
         val stegSlot = slot<StegType>()
+        val behandlingsresultatSlot = slot<BehandlingResultat>()
+        every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), capture(behandlingsresultatSlot)) } just Runs
+
         every { klageresultatService.hentEllerOpprettKlageresultat(any()) } returns Klageresultat(
             behandlingId = behandling.id,
             journalpostId = journalpostId,
@@ -120,6 +133,7 @@ internal class FerdigstillBehandlingServiceTest {
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
 
         assertThat(stegSlot.captured).isEqualTo(StegType.OVERFØRING_TIL_KABAL)
+        assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD)
         verify(exactly = 0) { distribusjonService.journalførBrev(any()) }
         verify(exactly = 0) { distribusjonService.distribuerBrev(any()) }
         verify(exactly = 0) { kabalService.sendTilKabal(any(), any(), any()) }
@@ -128,10 +142,13 @@ internal class FerdigstillBehandlingServiceTest {
     @Test
     internal fun `skal ikke sende til kabal hvis formkrav ikke er oppfylt`() {
         val stegSlot = slot<StegType>()
+        val behandlingsresultatSlot = slot<BehandlingResultat>()
         every { stegService.oppdaterSteg(any(), capture(stegSlot)) } just Runs
         every { formService.formkravErOppfyltForBehandling(any()) } returns false
+        every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), capture(behandlingsresultatSlot)) } just Runs
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
         assertThat(stegSlot.captured).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
+        assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_SATT) // TODO: Bytt til riktig resultat
 
         verify(exactly = 1) { distribusjonService.journalførBrev(any()) }
         verify(exactly = 1) { distribusjonService.distribuerBrev(any()) }
@@ -141,10 +158,14 @@ internal class FerdigstillBehandlingServiceTest {
     @Test
     internal fun `skal ikke sende til kabal hvis klage tas til følge`() {
         val stegSlot = slot<StegType>()
+        val behandlingsresultatSlot = slot<BehandlingResultat>()
+
+        every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), capture(behandlingsresultatSlot)) } just Runs
         every { stegService.oppdaterSteg(any(), capture(stegSlot)) } just Runs
         every { vurderingService.klageTasIkkeTilFølge(any()) } returns false
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
         assertThat(stegSlot.captured).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
+        assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.MEDHOLD)
 
         verify(exactly = 1) { distribusjonService.journalførBrev(any()) }
         verify(exactly = 1) { distribusjonService.distribuerBrev(any()) }
