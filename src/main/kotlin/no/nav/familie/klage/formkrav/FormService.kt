@@ -2,6 +2,8 @@ package no.nav.familie.klage.formkrav
 
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.felles.domain.Endret
+import no.nav.familie.klage.felles.domain.Sporbar
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.formkrav.dto.FormDto
@@ -19,6 +21,20 @@ class FormService(
 ) {
 
     fun hentForm(behandlingId: UUID): Form = formRepository.findByIdOrThrow(behandlingId)
+
+    @Transactional
+    fun opprettInitielleFormkrav(behandlingId: UUID, fagsakId: UUID): Form {
+        return formRepository.insert(
+                Form(behandlingId = behandlingId,
+                     fagsakId = fagsakId,
+                     klagePart = FormVilkår.IKKE_SATT,
+                     klagefristOverholdt = FormVilkår.IKKE_SATT,
+                     klageKonkret = FormVilkår.IKKE_SATT,
+                     klageSignert = FormVilkår.IKKE_SATT,
+                     saksbehandlerBegrunnelse = "",
+                     )
+        )
+    }
 
     @Transactional
     fun opprettEllerOppdaterForm(form: Form): FormDto {

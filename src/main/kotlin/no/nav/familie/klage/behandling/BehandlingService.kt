@@ -59,19 +59,7 @@ class BehandlingService(
                 )
         ).id
 
-        formService.opprettEllerOppdaterForm(
-                Form(
-                   behandlingId = behandlingId,
-                   fagsakId = fagsak.id,
-                   klagePart = FormVilkår.IKKE_SATT,
-                   klagefristOverholdt = FormVilkår.IKKE_SATT,
-                   klageKonkret = FormVilkår.IKKE_SATT,
-                   klageSignert = FormVilkår.IKKE_SATT,
-                   saksbehandlerBegrunnelse = "",
-                )
-        )
-
-        return behandlingId
+        return formService.opprettInitielleFormkrav(behandlingId, fagsak.id).behandlingId
     }
 
     fun finnKlagebehandlingsresultat(eksternFagsakId: String, fagsystem: Fagsystem): List<Klagebehandlingsesultat> {
