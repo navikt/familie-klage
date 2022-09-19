@@ -67,9 +67,7 @@ internal class DistribusjonServiceTest {
         assertThat(journalpostSlot.captured.forsøkFerdigstill).isEqualTo(true)
         assertThat(journalpostSlot.captured.hoveddokumentvarianter.map { it.dokument }).contains("123".toByteArray())
 
-        assertThat(journalpostSlot.captured.eksternReferanseId).isEqualTo(
-            "${behandling.eksternBehandlingId}-${fagsak.stønadstype}-klage"
-        )
+        assertThat(journalpostSlot.captured.eksternReferanseId).isEqualTo("${behandling.eksternBehandlingId}")
     }
 
     @Test

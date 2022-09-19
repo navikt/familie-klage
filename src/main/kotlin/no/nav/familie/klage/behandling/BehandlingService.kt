@@ -53,7 +53,7 @@ class BehandlingService(
         val behandlingId = behandlingRepository.insert(
                 Behandling(
                         fagsakId = fagsak.id,
-                        eksternBehandlingId = opprettKlagebehandlingRequest.eksternBehandlingId,
+                        eksternFagsystemBehandlingId = opprettKlagebehandlingRequest.eksternBehandlingId,
                         klageMottatt = opprettKlagebehandlingRequest.klageMottatt,
                         behandlendeEnhet = "4489" // TODO: Må inn i request
                 )

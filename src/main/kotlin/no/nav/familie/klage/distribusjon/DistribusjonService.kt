@@ -31,7 +31,7 @@ class DistribusjonService(
             personIdent = fagsak.hentAktivIdent(),
             pdf = brev,
             fagsakId = fagsak.eksternId,
-            behandlingId = behandling.eksternBehandlingId,
+            eksternBehandlingId = behandling.eksternBehandlingId,
             enhet = behandling.behandlendeEnhet,
             stønadstype = fagsak.stønadstype,
             dokumenttype = Dokumenttype.BARNETRYGD_VEDTAK_INNVILGELSE // TODO: Riktig dokumenttype
@@ -51,7 +51,7 @@ class DistribusjonService(
         personIdent: String,
         pdf: ByteArray,
         fagsakId: String,
-        behandlingId: String,
+        eksternBehandlingId: UUID,
         enhet: String,
         stønadstype: Stønadstype,
         dokumenttype: Dokumenttype
@@ -70,7 +70,7 @@ class DistribusjonService(
             vedleggsdokumenter = listOf(),
             fagsakId = fagsakId,
             journalførendeEnhet = enhet,
-            eksternReferanseId = "$behandlingId-$stønadstype-klage"
+            eksternReferanseId = "$eksternBehandlingId"
         )
     }
 }
