@@ -1,8 +1,8 @@
-CREATE TABLE klageresultat
-(
-    eventId               UUID PRIMARY KEY,
-    utfall                VARCHAR,
-    vedtakstidspunkt      TIMESTAMP(3) NOT NULL,
-    kildereferanse        UUID         NOT NULL,
-    journalpostReferanser JSON
+CREATE TABLE klageresultat (
+    event_id               UUID PRIMARY KEY,
+    type                   VARCHAR      NOT NULL,
+    utfall                 VARCHAR,
+    hendelse_tidspunkt     TIMESTAMP(3) NOT NULL,
+    kildereferanse         UUID         NOT NULL,
+    journalpost_referanser VARCHAR
 );

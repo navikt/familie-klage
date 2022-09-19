@@ -75,19 +75,21 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
         }
     }
 
-    @WritingConverter
-    class StringListTilStringConverter : Converter<List<String>, String> {
+    data class StringListWrapper(val verdier: List<String>)
 
-        override fun convert(verdier: List<String>): String {
-            return StringUtils.join(verdier, ";")
+    @WritingConverter
+    class StringListTilStringConverter : Converter<StringListWrapper, String> {
+
+        override fun convert(wrapper: StringListWrapper): String {
+            return StringUtils.join(wrapper.verdier, ";")
         }
     }
 
     @ReadingConverter
-    class StringTilStringList : Converter<String, List<String>> {
+    class StringTilStringList : Converter<String, StringListWrapper> {
 
-        override fun convert(verdi: String): List<String> {
-            return verdi.split(";")
+        override fun convert(verdi: String): StringListWrapper {
+            return StringListWrapper(verdi.split(";"))
         }
     }
 }

@@ -5,6 +5,7 @@ import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakRepository
+import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration.StringListWrapper
 import no.nav.familie.klage.kabal.BehandlingEvent
 import no.nav.familie.klage.kabal.BehandlingEventType
 import no.nav.familie.klage.kabal.KlageresultatRepository
@@ -38,22 +39,26 @@ class BehandlingEventService(
             val eksternBehandlingId = UUID.fromString(behandlingEvent.kildeReferanse)
             val behandling = behandlingRepository.findByEksternBehandlingId(eksternBehandlingId)
 
-            val klageresultat = Klageresultat(
-                behandlingEvent.eventId,
-                behandlingEvent.type,
-                behandlingEvent.detaljer.utledUtfall(),
-                behandlingEvent.detaljer.utledHendelseTidspunkt(),
-                UUID.fromString(behandlingEvent.kildeReferanse),
-                behandlingEvent.detaljer.journalpostReferanser()
-            )
-
-            klageresultatRepository.insert(klageresultat)
+            lagreKlageresultat(behandlingEvent)
 
             when (behandlingEvent.type) {
                 BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> behandleKlageAvsluttet(behandling, behandlingEvent)
                 else -> behandleAnke(behandling, behandlingEvent)
             }
         }
+    }
+
+    private fun lagreKlageresultat(behandlingEvent: BehandlingEvent) {
+        val klageresultat = Klageresultat(
+            eventId = behandlingEvent.eventId,
+            type = behandlingEvent.type,
+            utfall = behandlingEvent.detaljer.utledUtfall(),
+            hendelseTidspunkt = behandlingEvent.detaljer.utledHendelseTidspunkt(),
+            kildereferanse = UUID.fromString(behandlingEvent.kildeReferanse),
+            journalpostReferanser = StringListWrapper(behandlingEvent.detaljer.journalpostReferanser())
+        )
+
+        klageresultatRepository.insert(klageresultat)
     }
 
     private fun behandleAnke(behandling: Behandling, behandlingEvent: BehandlingEvent) {
