@@ -39,7 +39,7 @@ internal class BehandlingEventServiceTest {
     @BeforeEach
     fun setUp() {
         every { taskRepository.save(any()) } answers { firstArg() }
-        every { behandlingRepository.findByEksternBehandlingIdAndFagsystem(any()) } returns behandlingMedStatusVenter
+        every { behandlingRepository.findByEksternBehandlingId(any()) } returns behandlingMedStatusVenter
     }
 
     @Test
@@ -66,7 +66,7 @@ internal class BehandlingEventServiceTest {
     fun `Skal ikke behandle klage som er er ferdigstilt`() {
         val behandlingEvent = lagBehandlingEvent()
         val behandling = DomainUtil.behandling(status = BehandlingStatus.FERDIGSTILT)
-        every { behandlingRepository.findByEksternBehandlingIdAndFagsystem(any()) } returns behandling
+        every { behandlingRepository.findByEksternBehandlingId(any()) } returns behandling
         behandlingEventService.handleEvent(behandlingEvent)
 
         verify(exactly = 0) { taskRepository.save(any()) }

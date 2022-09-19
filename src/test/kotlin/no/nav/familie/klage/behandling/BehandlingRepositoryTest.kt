@@ -104,7 +104,7 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
         val behandlingPersistert = behandlingRepository.insert(behandling(fagsakPersistert, eksternFagsystemBehandlingId = "1"))
         behandlingRepository.insert(behandling(fagsakPersistert2, eksternFagsystemBehandlingId = "2"))
 
-        val behandling = behandlingRepository.findByEksternBehandlingIdAndFagsystem(behandlingPersistert.eksternBehandlingId)
+        val behandling = behandlingRepository.findByEksternBehandlingId(behandlingPersistert.eksternBehandlingId)
         assertThat(behandling).isNotNull
         assertThat(behandling.id).isEqualTo(behandlingPersistert.id)
         assertThat(fagsakPersistert.id).isEqualTo(behandling.fagsakId)

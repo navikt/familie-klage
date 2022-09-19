@@ -25,7 +25,7 @@ class BehandlingEventService(
 
     fun handleEvent(behandlingEvent: BehandlingEvent) {
         val eksternBehandlingId = UUID.fromString(behandlingEvent.kildeReferanse)
-        val behandling = behandlingRepository.findByEksternBehandlingIdAndFagsystem(eksternBehandlingId)
+        val behandling = behandlingRepository.findByEksternBehandlingId(eksternBehandlingId)
 
         when (behandlingEvent.type) {
             BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> behandleKlageAvsluttet(behandling, behandlingEvent)

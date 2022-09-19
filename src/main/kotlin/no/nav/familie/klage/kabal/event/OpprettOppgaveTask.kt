@@ -40,7 +40,7 @@ class OpprettOppgaveTask(
 
     override fun doTask(task: Task) {
         val opprettOppgavePayload = objectMapper.readValue<OpprettOppgavePayload>(task.payload)
-        val behandling = behandlingRepository.findByEksternBehandlingIdAndFagsystem(opprettOppgavePayload.klagebehandlingEksternId)
+        val behandling = behandlingRepository.findByEksternBehandlingId(opprettOppgavePayload.klagebehandlingEksternId)
         val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
         val personId = fagsakDomain?.fagsakPersonId
             ?: throw Feil("Feil ved henting av aktiv ident: Finner ikke fagsak for behandling med klagebehandlingEksternId ${opprettOppgavePayload.klagebehandlingEksternId}")
