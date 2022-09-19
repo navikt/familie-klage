@@ -20,9 +20,10 @@ data class Behandling(
     val sporbar: Sporbar = Sporbar(),
     val resultat: BehandlingResultat = BehandlingResultat.IKKE_SATT,
     val vedtakDato: LocalDateTime? = null,
-    val eksternBehandlingId: String,
+    val eksternFagsystemBehandlingId: String,
     val klageMottatt: LocalDate,
-    val behandlendeEnhet: String
+    val behandlendeEnhet: String,
+    val eksternBehandlingId: UUID = UUID.randomUUID(),
 )
 
 fun BehandlingStatus.erLåstForVidereBehandling() =

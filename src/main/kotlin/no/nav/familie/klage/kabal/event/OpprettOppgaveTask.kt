@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.UUID
 
 @Service
 @TaskStepBeskrivelse(
@@ -39,7 +40,7 @@ class OpprettOppgaveTask(
 
     override fun doTask(task: Task) {
         val opprettOppgavePayload = objectMapper.readValue<OpprettOppgavePayload>(task.payload)
-        val behandling = behandlingRepository.findByEksternBehandlingIdAndFagsystem(opprettOppgavePayload.klagebehandlingEksternId, opprettOppgavePayload.fagsystem.name)
+        val behandling = behandlingRepository.findByEksternBehandlingIdAndFagsystem(opprettOppgavePayload.klagebehandlingEksternId)
         val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
         val personId = fagsakDomain?.fagsakPersonId
             ?: throw Feil("Feil ved henting av aktiv ident: Finner ikke fagsak for behandling med klagebehandlingEksternId ${opprettOppgavePayload.klagebehandlingEksternId}")
@@ -109,7 +110,7 @@ class OpprettOppgaveTask(
 }
 
 data class OpprettOppgavePayload(
-    val klagebehandlingEksternId: String,
+    val klagebehandlingEksternId: UUID,
     val oppgaveTekst: String,
-    val fagsystem: Fagsystem = Fagsystem.EF
+    val fagsystem: Fagsystem
 )

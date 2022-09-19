@@ -43,9 +43,9 @@ interface BehandlingRepository : RepositoryInterface<Behandling, UUID>, InsertUp
     @Query(
         """SELECT b.* FROM behandling b 
             JOIN fagsak f ON b.fagsak_id=f.id
-            WHERE b.ekstern_behandling_id = :eksternBehandlingId AND f.fagsystem = :fagsystem"""
+            WHERE b.ekstern_behandling_id = :eksternBehandlingId"""
     )
-    fun findByEksternBehandlingIdAndFagsystem(eksternBehandlingId: String, fagsystem: String): Behandling
+    fun findByEksternBehandlingIdAndFagsystem(eksternBehandlingId: UUID): Behandling
 
     @Query(
         """

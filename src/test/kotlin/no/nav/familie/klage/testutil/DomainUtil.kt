@@ -45,7 +45,8 @@ object DomainUtil {
     fun behandling(
         fagsak: Fagsak = fagsak(),
         id: UUID = UUID.randomUUID(),
-        eksternBehandlingId: String = Random.nextInt().toString(),
+        eksternBehandlingId: UUID = UUID.randomUUID(),
+        eksternFagsystemBehandlingId: String = Random.nextInt().toString(),
         klageMottatt: LocalDate = LocalDate.now(),
         status: BehandlingStatus = BehandlingStatus.OPPRETTET,
         steg: StegType = StegType.FORMKRAV,
@@ -53,8 +54,9 @@ object DomainUtil {
     ): Behandling =
         Behandling(
             id = id,
-            fagsakId = fagsak.id,
             eksternBehandlingId = eksternBehandlingId,
+            fagsakId = fagsak.id,
+            eksternFagsystemBehandlingId = eksternFagsystemBehandlingId,
             klageMottatt = klageMottatt,
             status = status,
             steg = steg,
