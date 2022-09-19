@@ -11,6 +11,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class BehandlingEventService(
@@ -23,10 +24,8 @@ class BehandlingEventService(
     private val logger = LoggerFactory.getLogger(javaClass)
 
     fun handleEvent(behandlingEvent: BehandlingEvent) {
-        val behandling = behandlingRepository.findByEksternBehandlingIdAndFagsystem(
-            behandlingEvent.kildeReferanse,
-            behandlingEvent.kilde
-        )
+        val eksternBehandlingId = UUID.fromString(behandlingEvent.kildeReferanse)
+        val behandling = behandlingRepository.findByEksternBehandlingId(eksternBehandlingId)
 
         when (behandlingEvent.type) {
             BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> behandleKlageAvsluttet(behandling, behandlingEvent)
@@ -52,7 +51,7 @@ class BehandlingEventService(
 
         val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id) ?: error("Finner ikke fagsak for behandlingId: ${behandling.id}")
         val oppgaveTekst = "${behandlingEvent.detaljer.oppgaveTekst()} Gjelder: ${fagsakDomain.stønadstype}"
-        val klageBehandlingEksternId = behandlingEvent.kildeReferanse
+        val klageBehandlingEksternId = UUID.fromString(behandlingEvent.kildeReferanse)
 
         val opprettOppgavePayload = OpprettOppgavePayload(klageBehandlingEksternId, oppgaveTekst, fagsakDomain.fagsystem)
         val opprettOppgaveTask = OpprettOppgaveTask.opprettTask(opprettOppgavePayload)

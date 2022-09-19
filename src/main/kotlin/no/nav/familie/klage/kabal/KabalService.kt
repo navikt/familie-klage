@@ -29,8 +29,8 @@ class KabalService(
                 )
             ),
             fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem),
-            kildeReferanse = behandling.eksternBehandlingId, // TODO: Bytt ut med "intern klage-EksternBehandlingId" ettersom det kan være flere klagebehandlinger med samme fagsystemBehandlingId
-            innsynUrl = lagInnsynUrl(fagsak, behandling.eksternBehandlingId),
+            kildeReferanse = behandling.eksternBehandlingId.toString(),
+            innsynUrl = lagInnsynUrl(fagsak, behandling.eksternFagsystemBehandlingId),
             hjemler = vurdering.hjemmel?.let { listOf(it.kabalHjemmel) } ?: emptyList(),
             forrigeBehandlendeEnhet = behandling.behandlendeEnhet,
             tilknyttedeJournalposter = listOf(), // TODO: klagebrev kan puttes på automatisk, vedtaksbrev fra EF-sak må hentes fra iverksett, klage må velges ved ferdigstilling eller ved journalføring av klage

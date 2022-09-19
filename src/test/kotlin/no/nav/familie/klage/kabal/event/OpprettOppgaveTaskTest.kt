@@ -50,7 +50,7 @@ class OpprettOppgaveTaskTest : OppslagSpringRunnerTest() {
                 )
             )
         )
-        val behandling = behandling(fagsak = fagsak, eksternBehandlingId = "2")
+        val behandling = behandling(fagsak = fagsak, eksternFagsystemBehandlingId = "2")
         behandlingRepository.insert(behandling)
 
         val fagsakDomain = fagsakRepository.findByIdOrNull(fagsak.id) ?: error("Finner ikke fagsak med id")

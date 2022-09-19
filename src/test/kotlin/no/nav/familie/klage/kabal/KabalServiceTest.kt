@@ -36,8 +36,8 @@ internal class KabalServiceTest {
         assertThat(oversendelseSlot.captured.fagsak?.fagsakId).isEqualTo(fagsak.eksternId)
         assertThat(oversendelseSlot.captured.fagsak?.fagsystem).isEqualTo(Fagsystem.EF)
         assertThat(oversendelseSlot.captured.hjemler).containsAll(listOf(hjemmel.kabalHjemmel))
-        assertThat(oversendelseSlot.captured.kildeReferanse).isEqualTo(behandling.eksternBehandlingId)
-        assertThat(oversendelseSlot.captured.innsynUrl).isEqualTo("${lenkeConfig.efSakLenke}/fagsak/${fagsak.eksternId}/${behandling.eksternBehandlingId}")
+        assertThat(oversendelseSlot.captured.kildeReferanse).isEqualTo(behandling.eksternBehandlingId.toString())
+        assertThat(oversendelseSlot.captured.innsynUrl).isEqualTo("${lenkeConfig.efSakLenke}/fagsak/${fagsak.eksternId}/${behandling.eksternFagsystemBehandlingId}")
         assertThat(oversendelseSlot.captured.forrigeBehandlendeEnhet).isEqualTo(behandling.behandlendeEnhet)
         assertThat(oversendelseSlot.captured.tilknyttedeJournalposter).isEmpty() // TODO: Sjekk for relevante
         assertThat(oversendelseSlot.captured.brukersHenvendelseMottattNavDato).isEqualTo(behandling.klageMottatt)
