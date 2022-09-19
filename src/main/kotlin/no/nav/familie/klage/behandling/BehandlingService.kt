@@ -5,6 +5,10 @@ import no.nav.familie.klage.behandling.domain.Klagebehandlingsesultat
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.formkrav.FormService
+import no.nav.familie.klage.formkrav.domain.Form
+import no.nav.familie.klage.formkrav.domain.FormVilkår
+import no.nav.familie.klage.klageinfo.KlageinfoService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
@@ -18,7 +22,8 @@ import java.util.UUID
 class BehandlingService(
     private val behandlingRepository: BehandlingRepository,
     private val fagsakService: FagsakService,
-
+    private val formService: FormService,
+    private val klageinfoService: KlageinfoService
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -46,14 +51,28 @@ class BehandlingService(
             stønadstype = opprettKlagebehandlingRequest.stønadstype
         )
 
-        return behandlingRepository.insert(
-            Behandling(
-                fagsakId = fagsak.id,
-                eksternBehandlingId = opprettKlagebehandlingRequest.eksternBehandlingId,
-                klageMottatt = opprettKlagebehandlingRequest.klageMottatt,
-                behandlendeEnhet = "4489" // TODO: Må inn i request
-            )
+        val behandlingId = behandlingRepository.insert(
+                Behandling(
+                        fagsakId = fagsak.id,
+                        eksternBehandlingId = opprettKlagebehandlingRequest.eksternBehandlingId,
+                        klageMottatt = opprettKlagebehandlingRequest.klageMottatt,
+                        behandlendeEnhet = "4489" // TODO: Må inn i request
+                )
         ).id
+
+        formService.opprettEllerOppdaterForm(
+                Form(
+                   behandlingId = behandlingId,
+                   fagsakId = fagsak.id,
+                   klagePart = FormVilkår.IKKE_SATT,
+                   klagefristOverholdt = FormVilkår.IKKE_SATT,
+                   klageKonkret = FormVilkår.IKKE_SATT,
+                   klageSignert = FormVilkår.IKKE_SATT,
+                   saksbehandlerBegrunnelse = "",
+                )
+        )
+
+        return behandlingId
     }
 
     fun finnKlagebehandlingsresultat(eksternFagsakId: String, fagsystem: Fagsystem): List<Klagebehandlingsesultat> {
