@@ -70,7 +70,7 @@ class DistribusjonService(
             vedleggsdokumenter = listOf(),
             fagsakId = fagsakId,
             journalførendeEnhet = enhet,
-            eksternReferanseId = "$eksternBehandlingId-$stønadstype-klage"
+            eksternReferanseId = "$eksternBehandlingId"
         )
     }
 }
