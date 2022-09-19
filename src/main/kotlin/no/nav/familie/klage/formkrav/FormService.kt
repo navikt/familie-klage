@@ -7,6 +7,7 @@ import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.formkrav.dto.FormDto
 import no.nav.familie.klage.formkrav.dto.tilDto
 import no.nav.familie.klage.repository.findByIdOrThrow
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -38,7 +39,7 @@ class FormService(
                 klageKonkret = form.klageKonkret,
                 klagefristOverholdt = form.klagefristOverholdt,
                 klageSignert = form.klageSignert,
-                saksbehandlerBegrunnelse = form.saksbehandlerBegrunnelse,
+                saksbehandlerBegrunnelse = form.saksbehandlerBegrunnelse
             )
         ).tilDto()
     }
@@ -77,5 +78,10 @@ class FormService(
                 form.klagefristOverholdt == FormVilkår.OPPFYLT &&
                 form.saksbehandlerBegrunnelse != ""
             )
+    }
+
+    fun formkravErOppfyltForBehandling(behandlingId: UUID): Boolean {
+        val form = formRepository.findByIdOrNull(behandlingId) ?: error("Fant ikke formkrav for behandling=$behandlingId")
+        return formkravErOppfylt(form)
     }
 }

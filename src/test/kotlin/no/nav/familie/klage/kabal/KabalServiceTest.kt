@@ -1,6 +1,5 @@
 package no.nav.familie.klage.kabal
 
-import VurderingDto
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -10,8 +9,8 @@ import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
+import no.nav.familie.klage.testutil.DomainUtil.vurdering
 import no.nav.familie.klage.vurdering.domain.Hjemmel
-import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -29,12 +28,7 @@ internal class KabalServiceTest {
         val fagsak = fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent("1")))
         val behandling = behandling(fagsak)
         val hjemmel = Hjemmel.FT_FEMTEN_FIRE
-        val vurdering = VurderingDto(
-            behandlingId = behandling.id,
-            vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
-            hjemmel = hjemmel,
-            beskrivelse = "En begrunnelse"
-        )
+        val vurdering = vurdering(behandlingId = behandling.id, hjemmel = hjemmel)
         every { kabalClient.sendTilKabal(capture(oversendelseSlot)) } just Runs
 
         kabalService.sendTilKabal(fagsak, behandling, vurdering)

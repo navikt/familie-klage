@@ -28,7 +28,7 @@ class VurderingController(
     @GetMapping("{behandlingId}")
     fun hentVurdering(@PathVariable behandlingId: UUID): Ressurs<VurderingDto?> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
-        return Ressurs.success(vurderingService.hentVurdering(behandlingId))
+        return Ressurs.success(vurderingService.hentVurderingDto(behandlingId))
     }
 
     @PostMapping

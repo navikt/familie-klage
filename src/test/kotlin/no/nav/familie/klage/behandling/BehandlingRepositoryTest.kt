@@ -156,6 +156,5 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
         }
 
         // TODO test som sjekker mapping av verdier
-
     }
 }

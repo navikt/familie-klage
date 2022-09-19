@@ -8,14 +8,15 @@ import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
-import no.nav.familie.klage.klageinfo.KlageinfoService
 import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 import java.util.UUID
 
 @Service
@@ -23,7 +24,6 @@ class BehandlingService(
     private val behandlingRepository: BehandlingRepository,
     private val fagsakService: FagsakService,
     private val formService: FormService,
-    private val klageinfoService: KlageinfoService
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -43,7 +43,6 @@ class BehandlingService(
     fun opprettBehandling(
         opprettKlagebehandlingRequest: OpprettKlagebehandlingRequest
     ): UUID {
-
         val fagsak = fagsakService.hentEllerOpprettFagsak(
             ident = opprettKlagebehandlingRequest.ident,
             eksternId = opprettKlagebehandlingRequest.eksternFagsakId,
@@ -82,5 +81,14 @@ class BehandlingService(
     fun hentAktivIdent(behandlingId: UUID): String {
         val behandling = hentBehandling(behandlingId)
         return fagsakService.hentFagsak(behandling.fagsakId).hentAktivIdent()
+    }
+
+    fun oppdaterBehandlingsresultatOgVedtaksdato(behandlingId: UUID, behandlingsresultat: BehandlingResultat) {
+        val behandling = hentBehandling(behandlingId)
+        if (behandling.resultat != BehandlingResultat.IKKE_SATT) {
+            error("Kan ikke endre på et resultat som allerede er satt")
+        }
+        val oppdatertBehandling = behandling.copy(resultat = behandlingsresultat, vedtakDato = LocalDateTime.now())
+        behandlingRepository.update(oppdatertBehandling)
     }
 }
