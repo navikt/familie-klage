@@ -7,10 +7,13 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.kabal.BehandlingEvent
 import no.nav.familie.klage.kabal.BehandlingEventType
+import no.nav.familie.klage.kabal.KlageresultatRepository
+import no.nav.familie.klage.kabal.domain.Klageresultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
@@ -18,18 +21,38 @@ class BehandlingEventService(
     private val behandlingRepository: BehandlingRepository,
     private val fagsakRepository: FagsakRepository,
     private val taskRepository: TaskRepository,
+    private val klageresultatRepository: KlageresultatRepository,
     private val stegService: StegService
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
+    @Transactional
     fun handleEvent(behandlingEvent: BehandlingEvent) {
-        val eksternBehandlingId = UUID.fromString(behandlingEvent.kildeReferanse)
-        val behandling = behandlingRepository.findByEksternBehandlingId(eksternBehandlingId)
 
-        when (behandlingEvent.type) {
-            BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> behandleKlageAvsluttet(behandling, behandlingEvent)
-            else -> behandleAnke(behandling, behandlingEvent)
+        val finnesKlageresultat = klageresultatRepository.existsById(behandlingEvent.eventId)
+        if (finnesKlageresultat) {
+            logger.warn("Hendelse fra kabal med eventId: ${behandlingEvent.eventId} er allerede lest - prosesserer ikke hendelse.")
+        } else {
+            logger.info("Prosesserer hendelse fra kabal med eventId: ${behandlingEvent.eventId}")
+            val eksternBehandlingId = UUID.fromString(behandlingEvent.kildeReferanse)
+            val behandling = behandlingRepository.findByEksternBehandlingId(eksternBehandlingId)
+
+            val klageresultat = Klageresultat(
+                behandlingEvent.eventId,
+                behandlingEvent.type,
+                behandlingEvent.detaljer.utledUtfall(),
+                behandlingEvent.detaljer.utledHendelseTidspunkt(),
+                UUID.fromString(behandlingEvent.kildeReferanse),
+                behandlingEvent.detaljer.journalpostReferanser()
+            )
+
+            klageresultatRepository.insert(klageresultat)
+
+            when (behandlingEvent.type) {
+                BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> behandleKlageAvsluttet(behandling, behandlingEvent)
+                else -> behandleAnke(behandling, behandlingEvent)
+            }
         }
     }
 
