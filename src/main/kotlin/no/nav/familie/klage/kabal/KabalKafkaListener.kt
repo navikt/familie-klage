@@ -74,7 +74,7 @@ data class BehandlingDetaljer(
         return klagebehandlingAvsluttet?.utfall ?: ankebehandlingAvsluttet?.utfall
     }
 
-    fun utledHendelseTidspunkt(): LocalDateTime {
+    fun utledMottattEllerAvsluttetTidspunkt(): LocalDateTime {
         return klagebehandlingAvsluttet?.avsluttet
             ?: ankebehandlingOpprettet?.mottattKlageinstans
             ?: ankebehandlingAvsluttet?.avsluttet

@@ -53,7 +53,7 @@ class BehandlingEventService(
             eventId = behandlingEvent.eventId,
             type = behandlingEvent.type,
             utfall = behandlingEvent.detaljer.utledUtfall(),
-            mottattEllerAvsluttetTidspunkt = behandlingEvent.detaljer.utledHendelseTidspunkt(),
+            mottattEllerAvsluttetTidspunkt = behandlingEvent.detaljer.utledMottattEllerAvsluttetTidspunkt(),
             kildereferanse = UUID.fromString(behandlingEvent.kildeReferanse),
             journalpostReferanser = StringListWrapper(behandlingEvent.detaljer.journalpostReferanser()),
             behandlingId = behandling.id
