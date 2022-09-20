@@ -5,6 +5,7 @@ import no.nav.familie.klage.behandling.domain.Klagebehandlingsesultat
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.tilDto
 import no.nav.familie.klage.kabal.dto.KlageresultatDto
@@ -23,6 +24,7 @@ import java.util.UUID
 class BehandlingService(
     private val behandlingRepository: BehandlingRepository,
     private val klageresultatRepository: KlageresultatRepository,
+    private val formService: FormService,
     private val fagsakService: FagsakService
 ) {
 
@@ -50,7 +52,7 @@ class BehandlingService(
             stønadstype = opprettKlagebehandlingRequest.stønadstype
         )
 
-        return behandlingRepository.insert(
+        val behandlingId = behandlingRepository.insert(
             Behandling(
                 fagsakId = fagsak.id,
                 eksternFagsystemBehandlingId = opprettKlagebehandlingRequest.eksternBehandlingId,
@@ -58,6 +60,8 @@ class BehandlingService(
                 behandlendeEnhet = "4489" // TODO: Må inn i request
             )
         ).id
+
+        return formService.opprettInitielleFormkrav(behandlingId, fagsak.id).behandlingId
     }
 
     fun hentKlageresultatDto(behandlingId: UUID): List<KlageresultatDto> {
