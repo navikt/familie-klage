@@ -1,6 +1,5 @@
 package no.nav.familie.klage.kabal
 
-import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration.StringListWrapper
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest

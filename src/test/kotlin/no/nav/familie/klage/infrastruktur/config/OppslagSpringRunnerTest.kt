@@ -15,7 +15,6 @@ import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.infrastruktur.db.DbContainerInitializer
 import no.nav.familie.klage.kabal.domain.Klageresultat
-import no.nav.familie.klage.klageinfo.domain.Klage
 import no.nav.familie.klage.testutil.TestoppsettService
 import no.nav.familie.klage.testutil.TokenUtil
 import no.nav.familie.klage.vurdering.domain.Vurdering
@@ -103,7 +102,6 @@ abstract class OppslagSpringRunnerTest {
             Behandlingshistorikk::class,
             Avsnitt::class,
             Brev::class,
-            Klage::class,
             Vurdering::class,
             Form::class,
             DistribusjonResultat::class,
