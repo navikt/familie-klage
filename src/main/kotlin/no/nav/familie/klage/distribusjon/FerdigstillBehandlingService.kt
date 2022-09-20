@@ -17,6 +17,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_MEDHOLD_FO
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_SATT
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.MEDHOLD
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -35,6 +36,7 @@ class FerdigstillBehandlingService(
     /**
      * Skal ikke være @transactional fordi det er mulig å komme delvis igjennom løypa
      */
+    @Transactional
     fun ferdigstillKlagebehandling(behandlingId: UUID) {
         val distribusjonResultat = distribusjonResultatService.hentEllerOpprettDistribusjonResultat(behandlingId)
         val behandling = behandlingService.hentBehandling(behandlingId)
