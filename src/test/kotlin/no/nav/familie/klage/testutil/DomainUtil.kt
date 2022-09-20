@@ -134,7 +134,7 @@ object DomainUtil {
         eventId: UUID = UUID.randomUUID(),
         type: BehandlingEventType = BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET,
         utfall: ExternalUtfall = ExternalUtfall.MEDHOLD,
-        hendelseTidspunkt: LocalDateTime = SporbarUtils.now(),
+        mottattEllerAvsluttetTidspunkt: LocalDateTime = SporbarUtils.now(),
         kildereferanse: UUID = UUID.randomUUID(),
         journalpostReferanser: List<String> = listOf("1", "2"),
         behandlingId: UUID = UUID.randomUUID()
@@ -143,7 +143,7 @@ object DomainUtil {
             eventId = eventId,
             type = type,
             utfall = utfall,
-            hendelseTidspunkt = hendelseTidspunkt,
+            mottattEllerAvsluttetTidspunkt = mottattEllerAvsluttetTidspunkt,
             kildereferanse = kildereferanse,
             journalpostReferanser = DatabaseConfiguration.StringListWrapper(verdier = journalpostReferanser),
             behandlingId = behandlingId

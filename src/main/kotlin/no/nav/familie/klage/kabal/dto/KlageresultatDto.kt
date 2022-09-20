@@ -8,7 +8,7 @@ import java.util.UUID
 class KlageresultatDto(
     val type: BehandlingEventType,
     val utfall: ExternalUtfall?,
-    val hendelseTidspunkt: LocalDateTime,
+    val mottattEllerAvsluttetTidspunkt: LocalDateTime,
     val journalpostReferanser: List<String>,
     val behandlingId: UUID
 )

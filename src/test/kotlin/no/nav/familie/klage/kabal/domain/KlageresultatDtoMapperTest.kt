@@ -17,7 +17,7 @@ class KlageresultatDtoMapperTest {
         assertThat(klageresultatDtoList.size).isEqualTo(2)
         assertThat(klageresultatDtoList.first().behandlingId).isEqualTo(klageresultat.behandlingId)
         assertThat(klageresultatDtoList.first().type).isEqualTo(klageresultat.type)
-        assertThat(klageresultatDtoList.first().hendelseTidspunkt).isEqualTo(klageresultat.hendelseTidspunkt)
+        assertThat(klageresultatDtoList.first().mottattEllerAvsluttetTidspunkt).isEqualTo(klageresultat.mottattEllerAvsluttetTidspunkt)
         assertThat(klageresultatDtoList.first().utfall).isEqualTo(klageresultat.utfall)
         assertThat(klageresultatDtoList.first().journalpostReferanser).isEqualTo(klageresultat.journalpostReferanser.verdier)
     }

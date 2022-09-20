@@ -24,7 +24,7 @@ fun List<Klageresultat>.tilDto(): List<KlageresultatDto> {
         KlageresultatDto(
             type = it.type,
             utfall = it.utfall,
-            hendelseTidspunkt = it.mottattEllerAvsluttetTidspunkt,
+            mottattEllerAvsluttetTidspunkt = it.mottattEllerAvsluttetTidspunkt,
             journalpostReferanser = it.journalpostReferanser.verdier,
             behandlingId = it.behandlingId
         )
