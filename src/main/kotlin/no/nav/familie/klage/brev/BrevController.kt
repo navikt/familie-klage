@@ -22,26 +22,19 @@ import java.util.UUID
 @Validated
 class BrevController(
     private val brevService: BrevService,
-    private val ferdigstillBehandlingService: FerdigstillBehandlingService,
     private val tilgangService: TilgangService
 ) {
+
     @GetMapping("/{behandlingId}")
     fun hentBrev(@PathVariable behandlingId: UUID): Ressurs<BrevMedAvsnitt?> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         return Ressurs.success(brevService.hentMellomlagretBrev(behandlingId))
     }
-    @PostMapping("")
+
+    @PostMapping
     fun lagEllerOppdaterBrev(@RequestBody brevInnhold: FritekstBrevDto): Ressurs<ByteArray> {
         tilgangService.validerTilgangTilBehandling(brevInnhold.behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolle()
         return Ressurs.success(brevService.lagEllerOppdaterBrev(brevInnhold))
-    }
-
-    @Deprecated("Bruk BehandlingController", ReplaceWith("BehandlingController.ferdigstill"))
-    @PostMapping("/{behandlingId}/ferdigstill")
-    fun ferdigstillBrev(@PathVariable behandlingId: UUID) {
-        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.CREATE)
-        tilgangService.validerHarSaksbehandlerrolle()
-        ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
     }
 }
