@@ -4,6 +4,7 @@ import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.distribusjon.FerdigstillBehandlingService
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
+import no.nav.familie.klage.kabal.dto.KlageresultatDto
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
@@ -35,5 +36,11 @@ class BehandlingController(
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.CREATE)
         tilgangService.validerHarSaksbehandlerrolle()
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
+    }
+
+    @GetMapping("{behandlingId}/resultat")
+    fun hentKlageresultat(@PathVariable behandlingId: UUID): Ressurs<List<KlageresultatDto>> {
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        return Ressurs.success(behandlingService.hentKlageresultatDto(behandlingId))
     }
 }

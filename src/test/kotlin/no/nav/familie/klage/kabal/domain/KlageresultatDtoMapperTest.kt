@@ -1,0 +1,24 @@
+package no.nav.familie.klage.kabal.domain
+
+import no.nav.familie.klage.testutil.DomainUtil.klageresultat
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+
+class KlageresultatDtoMapperTest {
+
+    @Test
+    fun `map klageresultater til dto`() {
+        val klageresultat = klageresultat()
+        val klageresultat2 = klageresultat()
+        val klageresultater = listOf(klageresultat, klageresultat2)
+
+        val klageresultatDtoList = klageresultater.tilDto()
+
+        assertThat(klageresultatDtoList.size).isEqualTo(2)
+        assertThat(klageresultatDtoList.first().behandlingId).isEqualTo(klageresultat.behandlingId)
+        assertThat(klageresultatDtoList.first().type).isEqualTo(klageresultat.type)
+        assertThat(klageresultatDtoList.first().hendelseTidspunkt).isEqualTo(klageresultat.hendelseTidspunkt)
+        assertThat(klageresultatDtoList.first().utfall).isEqualTo(klageresultat.utfall)
+        assertThat(klageresultatDtoList.first().journalpostReferanser).isEqualTo(klageresultat.journalpostReferanser.verdier)
+    }
+}

@@ -5,6 +5,9 @@ import no.nav.familie.klage.behandling.domain.Klagebehandlingsesultat
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.kabal.KlageresultatRepository
+import no.nav.familie.klage.kabal.domain.tilDto
+import no.nav.familie.klage.kabal.dto.KlageresultatDto
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
@@ -19,8 +22,8 @@ import java.util.UUID
 @Service
 class BehandlingService(
     private val behandlingRepository: BehandlingRepository,
+    private val klageresultatRepository: KlageresultatRepository,
     private val fagsakService: FagsakService
-
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -55,6 +58,11 @@ class BehandlingService(
                 behandlendeEnhet = "4489" // TODO: Må inn i request
             )
         ).id
+    }
+
+    fun hentKlageresultatDto(behandlingId: UUID): List<KlageresultatDto> {
+        val klageresultater = klageresultatRepository.findByBehandlingId(behandlingId)
+        return klageresultater.tilDto()
     }
 
     fun finnKlagebehandlingsresultat(eksternFagsakId: String, fagsystem: Fagsystem): List<Klagebehandlingsesultat> {
