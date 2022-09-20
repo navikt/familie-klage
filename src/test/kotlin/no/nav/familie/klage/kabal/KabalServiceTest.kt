@@ -45,7 +45,7 @@ internal class KabalServiceTest {
         assertThat(oversendelseSlot.captured.klager.id.verdi).isEqualTo(fagsak.hentAktivIdent())
         assertThat(oversendelseSlot.captured.sakenGjelder).isNull()
         assertThat(oversendelseSlot.captured.kilde).isEqualTo(Fagsystem.EF)
-        assertThat(oversendelseSlot.captured.ytelse).isEqualTo(Ytelse.ENF)
+        assertThat(oversendelseSlot.captured.ytelse).isEqualTo(Ytelse.ENF_ENF)
         assertThat(oversendelseSlot.captured.kommentar).isNull()
         assertThat(oversendelseSlot.captured.dvhReferanse).isNull()
     }
