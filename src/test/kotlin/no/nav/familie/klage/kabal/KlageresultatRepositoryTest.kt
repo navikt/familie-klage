@@ -25,7 +25,7 @@ class KlageresultatRepositoryTest : OppslagSpringRunnerTest() {
             eventId = UUID.randomUUID(),
             type = BehandlingEventType.ANKEBEHANDLING_AVSLUTTET,
             utfall = ExternalUtfall.OPPHEVET,
-            hendelseTidspunkt = SporbarUtils.now(),
+            mottattEllerAvsluttetTidspunkt = SporbarUtils.now(),
             kildereferanse = UUID.randomUUID(),
             journalpostReferanser = StringListWrapper(listOf("ref1", "ref2")),
             behandlingId = behandling.id
@@ -36,7 +36,7 @@ class KlageresultatRepositoryTest : OppslagSpringRunnerTest() {
         assertThat(hentetKlageresultat.eventId).isEqualTo(klageresultat.eventId)
         assertThat(hentetKlageresultat.type).isEqualTo(klageresultat.type)
         assertThat(hentetKlageresultat.utfall).isEqualTo(klageresultat.utfall)
-        assertThat(hentetKlageresultat.hendelseTidspunkt).isEqualTo(klageresultat.hendelseTidspunkt)
+        assertThat(hentetKlageresultat.mottattEllerAvsluttetTidspunkt).isEqualTo(klageresultat.mottattEllerAvsluttetTidspunkt)
         assertThat(hentetKlageresultat.kildereferanse).isEqualTo(klageresultat.kildereferanse)
         assertThat(hentetKlageresultat.journalpostReferanser).isEqualTo(klageresultat.journalpostReferanser)
         assertThat(hentetKlageresultat.journalpostReferanser.verdier).hasSize(2)

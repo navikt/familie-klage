@@ -50,9 +50,9 @@ data class FagsakDomain(
 
 fun Stønadstype.tilYtelse(): Ytelse =
     when (this) {
-        Stønadstype.OVERGANGSSTØNAD -> Ytelse.ENF
-        Stønadstype.SKOLEPENGER -> Ytelse.ENF
-        Stønadstype.BARNETILSYN -> Ytelse.ENF
-        Stønadstype.BARNETRYGD -> Ytelse.BAR
-        Stønadstype.KONTANTSTØTTE -> Ytelse.KONT
+        Stønadstype.OVERGANGSSTØNAD -> Ytelse.ENF_ENF
+        Stønadstype.SKOLEPENGER -> Ytelse.ENF_ENF
+        Stønadstype.BARNETILSYN -> Ytelse.ENF_ENF
+        Stønadstype.BARNETRYGD -> Ytelse.BAR_BAR
+        Stønadstype.KONTANTSTØTTE -> Ytelse.KON_KON
     }

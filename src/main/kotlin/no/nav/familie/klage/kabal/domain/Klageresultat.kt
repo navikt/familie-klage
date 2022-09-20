@@ -13,7 +13,7 @@ class Klageresultat(
     val eventId: UUID,
     val type: BehandlingEventType,
     val utfall: ExternalUtfall?,
-    val hendelseTidspunkt: LocalDateTime,
+    val mottattEllerAvsluttetTidspunkt: LocalDateTime,
     val kildereferanse: UUID,
     val journalpostReferanser: StringListWrapper,
     val behandlingId: UUID
@@ -24,7 +24,7 @@ fun List<Klageresultat>.tilDto(): List<KlageresultatDto> {
         KlageresultatDto(
             type = it.type,
             utfall = it.utfall,
-            hendelseTidspunkt = it.hendelseTidspunkt,
+            hendelseTidspunkt = it.mottattEllerAvsluttetTidspunkt,
             journalpostReferanser = it.journalpostReferanser.verdier,
             behandlingId = it.behandlingId
         )
