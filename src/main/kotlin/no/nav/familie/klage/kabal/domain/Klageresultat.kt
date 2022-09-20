@@ -14,5 +14,6 @@ class Klageresultat(
     val utfall: ExternalUtfall?,
     val hendelseTidspunkt: LocalDateTime,
     val kildereferanse: UUID,
-    val journalpostReferanser: StringListWrapper
+    val journalpostReferanser: StringListWrapper,
+    val behandlingId: UUID
 )

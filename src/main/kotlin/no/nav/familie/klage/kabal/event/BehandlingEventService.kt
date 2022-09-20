@@ -39,7 +39,7 @@ class BehandlingEventService(
             val eksternBehandlingId = UUID.fromString(behandlingEvent.kildeReferanse)
             val behandling = behandlingRepository.findByEksternBehandlingId(eksternBehandlingId)
 
-            lagreKlageresultat(behandlingEvent)
+            lagreKlageresultat(behandlingEvent, behandling)
 
             when (behandlingEvent.type) {
                 BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> behandleKlageAvsluttet(behandling, behandlingEvent)
@@ -48,14 +48,15 @@ class BehandlingEventService(
         }
     }
 
-    private fun lagreKlageresultat(behandlingEvent: BehandlingEvent) {
+    private fun lagreKlageresultat(behandlingEvent: BehandlingEvent, behandling: Behandling) {
         val klageresultat = Klageresultat(
             eventId = behandlingEvent.eventId,
             type = behandlingEvent.type,
             utfall = behandlingEvent.detaljer.utledUtfall(),
             hendelseTidspunkt = behandlingEvent.detaljer.utledHendelseTidspunkt(),
             kildereferanse = UUID.fromString(behandlingEvent.kildeReferanse),
-            journalpostReferanser = StringListWrapper(behandlingEvent.detaljer.journalpostReferanser())
+            journalpostReferanser = StringListWrapper(behandlingEvent.detaljer.journalpostReferanser()),
+            behandlingId = behandling.id
         )
 
         klageresultatRepository.insert(klageresultat)
@@ -77,7 +78,8 @@ class BehandlingEventService(
 
     private fun opprettOppgaveTask(behandlingEvent: BehandlingEvent, behandling: Behandling) {
 
-        val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id) ?: error("Finner ikke fagsak for behandlingId: ${behandling.id}")
+        val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
+            ?: error("Finner ikke fagsak for behandlingId: ${behandling.id}")
         val oppgaveTekst = "${behandlingEvent.detaljer.oppgaveTekst()} Gjelder: ${fagsakDomain.stønadstype}"
         val klageBehandlingEksternId = UUID.fromString(behandlingEvent.kildeReferanse)
 

@@ -4,5 +4,8 @@ CREATE TABLE klageresultat (
     utfall                 VARCHAR,
     hendelse_tidspunkt     TIMESTAMP(3) NOT NULL,
     kildereferanse         UUID         NOT NULL,
-    journalpost_referanser VARCHAR
+    journalpost_referanser VARCHAR,
+    behandling_id          UUID         NOT NULL REFERENCES behandling (id)
 );
+
+CREATE INDEX ON klageresultat(behandling_id);

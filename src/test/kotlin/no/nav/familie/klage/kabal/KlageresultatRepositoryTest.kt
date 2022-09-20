@@ -1,10 +1,13 @@
 package no.nav.familie.klage.kabal
 
+import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration.StringListWrapper
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.kabal.domain.Klageresultat
 import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.klage.testutil.DomainUtil.behandling
+import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,13 +20,16 @@ class KlageresultatRepositoryTest : OppslagSpringRunnerTest() {
 
     @Test
     internal fun `skal kunne lagre og hente klageresultat`() {
+        val fagsak = testoppsettService.lagreFagsak(fagsak())
+        val behandling = testoppsettService.lagreBehandling(behandling(fagsak))
         val klageresultat = Klageresultat(
             eventId = UUID.randomUUID(),
             type = BehandlingEventType.ANKEBEHANDLING_AVSLUTTET,
             utfall = ExternalUtfall.OPPHEVET,
             hendelseTidspunkt = SporbarUtils.now(),
             kildereferanse = UUID.randomUUID(),
-            journalpostReferanser = StringListWrapper(listOf("ref1", "ref2"))
+            journalpostReferanser = StringListWrapper(listOf("ref1", "ref2")),
+            behandlingId = behandling.id
         )
         klageresultatRepository.insert(klageresultat)
 
@@ -35,5 +41,6 @@ class KlageresultatRepositoryTest : OppslagSpringRunnerTest() {
         assertThat(hentetKlageresultat.kildereferanse).isEqualTo(klageresultat.kildereferanse)
         assertThat(hentetKlageresultat.journalpostReferanser).isEqualTo(klageresultat.journalpostReferanser)
         assertThat(hentetKlageresultat.journalpostReferanser.verdier).hasSize(2)
+        assertThat(hentetKlageresultat.behandlingId).isEqualTo(klageresultat.behandlingId)
     }
 }
