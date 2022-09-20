@@ -12,6 +12,7 @@ import no.nav.familie.klage.kabal.BehandlingEvent
 import no.nav.familie.klage.kabal.BehandlingEventType
 import no.nav.familie.klage.kabal.ExternalUtfall
 import no.nav.familie.klage.kabal.KlagebehandlingAvsluttetDetaljer
+import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.prosessering.domene.TaskRepository
@@ -26,12 +27,14 @@ internal class BehandlingEventServiceTest {
     private val fagsakRepository = mockk<FagsakRepository>(relaxed = true)
     private val taskRepository = mockk<TaskRepository>(relaxed = true)
     private val stegService = mockk<StegService>(relaxed = true)
+    private val klageresultatRepository = mockk<KlageresultatRepository>(relaxed = true)
 
     val behandlingEventService = BehandlingEventService(
         behandlingRepository = behandlingRepository,
         fagsakRepository = fagsakRepository,
         stegService = stegService,
-        taskRepository = taskRepository
+        taskRepository = taskRepository,
+        klageresultatRepository = klageresultatRepository
     )
 
     val behandlingMedStatusVenter = DomainUtil.behandling(status = BehandlingStatus.VENTER)
@@ -40,6 +43,8 @@ internal class BehandlingEventServiceTest {
     fun setUp() {
         every { taskRepository.save(any()) } answers { firstArg() }
         every { behandlingRepository.findByEksternBehandlingId(any()) } returns behandlingMedStatusVenter
+        every { klageresultatRepository.insert(any()) } answers { firstArg() }
+        every { klageresultatRepository.existsById(any()) } returns false
     }
 
     @Test
@@ -71,6 +76,24 @@ internal class BehandlingEventServiceTest {
 
         verify(exactly = 0) { taskRepository.save(any()) }
         verify(exactly = 0) { stegService.oppdaterSteg(behandling.id, StegType.BEHANDLING_FERDIGSTILT) }
+    }
+
+    @Test
+    internal fun `Skal ikke behandle event hvis det allerede er behandlet`() {
+        every { klageresultatRepository.existsById(any()) } returns true
+
+        behandlingEventService.handleEvent(lagBehandlingEvent())
+
+        verify(exactly = 0) { behandlingRepository.findByEksternBehandlingId(any()) }
+        verify(exactly = 0) { klageresultatRepository.insert(any()) }
+    }
+
+    @Test
+    internal fun `Skal lagre event hvis det ikke allerede er behandlet`() {
+        behandlingEventService.handleEvent(lagBehandlingEvent())
+
+        verify(exactly = 1) { behandlingRepository.findByEksternBehandlingId(any()) }
+        verify(exactly = 1) { klageresultatRepository.insert(any()) }
     }
 
     private fun lagBehandlingEvent(behandlingEventType: BehandlingEventType = BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET): BehandlingEvent {

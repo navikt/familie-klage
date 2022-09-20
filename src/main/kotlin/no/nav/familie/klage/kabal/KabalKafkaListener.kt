@@ -1,6 +1,7 @@
 package no.nav.familie.klage.kabal
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.kabal.event.BehandlingEventService
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -64,6 +65,21 @@ data class BehandlingDetaljer(
     val ankebehandlingOpprettet: AnkebehandlingOpprettetDetaljer? = null,
     val ankebehandlingAvsluttet: AnkebehandlingAvsluttetDetaljer? = null,
 ) {
+
+    fun journalpostReferanser(): List<String> {
+        return klagebehandlingAvsluttet?.journalpostReferanser ?: ankebehandlingAvsluttet?.journalpostReferanser ?: listOf()
+    }
+
+    fun utledUtfall(): ExternalUtfall? {
+        return klagebehandlingAvsluttet?.utfall ?: ankebehandlingAvsluttet?.utfall
+    }
+
+    fun utledMottattEllerAvsluttetTidspunkt(): LocalDateTime {
+        return klagebehandlingAvsluttet?.avsluttet
+            ?: ankebehandlingOpprettet?.mottattKlageinstans
+            ?: ankebehandlingAvsluttet?.avsluttet
+            ?: throw Feil("Mottok ikke hendelsetidspunkt for BehandlingEvent fra kabal")
+    }
 
     fun oppgaveTekst(): String {
         return klagebehandlingAvsluttet?.oppgaveTekst()
