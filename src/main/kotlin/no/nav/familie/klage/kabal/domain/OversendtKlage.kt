@@ -72,9 +72,9 @@ enum class MottakDokumentType {
 }
 
 enum class Ytelse {
-    ENF,
-    BAR,
-    KONT
+    ENF_ENF,
+    BAR_BAR,
+    KON_KON
 }
 
 interface Kode {
