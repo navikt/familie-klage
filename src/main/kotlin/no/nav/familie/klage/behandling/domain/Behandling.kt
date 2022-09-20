@@ -32,6 +32,8 @@ fun BehandlingStatus.erLåstForVidereBehandling() =
         else -> setOf(BehandlingStatus.VENTER, BehandlingStatus.FERDIGSTILT).contains(this)
     }
 
+fun BehandlingStatus.erUnderArbeidAvSaksbehandler() = setOf(BehandlingStatus.OPPRETTET, BehandlingStatus.UTREDES).contains(this)
+
 enum class StegType(
     val rekkefølge: Int,
     val gjelderStatus: BehandlingStatus
