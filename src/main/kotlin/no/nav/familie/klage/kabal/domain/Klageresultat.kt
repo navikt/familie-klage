@@ -12,7 +12,7 @@ class Klageresultat(
     val eventId: UUID,
     val type: BehandlingEventType,
     val utfall: ExternalUtfall?,
-    val hendelseTidspunkt: LocalDateTime,
+    val mottattEllerAvsluttetTidspunkt: LocalDateTime,
     val kildereferanse: UUID,
     val journalpostReferanser: StringListWrapper,
     val behandlingId: UUID
