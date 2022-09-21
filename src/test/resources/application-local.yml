@@ -1,6 +1,8 @@
 server:
   port: 8094
 
+kafka.enabled: false
+
 spring:
   datasource:
     username: ${DATASOURCE_USERNAME}
