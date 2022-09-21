@@ -32,13 +32,7 @@ class StegService(
         behandlingRepository.updateSteg(behandlingId, nesteSteg)
         behandlingRepository.updateStatus(behandlingId, nesteSteg.gjelderStatus)
 
-        behandlingshistorikkService.opprettBehandlingshistorikk(
-            behandlingshistorikk = Behandlingshistorikk(
-                behandlingId = behandlingId,
-                steg = behandling.steg,
-                opprettetAv = SikkerhetContext.hentSaksbehandler()
-            )
-        )
+        behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, behandling.steg)
     }
 
     private fun validerGyldigNesteSteg(behandling: Behandling) =

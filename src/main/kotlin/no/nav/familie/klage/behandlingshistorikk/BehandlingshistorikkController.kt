@@ -29,10 +29,4 @@ class BehandlingshistorikkController(
         return Ressurs.success(behandlingshistorikkService.hentBehandlingshistorikker(behandlingId))
     }
 
-    @PostMapping
-    fun opprettBehandlingshistorikk(@RequestBody behandlingshistorikk: Behandlingshistorikk): Ressurs<Behandlingshistorikk> {
-        tilgangService.validerTilgangTilBehandling(behandlingshistorikk.behandlingId, AuditLoggerEvent.CREATE)
-        tilgangService.validerHarSaksbehandlerrolle()
-        return Ressurs.success(behandlingshistorikkService.opprettBehandlingshistorikk(behandlingshistorikk))
-    }
 }
