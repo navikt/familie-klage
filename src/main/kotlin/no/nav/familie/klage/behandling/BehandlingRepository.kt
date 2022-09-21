@@ -64,4 +64,6 @@ interface BehandlingRepository : RepositoryInterface<Behandling, UUID>, InsertUp
         @Param("eksternFagsakId") eksternFagsakId: String,
         @Param("fagsystem") fagsystem: Fagsystem
     ): List<Klagebehandlingsesultat>
+
+    fun findByFagsakId(fagsakId: UUID): List<Behandling>
 }

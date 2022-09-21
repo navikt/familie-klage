@@ -2,13 +2,15 @@ package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.Klagebehandlingsesultat
+import no.nav.familie.klage.behandling.domain.erUnderArbeidAvSaksbehandler
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.formkrav.FormService
-import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.tilDto
 import no.nav.familie.klage.kabal.dto.KlageresultatDto
+import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
@@ -23,9 +25,8 @@ import java.util.UUID
 @Service
 class BehandlingService(
     private val behandlingRepository: BehandlingRepository,
-    private val klageresultatRepository: KlageresultatRepository,
-    private val formService: FormService,
-    private val fagsakService: FagsakService
+    private val fagsakService: FagsakService,
+    private val formService: FormService
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -52,6 +53,8 @@ class BehandlingService(
             fagsystem = opprettKlagebehandlingRequest.fagsystem,
             stønadstype = opprettKlagebehandlingRequest.stønadstype
         )
+
+        validerKanOppretteBehandling(fagsak)
 
         val behandlingId = behandlingRepository.insert(
             Behandling(
@@ -86,5 +89,13 @@ class BehandlingService(
         }
         val oppdatertBehandling = behandling.copy(resultat = behandlingsresultat, vedtakDato = LocalDateTime.now())
         behandlingRepository.update(oppdatertBehandling)
+    }
+
+    private fun validerKanOppretteBehandling(fagsak: Fagsak) {
+        val behandlinger = behandlingRepository.findByFagsakId(fagsak.id)
+
+        brukerfeilHvis(behandlinger.any { it.status.erUnderArbeidAvSaksbehandler() }) {
+            "Det eksisterer allerede en klagebehandling som ikke er ferdigstilt på fagsak med id=${fagsak.id}"
+        }
     }
 }
