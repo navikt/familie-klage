@@ -1,6 +1,8 @@
 server:
   port: 9093
 
+kafka.enabled: false
+
 no.nav.security.jwt:
   issuer.azuread:
     discoveryurl: http://localhost:${mock-oauth2-server.port}/azuread/.well-known/openid-configuration

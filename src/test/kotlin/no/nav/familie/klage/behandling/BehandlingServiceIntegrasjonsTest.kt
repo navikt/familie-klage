@@ -52,9 +52,7 @@ internal class BehandlingServiceIntegrasjonsTest : OppslagSpringRunnerTest() {
             behandlingService.opprettBehandling(opprettKlagebehandlingRequest(fagsak, behandling))
         }
         Assertions.assertThat(feil.message)
-                .contains("Det eksisterer allerede en klagebehandling som ikke er ferdigstilt på fagsak med id=")
-
-
+            .contains("Det eksisterer allerede en klagebehandling som ikke er ferdigstilt på fagsak med id=")
     }
 
     @Test
@@ -74,11 +72,13 @@ internal class BehandlingServiceIntegrasjonsTest : OppslagSpringRunnerTest() {
     }
 
     private fun opprettKlagebehandlingRequest(fagsak: Fagsak, behandling: Behandling) =
-            OpprettKlagebehandlingRequest(ident = "1234",
-                                          stønadstype = fagsak.stønadstype,
-                                          eksternBehandlingId = behandling.eksternFagsystemBehandlingId,
-                                          eksternFagsakId = fagsak.eksternId,
-                                          fagsystem = fagsak.fagsystem,
-                                          klageMottatt = LocalDate.now().minusDays(1),
-                                          behandlendeEnhet = "4489")
+        OpprettKlagebehandlingRequest(
+            ident = "1234",
+            stønadstype = fagsak.stønadstype,
+            eksternBehandlingId = behandling.eksternFagsystemBehandlingId,
+            eksternFagsakId = fagsak.eksternId,
+            fagsystem = fagsak.fagsystem,
+            klageMottatt = LocalDate.now().minusDays(1),
+            behandlendeEnhet = "4489"
+        )
 }

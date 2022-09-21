@@ -2,6 +2,7 @@ package no.nav.familie.klage.behandling.dto
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.kabal.dto.KlageresultatDto
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
@@ -17,10 +18,11 @@ data class BehandlingDto(
     val resultat: BehandlingResultat?,
     val opprettet: LocalDateTime,
     val vedtaksdato: LocalDateTime? = null,
-    val stønadstype: Stønadstype
+    val stønadstype: Stønadstype,
+    val klageresultat: List<KlageresultatDto>
 )
 
-fun Behandling.tilDto(stønadstype: Stønadstype): BehandlingDto =
+fun Behandling.tilDto(stønadstype: Stønadstype, klageresultat: List<KlageresultatDto>): BehandlingDto =
     BehandlingDto(
         id = this.id,
         fagsakId = this.fagsakId,
@@ -29,5 +31,6 @@ fun Behandling.tilDto(stønadstype: Stønadstype): BehandlingDto =
         sistEndret = this.sporbar.endret.endretTid,
         resultat = this.resultat,
         opprettet = this.sporbar.opprettetTid,
-        stønadstype = stønadstype
+        stønadstype = stønadstype,
+        klageresultat = klageresultat
     )

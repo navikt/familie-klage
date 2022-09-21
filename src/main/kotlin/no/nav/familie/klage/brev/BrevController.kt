@@ -2,7 +2,6 @@ package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.brev.domain.BrevMedAvsnitt
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
-import no.nav.familie.klage.distribusjon.FerdigstillBehandlingService
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs

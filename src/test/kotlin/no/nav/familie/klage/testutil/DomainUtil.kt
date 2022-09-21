@@ -10,8 +10,13 @@ import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.felles.domain.Sporbar
+import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
+import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration
+import no.nav.familie.klage.kabal.BehandlingEventType
+import no.nav.familie.klage.kabal.ExternalUtfall
+import no.nav.familie.klage.kabal.domain.Klageresultat
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
@@ -19,6 +24,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.random.Random
 
@@ -121,6 +127,26 @@ object DomainUtil {
             sporbar = sporbar,
             eksternId = "1",
             fagsystem = Fagsystem.EF
+        )
+    }
+
+    fun klageresultat(
+        eventId: UUID = UUID.randomUUID(),
+        type: BehandlingEventType = BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET,
+        utfall: ExternalUtfall = ExternalUtfall.MEDHOLD,
+        mottattEllerAvsluttetTidspunkt: LocalDateTime = SporbarUtils.now(),
+        kildereferanse: UUID = UUID.randomUUID(),
+        journalpostReferanser: List<String> = listOf("1", "2"),
+        behandlingId: UUID = UUID.randomUUID()
+    ): Klageresultat {
+        return Klageresultat(
+            eventId = eventId,
+            type = type,
+            utfall = utfall,
+            mottattEllerAvsluttetTidspunkt = mottattEllerAvsluttetTidspunkt,
+            kildereferanse = kildereferanse,
+            journalpostReferanser = DatabaseConfiguration.StringListWrapper(verdier = journalpostReferanser),
+            behandlingId = behandlingId
         )
     }
 }
