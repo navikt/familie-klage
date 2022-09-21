@@ -34,7 +34,8 @@ class BehandlingService(
 
     fun hentBehandlingDto(behandlingId: UUID): BehandlingDto {
         val stønadstype = fagsakService.hentFagsakForBehandling(behandlingId).stønadstype
-        return behandlingRepository.findByIdOrThrow(behandlingId).tilDto(stønadstype)
+        return behandlingRepository.findByIdOrThrow(behandlingId)
+            .tilDto(stønadstype, hentKlageresultatDto(behandlingId))
     }
 
     fun hentNavnFraBehandlingsId(behandlingId: UUID): String {
@@ -64,7 +65,7 @@ class BehandlingService(
         return formService.opprettInitielleFormkrav(behandlingId, fagsak.id).behandlingId
     }
 
-    fun hentKlageresultatDto(behandlingId: UUID): List<KlageresultatDto> {
+    private fun hentKlageresultatDto(behandlingId: UUID): List<KlageresultatDto> {
         val klageresultater = klageresultatRepository.findByBehandlingId(behandlingId)
         return klageresultater.tilDto()
     }
