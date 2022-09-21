@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
-import org.springframework.http.ResponseEntity
 import java.util.UUID
 
 internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
@@ -77,7 +76,7 @@ internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
     }
 
     private fun ferdigstill(behandlingId: UUID) {
-        restTemplate.exchange<ResponseEntity<Ressurs<Nothing>>>(
+        restTemplate.exchange<Ressurs<Unit>>(
             localhost("/api/behandling/$behandlingId/ferdigstill"),
             HttpMethod.POST,
             HttpEntity(null, headers)
