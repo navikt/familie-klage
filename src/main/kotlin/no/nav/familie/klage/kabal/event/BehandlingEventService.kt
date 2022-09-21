@@ -52,10 +52,10 @@ class BehandlingEventService(
         val klageresultat = Klageresultat(
             eventId = behandlingEvent.eventId,
             type = behandlingEvent.type,
-            utfall = behandlingEvent.detaljer.utledUtfall(),
-            mottattEllerAvsluttetTidspunkt = behandlingEvent.detaljer.utledMottattEllerAvsluttetTidspunkt(),
+            utfall = behandlingEvent.utfall(),
+            mottattEllerAvsluttetTidspunkt = behandlingEvent.mottattEllerAvsluttetTidspunkt(),
             kildereferanse = UUID.fromString(behandlingEvent.kildeReferanse),
-            journalpostReferanser = StringListWrapper(behandlingEvent.detaljer.journalpostReferanser()),
+            journalpostReferanser = StringListWrapper(behandlingEvent.journalpostReferanser()),
             behandlingId = behandling.id
         )
 

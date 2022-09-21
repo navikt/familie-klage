@@ -54,7 +54,36 @@ data class BehandlingEvent(
     val kabalReferanse: String,
     val type: BehandlingEventType,
     val detaljer: BehandlingDetaljer,
-)
+) {
+    fun mottattEllerAvsluttetTidspunkt(): LocalDateTime {
+        val feilmelding = "Burde hatt behandlingdetaljer for event fra kabal av type $type"
+        return when (type) {
+            BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET ->
+                detaljer.klagebehandlingAvsluttet?.avsluttet ?: throw Feil(feilmelding)
+            BehandlingEventType.ANKEBEHANDLING_OPPRETTET ->
+                detaljer.ankebehandlingOpprettet?.mottattKlageinstans ?: throw Feil(feilmelding)
+            BehandlingEventType.ANKEBEHANDLING_AVSLUTTET -> detaljer.ankebehandlingAvsluttet?.avsluttet ?: throw Feil(feilmelding)
+            BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET -> throw Feil("Håndterer ikke typen $type")
+        }
+    }
+
+    fun utfall(): ExternalUtfall? {
+        val feilmelding = "Burde hatt behandlingdetaljer for event fra kabal av type $type"
+        return when (type) {
+            BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> detaljer.klagebehandlingAvsluttet?.utfall ?: throw Feil(feilmelding)
+            BehandlingEventType.ANKEBEHANDLING_AVSLUTTET -> detaljer.ankebehandlingAvsluttet?.utfall ?: throw Feil(feilmelding)
+            else -> null
+        }
+    }
+
+    fun journalpostReferanser(): List<String> {
+        return when (type) {
+            BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> detaljer.klagebehandlingAvsluttet?.journalpostReferanser ?: listOf()
+            BehandlingEventType.ANKEBEHANDLING_AVSLUTTET -> detaljer.ankebehandlingAvsluttet?.journalpostReferanser ?: listOf()
+            else -> listOf()
+        }
+    }
+}
 
 enum class BehandlingEventType {
     KLAGEBEHANDLING_AVSLUTTET, ANKEBEHANDLING_OPPRETTET, ANKEBEHANDLING_AVSLUTTET, ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET // TODO ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET skal fjernes på sikt
@@ -68,17 +97,6 @@ data class BehandlingDetaljer(
 
     fun journalpostReferanser(): List<String> {
         return klagebehandlingAvsluttet?.journalpostReferanser ?: ankebehandlingAvsluttet?.journalpostReferanser ?: listOf()
-    }
-
-    fun utledUtfall(): ExternalUtfall? {
-        return klagebehandlingAvsluttet?.utfall ?: ankebehandlingAvsluttet?.utfall
-    }
-
-    fun utledMottattEllerAvsluttetTidspunkt(): LocalDateTime {
-        return klagebehandlingAvsluttet?.avsluttet
-            ?: ankebehandlingOpprettet?.mottattKlageinstans
-            ?: ankebehandlingAvsluttet?.avsluttet
-            ?: throw Feil("Mottok ikke hendelsetidspunkt for BehandlingEvent fra kabal")
     }
 
     fun oppgaveTekst(): String {
