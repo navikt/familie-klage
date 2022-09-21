@@ -15,7 +15,6 @@ class KlageresultatDtoMapperTest {
         val klageresultatDtoList = klageresultater.tilDto()
 
         assertThat(klageresultatDtoList.size).isEqualTo(2)
-        assertThat(klageresultatDtoList.first().behandlingId).isEqualTo(klageresultat.behandlingId)
         assertThat(klageresultatDtoList.first().type).isEqualTo(klageresultat.type)
         assertThat(klageresultatDtoList.first().mottattEllerAvsluttetTidspunkt).isEqualTo(klageresultat.mottattEllerAvsluttetTidspunkt)
         assertThat(klageresultatDtoList.first().utfall).isEqualTo(klageresultat.utfall)
