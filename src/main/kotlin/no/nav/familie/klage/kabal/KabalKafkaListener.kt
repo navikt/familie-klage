@@ -20,7 +20,8 @@ class KabalKafkaListener(val behandlingEventService: BehandlingEventService) : C
 
     @KafkaListener(
         id = "familie-klage",
-        topics = ["klage.behandling-events.v1"]
+        topics = ["klage.behandling-events.v1"],
+        autoStartup = "\${kafka.enabled:true}"
     )
     fun listen(behandlingEventJson: String) {
         secureLogger.info("Klage-kabal-event: $behandlingEventJson")
