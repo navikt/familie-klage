@@ -8,9 +8,10 @@ import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.formkrav.FormService
+import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
+import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.tilDto
 import no.nav.familie.klage.kabal.dto.KlageresultatDto
-import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
@@ -26,7 +27,8 @@ import java.util.UUID
 class BehandlingService(
     private val behandlingRepository: BehandlingRepository,
     private val fagsakService: FagsakService,
-    private val formService: FormService
+    private val formService: FormService,
+    private val klageresultatRepository: KlageresultatRepository
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
