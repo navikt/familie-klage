@@ -55,6 +55,10 @@ enum class StegType(
         rekkefølge = 4,
         gjelderStatus = BehandlingStatus.VENTER
     ),
+    KABAL_VENTER_SVAR(
+        rekkefølge = 5,
+        gjelderStatus = BehandlingStatus.VENTER
+    ),
     BEHANDLING_FERDIGSTILT(
         rekkefølge = 6,
         gjelderStatus = BehandlingStatus.FERDIGSTILT

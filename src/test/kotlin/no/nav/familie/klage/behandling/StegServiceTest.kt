@@ -42,8 +42,11 @@ internal class StegServiceTest {
         )
     )
 
+    val historikkSlot = mutableListOf<StegType>()
+
     @BeforeEach
     internal fun setUp() {
+        historikkSlot.clear()
         mockkObject(SikkerhetContext)
     }
 
@@ -60,14 +63,13 @@ internal class StegServiceTest {
 
         val stegSlot = slot<StegType>()
         val statusSlot = slot<BehandlingStatus>()
-        val historikkSlot = slot<Behandlingshistorikk>()
 
         assertThat(behandling.steg).isEqualTo(StegType.FORMKRAV)
 
         every { behandlingRepository.findByIdOrThrow(behandlingId) } returns behandling
         every { behandlingRepository.updateSteg(behandlingId, capture(stegSlot)) } just Runs
         every { behandlingRepository.updateStatus(behandlingId, capture(statusSlot)) } just Runs
-        every { behandlingshistorikkService.opprettBehandlingshistorikk(capture(historikkSlot)) } returns mockk()
+        every { behandlingshistorikkService.opprettBehandlingshistorikk(any(), capture(historikkSlot)) } returns mockk()
         every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler"
         every { SikkerhetContext.harTilgangTilGittRolle(any(), any()) } returns true
 
@@ -76,8 +78,7 @@ internal class StegServiceTest {
 
         assertThat(stegSlot.captured).isEqualTo(nesteSteg)
         assertThat(statusSlot.captured).isEqualTo(nesteSteg.gjelderStatus)
-        assertThat(historikkSlot.captured.behandlingId).isEqualTo(behandling.id)
-        assertThat(historikkSlot.captured.steg).isEqualTo(behandling.steg)
+        assertThat(historikkSlot.single()).isEqualTo(behandling.steg)
     }
 
     @Test
