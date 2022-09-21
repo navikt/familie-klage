@@ -3,11 +3,15 @@ package no.nav.familie.klage.infrastruktur.config
 import no.nav.familie.klage.felles.domain.Endret
 import no.nav.familie.prosessering.PropertiesWrapperTilStringConverter
 import no.nav.familie.prosessering.StringTilPropertiesWrapperConverter
+import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.flyway.FlywayConfigurationCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.convert.converter.Converter
 import org.springframework.core.env.Environment
+import org.springframework.data.convert.ReadingConverter
+import org.springframework.data.convert.WritingConverter
 import org.springframework.data.domain.AuditorAware
 import org.springframework.data.jdbc.core.convert.JdbcCustomConversions
 import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration
@@ -47,7 +51,9 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
         return JdbcCustomConversions(
             listOf(
                 PropertiesWrapperTilStringConverter(),
-                StringTilPropertiesWrapperConverter()
+                StringTilPropertiesWrapperConverter(),
+                StringListTilStringConverter(),
+                StringTilStringList()
             )
         )
     }
@@ -66,6 +72,24 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
             if (!isProd && ignore) {
                 throw RuntimeException("Profile=${environment.activeProfiles} men har ignoreIfProd=--")
             }
+        }
+    }
+
+    data class StringListWrapper(val verdier: List<String>)
+
+    @WritingConverter
+    class StringListTilStringConverter : Converter<StringListWrapper, String> {
+
+        override fun convert(wrapper: StringListWrapper): String {
+            return StringUtils.join(wrapper.verdier, ";")
+        }
+    }
+
+    @ReadingConverter
+    class StringTilStringList : Converter<String, StringListWrapper> {
+
+        override fun convert(verdi: String): StringListWrapper {
+            return StringListWrapper(verdi.split(";"))
         }
     }
 }

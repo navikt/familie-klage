@@ -54,12 +54,12 @@ class BehandlingService(
         validerKanOppretteBehandling(fagsak)
 
         val behandlingId = behandlingRepository.insert(
-                Behandling(
-                        fagsakId = fagsak.id,
-                        eksternFagsystemBehandlingId = opprettKlagebehandlingRequest.eksternBehandlingId,
-                        klageMottatt = opprettKlagebehandlingRequest.klageMottatt,
-                        behandlendeEnhet = "4489" // TODO: Må inn i request
-                )
+            Behandling(
+                fagsakId = fagsak.id,
+                eksternFagsystemBehandlingId = opprettKlagebehandlingRequest.eksternBehandlingId,
+                klageMottatt = opprettKlagebehandlingRequest.klageMottatt,
+                behandlendeEnhet = "4489" // TODO: Må inn i request
+            )
         ).id
 
         return formService.opprettInitielleFormkrav(behandlingId, fagsak.id).behandlingId

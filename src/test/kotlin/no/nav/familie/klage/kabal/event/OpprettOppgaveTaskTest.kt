@@ -64,6 +64,5 @@ class OpprettOppgaveTaskTest : OppslagSpringRunnerTest() {
         assertThat(opprettOppgaveRequestSlot.captured.saksId).isEqualTo(fagsakDomain.eksternId)
         assertThat(opprettOppgaveRequestSlot.captured.enhetsnummer).isEqualTo(behandling.behandlendeEnhet)
         assertThat(opprettOppgaveRequestSlot.captured.behandlingstema).isEqualTo(Behandlingstema.Overgangsstønad.value)
-
     }
 }
