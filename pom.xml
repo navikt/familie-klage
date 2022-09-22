@@ -30,13 +30,13 @@
 		<changelist>-SNAPSHOT</changelist>
 		<java.version>17</java.version>
 		<kotlin.version>1.7.10</kotlin.version>
-		<springdoc.version>1.6.9</springdoc.version>
+		<springdoc.version>1.6.11</springdoc.version>
 		<mockk.version>1.12.5</mockk.version>
 		<felles.version>1.20220811104902_c1860ff</felles.version>
 		<prosessering.version>1.20220624132237_7f5ba9c</prosessering.version>
 		<start-class>no.nav.familie.klage.ApplicationKt</start-class>
 		<kontrakter.version>2.0_20220916130234_aa8ba65</kontrakter.version>
-		<cucumber.version>7.3.4</cucumber.version>
+		<cucumber.version>7.8.0</cucumber.version>
 		<nav.security.version>2.1.4</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
 		<okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
 		<unleash.version>4.4.1</unleash.version>
