@@ -7,7 +7,6 @@ import java.util.UUID
 
 data class FormDto(
     val behandlingId: UUID,
-    val fagsakId: UUID,
     val klagePart: FormVilkår,
     val klageKonkret: FormVilkår,
     val klagefristOverholdt: FormVilkår,
@@ -19,7 +18,6 @@ data class FormDto(
 fun Form.tilDto(): FormDto =
     FormDto(
         behandlingId = this.behandlingId,
-        fagsakId = this.fagsakId,
         klagePart = this.klagePart,
         klageKonkret = this.klageKonkret,
         klagefristOverholdt = this.klagefristOverholdt,

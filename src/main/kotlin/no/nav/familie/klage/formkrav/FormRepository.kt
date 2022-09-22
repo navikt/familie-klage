@@ -7,7 +7,4 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface FormRepository : RepositoryInterface<Form, UUID>, InsertUpdateRepository<Form> {
-
-    fun findByBehandlingId(behandlingId: UUID): Form
-}
+interface FormRepository : RepositoryInterface<Form, UUID>, InsertUpdateRepository<Form>

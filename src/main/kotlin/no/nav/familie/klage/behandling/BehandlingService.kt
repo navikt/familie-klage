@@ -67,7 +67,7 @@ class BehandlingService(
             )
         ).id
 
-        return formService.opprettInitielleFormkrav(behandlingId, fagsak.id).behandlingId
+        return formService.opprettInitielleFormkrav(behandlingId).behandlingId
     }
 
     private fun hentKlageresultatDto(behandlingId: UUID): List<KlageresultatDto> {
