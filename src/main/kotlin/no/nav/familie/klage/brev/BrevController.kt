@@ -33,7 +33,7 @@ class BrevController(
     @PostMapping
     fun lagEllerOppdaterBrev(@RequestBody brevInnhold: FritekstBrevDto): Ressurs<ByteArray> {
         tilgangService.validerTilgangTilBehandling(brevInnhold.behandlingId, AuditLoggerEvent.UPDATE)
-        tilgangService.validerHarSaksbehandlerrolle()
+        tilgangService.validerHarSaksbehandlerrolleForBehandling(brevInnhold.behandlingId)
         return Ressurs.success(brevService.lagEllerOppdaterBrev(brevInnhold))
     }
 }

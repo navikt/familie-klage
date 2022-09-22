@@ -33,7 +33,7 @@ class BehandlingController(
     @PostMapping("{behandlingId}/ferdigstill")
     fun ferdigstillBehandling(@PathVariable behandlingId: UUID): Ressurs<Unit> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.CREATE)
-        tilgangService.validerHarSaksbehandlerrolle()
+        tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
         return Ressurs.success(ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId))
     }
 }

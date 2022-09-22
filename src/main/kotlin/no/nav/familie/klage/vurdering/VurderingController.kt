@@ -34,7 +34,7 @@ class VurderingController(
     @PostMapping
     fun opprettEllerOppdaterVurdering(@RequestBody vurdering: Vurdering): Ressurs<Vurdering> {
         tilgangService.validerTilgangTilBehandling(vurdering.behandlingId, AuditLoggerEvent.UPDATE)
-        tilgangService.validerHarSaksbehandlerrolle()
+        tilgangService.validerHarSaksbehandlerrolleForBehandling(vurdering.behandlingId)
         return Ressurs.success(vurderingService.opprettEllerOppdaterVurdering(vurdering))
     }
 

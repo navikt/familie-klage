@@ -2,16 +2,19 @@ package no.nav.familie.klage.infrastruktur.sikkerhet
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.felles.domain.AuditLogger
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.felles.domain.BehandlerRolle
 import no.nav.familie.klage.felles.domain.CustomKeyValue
 import no.nav.familie.klage.felles.domain.Sporingsdata
 import no.nav.familie.klage.felles.dto.Tilgang
+import no.nav.familie.klage.infrastruktur.config.FagsystemRolleConfig
 import no.nav.familie.klage.infrastruktur.config.RolleConfig
 import no.nav.familie.klage.infrastruktur.config.getValue
 import no.nav.familie.klage.infrastruktur.exception.ManglerTilgang
 import no.nav.familie.klage.personopplysninger.PersonopplysningerIntegrasjonerClient
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.cache.CacheManager
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -25,33 +28,6 @@ class TilgangService(
     private val behandlingService: BehandlingService,
     private val fagsakService: FagsakService
 ) {
-
-    /**
-     * Kun ved tilgangskontroll for enskild person, ellers bruk [validerTilgangTilPersonMedBarn]
-     */
-    fun validerTilgangTilPerson(personIdent: String, event: AuditLoggerEvent) {
-        val tilgang = personopplysningerIntegrasjonerClient.sjekkTilgangTilPerson(personIdent)
-        auditLogger.log(Sporingsdata(event, personIdent, tilgang))
-        if (!tilgang.harTilgang) {
-            throw ManglerTilgang(
-                melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
-                    "har ikke tilgang til $personIdent",
-                frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}"
-            )
-        }
-    }
-
-    fun validerTilgangTilPersonMedBarn(personIdent: String, event: AuditLoggerEvent) {
-        val tilgang = harTilgangTilPersonMedRelasjoner(personIdent)
-        auditLogger.log(Sporingsdata(event, personIdent, tilgang))
-        if (!tilgang.harTilgang) {
-            throw ManglerTilgang(
-                melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
-                    "har ikke tilgang til $personIdent eller dets barn",
-                frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}"
-            )
-        }
-    }
 
     fun validerTilgangTilBehandling(behandlingId: UUID, event: AuditLoggerEvent) {
         val personIdent = cacheManager.getValue("behandlingPersonIdent", behandlingId) {
@@ -83,45 +59,6 @@ class TilgangService(
         }
     }
 
-    fun validerHarSaksbehandlerrolle() {
-        validerTilgangTilRolle(BehandlerRolle.SAKSBEHANDLER)
-    }
-
-    fun validerHarBeslutterrolle() {
-        validerTilgangTilRolle(BehandlerRolle.BESLUTTER)
-    }
-
-    fun validerTilgangTilRolle(minimumsrolle: BehandlerRolle) {
-        if (!harTilgangTilRolle(minimumsrolle)) {
-            throw ManglerTilgang(
-                melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} har ikke tilgang " +
-                    "til å utføre denne operasjonen som krever minimumsrolle $minimumsrolle",
-                frontendFeilmelding = "Mangler nødvendig saksbehandlerrolle for å utføre handlingen"
-            )
-        }
-    }
-
-    fun harTilgangTilRolle(minimumsrolle: BehandlerRolle): Boolean {
-        return SikkerhetContext.harTilgangTilGittRolle(rolleConfig, minimumsrolle)
-    }
-
-//    /**
-//     * Filtrerer data basert på om man har tilgang til den eller ikke
-//     * Filtrer ikke på egen ansatt
-//     */
-//    fun <T> filtrerUtFortroligDataForRolle(values: List<T>, fn: (T) -> Adressebeskyttelse?): List<T> {
-//        val grupper = hentGrupperFraToken()
-//        val kode6gruppe = grupper.contains(rolleConfig.kode6)
-//        val kode7Gruppe = grupper.contains(rolleConfig.kode7)
-//        return values.filter {
-//            when (fn(it)?.gradering) {
-//                FORTROLIG -> kode7Gruppe
-//                STRENGT_FORTROLIG, STRENGT_FORTROLIG_UTLAND -> kode6gruppe
-//                else -> (!kode6gruppe)
-//            }
-//        }
-//    }
-
     /**
      * Sjekker cache om tilgangen finnes siden tidligere, hvis ikke hentes verdiet med [hentVerdi]
      * Resultatet caches sammen med identen for saksbehandleren på gitt [cacheName]
@@ -135,14 +72,9 @@ class TilgangService(
         } ?: error("Finner ikke verdi fra cache=$cacheName")
     }
 
-    fun validerSaksbehandler(saksbehandler: String): Boolean {
-        return SikkerhetContext.hentSaksbehandler() == saksbehandler
-    }
-
     fun validerTilgangTilFagsak(fagsakId: UUID, event: AuditLoggerEvent) {
-        val personIdent = cacheManager.getValue("fagsakIdent", fagsakId) {
-            fagsakService.hentFagsak(fagsakId).hentAktivIdent()
-        }
+        val personIdent = hentFagsak(fagsakId).hentAktivIdent()
+
         val tilgang = harTilgangTilPersonMedRelasjoner(personIdent)
         auditLogger.log(Sporingsdata(event, personIdent, tilgang, custom1 = CustomKeyValue("fagsak", fagsakId.toString())))
         if (!tilgang.harTilgang) {
@@ -152,5 +84,72 @@ class TilgangService(
                 frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}"
             )
         }
+    }
+
+    private fun hentFagsak(fagsakId: UUID): Fagsak {
+        return cacheManager.getValue("fagsak", fagsakId) {
+            fagsakService.hentFagsak(fagsakId)
+        }
+    }
+
+    fun validerHarSaksbehandlerrolleForBehandling(behandlingId: UUID) {
+        if (!harTilgangTilBehandlingGittRolle(behandlingId, BehandlerRolle.SAKSBEHANDLER)) {
+            throw ManglerTilgang(
+                melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} har ikke tilgang " +
+                    "til å utføre denne operasjonen som krever minimumsrolle ${BehandlerRolle.SAKSBEHANDLER}",
+                frontendFeilmelding = "Mangler nødvendig saksbehandlerrolle for å utføre handlingen"
+            )
+        }
+    }
+
+    fun harMinimumRolleTversFagsystem(minimumsrolle: BehandlerRolle): Boolean =
+        harTilgangTilGittRolleForFagsystem(rolleConfig.ba, minimumsrolle) ||
+            harTilgangTilGittRolleForFagsystem(rolleConfig.ef, minimumsrolle) ||
+            harTilgangTilGittRolleForFagsystem(rolleConfig.ks, minimumsrolle)
+
+    fun harTilgangTilBehandlingGittRolle(behandlingId: UUID, minimumsrolle: BehandlerRolle): Boolean {
+        return harTilgangTilFagsakGittRolle(behandlingService.hentBehandling(behandlingId).fagsakId, minimumsrolle)
+    }
+
+    fun harTilgangTilFagsakGittRolle(fagsakId: UUID, minimumsrolle: BehandlerRolle): Boolean {
+        val stønadstype = hentFagsak(fagsakId).stønadstype
+        return harTilgangTilGittRolle(stønadstype, minimumsrolle)
+    }
+
+    private fun harTilgangTilGittRolle(stønadstype: Stønadstype, minimumsrolle: BehandlerRolle): Boolean {
+        val rolleForFagsystem = when (stønadstype) {
+            Stønadstype.BARNETRYGD -> rolleConfig.ba
+            Stønadstype.OVERGANGSSTØNAD, Stønadstype.BARNETILSYN, Stønadstype.SKOLEPENGER -> rolleConfig.ef
+            Stønadstype.KONTANTSTØTTE -> rolleConfig.ks
+        }
+        return harTilgangTilGittRolleForFagsystem(rolleForFagsystem, minimumsrolle)
+    }
+
+    private fun harTilgangTilGittRolleForFagsystem(
+        fagsystemRolleConfig: FagsystemRolleConfig,
+        minimumsrolle: BehandlerRolle
+    ): Boolean {
+        val rollerFraToken = SikkerhetContext.hentGrupperFraToken()
+        val rollerForBruker = when {
+            SikkerhetContext.hentSaksbehandler() == SikkerhetContext.SYSTEM_FORKORTELSE -> listOf(
+                BehandlerRolle.SYSTEM,
+                BehandlerRolle.BESLUTTER,
+                BehandlerRolle.SAKSBEHANDLER,
+                BehandlerRolle.VEILEDER
+            )
+            rollerFraToken.contains(fagsystemRolleConfig.beslutter) -> listOf(
+                BehandlerRolle.BESLUTTER,
+                BehandlerRolle.SAKSBEHANDLER,
+                BehandlerRolle.VEILEDER
+            )
+            rollerFraToken.contains(fagsystemRolleConfig.saksbehandler) -> listOf(
+                BehandlerRolle.SAKSBEHANDLER,
+                BehandlerRolle.VEILEDER
+            )
+            rollerFraToken.contains(fagsystemRolleConfig.veileder) -> listOf(BehandlerRolle.VEILEDER)
+            else -> listOf(BehandlerRolle.UKJENT)
+        }
+
+        return rollerForBruker.contains(minimumsrolle)
     }
 }

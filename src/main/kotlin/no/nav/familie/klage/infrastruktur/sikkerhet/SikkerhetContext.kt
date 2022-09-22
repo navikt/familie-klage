@@ -1,7 +1,5 @@
 package no.nav.familie.klage.infrastruktur.sikkerhet
 
-import no.nav.familie.klage.felles.domain.BehandlerRolle
-import no.nav.familie.klage.infrastruktur.config.RolleConfig
 import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
 
 object SikkerhetContext {
@@ -55,30 +53,5 @@ object SikkerhetContext {
                 },
                 onFailure = { emptyList() }
             )
-    }
-
-    fun harTilgangTilGittRolle(rolleConfig: RolleConfig, minimumsrolle: BehandlerRolle): Boolean {
-        val rollerFraToken = hentGrupperFraToken()
-        val rollerForBruker = when {
-            hentSaksbehandler() == SYSTEM_FORKORTELSE -> listOf(
-                BehandlerRolle.SYSTEM,
-                BehandlerRolle.BESLUTTER,
-                BehandlerRolle.SAKSBEHANDLER,
-                BehandlerRolle.VEILEDER
-            )
-            rollerFraToken.contains(rolleConfig.ef.beslutter) -> listOf(
-                BehandlerRolle.BESLUTTER,
-                BehandlerRolle.SAKSBEHANDLER,
-                BehandlerRolle.VEILEDER
-            )
-            rollerFraToken.contains(rolleConfig.ef.saksbehandler) -> listOf(
-                BehandlerRolle.SAKSBEHANDLER,
-                BehandlerRolle.VEILEDER
-            )
-            rollerFraToken.contains(rolleConfig.ef.veileder) -> listOf(BehandlerRolle.VEILEDER)
-            else -> listOf(BehandlerRolle.UKJENT)
-        }
-
-        return rollerForBruker.contains(minimumsrolle)
     }
 }
