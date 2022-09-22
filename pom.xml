@@ -31,7 +31,7 @@
 		<java.version>17</java.version>
 		<kotlin.version>1.6.21</kotlin.version>
 		<springdoc.version>1.6.9</springdoc.version>
-		<mockk.version>1.12.5</mockk.version>
+		<mockk.version>1.12.8</mockk.version>
 		<felles.version>1.20220811104902_c1860ff</felles.version>
 		<prosessering.version>1.20220624132237_7f5ba9c</prosessering.version>
 		<start-class>no.nav.familie.klage.ApplicationKt</start-class>
