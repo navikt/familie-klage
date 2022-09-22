@@ -27,6 +27,7 @@ class BehandlingController(
     @GetMapping("{behandlingId}")
     fun hentBehandling(@PathVariable behandlingId: UUID): Ressurs<BehandlingDto> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerHarVeilederrolleForBehandling(behandlingId)
         return Ressurs.success(behandlingService.hentBehandlingDto(behandlingId))
     }
 

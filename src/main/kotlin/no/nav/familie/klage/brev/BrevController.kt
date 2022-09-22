@@ -27,6 +27,7 @@ class BrevController(
     @GetMapping("/{behandlingId}")
     fun hentBrev(@PathVariable behandlingId: UUID): Ressurs<BrevMedAvsnitt?> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerHarVeilederrolleForBehandling(behandlingId)
         return Ressurs.success(brevService.hentMellomlagretBrev(behandlingId))
     }
 

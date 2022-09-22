@@ -28,6 +28,7 @@ class VurderingController(
     @GetMapping("{behandlingId}")
     fun hentVurdering(@PathVariable behandlingId: UUID): Ressurs<VurderingDto?> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerHarVeilederrolleForBehandling(behandlingId)
         return Ressurs.success(vurderingService.hentVurderingDto(behandlingId))
     }
 
@@ -41,6 +42,7 @@ class VurderingController(
     @GetMapping("{behandlingId}/vedtak")
     fun hentVedtak(@PathVariable behandlingId: UUID): Ressurs<Vedtak?> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerHarVeilederrolleForBehandling(behandlingId)
         return Ressurs.success(vurderingService.hentVedtak(behandlingId))
     }
 }

@@ -93,10 +93,18 @@ class TilgangService(
     }
 
     fun validerHarSaksbehandlerrolleForBehandling(behandlingId: UUID) {
-        if (!harTilgangTilBehandlingGittRolle(behandlingId, BehandlerRolle.SAKSBEHANDLER)) {
+        validerHarRolleForBehandling(behandlingId, BehandlerRolle.SAKSBEHANDLER)
+    }
+
+    fun validerHarVeilederrolleForBehandling(behandlingId: UUID) {
+        validerHarRolleForBehandling(behandlingId, BehandlerRolle.VEILEDER)
+    }
+
+    private fun validerHarRolleForBehandling(behandlingId: UUID, minumumRolle: BehandlerRolle) {
+        if (!harTilgangTilBehandlingGittRolle(behandlingId, minumumRolle)) {
             throw ManglerTilgang(
                 melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} har ikke tilgang " +
-                    "til å utføre denne operasjonen som krever minimumsrolle ${BehandlerRolle.SAKSBEHANDLER}",
+                        "til å utføre denne operasjonen som krever minimumsrolle $minumumRolle",
                 frontendFeilmelding = "Mangler nødvendig saksbehandlerrolle for å utføre handlingen"
             )
         }
