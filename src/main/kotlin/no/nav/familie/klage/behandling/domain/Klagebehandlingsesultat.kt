@@ -20,7 +20,7 @@ data class Klagebehandlingsesultat(
     val mottattDato: LocalDate,
     val resultat: BehandlingResultat?,
     val årsak: Årsak?,
-    val vedtaksdato: LocalDateTime?,
+    val vedtaksdato: LocalDateTime?
 )
 
 fun Klagebehandlingsesultat.tilEksternKlagebehandlingDto() = KlagebehandlingDto(

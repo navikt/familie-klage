@@ -19,7 +19,7 @@ import java.util.UUID
 class StegService(
     private val behandlingRepository: BehandlingRepository,
     private val behandlingshistorikkService: BehandlingshistorikkService,
-    private val rolleConfig: RolleConfig,
+    private val rolleConfig: RolleConfig
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -36,7 +36,6 @@ class StegService(
         } else {
             logger.info("Behandling=$behandlingId er allerede i steg=$nesteSteg")
         }
-
     }
 
     private fun oppdaterBehandlingOgHistorikk(

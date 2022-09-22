@@ -16,6 +16,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching
 import no.nav.familie.klage.arbeidsfordeling.Arbeidsfordelingsenhet
 import no.nav.familie.klage.felles.dto.EgenAnsattResponse
 import no.nav.familie.klage.felles.dto.Tilgang
+import no.nav.familie.klage.infrastruktur.config.PdfMock.pdfAsBase64String
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.ef.søknad.Testsøknad
 import no.nav.familie.kontrakter.felles.BrukerIdType
@@ -129,7 +130,7 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                             )
                         )
                     ).withStatus(200)
-                ),
+                )
 
         )
 

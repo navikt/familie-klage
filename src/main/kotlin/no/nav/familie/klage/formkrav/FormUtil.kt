@@ -2,7 +2,6 @@ package no.nav.familie.klage.formkrav
 
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
-import java.util.UUID
 
 object FormUtil {
 

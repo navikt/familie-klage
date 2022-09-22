@@ -21,7 +21,7 @@ import java.util.UUID
 @Validated
 class FormController(
     private val formService: FormService,
-    private val tilgangService: TilgangService,
+    private val tilgangService: TilgangService
 ) {
 
     @GetMapping("vilkar/{behandlingId}")

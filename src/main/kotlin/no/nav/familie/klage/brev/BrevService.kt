@@ -118,7 +118,7 @@ class BrevService(
             behandlingId = behandlingId,
             deloverskrift = deloverskrift,
             innhold = innhold,
-            skalSkjulesIBrevbygger = skalSkjulesIBrevBygger,
+            skalSkjulesIBrevbygger = skalSkjulesIBrevBygger
         )
         return when (avsnittRepository.existsById(avsnittId)) {
             true -> avsnittRepository.update(avsnitt)

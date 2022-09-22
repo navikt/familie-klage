@@ -9,7 +9,7 @@ data class VurderingDto(
     val vedtak: Vedtak,
     val arsak: Årsak? = null,
     val hjemmel: Hjemmel? = null,
-    val beskrivelse: String,
+    val beskrivelse: String
 )
 
 fun Vurdering.tilDto(): VurderingDto =
@@ -18,5 +18,5 @@ fun Vurdering.tilDto(): VurderingDto =
         vedtak = this.vedtak,
         arsak = this.arsak,
         hjemmel = this.hjemmel,
-        beskrivelse = this.beskrivelse,
+        beskrivelse = this.beskrivelse
     )

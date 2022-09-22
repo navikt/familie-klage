@@ -185,8 +185,11 @@ data class Kontaktadresse(
 @Suppress("unused")
 enum class KontaktadresseType {
 
-    @JsonProperty("Innland") INNLAND,
-    @JsonProperty("Utland") UTLAND
+    @JsonProperty("Innland")
+    INNLAND,
+
+    @JsonProperty("Utland")
+    UTLAND
 }
 
 data class Postboksadresse(

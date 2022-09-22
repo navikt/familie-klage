@@ -41,7 +41,6 @@ internal class DistribusjonServiceTest {
 
     @Test
     fun journalførBrev() {
-
         val ident = "1"
         val fagsak = fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent(ident)))
         val behandlendeEnhet = "enhet"
@@ -72,7 +71,6 @@ internal class DistribusjonServiceTest {
 
     @Test
     fun distribuerBrev() {
-
         val journalpostSlot = slot<String>()
         val distribusjonstypeSlot = slot<Distribusjonstype>()
         val journalpostId = "journalpostId"

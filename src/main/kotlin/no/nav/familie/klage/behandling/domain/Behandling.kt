@@ -23,7 +23,7 @@ data class Behandling(
     val eksternFagsystemBehandlingId: String,
     val klageMottatt: LocalDate,
     val behandlendeEnhet: String,
-    val eksternBehandlingId: UUID = UUID.randomUUID(),
+    val eksternBehandlingId: UUID = UUID.randomUUID()
 )
 
 fun BehandlingStatus.erLåstForVidereBehandling() =

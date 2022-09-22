@@ -29,7 +29,6 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
 
     @Test
     fun insertBehandling() {
-
         val id = UUID.randomUUID()
 
         val behandling = behandlingRepository.insert(
@@ -57,7 +56,6 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
 
     @Test
     fun updateStatus() {
-
         val id = UUID.randomUUID()
 
         val behandling = behandlingRepository.insert(behandling(fagsak, id))
@@ -73,7 +71,6 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
 
     @Test
     fun updateSteg() {
-
         val id = UUID.randomUUID()
 
         val behandling = behandlingRepository.insert(behandling(fagsak, id))
@@ -88,7 +85,6 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
 
     @Test
     internal fun `findByEksternBehandlingIdAndFagsystem - forvent treff`() {
-
         val fagsakPersistert = testoppsettService.lagreFagsak(
             fagsakDomain().tilFagsakMedPerson(
                 setOf(PersonIdent("12345678901"))

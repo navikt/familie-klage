@@ -19,7 +19,6 @@ class ByEnvironmentStrategy : Strategy {
     }
 
     override fun isEnabled(map: MutableMap<String, String>, unleashContext: UnleashContext): Boolean {
-
         return unleashContext.environment
             .map { env -> map?.get(miljøKey)?.split(',')?.contains(env) ?: false }
             .orElse(false)

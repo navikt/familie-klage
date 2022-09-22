@@ -21,7 +21,7 @@ data class Vurdering(
 enum class Vedtak {
     VELG,
     OMGJØR_VEDTAK,
-    OPPRETTHOLD_VEDTAK,
+    OPPRETTHOLD_VEDTAK
 }
 
 enum class Hjemmel(val kabalHjemmel: KabalHjemmel) {
@@ -42,5 +42,5 @@ enum class Hjemmel(val kabalHjemmel: KabalHjemmel) {
     BT_NI(KabalHjemmel.BTRL_9),
     BT_TRETTEN(KabalHjemmel.BTRL_13),
     FT_EØS(KabalHjemmel.EOES_AVTALEN),
-    FT_EØS_FOR(KabalHjemmel.EOES_883_2004_6),
+    FT_EØS_FOR(KabalHjemmel.EOES_883_2004_6)
 }
