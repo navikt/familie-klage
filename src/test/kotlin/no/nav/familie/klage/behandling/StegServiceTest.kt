@@ -104,6 +104,15 @@ internal class StegServiceTest {
     }
 
     @Test
+    internal fun `skal ikke oppdatere steg hvis den allerede er i det samme steget`() {
+        stegService.oppdaterSteg(behandlingId, behandling.steg)
+
+        verify(exactly = 0) { behandlingRepository.updateSteg(any(), any()) }
+        verify(exactly = 0) { behandlingRepository.updateStatus(any(), any()) }
+        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(any(), any()) }
+    }
+
+    @Test
     fun `skal feile hvis saksbehandler mangler rolle`() {
         unmockkObject(SikkerhetContext)
         testWithBrukerContext(groups = listOf(veilederRolle)) {
