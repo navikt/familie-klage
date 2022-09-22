@@ -10,7 +10,7 @@ import java.util.UUID
 data class BrevMedAvsnitt(
     val behandlingId: UUID,
     val overskrift: String,
-    val avsnitt: List<Avsnitt>?,
+    val avsnitt: List<Avsnitt>?
 )
 
 data class Brev(

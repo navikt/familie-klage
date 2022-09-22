@@ -18,7 +18,7 @@ import java.util.UUID
 @Validated
 class BehandlingshistorikkController(
     private val behandlingshistorikkService: BehandlingshistorikkService,
-    private val tilgangService: TilgangService,
+    private val tilgangService: TilgangService
 ) {
 
     @GetMapping("{behandlingId}")

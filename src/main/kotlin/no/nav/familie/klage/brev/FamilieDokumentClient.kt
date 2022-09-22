@@ -21,7 +21,6 @@ class FamilieDokumentClient(
 ) {
 
     fun genererPdfFraHtml(html: String): ByteArray {
-
         val htmlTilPdfURI = URI.create("$familieDokumentUrl/$HTML_TIL_PDF")
 
         return postForEntity(

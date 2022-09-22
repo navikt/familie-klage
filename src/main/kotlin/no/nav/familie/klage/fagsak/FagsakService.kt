@@ -16,7 +16,7 @@ import java.util.UUID
 class FagsakService(
     private val fagsakRepository: FagsakRepository,
     private val fagsakPersonService: FagsakPersonService,
-    private val pdlClient: PdlClient,
+    private val pdlClient: PdlClient
 ) {
 
     @Transactional

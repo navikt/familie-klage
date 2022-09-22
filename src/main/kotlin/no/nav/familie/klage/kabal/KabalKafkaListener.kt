@@ -54,7 +54,7 @@ data class BehandlingEvent(
     val kilde: String,
     val kabalReferanse: String,
     val type: BehandlingEventType,
-    val detaljer: BehandlingDetaljer,
+    val detaljer: BehandlingDetaljer
 ) {
     fun mottattEllerAvsluttetTidspunkt(): LocalDateTime {
         val feilmelding = "Burde hatt behandlingdetaljer for event fra kabal av type $type"
@@ -93,7 +93,7 @@ enum class BehandlingEventType {
 data class BehandlingDetaljer(
     val klagebehandlingAvsluttet: KlagebehandlingAvsluttetDetaljer? = null,
     val ankebehandlingOpprettet: AnkebehandlingOpprettetDetaljer? = null,
-    val ankebehandlingAvsluttet: AnkebehandlingAvsluttetDetaljer? = null,
+    val ankebehandlingAvsluttet: AnkebehandlingAvsluttetDetaljer? = null
 ) {
 
     fun journalpostReferanser(): List<String> {
@@ -133,7 +133,7 @@ data class AnkebehandlingOpprettetDetaljer(
 data class AnkebehandlingAvsluttetDetaljer(
     val avsluttet: LocalDateTime,
     val utfall: ExternalUtfall,
-    val journalpostReferanser: List<String>,
+    val journalpostReferanser: List<String>
 ) {
 
     fun oppgaveTekst(): String {

@@ -30,7 +30,6 @@ class BehandlingEventService(
 
     @Transactional
     fun handleEvent(behandlingEvent: BehandlingEvent) {
-
         val finnesKlageresultat = klageresultatRepository.existsById(behandlingEvent.eventId)
         if (finnesKlageresultat) {
             logger.warn("Hendelse fra kabal med eventId: ${behandlingEvent.eventId} er allerede lest - prosesserer ikke hendelse.")
@@ -77,7 +76,6 @@ class BehandlingEventService(
     }
 
     private fun opprettOppgaveTask(behandlingEvent: BehandlingEvent, behandling: Behandling) {
-
         val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
             ?: error("Finner ikke fagsak for behandlingId: ${behandling.id}")
         val oppgaveTekst = "${behandlingEvent.detaljer.oppgaveTekst()} Gjelder: ${fagsakDomain.stønadstype}"

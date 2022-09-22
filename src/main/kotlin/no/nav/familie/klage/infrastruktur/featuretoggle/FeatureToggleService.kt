@@ -12,7 +12,7 @@ interface FeatureToggleService : DisposableBean {
 }
 
 enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
-    START_BEHANDLING("familie.klage.start-behandling"),
+    START_BEHANDLING("familie.klage.start-behandling")
     ;
 
     companion object {
