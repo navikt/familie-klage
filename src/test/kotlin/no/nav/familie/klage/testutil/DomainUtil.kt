@@ -77,10 +77,9 @@ object DomainUtil {
             beskrivelse = "En begrunnelse"
         )
 
-    fun form(fagsakId: UUID, behandlingId: UUID) =
+    fun oppfyltForm(behandlingId: UUID) =
         Form(
             behandlingId = behandlingId,
-            fagsakId = fagsakId,
             klagePart = FormVilkår.OPPFYLT,
             klagefristOverholdt = FormVilkår.OPPFYLT,
             klageKonkret = FormVilkår.OPPFYLT,
