@@ -8,12 +8,11 @@ import java.util.UUID
 data class Form(
     @Id
     val behandlingId: UUID,
-    val fagsakId: UUID = UUID.randomUUID(),
     val klagePart: FormVilkår,
     val klagefristOverholdt: FormVilkår,
     val klageKonkret: FormVilkår,
     val klageSignert: FormVilkår,
-    val saksbehandlerBegrunnelse: String = "begrunnelsen kommer her",
+    val saksbehandlerBegrunnelse: String = "",
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar()
 )
