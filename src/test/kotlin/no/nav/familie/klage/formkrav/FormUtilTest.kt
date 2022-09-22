@@ -2,7 +2,7 @@ package no.nav.familie.klage.formkrav
 
 import no.nav.familie.klage.formkrav.FormUtil.formkravErFerdigUtfyllt
 import no.nav.familie.klage.formkrav.FormUtil.formkravErOppfylt
-import no.nav.familie.klage.formkrav.FormUtil.initiellForm
+import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
 import org.assertj.core.api.Assertions.assertThat
@@ -27,7 +27,7 @@ internal class FormUtilTest {
         internal fun `et eller flere er ikke utfylt`() {
             val oppfyltForm = oppfyltForm(UUID.randomUUID())
             assertThat(formkravErFerdigUtfyllt(oppfyltForm.copy(klagePart = FormVilkår.IKKE_SATT))).isFalse
-            assertThat(formkravErFerdigUtfyllt(initiellForm(UUID.randomUUID()))).isFalse
+            assertThat(formkravErFerdigUtfyllt(Form(UUID.randomUUID()))).isFalse
         }
     }
 
@@ -41,7 +41,7 @@ internal class FormUtilTest {
 
         @Test
         internal fun `et eller flere vilkår er ikke oppfylt`() {
-            val form = FormUtil.initiellForm(UUID.randomUUID())
+            val form = Form(UUID.randomUUID())
             assertThat(formkravErOppfylt(form)).isFalse
             assertThat(formkravErOppfylt(form.copy(klagePart = FormVilkår.OPPFYLT))).isFalse
 

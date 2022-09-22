@@ -4,7 +4,6 @@ import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.formkrav.FormUtil.formkravErFerdigUtfyllt
 import no.nav.familie.klage.formkrav.FormUtil.formkravErOppfylt
-import no.nav.familie.klage.formkrav.FormUtil.initiellForm
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.dto.FormDto
 import no.nav.familie.klage.formkrav.dto.tilDto
@@ -23,7 +22,7 @@ class FormService(
 
     @Transactional
     fun opprettInitielleFormkrav(behandlingId: UUID): Form {
-        return formRepository.insert(initiellForm(behandlingId = behandlingId))
+        return formRepository.insert(Form(behandlingId = behandlingId))
     }
 
     @Transactional

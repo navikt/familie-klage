@@ -6,7 +6,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.klage.formkrav.FormUtil.initiellForm
+import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.formkrav.dto.tilDto
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
@@ -27,7 +27,7 @@ internal class FormServiceTest {
     @BeforeEach
     internal fun setUp() {
         justRun { stegService.oppdaterSteg(any(), any()) }
-        every { formRepository.findByIdOrNull(any()) } returns initiellForm(behandlingId)
+        every { formRepository.findByIdOrNull(any()) } returns Form(behandlingId)
         every { formRepository.update(any()) } answers { firstArg() }
     }
 

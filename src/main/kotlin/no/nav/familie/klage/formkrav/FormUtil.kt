@@ -6,23 +6,6 @@ import java.util.UUID
 
 object FormUtil {
 
-    fun initiellForm(
-        behandlingId: UUID,
-        klagePart: FormVilkår = FormVilkår.IKKE_SATT,
-        klageKonkret: FormVilkår = FormVilkår.IKKE_SATT,
-        klagefristOverholdt: FormVilkår = FormVilkår.IKKE_SATT,
-        klageSignert: FormVilkår = FormVilkår.IKKE_SATT,
-        saksbehandlerBegrunnelse: String = ""
-    ): Form =
-        Form(
-            behandlingId,
-            klagePart,
-            klageKonkret,
-            klagefristOverholdt,
-            klageSignert,
-            saksbehandlerBegrunnelse
-        )
-
     fun formkravErFerdigUtfyllt(form: Form) =
         form.alleSvar().none { it == FormVilkår.IKKE_SATT } &&
             form.saksbehandlerBegrunnelse.isNotBlank()
