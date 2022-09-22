@@ -50,7 +50,7 @@ internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
     @BeforeEach
     internal fun setUp() {
         headers.setBearerAuth(lokalTestToken)
-        BrukerContextUtil.mockBrukerContext(groups = listOf(rolleConfig.saksbehandlerRolle))
+        BrukerContextUtil.mockBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler))
 
         testoppsettService.lagreFagsak(fagsak)
         testoppsettService.lagreBehandling(behandling)

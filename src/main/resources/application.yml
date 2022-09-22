@@ -140,11 +140,19 @@ PDL_URL: https://pdl-api.${ON_PREM_URL_ENV}-fss-pub.nais.io
 KABAL_URL: https://kabal-api.intern.nav.no
 
 rolle:
-  veileder: "31778fd8-3b71-4867-8db6-a81235fbe001"
-  saksbehandler: "6406aba2-b930-41d3-a85b-dd13731bc974"
-  beslutter: "5fcc0e1d-a4c2-49f0-93dc-27c9fea41e54"
-  kode6: "ad7b87a6-9180-467c-affc-20a566b0fec0" # 0000-GA-Strengt_Fortrolig_Adresse
-  kode7: "9ec6487d-f37a-4aad-a027-cd221c1ac32b" # 0000-GA-Fortrolig_Adresse
+  ba:
+    saksbehandler: "847e3d72-9dc1-41c3-80ff-f5d4acdd5d46"
+    beslutter: "7a271f87-39fb-468b-a9ee-6cf3c070f548"
+    veileder: "199c2b39-e535-4ae8-ac59-8ccbee7991ae"
+  ef:
+    saksbehandler: "6406aba2-b930-41d3-a85b-dd13731bc974"
+    beslutter: "5fcc0e1d-a4c2-49f0-93dc-27c9fea41e54"
+    veileder: "31778fd8-3b71-4867-8db6-a81235fbe001"
+  ks:
+    saksbehandler: "e40090eb-c2fb-400e-b412-e9084019a73b"
+    beslutter: "4e7f23d9-5db1-45c0-acec-89c86a9ec678"
+    veileder: "54cd86b8-2e23-48b2-8852-b05b5827bb0f"
+
 
 funksjonsbrytere:
   enabled: true
