@@ -85,7 +85,7 @@ internal class FerdigstillBehandlingServiceTest {
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
 
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD)
-        assertThat(stegSlot.captured).isEqualTo(StegType.OVERFØRING_TIL_KABAL)
+        assertThat(stegSlot.captured).isEqualTo(StegType.KABAL_VENTER_SVAR)
         verify { kabalService.sendTilKabal(fagsak, behandling, vurdering) }
     }
 
@@ -103,7 +103,7 @@ internal class FerdigstillBehandlingServiceTest {
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
 
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD)
-        assertThat(stegSlot.captured).isEqualTo(StegType.OVERFØRING_TIL_KABAL)
+        assertThat(stegSlot.captured).isEqualTo(StegType.KABAL_VENTER_SVAR)
         verify { kabalService.sendTilKabal(fagsak, behandling, vurdering) }
         verify(exactly = 0) { distribusjonService.journalførBrev(any()) }
     }
@@ -119,7 +119,7 @@ internal class FerdigstillBehandlingServiceTest {
         every { stegService.oppdaterSteg(any(), capture(stegSlot)) } just Runs
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
 
-        assertThat(stegSlot.captured).isEqualTo(StegType.OVERFØRING_TIL_KABAL)
+        assertThat(stegSlot.captured).isEqualTo(StegType.KABAL_VENTER_SVAR)
         verify { kabalService.sendTilKabal(fagsak, behandling, vurdering) }
         verify(exactly = 0) { distribusjonService.journalførBrev(any()) }
         verify(exactly = 0) { distribusjonService.distribuerBrev(any()) }
@@ -140,7 +140,7 @@ internal class FerdigstillBehandlingServiceTest {
         every { stegService.oppdaterSteg(any(), capture(stegSlot)) } just Runs
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
 
-        assertThat(stegSlot.captured).isEqualTo(StegType.OVERFØRING_TIL_KABAL)
+        assertThat(stegSlot.captured).isEqualTo(StegType.KABAL_VENTER_SVAR)
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD)
         verify(exactly = 0) { distribusjonService.journalførBrev(any()) }
         verify(exactly = 0) { distribusjonService.distribuerBrev(any()) }
