@@ -97,6 +97,5 @@ internal class TilgangServiceTest {
                 assertThat(tilgangService.harTilgangTilBehandlingGittRolle(behandlingEf.id, BehandlerRolle.BESLUTTER)).isTrue
             }
         }
-
     }
 }

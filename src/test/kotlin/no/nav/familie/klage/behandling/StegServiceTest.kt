@@ -51,8 +51,7 @@ internal class StegServiceTest {
         mockkObject(SikkerhetContext)
 
         every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler"
-        // every { SikkerhetContext.harTilgangTilGittRolle(any(), any()) } returns true
-
+        every { tilgangService.harTilgangTilBehandlingGittRolle(any(), any()) } returns true
         every { behandlingRepository.findByIdOrThrow(behandlingId) } returns behandling
         every { behandlingRepository.updateSteg(behandlingId, capture(stegSlot)) } just Runs
         every { behandlingRepository.updateStatus(behandlingId, capture(statusSlot)) } just Runs
@@ -108,14 +107,10 @@ internal class StegServiceTest {
 
     @Test
     fun `skal feile hvis saksbehandler mangler rolle`() {
-        unmockkObject(SikkerhetContext)
-        /*testWithBrukerContext(groups = listOf(RolleConfigTestUtil.veilederRolle)) {
-            val feil = assertThrows<Feil> { stegService.oppdaterSteg(behandlingId, StegType.VURDERING) }
+        every { tilgangService.harTilgangTilBehandlingGittRolle(any(), any()) } returns false
 
-            assertThat(feil.frontendFeilmelding).contains("Saksbehandler har ikke tilgang til å oppdatere behandlingssteg")
-        }
-
-         */
+        val feil = assertThrows<Feil> { stegService.oppdaterSteg(behandlingId, StegType.VURDERING) }
+        assertThat(feil.frontendFeilmelding).contains("Saksbehandler har ikke tilgang til å oppdatere behandlingssteg")
     }
 
     @Test
