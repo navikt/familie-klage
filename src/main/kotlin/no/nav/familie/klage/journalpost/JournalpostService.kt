@@ -17,25 +17,25 @@ class JournalpostService(private val familieIntegrasjonerClient: FamilieIntegras
     }
 
     fun finnJournalposter(
-            personIdent: String,
-            antall: Int = 200,
-            typer: List<Journalposttype> = Journalposttype.values().toList()
+        personIdent: String,
+        antall: Int = 200,
+        typer: List<Journalposttype> = Journalposttype.values().toList()
     ): List<Journalpost> {
         return familieIntegrasjonerClient.finnJournalposter(
-                JournalposterForBrukerRequest(
-                        brukerId = Bruker(
-                                id = personIdent,
-                                type = BrukerIdType.FNR
-                        ),
-                        antall = antall,
-                        tema = listOf(Tema.ENF),
-                        journalposttype = typer
-                )
+            JournalposterForBrukerRequest(
+                brukerId = Bruker(
+                    id = personIdent,
+                    type = BrukerIdType.FNR
+                ),
+                antall = antall,
+                tema = listOf(Tema.ENF),
+                journalposttype = typer
+            )
         )
     }
 
     fun hentDokument(
-            journalpostId: String,
-            dokumentInfoId: String,
+        journalpostId: String,
+        dokumentInfoId: String
     ): ByteArray = familieIntegrasjonerClient.hentDokument(journalpostId, dokumentInfoId)
 }

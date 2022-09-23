@@ -11,8 +11,8 @@ import java.util.UUID
 
 @Service
 class VedleggService(
-        private val behandlingService: BehandlingService,
-        private val journalpostService: JournalpostService
+    private val behandlingService: BehandlingService,
+    private val journalpostService: JournalpostService
 ) {
 
     fun finnVedleggPåBehandling(behandlingId: UUID): List<DokumentinfoDto> {
@@ -20,22 +20,22 @@ class VedleggService(
         val journalposter = journalpostService.finnJournalposter(personIdent)
 
         return journalposter
-                .flatMap { journalpost -> journalpost.dokumenter?.map { tilDokumentInfoDto(it, journalpost) } ?: emptyList() }
+            .flatMap { journalpost -> journalpost.dokumenter?.map { tilDokumentInfoDto(it, journalpost) } ?: emptyList() }
     }
 
     private fun tilDokumentInfoDto(
-            dokumentInfo: DokumentInfo,
-            journalpost: Journalpost
+        dokumentInfo: DokumentInfo,
+        journalpost: Journalpost
     ): DokumentinfoDto {
         return DokumentinfoDto(
-                dokumentinfoId = dokumentInfo.dokumentInfoId,
-                filnavn = dokumentInfo.dokumentvarianter?.find { it.variantformat == Dokumentvariantformat.ARKIV }?.filnavn,
-                tittel = dokumentInfo.tittel ?: "Tittel mangler",
-                journalpostId = journalpost.journalpostId,
-                dato = mestRelevanteDato(journalpost),
-                journalstatus = journalpost.journalstatus,
-                journalposttype = journalpost.journalposttype,
-                logiskeVedlegg = dokumentInfo.logiskeVedlegg?.map { LogiskVedleggDto(tittel = it.tittel) } ?: emptyList()
+            dokumentinfoId = dokumentInfo.dokumentInfoId,
+            filnavn = dokumentInfo.dokumentvarianter?.find { it.variantformat == Dokumentvariantformat.ARKIV }?.filnavn,
+            tittel = dokumentInfo.tittel ?: "Tittel mangler",
+            journalpostId = journalpost.journalpostId,
+            dato = mestRelevanteDato(journalpost),
+            journalstatus = journalpost.journalstatus,
+            journalposttype = journalpost.journalposttype,
+            logiskeVedlegg = dokumentInfo.logiskeVedlegg?.map { LogiskVedleggDto(tittel = it.tittel) } ?: emptyList()
         )
     }
 

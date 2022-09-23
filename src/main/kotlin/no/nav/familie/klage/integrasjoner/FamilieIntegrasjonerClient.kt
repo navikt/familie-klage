@@ -69,7 +69,7 @@ class FamilieIntegrasjonerClient(
 
     fun finnJournalposter(journalposterForBrukerRequest: JournalposterForBrukerRequest): List<Journalpost> {
         return postForEntity<Ressurs<List<Journalpost>>>(journalpostURI, journalposterForBrukerRequest).data
-               ?: error("Kunne ikke hente vedlegg for ${journalposterForBrukerRequest.brukerId.id}")
+            ?: error("Kunne ikke hente vedlegg for ${journalposterForBrukerRequest.brukerId.id}")
     }
 
     fun hentJournalpost(journalpostId: String): Journalpost {
@@ -87,16 +87,16 @@ class FamilieIntegrasjonerClient(
 
     fun hentDokument(journalpostId: String, dokumentInfoId: String): ByteArray {
         return getForEntity<Ressurs<ByteArray>>(
-                UriComponentsBuilder
-                        .fromUriString(
-                                "$journalpostURI/hentdokument/" +
-                                "$journalpostId/$dokumentInfoId"
-                        )
-                        .queryParam("variantFormat", Dokumentvariantformat.ARKIV)
-                        .build()
-                        .toUri()
+            UriComponentsBuilder
+                .fromUriString(
+                    "$journalpostURI/hentdokument/" +
+                        "$journalpostId/$dokumentInfoId"
+                )
+                .queryParam("variantFormat", Dokumentvariantformat.ARKIV)
+                .build()
+                .toUri()
         )
-                .getDataOrThrow()
+            .getDataOrThrow()
     }
 
     private fun headerMedSaksbehandler(saksbehandler: String?): HttpHeaders {

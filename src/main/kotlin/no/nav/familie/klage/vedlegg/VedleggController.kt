@@ -24,10 +24,10 @@ import java.util.UUID
 @ProtectedWithClaims(issuer = "azuread")
 @Validated
 class VedleggController(
-        private val vedleggService: VedleggService,
-        private val tilgangService: TilgangService,
-        private val journalpostService: JournalpostService,
-        private val pdlClient: PdlClient
+    private val vedleggService: VedleggService,
+    private val tilgangService: TilgangService,
+    private val journalpostService: JournalpostService,
+    private val pdlClient: PdlClient
 ) {
 
     @GetMapping("/{behandlingId}")
@@ -45,9 +45,9 @@ class VedleggController(
     }
 
     private fun validerDokumentKanHentes(
-            journalpost: Journalpost,
-            dokumentInfoId: String,
-            journalpostId: String
+        journalpost: Journalpost,
+        dokumentInfoId: String,
+        journalpostId: String
     ) {
         val dokument = journalpost.dokumenter?.find { it.dokumentInfoId == dokumentInfoId }
         feilHvis(dokument == null) {
