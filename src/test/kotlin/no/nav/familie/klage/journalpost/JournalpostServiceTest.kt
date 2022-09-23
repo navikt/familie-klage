@@ -7,7 +7,6 @@ import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.testutil.DomainUtil.journalpost
 import no.nav.familie.klage.testutil.DomainUtil.journalpostDokument
-import no.nav.familie.kontrakter.felles.journalpost.Dokumentstatus
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

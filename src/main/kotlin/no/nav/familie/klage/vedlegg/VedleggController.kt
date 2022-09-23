@@ -1,14 +1,11 @@
 package no.nav.familie.klage.vedlegg
 
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
-import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvisIkke
-import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.journalpost.JournalpostService
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.Ressurs
-import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariantformat
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.MediaType

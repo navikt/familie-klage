@@ -47,7 +47,7 @@ class JournalpostService(private val familieIntegrasjonerClient: FamilieIntegras
 
     private fun validerDokumentKanHentes(
         journalpost: Journalpost,
-        dokumentInfoId: String,
+        dokumentInfoId: String
     ) {
         val dokument = journalpost.dokumenter?.find { it.dokumentInfoId == dokumentInfoId }
         feilHvis(dokument == null) {
