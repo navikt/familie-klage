@@ -10,7 +10,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder
 class ApplicationLocal
 
 fun main(args: Array<String>) {
-
     SpringApplicationBuilder(ApplicationConfig::class.java)
         .initializers(DbContainerInitializer())
         .profiles(

@@ -26,7 +26,9 @@ import org.springframework.data.repository.findByIdOrNull
 class OpprettOppgaveTaskTest : OppslagSpringRunnerTest() {
 
     @Autowired lateinit var fagsakRepository: FagsakRepository
+
     @Autowired lateinit var behandlingRepository: BehandlingRepository
+
     @Autowired lateinit var personRepository: FagsakPersonRepository
 
     private val oppgaveClient = mockk<OppgaveClient>()

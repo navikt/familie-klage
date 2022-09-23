@@ -7,6 +7,7 @@ import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakRepository
+import no.nav.familie.klage.kabal.AnkebehandlingOpprettetDetaljer
 import no.nav.familie.klage.kabal.BehandlingDetaljer
 import no.nav.familie.klage.kabal.BehandlingEvent
 import no.nav.familie.klage.kabal.BehandlingEventType
@@ -59,7 +60,12 @@ internal class BehandlingEventServiceTest {
 
     @Test
     fun `Skal ikke ferdigstille behandling, bare lage oppgave, når event er av type anke`() {
-        val behandlingEvent = lagBehandlingEvent(behandlingEventType = BehandlingEventType.ANKEBEHANDLING_OPPRETTET)
+        val behandlingEvent = lagBehandlingEvent(
+            behandlingEventType = BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
+            behandlingDetaljer = BehandlingDetaljer(
+                ankebehandlingOpprettet = AnkebehandlingOpprettetDetaljer(LocalDateTime.now())
+            )
+        )
 
         behandlingEventService.handleEvent(behandlingEvent)
 
@@ -96,14 +102,17 @@ internal class BehandlingEventServiceTest {
         verify(exactly = 1) { klageresultatRepository.insert(any()) }
     }
 
-    private fun lagBehandlingEvent(behandlingEventType: BehandlingEventType = BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET): BehandlingEvent {
+    private fun lagBehandlingEvent(
+        behandlingEventType: BehandlingEventType = BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET,
+        behandlingDetaljer: BehandlingDetaljer? = null
+    ): BehandlingEvent {
         val behandlingEvent = BehandlingEvent(
             eventId = UUID.randomUUID(),
             kildeReferanse = UUID.randomUUID().toString(),
             kilde = "EF",
             kabalReferanse = "kabalReferanse",
             type = behandlingEventType,
-            detaljer = BehandlingDetaljer(
+            detaljer = behandlingDetaljer ?: BehandlingDetaljer(
                 KlagebehandlingAvsluttetDetaljer(
                     LocalDateTime.now().minusDays(1),
                     ExternalUtfall.MEDHOLD,

@@ -80,7 +80,9 @@ class AuditLogger(@Value("\${NAIS_APP_NAME}") private val applicationName: Strin
         return if (!tilgang.harTilgang && begrunnelse != null) {
             val denyPolicy = begrunnelse.replace(regexFlereSpaces, " ").split(" ").joinToString("_")
             "flexString2Label=deny_policy flexString2=$denyPolicy "
-        } else ""
+        } else {
+            ""
+        }
     }
 
     private fun createCustomString(data: Sporingsdata): String {

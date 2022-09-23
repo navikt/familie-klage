@@ -43,7 +43,8 @@ class ApplicationConfig {
     fun kotlinModule(): KotlinModule = KotlinModule()
 
     @Bean
-    @Primary fun objectMapper() = ObjectMapperProvider.objectMapper
+    @Primary
+    fun objectMapper() = ObjectMapperProvider.objectMapper
 
     @Bean
     fun logFilter(): FilterRegistrationBean<LogFilter> {

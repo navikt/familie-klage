@@ -52,7 +52,7 @@ class FerdigstillBehandlingService(
     }
 
     private fun stegForResultat(resultat: BehandlingResultat): StegType = when (resultat) {
-        IKKE_MEDHOLD -> StegType.OVERFØRING_TIL_KABAL
+        IKKE_MEDHOLD -> StegType.KABAL_VENTER_SVAR
         MEDHOLD, IKKE_MEDHOLD_FORMKRAV_AVVIST, HENLAGT -> StegType.BEHANDLING_FERDIGSTILT
         IKKE_SATT -> error("Kan ikke utlede neste steg når behandlingsresultatet er IKKE_SATT")
     }
@@ -90,12 +90,19 @@ class FerdigstillBehandlingService(
         }
     }
 
-    private fun distribuerOgOppdaterResultat(journalpostId: String, behandlingId: UUID, distribusjonResultat: DistribusjonResultat) {
+    private fun distribuerOgOppdaterResultat(
+        journalpostId: String,
+        behandlingId: UUID,
+        distribusjonResultat: DistribusjonResultat
+    ) {
         if (distribusjonResultat.brevDistribusjonId != null) {
             logger.info("Distribuerer ikke dokument da dette er gjort fra før for behandling=$behandlingId")
         } else {
             val brevDistribusjonId = distribusjonService.distribuerBrev(journalpostId)
-            distribusjonResultatService.oppdaterBrevDistribusjonId(brevDistribusjonId = brevDistribusjonId, behandlingId = behandlingId)
+            distribusjonResultatService.oppdaterBrevDistribusjonId(
+                brevDistribusjonId = brevDistribusjonId,
+                behandlingId = behandlingId
+            )
         }
     }
 

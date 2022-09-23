@@ -1,7 +1,6 @@
 package no.nav.familie.klage.formkrav
 
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
-import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.dto.FormDto
 import no.nav.familie.klage.formkrav.dto.tilDto
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
@@ -22,7 +21,7 @@ import java.util.UUID
 @Validated
 class FormController(
     private val formService: FormService,
-    private val tilgangService: TilgangService,
+    private val tilgangService: TilgangService
 ) {
 
     @GetMapping("vilkar/{behandlingId}")
@@ -32,9 +31,9 @@ class FormController(
     }
 
     @PostMapping
-    fun opprettEllerOppdaterFormkravVilkår(@RequestBody form: Form): Ressurs<FormDto> {
+    fun oppdaterFormkravVilkår(@RequestBody form: FormDto): Ressurs<FormDto> {
         tilgangService.validerTilgangTilBehandling(form.behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolle()
-        return Ressurs.success(formService.opprettEllerOppdaterForm(form))
+        return Ressurs.success(formService.oppdaterForm(form))
     }
 }

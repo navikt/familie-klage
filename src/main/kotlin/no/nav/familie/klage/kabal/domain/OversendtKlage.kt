@@ -19,12 +19,12 @@ data class OversendtKlageAnkeV3(
     val innsendtTilNav: LocalDate,
     val kilde: Fagsystem,
     val ytelse: Ytelse,
-    val kommentar: String? = null,
+    val kommentar: String? = null
 )
 
 enum class Type(override val id: String, override val navn: String, override val beskrivelse: String) : Kode {
     KLAGE("1", "Klage", "Klage"),
-    ANKE("2", "Anke", "Anke"),
+    ANKE("2", "Anke", "Anke")
 }
 
 enum class OversendtPartIdType {
@@ -58,7 +58,7 @@ data class OversendtSak(
 )
 
 data class OversendtDokumentReferanse(
-    val type: MottakDokumentType,
+    val type: MottakDokumentType
 )
 
 enum class MottakDokumentType {
