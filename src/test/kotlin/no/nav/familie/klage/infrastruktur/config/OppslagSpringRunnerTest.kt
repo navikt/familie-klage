@@ -130,10 +130,10 @@ abstract class OppslagSpringRunnerTest {
 
     protected val lokalTestToken: String
         get() {
-            return onBehalfOfToken(role = rolleConfig.beslutterRolle)
+            return onBehalfOfToken(role = rolleConfig.ef.beslutter)
         }
 
-    protected fun onBehalfOfToken(role: String = rolleConfig.beslutterRolle, saksbehandler: String = "julenissen"): String {
+    protected fun onBehalfOfToken(role: String = rolleConfig.ef.beslutter, saksbehandler: String = "julenissen"): String {
         return TokenUtil.onBehalfOfToken(mockOAuth2Server, role, saksbehandler)
     }
 

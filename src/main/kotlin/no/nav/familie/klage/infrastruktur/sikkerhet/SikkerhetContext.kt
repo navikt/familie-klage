@@ -66,16 +66,16 @@ object SikkerhetContext {
                 BehandlerRolle.SAKSBEHANDLER,
                 BehandlerRolle.VEILEDER
             )
-            rollerFraToken.contains(rolleConfig.beslutterRolle) -> listOf(
+            rollerFraToken.contains(rolleConfig.ef.beslutter) -> listOf(
                 BehandlerRolle.BESLUTTER,
                 BehandlerRolle.SAKSBEHANDLER,
                 BehandlerRolle.VEILEDER
             )
-            rollerFraToken.contains(rolleConfig.saksbehandlerRolle) -> listOf(
+            rollerFraToken.contains(rolleConfig.ef.saksbehandler) -> listOf(
                 BehandlerRolle.SAKSBEHANDLER,
                 BehandlerRolle.VEILEDER
             )
-            rollerFraToken.contains(rolleConfig.veilederRolle) -> listOf(BehandlerRolle.VEILEDER)
+            rollerFraToken.contains(rolleConfig.ef.veileder) -> listOf(BehandlerRolle.VEILEDER)
             else -> listOf(BehandlerRolle.UKJENT)
         }
 

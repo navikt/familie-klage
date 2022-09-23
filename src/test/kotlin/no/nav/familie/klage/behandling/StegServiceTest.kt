@@ -11,6 +11,7 @@ import io.mockk.verify
 import io.mockk.verifyOrder
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
+import no.nav.familie.klage.infrastruktur.config.FagsystemRolleConfig
 import no.nav.familie.klage.infrastruktur.config.RolleConfig
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
@@ -35,11 +36,9 @@ internal class StegServiceTest {
         behandlingRepository,
         behandlingshistorikkService,
         RolleConfig(
-            beslutterRolle = "",
-            saksbehandlerRolle = "",
-            veilederRolle = veilederRolle,
-            kode6 = "",
-            kode7 = ""
+            FagsystemRolleConfig("", "", ""),
+            FagsystemRolleConfig("", "", veilederRolle),
+            FagsystemRolleConfig("", "", "")
         )
     )
     val behandlingId = UUID.randomUUID()
