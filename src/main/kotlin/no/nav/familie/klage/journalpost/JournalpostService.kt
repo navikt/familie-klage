@@ -1,9 +1,12 @@
 package no.nav.familie.klage.journalpost
 
+import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvisIkke
+import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.journalpost.Bruker
+import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariantformat
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.JournalposterForBrukerRequest
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
@@ -35,7 +38,23 @@ class JournalpostService(private val familieIntegrasjonerClient: FamilieIntegras
     }
 
     fun hentDokument(
-        journalpostId: String,
+        journalpost: Journalpost,
         dokumentInfoId: String
-    ): ByteArray = familieIntegrasjonerClient.hentDokument(journalpostId, dokumentInfoId)
+    ): ByteArray {
+        validerDokumentKanHentes(journalpost, dokumentInfoId)
+        return familieIntegrasjonerClient.hentDokument(journalpost.journalpostId, dokumentInfoId)
+    }
+
+    private fun validerDokumentKanHentes(
+        journalpost: Journalpost,
+        dokumentInfoId: String,
+    ) {
+        val dokument = journalpost.dokumenter?.find { it.dokumentInfoId == dokumentInfoId }
+        feilHvis(dokument == null) {
+            "Finner ikke dokument med $dokumentInfoId for journalpost=${journalpost.journalpostId}"
+        }
+        brukerfeilHvisIkke(dokument.dokumentvarianter?.any { it.variantformat == Dokumentvariantformat.ARKIV } ?: false) {
+            "Vedlegget er sannsynligvis under arbeid, må åpnes i gosys"
+        }
+    }
 }

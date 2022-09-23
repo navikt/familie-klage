@@ -40,22 +40,7 @@ class VedleggController(
     fun hentDokumentSomPdf(@PathVariable journalpostId: String, @PathVariable dokumentInfoId: String): ByteArray {
         val (journalpost, personIdent) = finnJournalpostOgPersonIdent(journalpostId)
         tilgangService.validerTilgangTilPersonMedBarn(personIdent, AuditLoggerEvent.ACCESS)
-        validerDokumentKanHentes(journalpost, dokumentInfoId, journalpostId)
-        return journalpostService.hentDokument(journalpostId, dokumentInfoId)
-    }
-
-    private fun validerDokumentKanHentes(
-        journalpost: Journalpost,
-        dokumentInfoId: String,
-        journalpostId: String
-    ) {
-        val dokument = journalpost.dokumenter?.find { it.dokumentInfoId == dokumentInfoId }
-        feilHvis(dokument == null) {
-            "Finner ikke dokument med $dokumentInfoId for journalpost=$journalpostId"
-        }
-        brukerfeilHvisIkke(dokument.dokumentvarianter?.any { it.variantformat == Dokumentvariantformat.ARKIV } ?: false) {
-            "Vedlegget er sannsynligvis under arbeid, må åpnes i gosys"
-        }
+        return journalpostService.hentDokument(journalpost, dokumentInfoId)
     }
 
     private fun finnJournalpostOgPersonIdent(journalpostId: String): Pair<Journalpost, String> {

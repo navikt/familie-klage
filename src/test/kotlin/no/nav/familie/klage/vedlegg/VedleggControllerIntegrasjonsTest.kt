@@ -47,7 +47,7 @@ internal class VedleggControllerIntegrasjonsTest : OppslagSpringRunnerTest() {
 
     private fun finnVedlegg(behandlingId: UUID): ResponseEntity<Ressurs<List<DokumentinfoDto>>> {
         return restTemplate.exchange<Ressurs<List<DokumentinfoDto>>>(
-            localhost("/api/vedlegg/$behandlingId/ferdigstill"),
+            localhost("/api/vedlegg/$behandlingId"),
             HttpMethod.GET,
             HttpEntity(null, headers)
         )
