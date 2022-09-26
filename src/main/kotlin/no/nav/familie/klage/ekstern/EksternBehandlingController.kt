@@ -1,6 +1,7 @@
 package no.nav.familie.klage.ekstern
 
 import no.nav.familie.klage.behandling.BehandlingService
+import no.nav.familie.klage.behandling.OpprettBehandlingService
 import no.nav.familie.klage.behandling.domain.tilEksternKlagebehandlingDto
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
@@ -23,7 +24,11 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping(path = ["/api/ekstern/behandling"])
 @ProtectedWithClaims(issuer = "azuread")
 @Validated
-class EksternBehandlingController(val tilgangService: TilgangService, val behandlingService: BehandlingService) {
+class EksternBehandlingController(
+    private val tilgangService: TilgangService,
+    private val behandlingService: BehandlingService,
+    private val opprettBehandlingService: OpprettBehandlingService
+) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -49,6 +54,6 @@ class EksternBehandlingController(val tilgangService: TilgangService, val behand
 
     @PostMapping("/opprett")
     fun opprettBehandling(@RequestBody opprettKlageBehandlingDto: OpprettKlagebehandlingRequest) {
-        behandlingService.opprettBehandling(opprettKlageBehandlingDto)
+        opprettBehandlingService.opprettBehandling(opprettKlageBehandlingDto)
     }
 }
