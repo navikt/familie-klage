@@ -20,6 +20,14 @@ import no.nav.familie.klage.kabal.domain.Klageresultat
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
+import no.nav.familie.kontrakter.felles.journalpost.DokumentInfo
+import no.nav.familie.kontrakter.felles.journalpost.Dokumentstatus
+import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariant
+import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariantformat
+import no.nav.familie.kontrakter.felles.journalpost.Journalpost
+import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
+import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
+import no.nav.familie.kontrakter.felles.journalpost.RelevantDato
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
@@ -148,4 +156,34 @@ object DomainUtil {
             behandlingId = behandlingId
         )
     }
+
+    fun journalpost(dokumenter: List<DokumentInfo> = emptyList(), relevanteDatoer: List<RelevantDato> = emptyList()) = Journalpost(
+        journalpostId = UUID.randomUUID().toString(),
+        journalposttype = Journalposttype.I,
+        journalstatus = Journalstatus.MOTTATT,
+        tema = "ENF",
+        behandlingstema = null,
+        tittel = "Tut og kjør",
+        sak = null,
+        bruker = null,
+        avsenderMottaker = null,
+        journalforendeEnhet = null,
+        kanal = null,
+        dokumenter = dokumenter,
+        relevanteDatoer = relevanteDatoer,
+        eksternReferanseId = null
+    )
+
+    fun journalpostDokument(
+        status: Dokumentstatus = Dokumentstatus.FERDIGSTILT,
+        dokumentvarianter: List<Dokumentvariant>? = listOf(Dokumentvariant(Dokumentvariantformat.ARKIV))
+    ) = DokumentInfo(
+        dokumentInfoId = UUID.randomUUID().toString(),
+        tittel = "Tittel",
+        brevkode = null,
+        dokumentstatus = status,
+        dokumentvarianter = dokumentvarianter,
+        logiskeVedlegg = listOf()
+
+    )
 }

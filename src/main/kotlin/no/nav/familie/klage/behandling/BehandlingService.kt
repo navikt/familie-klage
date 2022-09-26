@@ -79,9 +79,10 @@ class BehandlingService(
         return behandlingRepository.finnKlagebehandlingsresultat(eksternFagsakId, fagsystem)
     }
 
-    fun hentAktivIdent(behandlingId: UUID): String {
+    fun hentAktivIdent(behandlingId: UUID): Pair<String, Fagsak> {
         val behandling = hentBehandling(behandlingId)
-        return fagsakService.hentFagsak(behandling.fagsakId).hentAktivIdent()
+        val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
+        return Pair(fagsak.hentAktivIdent(), fagsak)
     }
 
     fun oppdaterBehandlingsresultatOgVedtaksdato(behandlingId: UUID, behandlingsresultat: BehandlingResultat) {
