@@ -29,6 +29,18 @@ class TilgangService(
     private val fagsakService: FagsakService
 ) {
 
+    fun validerTilgangTilPersonMedBarn(personIdent: String, event: AuditLoggerEvent) {
+        val tilgang = harTilgangTilPersonMedRelasjoner(personIdent)
+        auditLogger.log(Sporingsdata(event, personIdent, tilgang))
+        if (!tilgang.harTilgang) {
+            throw ManglerTilgang(
+                melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
+                        "har ikke tilgang til $personIdent eller dets barn",
+                frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}"
+            )
+        }
+    }
+
     fun validerTilgangTilBehandling(behandlingId: UUID, event: AuditLoggerEvent) {
         val personIdent = cacheManager.getValue("behandlingPersonIdent", behandlingId) {
             behandlingService.hentAktivIdent(behandlingId).first
