@@ -27,6 +27,7 @@ import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariantformat
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
+import no.nav.familie.kontrakter.felles.journalpost.RelevantDato
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
@@ -156,7 +157,7 @@ object DomainUtil {
         )
     }
 
-    fun journalpost(dokumenter: List<DokumentInfo> = emptyList()) = Journalpost(
+    fun journalpost(dokumenter: List<DokumentInfo> = emptyList(), relevanteDatoer: List<RelevantDato> = emptyList()) = Journalpost(
         journalpostId = UUID.randomUUID().toString(),
         journalposttype = Journalposttype.I,
         journalstatus = Journalstatus.MOTTATT,
@@ -169,7 +170,7 @@ object DomainUtil {
         journalforendeEnhet = null,
         kanal = null,
         dokumenter = dokumenter,
-        relevanteDatoer = listOf(),
+        relevanteDatoer = relevanteDatoer,
         eksternReferanseId = null
     )
 
