@@ -31,7 +31,7 @@ class TilgangService(
 
     fun validerTilgangTilBehandling(behandlingId: UUID, event: AuditLoggerEvent) {
         val personIdent = cacheManager.getValue("behandlingPersonIdent", behandlingId) {
-            behandlingService.hentAktivIdent(behandlingId)
+            behandlingService.hentAktivIdent(behandlingId).first
         }
 
         val tilgang = harTilgangTilPersonMedRelasjoner(personIdent)
