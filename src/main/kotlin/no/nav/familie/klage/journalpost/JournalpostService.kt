@@ -4,12 +4,12 @@ import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvisIkke
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.kontrakter.felles.BrukerIdType
-import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.journalpost.Bruker
 import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariantformat
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.JournalposterForBrukerRequest
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.stereotype.Service
 
 @Service
@@ -21,6 +21,7 @@ class JournalpostService(private val familieIntegrasjonerClient: FamilieIntegras
 
     fun finnJournalposter(
         personIdent: String,
+        stønadType: Stønadstype,
         antall: Int = 200,
         typer: List<Journalposttype> = Journalposttype.values().toList()
     ): List<Journalpost> {
@@ -31,7 +32,7 @@ class JournalpostService(private val familieIntegrasjonerClient: FamilieIntegras
                     type = BrukerIdType.FNR
                 ),
                 antall = antall,
-                tema = listOf(Tema.ENF),
+                tema = listOf(stønadType.tilTema()),
                 journalposttype = typer
             )
         )

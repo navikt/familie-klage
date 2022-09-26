@@ -16,8 +16,8 @@ class VedleggService(
 ) {
 
     fun finnVedleggPåBehandling(behandlingId: UUID): List<DokumentinfoDto> {
-        val personIdent = behandlingService.hentAktivIdent(behandlingId)
-        val journalposter = journalpostService.finnJournalposter(personIdent)
+        val (personIdent, fagsak) = behandlingService.hentAktivIdent(behandlingId)
+        val journalposter = journalpostService.finnJournalposter(personIdent, fagsak.stønadstype)
 
         return journalposter
             .flatMap { journalpost -> journalpost.dokumenter?.map { tilDokumentInfoDto(it, journalpost) } ?: emptyList() }
