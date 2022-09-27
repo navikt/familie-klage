@@ -1,4 +1,4 @@
-package no.nav.familie.klage.integrasjoner
+package no.nav.familie.klage.oppgave
 
 import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
