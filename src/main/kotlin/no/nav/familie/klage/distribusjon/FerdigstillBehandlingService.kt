@@ -12,6 +12,7 @@ import no.nav.familie.klage.kabal.KabalService
 import no.nav.familie.klage.personopplysninger.pdl.logger
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.HENLAGT
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_MEDHOLD
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_SATT
@@ -52,7 +53,7 @@ class FerdigstillBehandlingService(
 
     private fun stegForResultat(resultat: BehandlingResultat): StegType = when (resultat) {
         IKKE_MEDHOLD -> StegType.KABAL_VENTER_SVAR
-        MEDHOLD, IKKE_MEDHOLD_FORMKRAV_AVVIST -> StegType.BEHANDLING_FERDIGSTILT
+        MEDHOLD, IKKE_MEDHOLD_FORMKRAV_AVVIST, HENLAGT -> StegType.BEHANDLING_FERDIGSTILT
         IKKE_SATT -> error("Kan ikke utlede neste steg når behandlingsresultatet er IKKE_SATT")
     }
 
