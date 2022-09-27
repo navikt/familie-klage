@@ -3,13 +3,14 @@ package no.nav.familie.klage.behandling
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.verify
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.behandling.dto.HenlagtÅrsak
 import no.nav.familie.klage.behandling.dto.HenlagtÅrsak.TRUKKET_TILBAKE
+import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.repository.findByIdOrThrow
@@ -32,10 +33,15 @@ import org.springframework.http.HttpStatus
 internal class BehandlingServiceTest {
 
     val klageresultatRepository = mockk<KlageresultatRepository>()
-    val formService = mockk<FormService>()
     val fagsakService = mockk<FagsakService>()
     val behandlingRepository = mockk<BehandlingRepository>()
-    val behandlingService = BehandlingService(behandlingRepository, fagsakService, formService, klageresultatRepository)
+    val behandlinghistorikkService = mockk<BehandlingshistorikkService>()
+    val behandlingService = BehandlingService(
+        behandlingRepository,
+        fagsakService,
+        klageresultatRepository,
+        behandlinghistorikkService
+    )
     val behandlingSlot = slot<Behandling>()
 
     @BeforeAll
@@ -46,6 +52,7 @@ internal class BehandlingServiceTest {
         } answers {
             behandlingSlot.captured
         }
+        every { behandlinghistorikkService.opprettBehandlingshistorikk(any(), any()) } returns mockk()
     }
 
     @AfterAll
@@ -95,6 +102,13 @@ internal class BehandlingServiceTest {
         internal fun `skal ikke kunne henlegge behandling som er ferdigstilt`() {
             val behandling = behandling(fagsak(), status = BehandlingStatus.FERDIGSTILT)
             henleggOgForventApiFeilmelding(behandling, TRUKKET_TILBAKE)
+        }
+
+        @Test
+        internal fun `henlegg og forvent historikkinnslag`() {
+            val behandling = behandling(fagsak(), status = BehandlingStatus.UTREDES)
+            henleggOgForventOk(behandling, TRUKKET_TILBAKE)
+            verify { behandlinghistorikkService.opprettBehandlingshistorikk(any(), StegType.BEHANDLING_FERDIGSTILT) }
         }
     }
 }

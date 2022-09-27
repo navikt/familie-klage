@@ -8,6 +8,7 @@ import no.nav.familie.klage.behandling.domain.erUnderArbeidAvSaksbehandler
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.behandling.dto.tilDto
+import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
@@ -28,7 +29,8 @@ import java.util.UUID
 class BehandlingService(
     private val behandlingRepository: BehandlingRepository,
     private val fagsakService: FagsakService,
-    private val klageresultatRepository: KlageresultatRepository
+    private val klageresultatRepository: KlageresultatRepository,
+    private val behandlinghistorikkService: BehandlingshistorikkService
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -95,7 +97,7 @@ class BehandlingService(
             status = FERDIGSTILT
         )
 
-        // TODO: Legg til historikkinnslag
+        behandlinghistorikkService.opprettBehandlingshistorikk(behandlingId, BEHANDLING_FERDIGSTILT)
         // TODO: Ferdigstill oppgave
 
         behandlingRepository.update(henlagtBehandling)
