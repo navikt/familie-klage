@@ -78,7 +78,8 @@ CREATE TABLE IF NOT EXISTS behandling (
     ekstern_fagsystem_behandling_id VARCHAR                             NOT NULL,
     klage_mottatt                   TIMESTAMP(3)                        NOT NULL,
     behandlende_enhet               VARCHAR                             NOT NULL,
-    ekstern_behandling_id           UUID                                NOT NULL
+    ekstern_behandling_id           UUID                                NOT NULL,
+    henlagt_arsak                   VARCHAR
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS behandling_ekstern_behandling_id_idx
