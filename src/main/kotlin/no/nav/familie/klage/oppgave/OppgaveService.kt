@@ -5,6 +5,7 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.oppgave.OppgaveUtil.lagFristForOppgave
+import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
@@ -21,8 +22,6 @@ class OppgaveService(
     private val behandleSakOppgaveRepository: BehandleSakOppgaveRepository
 ) {
 
-    val BEHANDLINGSTYPE_KLAGE = "ae0058"
-
     fun opprettBehandleSakOppgave(behandlingId: UUID) {
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         val behandling = behandlingService.hentBehandling(behandlingId)
@@ -35,7 +34,7 @@ class OppgaveService(
             fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
             beskrivelse = "Klagebehandling i ny løsning",
             enhetsnummer = behandling.behandlendeEnhet,
-            behandlingstype = BEHANDLINGSTYPE_KLAGE,
+            behandlingstype = Behandlingstema.Klage.value,
             behandlesAvApplikasjon = "familie-klage",
             tilordnetRessurs = SikkerhetContext.hentSaksbehandler(strict = true),
             behandlingstema = null
