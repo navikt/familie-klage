@@ -1,6 +1,7 @@
 package no.nav.familie.klage.oppgave
 
 import no.nav.familie.klage.behandling.BehandlingService
+import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.oppgave.OppgaveUtil.lagFristForOppgave
@@ -44,5 +45,10 @@ class OppgaveService(
         behandleSakOppgaveRepository.insert(
             BehandleSakOppgave(behandlingId = behandling.id, oppgaveId = oppgaveId)
         )
+    }
+
+    fun ferdigstillOppgaveForBehandling(behandling: Behandling) {
+        val behandleSakOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandling.id)
+        oppgaveClient.ferdigstillOppgave(behandleSakOppgave.oppgaveId)
     }
 }

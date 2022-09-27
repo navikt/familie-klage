@@ -29,6 +29,12 @@ class OppgaveClient(
         return pakkUtRespons(respons, uri, "opprettOppgave").oppgaveId
     }
 
+    fun ferdigstillOppgave(oppgaveId: Long) {
+        val uri = URI.create("$oppgaveUri/$oppgaveId/ferdigstill")
+        val respons = patchForEntity<Ressurs<OppgaveResponse>>(uri, "")
+        pakkUtRespons(respons, uri, "ferdigstillOppgave")
+    }
+
     private fun <T> pakkUtRespons(
         respons: Ressurs<T>,
         uri: URI?,
@@ -48,4 +54,5 @@ class OppgaveClient(
             )
         }
     }
+
 }

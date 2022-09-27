@@ -9,6 +9,7 @@ import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.kabal.KabalService
+import no.nav.familie.klage.oppgave.OppgaveService
 import no.nav.familie.klage.personopplysninger.pdl.logger
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
@@ -29,7 +30,8 @@ class FerdigstillBehandlingService(
     private val distribusjonResultatService: DistribusjonResultatService,
     private val vurderingService: VurderingService,
     private val formService: FormService,
-    private val stegService: StegService
+    private val stegService: StegService,
+    private val oppgaveService: OppgaveService
 ) {
 
     /**
@@ -46,6 +48,7 @@ class FerdigstillBehandlingService(
         distribuerOgOppdaterResultat(journalpostId, behandlingId, distribusjonResultat)
 
         sendTilKabalOgOppdaterResultat(behandling, distribusjonResultat, behandlingsresultat)
+        oppgaveService.ferdigstillOppgaveForBehandling(behandling)
         behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(behandlingId, behandlingsresultat)
         stegService.oppdaterSteg(behandlingId, stegForResultat(behandlingsresultat))
     }
