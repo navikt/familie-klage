@@ -1,10 +1,12 @@
 package no.nav.familie.klage.behandling.domain
 
+import no.nav.familie.klage.behandling.dto.HenlagtÅrsak
 import no.nav.familie.klage.felles.domain.Sporbar
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Embedded
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -23,7 +25,9 @@ data class Behandling(
     val eksternFagsystemBehandlingId: String,
     val klageMottatt: LocalDate,
     val behandlendeEnhet: String,
-    val eksternBehandlingId: UUID = UUID.randomUUID()
+    val eksternBehandlingId: UUID = UUID.randomUUID(),
+    @Column("henlagt_arsak")
+    val henlagtÅrsak: HenlagtÅrsak? = null
 )
 
 fun BehandlingStatus.erLåstForVidereBehandling() =
