@@ -10,7 +10,6 @@ import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
-import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.tilDto
@@ -19,11 +18,9 @@ import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus.FERDIGSTILT
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
-import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -31,7 +28,6 @@ import java.util.UUID
 class BehandlingService(
     private val behandlingRepository: BehandlingRepository,
     private val fagsakService: FagsakService,
-    private val formService: FormService,
     private val klageresultatRepository: KlageresultatRepository
 ) {
 
@@ -45,33 +41,14 @@ class BehandlingService(
             .tilDto(stønadstype, hentKlageresultatDto(behandlingId))
     }
 
-    fun hentNavnFraBehandlingsId(behandlingId: UUID): String {
-        return "Navn Navnesen"
+    fun opprettBehandling(behandling: Behandling): Behandling {
+        validerKanOppretteBehandling(behandling.fagsakId)
+        return behandlingRepository.insert(behandling)
     }
 
-    @Transactional
-    fun opprettBehandling(
-        opprettKlagebehandlingRequest: OpprettKlagebehandlingRequest
-    ): UUID {
-        val fagsak = fagsakService.hentEllerOpprettFagsak(
-            ident = opprettKlagebehandlingRequest.ident,
-            eksternId = opprettKlagebehandlingRequest.eksternFagsakId,
-            fagsystem = opprettKlagebehandlingRequest.fagsystem,
-            stønadstype = opprettKlagebehandlingRequest.stønadstype
-        )
-
-        validerKanOppretteBehandling(fagsak)
-
-        val behandlingId = behandlingRepository.insert(
-            Behandling(
-                fagsakId = fagsak.id,
-                eksternFagsystemBehandlingId = opprettKlagebehandlingRequest.eksternBehandlingId,
-                klageMottatt = opprettKlagebehandlingRequest.klageMottatt,
-                behandlendeEnhet = "4489" // TODO: Må inn i request
-            )
-        ).id
-
-        return formService.opprettInitielleFormkrav(behandlingId).behandlingId
+    // TODO
+    fun hentNavnFraBehandlingsId(behandlingId: UUID): String {
+        return "Navn Navnesen"
     }
 
     private fun hentKlageresultatDto(behandlingId: UUID): List<KlageresultatDto> {
@@ -83,9 +60,10 @@ class BehandlingService(
         return behandlingRepository.finnKlagebehandlingsresultat(eksternFagsakId, fagsystem)
     }
 
-    fun hentAktivIdent(behandlingId: UUID): String {
+    fun hentAktivIdent(behandlingId: UUID): Pair<String, Fagsak> {
         val behandling = hentBehandling(behandlingId)
-        return fagsakService.hentFagsak(behandling.fagsakId).hentAktivIdent()
+        val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
+        return Pair(fagsak.hentAktivIdent(), fagsak)
     }
 
     fun oppdaterBehandlingsresultatOgVedtaksdato(behandlingId: UUID, behandlingsresultat: BehandlingResultat) {
@@ -97,11 +75,11 @@ class BehandlingService(
         behandlingRepository.update(oppdatertBehandling)
     }
 
-    private fun validerKanOppretteBehandling(fagsak: Fagsak) {
-        val behandlinger = behandlingRepository.findByFagsakId(fagsak.id)
+    private fun validerKanOppretteBehandling(fagsakId: UUID) {
+        val behandlinger = behandlingRepository.findByFagsakId(fagsakId)
 
         brukerfeilHvis(behandlinger.any { it.status.erUnderArbeidAvSaksbehandler() }) {
-            "Det eksisterer allerede en klagebehandling som ikke er ferdigstilt på fagsak med id=${fagsak.id}"
+            "Det eksisterer allerede en klagebehandling som ikke er ferdigstilt på fagsak med id=$fagsakId"
         }
     }
 

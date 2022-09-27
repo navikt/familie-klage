@@ -1,6 +1,6 @@
 package no.nav.familie.klage.test
 
-import no.nav.familie.klage.behandling.BehandlingService
+import no.nav.familie.klage.behandling.OpprettBehandlingService
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
@@ -8,7 +8,6 @@ import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.MediaType
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -21,13 +20,12 @@ import kotlin.random.Random
 @RequestMapping(path = ["/api/test"], produces = [MediaType.APPLICATION_JSON_VALUE])
 @ProtectedWithClaims(issuer = "azuread")
 @Validated
-class TestController(private val behandlingService: BehandlingService) {
+class TestController(private val opprettBehandlingService: OpprettBehandlingService) {
 
     @PostMapping("opprett")
     fun opprettDummybehandling(@RequestBody request: DummybehandlingRequest): Ressurs<UUID> {
         return Ressurs.success(
-            behandlingService.opprettBehandling(
-
+            opprettBehandlingService.opprettBehandling(
                 OpprettKlagebehandlingRequest(
                     request.ident,
                     request.stønadstype,
@@ -38,13 +36,6 @@ class TestController(private val behandlingService: BehandlingService) {
                     request.behandlendeEnhet
                 )
             )
-        )
-    }
-
-    @GetMapping
-    fun hentSøknadDatoer(): Ressurs<String> {
-        return Ressurs.success(
-            "Hentet tekst fra backend"
         )
     }
 
