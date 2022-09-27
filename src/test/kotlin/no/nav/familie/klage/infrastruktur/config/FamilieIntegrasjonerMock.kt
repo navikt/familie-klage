@@ -39,12 +39,15 @@ import no.nav.familie.kontrakter.felles.kodeverk.KodeverkDto
 import no.nav.familie.kontrakter.felles.medlemskap.Medlemskapsinfo
 import no.nav.familie.kontrakter.felles.navkontor.NavKontorEnhet
 import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.personopplysning.ADRESSEBESKYTTELSEGRADERING
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlin.math.absoluteValue
+import kotlin.random.Random
 
 @Component
 class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
@@ -130,7 +133,9 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                             )
                         )
                     ).withStatus(200)
-                )
+                ),
+            post(urlEqualTo("${integrasjonerConfig.oppgaveUri.path}/opprett"))
+                .willReturn(okJson(objectMapper.writeValueAsString(Ressurs.success(OppgaveResponse(Random.nextLong().absoluteValue)))))
 
         )
 

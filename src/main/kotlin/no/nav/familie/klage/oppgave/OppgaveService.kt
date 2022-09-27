@@ -19,6 +19,8 @@ class OppgaveService(
     private val behandlingService: BehandlingService
 ) {
 
+    val BEHANDLINGSTYPE_KLAGE = "ae0058"
+
     fun opprettBehandleSakOppgave(behandlingId: UUID) {
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         val behandling = behandlingService.hentBehandling(behandlingId)
@@ -27,11 +29,11 @@ class OppgaveService(
             ident = OppgaveIdentV2(ident = fagsak.hentAktivIdent(), gruppe = IdentGruppe.FOLKEREGISTERIDENT),
             saksId = fagsak.eksternId, // fagsakId fra fagsystem
             tema = fagsak.stønadstype.tilTema(), //
-            oppgavetype = Oppgavetype.VurderKonsekvensForYtelse,
+            oppgavetype = Oppgavetype.BehandleSak,
             fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
             beskrivelse = "Klagebehandling i ny løsning",
             enhetsnummer = behandling.behandlendeEnhet,
-            behandlingstype = "ae0058",
+            behandlingstype = BEHANDLINGSTYPE_KLAGE,
             behandlesAvApplikasjon = "familie-klage",
             tilordnetRessurs = SikkerhetContext.hentSaksbehandler(strict = true),
             behandlingstema = null
