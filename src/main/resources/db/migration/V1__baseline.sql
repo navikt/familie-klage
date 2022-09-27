@@ -1,235 +1,165 @@
-create table if not exists task
-(
-    id bigserial
-        constraint task_pkey
-            primary key,
-    payload varchar not null,
-    status varchar(20) default 'UBEHANDLET'::character varying not null,
-    versjon bigint default 0,
-    opprettet_tid timestamp(3) default LOCALTIMESTAMP,
-    type varchar not null,
-    metadata varchar,
-    trigger_tid timestamp(3) default LOCALTIMESTAMP,
-    avvikstype varchar
+CREATE TABLE IF NOT EXISTS task (
+    id            BIGSERIAL PRIMARY KEY,
+    payload       VARCHAR                                              NOT NULL,
+    status        VARCHAR(20)  DEFAULT 'UBEHANDLET'::CHARACTER VARYING NOT NULL,
+    versjon       BIGINT       DEFAULT 0,
+    opprettet_tid TIMESTAMP(3) DEFAULT LOCALTIMESTAMP,
+    type          VARCHAR                                              NOT NULL,
+    metadata      VARCHAR,
+    trigger_tid   TIMESTAMP(3) DEFAULT LOCALTIMESTAMP,
+    avvikstype    VARCHAR
 );
 
-create unique index if not exists task_payload_type_idx
-    on task (payload, type);
+CREATE UNIQUE INDEX IF NOT EXISTS task_payload_type_idx
+    ON task (payload, type);
 
-create index if not exists task_status_idx
-    on task (status);
+CREATE INDEX IF NOT EXISTS task_status_idx
+    ON task (status);
 
-create table if not exists task_logg
-(
-    id bigserial
-        constraint task_logg_pkey
-            primary key,
-    task_id bigint not null
-        constraint henvendelse_logg_henvendelse_id_fkey
-            references task,
-    type varchar not null,
-    node varchar(100) not null,
-    opprettet_tid timestamp(3) default LOCALTIMESTAMP,
-    melding varchar,
-    endret_av varchar(100) default 'VL'::character varying
+CREATE TABLE IF NOT EXISTS task_logg (
+    id            BIGSERIAL PRIMARY KEY,
+    task_id       BIGINT       NOT NULL REFERENCES task (id),
+    type          VARCHAR      NOT NULL,
+    node          VARCHAR(100) NOT NULL,
+    opprettet_tid TIMESTAMP(3) DEFAULT LOCALTIMESTAMP,
+    melding       VARCHAR,
+    endret_av     VARCHAR(100) DEFAULT 'VL'::CHARACTER VARYING
 );
 
-create index if not exists henvendelse_logg_henvendelse_id_idx
-    on task_logg (task_id);
+CREATE INDEX IF NOT EXISTS henvendelse_logg_henvendelse_id_idx
+    ON task_logg (task_id);
 
-create table if not exists form
-(
-    behandling_id uuid not null
-        constraint form_pkey
-            primary key,
-    opprettet_av varchar default 'VL'::character varying not null,
-    opprettet_tid timestamp(3) default LOCALTIMESTAMP not null,
-    endret_av varchar not null,
-    endret_tid timestamp default LOCALTIMESTAMP not null,
-    klage_part varchar default 'IKKE_SATT'::character varying,
-    klage_konkret varchar default 'IKKE_SATT'::character varying,
-    klage_signert varchar default 'IKKE_SATT'::character varying,
-    klagefrist_overholdt varchar default 'IKKE_SATT'::character varying,
-    saksbehandler_begrunnelse varchar default 'IKKE_SATT'::character varying
+CREATE TABLE IF NOT EXISTS fagsak_person (
+    id            UUID                                         NOT NULL PRIMARY KEY,
+    opprettet_av  VARCHAR      DEFAULT 'VL'::CHARACTER VARYING NOT NULL,
+    opprettet_tid TIMESTAMP(3) DEFAULT LOCALTIMESTAMP          NOT NULL
 );
 
-create table if not exists vurdering
-(
-    behandling_id uuid not null
-        constraint vurdering_pkey
-            primary key,
-    vedtak varchar not null,
-    arsak varchar,
-    hjemmel varchar,
-    beskrivelse varchar not null,
-    opprettet_av varchar default 'VL'::character varying not null,
-    opprettet_tid timestamp(3) default LOCALTIMESTAMP not null,
-    endret_av varchar not null,
-    endret_tid timestamp default LOCALTIMESTAMP not null
+CREATE TABLE IF NOT EXISTS person_ident (
+    ident            VARCHAR                                      NOT NULL PRIMARY KEY,
+    fagsak_person_id UUID                                         NOT NULL REFERENCES fagsak_person (id),
+    opprettet_av     VARCHAR      DEFAULT 'VL'::CHARACTER VARYING NOT NULL,
+    opprettet_tid    TIMESTAMP(3) DEFAULT LOCALTIMESTAMP          NOT NULL,
+    endret_av        VARCHAR                                      NOT NULL,
+    endret_tid       TIMESTAMP    DEFAULT LOCALTIMESTAMP          NOT NULL
 );
 
-create table if not exists klage
-(
-    behandling_id uuid not null
-        constraint klage_pkey
-            primary key,
-    fagsak_id varchar not null,
-    vedtaks_dato timestamp default LOCALTIMESTAMP not null,
-    klage_mottatt timestamp default LOCALTIMESTAMP not null,
-    klage_aarsak varchar not null,
-    klage_beskrivelse varchar not null,
-    sak_sist_endret timestamp default LOCALTIMESTAMP
+CREATE INDEX IF NOT EXISTS person_ident_fagsak_person_id_idx
+    ON person_ident (fagsak_person_id);
+
+CREATE TABLE IF NOT EXISTS fagsak (
+    id               UUID                                         NOT NULL PRIMARY KEY,
+    stonadstype      VARCHAR                                      NOT NULL,
+    opprettet_av     VARCHAR      DEFAULT 'VL'::CHARACTER VARYING NOT NULL,
+    opprettet_tid    TIMESTAMP(3) DEFAULT LOCALTIMESTAMP          NOT NULL,
+    endret_av        VARCHAR                                      NOT NULL,
+    endret_tid       TIMESTAMP    DEFAULT LOCALTIMESTAMP          NOT NULL,
+    ekstern_id       VARCHAR                                      NOT NULL,
+    fagsystem        VARCHAR                                      NOT NULL,
+    fagsak_person_id UUID REFERENCES fagsak_person (id),
+    CONSTRAINT fagsak_person_unique
+        UNIQUE (fagsak_person_id, stonadstype, fagsystem)
 );
 
-create table if not exists fagsak_person
-(
-    id uuid not null
-        constraint fagsak_person_pkey
-            primary key,
-    opprettet_av varchar default 'VL'::character varying not null,
-    opprettet_tid timestamp(3) default LOCALTIMESTAMP not null
+CREATE INDEX IF NOT EXISTS fagsak_fagsak_person_id_idx
+    ON fagsak (fagsak_person_id);
+
+CREATE TABLE IF NOT EXISTS behandling (
+    id                              UUID                                         NOT NULL PRIMARY KEY,
+    fagsak_id                       UUID                                         NOT NULL REFERENCES fagsak (id),
+    opprettet_av                    VARCHAR      DEFAULT 'VL'::CHARACTER VARYING NOT NULL,
+    opprettet_tid                   TIMESTAMP(3) DEFAULT LOCALTIMESTAMP          NOT NULL,
+    endret_av                       VARCHAR                                      NOT NULL,
+    endret_tid                      TIMESTAMP    DEFAULT LOCALTIMESTAMP          NOT NULL,
+    status                          VARCHAR                                      NOT NULL,
+    steg                            VARCHAR                                      NOT NULL,
+    resultat                        VARCHAR                                      NOT NULL,
+    vedtak_dato                     TIMESTAMP    DEFAULT LOCALTIMESTAMP,
+    ekstern_fagsystem_behandling_id VARCHAR                                      NOT NULL,
+    klage_mottatt                   TIMESTAMP(3)                                 NOT NULL,
+    behandlende_enhet               VARCHAR                                      NOT NULL,
+    ekstern_behandling_id           UUID                                         NOT NULL
 );
 
-create table if not exists fagsak
-(
-    id uuid not null
-        constraint fagsak_pkey
-            primary key,
-    stonadstype varchar not null,
-    opprettet_av varchar default 'VL'::character varying not null,
-    opprettet_tid timestamp(3) default LOCALTIMESTAMP not null,
-    endret_av varchar not null,
-    endret_tid timestamp default LOCALTIMESTAMP not null,
-    ekstern_id varchar not null,
-    fagsystem varchar not null,
-    fagsak_person_id uuid
-        constraint fagsak_fagsak_person_id_fkey
-            references fagsak_person,
-    constraint fagsak_person_unique
-        unique (fagsak_person_id, stonadstype, fagsystem)
+CREATE UNIQUE INDEX IF NOT EXISTS behandling_ekstern_behandling_id_idx
+    ON behandling (ekstern_behandling_id);
+
+CREATE TABLE IF NOT EXISTS form (
+    behandling_id             UUID                                         NOT NULL PRIMARY KEY REFERENCES behandling (id),
+    opprettet_av              VARCHAR      DEFAULT 'VL'::CHARACTER VARYING NOT NULL,
+    opprettet_tid             TIMESTAMP(3) DEFAULT LOCALTIMESTAMP          NOT NULL,
+    endret_av                 VARCHAR                                      NOT NULL,
+    endret_tid                TIMESTAMP    DEFAULT LOCALTIMESTAMP          NOT NULL,
+    klage_part                VARCHAR                                      NOT NULL,
+    klage_konkret             VARCHAR                                      NOT NULL,
+    klage_signert             VARCHAR                                      NOT NULL,
+    klagefrist_overholdt      VARCHAR                                      NOT NULL,
+    saksbehandler_begrunnelse VARCHAR                                      NOT NULL
 );
 
-create index if not exists fagsak_fagsak_person_id_idx
-    on fagsak (fagsak_person_id);
-
-create table if not exists behandling
-(
-    id uuid not null
-        constraint behandling_pkey
-            primary key,
-    fagsak_id uuid not null
-        constraint behandling_fagsak_id_fkey
-            references fagsak,
-    opprettet_av varchar default 'VL'::character varying not null,
-    opprettet_tid timestamp(3) default LOCALTIMESTAMP not null,
-    endret_av varchar not null,
-    endret_tid timestamp default LOCALTIMESTAMP not null,
-    status varchar not null,
-    steg varchar not null,
-    resultat varchar not null,
-    vedtak_dato timestamp default LOCALTIMESTAMP,
-    ekstern_fagsystem_behandling_id varchar not null,
-    klage_mottatt timestamp(3) not null,
-    behandlende_enhet varchar not null,
-    ekstern_behandling_id uuid not null
+CREATE TABLE IF NOT EXISTS vurdering (
+    behandling_id UUID                                         NOT NULL PRIMARY KEY REFERENCES behandling (id),
+    vedtak        VARCHAR                                      NOT NULL,
+    arsak         VARCHAR,
+    hjemmel       VARCHAR,
+    beskrivelse   VARCHAR                                      NOT NULL,
+    opprettet_av  VARCHAR      DEFAULT 'VL'::CHARACTER VARYING NOT NULL,
+    opprettet_tid TIMESTAMP(3) DEFAULT LOCALTIMESTAMP          NOT NULL,
+    endret_av     VARCHAR                                      NOT NULL,
+    endret_tid    TIMESTAMP    DEFAULT LOCALTIMESTAMP          NOT NULL
 );
 
-create unique index if not exists behandling_ekstern_behandling_id_idx
-    on behandling (ekstern_behandling_id);
-
-create table if not exists behandlingshistorikk
-(
-    id uuid not null
-        constraint behandlingshistorikk_pkey
-            primary key,
-    behandling_id uuid
-        constraint behandlingshistorikk_behandling_id_fkey
-            references behandling,
-    steg varchar not null,
-    opprettet_av varchar not null,
-    endret_tid timestamp default LOCALTIMESTAMP not null
+CREATE TABLE IF NOT EXISTS behandlingshistorikk (
+    id            UUID                             NOT NULL PRIMARY KEY,
+    behandling_id UUID REFERENCES behandling (id),
+    steg          VARCHAR                          NOT NULL,
+    opprettet_av  VARCHAR                          NOT NULL,
+    endret_tid    TIMESTAMP DEFAULT LOCALTIMESTAMP NOT NULL
 );
 
-create table if not exists brev
-(
-    behandling_id uuid not null
-        constraint brev_pkey
-            primary key
-        constraint brev_behandling_id_fkey
-            references behandling,
-    overskrift varchar not null,
-    saksbehandler_html varchar not null,
-    brevtype varchar not null,
-    opprettet_av varchar default 'VL'::character varying not null,
-    opprettet_tid timestamp(3) default LOCALTIMESTAMP not null,
-    endret_av varchar not null,
-    endret_tid timestamp default LOCALTIMESTAMP not null
+CREATE TABLE IF NOT EXISTS brev (
+    behandling_id      UUID                                         NOT NULL PRIMARY KEY REFERENCES behandling (id),
+    overskrift         VARCHAR                                      NOT NULL,
+    saksbehandler_html VARCHAR                                      NOT NULL,
+    brevtype           VARCHAR                                      NOT NULL,
+    opprettet_av       VARCHAR      DEFAULT 'VL'::CHARACTER VARYING NOT NULL,
+    opprettet_tid      TIMESTAMP(3) DEFAULT LOCALTIMESTAMP          NOT NULL,
+    endret_av          VARCHAR                                      NOT NULL,
+    endret_tid         TIMESTAMP    DEFAULT LOCALTIMESTAMP          NOT NULL
 );
 
-create table if not exists avsnitt
-(
-    avsnitt_id uuid not null
-        constraint avsnitt_pkey
-            primary key,
-    behandling_id uuid
-        constraint avsnitt_behandling_id_fkey
-            references behandling,
-    deloverskrift varchar,
-    innhold varchar,
-    skal_skjules_i_brevbygger boolean,
-    opprettet_av varchar default 'VL'::character varying not null,
-    opprettet_tid timestamp(3) default LOCALTIMESTAMP not null,
-    endret_av varchar not null,
-    endret_tid timestamp default LOCALTIMESTAMP not null
+CREATE TABLE IF NOT EXISTS avsnitt (
+    avsnitt_id                UUID                                         NOT NULL PRIMARY KEY,
+    behandling_id             UUID REFERENCES behandling (id),
+    deloverskrift             VARCHAR,
+    innhold                   VARCHAR,
+    skal_skjules_i_brevbygger BOOLEAN,
+    opprettet_av              VARCHAR      DEFAULT 'VL'::CHARACTER VARYING NOT NULL,
+    opprettet_tid             TIMESTAMP(3) DEFAULT LOCALTIMESTAMP          NOT NULL,
+    endret_av                 VARCHAR                                      NOT NULL,
+    endret_tid                TIMESTAMP    DEFAULT LOCALTIMESTAMP          NOT NULL
 );
 
-create table if not exists person_ident
-(
-    ident varchar not null
-        constraint person_ident_pkey
-            primary key,
-    fagsak_person_id uuid not null
-        constraint person_ident_fagsak_person_id_fkey
-            references fagsak_person,
-    opprettet_av varchar default 'VL'::character varying not null,
-    opprettet_tid timestamp(3) default LOCALTIMESTAMP not null,
-    endret_av varchar not null,
-    endret_tid timestamp default LOCALTIMESTAMP not null
+CREATE TABLE IF NOT EXISTS distribusjon_resultat (
+    behandling_id                 UUID                                         NOT NULL PRIMARY KEY REFERENCES behandling (id),
+    journalpost_id                VARCHAR,
+    brev_distribusjon_id          VARCHAR,
+    oversendt_til_kabal_tidspunkt TIMESTAMP(3) DEFAULT LOCALTIMESTAMP,
+    opprettet_av                  VARCHAR      DEFAULT 'VL'::CHARACTER VARYING NOT NULL,
+    opprettet_tid                 TIMESTAMP(3) DEFAULT LOCALTIMESTAMP          NOT NULL,
+    endret_av                     VARCHAR                                      NOT NULL,
+    endret_tid                    TIMESTAMP    DEFAULT LOCALTIMESTAMP          NOT NULL
 );
 
-create index if not exists person_ident_fagsak_person_id_idx
-    on person_ident (fagsak_person_id);
-
-create table if not exists distribusjon_resultat
-(
-    behandling_id uuid not null
-        constraint distribusjon_resultat_pkey
-            primary key
-        constraint distribusjon_resultat_behandling_id_fkey
-            references behandling,
-    journalpost_id varchar,
-    brev_distribusjon_id varchar,
-    oversendt_til_kabal_tidspunkt timestamp(3) default LOCALTIMESTAMP,
-    opprettet_av varchar default 'VL'::character varying not null,
-    opprettet_tid timestamp(3) default LOCALTIMESTAMP not null,
-    endret_av varchar not null,
-    endret_tid timestamp default LOCALTIMESTAMP not null
+CREATE TABLE IF NOT EXISTS klageresultat (
+    event_id                          UUID         NOT NULL PRIMARY KEY,
+    type                              VARCHAR      NOT NULL,
+    utfall                            VARCHAR,
+    mottatt_eller_avsluttet_tidspunkt TIMESTAMP(3) NOT NULL,
+    kildereferanse                    UUID         NOT NULL,
+    journalpost_referanser            VARCHAR,
+    behandling_id                     UUID         NOT NULL REFERENCES behandling (id)
 );
 
-create table if not exists klageresultat
-(
-    event_id uuid not null
-        constraint klageresultat_pkey
-            primary key,
-    type varchar not null,
-    utfall varchar,
-    mottatt_eller_avsluttet_tidspunkt timestamp(3) not null,
-    kildereferanse uuid not null,
-    journalpost_referanser varchar,
-    behandling_id uuid not null
-        constraint klageresultat_behandling_id_fkey
-            references behandling
-);
-
-create index if not exists klageresultat_behandling_id_idx
-    on klageresultat (behandling_id);
+CREATE INDEX IF NOT EXISTS klageresultat_behandling_id_idx
+    ON klageresultat (behandling_id);
