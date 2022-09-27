@@ -15,15 +15,18 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import kotlin.math.absoluteValue
+import kotlin.random.Random
 
 internal class OppgaveServiceTest {
 
     val oppgaveClient = mockk<OppgaveClient>()
     val fagsakService = mockk<FagsakService>()
     val behandlingService = mockk<BehandlingService>()
+    val behandleSakOppgaveRepository = mockk<BehandleSakOppgaveRepository>()
 
     val oppgaveService =
-        OppgaveService(oppgaveClient = oppgaveClient, fagsakService = fagsakService, behandlingService = behandlingService)
+        OppgaveService(oppgaveClient = oppgaveClient, fagsakService = fagsakService, behandlingService = behandlingService, behandleSakOppgaveRepository = behandleSakOppgaveRepository)
 
     val fagsak = DomainUtil.fagsak()
     val behandling = DomainUtil.behandling(fagsak = fagsak)
@@ -43,7 +46,9 @@ internal class OppgaveServiceTest {
     @Test
     internal fun `skal opprette behandleSak oppgave med riktige verdier for ny klagebehandling`() {
         val oppgaveSlot = slot<OpprettOppgaveRequest>()
-        every { oppgaveClient.opprettOppgave(capture(oppgaveSlot)) } returns 1L
+        val oppgaveId = 1L
+        every { oppgaveClient.opprettOppgave(capture(oppgaveSlot)) } returns oppgaveId
+        every { behandleSakOppgaveRepository.insert(any()) } answers { firstArg() }
         oppgaveService.opprettBehandleSakOppgave(behandling.id)
 
         assertThat(oppgaveSlot.captured.behandlingstema).isNull()
@@ -55,5 +60,19 @@ internal class OppgaveServiceTest {
         assertThat(oppgaveSlot.captured.saksId).isEqualTo(fagsak.eksternId)
         assertThat(oppgaveSlot.captured.tema).isEqualTo(Tema.ENF)
         assertThat(oppgaveSlot.captured.tilordnetRessurs).isNotNull
+    }
+
+    @Test
+    internal fun `skal opprette en behandleSakOppgave i databasen`() {
+        val oppgaveId = Random.nextLong().absoluteValue
+        val behandleSakOppgaveSlot = slot<BehandleSakOppgave>()
+        every { oppgaveClient.opprettOppgave(any()) } returns oppgaveId
+        every { behandleSakOppgaveRepository.insert(capture(behandleSakOppgaveSlot)) } answers { firstArg() }
+        oppgaveService.opprettBehandleSakOppgave(behandling.id)
+
+        assertThat(behandleSakOppgaveSlot.captured.oppgaveId).isEqualTo(oppgaveId)
+        assertThat(behandleSakOppgaveSlot.captured.behandlingId).isEqualTo(behandling.id)
+
+
     }
 }

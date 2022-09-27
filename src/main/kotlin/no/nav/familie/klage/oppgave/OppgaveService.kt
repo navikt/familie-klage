@@ -16,7 +16,8 @@ import java.util.UUID
 class OppgaveService(
     private val oppgaveClient: OppgaveClient,
     private val fagsakService: FagsakService,
-    private val behandlingService: BehandlingService
+    private val behandlingService: BehandlingService,
+    private val behandleSakOppgaveRepository: BehandleSakOppgaveRepository
 ) {
 
     val BEHANDLINGSTYPE_KLAGE = "ae0058"
@@ -39,6 +40,9 @@ class OppgaveService(
             behandlingstema = null
         )
 
-        val oppgave = oppgaveClient.opprettOppgave(opprettOppgaveRequest = oppgaveRequest)
+        val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest = oppgaveRequest)
+        behandleSakOppgaveRepository.insert(
+            BehandleSakOppgave(behandlingId = behandling.id, oppgaveId = oppgaveId)
+        )
     }
 }
