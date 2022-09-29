@@ -49,7 +49,7 @@ class FerdigstillBehandlingService(
         distribuerOgOppdaterResultat(journalpostId, behandlingId, distribusjonResultat)
 
         sendTilKabalOgOppdaterResultat(behandling, distribusjonResultat, behandlingsresultat)
-        oppgaveService.ferdigstillOppgaveForBehandling(behandling)
+        oppgaveService.lagFerdigstillOppgaveForBehandlingTask(behandling)
         behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(behandlingId, behandlingsresultat)
         stegService.oppdaterSteg(behandlingId, stegForResultat(behandlingsresultat))
     }

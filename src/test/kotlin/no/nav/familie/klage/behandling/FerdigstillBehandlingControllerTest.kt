@@ -17,7 +17,6 @@ import no.nav.familie.klage.testutil.DomainUtil.tilFagsak
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.Ressurs
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
