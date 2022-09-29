@@ -15,6 +15,7 @@ import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.infrastruktur.db.DbContainerInitializer
 import no.nav.familie.klage.kabal.domain.Klageresultat
+import no.nav.familie.klage.oppgave.BehandleSakOppgave
 import no.nav.familie.klage.testutil.TestoppsettService
 import no.nav.familie.klage.testutil.TokenUtil
 import no.nav.familie.klage.vurdering.domain.Vurdering
@@ -99,6 +100,7 @@ abstract class OppslagSpringRunnerTest {
 
     private fun resetDatabase() {
         listOf(
+            BehandleSakOppgave::class,
             Behandlingshistorikk::class,
             Avsnitt::class,
             Brev::class,

@@ -4,6 +4,7 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
+import no.nav.familie.klage.oppgave.OppgaveService
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -14,7 +15,8 @@ import java.util.UUID
 class OpprettBehandlingService(
     private val fagsakService: FagsakService,
     private val behandlingService: BehandlingService,
-    private val formService: FormService
+    private val formService: FormService,
+    private val oppgaveService: OppgaveService
 ) {
 
     @Transactional
@@ -41,6 +43,10 @@ class OpprettBehandlingService(
             )
         ).id
 
-        return formService.opprettInitielleFormkrav(behandlingId).behandlingId
+        formService.opprettInitielleFormkrav(behandlingId)
+
+        oppgaveService.opprettBehandleSakOppgave(behandlingId)
+
+        return behandlingId
     }
 }

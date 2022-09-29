@@ -5,7 +5,8 @@ import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.fagsak.FagsakPersonRepository
 import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.infrastruktur.exception.Feil
-import no.nav.familie.klage.integrasjoner.OppgaveClient
+import no.nav.familie.klage.oppgave.OppgaveClient
+import no.nav.familie.klage.oppgave.OppgaveUtil.lagFristForOppgave
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
@@ -19,8 +20,6 @@ import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.time.DayOfWeek
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -75,21 +74,6 @@ class OpprettOppgaveTask(
         }
     }
 
-    private fun lagFristForOppgave(gjeldendeTid: LocalDateTime): LocalDate {
-        val frist = when (gjeldendeTid.dayOfWeek) {
-            DayOfWeek.FRIDAY -> fristBasertPåKlokkeslett(gjeldendeTid.plusDays(2))
-            DayOfWeek.SATURDAY -> fristBasertPåKlokkeslett(gjeldendeTid.plusDays(2).withHour(8))
-            DayOfWeek.SUNDAY -> fristBasertPåKlokkeslett(gjeldendeTid.plusDays(1).withHour(8))
-            else -> fristBasertPåKlokkeslett(gjeldendeTid)
-        }
-
-        return when (frist.dayOfWeek) {
-            DayOfWeek.SATURDAY -> frist.plusDays(2)
-            DayOfWeek.SUNDAY -> frist.plusDays(1)
-            else -> frist
-        }
-    }
-
     private fun finnBehandlingstema(stønadstype: Stønadstype): Behandlingstema {
         return when (stønadstype) {
             Stønadstype.BARNETRYGD -> Behandlingstema.Barnetrygd
@@ -97,14 +81,6 @@ class OpprettOppgaveTask(
             Stønadstype.BARNETILSYN -> Behandlingstema.Barnetilsyn
             Stønadstype.SKOLEPENGER -> Behandlingstema.Skolepenger
             Stønadstype.KONTANTSTØTTE -> Behandlingstema.Kontantstøtte
-        }
-    }
-
-    private fun fristBasertPåKlokkeslett(gjeldendeTid: LocalDateTime): LocalDate {
-        return if (gjeldendeTid.hour >= 12) {
-            return gjeldendeTid.plusDays(2).toLocalDate()
-        } else {
-            gjeldendeTid.plusDays(1).toLocalDate()
         }
     }
 }

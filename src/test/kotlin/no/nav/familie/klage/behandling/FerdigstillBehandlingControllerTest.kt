@@ -6,6 +6,8 @@ import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.formkrav.dto.tilDto
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.infrastruktur.config.RolleConfig
+import no.nav.familie.klage.oppgave.BehandleSakOppgave
+import no.nav.familie.klage.oppgave.BehandleSakOppgaveRepository
 import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
@@ -16,6 +18,7 @@ import no.nav.familie.klage.testutil.DomainUtil.vurdering
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.Ressurs
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,7 +26,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import java.util.UUID
+import kotlin.math.absoluteValue
+import kotlin.random.Random
 
 internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
 
@@ -38,6 +45,9 @@ internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
 
     @Autowired
     private lateinit var brevService: BrevService
+
+    @Autowired
+    private lateinit var behandleSakOppgaveRepository: BehandleSakOppgaveRepository
 
     @Autowired
     private lateinit var rolleConfig: RolleConfig
@@ -60,6 +70,7 @@ internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
         vurderingService.opprettEllerOppdaterVurdering(vurdering)
 
         brevService.lagEllerOppdaterBrev(fritekstbrev)
+        behandleSakOppgaveRepository.insert(BehandleSakOppgave(behandlingId = behandling.id, oppgaveId = Random.nextLong().absoluteValue))
     }
 
     @AfterEach
@@ -69,15 +80,16 @@ internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
 
     @Test
     internal fun `skal ferdigstille behandling og oppdatere verdier i distribusjonResultat`() {
-        ferdigstill(behandlingId = behandling.id)
+        val ferdigstillResponse = ferdigstill(behandlingId = behandling.id)
+        assertThat(ferdigstillResponse.statusCode).isEqualTo(HttpStatus.OK)
         val distribusjonResultat = distribusjonResultatService.hentEllerOpprettDistribusjonResultat(behandlingId = behandling.id)
-        Assertions.assertThat(distribusjonResultat.journalpostId).isNotNull
-        Assertions.assertThat(distribusjonResultat.brevDistribusjonId).isNotNull
-        Assertions.assertThat(distribusjonResultat.oversendtTilKabalTidspunkt).isNotNull
+        assertThat(distribusjonResultat.journalpostId).isNotNull
+        assertThat(distribusjonResultat.brevDistribusjonId).isNotNull
+        assertThat(distribusjonResultat.oversendtTilKabalTidspunkt).isNotNull
     }
 
-    private fun ferdigstill(behandlingId: UUID) {
-        restTemplate.exchange<Ressurs<Unit>>(
+    private fun ferdigstill(behandlingId: UUID): ResponseEntity<Ressurs<Unit>> {
+        return restTemplate.exchange<Ressurs<Unit>>(
             localhost("/api/behandling/$behandlingId/ferdigstill"),
             HttpMethod.POST,
             HttpEntity(null, headers)

@@ -6,12 +6,15 @@ import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.tilFagsak
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,6 +29,16 @@ internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {
     @Autowired
     private lateinit var behandlingService: BehandlingService
 
+    @BeforeEach
+    internal fun setUp() {
+        BrukerContextUtil.mockBrukerContext()
+    }
+
+    @AfterEach
+    internal fun tearDown() {
+        BrukerContextUtil.clearBrukerContext()
+    }
+
     @Test
     internal fun `skal ikke opprette ny klagebehandling dersom en behandling under arbeid allerede eksisterer på samme  fagsak`() {
         val fagsak = DomainUtil.fagsakDomain().tilFagsak("1234")
@@ -38,7 +51,7 @@ internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {
             opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest(fagsak, behandling))
         }
         assertThat(feil.message)
-                .contains("Det eksisterer allerede en klagebehandling som ikke er ferdigstilt på fagsak med id=")
+            .contains("Det eksisterer allerede en klagebehandling som ikke er ferdigstilt på fagsak med id=")
     }
 
     @Test
@@ -68,16 +81,18 @@ internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {
         assertThat(feil.frontendFeilmelding).contains("Kan ikke opprette klage med krav mottatt frem i tid for behandling med eksternBehandlingId=")
     }
 
-    private fun opprettKlagebehandlingRequest(fagsak: Fagsak,
-                                              behandling: Behandling,
-                                              klageMottatt: LocalDate = LocalDate.now().minusDays(1)) =
-            OpprettKlagebehandlingRequest(
-                    ident = "1234",
-                    stønadstype = fagsak.stønadstype,
-                    eksternBehandlingId = behandling.eksternFagsystemBehandlingId,
-                    eksternFagsakId = fagsak.eksternId,
-                    fagsystem = fagsak.fagsystem,
-                    klageMottatt = klageMottatt,
-                    behandlendeEnhet = "4489"
-            )
+    private fun opprettKlagebehandlingRequest(
+        fagsak: Fagsak,
+        behandling: Behandling,
+        klageMottatt: LocalDate = LocalDate.now().minusDays(1)
+    ) =
+        OpprettKlagebehandlingRequest(
+            ident = "1234",
+            stønadstype = fagsak.stønadstype,
+            eksternBehandlingId = behandling.eksternFagsystemBehandlingId,
+            eksternFagsakId = fagsak.eksternId,
+            fagsystem = fagsak.fagsystem,
+            klageMottatt = klageMottatt,
+            behandlendeEnhet = "4489"
+        )
 }
