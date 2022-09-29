@@ -103,12 +103,12 @@ internal class StegServiceTest {
     }
 
     @Test
-    internal fun `skal ikke oppdatere steg hvis den allerede er i det samme steget`() {
+    internal fun `skal oppdatere steg hvis den allerede er i det samme steget`() {
         stegService.oppdaterSteg(behandlingId, behandling.steg, behandling.steg)
 
-        verify(exactly = 0) { behandlingRepository.updateSteg(any(), any()) }
-        verify(exactly = 0) { behandlingRepository.updateStatus(any(), any()) }
-        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(any(), any()) }
+        verify(exactly = 1) { behandlingRepository.updateSteg(any(), any()) }
+        verify(exactly = 1) { behandlingRepository.updateStatus(any(), any()) }
+        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(any(), any()) }
     }
 
     @Test
