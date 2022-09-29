@@ -30,7 +30,7 @@ class VurderingService(
 
     @Transactional
     fun opprettEllerOppdaterVurdering(vurdering: Vurdering): Vurdering {
-        stegService.oppdaterSteg(vurdering.behandlingId, StegType.BREV)
+        stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING, StegType.BREV)
 
         if (sjekkOmVurderingEksisterer(vurdering.behandlingId)) {
             return oppdaterVurdering(vurdering)

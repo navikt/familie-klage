@@ -48,7 +48,7 @@ class FerdigstillBehandlingService(
 
         sendTilKabalOgOppdaterResultat(behandling, distribusjonResultat, behandlingsresultat)
         behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(behandlingId, behandlingsresultat)
-        stegService.oppdaterSteg(behandlingId, stegForResultat(behandlingsresultat))
+        stegService.oppdaterSteg(behandlingId, StegType.BEHANDLING_FERDIGSTILT, stegForResultat(behandlingsresultat))
     }
 
     private fun stegForResultat(resultat: BehandlingResultat): StegType = when (resultat) {
@@ -73,7 +73,8 @@ class FerdigstillBehandlingService(
         logger.info("Sender klage videre til kabal")
         val fagsak = fagsakService.hentFagsakForBehandling(behandling.id)
         val vurdering =
-            vurderingService.hentVurdering(behandling.id) ?: error("Mangler vurdering på klagen - kan ikke oversendes til kabal")
+            vurderingService.hentVurdering(behandling.id)
+                ?: error("Mangler vurdering på klagen - kan ikke oversendes til kabal")
         kabalService.sendTilKabal(fagsak, behandling, vurdering)
         distribusjonResultatService.oppdaterSendtTilKabalTid(
             oversendtTilKabalTidspunkt = LocalDateTime.now(),

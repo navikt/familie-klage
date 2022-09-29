@@ -10,7 +10,6 @@ import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.repository.findByIdOrThrow
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -22,31 +21,24 @@ class StegService(
     private val rolleConfig: RolleConfig
 ) {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
-
     @Transactional
-    fun oppdaterSteg(behandlingId: UUID, nesteSteg: StegType) {
+    fun oppdaterSteg(behandlingId: UUID, nåværendeSteg: StegType, nesteSteg: StegType) {
         val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
-
         validerHarSaksbehandlerRolle()
         validerGyldigNesteSteg(behandling)
-
-        if (nesteSteg != behandling.steg) {
-            oppdaterBehandlingOgHistorikk(behandling, nesteSteg)
-        } else {
-            logger.info("Behandling=$behandlingId er allerede i steg=$nesteSteg")
-        }
+        oppdaterBehandlingOgHistorikk(behandling, nåværendeSteg, nesteSteg)
     }
 
     private fun oppdaterBehandlingOgHistorikk(
         behandling: Behandling,
+        nåværendeSteg: StegType,
         nesteSteg: StegType
     ) {
         val behandlingId = behandling.id
         behandlingRepository.updateSteg(behandlingId, nesteSteg)
         behandlingRepository.updateStatus(behandlingId, nesteSteg.gjelderStatus)
 
-        behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, behandling.steg)
+        behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, nåværendeSteg)
 
         if (nesteSteg == StegType.KABAL_VENTER_SVAR) {
             behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.OVERFØRING_TIL_KABAL)

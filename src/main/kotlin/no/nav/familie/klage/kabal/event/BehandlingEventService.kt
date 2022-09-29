@@ -81,12 +81,13 @@ class BehandlingEventService(
         val oppgaveTekst = "${behandlingEvent.detaljer.oppgaveTekst()} Gjelder: ${fagsakDomain.stønadstype}"
         val klageBehandlingEksternId = UUID.fromString(behandlingEvent.kildeReferanse)
 
-        val opprettOppgavePayload = OpprettOppgavePayload(klageBehandlingEksternId, oppgaveTekst, fagsakDomain.fagsystem)
+        val opprettOppgavePayload =
+            OpprettOppgavePayload(klageBehandlingEksternId, oppgaveTekst, fagsakDomain.fagsystem)
         val opprettOppgaveTask = OpprettOppgaveTask.opprettTask(opprettOppgavePayload)
         taskRepository.save(opprettOppgaveTask)
     }
 
     private fun ferdigstillKlagebehandling(behandling: Behandling) {
-        stegService.oppdaterSteg(behandling.id, StegType.BEHANDLING_FERDIGSTILT)
+        stegService.oppdaterSteg(behandling.id, StegType.BEHANDLING_FERDIGSTILT, StegType.BEHANDLING_FERDIGSTILT)
     }
 }
