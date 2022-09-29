@@ -38,12 +38,12 @@ class StegService(
         behandlingRepository.updateSteg(behandlingId, nesteSteg)
         behandlingRepository.updateStatus(behandlingId, nesteSteg.gjelderStatus)
 
-        behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, nåværendeSteg)
-
         if (nesteSteg == StegType.KABAL_VENTER_SVAR) {
             behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.OVERFØRING_TIL_KABAL)
         } else if (nesteSteg == StegType.BEHANDLING_FERDIGSTILT) {
             behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BEHANDLING_FERDIGSTILT)
+        } else {
+            behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, nåværendeSteg)
         }
     }
 
