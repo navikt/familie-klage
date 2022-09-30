@@ -1,15 +1,15 @@
 package no.nav.familie.klage.vurdering
 
-import VurderingDto
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
+import no.nav.familie.klage.vurdering.dto.VurderingDto
+import no.nav.familie.klage.vurdering.dto.tilDto
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import tilDto
 import java.util.UUID
 
 @Service
