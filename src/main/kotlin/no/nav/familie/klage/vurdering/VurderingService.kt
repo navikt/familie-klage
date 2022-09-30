@@ -25,8 +25,8 @@ class VurderingService(
     fun hentVurderingDto(behandlingId: UUID): VurderingDto? =
         hentVurdering(behandlingId)?.tilDto()
 
-    fun hentVedtak(id: UUID): Vedtak? {
-        return vurderingRepository.findVedtakByBehandlingIdOrThrow(id)
+    fun hentVedtak(behandlingId: UUID): Vedtak? {
+        return vurderingRepository.findByIdOrNull(behandlingId)?.vedtak
     }
 
     @Transactional
@@ -35,8 +35,9 @@ class VurderingService(
 
         stegService.oppdaterSteg(vurdering.behandlingId, StegType.BREV)
 
-        return if (vurderingRepository.existsById(vurdering.behandlingId)) {
-            oppdaterVurdering(vurdering).tilDto()
+        val eksisterendeVurdering = vurderingRepository.findByIdOrNull(vurdering.behandlingId)
+        return if (eksisterendeVurdering != null) {
+            oppdaterVurdering(vurdering, eksisterendeVurdering).tilDto()
         } else {
             opprettNyVurdering(vurdering).tilDto()
         }
@@ -52,10 +53,9 @@ class VurderingService(
         )
     )
 
-    private fun oppdaterVurdering(vurdering: VurderingDto): Vurdering {
-        val vurderingFraDb = vurderingRepository.findByBehandlingId(vurdering.behandlingId)
+    private fun oppdaterVurdering(vurdering: VurderingDto, eksisterendeVurdering: Vurdering): Vurdering {
         return vurderingRepository.update(
-            vurderingFraDb.copy(
+            eksisterendeVurdering.copy(
                 vedtak = vurdering.vedtak,
                 beskrivelse = vurdering.beskrivelse,
                 arsak = vurdering.arsak,
