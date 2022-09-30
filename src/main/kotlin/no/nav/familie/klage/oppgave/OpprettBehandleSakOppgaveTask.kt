@@ -43,7 +43,7 @@ class OpprettBehandleSakOppgaveTask(
             enhetsnummer = behandling.behandlendeEnhet,
             behandlingstype = Behandlingstema.Klage.value,
             behandlesAvApplikasjon = "familie-klage",
-            tilordnetRessurs = SikkerhetContext.hentSaksbehandler(strict = true),
+            tilordnetRessurs = task.metadata[saksbehandlerMetadataKey].toString(),
             behandlingstema = null
         )
 
@@ -55,5 +55,6 @@ class OpprettBehandleSakOppgaveTask(
 
     companion object {
         const val TYPE = "opprettBehandleSakoppgave"
+        const val saksbehandlerMetadataKey = "saksbehandler"
     }
 }
