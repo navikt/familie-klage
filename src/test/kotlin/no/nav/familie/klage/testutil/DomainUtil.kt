@@ -20,6 +20,7 @@ import no.nav.familie.klage.kabal.domain.Klageresultat
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
+import no.nav.familie.klage.vurdering.dto.VurderingDto
 import no.nav.familie.kontrakter.felles.journalpost.DokumentInfo
 import no.nav.familie.kontrakter.felles.journalpost.Dokumentstatus
 import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariant
@@ -79,6 +80,14 @@ object DomainUtil {
 
     fun vurdering(behandlingId: UUID, vedtak: Vedtak = Vedtak.OPPRETTHOLD_VEDTAK, hjemmel: Hjemmel = Hjemmel.FT_FEMTEN_FEM) =
         Vurdering(
+            behandlingId = behandlingId,
+            vedtak = vedtak,
+            hjemmel = hjemmel,
+            beskrivelse = "En begrunnelse"
+        )
+
+    fun vurderingDto(behandlingId: UUID, vedtak: Vedtak = Vedtak.OPPRETTHOLD_VEDTAK, hjemmel: Hjemmel = Hjemmel.FT_FEMTEN_FEM) =
+        VurderingDto(
             behandlingId = behandlingId,
             vedtak = vedtak,
             hjemmel = hjemmel,

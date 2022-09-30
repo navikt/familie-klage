@@ -32,12 +32,13 @@ class VurderingController(
     }
 
     @PostMapping
-    fun opprettEllerOppdaterVurdering(@RequestBody vurdering: Vurdering): Ressurs<Vurdering> {
+    fun opprettEllerOppdaterVurdering(@RequestBody vurdering: VurderingDto): Ressurs<VurderingDto> {
         tilgangService.validerTilgangTilBehandling(vurdering.behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolle()
         return Ressurs.success(vurderingService.opprettEllerOppdaterVurdering(vurdering))
     }
 
+    // TODO kan frontend bruke hentVurdering i stedet, så trenger vi ikke en ekstra endepunkt for å hente vedtak?
     @GetMapping("{behandlingId}/vedtak")
     fun hentVedtak(@PathVariable behandlingId: UUID): Ressurs<Vedtak?> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)

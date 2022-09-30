@@ -14,10 +14,9 @@ import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
 import no.nav.familie.klage.testutil.DomainUtil.fritekstbrev
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
 import no.nav.familie.klage.testutil.DomainUtil.tilFagsak
-import no.nav.familie.klage.testutil.DomainUtil.vurdering
+import no.nav.familie.klage.testutil.DomainUtil.vurderingDto
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.Ressurs
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -54,7 +53,7 @@ internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
 
     val fagsak = fagsakDomain().tilFagsak()
     val behandling = behandling(fagsak = fagsak)
-    val vurdering = vurdering(behandlingId = behandling.id)
+    val vurdering = vurderingDto(behandlingId = behandling.id)
     val fritekstbrev = fritekstbrev(behandlingId = behandling.id)
 
     @BeforeEach

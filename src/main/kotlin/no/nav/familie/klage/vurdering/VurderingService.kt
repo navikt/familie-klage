@@ -29,24 +29,27 @@ class VurderingService(
     }
 
     @Transactional
-    fun opprettEllerOppdaterVurdering(vurdering: Vurdering): Vurdering {
+    fun opprettEllerOppdaterVurdering(vurdering: VurderingDto): VurderingDto {
         stegService.oppdaterSteg(vurdering.behandlingId, StegType.BREV)
 
-        if (sjekkOmVurderingEksisterer(vurdering.behandlingId)) {
-            return oppdaterVurdering(vurdering)
+        return if (vurderingRepository.existsById(vurdering.behandlingId)) {
+            oppdaterVurdering(vurdering).tilDto()
+        } else {
+            opprettNyVurdering(vurdering).tilDto()
         }
-        return vurderingRepository.insert(
-            Vurdering(
-                behandlingId = vurdering.behandlingId,
-                vedtak = vurdering.vedtak,
-                arsak = vurdering.arsak,
-                hjemmel = vurdering.hjemmel,
-                beskrivelse = vurdering.beskrivelse
-            )
-        )
     }
 
-    fun oppdaterVurdering(vurdering: Vurdering): Vurdering {
+    private fun opprettNyVurdering(vurdering: VurderingDto) = vurderingRepository.insert(
+        Vurdering(
+            behandlingId = vurdering.behandlingId,
+            vedtak = vurdering.vedtak,
+            arsak = vurdering.arsak,
+            hjemmel = vurdering.hjemmel,
+            beskrivelse = vurdering.beskrivelse
+        )
+    )
+
+    private fun oppdaterVurdering(vurdering: VurderingDto): Vurdering {
         val vurderingFraDb = vurderingRepository.findByBehandlingId(vurdering.behandlingId)
         return vurderingRepository.update(
             vurderingFraDb.copy(
@@ -58,22 +61,8 @@ class VurderingService(
         )
     }
 
-    fun sjekkOmVurderingEksisterer(id: UUID): Boolean {
-        return vurderingRepository.findById(id).isPresent
-    }
-
-    fun lagTomVurdering(behandlingId: UUID): Vurdering {
-        return Vurdering(
-            behandlingId = behandlingId,
-            vedtak = Vedtak.VELG,
-            arsak = null,
-            hjemmel = null,
-            beskrivelse = ""
-        )
-    }
-
     fun klageTasIkkeTilFølge(behandlingId: UUID): Boolean {
         val vurdering = vurderingRepository.findByIdOrThrow(behandlingId)
-        return (vurdering.vedtak == Vedtak.OPPRETTHOLD_VEDTAK)
+        return vurdering.vedtak == Vedtak.OPPRETTHOLD_VEDTAK
     }
 }
