@@ -45,6 +45,10 @@ class StegService(
         } else if (nesteSteg == StegType.BEHANDLING_FERDIGSTILT) {
             behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BEHANDLING_FERDIGSTILT)
         }
+
+        if (nåværendeSteg == StegType.BEHANDLING_FERDIGSTILT && behandling.steg == StegType.BREV) {
+            behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BREV)
+        }
     }
 
     private fun validerGyldigNesteSteg(behandling: Behandling) =
