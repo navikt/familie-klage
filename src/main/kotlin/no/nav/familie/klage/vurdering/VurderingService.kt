@@ -3,6 +3,7 @@ package no.nav.familie.klage.vurdering
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.klage.vurdering.VurderingValidator.validerVurdering
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import no.nav.familie.klage.vurdering.dto.VurderingDto
@@ -30,6 +31,8 @@ class VurderingService(
 
     @Transactional
     fun opprettEllerOppdaterVurdering(vurdering: VurderingDto): VurderingDto {
+        validerVurdering(vurdering)
+
         stegService.oppdaterSteg(vurdering.behandlingId, StegType.BREV)
 
         return if (vurderingRepository.existsById(vurdering.behandlingId)) {
