@@ -108,7 +108,7 @@ internal class StegServiceTest {
     @Test
     fun `skal feile hvis saksbehandler mangler rolle`() {
         every { tilgangService.harTilgangTilBehandlingGittRolle(any(), any()) } returns false
-        val feil = assertThrows<Feil> { stegService.oppdaterSteg(behandlingId, StegType.VURDERING) }
+        val feil = assertThrows<Feil> { stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.VURDERING) }
         assertThat(feil.frontendFeilmelding).contains("Saksbehandler har ikke tilgang til å oppdatere behandlingssteg")
     }
 

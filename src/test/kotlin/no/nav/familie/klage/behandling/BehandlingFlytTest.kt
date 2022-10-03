@@ -14,6 +14,7 @@ import no.nav.familie.klage.infrastruktur.config.RolleConfig
 import no.nav.familie.klage.testutil.BrukerContextUtil.testWithBrukerContext
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
+import no.nav.familie.klage.testutil.DomainUtil.vurderingDto
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
@@ -63,9 +64,9 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
             testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
                 formService.oppdaterForm(oppfyltFormDto(behandlingId))
-                vurderingService.opprettEllerOppdaterVurdering(vurdering(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
+                vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
                 formService.oppdaterForm(oppfyltFormDto(behandlingId))
-                vurderingService.opprettEllerOppdaterVurdering(vurdering(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
+                vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
                 brevService.lagEllerOppdaterBrev(behandlingId, "", "", FritekstBrevtype.VEDTAK_AVSLAG)
                 ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
             }
@@ -88,12 +89,12 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
             testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
                 formService.oppdaterForm(oppfyltFormDto(behandlingId))
-                vurderingService.opprettEllerOppdaterVurdering(vurdering(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
+                vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
 
                 brevService.lagEllerOppdaterBrev(behandlingId, "", "", FritekstBrevtype.VEDTAK_AVSLAG)
 
                 formService.oppdaterForm(oppfyltFormDto(behandlingId))
-                vurderingService.opprettEllerOppdaterVurdering(vurdering(behandlingId))
+                vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId))
 
                 brevService.lagEllerOppdaterBrev(behandlingId, "", "", FritekstBrevtype.VEDTAK_AVSLAG)
                 ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
@@ -121,7 +122,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
             testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
                 formService.oppdaterForm(oppfyltFormDto(behandlingId))
-                vurderingService.opprettEllerOppdaterVurdering(vurdering(behandlingId, Vedtak.OMGJØR_VEDTAK))
+                vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId, Vedtak.OMGJØR_VEDTAK))
                 brevService.lagEllerOppdaterBrev(behandlingId, "", "", FritekstBrevtype.VEDTAK_AVSLAG)
                 ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
             }
