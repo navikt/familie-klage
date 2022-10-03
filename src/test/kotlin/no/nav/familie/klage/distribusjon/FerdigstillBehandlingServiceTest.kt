@@ -68,6 +68,7 @@ internal class FerdigstillBehandlingServiceTest {
         every { vurderingService.klageTasIkkeTilFølge(any()) } returns true
         every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), any()) } just Runs
         every { taskRepository.save(any()) } answers { firstArg() }
+        every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling) } just Runs
     }
 
     @AfterEach
