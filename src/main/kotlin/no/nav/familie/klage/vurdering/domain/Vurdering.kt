@@ -19,7 +19,6 @@ data class Vurdering(
 )
 
 enum class Vedtak {
-    VELG,
     OMGJØR_VEDTAK,
     OPPRETTHOLD_VEDTAK
 }

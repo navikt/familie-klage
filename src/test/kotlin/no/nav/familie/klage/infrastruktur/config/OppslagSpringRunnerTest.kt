@@ -8,13 +8,13 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.dto.Avsnitt
-import no.nav.familie.klage.distribusjon.DistribusjonResultat
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.infrastruktur.db.DbContainerInitializer
 import no.nav.familie.klage.kabal.domain.Klageresultat
+import no.nav.familie.klage.oppgave.BehandleSakOppgave
 import no.nav.familie.klage.testutil.TestoppsettService
 import no.nav.familie.klage.testutil.TokenUtil
 import no.nav.familie.klage.vurdering.domain.Vurdering
@@ -68,6 +68,7 @@ abstract class OppslagSpringRunnerTest {
     @Autowired
     private lateinit var rolleConfig: RolleConfig
 
+    @Suppress("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     private lateinit var mockOAuth2Server: MockOAuth2Server
 
@@ -99,12 +100,12 @@ abstract class OppslagSpringRunnerTest {
 
     private fun resetDatabase() {
         listOf(
+            BehandleSakOppgave::class,
             Behandlingshistorikk::class,
             Avsnitt::class,
             Brev::class,
             Vurdering::class,
             Form::class,
-            DistribusjonResultat::class,
             Klageresultat::class,
             Behandling::class,
             FagsakDomain::class,

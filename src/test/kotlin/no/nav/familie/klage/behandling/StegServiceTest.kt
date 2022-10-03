@@ -11,12 +11,10 @@ import io.mockk.verify
 import io.mockk.verifyOrder
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
-import no.nav.familie.klage.infrastruktur.config.FagsystemRolleConfig
-import no.nav.familie.klage.infrastruktur.config.RolleConfig
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
+import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.repository.findByIdOrThrow
-import no.nav.familie.klage.testutil.BrukerContextUtil.testWithBrukerContext
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import org.assertj.core.api.Assertions.assertThat
@@ -31,15 +29,12 @@ internal class StegServiceTest {
     val behandlingRepository = mockk<BehandlingRepository>()
     val behandlingshistorikkService = mockk<BehandlingshistorikkService>()
 
-    val veilederRolle = "veilederRolle"
+    val tilgangService = mockk<TilgangService>()
+
     val stegService = StegService(
         behandlingRepository,
         behandlingshistorikkService,
-        RolleConfig(
-            FagsystemRolleConfig("", "", ""),
-            FagsystemRolleConfig("", "", veilederRolle),
-            FagsystemRolleConfig("", "", "")
-        )
+        tilgangService
     )
     val behandlingId = UUID.randomUUID()
     val behandling = behandling(id = behandlingId)
@@ -56,8 +51,7 @@ internal class StegServiceTest {
         mockkObject(SikkerhetContext)
 
         every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler"
-        every { SikkerhetContext.harTilgangTilGittRolle(any(), any()) } returns true
-
+        every { tilgangService.harTilgangTilBehandlingGittRolle(any(), any()) } returns true
         every { behandlingRepository.findByIdOrThrow(behandlingId) } returns behandling
         every { behandlingRepository.updateSteg(behandlingId, capture(stegSlot)) } just Runs
         every { behandlingRepository.updateStatus(behandlingId, capture(statusSlot)) } just Runs
@@ -113,12 +107,9 @@ internal class StegServiceTest {
 
     @Test
     fun `skal feile hvis saksbehandler mangler rolle`() {
-        unmockkObject(SikkerhetContext)
-        testWithBrukerContext(groups = listOf(veilederRolle)) {
-            val feil = assertThrows<Feil> { stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.VURDERING) }
-
-            assertThat(feil.frontendFeilmelding).contains("Saksbehandler har ikke tilgang til å oppdatere behandlingssteg")
-        }
+        every { tilgangService.harTilgangTilBehandlingGittRolle(any(), any()) } returns false
+        val feil = assertThrows<Feil> { stegService.oppdaterSteg(behandlingId, StegType.VURDERING) }
+        assertThat(feil.frontendFeilmelding).contains("Saksbehandler har ikke tilgang til å oppdatere behandlingssteg")
     }
 
     @Test

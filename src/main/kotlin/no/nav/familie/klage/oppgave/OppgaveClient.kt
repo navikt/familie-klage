@@ -1,4 +1,4 @@
-package no.nav.familie.klage.integrasjoner
+package no.nav.familie.klage.oppgave
 
 import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
@@ -27,6 +27,12 @@ class OppgaveClient(
 
         val respons = postForEntity<Ressurs<OppgaveResponse>>(uri, opprettOppgaveRequest, HttpHeaders().medContentTypeJsonUTF8())
         return pakkUtRespons(respons, uri, "opprettOppgave").oppgaveId
+    }
+
+    fun ferdigstillOppgave(oppgaveId: Long) {
+        val uri = URI.create("$oppgaveUri/$oppgaveId/ferdigstill")
+        val respons = patchForEntity<Ressurs<OppgaveResponse>>(uri, "")
+        pakkUtRespons(respons, uri, "ferdigstillOppgave")
     }
 
     private fun <T> pakkUtRespons(

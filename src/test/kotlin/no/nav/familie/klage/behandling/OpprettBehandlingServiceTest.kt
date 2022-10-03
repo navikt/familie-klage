@@ -6,12 +6,15 @@ import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.tilFagsak
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,6 +28,16 @@ internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {
 
     @Autowired
     private lateinit var behandlingService: BehandlingService
+
+    @BeforeEach
+    internal fun setUp() {
+        BrukerContextUtil.mockBrukerContext()
+    }
+
+    @AfterEach
+    internal fun tearDown() {
+        BrukerContextUtil.clearBrukerContext()
+    }
 
     @Test
     internal fun `skal ikke opprette ny klagebehandling dersom en behandling under arbeid allerede eksisterer på samme  fagsak`() {
