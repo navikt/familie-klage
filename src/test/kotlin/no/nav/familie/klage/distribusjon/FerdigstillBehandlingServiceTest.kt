@@ -68,7 +68,7 @@ internal class FerdigstillBehandlingServiceTest {
         every { vurderingService.klageTasIkkeTilFølge(any()) } returns true
         every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), any()) } just Runs
         every { taskRepository.save(any()) } answers { firstArg() }
-        every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling) } just Runs
+        every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id) } just Runs
     }
 
     @AfterEach
@@ -93,8 +93,7 @@ internal class FerdigstillBehandlingServiceTest {
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD)
         assertThat(stegSlot.captured).isEqualTo(StegType.KABAL_VENTER_SVAR)
         verify { taskRepository.save(any()) }
-        verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling) }
-
+        verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id) }
     }
 
     @Test

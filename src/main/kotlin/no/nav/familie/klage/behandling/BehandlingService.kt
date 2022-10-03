@@ -100,7 +100,7 @@ class BehandlingService(
         )
 
         behandlinghistorikkService.opprettBehandlingshistorikk(behandlingId, BEHANDLING_FERDIGSTILT)
-        oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling)
+        oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
 
         behandlingRepository.update(henlagtBehandling)
     }

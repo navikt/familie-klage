@@ -45,7 +45,7 @@ class FerdigstillBehandlingService(
         if (behandlingsresultat != MEDHOLD) {
             opprettJournalførBrevTask(behandlingId)
         }
-        oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling)
+        oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
         behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(behandlingId, behandlingsresultat)
         stegService.oppdaterSteg(behandlingId, behandling.steg, stegForResultat(behandlingsresultat))
     }

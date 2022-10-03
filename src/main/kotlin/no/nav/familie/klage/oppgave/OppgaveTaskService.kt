@@ -1,7 +1,5 @@
 package no.nav.familie.klage.oppgave
 
-import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.oppgave.OpprettBehandleSakOppgaveTask.Companion.saksbehandlerMetadataKey
 import no.nav.familie.prosessering.domene.Task
@@ -11,15 +9,11 @@ import java.util.Properties
 import java.util.UUID
 
 @Service
-class OppgaveTaskService(
-    private val taskRepository: TaskRepository,
-    private val behandlingService: BehandlingService
-) {
+class OppgaveTaskService(private val taskRepository: TaskRepository) {
     fun opprettBehandleSakOppgave(behandlingId: UUID) {
-        val behandling = behandlingService.hentBehandling(behandlingId)
         val behandleSakOppgaveTask = Task(
             type = OpprettBehandleSakOppgaveTask.TYPE,
-            payload = behandling.id.toString(),
+            payload = behandlingId.toString(),
             properties = Properties().apply {
                 this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
             }
@@ -27,10 +21,10 @@ class OppgaveTaskService(
         taskRepository.save(behandleSakOppgaveTask)
     }
 
-    fun lagFerdigstillOppgaveForBehandlingTask(behandling: Behandling) {
+    fun lagFerdigstillOppgaveForBehandlingTask(behandlingId: UUID) {
         val ferdigstillbehandlesakOppgave = Task(
             type = OpprettFerdigstillOppgaveTask.TYPE,
-            payload = behandling.id.toString()
+            payload = behandlingId.toString()
         )
         taskRepository.save(ferdigstillbehandlesakOppgave)
     }
