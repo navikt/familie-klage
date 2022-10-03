@@ -93,8 +93,8 @@ object DomainUtil {
     fun vurderingDto(
         behandlingId: UUID = UUID.randomUUID(),
         vedtak: Vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
-        årsak: Årsak? = if(vedtak == Vedtak.OPPRETTHOLD_VEDTAK) null else Årsak.FEIL_I_LOVANDVENDELSE,
-        hjemmel: Hjemmel? = if(vedtak == Vedtak.OPPRETTHOLD_VEDTAK) Hjemmel.BT_FEM else null
+        årsak: Årsak? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) null else Årsak.FEIL_I_LOVANDVENDELSE,
+        hjemmel: Hjemmel? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) Hjemmel.BT_FEM else null
     ) = VurderingDto(
         behandlingId = behandlingId,
         vedtak = vedtak,
