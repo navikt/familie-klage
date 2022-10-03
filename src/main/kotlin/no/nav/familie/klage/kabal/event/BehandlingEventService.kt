@@ -88,6 +88,6 @@ class BehandlingEventService(
     }
 
     private fun ferdigstillKlagebehandling(behandling: Behandling) {
-        stegService.oppdaterSteg(behandling.id, StegType.BEHANDLING_FERDIGSTILT, StegType.BEHANDLING_FERDIGSTILT)
+        stegService.oppdaterSteg(behandling.id, StegType.KABAL_VENTER_SVAR, StegType.BEHANDLING_FERDIGSTILT)
     }
 }

@@ -64,6 +64,8 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
                 formService.oppdaterForm(oppfyltFormDto(behandlingId))
                 vurderingService.opprettEllerOppdaterVurdering(vurdering(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
+                formService.oppdaterForm(oppfyltFormDto(behandlingId))
+                vurderingService.opprettEllerOppdaterVurdering(vurdering(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
                 brevService.lagEllerOppdaterBrev(behandlingId, "", "", FritekstBrevtype.VEDTAK_AVSLAG)
                 ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
             }
@@ -126,7 +128,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
 
             val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikker(behandlingId)
 
-            assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.KABAL_VENTER_SVAR)
+            assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
             assertThat(behandlingshistorikk.map { it.steg }).containsExactly(
                 StegType.BEHANDLING_FERDIGSTILT,
                 StegType.BREV,
@@ -146,7 +148,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
 
             val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikker(behandlingId)
 
-            assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.KABAL_VENTER_SVAR)
+            assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
             assertThat(behandlingshistorikk.map { it.steg }).containsExactly(
                 StegType.BEHANDLING_FERDIGSTILT,
                 StegType.BREV,

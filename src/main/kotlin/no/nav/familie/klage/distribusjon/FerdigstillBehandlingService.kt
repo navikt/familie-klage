@@ -48,7 +48,7 @@ class FerdigstillBehandlingService(
 
         sendTilKabalOgOppdaterResultat(behandling, distribusjonResultat, behandlingsresultat)
         behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(behandlingId, behandlingsresultat)
-        stegService.oppdaterSteg(behandlingId, StegType.BEHANDLING_FERDIGSTILT, stegForResultat(behandlingsresultat))
+        stegService.oppdaterSteg(behandlingId, behandling.steg, stegForResultat(behandlingsresultat))
     }
 
     private fun stegForResultat(resultat: BehandlingResultat): StegType = when (resultat) {
