@@ -44,10 +44,10 @@ class StegService(
             behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BEHANDLING_FERDIGSTILT)
         }
 
-        if (nåværendeSteg == StegType.BEHANDLING_FERDIGSTILT && behandling.steg == StegType.BREV) {
-            behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BREV)
-        } else if (nåværendeSteg != StegType.BEHANDLING_FERDIGSTILT) {
+        if (nåværendeSteg != StegType.BEHANDLING_FERDIGSTILT) {
             behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, nåværendeSteg)
+        } else if (nåværendeSteg == StegType.BEHANDLING_FERDIGSTILT && behandling.steg == StegType.BREV) {
+            behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BREV)
         }
     }
 
