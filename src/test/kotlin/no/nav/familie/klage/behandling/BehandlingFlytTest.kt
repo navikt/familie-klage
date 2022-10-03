@@ -13,7 +13,6 @@ import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.infrastruktur.config.RolleConfig
 import no.nav.familie.klage.testutil.BrukerContextUtil.testWithBrukerContext
 import no.nav.familie.klage.testutil.DomainUtil
-import no.nav.familie.klage.testutil.DomainUtil.vurdering
 import no.nav.familie.klage.testutil.DomainUtil.vurderingDto
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.domain.Vedtak
@@ -61,14 +60,15 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
 
         @Test
         internal fun `OPPRETTHOLD_VEDTAK - når man sendt brev skal man vente på svar`() {
-            val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
-            testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
+            val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
+                val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
                 formService.oppdaterForm(oppfyltFormDto(behandlingId))
                 vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
                 formService.oppdaterForm(oppfyltFormDto(behandlingId))
                 vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
                 brevService.lagEllerOppdaterBrev(behandlingId, "", "", FritekstBrevtype.VEDTAK_AVSLAG)
                 ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
+                behandlingId
             }
 
             val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikker(behandlingId)
@@ -86,8 +86,8 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
 
         @Test
         internal fun `OPPRETTHOLD_VEDTAK - skal kunne hoppe mellom steg`() {
-            val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
-            testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
+            val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
+                val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
                 formService.oppdaterForm(oppfyltFormDto(behandlingId))
                 vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
 
@@ -98,6 +98,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
 
                 brevService.lagEllerOppdaterBrev(behandlingId, "", "", FritekstBrevtype.VEDTAK_AVSLAG)
                 ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
+                behandlingId
             }
 
             testHendelseController.opprettDummyKabalEvent(behandlingId)
@@ -119,12 +120,13 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
 
         @Test
         internal fun `OMGJØR_VEDTAK - når man ferdigstilt klagebehandling skal man vente på svar`() {
-            val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
-            testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
+            val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
+                val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
                 formService.oppdaterForm(oppfyltFormDto(behandlingId))
                 vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId, Vedtak.OMGJØR_VEDTAK))
                 brevService.lagEllerOppdaterBrev(behandlingId, "", "", FritekstBrevtype.VEDTAK_AVSLAG)
                 ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
+                behandlingId
             }
 
             val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikker(behandlingId)
@@ -140,11 +142,12 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
 
         @Test
         internal fun `Ikke oppfylt formkrav skal ikke vurderes`() {
-            val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
-            testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
+            val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
+                val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
                 formService.oppdaterForm(ikkeOppfyltFormDto(behandlingId))
                 brevService.lagEllerOppdaterBrev(behandlingId, "", "", FritekstBrevtype.VEDTAK_AVSLAG)
                 ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
+                behandlingId
             }
 
             val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikker(behandlingId)
