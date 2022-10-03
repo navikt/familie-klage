@@ -8,7 +8,9 @@ import no.nav.familie.klage.fagsak.FagsakPersonRepository
 import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
-import no.nav.familie.klage.integrasjoner.OppgaveClient
+import no.nav.familie.klage.oppgave.OppgaveClient
+import no.nav.familie.klage.oppgave.OpprettKabalEventOppgaveTask
+import no.nav.familie.klage.oppgave.OpprettOppgavePayload
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
 import no.nav.familie.kontrakter.felles.Behandlingstema
@@ -34,11 +36,11 @@ class OpprettOppgaveTaskTest : OppslagSpringRunnerTest() {
     private val oppgaveClient = mockk<OppgaveClient>()
     private val opprettOppgaveRequestSlot = slot<OpprettOppgaveRequest>()
 
-    private lateinit var opprettOppgaveTask: OpprettOppgaveTask
+    private lateinit var opprettOppgaveTask: OpprettKabalEventOppgaveTask
 
     @BeforeEach
     fun setup() {
-        opprettOppgaveTask = OpprettOppgaveTask(fagsakRepository, behandlingRepository, personRepository, oppgaveClient)
+        opprettOppgaveTask = OpprettKabalEventOppgaveTask(fagsakRepository, behandlingRepository, personRepository, oppgaveClient)
         every { oppgaveClient.opprettOppgave(capture(opprettOppgaveRequestSlot)) } answers { 9L }
     }
 
@@ -58,7 +60,7 @@ class OpprettOppgaveTaskTest : OppslagSpringRunnerTest() {
         val fagsakDomain = fagsakRepository.findByIdOrNull(fagsak.id) ?: error("Finner ikke fagsak med id")
 
         val opprettOppgavePayload = OpprettOppgavePayload(behandling.eksternBehandlingId, "tekst", Fagsystem.EF)
-        opprettOppgaveTask.doTask(OpprettOppgaveTask.opprettTask(opprettOppgavePayload))
+        opprettOppgaveTask.doTask(OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload))
 
         assertThat(opprettOppgaveRequestSlot.captured.tema).isEqualTo(Tema.ENF)
         assertThat(opprettOppgaveRequestSlot.captured.beskrivelse).contains("tekst")

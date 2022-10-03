@@ -10,6 +10,8 @@ import no.nav.familie.klage.kabal.BehandlingEvent
 import no.nav.familie.klage.kabal.BehandlingEventType
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.Klageresultat
+import no.nav.familie.klage.oppgave.OpprettKabalEventOppgaveTask
+import no.nav.familie.klage.oppgave.OpprettOppgavePayload
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.LoggerFactory
@@ -82,7 +84,7 @@ class BehandlingEventService(
         val klageBehandlingEksternId = UUID.fromString(behandlingEvent.kildeReferanse)
 
         val opprettOppgavePayload = OpprettOppgavePayload(klageBehandlingEksternId, oppgaveTekst, fagsakDomain.fagsystem)
-        val opprettOppgaveTask = OpprettOppgaveTask.opprettTask(opprettOppgavePayload)
+        val opprettOppgaveTask = OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload)
         taskRepository.save(opprettOppgaveTask)
     }
 

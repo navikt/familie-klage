@@ -36,8 +36,10 @@ internal class VedleggServiceTest {
 
     @Test
     internal fun `skal sette datoRegistrert på journalpost dersom finnes`() {
-        val journalPost = DomainUtil.journalpost(listOf(dokument),
-                                                 listOf(datoUkjent, datoDokument, datoJournalført, datoRegistrert, datoOpprettet))
+        val journalPost = DomainUtil.journalpost(
+            listOf(dokument),
+            listOf(datoUkjent, datoDokument, datoJournalført, datoRegistrert, datoOpprettet)
+        )
 
         every { journalpostServiceMock.finnJournalposter(any(), any()) } returns listOf(journalPost)
 
@@ -48,8 +50,10 @@ internal class VedleggServiceTest {
 
     @Test
     internal fun `skal sette datoJournalført dersom datoRegistrert ikke finnes og datoJournalført finnes`() {
-        val journalPost = DomainUtil.journalpost(listOf(dokument),
-                                                 listOf(datoUkjent, datoDokument, datoJournalført, datoOpprettet))
+        val journalPost = DomainUtil.journalpost(
+            listOf(dokument),
+            listOf(datoUkjent, datoDokument, datoJournalført, datoOpprettet)
+        )
 
         every { journalpostServiceMock.finnJournalposter(any(), any()) } returns listOf(journalPost)
 
@@ -60,8 +64,10 @@ internal class VedleggServiceTest {
 
     @Test
     internal fun `skal sette datoDokument forran datoOpprettet`() {
-        val journalPost = DomainUtil.journalpost(listOf(dokument),
-                                                 listOf(datoUkjent, datoDokument, datoOpprettet))
+        val journalPost = DomainUtil.journalpost(
+            listOf(dokument),
+            listOf(datoUkjent, datoDokument, datoOpprettet)
+        )
 
         every { journalpostServiceMock.finnJournalposter(any(), any()) } returns listOf(journalPost)
 
@@ -72,8 +78,10 @@ internal class VedleggServiceTest {
 
     @Test
     internal fun `skal sette datoOpprettet dersom ingen annen dato finnes og datoOpprettet finnes`() {
-        val journalPost = DomainUtil.journalpost(listOf(dokument),
-                                                 listOf(datoUkjent, datoOpprettet))
+        val journalPost = DomainUtil.journalpost(
+            listOf(dokument),
+            listOf(datoUkjent, datoOpprettet)
+        )
 
         every { journalpostServiceMock.finnJournalposter(any(), any()) } returns listOf(journalPost)
 
@@ -84,8 +92,10 @@ internal class VedleggServiceTest {
 
     @Test
     internal fun `skal ikke sette dato dersom dato ikke finnes`() {
-        val journalPost = DomainUtil.journalpost(listOf(dokument),
-                                                 emptyList())
+        val journalPost = DomainUtil.journalpost(
+            listOf(dokument),
+            emptyList()
+        )
 
         every { journalpostServiceMock.finnJournalposter(any(), any()) } returns listOf(journalPost)
 

@@ -2,9 +2,13 @@ package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.Klagebehandlingsesultat
+import no.nav.familie.klage.behandling.domain.StegType.BEHANDLING_FERDIGSTILT
+import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandling.domain.erUnderArbeidAvSaksbehandler
 import no.nav.familie.klage.behandling.dto.BehandlingDto
+import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.behandling.dto.tilDto
+import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
@@ -13,6 +17,7 @@ import no.nav.familie.klage.kabal.domain.tilDto
 import no.nav.familie.klage.kabal.dto.KlageresultatDto
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
+import no.nav.familie.kontrakter.felles.klage.BehandlingStatus.FERDIGSTILT
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -24,7 +29,8 @@ import java.util.UUID
 class BehandlingService(
     private val behandlingRepository: BehandlingRepository,
     private val fagsakService: FagsakService,
-    private val klageresultatRepository: KlageresultatRepository
+    private val klageresultatRepository: KlageresultatRepository,
+    private val behandlinghistorikkService: BehandlingshistorikkService
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -76,6 +82,30 @@ class BehandlingService(
 
         brukerfeilHvis(behandlinger.any { it.status.erUnderArbeidAvSaksbehandler() }) {
             "Det eksisterer allerede en klagebehandling som ikke er ferdigstilt på fagsak med id=$fagsakId"
+        }
+    }
+
+    fun henleggBehandling(behandlingId: UUID, henlagt: HenlagtDto) {
+        val behandling = hentBehandling(behandlingId)
+
+        validerKanHenleggeBehandling(behandling)
+
+        val henlagtBehandling = behandling.copy(
+            henlagtÅrsak = henlagt.årsak,
+            resultat = BehandlingResultat.HENLAGT,
+            steg = BEHANDLING_FERDIGSTILT,
+            status = FERDIGSTILT
+        )
+
+        behandlinghistorikkService.opprettBehandlingshistorikk(behandlingId, BEHANDLING_FERDIGSTILT)
+        // TODO: Ferdigstill oppgave
+
+        behandlingRepository.update(henlagtBehandling)
+    }
+
+    private fun validerKanHenleggeBehandling(behandling: Behandling) {
+        brukerfeilHvis(behandling.status.erLåstForVidereBehandling()) {
+            "Kan ikke henlegge behandling med status ${behandling.status}"
         }
     }
 }

@@ -5,16 +5,20 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
+import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.tilFagsak
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
-import java.time.LocalDateTime.now
 import kotlin.test.assertFailsWith
 
 internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {
@@ -24,6 +28,16 @@ internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {
 
     @Autowired
     private lateinit var behandlingService: BehandlingService
+
+    @BeforeEach
+    internal fun setUp() {
+        BrukerContextUtil.mockBrukerContext()
+    }
+
+    @AfterEach
+    internal fun tearDown() {
+        BrukerContextUtil.clearBrukerContext()
+    }
 
     @Test
     internal fun `skal ikke opprette ny klagebehandling dersom en behandling under arbeid allerede eksisterer på samme  fagsak`() {
@@ -56,14 +70,29 @@ internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {
         assertThat(andregangsbehandling.eksternBehandlingId).isNotEqualTo(førstegangsbehandling.eksternBehandlingId)
     }
 
-    private fun opprettKlagebehandlingRequest(fagsak: Fagsak, behandling: Behandling) =
+    @Test
+    internal fun `skal ikke kunne opprette klage med krav mottatt frem i tid`() {
+        val fagsak = DomainUtil.fagsakDomain().tilFagsak("1234")
+        val behandling = behandling(fagsak = fagsak, status = BehandlingStatus.VENTER, steg = StegType.OVERFØRING_TIL_KABAL)
+        val request = opprettKlagebehandlingRequest(fagsak, behandling, LocalDate.now().plusDays(1))
+
+        val feil = assertThrows<Feil> { opprettBehandlingService.opprettBehandling(request) }
+
+        assertThat(feil.frontendFeilmelding).contains("Kan ikke opprette klage med krav mottatt frem i tid for behandling med eksternBehandlingId=")
+    }
+
+    private fun opprettKlagebehandlingRequest(
+        fagsak: Fagsak,
+        behandling: Behandling,
+        klageMottatt: LocalDate = LocalDate.now().minusDays(1)
+    ) =
         OpprettKlagebehandlingRequest(
             ident = "1234",
             stønadstype = fagsak.stønadstype,
             eksternBehandlingId = behandling.eksternFagsystemBehandlingId,
             eksternFagsakId = fagsak.eksternId,
             fagsystem = fagsak.fagsystem,
-            klageMottatt = LocalDate.now().minusDays(1),
+            klageMottatt = klageMottatt,
             behandlendeEnhet = "4489"
         )
 }

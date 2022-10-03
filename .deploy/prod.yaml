@@ -55,6 +55,7 @@ spec:
       rules:
         - application: familie-klage-frontend
         - application: familie-ef-sak
+        - application: familie-prosessering
     outbound:
       rules:
         - application: familie-tilbake
