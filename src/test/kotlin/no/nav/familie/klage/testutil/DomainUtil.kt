@@ -28,6 +28,7 @@ import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.kontrakter.felles.journalpost.RelevantDato
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
@@ -64,7 +65,8 @@ object DomainUtil {
         klageMottatt: LocalDate = LocalDate.now(),
         status: BehandlingStatus = BehandlingStatus.OPPRETTET,
         steg: StegType = StegType.FORMKRAV,
-        behandlendeEnhet: String = "4489"
+        behandlendeEnhet: String = "4489",
+        resultat: BehandlingResultat = BehandlingResultat.IKKE_SATT
     ): Behandling =
         Behandling(
             id = id,
@@ -74,7 +76,8 @@ object DomainUtil {
             klageMottatt = klageMottatt,
             status = status,
             steg = steg,
-            behandlendeEnhet = behandlendeEnhet
+            behandlendeEnhet = behandlendeEnhet,
+            resultat = resultat
         )
 
     fun vurdering(behandlingId: UUID, vedtak: Vedtak = Vedtak.OPPRETTHOLD_VEDTAK, hjemmel: Hjemmel = Hjemmel.FT_FEMTEN_FEM) =
