@@ -5,10 +5,9 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.felles.domain.BehandlerRolle
-import no.nav.familie.klage.infrastruktur.config.RolleConfig
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
-import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
+import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -19,7 +18,7 @@ import java.util.UUID
 class StegService(
     private val behandlingRepository: BehandlingRepository,
     private val behandlingshistorikkService: BehandlingshistorikkService,
-    private val rolleConfig: RolleConfig
+    private val tilgangService: TilgangService
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -28,7 +27,7 @@ class StegService(
     fun oppdaterSteg(behandlingId: UUID, nesteSteg: StegType) {
         val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
 
-        validerHarSaksbehandlerRolle()
+        validerHarSaksbehandlerRolle(behandlingId)
         validerGyldigNesteSteg(behandling)
 
         if (nesteSteg != behandling.steg) {
@@ -60,8 +59,8 @@ class StegService(
             "Behandlingen er låst for videre behandling"
         }
 
-    private fun validerHarSaksbehandlerRolle() =
+    private fun validerHarSaksbehandlerRolle(behandlingId: UUID) =
         feilHvisIkke(
-            SikkerhetContext.harTilgangTilGittRolle(rolleConfig, BehandlerRolle.SAKSBEHANDLER)
+            tilgangService.harTilgangTilBehandlingGittRolle(behandlingId, BehandlerRolle.SAKSBEHANDLER)
         ) { "Saksbehandler har ikke tilgang til å oppdatere behandlingssteg" }
 }

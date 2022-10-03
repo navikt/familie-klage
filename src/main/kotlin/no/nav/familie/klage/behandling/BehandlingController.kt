@@ -29,20 +29,21 @@ class BehandlingController(
     @GetMapping("{behandlingId}")
     fun hentBehandling(@PathVariable behandlingId: UUID): Ressurs<BehandlingDto> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerHarVeilederrolleForBehandling(behandlingId)
         return Ressurs.success(behandlingService.hentBehandlingDto(behandlingId))
     }
 
     @PostMapping("{behandlingId}/ferdigstill")
     fun ferdigstillBehandling(@PathVariable behandlingId: UUID): Ressurs<Unit> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.CREATE)
-        tilgangService.validerHarSaksbehandlerrolle()
+        tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
         return Ressurs.success(ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId))
     }
 
     @PostMapping("{behandlingId}/henlegg")
     fun henleggBehandling(@PathVariable behandlingId: UUID, @RequestBody henlegg: HenlagtDto): Ressurs<Unit> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
-        tilgangService.validerHarSaksbehandlerrolle()
+        tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
         return Ressurs.success(behandlingService.henleggBehandling(behandlingId, henlegg))
     }
 }
