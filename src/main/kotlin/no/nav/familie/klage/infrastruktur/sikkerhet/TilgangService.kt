@@ -35,7 +35,7 @@ class TilgangService(
         if (!tilgang.harTilgang) {
             throw ManglerTilgang(
                 melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
-                        "har ikke tilgang til $personIdent eller dets barn",
+                    "har ikke tilgang til $personIdent eller dets barn",
                 frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}"
             )
         }
@@ -116,7 +116,7 @@ class TilgangService(
         if (!harTilgangTilBehandlingGittRolle(behandlingId, minumumRolle)) {
             throw ManglerTilgang(
                 melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} har ikke tilgang " +
-                        "til å utføre denne operasjonen som krever minimumsrolle $minumumRolle",
+                    "til å utføre denne operasjonen som krever minimumsrolle $minumumRolle",
                 frontendFeilmelding = "Mangler nødvendig saksbehandlerrolle for å utføre handlingen"
             )
         }
