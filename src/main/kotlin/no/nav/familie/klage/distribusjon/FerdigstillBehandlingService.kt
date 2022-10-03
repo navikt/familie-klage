@@ -7,7 +7,7 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
-import no.nav.familie.klage.oppgave.OppgaveService
+import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.HENLAGT
@@ -28,7 +28,7 @@ class FerdigstillBehandlingService(
     private val formService: FormService,
     private val stegService: StegService,
     private val taskRepository: TaskRepository,
-    private val oppgaveService: OppgaveService
+    private val oppgaveTaskService: OppgaveTaskService
 ) {
 
     /**
@@ -43,7 +43,7 @@ class FerdigstillBehandlingService(
         if (behandlingsresultat != MEDHOLD) {
             opprettJournalførBrevTask(behandlingId)
         }
-        oppgaveService.lagFerdigstillOppgaveForBehandlingTask(behandling)
+        oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling)
         behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(behandlingId, behandlingsresultat)
         stegService.oppdaterSteg(behandlingId, stegForResultat(behandlingsresultat))
     }

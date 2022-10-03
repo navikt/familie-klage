@@ -19,7 +19,7 @@ import java.time.LocalDate
 import kotlin.math.absoluteValue
 import kotlin.random.Random
 
-internal class OppgaveServiceTest {
+internal class OppgaveTaskServiceTest {
 
     val oppgaveClient = mockk<OppgaveClient>()
     val fagsakService = mockk<FagsakService>()
