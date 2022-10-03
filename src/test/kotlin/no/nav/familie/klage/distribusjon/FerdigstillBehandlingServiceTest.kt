@@ -13,7 +13,7 @@ import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.kabal.KabalService
-import no.nav.familie.klage.oppgave.OppgaveService
+import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.tilFagsak
@@ -38,7 +38,7 @@ internal class FerdigstillBehandlingServiceTest {
     val vurderingService = mockk<VurderingService>()
     val formService = mockk<FormService>()
     val stegService = mockk<StegService>()
-    val oppgaveService = mockk<OppgaveService>()
+    val oppgaveTaskService = mockk<OppgaveTaskService>()
 
     val ferdigstillBehandlingService = FerdigstillBehandlingService(
         fagsakService = fagsakService,
@@ -49,7 +49,7 @@ internal class FerdigstillBehandlingServiceTest {
         vurderingService = vurderingService,
         formService = formService,
         stegService = stegService,
-        oppgaveService = oppgaveService
+        oppgaveTaskService = oppgaveTaskService
     )
     val fagsak = DomainUtil.fagsakDomain().tilFagsak()
     val behandling = DomainUtil.behandling(fagsak = fagsak, steg = StegType.BREV, status = BehandlingStatus.UTREDES)
@@ -71,7 +71,7 @@ internal class FerdigstillBehandlingServiceTest {
         every { formService.formkravErOppfyltForBehandling(any()) } returns true
         every { vurderingService.klageTasIkkeTilFølge(any()) } returns true
         every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), any()) } just Runs
-        every { oppgaveService.ferdigstillOppgaveForBehandling(any()) } just Runs
+        every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any()) } just Runs
     }
 
     @AfterEach
@@ -90,7 +90,7 @@ internal class FerdigstillBehandlingServiceTest {
 
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD)
         assertThat(stegSlot.captured).isEqualTo(StegType.KABAL_VENTER_SVAR)
-        verify { oppgaveService.ferdigstillOppgaveForBehandling(behandling) }
+        verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling) }
         verify { kabalService.sendTilKabal(fagsak, behandling, vurdering) }
     }
 

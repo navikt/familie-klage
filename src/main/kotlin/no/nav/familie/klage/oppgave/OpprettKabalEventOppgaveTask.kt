@@ -1,11 +1,10 @@
-package no.nav.familie.klage.kabal.event
+package no.nav.familie.klage.oppgave
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.fagsak.FagsakPersonRepository
 import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.infrastruktur.exception.Feil
-import no.nav.familie.klage.oppgave.OppgaveClient
 import no.nav.familie.klage.oppgave.OppgaveUtil.lagFristForOppgave
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
@@ -25,10 +24,10 @@ import java.util.UUID
 
 @Service
 @TaskStepBeskrivelse(
-    taskStepType = OpprettOppgaveTask.TYPE,
+    taskStepType = OpprettKabalEventOppgaveTask.TYPE,
     beskrivelse = "Opprett oppgave for relevant hendelse fra kabal"
 )
-class OpprettOppgaveTask(
+class OpprettKabalEventOppgaveTask(
     private val fagsakRepository: FagsakRepository,
     private val behandlingRepository: BehandlingRepository,
     private val personRepository: FagsakPersonRepository,

@@ -10,6 +10,7 @@ import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
+import no.nav.familie.prosessering.domene.Task
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -18,15 +19,17 @@ import java.time.LocalDate
 import kotlin.math.absoluteValue
 import kotlin.random.Random
 
-internal class OppgaveServiceTest {
+internal class OppgaveTaskServiceTest {
 
     val oppgaveClient = mockk<OppgaveClient>()
     val fagsakService = mockk<FagsakService>()
     val behandlingService = mockk<BehandlingService>()
     val behandleSakOppgaveRepository = mockk<BehandleSakOppgaveRepository>()
 
-    val oppgaveService =
-        OppgaveService(oppgaveClient = oppgaveClient, fagsakService = fagsakService, behandlingService = behandlingService, behandleSakOppgaveRepository = behandleSakOppgaveRepository)
+//    val oppgaveService =
+//        OppgaveService(oppgaveClient = oppgaveClient, taskRepository = fagsakService, behandlingService = behandlingService, behandleSakOppgaveRepository = behandleSakOppgaveRepository)
+
+    val opprettBehandleSakOppgaveTask = OpprettBehandleSakOppgaveTask(fagsakService = fagsakService, oppgaveClient = oppgaveClient, behandlingService = behandlingService, behandleSakOppgaveRepository = behandleSakOppgaveRepository)
 
     val fagsak = DomainUtil.fagsak()
     val behandling = DomainUtil.behandling(fagsak = fagsak)
@@ -49,7 +52,13 @@ internal class OppgaveServiceTest {
         val oppgaveId = 1L
         every { oppgaveClient.opprettOppgave(capture(oppgaveSlot)) } returns oppgaveId
         every { behandleSakOppgaveRepository.insert(any()) } answers { firstArg() }
-        oppgaveService.opprettBehandleSakOppgave(behandling.id)
+
+        val behandleSakOppgaveTask = Task(
+            type = OpprettBehandleSakOppgaveTask.TYPE,
+            payload = behandling.id.toString()
+        )
+
+        opprettBehandleSakOppgaveTask.doTask(behandleSakOppgaveTask)
 
         assertThat(oppgaveSlot.captured.behandlingstema).isNull()
         assertThat(oppgaveSlot.captured.behandlingstype).isEqualTo("ae0058")
@@ -68,11 +77,14 @@ internal class OppgaveServiceTest {
         val behandleSakOppgaveSlot = slot<BehandleSakOppgave>()
         every { oppgaveClient.opprettOppgave(any()) } returns oppgaveId
         every { behandleSakOppgaveRepository.insert(capture(behandleSakOppgaveSlot)) } answers { firstArg() }
-        oppgaveService.opprettBehandleSakOppgave(behandling.id)
+        val behandleSakOppgaveTask = Task(
+            type = OpprettBehandleSakOppgaveTask.TYPE,
+            payload = behandling.id.toString()
+        )
+
+        opprettBehandleSakOppgaveTask.doTask(behandleSakOppgaveTask)
 
         assertThat(behandleSakOppgaveSlot.captured.oppgaveId).isEqualTo(oppgaveId)
         assertThat(behandleSakOppgaveSlot.captured.behandlingId).isEqualTo(behandling.id)
-
-
     }
 }
