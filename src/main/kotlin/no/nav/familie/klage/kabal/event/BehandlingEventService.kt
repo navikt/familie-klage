@@ -82,13 +82,12 @@ class BehandlingEventService(
             ?: error("Finner ikke fagsak for behandlingId: ${behandling.id}")
         val oppgaveTekst = "${behandlingEvent.detaljer.oppgaveTekst()} Gjelder: ${fagsakDomain.stønadstype}"
         val klageBehandlingEksternId = UUID.fromString(behandlingEvent.kildeReferanse)
-
         val opprettOppgavePayload = OpprettOppgavePayload(klageBehandlingEksternId, oppgaveTekst, fagsakDomain.fagsystem)
         val opprettOppgaveTask = OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload)
         taskRepository.save(opprettOppgaveTask)
     }
 
     private fun ferdigstillKlagebehandling(behandling: Behandling) {
-        stegService.oppdaterSteg(behandling.id, StegType.BEHANDLING_FERDIGSTILT)
+        stegService.oppdaterSteg(behandling.id, StegType.KABAL_VENTER_SVAR, StegType.BEHANDLING_FERDIGSTILT)
     }
 }

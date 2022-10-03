@@ -55,7 +55,13 @@ internal class BehandlingEventServiceTest {
         behandlingEventService.handleEvent(behandlingEvent)
 
         verify(exactly = 1) { taskRepository.save(any()) }
-        verify(exactly = 1) { stegService.oppdaterSteg(behandlingMedStatusVenter.id, StegType.BEHANDLING_FERDIGSTILT) }
+        verify(exactly = 1) {
+            stegService.oppdaterSteg(
+                behandlingMedStatusVenter.id,
+                any(),
+                StegType.BEHANDLING_FERDIGSTILT
+            )
+        }
     }
 
     @Test
@@ -70,7 +76,7 @@ internal class BehandlingEventServiceTest {
         behandlingEventService.handleEvent(behandlingEvent)
 
         verify(exactly = 1) { taskRepository.save(any()) }
-        verify(exactly = 0) { stegService.oppdaterSteg(any(), any()) }
+        verify(exactly = 0) { stegService.oppdaterSteg(any(), any(), any()) }
     }
 
     @Test
@@ -81,7 +87,7 @@ internal class BehandlingEventServiceTest {
         behandlingEventService.handleEvent(behandlingEvent)
 
         verify(exactly = 0) { taskRepository.save(any()) }
-        verify(exactly = 0) { stegService.oppdaterSteg(behandling.id, StegType.BEHANDLING_FERDIGSTILT) }
+        verify(exactly = 0) { stegService.oppdaterSteg(behandling.id, any(), StegType.BEHANDLING_FERDIGSTILT) }
     }
 
     @Test

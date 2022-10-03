@@ -68,7 +68,7 @@ internal class StegServiceTest {
         assertThat(behandling.steg).isEqualTo(StegType.FORMKRAV)
 
         val nesteSteg = StegType.VURDERING
-        stegService.oppdaterSteg(behandlingId, nesteSteg)
+        stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, nesteSteg)
 
         assertThat(stegSlot.captured).isEqualTo(nesteSteg)
         assertThat(statusSlot.captured).isEqualTo(nesteSteg.gjelderStatus)
@@ -78,7 +78,7 @@ internal class StegServiceTest {
 
     @Test
     internal fun `skal legge inn overføring til kabal i historikken når neste steg er venter på svar då det er steg vi hopper over men for historikk i frontend`() {
-        stegService.oppdaterSteg(behandlingId, StegType.KABAL_VENTER_SVAR)
+        stegService.oppdaterSteg(behandlingId, behandling.steg, StegType.KABAL_VENTER_SVAR)
 
         verifyOrder {
             behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, behandling.steg)
@@ -88,7 +88,7 @@ internal class StegServiceTest {
 
     @Test
     internal fun `skal legge inn ferdigstill i historikken når neste steg er ferdigstill`() {
-        stegService.oppdaterSteg(behandlingId, StegType.BEHANDLING_FERDIGSTILT)
+        stegService.oppdaterSteg(behandlingId, behandling.steg, StegType.BEHANDLING_FERDIGSTILT)
 
         verifyOrder {
             behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, behandling.steg)
@@ -97,19 +97,18 @@ internal class StegServiceTest {
     }
 
     @Test
-    internal fun `skal ikke oppdatere steg hvis den allerede er i det samme steget`() {
-        stegService.oppdaterSteg(behandlingId, behandling.steg)
+    internal fun `skal oppdatere steg hvis den allerede er i det samme steget`() {
+        stegService.oppdaterSteg(behandlingId, behandling.steg, behandling.steg)
 
-        verify(exactly = 0) { behandlingRepository.updateSteg(any(), any()) }
-        verify(exactly = 0) { behandlingRepository.updateStatus(any(), any()) }
-        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(any(), any()) }
+        verify(exactly = 1) { behandlingRepository.updateSteg(any(), any()) }
+        verify(exactly = 1) { behandlingRepository.updateStatus(any(), any()) }
+        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(any(), any()) }
     }
 
     @Test
     fun `skal feile hvis saksbehandler mangler rolle`() {
         every { tilgangService.harTilgangTilBehandlingGittRolle(any(), any()) } returns false
-
-        val feil = assertThrows<Feil> { stegService.oppdaterSteg(behandlingId, StegType.VURDERING) }
+        val feil = assertThrows<Feil> { stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.VURDERING) }
         assertThat(feil.frontendFeilmelding).contains("Saksbehandler har ikke tilgang til å oppdatere behandlingssteg")
     }
 
@@ -120,6 +119,7 @@ internal class StegServiceTest {
         val feil = assertThrows<Feil> {
             stegService.oppdaterSteg(
                 UUID.randomUUID(),
+                StegType.VURDERING,
                 StegType.BREV
             )
         }

@@ -45,7 +45,7 @@ class FerdigstillBehandlingService(
         }
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling)
         behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(behandlingId, behandlingsresultat)
-        stegService.oppdaterSteg(behandlingId, stegForResultat(behandlingsresultat))
+        stegService.oppdaterSteg(behandlingId, behandling.steg, stegForResultat(behandlingsresultat))
     }
 
     private fun opprettJournalførBrevTask(behandlingId: UUID) {

@@ -26,7 +26,7 @@ internal class FormServiceTest {
 
     @BeforeEach
     internal fun setUp() {
-        justRun { stegService.oppdaterSteg(any(), any()) }
+        justRun { stegService.oppdaterSteg(any(), any(), any()) }
         every { formRepository.findByIdOrNull(any()) } returns Form(behandlingId)
         every { formRepository.update(any()) } answers { firstArg() }
     }
@@ -38,7 +38,7 @@ internal class FormServiceTest {
         internal fun `ikke ferdigutfylt skal gå til steget formKrav`() {
             service.oppdaterForm(ikkeFerdigutfylt())
 
-            verify { stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV) }
+            verify { stegService.oppdaterSteg(behandlingId, any(), StegType.FORMKRAV) }
             verify { formRepository.update(any()) }
         }
 
@@ -46,7 +46,7 @@ internal class FormServiceTest {
         internal fun `ferdigutfylt og oppfylt skal gå videre til vurdering`() {
             service.oppdaterForm(oppfyltFormDto())
 
-            verify { stegService.oppdaterSteg(behandlingId, StegType.VURDERING) }
+            verify { stegService.oppdaterSteg(behandlingId, any(), StegType.VURDERING) }
             verify { formRepository.update(any()) }
         }
 
@@ -54,7 +54,7 @@ internal class FormServiceTest {
         internal fun `ferdigutfylt men ikke oppfylt skal gå videre til brev`() {
             service.oppdaterForm(ikkeOppfyltFormDto())
 
-            verify { stegService.oppdaterSteg(behandlingId, StegType.BREV) }
+            verify { stegService.oppdaterSteg(behandlingId, any(), StegType.BREV) }
             verify { formRepository.update(any()) }
         }
     }

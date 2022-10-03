@@ -63,7 +63,7 @@ internal class FerdigstillBehandlingServiceTest {
         every { distribusjonService.distribuerBrev(any()) } returns brevDistribusjonId
         every { vurderingService.hentVurdering(any()) } returns vurdering
         every { kabalService.sendTilKabal(any(), any(), any()) } just Runs
-        every { stegService.oppdaterSteg(any(), any()) } just Runs
+        every { stegService.oppdaterSteg(any(), any(), any()) } just Runs
         every { formService.formkravErOppfyltForBehandling(any()) } returns true
         every { vurderingService.klageTasIkkeTilFølge(any()) } returns true
         every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), any()) } just Runs
@@ -80,8 +80,13 @@ internal class FerdigstillBehandlingServiceTest {
     internal fun `skal ferdigstille behandling`() {
         val stegSlot = slot<StegType>()
         val behandlingsresultatSlot = slot<BehandlingResultat>()
-        every { stegService.oppdaterSteg(any(), capture(stegSlot)) } just Runs
-        every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), capture(behandlingsresultatSlot)) } just Runs
+        every { stegService.oppdaterSteg(any(), any(), capture(stegSlot)) } just Runs
+        every {
+            behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(
+                any(),
+                capture(behandlingsresultatSlot)
+            )
+        } just Runs
 
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
 
@@ -89,15 +94,21 @@ internal class FerdigstillBehandlingServiceTest {
         assertThat(stegSlot.captured).isEqualTo(StegType.KABAL_VENTER_SVAR)
         verify { taskRepository.save(any()) }
         verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling) }
+
     }
 
     @Test
     internal fun `skal ikke sende til kabal hvis formkrav ikke er oppfylt`() {
         val stegSlot = slot<StegType>()
         val behandlingsresultatSlot = slot<BehandlingResultat>()
-        every { stegService.oppdaterSteg(any(), capture(stegSlot)) } just Runs
+        every { stegService.oppdaterSteg(any(), any(), capture(stegSlot)) } just Runs
         every { formService.formkravErOppfyltForBehandling(any()) } returns false
-        every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), capture(behandlingsresultatSlot)) } just Runs
+        every {
+            behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(
+                any(),
+                capture(behandlingsresultatSlot)
+            )
+        } just Runs
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
         assertThat(stegSlot.captured).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST)
@@ -109,8 +120,13 @@ internal class FerdigstillBehandlingServiceTest {
         val stegSlot = slot<StegType>()
         val behandlingsresultatSlot = slot<BehandlingResultat>()
 
-        every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), capture(behandlingsresultatSlot)) } just Runs
-        every { stegService.oppdaterSteg(any(), capture(stegSlot)) } just Runs
+        every {
+            behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(
+                any(),
+                capture(behandlingsresultatSlot)
+            )
+        } just Runs
+        every { stegService.oppdaterSteg(any(), any(), capture(stegSlot)) } just Runs
         every { vurderingService.klageTasIkkeTilFølge(any()) } returns false
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
         assertThat(stegSlot.captured).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)

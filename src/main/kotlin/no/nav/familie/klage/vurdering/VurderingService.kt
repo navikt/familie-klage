@@ -32,9 +32,7 @@ class VurderingService(
     @Transactional
     fun opprettEllerOppdaterVurdering(vurdering: VurderingDto): VurderingDto {
         validerVurdering(vurdering)
-
-        stegService.oppdaterSteg(vurdering.behandlingId, StegType.BREV)
-
+        stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING, StegType.BREV)
         val eksisterendeVurdering = vurderingRepository.findByIdOrNull(vurdering.behandlingId)
         return if (eksisterendeVurdering != null) {
             oppdaterVurdering(vurdering, eksisterendeVurdering).tilDto()

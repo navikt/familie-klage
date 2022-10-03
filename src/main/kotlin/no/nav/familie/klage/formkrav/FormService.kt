@@ -37,12 +37,12 @@ class FormService(
         )
         if (formkravErFerdigUtfyllt(oppdatertForm)) {
             if (formkravErOppfylt(oppdatertForm)) {
-                stegService.oppdaterSteg(behandlingId, StegType.VURDERING)
+                stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.VURDERING)
             } else {
-                stegService.oppdaterSteg(behandlingId, StegType.BREV)
+                stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.BREV)
             }
         } else {
-            stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV)
+            stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.FORMKRAV)
         }
 
         return formRepository.update(oppdatertForm).tilDto()
