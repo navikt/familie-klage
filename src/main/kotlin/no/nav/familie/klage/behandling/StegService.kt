@@ -26,15 +26,14 @@ class StegService(
         val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
         validerHarSaksbehandlerRolle()
         validerGyldigNesteSteg(behandling)
-        oppdaterBehandlingOgHistorikk(behandling, nåværendeSteg, nesteSteg)
+        oppdaterBehandlingOgHistorikk(behandling.id, nåværendeSteg, nesteSteg)
     }
 
     private fun oppdaterBehandlingOgHistorikk(
-        behandling: Behandling,
+        behandlingId: UUID,
         nåværendeSteg: StegType,
         nesteSteg: StegType
     ) {
-        val behandlingId = behandling.id
         behandlingRepository.updateSteg(behandlingId, nesteSteg)
         behandlingRepository.updateStatus(behandlingId, nesteSteg.gjelderStatus)
 
