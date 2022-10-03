@@ -49,7 +49,7 @@ internal class FerdigstillBehandlingServiceTest {
         vurderingService = vurderingService,
         formService = formService,
         stegService = stegService,
-        oppgaveService = oppgaveTaskService
+        oppgaveTaskService = oppgaveTaskService
     )
     val fagsak = DomainUtil.fagsakDomain().tilFagsak()
     val behandling = DomainUtil.behandling(fagsak = fagsak, steg = StegType.BREV, status = BehandlingStatus.UTREDES)

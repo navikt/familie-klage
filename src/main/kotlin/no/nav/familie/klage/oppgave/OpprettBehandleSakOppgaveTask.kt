@@ -2,7 +2,6 @@ package no.nav.familie.klage.oppgave
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.oppgave.OppgaveUtil.lagFristForOppgave
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
