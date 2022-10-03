@@ -3,7 +3,6 @@ package no.nav.familie.klage.distribusjon
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
@@ -22,7 +21,7 @@ class DistribusjonService(
     private val brevService: BrevService
 ) {
 
-    fun journalførBrev(behandlingId: UUID): String {
+    fun journalførBrev(behandlingId: UUID, saksbehandler: String): String {
         val brev = brevService.lagBrevSomPdf(behandlingId)
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         val behandling = behandlingService.hentBehandling(behandlingId)
@@ -39,7 +38,7 @@ class DistribusjonService(
 
         return familieIntegrasjonerClient.arkiverDokument(
             arkiverDokumentRequest,
-            SikkerhetContext.hentSaksbehandler(true)
+            saksbehandler
         ).journalpostId
     }
 

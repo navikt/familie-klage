@@ -23,7 +23,8 @@ class JournalførBrevTask(
 
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
-        val journalpostId = distribusjonService.journalførBrev(behandlingId)
+        val saksbehandler = task.metadata[saksbehandlerMetadataKey].toString()
+        val journalpostId = distribusjonService.journalførBrev(behandlingId, saksbehandler)
         task.metadata.apply {
             this["journalpostId"] = journalpostId
         }
@@ -61,5 +62,6 @@ class JournalførBrevTask(
 
     companion object {
         const val TYPE = "journalførBrevTask"
+        const val saksbehandlerMetadataKey = "saksbehandler"
     }
 }

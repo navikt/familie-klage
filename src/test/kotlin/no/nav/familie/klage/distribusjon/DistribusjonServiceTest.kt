@@ -58,7 +58,7 @@ internal class DistribusjonServiceTest {
             )
         } returns ArkiverDokumentResponse("journalpostId", false)
 
-        distribusjonService.journalførBrev(behandling.id)
+        distribusjonService.journalførBrev(behandling.id, "saksbehandler")
 
         assertThat(journalpostSlot.captured.fagsakId).isEqualTo(fagsak.eksternId)
         assertThat(journalpostSlot.captured.fnr).isEqualTo(ident)
