@@ -33,11 +33,11 @@ internal class JournalførBrevTaskTest {
 
     @Test
     internal fun `skal journalføre og sette journalpostId på tasken`() {
-        every { distribusjonService.journalførBrev(any()) } returns journalpostId
+        every { distribusjonService.journalførBrev(any(), any()) } returns journalpostId
         val task = Task(payload = behandlingId.toString(), type = JournalførBrevTask.TYPE)
         journalførBrevTask.doTask(task)
         assertThat(task.metadata["journalpostId"]).isEqualTo(journalpostId)
-        verify { distribusjonService.journalførBrev(behandlingId) }
+        verify { distribusjonService.journalførBrev(behandlingId, any()) }
     }
 
     @Test

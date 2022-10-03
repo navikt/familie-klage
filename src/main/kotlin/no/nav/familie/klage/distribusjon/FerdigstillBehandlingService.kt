@@ -7,6 +7,7 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
@@ -19,6 +20,7 @@ import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.Properties
 import java.util.UUID
 
 @Service
@@ -51,7 +53,10 @@ class FerdigstillBehandlingService(
     private fun opprettJournalførBrevTask(behandlingId: UUID) {
         val journalførBrevTask = Task(
             type = JournalførBrevTask.TYPE,
-            payload = behandlingId.toString()
+            payload = behandlingId.toString(),
+            properties = Properties().apply {
+                this[JournalførBrevTask.saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
+            }
         )
         taskRepository.save(journalførBrevTask)
     }
