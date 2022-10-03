@@ -11,7 +11,7 @@ import java.util.Properties
 import java.util.UUID
 
 @Service
-class OppgaveService(
+class OppgaveTaskService(
     private val taskRepository: TaskRepository,
     private val behandlingService: BehandlingService
 ) {
