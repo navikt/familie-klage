@@ -15,6 +15,7 @@ import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.tilDto
 import no.nav.familie.klage.kabal.dto.KlageresultatDto
+import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus.FERDIGSTILT
@@ -30,7 +31,8 @@ class BehandlingService(
     private val behandlingRepository: BehandlingRepository,
     private val fagsakService: FagsakService,
     private val klageresultatRepository: KlageresultatRepository,
-    private val behandlinghistorikkService: BehandlingshistorikkService
+    private val behandlinghistorikkService: BehandlingshistorikkService,
+    private val oppgaveTaskService: OppgaveTaskService
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -98,7 +100,7 @@ class BehandlingService(
         )
 
         behandlinghistorikkService.opprettBehandlingshistorikk(behandlingId, BEHANDLING_FERDIGSTILT)
-        // TODO: Ferdigstill oppgave
+        oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling)
 
         behandlingRepository.update(henlagtBehandling)
     }
