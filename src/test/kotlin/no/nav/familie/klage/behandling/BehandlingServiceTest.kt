@@ -13,6 +13,7 @@ import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.kabal.KlageresultatRepository
+import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.BrukerContextUtil.clearBrukerContext
 import no.nav.familie.klage.testutil.BrukerContextUtil.mockBrukerContext
@@ -21,30 +22,32 @@ import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
 import org.springframework.http.HttpStatus
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 internal class BehandlingServiceTest {
 
     val klageresultatRepository = mockk<KlageresultatRepository>()
     val fagsakService = mockk<FagsakService>()
     val behandlingRepository = mockk<BehandlingRepository>()
     val behandlinghistorikkService = mockk<BehandlingshistorikkService>()
+    private val oppgaveTaskService = mockk<OppgaveTaskService>()
     val behandlingService = BehandlingService(
         behandlingRepository,
         fagsakService,
         klageresultatRepository,
-        behandlinghistorikkService
+        behandlinghistorikkService,
+        oppgaveTaskService
     )
     val behandlingSlot = slot<Behandling>()
 
-    @BeforeAll
+    @BeforeEach
     fun setUp() {
         mockBrukerContext()
         every {
@@ -53,9 +56,10 @@ internal class BehandlingServiceTest {
             behandlingSlot.captured
         }
         every { behandlinghistorikkService.opprettBehandlingshistorikk(any(), any()) } returns mockk()
+        every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any()) } returns mockk()
     }
 
-    @AfterAll
+    @AfterEach
     fun tearDown() {
         clearBrukerContext()
     }
@@ -90,6 +94,7 @@ internal class BehandlingServiceTest {
         internal fun `skal kunne henlegge behandling`() {
             val behandling = behandling(fagsak(), status = BehandlingStatus.UTREDES)
             henleggOgForventOk(behandling, henlagtÅrsak = HenlagtÅrsak.FEILREGISTRERT)
+            verify(exactly = 1) { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any()) }
         }
 
         @Test
@@ -109,6 +114,7 @@ internal class BehandlingServiceTest {
             val behandling = behandling(fagsak(), status = BehandlingStatus.UTREDES)
             henleggOgForventOk(behandling, TRUKKET_TILBAKE)
             verify { behandlinghistorikkService.opprettBehandlingshistorikk(any(), StegType.BEHANDLING_FERDIGSTILT) }
+            verify(exactly = 1) { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any()) }
         }
     }
 }
