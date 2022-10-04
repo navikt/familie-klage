@@ -6,6 +6,7 @@ import no.nav.familie.klage.kabal.dto.KlageresultatDto
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -20,7 +21,8 @@ data class BehandlingDto(
     val vedtaksdato: LocalDateTime? = null,
     val stønadstype: Stønadstype,
     val klageresultat: List<KlageresultatDto>,
-    val eksternFagsystemBehandlingId: String
+    val eksternFagsystemBehandlingId: String,
+    val klageMottatt: LocalDate
 )
 
 fun Behandling.tilDto(stønadstype: Stønadstype, klageresultat: List<KlageresultatDto>): BehandlingDto =
@@ -34,5 +36,6 @@ fun Behandling.tilDto(stønadstype: Stønadstype, klageresultat: List<Klageresul
         opprettet = this.sporbar.opprettetTid,
         stønadstype = stønadstype,
         klageresultat = klageresultat,
-        eksternFagsystemBehandlingId = this.eksternFagsystemBehandlingId
+        eksternFagsystemBehandlingId = this.eksternFagsystemBehandlingId,
+        klageMottatt = this.klageMottatt
     )
