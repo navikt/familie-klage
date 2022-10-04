@@ -40,9 +40,9 @@ class BehandlingService(
     fun hentBehandling(behandlingId: UUID): Behandling = behandlingRepository.findByIdOrThrow(behandlingId)
 
     fun hentBehandlingDto(behandlingId: UUID): BehandlingDto {
-        val stønadstype = fagsakService.hentFagsakForBehandling(behandlingId).stønadstype
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         return behandlingRepository.findByIdOrThrow(behandlingId)
-            .tilDto(stønadstype, hentKlageresultatDto(behandlingId))
+            .tilDto(fagsak, hentKlageresultatDto(behandlingId))
     }
 
     fun opprettBehandling(behandling: Behandling): Behandling {
