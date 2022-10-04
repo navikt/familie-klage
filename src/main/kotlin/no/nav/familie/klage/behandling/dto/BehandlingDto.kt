@@ -19,7 +19,8 @@ data class BehandlingDto(
     val opprettet: LocalDateTime,
     val vedtaksdato: LocalDateTime? = null,
     val stønadstype: Stønadstype,
-    val klageresultat: List<KlageresultatDto>
+    val klageresultat: List<KlageresultatDto>,
+    val eksternFagsystemBehandlingId: String
 )
 
 fun Behandling.tilDto(stønadstype: Stønadstype, klageresultat: List<KlageresultatDto>): BehandlingDto =
@@ -32,5 +33,6 @@ fun Behandling.tilDto(stønadstype: Stønadstype, klageresultat: List<Klageresul
         resultat = this.resultat,
         opprettet = this.sporbar.opprettetTid,
         stønadstype = stønadstype,
-        klageresultat = klageresultat
+        klageresultat = klageresultat,
+        eksternFagsystemBehandlingId = this.eksternFagsystemBehandlingId
     )
