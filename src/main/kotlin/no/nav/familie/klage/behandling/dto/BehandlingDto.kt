@@ -26,7 +26,7 @@ data class BehandlingDto(
     val eksternFagsystemBehandlingId: String,
     val eksternFagsystemFagsakId: String,
     val fagsystem: Fagsystem,
-    val klageMottatt: LocalDate,
+    val klageMottatt: LocalDate
 )
 
 fun Behandling.tilDto(fagsak: Fagsak, klageresultat: List<KlageresultatDto>): BehandlingDto =
