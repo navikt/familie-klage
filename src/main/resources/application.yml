@@ -65,6 +65,15 @@ no.nav.security.jwt:
           client-id: ${AZURE_APP_CLIENT_ID}
           client-secret: ${AZURE_APP_CLIENT_SECRET}
           client-auth-method: client_secret_basic
+      kabal-clientcredentials:
+        resource-url: ${KABAL_URL}
+        token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+        grant-type: client_credentials
+        scope: ${KABAL_SCOPE}
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_basic
 
 
 PDL_SCOPE: api://${DEPLOY_ENV}-fss.pdl.pdl-api/.default
