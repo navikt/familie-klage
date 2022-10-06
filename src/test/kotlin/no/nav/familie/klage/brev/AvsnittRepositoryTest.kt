@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired
 
 internal class AvsnittRepositoryTest : OppslagSpringRunnerTest() {
 
-
     @Autowired
     lateinit var avsnittRepository: AvsnittRepository
 

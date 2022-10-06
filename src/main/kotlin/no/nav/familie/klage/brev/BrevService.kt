@@ -101,12 +101,14 @@ class BrevService(
     }
 
     private fun lagreAvsnitt(behandlingId: UUID, avsnitt: AvsnittDto): Avsnitt {
-        return avsnittRepository.insert(Avsnitt(
-            behandlingId = behandlingId,
-            deloverskrift = avsnitt.deloverskrift,
-            innhold = avsnitt.innhold,
-            skalSkjulesIBrevbygger = avsnitt.skalSkjulesIBrevbygger
-        ))
+        return avsnittRepository.insert(
+            Avsnitt(
+                behandlingId = behandlingId,
+                deloverskrift = avsnitt.deloverskrift,
+                innhold = avsnitt.innhold,
+                skalSkjulesIBrevbygger = avsnitt.skalSkjulesIBrevbygger
+            )
+        )
     }
 
     fun slettAvsnittOmEksisterer(behandlingId: UUID) {
