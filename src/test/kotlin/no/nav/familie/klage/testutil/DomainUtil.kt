@@ -113,16 +113,19 @@ object DomainUtil {
             saksbehandlerBegrunnelse = "Ok"
         )
 
-    fun fritekstbrev(behandlingId: UUID) = FritekstBrevDto(
+    fun avsnitt() = AvsnittDto(
+        avsnittId = UUID.randomUUID(),
+        deloverskrift = "Deloverskrift",
+        innhold = "Litt innhold",
+        skalSkjulesIBrevbygger = false
+    )
+
+    fun fritekstbrev(
+        behandlingId: UUID,
+        avsnitt: List<AvsnittDto> = listOf(avsnitt())
+    ) = FritekstBrevDto(
         overskrift = "Topp",
-        avsnitt = listOf(
-            AvsnittDto(
-                avsnittId = UUID.randomUUID(),
-                deloverskrift = "Deloverskrift",
-                innhold = "Litt innhold",
-                skalSkjulesIBrevbygger = false
-            )
-        ),
+        avsnitt = avsnitt,
         behandlingId = behandlingId,
         brevType = FritekstBrevtype.VEDTAK_INVILGELSE
     )
@@ -175,22 +178,23 @@ object DomainUtil {
         )
     }
 
-    fun journalpost(dokumenter: List<DokumentInfo> = emptyList(), relevanteDatoer: List<RelevantDato> = emptyList()) = Journalpost(
-        journalpostId = UUID.randomUUID().toString(),
-        journalposttype = Journalposttype.I,
-        journalstatus = Journalstatus.MOTTATT,
-        tema = "ENF",
-        behandlingstema = null,
-        tittel = "Tut og kjør",
-        sak = null,
-        bruker = null,
-        avsenderMottaker = null,
-        journalforendeEnhet = null,
-        kanal = null,
-        dokumenter = dokumenter,
-        relevanteDatoer = relevanteDatoer,
-        eksternReferanseId = null
-    )
+    fun journalpost(dokumenter: List<DokumentInfo> = emptyList(), relevanteDatoer: List<RelevantDato> = emptyList()) =
+        Journalpost(
+            journalpostId = UUID.randomUUID().toString(),
+            journalposttype = Journalposttype.I,
+            journalstatus = Journalstatus.MOTTATT,
+            tema = "ENF",
+            behandlingstema = null,
+            tittel = "Tut og kjør",
+            sak = null,
+            bruker = null,
+            avsenderMottaker = null,
+            journalforendeEnhet = null,
+            kanal = null,
+            dokumenter = dokumenter,
+            relevanteDatoer = relevanteDatoer,
+            eksternReferanseId = null
+        )
 
     fun journalpostDokument(
         status: Dokumentstatus = Dokumentstatus.FERDIGSTILT,
