@@ -5,5 +5,5 @@ import java.util.UUID
 data class BrevMedAvsnittDto(
     val behandlingId: UUID,
     val overskrift: String,
-    val avsnitt: List<AvsnittDto>?
+    val avsnitt: List<AvsnittDto>
 )

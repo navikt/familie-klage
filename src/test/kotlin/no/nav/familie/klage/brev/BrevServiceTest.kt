@@ -50,16 +50,31 @@ internal class BrevServiceTest : OppslagSpringRunnerTest() {
 
         @Test
         internal fun `skal slette tidligere avsnitt når man lagrer på nytt`() {
-            val fritekstbrev1 = fritekstbrev(behandling.id)
-            val fritekstbrev2 = fritekstbrev(behandling.id, avsnitt = listOf(avsnitt(), avsnitt()))
+            val fritekstbrev1 = fritekstbrev(behandling.id, avsnitt = listOf(avsnitt(), avsnitt()))
+            val fritekstbrev2 = fritekstbrev(behandling.id)
 
             brevService.lagEllerOppdaterBrev(fritekstbrev1)
-            assertThat(brevService.hentMellomlagretBrev(behandling.id)?.avsnitt!!.map { it.avsnittId })
-                .containsExactlyInAnyOrder(fritekstbrev1.avsnitt.single().avsnittId)
+            assertThat(brevService.hentMellomlagretBrev(behandling.id)!!.avsnitt).hasSize(2)
 
             brevService.lagEllerOppdaterBrev(fritekstbrev2)
-            assertThat(brevService.hentMellomlagretBrev(behandling.id)?.avsnitt!!.map { it.avsnittId })
-                .containsExactlyInAnyOrder(fritekstbrev2.avsnitt[0].avsnittId, fritekstbrev2.avsnitt[1].avsnittId)
+            assertThat(brevService.hentMellomlagretBrev(behandling.id)!!.avsnitt).hasSize(1)
+        }
+
+        @Test
+        internal fun `skal generere et nytt avsnittId for avsnitt som sendes inn fra frontend`() {
+            val avsnitt = avsnitt()
+            val fritekstbrev = fritekstbrev(behandling.id, avsnitt = listOf(avsnitt))
+
+            brevService.lagEllerOppdaterBrev(fritekstbrev)
+            val lagredeAvsnitt = brevService.hentMellomlagretBrev(behandling.id)!!.avsnitt
+            assertThat(lagredeAvsnitt).hasSize(1)
+            assertThat(lagredeAvsnitt[0].avsnittId).isNotEqualTo(avsnitt.avsnittId)
+
+            brevService.lagEllerOppdaterBrev(fritekstbrev)
+            val lagredeAvsnitt2 = brevService.hentMellomlagretBrev(behandling.id)!!.avsnitt
+            assertThat(lagredeAvsnitt).hasSize(1)
+            assertThat(lagredeAvsnitt2[0].avsnittId).isNotEqualTo(avsnitt.avsnittId)
+            assertThat(lagredeAvsnitt2[0].avsnittId).isNotEqualTo(lagredeAvsnitt[0].avsnittId)
         }
     }
 }
