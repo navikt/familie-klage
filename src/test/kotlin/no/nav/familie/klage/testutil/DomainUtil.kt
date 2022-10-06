@@ -113,16 +113,19 @@ object DomainUtil {
             saksbehandlerBegrunnelse = "Ok"
         )
 
-    fun fritekstbrev(behandlingId: UUID) = FritekstBrevDto(
+    fun avsnitt() = AvsnittDto(
+        avsnittId = UUID.randomUUID(),
+        deloverskrift = "Deloverskrift",
+        innhold = "Litt innhold",
+        skalSkjulesIBrevbygger = false
+    )
+
+    fun fritekstbrev(
+        behandlingId: UUID,
+        avsnitt: List<AvsnittDto> = listOf(avsnitt())
+    ) = FritekstBrevDto(
         overskrift = "Topp",
-        avsnitt = listOf(
-            AvsnittDto(
-                avsnittId = UUID.randomUUID(),
-                deloverskrift = "Deloverskrift",
-                innhold = "Litt innhold",
-                skalSkjulesIBrevbygger = false
-            )
-        ),
+        avsnitt = avsnitt,
         behandlingId = behandlingId,
         brevType = FritekstBrevtype.VEDTAK_INVILGELSE
     )

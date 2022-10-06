@@ -72,17 +72,10 @@ class BrevService(
             overskrift = fritekstbrevDto.overskrift,
             saksbehandlerHtml = html,
             brevtype = fritekstbrevDto.brevType
-
         )
 
-        for (avsnitt in fritekstbrevDto.avsnitt) {
-            lagEllerOppdaterAvsnitt(
-                avsnittId = avsnitt.avsnittId,
-                behandlingId = fritekstbrevDto.behandlingId,
-                deloverskrift = avsnitt.deloverskrift,
-                innhold = avsnitt.innhold,
-                skalSkjulesIBrevBygger = avsnitt.skalSkjulesIBrevbygger
-            )
+        fritekstbrevDto.avsnitt.forEach {
+            lagreAvsnitt(behandlingId = fritekstbrevDto.behandlingId, avsnitt = it)
         }
 
         return familieDokumentClient.genererPdfFraHtml(html)
@@ -94,13 +87,12 @@ class BrevService(
         saksbehandlerHtml: String,
         brevtype: FritekstBrevtype
     ): Brev {
-        val brev =
-            Brev(
-                behandlingId = behandlingId,
-                overskrift = overskrift,
-                saksbehandlerHtml = saksbehandlerHtml,
-                brevtype = brevtype
-            )
+        val brev = Brev(
+            behandlingId = behandlingId,
+            overskrift = overskrift,
+            saksbehandlerHtml = saksbehandlerHtml,
+            brevtype = brevtype
+        )
 
         return when (brevRepository.existsById(brev.behandlingId)) {
             true -> brevRepository.update(brev)
@@ -108,28 +100,17 @@ class BrevService(
         }
     }
 
-    fun lagEllerOppdaterAvsnitt(
-        avsnittId: UUID,
-        behandlingId: UUID,
-        deloverskrift: String,
-        innhold: String,
-        skalSkjulesIBrevBygger: Boolean?
-    ): Avsnitt {
-        val avsnitt = Avsnitt(
-            avsnittId = avsnittId,
+    private fun lagreAvsnitt(behandlingId: UUID, avsnitt: AvsnittDto): Avsnitt {
+        return avsnittRepository.insert(Avsnitt(
             behandlingId = behandlingId,
-            deloverskrift = deloverskrift,
-            innhold = innhold,
-            skalSkjulesIBrevbygger = skalSkjulesIBrevBygger
-        )
-        return when (avsnittRepository.existsById(avsnittId)) {
-            true -> avsnittRepository.update(avsnitt)
-            false -> avsnittRepository.insert(avsnitt)
-        }
+            deloverskrift = avsnitt.deloverskrift,
+            innhold = avsnitt.innhold,
+            skalSkjulesIBrevbygger = avsnitt.skalSkjulesIBrevbygger
+        ))
     }
 
     fun slettAvsnittOmEksisterer(behandlingId: UUID) {
-        avsnittRepository.slettAvsnittMedBehanldingId(behandlingId)
+        avsnittRepository.slettAvsnittMedBehandlingId(behandlingId)
     }
 
     fun lagBrevSomPdf(behandlingId: UUID): ByteArray {

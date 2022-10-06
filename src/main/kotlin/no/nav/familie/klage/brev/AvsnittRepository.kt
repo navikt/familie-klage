@@ -11,20 +11,9 @@ import java.util.UUID
 @Repository
 interface AvsnittRepository : RepositoryInterface<Avsnitt, UUID>, InsertUpdateRepository<Avsnitt> {
 
-    @Query(
-        """
-            SELECT * from avsnitt
-            WHERE behandling_id = :behandlingId
-        """
-    )
-    fun hentAvsnittPåBehandlingId(
-        behandlingId: UUID
-    ): List<Avsnitt>?
+    fun findByBehandlingId(behandlingId: UUID): List<Avsnitt>
 
     @Modifying
-    @Query(
-        """DELETE from avsnitt
-            WHERE avsnitt.behandling_id = :behandlingId"""
-    )
-    fun slettAvsnittMedBehanldingId(behandlingId: UUID)
+    @Query("""DELETE FROM avsnitt WHERE avsnitt.behandling_id = :behandlingId""")
+    fun slettAvsnittMedBehandlingId(behandlingId: UUID)
 }
