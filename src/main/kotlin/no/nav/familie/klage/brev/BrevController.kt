@@ -31,6 +31,13 @@ class BrevController(
         return Ressurs.success(brevService.hentMellomlagretBrev(behandlingId))
     }
 
+    @GetMapping("/{behandlingId}/pdf")
+    fun hentBrevPdf(@PathVariable behandlingId: UUID): Ressurs<ByteArray> {
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerHarVeilederrolleForBehandling(behandlingId)
+        return Ressurs.success(brevService.hentBrevPdf(behandlingId))
+    }
+
     @PostMapping
     fun lagEllerOppdaterBrev(@RequestBody brevInnhold: FritekstBrevDto): Ressurs<ByteArray> {
         tilgangService.validerTilgangTilBehandling(brevInnhold.behandlingId, AuditLoggerEvent.UPDATE)

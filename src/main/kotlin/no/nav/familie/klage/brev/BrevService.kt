@@ -9,6 +9,7 @@ import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.brev.dto.FritekstBrevtype
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.repository.findByIdOrThrow
 import org.springframework.data.repository.findByIdOrNull
@@ -83,6 +84,11 @@ class BrevService(
         return familieDokumentClient.genererPdfFraHtml(html)
     }
 
+    fun hentBrevPdf(behandlingId: UUID): ByteArray {
+        return brevRepository.findByIdOrThrow(behandlingId).pdf?.bytes
+            ?: error("Finner ikke brev-pdf for behandling=$behandlingId")
+    }
+
     private fun lagEllerOppdaterBrev(
         behandlingId: UUID,
         overskrift: String,
@@ -131,7 +137,12 @@ class BrevService(
         feilHvis(behandlingService.erLåstForVidereBehandling(behandlingId)) {
             "Kan ikke lage pdf når behandlingen er låst"
         }
+        feilHvis(brev.pdf != null) {
+            "Det finnes allerede en lagret pdf"
+        }
 
-        return familieDokumentClient.genererPdfFraHtml(brev.saksbehandlerHtml)
+        val generertBrev = familieDokumentClient.genererPdfFraHtml(brev.saksbehandlerHtml)
+        brevRepository.update(brev.copy(pdf = Fil(generertBrev)))
+        return generertBrev
     }
 }
