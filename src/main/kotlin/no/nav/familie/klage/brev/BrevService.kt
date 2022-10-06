@@ -1,12 +1,14 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.behandling.BehandlingService
+import no.nav.familie.klage.brev.domain.Avsnitt
 import no.nav.familie.klage.brev.domain.Brev
-import no.nav.familie.klage.brev.domain.BrevMedAvsnitt
-import no.nav.familie.klage.brev.dto.Avsnitt
+import no.nav.familie.klage.brev.dto.AvsnittDto
+import no.nav.familie.klage.brev.dto.BrevMedAvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.brev.dto.FritekstBrevtype
+import no.nav.familie.klage.brev.dto.tilDto
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import org.slf4j.Logger
@@ -28,12 +30,12 @@ class BrevService(
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    fun hentMellomlagretBrev(behandlingId: UUID): BrevMedAvsnitt? {
+    fun hentMellomlagretBrev(behandlingId: UUID): BrevMedAvsnittDto? {
         val eksisterer = sjekkOmBrevEksisterer(behandlingId)
         if (eksisterer) {
             val brev = brevRepository.findByIdOrThrow(behandlingId)
-            val avsnitt = avsnittRepository.hentAvsnittPåBehandlingId(behandlingId)
-            return BrevMedAvsnitt(behandlingId, brev.overskrift, avsnitt)
+            val avsnitt = avsnittRepository.findByBehandlingId(behandlingId)
+            return BrevMedAvsnittDto(behandlingId, brev.overskrift, avsnitt.map { it.tilDto() })
         }
         return null
     }
