@@ -124,8 +124,6 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
                 val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
                 formService.oppdaterForm(oppfyltFormDto(behandlingId))
                 vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId, Vedtak.OMGJØR_VEDTAK))
-                brevService.lagEllerOppdaterBrev(behandlingId, "", "", FritekstBrevtype.VEDTAK_AVSLAG)
-                ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
                 behandlingId
             }
 
@@ -134,7 +132,6 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
             assertThat(behandlingshistorikk.map { it.steg }).containsExactly(
                 StegType.BEHANDLING_FERDIGSTILT,
-                StegType.BREV,
                 StegType.VURDERING,
                 StegType.FORMKRAV
             )

@@ -9,7 +9,8 @@ import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.oppgave.OppgaveTaskService
-import no.nav.familie.klage.vurdering.VurderingService
+import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.klage.vurdering.VurderingRepository
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.HENLAGT
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_MEDHOLD
@@ -26,7 +27,7 @@ import java.util.UUID
 @Service
 class FerdigstillBehandlingService(
     private val behandlingService: BehandlingService,
-    private val vurderingService: VurderingService,
+    private val vurderingRepository: VurderingRepository,
     private val formService: FormService,
     private val stegService: StegService,
     private val taskRepository: TaskRepository,
@@ -41,7 +42,7 @@ class FerdigstillBehandlingService(
         val behandling = behandlingService.hentBehandling(behandlingId)
         val behandlingsresultat = utledBehandlingResultat(behandlingId)
 
-        validerKanFerdigstille(behandling)
+        validerKanFerdigstille(behandling, behandlingsresultat)
         if (behandlingsresultat != MEDHOLD) {
             opprettJournalførBrevTask(behandlingId)
         }
@@ -67,22 +68,18 @@ class FerdigstillBehandlingService(
         IKKE_SATT -> error("Kan ikke utlede neste steg når behandlingsresultatet er IKKE_SATT")
     }
 
-    private fun validerKanFerdigstille(behandling: Behandling) {
+    private fun validerKanFerdigstille(behandling: Behandling, behandlingsresultat: BehandlingResultat) {
         if (behandling.status.erLåstForVidereBehandling()) {
             throw Feil("Kan ikke ferdigstille behandlingen da den er låst for videre behandling")
         }
-        if (behandling.steg != StegType.BREV) {
+        if (!(behandling.steg == StegType.BREV || behandlingsresultat == MEDHOLD)) {
             throw Feil("Kan ikke ferdigstille behandlingen fra steg=${behandling.steg}")
         }
     }
 
     private fun utledBehandlingResultat(behandlingId: UUID): BehandlingResultat {
         return if (formService.formkravErOppfyltForBehandling(behandlingId)) {
-            if (vurderingService.klageTasIkkeTilFølge(behandlingId)) {
-                IKKE_MEDHOLD
-            } else {
-                MEDHOLD
-            }
+            vurderingRepository.findByIdOrThrow(behandlingId).vedtak.tilBehandlingResultat()
         } else {
             IKKE_MEDHOLD_FORMKRAV_AVVIST
         }

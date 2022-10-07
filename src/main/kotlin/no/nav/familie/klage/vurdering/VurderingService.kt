@@ -2,7 +2,7 @@ package no.nav.familie.klage.vurdering
 
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.klage.distribusjon.FerdigstillBehandlingService
 import no.nav.familie.klage.vurdering.VurderingValidator.validerVurdering
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
@@ -16,7 +16,8 @@ import java.util.UUID
 @Service
 class VurderingService(
     private val vurderingRepository: VurderingRepository,
-    private val stegService: StegService
+    private val stegService: StegService,
+    private val ferdigstillBehandlingService: FerdigstillBehandlingService
 ) {
 
     fun hentVurdering(behandlingId: UUID): Vurdering? =
@@ -32,13 +33,19 @@ class VurderingService(
     @Transactional
     fun opprettEllerOppdaterVurdering(vurdering: VurderingDto): VurderingDto {
         validerVurdering(vurdering)
-        stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING, StegType.BREV)
+
         val eksisterendeVurdering = vurderingRepository.findByIdOrNull(vurdering.behandlingId)
-        return if (eksisterendeVurdering != null) {
+        val lagretVurdering = if (eksisterendeVurdering != null) {
             oppdaterVurdering(vurdering, eksisterendeVurdering).tilDto()
         } else {
             opprettNyVurdering(vurdering).tilDto()
         }
+        if (vurdering.vedtak == Vedtak.OMGJØR_VEDTAK) {
+            ferdigstillBehandlingService.ferdigstillKlagebehandling(vurdering.behandlingId)
+        } else {
+            stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING, StegType.BREV)
+        }
+        return lagretVurdering
     }
 
     private fun opprettNyVurdering(vurdering: VurderingDto) = vurderingRepository.insert(
@@ -60,10 +67,5 @@ class VurderingService(
                 hjemmel = vurdering.hjemmel
             )
         )
-    }
-
-    fun klageTasIkkeTilFølge(behandlingId: UUID): Boolean {
-        val vurdering = vurderingRepository.findByIdOrThrow(behandlingId)
-        return vurdering.vedtak == Vedtak.OPPRETTHOLD_VEDTAK
     }
 }

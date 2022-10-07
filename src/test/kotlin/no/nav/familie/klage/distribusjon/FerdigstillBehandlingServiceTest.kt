@@ -14,11 +14,13 @@ import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.kabal.KabalService
 import no.nav.familie.klage.oppgave.OppgaveTaskService
+import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.tilFagsak
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
-import no.nav.familie.klage.vurdering.VurderingService
+import no.nav.familie.klage.vurdering.VurderingRepository
+import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.prosessering.domene.TaskRepository
@@ -34,7 +36,9 @@ internal class FerdigstillBehandlingServiceTest {
     val behandlingService = mockk<BehandlingService>()
     val distribusjonService = mockk<DistribusjonService>()
     val kabalService = mockk<KabalService>()
-    val vurderingService = mockk<VurderingService>()
+    val vurderingRepository = mockk<VurderingRepository>()
+
+    // val vurderingService = mockk<VurderingService>()
     val formService = mockk<FormService>()
     val stegService = mockk<StegService>()
     val taskRepository = mockk<TaskRepository>()
@@ -42,7 +46,7 @@ internal class FerdigstillBehandlingServiceTest {
 
     val ferdigstillBehandlingService = FerdigstillBehandlingService(
         behandlingService = behandlingService,
-        vurderingService = vurderingService,
+        vurderingRepository = vurderingRepository,
         formService = formService,
         stegService = stegService,
         taskRepository = taskRepository,
@@ -61,11 +65,10 @@ internal class FerdigstillBehandlingServiceTest {
         every { fagsakService.hentFagsakForBehandling(any()) } returns fagsak
         every { distribusjonService.journalførBrev(any(), any()) } returns journalpostId
         every { distribusjonService.distribuerBrev(any()) } returns brevDistribusjonId
-        every { vurderingService.hentVurdering(any()) } returns vurdering
+        every { vurderingRepository.findByIdOrThrow(any()) } returns vurdering
         every { kabalService.sendTilKabal(any(), any(), any()) } just Runs
         every { stegService.oppdaterSteg(any(), any(), any()) } just Runs
         every { formService.formkravErOppfyltForBehandling(any()) } returns true
-        every { vurderingService.klageTasIkkeTilFølge(any()) } returns true
         every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), any()) } just Runs
         every { taskRepository.save(any()) } answers { firstArg() }
         every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id) } just Runs
@@ -126,7 +129,7 @@ internal class FerdigstillBehandlingServiceTest {
             )
         } just Runs
         every { stegService.oppdaterSteg(any(), any(), capture(stegSlot)) } just Runs
-        every { vurderingService.klageTasIkkeTilFølge(any()) } returns false
+        every { vurderingRepository.findByIdOrThrow(any()) } returns vurdering.copy(vedtak = Vedtak.OMGJØR_VEDTAK)
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
         assertThat(stegSlot.captured).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.MEDHOLD)
