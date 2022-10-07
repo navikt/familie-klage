@@ -7,7 +7,6 @@ import io.mockk.runs
 import no.nav.familie.klage.personopplysninger.pdl.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.pdl.AdressebeskyttelseGradering
 import no.nav.familie.klage.personopplysninger.pdl.Bostedsadresse
-import no.nav.familie.klage.personopplysninger.pdl.Dødsfall
 import no.nav.familie.klage.personopplysninger.pdl.Familierelasjonsrolle
 import no.nav.familie.klage.personopplysninger.pdl.Folkeregistermetadata
 import no.nav.familie.klage.personopplysninger.pdl.Folkeregisterpersonstatus
@@ -18,11 +17,8 @@ import no.nav.familie.klage.personopplysninger.pdl.KjønnType
 import no.nav.familie.klage.personopplysninger.pdl.Kontaktadresse
 import no.nav.familie.klage.personopplysninger.pdl.KontaktadresseType
 import no.nav.familie.klage.personopplysninger.pdl.MotpartsRolle
-import no.nav.familie.klage.personopplysninger.pdl.Navn
 import no.nav.familie.klage.personopplysninger.pdl.Opphold
 import no.nav.familie.klage.personopplysninger.pdl.Oppholdstillatelse
-import no.nav.familie.klage.personopplysninger.pdl.PdlAnnenForelder
-import no.nav.familie.klage.personopplysninger.pdl.PdlBarn
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.klage.personopplysninger.pdl.PdlIdent
 import no.nav.familie.klage.personopplysninger.pdl.PdlIdenter
@@ -38,7 +34,6 @@ import no.nav.familie.klage.testutil.PdlTestdataHelper.fødsel
 import no.nav.familie.klage.testutil.PdlTestdataHelper.lagKjønn
 import no.nav.familie.klage.testutil.PdlTestdataHelper.lagNavn
 import no.nav.familie.klage.testutil.PdlTestdataHelper.metadataGjeldende
-import no.nav.familie.klage.testutil.PdlTestdataHelper.pdlBarn
 import no.nav.familie.klage.testutil.PdlTestdataHelper.pdlSøker
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -122,31 +117,6 @@ class PdlClientMock {
             LocalDateTime.of(2018, Month.JANUARY, 15, 12, 55)
         )
 
-        private fun barn(): Map<String, PdlBarn> =
-            mapOf(
-                barnFnr to pdlBarn(
-                    bostedsadresse = bostedsadresse(),
-                    forelderBarnRelasjon = familierelasjonerBarn(),
-                    fødsel = fødsel(),
-                    navn = lagNavn("Barn", null, "Barnesen")
-                ),
-                barn2Fnr to pdlBarn(
-                    bostedsadresse = bostedsadresse(),
-                    forelderBarnRelasjon = familierelasjonerBarn(),
-                    fødsel = fødsel(),
-                    navn = lagNavn("Barn2", null, "Barnesen")
-                )
-            )
-
-        private fun annenForelder(): PdlAnnenForelder =
-            PdlAnnenForelder(
-                adressebeskyttelse = emptyList(),
-                bostedsadresse = bostedsadresse(),
-                dødsfall = listOf(Dødsfall(LocalDate.of(2021, 9, 22))),
-                fødsel = listOf(fødsel(1994, 11, 1)),
-                navn = listOf(Navn("Bob", "", "Burger", metadataGjeldende))
-            )
-
         private fun forelderBarnRelasjoner(): List<ForelderBarnRelasjon> =
             listOf(
                 ForelderBarnRelasjon(
@@ -158,20 +128,6 @@ class PdlClientMock {
                     relatertPersonsIdent = barn2Fnr,
                     relatertPersonsRolle = Familierelasjonsrolle.BARN,
                     minRolleForPerson = Familierelasjonsrolle.MOR
-                )
-            )
-
-        private fun familierelasjonerBarn(): List<ForelderBarnRelasjon> =
-            listOf(
-                ForelderBarnRelasjon(
-                    relatertPersonsIdent = søkerFnr,
-                    relatertPersonsRolle = Familierelasjonsrolle.MOR,
-                    minRolleForPerson = Familierelasjonsrolle.BARN
-                ),
-                ForelderBarnRelasjon(
-                    relatertPersonsIdent = annenForelderFnr,
-                    relatertPersonsRolle = Familierelasjonsrolle.FAR,
-                    minRolleForPerson = Familierelasjonsrolle.BARN
                 )
             )
 
