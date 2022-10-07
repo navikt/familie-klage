@@ -2,7 +2,6 @@ package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.HenlagtDto
-import no.nav.familie.klage.distribusjon.FerdigstillBehandlingService
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs

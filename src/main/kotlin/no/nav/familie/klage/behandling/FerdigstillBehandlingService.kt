@@ -1,10 +1,9 @@
-package no.nav.familie.klage.distribusjon
+package no.nav.familie.klage.behandling
 
-import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
+import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
