@@ -117,7 +117,7 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                 ),
             post(urlEqualTo(integrasjonerConfig.distribuerDokumentUri.path))
                 .willReturn(
-                    WireMock.okJson(
+                    okJson(
                         objectMapper.writeValueAsString(
                             Ressurs.success(
                                 "123"
@@ -127,7 +127,7 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                 ),
             post(urlEqualTo(integrasjonerConfig.sendTilKabalUri.path))
                 .willReturn(
-                    WireMock.okJson(
+                    okJson(
                         objectMapper.writeValueAsString(
                             Ressurs.success(
                                 "123456"
@@ -163,56 +163,11 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
     companion object {
 
         private val egenAnsatt = Ressurs.success(EgenAnsattResponse(false))
-        private val poststed =
-            KodeverkDto(
-                mapOf(
-                    "0575" to listOf(
-                        BetydningDto(
-                            LocalDate.MIN,
-                            LocalDate.MAX,
-                            mapOf(
-                                "nb" to BeskrivelseDto(
-                                    "OSLO",
-                                    "OSLO"
-                                )
-                            )
-                        )
-                    )
-                )
-            )
-        private val land = KodeverkDto(
-            mapOf(
-                "NOR" to listOf(
-                    BetydningDto(
-                        LocalDate.MIN,
-                        LocalDate.MAX,
-                        mapOf(
-                            "nb" to BeskrivelseDto(
-                                "NORGE",
-                                "NORGE"
-                            )
-                        )
-                    )
-                )
-            )
-        )
-        private val kodeverkPoststed = Ressurs.success(poststed)
-        private val kodeverkLand = Ressurs.success(land)
-        private val kodeverkInntekt: Ressurs<InntektKodeverkDto> = Ressurs.success(emptyMap())
 
         private val arbeidsfordeling =
             Ressurs.success(listOf(Arbeidsfordelingsenhet("4489", "nerd-enhet")))
 
         private const val fnr = "23097825289"
-        private val medl =
-            Ressurs.success(
-                Medlemskapsinfo(
-                    personIdent = fnr,
-                    gyldigePerioder = emptyList(),
-                    uavklartePerioder = emptyList(),
-                    avvistePerioder = emptyList()
-                )
-            )
 
         private val oppdatertJournalpostResponse =
             Ressurs.success(OppdaterJournalpostResponse(journalpostId = "1234"))

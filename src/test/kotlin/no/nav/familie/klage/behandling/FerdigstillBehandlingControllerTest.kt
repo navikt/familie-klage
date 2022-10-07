@@ -82,7 +82,7 @@ internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
     }
 
     private fun ferdigstill(behandlingId: UUID): ResponseEntity<Ressurs<Unit>> {
-        return restTemplate.exchange<Ressurs<Unit>>(
+        return restTemplate.exchange(
             localhost("/api/behandling/$behandlingId/ferdigstill"),
             HttpMethod.POST,
             HttpEntity(null, headers)

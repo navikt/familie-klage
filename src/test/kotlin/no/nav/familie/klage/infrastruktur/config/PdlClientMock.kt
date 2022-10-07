@@ -60,7 +60,7 @@ class PdlClientMock {
 
         every { pdlClient.ping() } just runs
 
-        every { pdlClient.hentPersonKortBolk(any()) } answers { firstArg<List<String>>().associate { it to lagPersonKort(it) } }
+        every { pdlClient.hentPersonKortBolk(any()) } answers { firstArg<List<String>>().associateWith { lagPersonKort(it) } }
 
         every { pdlClient.hentPerson(any()) } returns opprettPdlSøker()
 
@@ -108,7 +108,6 @@ class PdlClientMock {
         private const val barn2Fnr = "14041385481"
         private const val søkerFnr = "01010172272"
         private const val annenForelderFnr = "17097926735"
-        private const val fnrPåAdresseSøk = "01012067050"
 
         fun lagPersonKort(it: String) =
             PdlPersonKort(
