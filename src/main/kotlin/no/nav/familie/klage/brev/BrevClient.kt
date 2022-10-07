@@ -45,13 +45,6 @@ class BrevClient(
     }
 }
 
-data class BrevRequestMedSignaturer(
-    val brevFraSaksbehandler: JsonNode,
-    val saksbehandlersignatur: String,
-    val enhet: String?,
-    val skjulBeslutterSignatur: Boolean
-)
-
 data class FritekstBrevRequestMedSignatur(
     val brevFraSaksbehandler: FritekstBrevRequestDto,
     val saksbehandlersignatur: String,

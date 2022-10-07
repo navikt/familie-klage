@@ -15,8 +15,3 @@ data class Brev(
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar()
 )
-enum class FormVilkår {
-    OPPFYLT,
-    IKKE_OPPFYLT,
-    IKKE_SATT
-}

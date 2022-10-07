@@ -75,7 +75,6 @@ class PdlClientMock {
         private const val barn2Fnr = "14041385481"
         private const val søkerFnr = "01010172272"
         private const val annenForelderFnr = "17097926735"
-        private const val fnrPåAdresseSøk = "01012067050"
 
         fun opprettPdlSøker() =
             pdlSøker(

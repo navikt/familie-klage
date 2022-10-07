@@ -46,7 +46,7 @@ internal class VedleggControllerIntegrasjonsTest : OppslagSpringRunnerTest() {
     }
 
     private fun finnVedlegg(behandlingId: UUID): ResponseEntity<Ressurs<List<DokumentinfoDto>>> {
-        return restTemplate.exchange<Ressurs<List<DokumentinfoDto>>>(
+        return restTemplate.exchange(
             localhost("/api/vedlegg/$behandlingId"),
             HttpMethod.GET,
             HttpEntity(null, headers)
@@ -54,7 +54,7 @@ internal class VedleggControllerIntegrasjonsTest : OppslagSpringRunnerTest() {
     }
 
     private fun hentDokument(journalpostId: String, dokumentinfoId: String): ResponseEntity<ByteArray> {
-        return restTemplate.exchange<ByteArray>(
+        return restTemplate.exchange(
             localhost("/api/vedlegg/$journalpostId/dokument-pdf/$dokumentinfoId"),
             HttpMethod.GET,
             HttpEntity(null, headers)

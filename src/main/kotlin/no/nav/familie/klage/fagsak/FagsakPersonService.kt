@@ -4,16 +4,12 @@ import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
-import no.nav.familie.klage.repository.findByIdOrThrow
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
 class FagsakPersonService(private val fagsakPersonRepository: FagsakPersonRepository) {
-    fun hentPerson(personId: UUID): FagsakPerson = fagsakPersonRepository.findByIdOrThrow(personId)
-
-    fun finnPerson(personIdenter: Set<String>): FagsakPerson? = fagsakPersonRepository.findByIdent(personIdenter)
 
     fun hentIdenter(personId: UUID): Set<PersonIdent> {
         val personIdenter = fagsakPersonRepository.findPersonIdenter(personId)

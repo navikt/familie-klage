@@ -112,7 +112,7 @@ internal class BehandlingEventServiceTest {
         behandlingEventType: BehandlingEventType = BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET,
         behandlingDetaljer: BehandlingDetaljer? = null
     ): BehandlingEvent {
-        val behandlingEvent = BehandlingEvent(
+        return BehandlingEvent(
             eventId = UUID.randomUUID(),
             kildeReferanse = UUID.randomUUID().toString(),
             kilde = "EF",
@@ -126,6 +126,5 @@ internal class BehandlingEventServiceTest {
                 )
             )
         )
-        return behandlingEvent
     }
 }
