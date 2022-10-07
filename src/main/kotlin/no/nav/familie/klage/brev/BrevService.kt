@@ -2,12 +2,14 @@ package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
+import no.nav.familie.klage.brev.domain.Avsnitt
 import no.nav.familie.klage.brev.domain.Brev
-import no.nav.familie.klage.brev.domain.BrevMedAvsnitt
-import no.nav.familie.klage.brev.dto.Avsnitt
+import no.nav.familie.klage.brev.dto.AvsnittDto
+import no.nav.familie.klage.brev.dto.BrevMedAvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.brev.dto.FritekstBrevtype
+import no.nav.familie.klage.brev.dto.tilDto
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
@@ -28,13 +30,13 @@ class BrevService(
     private val fagsakService: FagsakService
 ) {
 
-    fun hentMellomlagretBrev(behandlingId: UUID): BrevMedAvsnitt? {
+    fun hentMellomlagretBrev(behandlingId: UUID): BrevMedAvsnittDto? {
         feilHvis(behandlingService.erLåstForVidereBehandling(behandlingId)) {
             "Kan ikke hente mellomlagret brev når behandlingen er låst"
         }
         return brevRepository.findByIdOrNull(behandlingId)?.let {
-            val avsnitt = avsnittRepository.hentAvsnittPåBehandlingId(behandlingId)
-            BrevMedAvsnitt(behandlingId, it.overskrift, avsnitt)
+            val avsnitt = avsnittRepository.findByBehandlingId(behandlingId)
+            BrevMedAvsnittDto(behandlingId, it.overskrift, avsnitt.map { it.tilDto() })
         }
     }
 
@@ -71,14 +73,8 @@ class BrevService(
             brevtype = fritekstbrevDto.brevType
         )
 
-        for (avsnitt in fritekstbrevDto.avsnitt) {
-            lagEllerOppdaterAvsnitt(
-                avsnittId = avsnitt.avsnittId,
-                behandlingId = fritekstbrevDto.behandlingId,
-                deloverskrift = avsnitt.deloverskrift,
-                innhold = avsnitt.innhold,
-                skalSkjulesIBrevBygger = avsnitt.skalSkjulesIBrevbygger
-            )
+        fritekstbrevDto.avsnitt.forEach {
+            lagreAvsnitt(behandlingId = fritekstbrevDto.behandlingId, avsnitt = it)
         }
 
         return familieDokumentClient.genererPdfFraHtml(html)
@@ -108,28 +104,19 @@ class BrevService(
         }
     }
 
-    private fun lagEllerOppdaterAvsnitt(
-        avsnittId: UUID,
-        behandlingId: UUID,
-        deloverskrift: String,
-        innhold: String,
-        skalSkjulesIBrevBygger: Boolean?
-    ): Avsnitt {
-        val avsnitt = Avsnitt(
-            avsnittId = avsnittId,
-            behandlingId = behandlingId,
-            deloverskrift = deloverskrift,
-            innhold = innhold,
-            skalSkjulesIBrevbygger = skalSkjulesIBrevBygger
+    private fun lagreAvsnitt(behandlingId: UUID, avsnitt: AvsnittDto): Avsnitt {
+        return avsnittRepository.insert(
+            Avsnitt(
+                behandlingId = behandlingId,
+                deloverskrift = avsnitt.deloverskrift,
+                innhold = avsnitt.innhold,
+                skalSkjulesIBrevbygger = avsnitt.skalSkjulesIBrevbygger
+            )
         )
-        return when (avsnittRepository.existsById(avsnittId)) {
-            true -> avsnittRepository.update(avsnitt)
-            false -> avsnittRepository.insert(avsnitt)
-        }
     }
 
     private fun slettAvsnittOmEksisterer(behandlingId: UUID) {
-        avsnittRepository.slettAvsnittMedBehanldingId(behandlingId)
+        avsnittRepository.slettAvsnittMedBehandlingId(behandlingId)
     }
 
     fun lagBrevSomPdf(behandlingId: UUID): ByteArray {

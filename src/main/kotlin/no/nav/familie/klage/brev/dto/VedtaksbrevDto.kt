@@ -1,4 +1,4 @@
-package no.nav.familie.ef.sak.brev.dto
+package no.nav.familie.klage.brev.dto
 
 data class VedtaksbrevDto(
     val saksbehandlerBrevrequest: String,
