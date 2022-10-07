@@ -24,7 +24,6 @@ class IntegrasjonerConfig(@Value("\${FAMILIE_INTEGRASJONER_URL}") private val in
     val arbeidsfordelingMedRelasjonerUri: URI =
         UriComponentsBuilder.fromUri(integrasjonUri).pathSegment(PATH_BEHANDLENDE_ENHET_MED_RELASJONER).build().toUri()
 
-    val arbeidsforholdUri: URI = UriComponentsBuilder.fromUri(integrasjonUri).pathSegment(PATH_ARBEIDSFORHOLD).build().toUri()
 
     val oppgaveUri: URI = UriComponentsBuilder.fromUri(integrasjonUri).pathSegment(PATH_OPPGAVE).build().toUri()
 
@@ -43,9 +42,6 @@ class IntegrasjonerConfig(@Value("\${FAMILIE_INTEGRASJONER_URL}") private val in
     companion object {
 
         private const val PATH_PING = "api/ping"
-        private const val PATH_KODEVERK_LANDKODER = "api/kodeverk/landkoder"
-        private const val PATH_KODEVERK_POSTSTED = "api/kodeverk/poststed"
-        private const val PATH_KODEVERK_INNTEKT = "api/kodeverk/inntekt"
         private const val PATH_TILGANG_RELASJONER = "api/tilgang/person-med-relasjoner"
         private const val PATH_TILGANG_PERSON = "api/tilgang/v2/personer"
         private const val PATH_ADRESSEBESKYTTELSE = "api/personopplysning/strengeste-adressebeskyttelse-for-person-med-relasjoner"
@@ -56,7 +52,6 @@ class IntegrasjonerConfig(@Value("\${FAMILIE_INTEGRASJONER_URL}") private val in
         private const val PATH_OPPGAVE = "api/oppgave"
         private const val PATH_JOURNALPOST = "api/journalpost"
         private const val PATH_DOKARKIV = "api/arkiv"
-        private const val PATH_MEDLEMSKAP = "api/medlemskap/v3"
         private const val PATH_NAV_KONTOR = "api/arbeidsfordeling/nav-kontor/ENF"
         private const val PATH_DOKDIST = "api/dist/v1"
         private const val PATH_KABAL = "api/oversendelse/v3/sak"
