@@ -16,23 +16,11 @@ import java.util.UUID
 @Repository
 interface BehandlingRepository : RepositoryInterface<Behandling, UUID>, InsertUpdateRepository<Behandling> {
 
-    @Query(
-        """SELECT DISTINCT personopplysninger.navn FROM personopplysninger 
-                JOIN behandling ON personopplysninger.person_id = behandling.person_id
-              WHERE behandling.id = :behandling_id"""
-    )
-    fun findNavnByBehandlingId(behandling_id: UUID): String
-
     @Modifying
     @Query(
         """UPDATE behandling SET steg = :steg WHERE id = :behandling_id"""
     )
     fun updateSteg(behandling_id: UUID, steg: StegType)
-
-    @Query(
-        """SELECT steg FROM behandling WHERE id = :behandling_id"""
-    )
-    fun findStegById(behandling_id: UUID): StegType
 
     @Modifying
     @Query(

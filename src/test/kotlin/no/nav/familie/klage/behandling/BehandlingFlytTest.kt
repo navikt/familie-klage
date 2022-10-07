@@ -177,7 +177,5 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
 
     private fun ikkeOppfyltFormDto(behandlingId: UUID) =
         DomainUtil.oppfyltForm(behandlingId).tilDto().copy(klagePart = FormVilkår.IKKE_OPPFYLT)
-
-    private fun ikkeFerdigutfylt(behandlingId: UUID) =
-        DomainUtil.oppfyltForm(behandlingId).tilDto().copy(klagePart = FormVilkår.IKKE_SATT)
+    
 }
