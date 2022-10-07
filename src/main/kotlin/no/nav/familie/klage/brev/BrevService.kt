@@ -1,6 +1,7 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.behandling.BehandlingService
+import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.brev.domain.Avsnitt
 import no.nav.familie.klage.brev.domain.Brev
@@ -47,6 +48,9 @@ class BrevService(
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
         feilHvis(behandling.status.erLåstForVidereBehandling()) {
             "Kan ikke oppdatere brev når behandlingen er låst"
+        }
+        feilHvis(behandling.steg != StegType.BREV) {
+            "Behandlingen er i feil steg (${behandling.steg}) steg=${StegType.BREV} for å kunne oppdatere brevet"
         }
 
         slettAvsnittOmEksisterer(fritekstbrevDto.behandlingId)
@@ -121,9 +125,17 @@ class BrevService(
 
     fun lagBrevSomPdf(behandlingId: UUID): ByteArray {
         val brev = brevRepository.findByIdOrThrow(behandlingId)
-        feilHvis(behandlingService.erLåstForVidereBehandling(behandlingId)) {
+        /*
+        // TODO burde vi validere noe av dette? Behandlingen er allerede satt til et annet steg
+        val behandling = behandlingService.hentBehandling(behandlingId)
+        dette validerer ikke då behandlingen allerede er i et annet steg i det at man sender brevet
+        feilHvis(behandling.status.erLåstForVidereBehandling()) {
             "Kan ikke lage pdf når behandlingen er låst"
         }
+        feilHvis(behandling.steg != StegType.BREV) {
+            "Behandlingen er i steg=${behandling.steg} må være i steg=${StegType.BREV} for å kunne generere pdf"
+        }
+        */
         feilHvis(brev.pdf != null) {
             "Det finnes allerede en lagret pdf"
         }

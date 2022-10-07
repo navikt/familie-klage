@@ -1,6 +1,7 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.behandling.BehandlingRepository
+import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil.avsnitt
@@ -13,6 +14,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,7 +30,7 @@ internal class BrevServiceTest : OppslagSpringRunnerTest() {
     private val fagsak = fagsak()
     private val fagsakFerdigstiltBehandling =
         fagsak(stønadstype = Stønadstype.SKOLEPENGER, fagsakPersonId = fagsak.fagsakPersonId)
-    private val behandling = behandling(fagsak)
+    private val behandling = behandling(fagsak, steg = StegType.BREV)
     private val ferdigstiltBehandling = behandling(fagsakFerdigstiltBehandling, status = BehandlingStatus.FERDIGSTILT)
 
     @BeforeEach
@@ -53,6 +55,13 @@ internal class BrevServiceTest : OppslagSpringRunnerTest() {
         internal fun `skal ikke kunne lage eller oppdatere når behandlingen er låst`() {
             assertThatThrownBy { brevService.lagEllerOppdaterBrev(fritekstbrev(ferdigstiltBehandling.id)) }
                 .hasMessage("Kan ikke oppdatere brev når behandlingen er låst")
+        }
+
+        @Test
+        internal fun `skal ikke kunne lage eller oppdatere når behandlingen ikke er i brevsteget`() {
+            behandlingRepository.update(behandling.copy(steg = StegType.FORMKRAV))
+            assertThatThrownBy { brevService.lagEllerOppdaterBrev(fritekstbrev(behandling.id)) }
+                .hasMessageContaining("Behandlingen er i feil steg ")
         }
 
         @Test
@@ -98,6 +107,7 @@ internal class BrevServiceTest : OppslagSpringRunnerTest() {
     @Nested
     inner class lagBrevSomPdf {
 
+        @Disabled // TODO skal vi validere dette?
         @Test
         internal fun `skal ikke kunne lage brev når behandlingen er låst`() {
             brevService.lagEllerOppdaterBrev(fritekstbrev(behandling.id))
