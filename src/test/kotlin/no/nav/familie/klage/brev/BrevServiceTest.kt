@@ -14,7 +14,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -106,16 +105,6 @@ internal class BrevServiceTest : OppslagSpringRunnerTest() {
 
     @Nested
     inner class lagBrevSomPdf {
-
-        @Disabled // TODO skal vi validere dette?
-        @Test
-        internal fun `skal ikke kunne lage brev når behandlingen er låst`() {
-            brevService.lagEllerOppdaterBrev(fritekstbrev(behandling.id))
-            behandlingRepository.updateStatus(behandling.id, BehandlingStatus.FERDIGSTILT)
-
-            assertThatThrownBy { brevService.lagBrevSomPdf(behandling.id) }
-                .hasMessage("Kan ikke lage pdf når behandlingen er låst")
-        }
 
         @Test
         internal fun `kan ikke lagre brevet 2 ganger`() {

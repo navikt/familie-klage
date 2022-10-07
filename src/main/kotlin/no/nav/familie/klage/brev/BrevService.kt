@@ -125,17 +125,6 @@ class BrevService(
 
     fun lagBrevSomPdf(behandlingId: UUID): ByteArray {
         val brev = brevRepository.findByIdOrThrow(behandlingId)
-        /*
-        // TODO burde vi validere noe av dette? Behandlingen er allerede satt til et annet steg
-        val behandling = behandlingService.hentBehandling(behandlingId)
-        dette validerer ikke då behandlingen allerede er i et annet steg i det at man sender brevet
-        feilHvis(behandling.status.erLåstForVidereBehandling()) {
-            "Kan ikke lage pdf når behandlingen er låst"
-        }
-        feilHvis(behandling.steg != StegType.BREV) {
-            "Behandlingen er i steg=${behandling.steg} må være i steg=${StegType.BREV} for å kunne generere pdf"
-        }
-        */
         feilHvis(brev.pdf != null) {
             "Det finnes allerede en lagret pdf"
         }
