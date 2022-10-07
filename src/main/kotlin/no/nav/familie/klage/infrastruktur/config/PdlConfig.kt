@@ -15,19 +15,9 @@ class PdlConfig(@Value("\${PDL_URL}") pdlUrl: URI) {
 
         const val PATH_GRAPHQL = "graphql"
 
-        val personBolkKortQuery = graphqlQuery("/pdl/person_kort_bolk.graphql")
-
         val søkerQuery = graphqlQuery("/pdl/søker.graphql")
 
-        val barnQuery = graphqlQuery("/pdl/barn.graphql")
-
-        val annenForelderQuery = graphqlQuery("/pdl/andreForeldre.graphql")
-
         val hentIdentQuery = graphqlQuery("/pdl/hent_ident.graphql")
-
-        val hentIdenterBolkQuery = graphqlQuery("/pdl/hent_ident_bolk.graphql")
-
-        val søkPersonQuery = graphqlQuery("/pdl/søk_person.graphql")
 
         private fun graphqlQuery(path: String) = PdlConfig::class.java.getResource(path)
             .readText()

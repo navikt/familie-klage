@@ -26,7 +26,6 @@ import no.nav.familie.klage.personopplysninger.pdl.PdlBarn
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.klage.personopplysninger.pdl.PdlIdent
 import no.nav.familie.klage.personopplysninger.pdl.PdlIdenter
-import no.nav.familie.klage.personopplysninger.pdl.PdlPersonKort
 import no.nav.familie.klage.personopplysninger.pdl.Sivilstand
 import no.nav.familie.klage.personopplysninger.pdl.Sivilstandstype
 import no.nav.familie.klage.personopplysninger.pdl.Statsborgerskap
@@ -60,42 +59,10 @@ class PdlClientMock {
 
         every { pdlClient.ping() } just runs
 
-        every { pdlClient.hentPersonKortBolk(any()) } answers { firstArg<List<String>>().associate { it to lagPersonKort(it) } }
-
         every { pdlClient.hentPerson(any()) } returns opprettPdlSøker()
-
-        every { pdlClient.hentBarn(any()) } returns barn()
-
-        every { pdlClient.hentAndreForeldre(any()) } returns mapOf(annenForelderFnr to annenForelder())
-
-        every { pdlClient.hentAktørIder(any()) } returns PdlIdenter(listOf(PdlIdent("12345678901232", false)))
 
         every { pdlClient.hentPersonidenter(any(), eq(true)) } answers
             { PdlIdenter(listOf(PdlIdent(firstArg(), false), PdlIdent("98765432109", true))) }
-
-        every { pdlClient.hentIdenterBolk(listOf("123", "456")) }
-            .returns(
-                mapOf(
-                    "123" to PdlIdent("ny123", false),
-                    "456" to PdlIdent("ny456", false)
-                )
-            )
-
-        every { pdlClient.hentIdenterBolk(listOf("456", "123")) }
-            .returns(
-                mapOf(
-                    "123" to PdlIdent("ny123", false),
-                    "456" to PdlIdent("ny456", false)
-                )
-            )
-
-        every { pdlClient.hentIdenterBolk(listOf("111", "222")) }
-            .returns(
-                mapOf(
-                    "111" to PdlIdent("111", false),
-                    "222" to PdlIdent("222", false)
-                )
-            )
 
         return pdlClient
     }
@@ -109,18 +76,6 @@ class PdlClientMock {
         private const val søkerFnr = "01010172272"
         private const val annenForelderFnr = "17097926735"
         private const val fnrPåAdresseSøk = "01012067050"
-
-        fun lagPersonKort(it: String) =
-            PdlPersonKort(
-                listOf(
-                    Adressebeskyttelse(
-                        gradering = AdressebeskyttelseGradering.UGRADERT,
-                        metadata = metadataGjeldende
-                    )
-                ),
-                listOf(lagNavn(fornavn = it)),
-                emptyList()
-            )
 
         fun opprettPdlSøker() =
             pdlSøker(
