@@ -1,12 +1,14 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.behandling.BehandlingService
+import no.nav.familie.klage.brev.domain.Avsnitt
 import no.nav.familie.klage.brev.domain.Brev
-import no.nav.familie.klage.brev.domain.BrevMedAvsnitt
-import no.nav.familie.klage.brev.dto.Avsnitt
+import no.nav.familie.klage.brev.dto.AvsnittDto
+import no.nav.familie.klage.brev.dto.BrevMedAvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.brev.dto.FritekstBrevtype
+import no.nav.familie.klage.brev.dto.tilDto
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import org.slf4j.Logger
@@ -28,12 +30,12 @@ class BrevService(
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    fun hentMellomlagretBrev(behandlingId: UUID): BrevMedAvsnitt? {
+    fun hentMellomlagretBrev(behandlingId: UUID): BrevMedAvsnittDto? {
         val eksisterer = sjekkOmBrevEksisterer(behandlingId)
         if (eksisterer) {
             val brev = brevRepository.findByIdOrThrow(behandlingId)
-            val avsnitt = avsnittRepository.hentAvsnittPåBehandlingId(behandlingId)
-            return BrevMedAvsnitt(behandlingId, brev.overskrift, avsnitt)
+            val avsnitt = avsnittRepository.findByBehandlingId(behandlingId)
+            return BrevMedAvsnittDto(behandlingId, brev.overskrift, avsnitt.map { it.tilDto() })
         }
         return null
     }
@@ -70,17 +72,10 @@ class BrevService(
             overskrift = fritekstbrevDto.overskrift,
             saksbehandlerHtml = html,
             brevtype = fritekstbrevDto.brevType
-
         )
 
-        for (avsnitt in fritekstbrevDto.avsnitt) {
-            lagEllerOppdaterAvsnitt(
-                avsnittId = avsnitt.avsnittId,
-                behandlingId = fritekstbrevDto.behandlingId,
-                deloverskrift = avsnitt.deloverskrift,
-                innhold = avsnitt.innhold,
-                skalSkjulesIBrevBygger = avsnitt.skalSkjulesIBrevbygger
-            )
+        fritekstbrevDto.avsnitt.forEach {
+            lagreAvsnitt(behandlingId = fritekstbrevDto.behandlingId, avsnitt = it)
         }
 
         return familieDokumentClient.genererPdfFraHtml(html)
@@ -92,13 +87,12 @@ class BrevService(
         saksbehandlerHtml: String,
         brevtype: FritekstBrevtype
     ): Brev {
-        val brev =
-            Brev(
-                behandlingId = behandlingId,
-                overskrift = overskrift,
-                saksbehandlerHtml = saksbehandlerHtml,
-                brevtype = brevtype
-            )
+        val brev = Brev(
+            behandlingId = behandlingId,
+            overskrift = overskrift,
+            saksbehandlerHtml = saksbehandlerHtml,
+            brevtype = brevtype
+        )
 
         return when (brevRepository.existsById(brev.behandlingId)) {
             true -> brevRepository.update(brev)
@@ -106,28 +100,19 @@ class BrevService(
         }
     }
 
-    fun lagEllerOppdaterAvsnitt(
-        avsnittId: UUID,
-        behandlingId: UUID,
-        deloverskrift: String,
-        innhold: String,
-        skalSkjulesIBrevBygger: Boolean?
-    ): Avsnitt {
-        val avsnitt = Avsnitt(
-            avsnittId = avsnittId,
-            behandlingId = behandlingId,
-            deloverskrift = deloverskrift,
-            innhold = innhold,
-            skalSkjulesIBrevbygger = skalSkjulesIBrevBygger
+    private fun lagreAvsnitt(behandlingId: UUID, avsnitt: AvsnittDto): Avsnitt {
+        return avsnittRepository.insert(
+            Avsnitt(
+                behandlingId = behandlingId,
+                deloverskrift = avsnitt.deloverskrift,
+                innhold = avsnitt.innhold,
+                skalSkjulesIBrevbygger = avsnitt.skalSkjulesIBrevbygger
+            )
         )
-        return when (avsnittRepository.existsById(avsnittId)) {
-            true -> avsnittRepository.update(avsnitt)
-            false -> avsnittRepository.insert(avsnitt)
-        }
     }
 
     fun slettAvsnittOmEksisterer(behandlingId: UUID) {
-        avsnittRepository.slettAvsnittMedBehanldingId(behandlingId)
+        avsnittRepository.slettAvsnittMedBehandlingId(behandlingId)
     }
 
     fun lagBrevSomPdf(behandlingId: UUID): ByteArray {

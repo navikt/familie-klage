@@ -1,6 +1,6 @@
 package no.nav.familie.klage.brev
 
-import no.nav.familie.klage.brev.domain.BrevMedAvsnitt
+import no.nav.familie.klage.brev.dto.BrevMedAvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
@@ -25,7 +25,7 @@ class BrevController(
 ) {
 
     @GetMapping("/{behandlingId}")
-    fun hentBrev(@PathVariable behandlingId: UUID): Ressurs<BrevMedAvsnitt?> {
+    fun hentBrev(@PathVariable behandlingId: UUID): Ressurs<BrevMedAvsnittDto?> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleForBehandling(behandlingId)
         return Ressurs.success(brevService.hentMellomlagretBrev(behandlingId))
