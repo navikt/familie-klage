@@ -1,6 +1,8 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.behandling.BehandlingService
+import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.brev.domain.Avsnitt
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.dto.AvsnittDto
@@ -10,9 +12,10 @@ import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.brev.dto.FritekstBrevtype
 import no.nav.familie.klage.brev.dto.tilDto
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.felles.domain.Fil
+import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.repository.findByIdOrThrow
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -28,20 +31,14 @@ class BrevService(
     private val fagsakService: FagsakService
 ) {
 
-    val logger: Logger = LoggerFactory.getLogger(this::class.java)
-
     fun hentMellomlagretBrev(behandlingId: UUID): BrevMedAvsnittDto? {
-        val eksisterer = sjekkOmBrevEksisterer(behandlingId)
-        if (eksisterer) {
-            val brev = brevRepository.findByIdOrThrow(behandlingId)
-            val avsnitt = avsnittRepository.findByBehandlingId(behandlingId)
-            return BrevMedAvsnittDto(behandlingId, brev.overskrift, avsnitt.map { it.tilDto() })
+        feilHvis(behandlingService.erLåstForVidereBehandling(behandlingId)) {
+            "Kan ikke hente mellomlagret brev når behandlingen er låst"
         }
-        return null
-    }
-
-    fun sjekkOmBrevEksisterer(id: UUID): Boolean {
-        return brevRepository.findById(id).isPresent
+        return brevRepository.findByIdOrNull(behandlingId)?.let {
+            val avsnitt = avsnittRepository.findByBehandlingId(behandlingId)
+            BrevMedAvsnittDto(behandlingId, it.overskrift, avsnitt.map { it.tilDto() })
+        }
     }
 
     @Transactional
@@ -49,6 +46,12 @@ class BrevService(
         val navn = behandlingService.hentNavnFraBehandlingsId(fritekstbrevDto.behandlingId)
         val behandling = behandlingService.hentBehandling(fritekstbrevDto.behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
+        feilHvis(behandling.status.erLåstForVidereBehandling()) {
+            "Kan ikke oppdatere brev når behandlingen er låst"
+        }
+        feilHvis(behandling.steg != StegType.BREV) {
+            "Behandlingen er i feil steg (${behandling.steg}) steg=${StegType.BREV} for å kunne oppdatere brevet"
+        }
 
         slettAvsnittOmEksisterer(fritekstbrevDto.behandlingId)
 
@@ -81,7 +84,12 @@ class BrevService(
         return familieDokumentClient.genererPdfFraHtml(html)
     }
 
-    fun lagEllerOppdaterBrev(
+    fun hentBrevPdf(behandlingId: UUID): ByteArray {
+        return brevRepository.findByIdOrThrow(behandlingId).pdf?.bytes
+            ?: error("Finner ikke brev-pdf for behandling=$behandlingId")
+    }
+
+    private fun lagEllerOppdaterBrev(
         behandlingId: UUID,
         overskrift: String,
         saksbehandlerHtml: String,
@@ -111,12 +119,18 @@ class BrevService(
         )
     }
 
-    fun slettAvsnittOmEksisterer(behandlingId: UUID) {
+    private fun slettAvsnittOmEksisterer(behandlingId: UUID) {
         avsnittRepository.slettAvsnittMedBehandlingId(behandlingId)
     }
 
     fun lagBrevSomPdf(behandlingId: UUID): ByteArray {
         val brev = brevRepository.findByIdOrThrow(behandlingId)
-        return familieDokumentClient.genererPdfFraHtml(brev.saksbehandlerHtml)
+        feilHvis(brev.pdf != null) {
+            "Det finnes allerede en lagret pdf"
+        }
+
+        val generertBrev = familieDokumentClient.genererPdfFraHtml(brev.saksbehandlerHtml)
+        brevRepository.update(brev.copy(pdf = Fil(generertBrev)))
+        return generertBrev
     }
 }

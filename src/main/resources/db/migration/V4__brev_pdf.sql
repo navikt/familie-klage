@@ -1,0 +1,1 @@
+ALTER TABLE brev ADD COLUMN pdf BYTEA;

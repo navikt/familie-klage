@@ -1,6 +1,7 @@
 package no.nav.familie.klage.infrastruktur.config
 
 import no.nav.familie.klage.felles.domain.Endret
+import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.prosessering.PropertiesWrapperTilStringConverter
 import no.nav.familie.prosessering.StringTilPropertiesWrapperConverter
 import org.apache.commons.lang3.StringUtils
@@ -53,7 +54,9 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
                 PropertiesWrapperTilStringConverter(),
                 StringTilPropertiesWrapperConverter(),
                 StringListTilStringConverter(),
-                StringTilStringList()
+                StringTilStringList(),
+                FilTilBytearrayConverter(),
+                BytearrayTilFilConverter()
             )
         )
     }
@@ -90,6 +93,22 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
 
         override fun convert(verdi: String): StringListWrapper {
             return StringListWrapper(verdi.split(";"))
+        }
+    }
+
+    @WritingConverter
+    class FilTilBytearrayConverter : Converter<Fil, ByteArray> {
+
+        override fun convert(fil: Fil): ByteArray {
+            return fil.bytes
+        }
+    }
+
+    @ReadingConverter
+    class BytearrayTilFilConverter : Converter<ByteArray, Fil> {
+
+        override fun convert(bytes: ByteArray): Fil {
+            return Fil(bytes)
         }
     }
 }

@@ -105,6 +105,9 @@ class BehandlingService(
         behandlingRepository.update(henlagtBehandling)
     }
 
+    fun erLåstForVidereBehandling(behandlingId: UUID) =
+        behandlingRepository.findByIdOrThrow(behandlingId).status.erLåstForVidereBehandling()
+
     private fun validerKanHenleggeBehandling(behandling: Behandling) {
         brukerfeilHvis(behandling.status.erLåstForVidereBehandling()) {
             "Kan ikke henlegge behandling med status ${behandling.status}"

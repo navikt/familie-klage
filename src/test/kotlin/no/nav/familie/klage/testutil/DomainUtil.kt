@@ -178,22 +178,23 @@ object DomainUtil {
         )
     }
 
-    fun journalpost(dokumenter: List<DokumentInfo> = emptyList(), relevanteDatoer: List<RelevantDato> = emptyList()) = Journalpost(
-        journalpostId = UUID.randomUUID().toString(),
-        journalposttype = Journalposttype.I,
-        journalstatus = Journalstatus.MOTTATT,
-        tema = "ENF",
-        behandlingstema = null,
-        tittel = "Tut og kjør",
-        sak = null,
-        bruker = null,
-        avsenderMottaker = null,
-        journalforendeEnhet = null,
-        kanal = null,
-        dokumenter = dokumenter,
-        relevanteDatoer = relevanteDatoer,
-        eksternReferanseId = null
-    )
+    fun journalpost(dokumenter: List<DokumentInfo> = emptyList(), relevanteDatoer: List<RelevantDato> = emptyList()) =
+        Journalpost(
+            journalpostId = UUID.randomUUID().toString(),
+            journalposttype = Journalposttype.I,
+            journalstatus = Journalstatus.MOTTATT,
+            tema = "ENF",
+            behandlingstema = null,
+            tittel = "Tut og kjør",
+            sak = null,
+            bruker = null,
+            avsenderMottaker = null,
+            journalforendeEnhet = null,
+            kanal = null,
+            dokumenter = dokumenter,
+            relevanteDatoer = relevanteDatoer,
+            eksternReferanseId = null
+        )
 
     fun journalpostDokument(
         status: Dokumentstatus = Dokumentstatus.FERDIGSTILT,
