@@ -1,3 +1,5 @@
+package no.nav.familie.klage.felles.domain
+
 data class Fil(val bytes: ByteArray) {
 
     override fun equals(other: Any?): Boolean {

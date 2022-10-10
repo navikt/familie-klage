@@ -2,10 +2,7 @@ package no.nav.familie.klage.repository
 
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.fagsak.FagsakRepository
-import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.PersonIdent
-import no.nav.familie.klage.felles.domain.Endret
-import no.nav.familie.klage.felles.domain.Sporbar
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
@@ -15,7 +12,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
-import java.time.LocalDateTime
 import kotlin.random.Random
 
 internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
@@ -82,14 +78,4 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
         assertThat(lagretFagsak.fagsakPersonId).isEqualTo(fagsak.fagsakPersonId)
     }
 
-    private fun opprettFagsakMedFlereIdenter(ident: String = "1", ident2: String = "2", ident3: String = "3"): Fagsak {
-        val endret2DagerSiden = Sporbar(endret = Endret(endretTid = LocalDateTime.now().plusDays(2)))
-        return fagsakDomain().tilFagsakMedPerson(
-            setOf(
-                PersonIdent(ident = ident),
-                PersonIdent(ident = ident2, sporbar = endret2DagerSiden),
-                PersonIdent(ident = ident3)
-            )
-        )
-    }
 }

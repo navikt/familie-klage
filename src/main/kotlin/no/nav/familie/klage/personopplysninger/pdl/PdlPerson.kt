@@ -83,11 +83,6 @@ data class PdlPersonKort(
     @JsonProperty("doedsfall") val dødsfall: List<Dødsfall>
 )
 
-data class PdlSøkerKort(
-    @JsonProperty("kjoenn") val kjønn: List<Kjønn>,
-    val navn: List<Navn>
-)
-
 data class PdlSøker(
     val adressebeskyttelse: List<Adressebeskyttelse>,
     override val bostedsadresse: List<Bostedsadresse>,
