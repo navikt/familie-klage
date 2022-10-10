@@ -77,5 +77,4 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
         assertThat(lagretFagsak.stønadstype).isEqualTo(fagsak.stønadstype)
         assertThat(lagretFagsak.fagsakPersonId).isEqualTo(fagsak.fagsakPersonId)
     }
-
 }

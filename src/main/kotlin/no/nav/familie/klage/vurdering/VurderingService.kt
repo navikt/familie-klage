@@ -32,17 +32,18 @@ class VurderingService(
     fun opprettEllerOppdaterVurdering(vurdering: VurderingDto): VurderingDto {
         validerVurdering(vurdering)
 
-        val eksisterendeVurdering = vurderingRepository.findByIdOrNull(vurdering.behandlingId)
         if (vurdering.vedtak != Vedtak.OMGJØR_VEDTAK) {
             stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING, StegType.BREV)
+        } else {
+            stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING, StegType.VURDERING)
         }
-        val lagretVurdering = if (eksisterendeVurdering != null) {
+
+        val eksisterendeVurdering = vurderingRepository.findByIdOrNull(vurdering.behandlingId)
+        return if (eksisterendeVurdering != null) {
             oppdaterVurdering(vurdering, eksisterendeVurdering).tilDto()
         } else {
             opprettNyVurdering(vurdering).tilDto()
         }
-
-        return lagretVurdering
     }
 
     private fun opprettNyVurdering(vurdering: VurderingDto) = vurderingRepository.insert(

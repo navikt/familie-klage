@@ -8,8 +8,7 @@ import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.oppgave.OppgaveTaskService
-import no.nav.familie.klage.repository.findByIdOrThrow
-import no.nav.familie.klage.vurdering.VurderingRepository
+import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.HENLAGT
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_MEDHOLD
@@ -26,7 +25,7 @@ import java.util.UUID
 @Service
 class FerdigstillBehandlingService(
     private val behandlingService: BehandlingService,
-    private val vurderingRepository: VurderingRepository,
+    private val vurderingService: VurderingService,
     private val formService: FormService,
     private val stegService: StegService,
     private val taskRepository: TaskRepository,
@@ -78,7 +77,7 @@ class FerdigstillBehandlingService(
 
     private fun utledBehandlingResultat(behandlingId: UUID): BehandlingResultat {
         return if (formService.formkravErOppfyltForBehandling(behandlingId)) {
-            vurderingRepository.findByIdOrThrow(behandlingId).vedtak.tilBehandlingResultat()
+            vurderingService.hentVurdering(behandlingId)?.vedtak?.tilBehandlingResultat() ?: throw Feil("Burde funnet behandling $behandlingId")
         } else {
             IKKE_MEDHOLD_FORMKRAV_AVVIST
         }

@@ -1,11 +1,11 @@
 package no.nav.familie.klage.vurdering
 
-import io.mockk.Runs
 import io.mockk.every
-import io.mockk.just
+import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.klage.behandling.StegService
+import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
@@ -39,18 +39,18 @@ class VurderingServiceTest {
     fun setup() {
         every { vurderingRepository.findByIdOrNull(any()) } returns omgjørVedtakVurdering
         every { vurderingRepository.update(any()) } answers { firstArg() }
-        every { stegService.oppdaterSteg(any(), any(), any()) } just Runs
+        justRun { stegService.oppdaterSteg(any(), any(), any()) }
     }
 
     @Test
-    fun `skal ikke oppdatere steg ved omgjøring`() {
+    fun `skal oppdatere steg ved omgjøring`() {
         vurderingService.opprettEllerOppdaterVurdering(omgjørVedtakVurdering.tilDto())
-        verify(exactly = 0) { stegService.oppdaterSteg(any(), any(), any()) }
+        verify(exactly = 1) { stegService.oppdaterSteg(any(), any(), StegType.VURDERING) }
     }
 
     @Test
     fun `skal oppdatere steg ved opprettholdelse av klage`() {
         vurderingService.opprettEllerOppdaterVurdering(opprettholdVedtakVurdering.tilDto())
-        verify(exactly = 1) { stegService.oppdaterSteg(any(), any(), any()) }
+        verify(exactly = 1) { stegService.oppdaterSteg(any(), any(), StegType.BREV) }
     }
 }
