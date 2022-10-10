@@ -1,6 +1,5 @@
 package no.nav.familie.klage.brev
 
-import com.fasterxml.jackson.databind.JsonNode
 import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8

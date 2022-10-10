@@ -82,12 +82,13 @@ object DomainUtil {
             resultat = resultat
         )
 
-    fun vurdering(behandlingId: UUID, vedtak: Vedtak = Vedtak.OPPRETTHOLD_VEDTAK, hjemmel: Hjemmel = Hjemmel.FT_FEMTEN_FEM) =
+    fun vurdering(behandlingId: UUID, vedtak: Vedtak = Vedtak.OPPRETTHOLD_VEDTAK, hjemmel: Hjemmel? = Hjemmel.FT_FEMTEN_FEM, årsak: Årsak? = null) =
         Vurdering(
             behandlingId = behandlingId,
             vedtak = vedtak,
             hjemmel = hjemmel,
-            beskrivelse = "En begrunnelse"
+            beskrivelse = "En begrunnelse",
+            arsak = årsak
         )
 
     fun vurderingDto(

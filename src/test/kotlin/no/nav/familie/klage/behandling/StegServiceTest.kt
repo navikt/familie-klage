@@ -125,4 +125,12 @@ internal class StegServiceTest {
         }
         assertThat(feil.frontendFeilmelding).contains("Behandlingen er låst for videre behandling")
     }
+
+    @Test
+    fun `skal ikke lagre behandlingshistorikk dersom en vurdering ferdigstilles ved omgjøring`() {
+        stegService.oppdaterSteg(behandlingId, StegType.VURDERING, StegType.BEHANDLING_FERDIGSTILT)
+
+        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.VURDERING) }
+        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BEHANDLING_FERDIGSTILT) }
+    }
 }

@@ -1,4 +1,4 @@
-package no.nav.familie.klage.distribusjon
+package no.nav.familie.klage.behandling
 
 import io.mockk.Runs
 import io.mockk.every
@@ -6,9 +6,8 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.distribusjon.DistribusjonService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
@@ -19,6 +18,7 @@ import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.tilFagsak
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
 import no.nav.familie.klage.vurdering.VurderingService
+import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.prosessering.domene.TaskRepository
@@ -35,6 +35,7 @@ internal class FerdigstillBehandlingServiceTest {
     val distribusjonService = mockk<DistribusjonService>()
     val kabalService = mockk<KabalService>()
     val vurderingService = mockk<VurderingService>()
+
     val formService = mockk<FormService>()
     val stegService = mockk<StegService>()
     val taskRepository = mockk<TaskRepository>()
@@ -65,7 +66,6 @@ internal class FerdigstillBehandlingServiceTest {
         every { kabalService.sendTilKabal(any(), any(), any()) } just Runs
         every { stegService.oppdaterSteg(any(), any(), any()) } just Runs
         every { formService.formkravErOppfyltForBehandling(any()) } returns true
-        every { vurderingService.klageTasIkkeTilFølge(any()) } returns true
         every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), any()) } just Runs
         every { taskRepository.save(any()) } answers { firstArg() }
         every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id) } just Runs
@@ -126,7 +126,7 @@ internal class FerdigstillBehandlingServiceTest {
             )
         } just Runs
         every { stegService.oppdaterSteg(any(), any(), capture(stegSlot)) } just Runs
-        every { vurderingService.klageTasIkkeTilFølge(any()) } returns false
+        every { vurderingService.hentVurdering(any()) } returns vurdering.copy(vedtak = Vedtak.OMGJØR_VEDTAK)
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
         assertThat(stegSlot.captured).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.MEDHOLD)

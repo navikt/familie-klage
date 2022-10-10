@@ -24,7 +24,6 @@ class IntegrasjonerConfig(@Value("\${FAMILIE_INTEGRASJONER_URL}") private val in
     val arbeidsfordelingMedRelasjonerUri: URI =
         UriComponentsBuilder.fromUri(integrasjonUri).pathSegment(PATH_BEHANDLENDE_ENHET_MED_RELASJONER).build().toUri()
 
-
     val oppgaveUri: URI = UriComponentsBuilder.fromUri(integrasjonUri).pathSegment(PATH_OPPGAVE).build().toUri()
 
     val journalPostUri: URI = UriComponentsBuilder.fromUri(integrasjonUri).pathSegment(PATH_JOURNALPOST).build().toUri()

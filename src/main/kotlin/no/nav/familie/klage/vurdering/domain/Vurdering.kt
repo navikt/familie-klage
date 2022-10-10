@@ -2,6 +2,7 @@ package no.nav.familie.klage.vurdering.domain
 
 import no.nav.familie.klage.felles.domain.Sporbar
 import no.nav.familie.klage.kabal.KabalHjemmel
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.Årsak
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Embedded
@@ -20,7 +21,14 @@ data class Vurdering(
 
 enum class Vedtak {
     OMGJØR_VEDTAK,
-    OPPRETTHOLD_VEDTAK
+    OPPRETTHOLD_VEDTAK;
+
+    fun tilBehandlingResultat(): BehandlingResultat {
+        return when (this) {
+            OMGJØR_VEDTAK -> BehandlingResultat.MEDHOLD
+            OPPRETTHOLD_VEDTAK -> BehandlingResultat.IKKE_MEDHOLD
+        }
+    }
 }
 
 enum class Hjemmel(val kabalHjemmel: KabalHjemmel) {

@@ -1,10 +1,9 @@
-package no.nav.familie.klage.distribusjon
+package no.nav.familie.klage.behandling
 
-import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
+import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
@@ -41,7 +40,7 @@ class FerdigstillBehandlingService(
         val behandling = behandlingService.hentBehandling(behandlingId)
         val behandlingsresultat = utledBehandlingResultat(behandlingId)
 
-        validerKanFerdigstille(behandling)
+        validerKanFerdigstille(behandling, behandlingsresultat)
         if (behandlingsresultat != MEDHOLD) {
             opprettJournalførBrevTask(behandlingId)
         }
@@ -67,22 +66,18 @@ class FerdigstillBehandlingService(
         IKKE_SATT -> error("Kan ikke utlede neste steg når behandlingsresultatet er IKKE_SATT")
     }
 
-    private fun validerKanFerdigstille(behandling: Behandling) {
+    private fun validerKanFerdigstille(behandling: Behandling, behandlingsresultat: BehandlingResultat) {
         if (behandling.status.erLåstForVidereBehandling()) {
             throw Feil("Kan ikke ferdigstille behandlingen da den er låst for videre behandling")
         }
-        if (behandling.steg != StegType.BREV) {
+        if (!(behandling.steg == StegType.BREV || behandlingsresultat == MEDHOLD)) {
             throw Feil("Kan ikke ferdigstille behandlingen fra steg=${behandling.steg}")
         }
     }
 
     private fun utledBehandlingResultat(behandlingId: UUID): BehandlingResultat {
         return if (formService.formkravErOppfyltForBehandling(behandlingId)) {
-            if (vurderingService.klageTasIkkeTilFølge(behandlingId)) {
-                IKKE_MEDHOLD
-            } else {
-                MEDHOLD
-            }
+            vurderingService.hentVurdering(behandlingId)?.vedtak?.tilBehandlingResultat() ?: throw Feil("Burde funnet behandling $behandlingId")
         } else {
             IKKE_MEDHOLD_FORMKRAV_AVVIST
         }

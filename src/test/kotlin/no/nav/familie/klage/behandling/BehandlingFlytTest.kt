@@ -5,7 +5,6 @@ import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.klage.brev.dto.FritekstBrevtype
-import no.nav.familie.klage.distribusjon.FerdigstillBehandlingService
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.formkrav.dto.tilDto
@@ -125,7 +124,6 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
                 val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
                 formService.oppdaterForm(oppfyltFormDto(behandlingId))
                 vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId, Vedtak.OMGJØR_VEDTAK))
-                lagEllerOppdaterBrev(behandlingId)
                 ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
                 behandlingId
             }
@@ -135,7 +133,6 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
             assertThat(behandlingshistorikk.map { it.steg }).containsExactly(
                 StegType.BEHANDLING_FERDIGSTILT,
-                StegType.BREV,
                 StegType.VURDERING,
                 StegType.FORMKRAV
             )
@@ -182,5 +179,4 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
 
     private fun ikkeOppfyltFormDto(behandlingId: UUID) =
         DomainUtil.oppfyltForm(behandlingId).tilDto().copy(klagePart = FormVilkår.IKKE_OPPFYLT)
-    
 }

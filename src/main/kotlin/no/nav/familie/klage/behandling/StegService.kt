@@ -36,8 +36,9 @@ class StegService(
         behandlingRepository.updateSteg(behandlingId, nesteSteg)
         behandlingRepository.updateStatus(behandlingId, nesteSteg.gjelderStatus)
 
-        behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, nåværendeSteg)
-
+        if (harIkkeAlleredeLagretBehandlingshistorikk(nåværendeSteg, nesteSteg)) {
+            behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, nåværendeSteg)
+        }
         if (nesteSteg == StegType.KABAL_VENTER_SVAR) {
             behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.OVERFØRING_TIL_KABAL)
         }
@@ -45,6 +46,11 @@ class StegService(
             behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BEHANDLING_FERDIGSTILT)
         }
     }
+
+    private fun harIkkeAlleredeLagretBehandlingshistorikk(
+        nåværendeSteg: StegType,
+        nesteSteg: StegType
+    ) = !(nåværendeSteg == StegType.VURDERING && nesteSteg == StegType.BEHANDLING_FERDIGSTILT)
 
     private fun validerGyldigNesteSteg(behandling: Behandling) =
         feilHvis(behandling.status.erLåstForVidereBehandling()) {

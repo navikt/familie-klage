@@ -2,7 +2,6 @@ package no.nav.familie.klage.vurdering
 
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingValidator.validerVurdering
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
@@ -32,7 +31,13 @@ class VurderingService(
     @Transactional
     fun opprettEllerOppdaterVurdering(vurdering: VurderingDto): VurderingDto {
         validerVurdering(vurdering)
-        stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING, StegType.BREV)
+
+        if (vurdering.vedtak != Vedtak.OMGJØR_VEDTAK) {
+            stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING, StegType.BREV)
+        } else {
+            stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING, StegType.VURDERING)
+        }
+
         val eksisterendeVurdering = vurderingRepository.findByIdOrNull(vurdering.behandlingId)
         return if (eksisterendeVurdering != null) {
             oppdaterVurdering(vurdering, eksisterendeVurdering).tilDto()
@@ -60,10 +65,5 @@ class VurderingService(
                 hjemmel = vurdering.hjemmel
             )
         )
-    }
-
-    fun klageTasIkkeTilFølge(behandlingId: UUID): Boolean {
-        val vurdering = vurderingRepository.findByIdOrThrow(behandlingId)
-        return vurdering.vedtak == Vedtak.OPPRETTHOLD_VEDTAK
     }
 }
