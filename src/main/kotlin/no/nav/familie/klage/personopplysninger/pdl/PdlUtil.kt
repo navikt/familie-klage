@@ -32,32 +32,3 @@ inline fun <reified DATA : Any, reified T : Any> feilsjekkOgReturnerData(
     }
     return data
 }
-
-inline fun <reified T : Any> feilsjekkOgReturnerData(pdlResponse: PdlBolkResponse<T>): Map<String, T> {
-    if (pdlResponse.data == null) {
-        secureLogger.error("Data fra pdl er null ved bolkoppslag av ${T::class} fra PDL: ${pdlResponse.errorMessages()}")
-        throw PdlRequestException("Data er null fra PDL -  ${T::class}. Se secure logg for detaljer.")
-    }
-
-    val feil = pdlResponse.data.personBolk.filter { it.code != "ok" }.associate { it.ident to it.code }
-    if (feil.isNotEmpty()) {
-        secureLogger.error("Feil ved henting av ${T::class} fra PDL: $feil")
-        throw PdlRequestException("Feil ved henting av ${T::class} fra PDL. Se secure logg for detaljer.")
-    }
-    return pdlResponse.data.personBolk.associateBy({ it.ident }, { it.person!! })
-}
-
-fun feilmeldOgReturnerData(pdlResponse: PdlIdentBolkResponse): Map<String, PdlIdent> {
-    if (pdlResponse.data == null) {
-        secureLogger.error("Data fra pdl er null ved bolkoppslag av identer fra PDL: ${pdlResponse.errorMessages()}")
-        throw PdlRequestException("Data er null fra PDL -  ${PdlIdentBolkResponse::class}. Se secure logg for detaljer.")
-    }
-
-    val feil = pdlResponse.data.hentIdenterBolk.filter { it.code != "ok" }.associate { it.ident to it.code }
-    if (feil.isNotEmpty()) {
-        // Logg feil og gå vider. Ved feil returneres nåværende ident.
-        logger.error("Feil ved henting av ${PdlIdentBolkResponse::class}. Nåværende ident returnert.")
-        secureLogger.error("Feil ved henting av ${PdlIdentBolkResponse::class} fra PDL: $feil. Nåværende ident returnert.")
-    }
-    return pdlResponse.data.hentIdenterBolk.associateBy({ it.ident }, { it.gjeldende() })
-}
