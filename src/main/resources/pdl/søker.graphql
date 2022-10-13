@@ -9,6 +9,13 @@ query($ident: ID!){
         doedsfall {
             doedsdato
         }
+        folkeregisterpersonstatus {
+            status
+            forenkletStatus
+            metadata {
+                historisk
+            }
+        }
         fullmakt(historikk: true) {
             gyldigFraOgMed
             gyldigTilOgMed

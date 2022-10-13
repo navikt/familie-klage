@@ -17,6 +17,8 @@ class PdlConfig(@Value("\${PDL_URL}") pdlUrl: URI) {
 
         val søkerQuery = graphqlQuery("/pdl/søker.graphql")
 
+        val bolkNavnQuery = graphqlQuery("/pdl/navn_bolk.graphql")
+
         val hentIdentQuery = graphqlQuery("/pdl/hent_ident.graphql")
 
         private fun graphqlQuery(path: String) = PdlConfig::class.java.getResource(path)

@@ -36,6 +36,20 @@ class PdlClient(
         return feilsjekkOgReturnerData(personIdent, pdlResponse) { it.person }
     }
 
+    fun hentNavnBolk(personIdenter: List<String>): Map<String, PdlNavn> {
+        require(personIdenter.size <= 100) { "Liste med personidenter må være færre enn 100 st" }
+        val pdlPersonRequest = PdlPersonBolkRequest(
+            variables = PdlPersonBolkRequestVariables(personIdenter),
+            query = PdlConfig.bolkNavnQuery
+        )
+        val pdlResponse: PdlBolkResponse<PdlNavn> = postForEntity(
+            pdlConfig.pdlUri,
+            pdlPersonRequest,
+            httpHeaders()
+        )
+        return feilsjekkOgReturnerData(pdlResponse)
+    }
+
     /**
      * @param ident Ident til personen, samme hvilke type (Folkeregisterident, aktørid eller npid)
      * @param historikk default false, tar med historikk hvis det er ønskelig
@@ -57,7 +71,7 @@ class PdlClient(
 
     private fun httpHeaders(): HttpHeaders {
         return HttpHeaders().apply {
-            add("Tema", "ENF")
+            add("Tema", "ENF") // TODO
         }
     }
 }

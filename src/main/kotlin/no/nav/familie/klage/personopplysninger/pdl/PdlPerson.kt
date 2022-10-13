@@ -18,6 +18,13 @@ data class PdlResponse<T>(
     }
 }
 
+data class PdlBolkResponse<T>(val data: PersonBolk<T>?, val errors: List<PdlError>?) {
+
+    fun errorMessages(): String {
+        return errors?.joinToString { it -> it.message } ?: ""
+    }
+}
+
 data class PdlError(
     val message: String,
     val extensions: PdlExtensions?
@@ -40,10 +47,18 @@ data class PdlIdenter(val identer: List<PdlIdent>) {
 
 data class PdlHentIdenter(val hentIdenter: PdlIdenter?)
 
+data class PersonDataBolk<T>(val ident: String, val code: String, val person: T?)
+data class PersonBolk<T>(val personBolk: List<PersonDataBolk<T>>)
+
+data class PdlNavn(
+    val navn: List<Navn>
+)
+
 data class PdlSøker(
     val adressebeskyttelse: List<Adressebeskyttelse>,
     @JsonProperty("doedsfall") val dødsfall: List<Dødsfall>,
     @JsonProperty("kjoenn") val kjønn: List<Kjønn>,
+    val folkeregisterpersonstatus: List<Folkeregisterpersonstatus>,
     val fullmakt: List<Fullmakt>,
     val navn: List<Navn>,
     val vergemaalEllerFremtidsfullmakt: List<VergemaalEllerFremtidsfullmakt>
@@ -70,6 +85,12 @@ enum class AdressebeskyttelseGradering {
 }
 
 data class Dødsfall(@JsonProperty("doedsdato") val dødsdato: LocalDate?)
+
+data class Folkeregisterpersonstatus(
+    val status: String,
+    val forenkletStatus: String,
+    val metadata: Metadata
+)
 
 data class Fullmakt(
     val gyldigFraOgMed: LocalDate,

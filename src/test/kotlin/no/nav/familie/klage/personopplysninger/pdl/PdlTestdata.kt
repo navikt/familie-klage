@@ -7,6 +7,8 @@ object PdlTestdata {
 
     private val metadataGjeldende = Metadata(false)
 
+    val ident = "2"
+
     private val folkeregistermetadata = Folkeregistermetadata(LocalDateTime.now(), LocalDateTime.now())
 
     private val navn = listOf(Navn("", "", "", metadataGjeldende))
@@ -16,12 +18,25 @@ object PdlTestdata {
 
     private val dødsfall = listOf(Dødsfall(LocalDate.now()))
 
-   val pdlSøkerData =
+    val pdlNavnBolk = PersonBolk(
+        personBolk = listOf(
+            PersonDataBolk(
+                ident = ident,
+                code = "ok",
+                person = PdlNavn(
+                    navn = navn
+                )
+            )
+        )
+    )
+
+    val pdlSøkerData =
         PdlSøkerData(
             PdlSøker(
                 adressebeskyttelse,
                 dødsfall,
                 listOf(Kjønn(KjønnType.KVINNE)),
+                listOf(Folkeregisterpersonstatus("", "", metadataGjeldende)),
                 listOf(
                     Fullmakt(
                         LocalDate.now(),
@@ -47,7 +62,4 @@ object PdlTestdata {
                 )
             )
         )
-
-    val ennenForelderIdentifikator = "2"
-
 }

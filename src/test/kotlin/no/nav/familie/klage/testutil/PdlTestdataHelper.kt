@@ -2,11 +2,13 @@ package no.nav.familie.klage.testutil
 
 import no.nav.familie.klage.personopplysninger.pdl.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.pdl.Dødsfall
+import no.nav.familie.klage.personopplysninger.pdl.Folkeregisterpersonstatus
 import no.nav.familie.klage.personopplysninger.pdl.Fullmakt
 import no.nav.familie.klage.personopplysninger.pdl.Kjønn
 import no.nav.familie.klage.personopplysninger.pdl.KjønnType
 import no.nav.familie.klage.personopplysninger.pdl.Metadata
 import no.nav.familie.klage.personopplysninger.pdl.Navn
+import no.nav.familie.klage.personopplysninger.pdl.PdlNavn
 import no.nav.familie.klage.personopplysninger.pdl.PdlSøker
 import no.nav.familie.klage.personopplysninger.pdl.VergemaalEllerFremtidsfullmakt
 
@@ -30,9 +32,17 @@ object PdlTestdataHelper {
         )
     }
 
+    fun pdlNavn(
+        navn: List<Navn> = emptyList()
+    ) =
+        PdlNavn(
+            navn
+        )
+
     fun pdlSøker(
         adressebeskyttelse: List<Adressebeskyttelse> = emptyList(),
         dødsfall: List<Dødsfall> = emptyList(),
+        folkeregisterpersonstatus: List<Folkeregisterpersonstatus> = emptyList(),
         fullmakt: List<Fullmakt> = emptyList(),
         kjønn: Kjønn? = null,
         navn: List<Navn> = emptyList(),
@@ -42,9 +52,9 @@ object PdlTestdataHelper {
             adressebeskyttelse,
             dødsfall,
             listOfNotNull(kjønn),
+            folkeregisterpersonstatus,
             fullmakt,
             navn,
             vergemaalEllerFremtidsfullmakt
         )
-
 }

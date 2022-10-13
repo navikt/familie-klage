@@ -17,6 +17,7 @@ import no.nav.familie.klage.personopplysninger.pdl.VergemaalEllerFremtidsfullmak
 import no.nav.familie.klage.testutil.PdlTestdataHelper.lagKjønn
 import no.nav.familie.klage.testutil.PdlTestdataHelper.lagNavn
 import no.nav.familie.klage.testutil.PdlTestdataHelper.metadataGjeldende
+import no.nav.familie.klage.testutil.PdlTestdataHelper.pdlNavn
 import no.nav.familie.klage.testutil.PdlTestdataHelper.pdlSøker
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -35,7 +36,7 @@ class PdlClientMock {
 
         every { pdlClient.ping() } just runs
 
-        //every { pdlClient.hentPersonKortBolk(any()) } answers { firstArg<List<String>>().associateWith { lagPersonKort(it) } }
+        every { pdlClient.hentNavnBolk(any()) } answers { firstArg<List<String>>().associateWith { pdlNavn(listOf(lagNavn())) } }
 
         every { pdlClient.hentPerson(any()) } returns opprettPdlSøker()
 

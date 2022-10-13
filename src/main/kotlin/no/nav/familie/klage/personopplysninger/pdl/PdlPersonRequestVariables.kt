@@ -7,3 +7,5 @@ data class PdlIdentRequestVariables(
     val gruppe: String,
     val historikk: Boolean = false
 )
+
+data class PdlPersonBolkRequestVariables(val identer: List<String>)
