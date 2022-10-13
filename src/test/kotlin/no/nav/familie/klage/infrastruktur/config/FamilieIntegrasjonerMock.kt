@@ -145,7 +145,7 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
     @Bean("mock-integrasjoner")
     @Profile("mock-integrasjoner")
     fun integrationMockServer(): WireMockServer {
-        val mockServer = WireMockServer(8385)
+        val mockServer = WireMockServer(8386)
         responses.forEach {
             mockServer.stubFor(it)
         }

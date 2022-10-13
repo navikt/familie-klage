@@ -1,10 +1,9 @@
-package no.nav.familie.klage.personopplysninger.domain
+package no.nav.familie.klage.personopplysninger.dto
 
 data class PersonopplysningerDto(
     val personIdent: String,
     val navn: String,
-    val kjønn: Kjønn,
-    val adresse: String
+    val kjønn: Kjønn
 )
 
 enum class Kjønn {

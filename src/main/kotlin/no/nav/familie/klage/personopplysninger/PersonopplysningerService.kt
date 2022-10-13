@@ -2,8 +2,8 @@ package no.nav.familie.klage.personopplysninger
 
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.personopplysninger.domain.Kjønn
-import no.nav.familie.klage.personopplysninger.domain.PersonopplysningerDto
+import no.nav.familie.klage.personopplysninger.dto.Kjønn
+import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerDto
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.klage.personopplysninger.pdl.gjeldende
 import no.nav.familie.klage.personopplysninger.pdl.gjelende
@@ -28,8 +28,6 @@ class PersonopplysningerService(
                 personIdent = fagsak.hentAktivIdent(),
                 navn = it.navn.gjeldende().visningsnavn(),
                 kjønn = Kjønn.valueOf(it.kjønn.gjelende().kjønn.toString()),
-                adresse = "" // TODO
-
             )
         }
     }
