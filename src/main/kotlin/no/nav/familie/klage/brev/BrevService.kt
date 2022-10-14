@@ -123,7 +123,7 @@ class BrevService(
         avsnittRepository.slettAvsnittMedBehandlingId(behandlingId)
     }
 
-    fun lagBrevSomPdf(behandlingId: UUID): ByteArray {
+    fun lagBrevPdf(behandlingId: UUID) {
         val brev = brevRepository.findByIdOrThrow(behandlingId)
         feilHvis(brev.pdf != null) {
             "Det finnes allerede en lagret pdf"
@@ -131,6 +131,5 @@ class BrevService(
 
         val generertBrev = familieDokumentClient.genererPdfFraHtml(brev.saksbehandlerHtml)
         brevRepository.update(brev.copy(pdf = Fil(generertBrev)))
-        return generertBrev
     }
 }

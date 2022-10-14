@@ -50,7 +50,7 @@ internal class DistribusjonServiceTest {
 
         every { fagsakService.hentFagsakForBehandling(any()) } returns fagsak
         every { behandlingService.hentBehandling(any()) } returns behandling
-        every { brevService.lagBrevSomPdf(any()) } returns "123".toByteArray()
+        every { brevService.hentBrevPdf(any()) } returns "123".toByteArray()
         every {
             familieIntegrasjonerClient.arkiverDokument(
                 capture(journalpostSlot),
