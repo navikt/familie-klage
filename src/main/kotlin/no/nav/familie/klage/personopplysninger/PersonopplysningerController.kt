@@ -2,7 +2,7 @@ package no.nav.familie.klage.personopplysninger
 
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
-import no.nav.familie.klage.personopplysninger.domain.PersonopplysningerDto
+import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerDto
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated

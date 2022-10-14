@@ -26,7 +26,7 @@ funksjonsbrytere:
     environment: local
     applicationName: familie-klage
 
-FAMILIE_INTEGRASJONER_URL: http://localhost:8385
+FAMILIE_INTEGRASJONER_URL: http://localhost:8386
 FAMILIE_BREV_API_URL: http://localhost:8002
 
 AZURE_APP_TENANT_ID: navq.onmicrosoft.com

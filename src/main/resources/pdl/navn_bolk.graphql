@@ -1,0 +1,16 @@
+query($identer: [ID!]!){
+    personBolk: hentPersonBolk(identer: $identer) {
+        code
+        ident
+        person {
+            navn {
+                fornavn
+                mellomnavn
+                etternavn
+                metadata {
+                    historisk
+                }
+            }
+        }
+    }
+}

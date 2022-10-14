@@ -24,7 +24,7 @@ no.nav.security.jwt:
     proxy_url: #Default satt, skal være null lokalt
 
 AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
-FAMILIE_INTEGRASJONER_URL: http://localhost:8385
+FAMILIE_INTEGRASJONER_URL: http://localhost:8386
 FAMILIE_BREV_API_URL: http://localhost:8002
 FAMILIE_DOKUMENT_URL: http://localhost:8082
 
