@@ -41,7 +41,7 @@ class OpprettBehandlingService(
                 fagsakId = fagsak.id,
                 påklagetVedtak = PåklagetVedtak(
                     eksternFagsystemBehandlingId = opprettKlagebehandlingRequest.eksternBehandlingId,
-                    påklagetVedtakstype = if (opprettKlagebehandlingRequest.eksternBehandlingId != null) PåklagetVedtakstype.Vedtak else PåklagetVedtakstype.IkkeValgt
+                    påklagetVedtakstype = if (opprettKlagebehandlingRequest.eksternBehandlingId != null) PåklagetVedtakstype.VEDTAK else PåklagetVedtakstype.IKKE_VALGT
                 ),
                 klageMottatt = opprettKlagebehandlingRequest.klageMottatt,
                 behandlendeEnhet = opprettKlagebehandlingRequest.behandlendeEnhet

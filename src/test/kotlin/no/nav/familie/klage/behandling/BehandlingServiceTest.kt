@@ -131,7 +131,7 @@ internal class BehandlingServiceTest {
             assertThrows<ApiFeil> {
                 behandlingService.oppdaterPåklagetVedtak(
                     behandlingId = behandling.id,
-                    PåklagetVedtakDto(null, PåklagetVedtakstype.UtenVedtak)
+                    PåklagetVedtakDto(null, PåklagetVedtakstype.UTEN_VEDTAK)
                 )
             }
         }
@@ -140,9 +140,9 @@ internal class BehandlingServiceTest {
         internal fun `skal ikke kunne oppdatere påklaget vedtak med ugyldig tilstand`() {
             val behandling = behandling(fagsak(), status = BehandlingStatus.UTREDES)
             every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
-            val ugyldigManglerBehandlingId = PåklagetVedtakDto(null, PåklagetVedtakstype.Vedtak)
-            val ugyldigUtenVedtakMedBehandlingId = PåklagetVedtakDto("123", PåklagetVedtakstype.UtenVedtak)
-            val ugyldigIkkeValgtMedBehandlingId = PåklagetVedtakDto("123", PåklagetVedtakstype.IkkeValgt)
+            val ugyldigManglerBehandlingId = PåklagetVedtakDto(null, PåklagetVedtakstype.VEDTAK)
+            val ugyldigUtenVedtakMedBehandlingId = PåklagetVedtakDto("123", PåklagetVedtakstype.UTEN_VEDTAK)
+            val ugyldigIkkeValgtMedBehandlingId = PåklagetVedtakDto("123", PåklagetVedtakstype.IKKE_VALGT)
 
             assertThrows<Feil> { behandlingService.oppdaterPåklagetVedtak(behandling.id, ugyldigManglerBehandlingId) }
             assertThrows<Feil> { behandlingService.oppdaterPåklagetVedtak(behandling.id, ugyldigUtenVedtakMedBehandlingId) }
@@ -153,9 +153,9 @@ internal class BehandlingServiceTest {
         internal fun `skal  kunne oppdatere påklaget vedtak med gyldige tilstander`() {
             val behandling = behandling(fagsak(), status = BehandlingStatus.UTREDES)
             every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
-            val medVedtak = PåklagetVedtakDto("123", PåklagetVedtakstype.Vedtak)
-            val utenVedtak = PåklagetVedtakDto(null, PåklagetVedtakstype.UtenVedtak)
-            val ikkeValgt = PåklagetVedtakDto(null, PåklagetVedtakstype.IkkeValgt)
+            val medVedtak = PåklagetVedtakDto("123", PåklagetVedtakstype.VEDTAK)
+            val utenVedtak = PåklagetVedtakDto(null, PåklagetVedtakstype.UTEN_VEDTAK)
+            val ikkeValgt = PåklagetVedtakDto(null, PåklagetVedtakstype.IKKE_VALGT)
 
             behandlingService.oppdaterPåklagetVedtak(behandling.id, ikkeValgt)
             verify(exactly = 1) { behandlingRepository.update(any()) }

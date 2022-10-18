@@ -52,7 +52,7 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
         val fagsak = DomainUtil.fagsakDomain().tilFagsak("12345")
         val behandling = behandling(fagsak = fagsak)
         val påklagetVedtak =
-            PåklagetVedtakDto(eksternFagsystemBehandlingId = "14", påklagetVedtakstype = PåklagetVedtakstype.Vedtak)
+            PåklagetVedtakDto(eksternFagsystemBehandlingId = "14", påklagetVedtakstype = PåklagetVedtakstype.VEDTAK)
         testoppsettService.lagreFagsak(fagsak)
         testoppsettService.lagreBehandling(behandling)
         behandlingService.oppdaterPåklagetVedtak(behandlingId = behandling.id, påklagetVedtakDto = påklagetVedtak)

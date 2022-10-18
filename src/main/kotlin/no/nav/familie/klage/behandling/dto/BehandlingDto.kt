@@ -3,7 +3,7 @@ package no.nav.familie.klage.behandling.dto
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
-import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.Vedtak
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.kabal.dto.KlageresultatDto
@@ -37,8 +37,8 @@ data class PåklagetVedtakDto(
     val påklagetVedtakstype: PåklagetVedtakstype
 ) {
     fun erGyldig(): Boolean = when (eksternFagsystemBehandlingId) {
-        null -> påklagetVedtakstype != Vedtak
-        else -> påklagetVedtakstype == Vedtak
+        null -> påklagetVedtakstype != VEDTAK
+        else -> påklagetVedtakstype == VEDTAK
     }
 }
 

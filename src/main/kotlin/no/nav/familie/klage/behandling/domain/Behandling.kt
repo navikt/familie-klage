@@ -38,9 +38,9 @@ data class PåklagetVedtak(
 )
 
 enum class PåklagetVedtakstype {
-    Vedtak,
-    UtenVedtak,
-    IkkeValgt
+    VEDTAK,
+    UTEN_VEDTAK,
+    IKKE_VALGT
 }
 
 fun BehandlingStatus.erLåstForVidereBehandling() =

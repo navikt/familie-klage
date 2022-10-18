@@ -65,7 +65,7 @@ object DomainUtil {
         fagsak: Fagsak = fagsak(),
         id: UUID = UUID.randomUUID(),
         eksternBehandlingId: UUID = UUID.randomUUID(),
-        påklagetVedtak: PåklagetVedtak = PåklagetVedtak(null, PåklagetVedtakstype.IkkeValgt),
+        påklagetVedtak: PåklagetVedtak = PåklagetVedtak(null, PåklagetVedtakstype.IKKE_VALGT),
         klageMottatt: LocalDate = LocalDate.now(),
         status: BehandlingStatus = BehandlingStatus.OPPRETTET,
         steg: StegType = StegType.FORMKRAV,

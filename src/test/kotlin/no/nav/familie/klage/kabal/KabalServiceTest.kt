@@ -28,7 +28,7 @@ internal class KabalServiceTest {
         val oversendelseSlot = slot<OversendtKlageAnkeV3>()
 
         val fagsak = fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent("1")))
-        val behandling = behandling(fagsak, påklagetVedtak = PåklagetVedtak("1234", PåklagetVedtakstype.Vedtak))
+        val behandling = behandling(fagsak, påklagetVedtak = PåklagetVedtak("1234", PåklagetVedtakstype.VEDTAK))
         val hjemmel = Hjemmel.FT_FEMTEN_FIRE
         val vurdering = vurdering(behandlingId = behandling.id, hjemmel = hjemmel)
         every { kabalClient.sendTilKabal(capture(oversendelseSlot)) } just Runs
