@@ -47,7 +47,7 @@ class BehandlingController(
         return Ressurs.success(behandlingService.henleggBehandling(behandlingId, henlegg))
     }
 
-    @PostMapping("{behandlingId}/paklaget_vedtak")
+    @PostMapping("{behandlingId}/paklaget-vedtak")
     fun settPåklagetVedtak(@PathVariable behandlingId: UUID, @RequestBody påklagetVedtakDto: PåklagetVedtakDto): Ressurs<Unit> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
