@@ -1,6 +1,9 @@
 package no.nav.familie.klage.behandling.dto
 
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.PåklagetVedtak
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.Vedtak
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.kabal.dto.KlageresultatDto
@@ -23,11 +26,21 @@ data class BehandlingDto(
     val vedtaksdato: LocalDateTime? = null,
     val stønadstype: Stønadstype,
     val klageresultat: List<KlageresultatDto>,
-    val eksternFagsystemBehandlingId: String,
+    val påklagetVedtak: PåklagetVedtakDto,
     val eksternFagsystemFagsakId: String,
     val fagsystem: Fagsystem,
     val klageMottatt: LocalDate
 )
+
+data class PåklagetVedtakDto(
+    val eksternFagsystemBehandlingId: String?,
+    val påklagetVedtakstype: PåklagetVedtakstype
+) {
+    fun erGyldig(): Boolean = when (eksternFagsystemBehandlingId) {
+        null -> påklagetVedtakstype != Vedtak
+        else -> påklagetVedtakstype == Vedtak
+    }
+}
 
 fun Behandling.tilDto(fagsak: Fagsak, klageresultat: List<KlageresultatDto>): BehandlingDto =
     BehandlingDto(
@@ -42,6 +55,12 @@ fun Behandling.tilDto(fagsak: Fagsak, klageresultat: List<KlageresultatDto>): Be
         fagsystem = fagsak.fagsystem,
         eksternFagsystemFagsakId = fagsak.eksternId,
         klageresultat = klageresultat,
-        eksternFagsystemBehandlingId = this.eksternFagsystemBehandlingId,
+        påklagetVedtak = this.påklagetVedtak.tilDto(),
         klageMottatt = this.klageMottatt
+    )
+
+private fun PåklagetVedtak.tilDto(): PåklagetVedtakDto =
+    PåklagetVedtakDto(
+        eksternFagsystemBehandlingId = this.eksternFagsystemBehandlingId,
+        påklagetVedtakstype = this.påklagetVedtakstype
     )

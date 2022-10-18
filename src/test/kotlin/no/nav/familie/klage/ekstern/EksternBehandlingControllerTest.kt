@@ -55,7 +55,7 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
 
         @Test
         internal fun `skal returnere behandling når man spør etter eksternFagsakId`() {
-            val behandling = behandlingRepository.insert(behandling(fagsak, eksternFagsystemBehandlingId = "123"))
+            val behandling = behandlingRepository.insert(behandling(fagsak))
 
             val url = "$hentBehandlingUrl?eksternFagsakId=${fagsak.eksternId}"
             val response = hentBehandlinger(url)
@@ -90,8 +90,8 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
             ).tilFagsakMedPerson(fagsak.personIdenter)
 
             testoppsettService.lagreFagsak(fagsak2)
-            behandlingRepository.insert(behandling(fagsak, eksternFagsystemBehandlingId = "11"))
-            behandlingRepository.insert(behandling(fagsak2, eksternFagsystemBehandlingId = "22"))
+            behandlingRepository.insert(behandling(fagsak))
+            behandlingRepository.insert(behandling(fagsak2))
 
             val url = "$hentBehandlingUrl?eksternFagsakId=${fagsak.eksternId},${fagsak2.eksternId},$fagsak3EksternId"
             val response = hentBehandlinger(url)

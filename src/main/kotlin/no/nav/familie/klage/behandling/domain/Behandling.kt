@@ -22,13 +22,26 @@ data class Behandling(
     val sporbar: Sporbar = Sporbar(),
     val resultat: BehandlingResultat = BehandlingResultat.IKKE_SATT,
     val vedtakDato: LocalDateTime? = null,
-    val eksternFagsystemBehandlingId: String,
+    @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
+    val påklagetVedtak: PåklagetVedtak,
     val klageMottatt: LocalDate,
     val behandlendeEnhet: String,
     val eksternBehandlingId: UUID = UUID.randomUUID(),
     @Column("henlagt_arsak")
     val henlagtÅrsak: HenlagtÅrsak? = null
 )
+
+data class PåklagetVedtak(
+    val eksternFagsystemBehandlingId: String?,
+    @Column("paklaget_vedtak")
+    val påklagetVedtakstype: PåklagetVedtakstype
+)
+
+enum class PåklagetVedtakstype {
+    Vedtak,
+    UtenVedtak,
+    IkkeValgt
+}
 
 fun BehandlingStatus.erLåstForVidereBehandling() =
     when (SikkerhetContext.hentSaksbehandler()) {

@@ -5,6 +5,8 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
+import no.nav.familie.klage.behandling.domain.PåklagetVedtak
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
 import no.nav.familie.klage.testutil.DomainUtil.behandling
@@ -26,7 +28,7 @@ internal class KabalServiceTest {
         val oversendelseSlot = slot<OversendtKlageAnkeV3>()
 
         val fagsak = fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent("1")))
-        val behandling = behandling(fagsak)
+        val behandling = behandling(fagsak, påklagetVedtak = PåklagetVedtak("1234", PåklagetVedtakstype.Vedtak))
         val hjemmel = Hjemmel.FT_FEMTEN_FIRE
         val vurdering = vurdering(behandlingId = behandling.id, hjemmel = hjemmel)
         every { kabalClient.sendTilKabal(capture(oversendelseSlot)) } just Runs
@@ -37,7 +39,7 @@ internal class KabalServiceTest {
         assertThat(oversendelseSlot.captured.fagsak?.fagsystem).isEqualTo(Fagsystem.EF)
         assertThat(oversendelseSlot.captured.hjemler).containsAll(listOf(hjemmel.kabalHjemmel))
         assertThat(oversendelseSlot.captured.kildeReferanse).isEqualTo(behandling.eksternBehandlingId.toString())
-        assertThat(oversendelseSlot.captured.innsynUrl).isEqualTo("${lenkeConfig.efSakLenke}/fagsak/${fagsak.eksternId}/${behandling.eksternFagsystemBehandlingId}")
+        assertThat(oversendelseSlot.captured.innsynUrl).isEqualTo("${lenkeConfig.efSakLenke}/fagsak/${fagsak.eksternId}/${behandling.påklagetVedtak.eksternFagsystemBehandlingId}")
         assertThat(oversendelseSlot.captured.forrigeBehandlendeEnhet).isEqualTo(behandling.behandlendeEnhet)
         assertThat(oversendelseSlot.captured.tilknyttedeJournalposter).isEmpty() // TODO: Sjekk for relevante
         assertThat(oversendelseSlot.captured.brukersHenvendelseMottattNavDato).isEqualTo(behandling.klageMottatt)

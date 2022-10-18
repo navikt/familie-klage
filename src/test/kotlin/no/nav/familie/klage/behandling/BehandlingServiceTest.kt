@@ -5,13 +5,16 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.behandling.dto.HenlagtÅrsak
 import no.nav.familie.klage.behandling.dto.HenlagtÅrsak.TRUKKET_TILBAKE
+import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
+import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.klage.repository.findByIdOrThrow
@@ -115,6 +118,53 @@ internal class BehandlingServiceTest {
             henleggOgForventOk(behandling, TRUKKET_TILBAKE)
             verify { behandlinghistorikkService.opprettBehandlingshistorikk(any(), StegType.BEHANDLING_FERDIGSTILT) }
             verify(exactly = 1) { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any()) }
+        }
+    }
+
+    @Nested
+    inner class PåklagetVedtak {
+
+        @Test
+        internal fun `skal ikke kunne oppdatere påklaget vedtak dersom behandlingen er låst`() {
+            val behandling = behandling(fagsak(), status = BehandlingStatus.VENTER)
+            every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
+            assertThrows<ApiFeil> {
+                behandlingService.oppdaterPåklagetVedtak(
+                    behandlingId = behandling.id,
+                    PåklagetVedtakDto(null, PåklagetVedtakstype.UtenVedtak)
+                )
+            }
+        }
+
+        @Test
+        internal fun `skal ikke kunne oppdatere påklaget vedtak med ugyldig tilstand`() {
+            val behandling = behandling(fagsak(), status = BehandlingStatus.UTREDES)
+            every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
+            val ugyldigManglerBehandlingId = PåklagetVedtakDto(null, PåklagetVedtakstype.Vedtak)
+            val ugyldigUtenVedtakMedBehandlingId = PåklagetVedtakDto("123", PåklagetVedtakstype.UtenVedtak)
+            val ugyldigIkkeValgtMedBehandlingId = PåklagetVedtakDto("123", PåklagetVedtakstype.IkkeValgt)
+
+            assertThrows<Feil> { behandlingService.oppdaterPåklagetVedtak(behandling.id, ugyldigManglerBehandlingId) }
+            assertThrows<Feil> { behandlingService.oppdaterPåklagetVedtak(behandling.id, ugyldigUtenVedtakMedBehandlingId) }
+            assertThrows<Feil> { behandlingService.oppdaterPåklagetVedtak(behandling.id, ugyldigIkkeValgtMedBehandlingId) }
+        }
+
+        @Test
+        internal fun `skal  kunne oppdatere påklaget vedtak med gyldige tilstander`() {
+            val behandling = behandling(fagsak(), status = BehandlingStatus.UTREDES)
+            every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
+            val medVedtak = PåklagetVedtakDto("123", PåklagetVedtakstype.Vedtak)
+            val utenVedtak = PåklagetVedtakDto(null, PåklagetVedtakstype.UtenVedtak)
+            val ikkeValgt = PåklagetVedtakDto(null, PåklagetVedtakstype.IkkeValgt)
+
+            behandlingService.oppdaterPåklagetVedtak(behandling.id, ikkeValgt)
+            verify(exactly = 1) { behandlingRepository.update(any()) }
+
+            behandlingService.oppdaterPåklagetVedtak(behandling.id, utenVedtak)
+            verify(exactly = 2) { behandlingRepository.update(any()) }
+
+            behandlingService.oppdaterPåklagetVedtak(behandling.id, medVedtak)
+            verify(exactly = 3) { behandlingRepository.update(any()) }
         }
     }
 }

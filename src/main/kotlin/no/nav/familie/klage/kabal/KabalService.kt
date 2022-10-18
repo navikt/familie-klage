@@ -1,6 +1,7 @@
 package no.nav.familie.klage.kabal
 
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.tilYtelse
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
@@ -30,7 +31,7 @@ class KabalService(
             ),
             fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem),
             kildeReferanse = behandling.eksternBehandlingId.toString(),
-            innsynUrl = lagInnsynUrl(fagsak, behandling.eksternFagsystemBehandlingId),
+            innsynUrl = lagInnsynUrl(fagsak, behandling.påklagetVedtak),
             hjemler = vurdering.hjemmel?.let { listOf(it.kabalHjemmel) } ?: emptyList(),
             forrigeBehandlendeEnhet = behandling.behandlendeEnhet,
             tilknyttedeJournalposter = listOf(), // TODO: klagebrev kan puttes på automatisk, vedtaksbrev fra EF-sak må hentes fra iverksett, klage må velges ved ferdigstilling eller ved journalføring av klage
@@ -41,13 +42,13 @@ class KabalService(
         )
     }
 
-    private fun lagInnsynUrl(fagsak: Fagsak, eksternBehandlingId: String?): String {
+    private fun lagInnsynUrl(fagsak: Fagsak, påklagetVedtak: PåklagetVedtak): String {
         val fagsystemUrl = when (fagsak.fagsystem) {
             Fagsystem.EF -> lenkeConfig.efSakLenke
             Fagsystem.BA -> lenkeConfig.baSakLenke
             Fagsystem.KS -> error("Ikke implementert støtte for KS")
         }
-        return eksternBehandlingId?.let { "$fagsystemUrl/fagsak/${fagsak.eksternId}/$eksternBehandlingId" }
+        return påklagetVedtak.eksternFagsystemBehandlingId?.let { "$fagsystemUrl/fagsak/${fagsak.eksternId}/${påklagetVedtak.eksternFagsystemBehandlingId}" }
             ?: "$fagsystemUrl/fagsak/${fagsak.eksternId}/saksoversikt"
     }
 }
