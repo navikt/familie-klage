@@ -109,9 +109,9 @@ internal class BrevServiceTest : OppslagSpringRunnerTest() {
         @Test
         internal fun `kan ikke lagre brevet 2 ganger`() {
             brevService.lagEllerOppdaterBrev(fritekstbrev(behandling.id))
-            brevService.lagBrevSomPdf(behandling.id)
+            brevService.lagBrevPdf(behandling.id)
 
-            assertThatThrownBy { brevService.lagBrevSomPdf(behandling.id) }
+            assertThatThrownBy { brevService.lagBrevPdf(behandling.id) }
                 .hasMessage("Det finnes allerede en lagret pdf")
         }
     }

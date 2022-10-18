@@ -3,10 +3,12 @@ package no.nav.familie.klage.behandling
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
+import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.distribusjon.DistribusjonService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
@@ -40,6 +42,8 @@ internal class FerdigstillBehandlingServiceTest {
     val stegService = mockk<StegService>()
     val taskRepository = mockk<TaskRepository>()
     val oppgaveTaskService = mockk<OppgaveTaskService>()
+    val brevService = mockk<BrevService>()
+
 
     val ferdigstillBehandlingService = FerdigstillBehandlingService(
         behandlingService = behandlingService,
@@ -47,7 +51,8 @@ internal class FerdigstillBehandlingServiceTest {
         formService = formService,
         stegService = stegService,
         taskRepository = taskRepository,
-        oppgaveTaskService = oppgaveTaskService
+        oppgaveTaskService = oppgaveTaskService,
+        brevService = brevService
     )
     val fagsak = DomainUtil.fagsakDomain().tilFagsak()
     val behandling = DomainUtil.behandling(fagsak = fagsak, steg = StegType.BREV, status = BehandlingStatus.UTREDES)
@@ -81,6 +86,7 @@ internal class FerdigstillBehandlingServiceTest {
         val stegSlot = slot<StegType>()
         val behandlingsresultatSlot = slot<BehandlingResultat>()
         every { stegService.oppdaterSteg(any(), any(), capture(stegSlot)) } just Runs
+        justRun { brevService.lagBrevPdf(any()) }
         every {
             behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(
                 any(),
@@ -100,6 +106,7 @@ internal class FerdigstillBehandlingServiceTest {
     internal fun `skal ikke sende til kabal hvis formkrav ikke er oppfylt`() {
         val stegSlot = slot<StegType>()
         val behandlingsresultatSlot = slot<BehandlingResultat>()
+        justRun { brevService.lagBrevPdf(any()) }
         every { stegService.oppdaterSteg(any(), any(), capture(stegSlot)) } just Runs
         every { formService.formkravErOppfyltForBehandling(any()) } returns false
         every {

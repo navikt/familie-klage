@@ -22,7 +22,7 @@ class DistribusjonService(
 ) {
 
     fun journalførBrev(behandlingId: UUID, saksbehandler: String): String {
-        val brev = brevService.lagBrevSomPdf(behandlingId)
+        val brev = brevService.hentBrevPdf(behandlingId)
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         val behandling = behandlingService.hentBehandling(behandlingId)
 
