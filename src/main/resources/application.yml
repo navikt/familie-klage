@@ -120,6 +120,8 @@ spring:
           type: PKCS12
           location: ${KAFKA_TRUSTSTORE_PATH}
           password: ${KAFKA_CREDSTORE_PASSWORD}
+    producer:
+      acks: all
     consumer:
       group-id: familie-klage
       max-poll-records: 1
@@ -182,3 +184,5 @@ prosessering:
 lenker:
   EF_SAK_FRONTEND_URL: "https://ensligmorellerfar.intern.nav.no/ekstern"
   BA_SAK_FRONTEND_URL: "https://barnetrygd.intern.nav.no"
+
+BEHANDLINGSSTATISTIKK_TOPIC: teamfamilie.aapen-klage-behandlingsstatistikk
