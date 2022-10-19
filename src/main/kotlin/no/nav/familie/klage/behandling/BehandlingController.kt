@@ -5,7 +5,9 @@ import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
+import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -23,7 +25,8 @@ import java.util.UUID
 class BehandlingController(
     private val behandlingService: BehandlingService,
     private val tilgangService: TilgangService,
-    private val ferdigstillBehandlingService: FerdigstillBehandlingService
+    private val ferdigstillBehandlingService: FerdigstillBehandlingService,
+    private val fagsystemVedtakService: FagsystemVedtakService
 ) {
 
     @GetMapping("{behandlingId}")
@@ -52,5 +55,12 @@ class BehandlingController(
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
         return Ressurs.success(behandlingService.oppdaterPåklagetVedtak(behandlingId, påklagetVedtakDto))
+    }
+
+    @GetMapping("{behandlingId}/paklagbare-vedtak")
+    fun hentPåklagbareVedtak(@PathVariable behandlingId: UUID): Ressurs<List<FagsystemVedtak>> {
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
+        return Ressurs.success(fagsystemVedtakService.hentPåklagebareVedtak(behandlingId))
     }
 }
