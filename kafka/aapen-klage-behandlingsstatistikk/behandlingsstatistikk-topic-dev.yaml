@@ -21,3 +21,6 @@ spec:
     - team: ptsak
       application: pt-sak-klage-preprod
       access: read
+    - team: ptsak
+      application: pt-sak-klage-dev
+      access: read
