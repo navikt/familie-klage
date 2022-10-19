@@ -1,6 +1,8 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.PåklagetVedtak
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
@@ -37,7 +39,10 @@ class OpprettBehandlingService(
         val behandlingId = behandlingService.opprettBehandling(
             Behandling(
                 fagsakId = fagsak.id,
-                eksternFagsystemBehandlingId = opprettKlagebehandlingRequest.eksternBehandlingId,
+                påklagetVedtak = PåklagetVedtak(
+                    eksternFagsystemBehandlingId = opprettKlagebehandlingRequest.eksternBehandlingId,
+                    påklagetVedtakstype = if (opprettKlagebehandlingRequest.eksternBehandlingId != null) PåklagetVedtakstype.VEDTAK else PåklagetVedtakstype.IKKE_VALGT
+                ),
                 klageMottatt = opprettKlagebehandlingRequest.klageMottatt,
                 behandlendeEnhet = opprettKlagebehandlingRequest.behandlendeEnhet
             )

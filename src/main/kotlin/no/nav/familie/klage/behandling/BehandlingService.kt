@@ -2,16 +2,19 @@ package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.Klagebehandlingsesultat
+import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.StegType.BEHANDLING_FERDIGSTILT
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandling.domain.erUnderArbeidAvSaksbehandler
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.HenlagtDto
+import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
+import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.tilDto
 import no.nav.familie.klage.kabal.dto.KlageresultatDto
@@ -23,6 +26,7 @@ import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -77,6 +81,24 @@ class BehandlingService(
         }
         val oppdatertBehandling = behandling.copy(resultat = behandlingsresultat, vedtakDato = LocalDateTime.now())
         behandlingRepository.update(oppdatertBehandling)
+    }
+
+    @Transactional
+    fun oppdaterPåklagetVedtak(behandlingId: UUID, påklagetVedtakDto: PåklagetVedtakDto) {
+        val behandling = hentBehandling(behandlingId)
+        brukerfeilHvis(behandling.status.erLåstForVidereBehandling()) {
+            "Kan ikke oppdatere påklaget vedtak siden behandlingen er låst for videre saksbehandling"
+        }
+        feilHvisIkke(påklagetVedtakDto.erGyldig()) {
+            "Påklaget vedtak er i en ugyldig tilstand: EksternFagsystemBehandlingId:${påklagetVedtakDto.eksternFagsystemBehandlingId}, PåklagetVedtakType: ${påklagetVedtakDto.påklagetVedtakstype}"
+        }
+        val behandlingMedPåklagetVedtak = behandling.copy(
+            påklagetVedtak = PåklagetVedtak(
+                eksternFagsystemBehandlingId = påklagetVedtakDto.eksternFagsystemBehandlingId,
+                påklagetVedtakstype = påklagetVedtakDto.påklagetVedtakstype
+            )
+        )
+        behandlingRepository.update(behandlingMedPåklagetVedtak)
     }
 
     private fun validerKanOppretteBehandling(fagsakId: UUID) {

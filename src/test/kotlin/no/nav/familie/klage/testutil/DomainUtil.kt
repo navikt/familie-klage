@@ -1,6 +1,8 @@
 package no.nav.familie.klage.testutil
 
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.PåklagetVedtak
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.brev.dto.AvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
@@ -63,7 +65,7 @@ object DomainUtil {
         fagsak: Fagsak = fagsak(),
         id: UUID = UUID.randomUUID(),
         eksternBehandlingId: UUID = UUID.randomUUID(),
-        eksternFagsystemBehandlingId: String = Random.nextInt().toString(),
+        påklagetVedtak: PåklagetVedtak = PåklagetVedtak(null, PåklagetVedtakstype.IKKE_VALGT),
         klageMottatt: LocalDate = LocalDate.now(),
         status: BehandlingStatus = BehandlingStatus.OPPRETTET,
         steg: StegType = StegType.FORMKRAV,
@@ -74,7 +76,7 @@ object DomainUtil {
             id = id,
             eksternBehandlingId = eksternBehandlingId,
             fagsakId = fagsak.id,
-            eksternFagsystemBehandlingId = eksternFagsystemBehandlingId,
+            påklagetVedtak = påklagetVedtak,
             klageMottatt = klageMottatt,
             status = status,
             steg = steg,

@@ -89,7 +89,7 @@ internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {
         OpprettKlagebehandlingRequest(
             ident = "1234",
             stønadstype = fagsak.stønadstype,
-            eksternBehandlingId = behandling.eksternFagsystemBehandlingId,
+            eksternBehandlingId = behandling.påklagetVedtak.eksternFagsystemBehandlingId,
             eksternFagsakId = fagsak.eksternId,
             fagsystem = fagsak.fagsystem,
             klageMottatt = klageMottatt,

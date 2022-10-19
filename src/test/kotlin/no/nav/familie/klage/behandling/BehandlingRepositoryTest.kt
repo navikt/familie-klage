@@ -1,5 +1,7 @@
 package no.nav.familie.klage.behandling
 
+import no.nav.familie.klage.behandling.domain.PåklagetVedtak
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
@@ -35,8 +37,8 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
             behandling(
                 fagsak = fagsak,
                 id = id,
-                eksternFagsystemBehandlingId = "123",
-                klageMottatt = LocalDate.now()
+                klageMottatt = LocalDate.now(),
+                påklagetVedtak = PåklagetVedtak("1234", PåklagetVedtakstype.VEDTAK)
             )
         )
 
@@ -45,7 +47,8 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
         assertThat(behandling.id).isEqualTo(hentetBehandling.id)
         assertThat(behandling.fagsakId).isEqualTo(hentetBehandling.fagsakId)
         assertThat(behandling.eksternBehandlingId).isEqualTo(hentetBehandling.eksternBehandlingId)
-        assertThat(behandling.eksternFagsystemBehandlingId).isEqualTo(hentetBehandling.eksternFagsystemBehandlingId)
+        assertThat(behandling.påklagetVedtak.påklagetVedtakstype).isEqualTo(hentetBehandling.påklagetVedtak.påklagetVedtakstype)
+        assertThat(behandling.påklagetVedtak.eksternFagsystemBehandlingId).isEqualTo(hentetBehandling.påklagetVedtak.eksternFagsystemBehandlingId)
         assertThat(behandling.klageMottatt).isEqualTo(hentetBehandling.klageMottatt)
         assertThat(behandling.resultat).isEqualTo(hentetBehandling.resultat)
         assertThat(behandling.sporbar.opprettetAv).isEqualTo(hentetBehandling.sporbar.opprettetAv)
@@ -97,8 +100,8 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
             )
         )
 
-        val behandlingPersistert = behandlingRepository.insert(behandling(fagsakPersistert, eksternFagsystemBehandlingId = "1"))
-        behandlingRepository.insert(behandling(fagsakPersistert2, eksternFagsystemBehandlingId = "2"))
+        val behandlingPersistert = behandlingRepository.insert(behandling(fagsakPersistert))
+        behandlingRepository.insert(behandling(fagsakPersistert2))
 
         val behandling = behandlingRepository.findByEksternBehandlingId(behandlingPersistert.eksternBehandlingId)
         assertThat(behandling).isNotNull
