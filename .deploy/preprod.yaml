@@ -55,10 +55,12 @@ spec:
         - application: familie-klage-frontend
         - application: familie-klage-frontend-lokal
         - application: familie-ef-sak
+        - application: familie-ef-sak-lokal
         - application: familie-prosessering
         - application: familie-prosessering-lokal
     outbound:
       rules:
+        - application: familie-ef-sak-lokal
         - application: familie-tilbake
         - application: familie-brev
         - application: familie-ef-blankett
