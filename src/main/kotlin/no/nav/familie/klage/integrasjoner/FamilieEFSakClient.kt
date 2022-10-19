@@ -18,7 +18,7 @@ class FamilieEFSakClient(
 ) : AbstractRestClient(restOperations, "familie.ef.sak") {
 
     fun hentVedtak(fagsystemEksternFagsakId: String): List<FagsystemVedtak> {
-        val hentVedtakUri = UriComponentsBuilder.fromUri(familieEfSakUri).pathSegment("api/ekstern/vedtak").build().toUri()
+        val hentVedtakUri = UriComponentsBuilder.fromUri(familieEfSakUri).pathSegment("api/ekstern/vedtak/{$fagsystemEksternFagsakId}").build().toUri()
         return getForEntity<Ressurs<List<FagsystemVedtak>>>(hentVedtakUri).getDataOrThrow()
     }
 }
