@@ -47,14 +47,6 @@ class BehandlingsstatistikkTask(
                 gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true)
             )
 
-        fun opprettVenterTask(behandlingId: UUID): Task =
-            opprettTask(
-                behandlingId = behandlingId,
-                hendelse = Hendelse.VENTER,
-                hendelseTidspunkt = LocalDateTime.now(),
-                gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true)
-            )
-
         fun opprettVedtattTask(behandlingId: UUID): Task =
             opprettTask(
                 behandlingId = behandlingId,
