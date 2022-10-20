@@ -57,8 +57,8 @@ class BehandlingController(
         return Ressurs.success(behandlingService.oppdaterPåklagetVedtak(behandlingId, påklagetVedtakDto))
     }
 
-    @GetMapping("{behandlingId}/paklagbare-vedtak")
-    fun hentPåklagbareVedtak(@PathVariable behandlingId: UUID): Ressurs<List<FagsystemVedtak>> {
+    @GetMapping("{behandlingId}/fagsystem-vedtak")
+    fun hentFagsystemVedtak(@PathVariable behandlingId: UUID): Ressurs<List<FagsystemVedtak>> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
         return Ressurs.success(fagsystemVedtakService.hentPåklagebareVedtak(behandlingId))
