@@ -29,7 +29,9 @@ enum class Adressebeskyttelse {
     STRENGT_FORTROLIG,
     STRENGT_FORTROLIG_UTLAND,
     FORTROLIG,
-    UGRADERT
+    UGRADERT;
+
+    fun erStrengtFortrolig() = this == STRENGT_FORTROLIG || this == STRENGT_FORTROLIG_UTLAND
 }
 
 @Suppress("unused") // Kopi fra PDL

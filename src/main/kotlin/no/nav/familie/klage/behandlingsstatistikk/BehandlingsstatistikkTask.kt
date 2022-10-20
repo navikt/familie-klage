@@ -25,7 +25,7 @@ class BehandlingsstatistikkTask(
     override fun doTask(task: Task) {
         val (behandlingId, hendelse, hendelseTidspunkt, gjeldendeSaksbehandler) =
             objectMapper.readValue<BehandlingsstatistikkTaskPayload>(task.payload)
-        behandlingStatistikkService.sendBehandlingstatistikk(behandlingId)
+        behandlingStatistikkService.sendBehandlingstatistikk(behandlingId, hendelse, hendelseTidspunkt)
     }
 
     companion object {
