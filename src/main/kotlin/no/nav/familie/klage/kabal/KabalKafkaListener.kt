@@ -11,6 +11,7 @@ import org.springframework.kafka.listener.ConsumerSeekAware
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.util.UUID
+import no.nav.familie.kontrakter.felles.klage.ExternalUtfall as KontraktExternalUtfall
 
 @Component
 class KabalKafkaListener(val behandlingEventService: BehandlingEventService) : ConsumerSeekAware {
@@ -152,4 +153,17 @@ enum class ExternalUtfall(val navn: String) {
     STADFESTELSE("Stadfestelse"),
     UGUNST("Ugunst (Ugyldig)"),
     AVVIST("Avvist");
+
+    fun tilKontraktUtfall(): KontraktExternalUtfall? {
+        return when (this) {
+            TRUKKET -> KontraktExternalUtfall.TRUKKET;
+            RETUR->KontraktExternalUtfall.RETUR;
+            OPPHEVET->KontraktExternalUtfall.OPPHEVET;
+            MEDHOLD->KontraktExternalUtfall.MEDHOLD;
+            DELVIS_MEDHOLD->KontraktExternalUtfall.DELVIS_MEDHOLD;
+            STADFESTELSE->KontraktExternalUtfall.STADFESTELSE;
+            UGUNST->KontraktExternalUtfall.UGUNST;
+            AVVIST->KontraktExternalUtfall.AVVIST;
+        }
+    }
 }
