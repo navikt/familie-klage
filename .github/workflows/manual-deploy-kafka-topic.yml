@@ -1,0 +1,18 @@
+name: Deploy kafka topics
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: deploy behandlingsstatistikk to dev
+        uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-gcp
+          RESOURCE: kafka/aapen-klage-behandlingsstatistikk/behandlingsstatistikk-topic-dev.yaml
+          PRINT_PAYLOAD: true

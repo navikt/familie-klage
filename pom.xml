@@ -36,6 +36,7 @@
 		<prosessering.version>1.20220624132237_7f5ba9c</prosessering.version>
 		<start-class>no.nav.familie.klage.ApplicationKt</start-class>
 		<kontrakter.version>2.0_20221018121204_ee60849</kontrakter.version>
+		<eksterne-kontrakter.version>2.0_20221019110152_74f39dd</eksterne-kontrakter.version>
 		<nav.security.version>2.1.6</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
 		<okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
 		<unleash.version>4.4.1</unleash.version>
@@ -127,6 +128,11 @@
 			<groupId>no.nav.familie.kontrakter</groupId>
 			<artifactId>felles</artifactId>
 			<version>${kontrakter.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.familie.eksterne.kontrakter</groupId>
+			<artifactId>saksstatistikk-klage</artifactId>
+			<version>${eksterne-kontrakter.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>no.nav.familie.felles</groupId>
