@@ -59,6 +59,7 @@ spec:
         - application: familie-prosessering-lokal
     outbound:
       rules:
+        - application: familie-ef-sak
         - application: familie-tilbake
         - application: familie-brev
         - application: familie-ef-blankett

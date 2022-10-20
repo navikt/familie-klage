@@ -21,6 +21,9 @@ spec:
     - application: familie-prosessering-lokal
       cluster: dev-gcp
       namespace: teamfamilie
+    - application: familie-ef-sak-lokal
+      cluster: dev-gcp
+      namespace: teamfamilie
   tenant: trygdeetaten.no
   secretName: azuread-familie-klage-lokal
   claims:
