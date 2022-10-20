@@ -43,7 +43,7 @@ class BehandlingsstatistikkService(
             endretTid = behandling.sporbar.endret.endretTid.atZone(zoneIdOslo),
             tekniskTid = ZonedDateTime.now(zoneIdOslo),
             sakYtelse = fagsak.stønadstype.name,
-            relatertEksternFagsakId = fagsak.eksternId,
+            relatertEksternBehandlingId = behandling.påklagetVedtak.eksternFagsystemBehandlingId,
             behandlingStatus = behandling.status.name,
             opprettetAv = behandling.sporbar.opprettetAv,
             opprettetEnhet = maskerVerdiHvisStrengtFortrolig(
@@ -54,8 +54,8 @@ class BehandlingsstatistikkService(
                 erStrengtFortrolig,
                 behandling.behandlendeEnhet
             ),
-            sakId = fagsak.eksternId.toLong(),
-            saksnummer = fagsak.eksternId.toLong(),
+            sakId = fagsak.eksternId,
+            saksnummer = fagsak.eksternId,
             mottattTid = behandling.klageMottatt.atStartOfDay(zoneIdOslo),
             ferdigBehandletTid = if (hendelse == Hendelse.FERDIG) hendelseTidspunkt.atZone(zoneIdOslo) else null,
             vedtakTid = if (hendelse == Hendelse.VEDTATT) hendelseTidspunkt.atZone(zoneIdOslo) else null,
