@@ -2,6 +2,8 @@ package no.nav.familie.klage.infrastruktur
 
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.kabal.AnkebehandlingAvsluttetDetaljer
+import no.nav.familie.klage.kabal.AnkebehandlingOpprettetDetaljer
 import no.nav.familie.klage.kabal.BehandlingDetaljer
 import no.nav.familie.klage.kabal.BehandlingEvent
 import no.nav.familie.klage.kabal.BehandlingEventType
@@ -55,6 +57,46 @@ class TestHendelseController(
                         avsluttet = LocalDateTime.now(),
                         utfall = ExternalUtfall.AVVIST,
                         journalpostReferanser = listOf("journalpost1")
+                    )
+                )
+            )
+        )
+    }
+
+    @PostMapping("{behandlingId}/startanke")
+    fun opprettDummyKabalAnkeEvent(@PathVariable behandlingId: UUID) {
+        val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
+        behandlingEventService.handleEvent(
+            BehandlingEvent(
+                eventId = UUID.randomUUID(),
+                kildeReferanse = behandling.eksternBehandlingId.toString(),
+                kilde = Fagsystem.EF.name,
+                kabalReferanse = UUID.randomUUID().toString(),
+                type = BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
+                detaljer = BehandlingDetaljer(
+                    ankebehandlingOpprettet = AnkebehandlingOpprettetDetaljer(
+                        mottattKlageinstans = LocalDateTime.now()
+                    )
+                )
+            )
+        )
+    }
+
+    @PostMapping("{behandlingId}/avsluttanke")
+    fun opprettDummyKabalAvsluttAnkeEvent(@PathVariable behandlingId: UUID) {
+        val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
+        behandlingEventService.handleEvent(
+            BehandlingEvent(
+                eventId = UUID.randomUUID(),
+                kildeReferanse = behandling.eksternBehandlingId.toString(),
+                kilde = Fagsystem.EF.name,
+                kabalReferanse = UUID.randomUUID().toString(),
+                type = BehandlingEventType.ANKEBEHANDLING_AVSLUTTET,
+                detaljer = BehandlingDetaljer(
+                    ankebehandlingAvsluttet = AnkebehandlingAvsluttetDetaljer(
+                        avsluttet = LocalDateTime.now(),
+                        utfall = ExternalUtfall.DELVIS_MEDHOLD,
+                        journalpostReferanser = listOf("1", "2", "3")
                     )
                 )
             )

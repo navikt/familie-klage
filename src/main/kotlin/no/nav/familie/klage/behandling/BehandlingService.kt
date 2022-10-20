@@ -59,7 +59,7 @@ class BehandlingService(
         return "Navn Navnesen"
     }
 
-    private fun hentKlageresultatDto(behandlingId: UUID): List<KlageresultatDto> {
+    fun hentKlageresultatDto(behandlingId: UUID): List<KlageresultatDto> {
         val klageresultater = klageresultatRepository.findByBehandlingId(behandlingId)
         return klageresultater.tilDto()
     }

@@ -2,6 +2,7 @@ package no.nav.familie.klage.behandling.domain
 
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
+//import no.nav.familie.kontrakter.felles.klage.EksternKlageresultatDto
 import no.nav.familie.kontrakter.felles.klage.KlagebehandlingDto
 import no.nav.familie.kontrakter.felles.klage.Årsak
 import java.time.LocalDate
@@ -23,6 +24,8 @@ data class Klagebehandlingsesultat(
     val vedtaksdato: LocalDateTime?
 )
 
+//fun Klagebehandlingsesultat.tilEksternKlagebehandlingDto(eksternKlageresultat: List<EksternKlageresultatDto>) = KlagebehandlingDto(
+
 fun Klagebehandlingsesultat.tilEksternKlagebehandlingDto() = KlagebehandlingDto(
     id = this.id,
     fagsakId = this.fagsakId,
@@ -31,5 +34,6 @@ fun Klagebehandlingsesultat.tilEksternKlagebehandlingDto() = KlagebehandlingDto(
     mottattDato = this.mottattDato,
     resultat = this.resultat,
     årsak = this.årsak,
-    vedtaksdato = this.vedtaksdato
+    vedtaksdato = this.vedtaksdato,
+    //eksternKlageresultat = eksternKlageresultat
 )
