@@ -41,7 +41,7 @@ class BehandlingsstatistikkService(
             personIdent = fagsak.hentAktivIdent(),
             registrertTid = behandling.sporbar.opprettetTid.atZone(zoneIdOslo),
             endretTid = behandling.sporbar.endret.endretTid.atZone(zoneIdOslo),
-            tekniskTid = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+            tekniskTid = ZonedDateTime.now(zoneIdOslo),
             sakYtelse = fagsak.stønadstype.name,
             relatertEksternFagsakId = fagsak.eksternId,
             behandlingStatus = behandling.status.name,
@@ -64,7 +64,7 @@ class BehandlingsstatistikkService(
             resultatBegrunnelse = vurdering?.arsak?.name,
             behandlingMetode = "MANUELL",
             saksbehandler = behandling.sporbar.endret.endretAv,
-            avsender = "Klage"
+            avsender = "Klage familie"
         )
     }
 
