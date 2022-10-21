@@ -6,9 +6,9 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.domain.Fagsak
-import no.nav.familie.klage.kabal.dto.KlageresultatDto
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
+import no.nav.familie.kontrakter.felles.klage.EksternKlageresultatDto
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import java.time.LocalDate
@@ -25,7 +25,7 @@ data class BehandlingDto(
     val opprettet: LocalDateTime,
     val vedtaksdato: LocalDateTime? = null,
     val stønadstype: Stønadstype,
-    val klageresultat: List<KlageresultatDto>,
+    val klageresultat: List<EksternKlageresultatDto>,
     val påklagetVedtak: PåklagetVedtakDto,
     val eksternFagsystemFagsakId: String,
     val fagsystem: Fagsystem,
@@ -42,7 +42,7 @@ data class PåklagetVedtakDto(
     }
 }
 
-fun Behandling.tilDto(fagsak: Fagsak, klageresultat: List<KlageresultatDto>): BehandlingDto =
+fun Behandling.tilDto(fagsak: Fagsak, klageresultat: List<EksternKlageresultatDto>): BehandlingDto =
     BehandlingDto(
         id = this.id,
         fagsakId = this.fagsakId,

@@ -3,6 +3,8 @@ package no.nav.familie.klage.kabal
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.kabal.event.BehandlingEventService
+import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
+import no.nav.familie.kontrakter.felles.klage.ExternalUtfall
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
@@ -87,9 +89,6 @@ data class BehandlingEvent(
     }
 }
 
-enum class BehandlingEventType {
-    KLAGEBEHANDLING_AVSLUTTET, ANKEBEHANDLING_OPPRETTET, ANKEBEHANDLING_AVSLUTTET, ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET // TODO ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET skal fjernes på sikt
-}
 
 data class BehandlingDetaljer(
     val klagebehandlingAvsluttet: KlagebehandlingAvsluttetDetaljer? = null,
@@ -144,26 +143,3 @@ data class AnkebehandlingAvsluttetDetaljer(
     }
 }
 
-enum class ExternalUtfall(val navn: String) {
-    TRUKKET("Trukket"),
-    RETUR("Retur"),
-    OPPHEVET("Opphevet"),
-    MEDHOLD("Medhold"),
-    DELVIS_MEDHOLD("Delvis medhold"),
-    STADFESTELSE("Stadfestelse"),
-    UGUNST("Ugunst (Ugyldig)"),
-    AVVIST("Avvist");
-
-    fun tilKontraktUtfall(): KontraktExternalUtfall? {
-        return when (this) {
-            TRUKKET -> KontraktExternalUtfall.TRUKKET;
-            RETUR->KontraktExternalUtfall.RETUR;
-            OPPHEVET->KontraktExternalUtfall.OPPHEVET;
-            MEDHOLD->KontraktExternalUtfall.MEDHOLD;
-            DELVIS_MEDHOLD->KontraktExternalUtfall.DELVIS_MEDHOLD;
-            STADFESTELSE->KontraktExternalUtfall.STADFESTELSE;
-            UGUNST->KontraktExternalUtfall.UGUNST;
-            AVVIST->KontraktExternalUtfall.AVVIST;
-        }
-    }
-}

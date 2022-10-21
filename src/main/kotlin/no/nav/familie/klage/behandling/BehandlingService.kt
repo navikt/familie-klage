@@ -17,11 +17,11 @@ import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.tilDto
-import no.nav.familie.klage.kabal.dto.KlageresultatDto
 import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus.FERDIGSTILT
+import no.nav.familie.kontrakter.felles.klage.EksternKlageresultatDto
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -59,7 +59,7 @@ class BehandlingService(
         return "Navn Navnesen"
     }
 
-    fun hentKlageresultatDto(behandlingId: UUID): List<KlageresultatDto> {
+    fun hentKlageresultatDto(behandlingId: UUID): List<EksternKlageresultatDto> {
         val klageresultater = klageresultatRepository.findByBehandlingId(behandlingId)
         return klageresultater.tilDto()
     }

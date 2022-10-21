@@ -6,8 +6,6 @@ import no.nav.familie.klage.behandling.domain.tilEksternKlagebehandlingDto
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
-import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
-import no.nav.familie.kontrakter.felles.klage.EksternKlageresultatDto
 
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.KlagebehandlingDto
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.util.UUID
 
 @RestController
 @RequestMapping(path = ["/api/ekstern/behandling"])
@@ -49,7 +46,7 @@ class EksternBehandlingController(
          */
         val behandlinger = eksternFagsakIder.associateWith { eksternFagsakId ->
             behandlingService.finnKlagebehandlingsresultat(eksternFagsakId, fagsystem).map {
-                it.tilEksternKlagebehandlingDto(eksternKlageresultatDtos(it.id))
+                it.tilEksternKlagebehandlingDto(behandlingService.hentKlageresultatDto(behandlingId = it.id))
             }
         }
         val antallTreff = behandlinger.entries.associate { it.key to it.value.size }
@@ -58,14 +55,6 @@ class EksternBehandlingController(
         return Ressurs.success(behandlinger)
     }
 
-    private fun eksternKlageresultatDtos(behandlingId: UUID) =
-        behandlingService.hentKlageresultatDto(behandlingId = behandlingId).map { resultatDto ->
-            EksternKlageresultatDto(
-                BehandlingEventType.valueOf(resultatDto.type.toString()),
-                resultatDto.utfall?.tilKontraktUtfall(),
-                resultatDto.mottattEllerAvsluttetTidspunkt
-            )
-        }
 
     @PostMapping("/opprett")
     fun opprettBehandling(@RequestBody opprettKlageBehandlingDto: OpprettKlagebehandlingRequest) {

@@ -6,11 +6,11 @@ import no.nav.familie.klage.kabal.AnkebehandlingAvsluttetDetaljer
 import no.nav.familie.klage.kabal.AnkebehandlingOpprettetDetaljer
 import no.nav.familie.klage.kabal.BehandlingDetaljer
 import no.nav.familie.klage.kabal.BehandlingEvent
-import no.nav.familie.klage.kabal.BehandlingEventType
-import no.nav.familie.klage.kabal.ExternalUtfall
 import no.nav.familie.klage.kabal.KlagebehandlingAvsluttetDetaljer
 import no.nav.familie.klage.kabal.event.BehandlingEventService
 import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
+import no.nav.familie.kontrakter.felles.klage.ExternalUtfall
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.validation.annotation.Validated

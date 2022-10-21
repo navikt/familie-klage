@@ -24,7 +24,6 @@ data class Klagebehandlingsesultat(
     val vedtaksdato: LocalDateTime?
 )
 
-//fun Klagebehandlingsesultat.tilEksternKlagebehandlingDto() = KlagebehandlingDto(
 fun Klagebehandlingsesultat.tilEksternKlagebehandlingDto(eksternKlageresultat: List<EksternKlageresultatDto>) = KlagebehandlingDto(
     id = this.id,
     fagsakId = this.fagsakId,
