@@ -10,8 +10,8 @@ import no.nav.familie.klage.kabal.KlagebehandlingAvsluttetDetaljer
 import no.nav.familie.klage.kabal.event.BehandlingEventService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
-import no.nav.familie.kontrakter.felles.klage.ExternalUtfall
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -55,7 +55,7 @@ class TestHendelseController(
                 detaljer = BehandlingDetaljer(
                     KlagebehandlingAvsluttetDetaljer(
                         avsluttet = LocalDateTime.now(),
-                        utfall = ExternalUtfall.AVVIST,
+                        utfall = KlageinstansUtfall.AVVIST,
                         journalpostReferanser = listOf("journalpost1")
                     )
                 )
@@ -95,7 +95,7 @@ class TestHendelseController(
                 detaljer = BehandlingDetaljer(
                     ankebehandlingAvsluttet = AnkebehandlingAvsluttetDetaljer(
                         avsluttet = LocalDateTime.now(),
-                        utfall = ExternalUtfall.DELVIS_MEDHOLD,
+                        utfall = KlageinstansUtfall.DELVIS_MEDHOLD,
                         journalpostReferanser = listOf("1", "2", "3")
                     )
                 )

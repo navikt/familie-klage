@@ -4,8 +4,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.kabal.event.BehandlingEventService
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
-import no.nav.familie.kontrakter.felles.klage.ExternalUtfall
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
@@ -13,7 +13,6 @@ import org.springframework.kafka.listener.ConsumerSeekAware
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.util.UUID
-import no.nav.familie.kontrakter.felles.klage.ExternalUtfall as KontraktExternalUtfall
 
 @Component
 class KabalKafkaListener(val behandlingEventService: BehandlingEventService) : ConsumerSeekAware {
@@ -71,7 +70,7 @@ data class BehandlingEvent(
         }
     }
 
-    fun utfall(): ExternalUtfall? {
+    fun utfall(): KlageinstansUtfall? {
         val feilmelding = "Burde hatt behandlingdetaljer for event fra kabal av type $type"
         return when (type) {
             BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> detaljer.klagebehandlingAvsluttet?.utfall ?: throw Feil(feilmelding)
@@ -110,7 +109,7 @@ data class BehandlingDetaljer(
 
 data class KlagebehandlingAvsluttetDetaljer(
     val avsluttet: LocalDateTime,
-    val utfall: ExternalUtfall,
+    val utfall: KlageinstansUtfall,
     val journalpostReferanser: List<String>
 ) {
 
@@ -132,7 +131,7 @@ data class AnkebehandlingOpprettetDetaljer(
 
 data class AnkebehandlingAvsluttetDetaljer(
     val avsluttet: LocalDateTime,
-    val utfall: ExternalUtfall,
+    val utfall: KlageinstansUtfall,
     val journalpostReferanser: List<String>
 ) {
 

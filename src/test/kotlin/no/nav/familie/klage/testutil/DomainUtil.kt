@@ -32,8 +32,8 @@ import no.nav.familie.kontrakter.felles.journalpost.RelevantDato
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
-import no.nav.familie.kontrakter.felles.klage.ExternalUtfall
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.klage.Årsak
 import java.time.LocalDate
@@ -164,7 +164,7 @@ object DomainUtil {
     fun klageresultat(
         eventId: UUID = UUID.randomUUID(),
         type: BehandlingEventType = BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET,
-        utfall: ExternalUtfall = ExternalUtfall.MEDHOLD,
+        utfall: KlageinstansUtfall = KlageinstansUtfall.MEDHOLD,
         mottattEllerAvsluttetTidspunkt: LocalDateTime = SporbarUtils.now(),
         kildereferanse: UUID = UUID.randomUUID(),
         journalpostReferanser: List<String> = listOf("1", "2"),

@@ -4,7 +4,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.klage.kabal.event.BehandlingEventService
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
-import no.nav.familie.kontrakter.felles.klage.ExternalUtfall
+import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -48,7 +48,7 @@ class KabalKafkaListenerTest {
             BehandlingDetaljer(
                 KlagebehandlingAvsluttetDetaljer(
                     LocalDateTime.now().minusDays(1),
-                    ExternalUtfall.MEDHOLD,
+                    KlageinstansUtfall.MEDHOLD,
                     listOf("journalpostReferanse1", "journalpostReferanse2")
                 )
             )

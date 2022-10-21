@@ -21,8 +21,8 @@ import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus.FERDIGSTILT
-import no.nav.familie.kontrakter.felles.klage.EksternKlageresultatDto
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -59,7 +59,7 @@ class BehandlingService(
         return "Navn Navnesen"
     }
 
-    fun hentKlageresultatDto(behandlingId: UUID): List<EksternKlageresultatDto> {
+    fun hentKlageresultatDto(behandlingId: UUID): List<KlageinstansResultatDto> {
         val klageresultater = klageresultatRepository.findByBehandlingId(behandlingId)
         return klageresultater.tilDto()
     }
