@@ -88,7 +88,6 @@ data class BehandlingEvent(
     }
 }
 
-
 data class BehandlingDetaljer(
     val klagebehandlingAvsluttet: KlagebehandlingAvsluttetDetaljer? = null,
     val ankebehandlingOpprettet: AnkebehandlingOpprettetDetaljer? = null,
@@ -141,4 +140,3 @@ data class AnkebehandlingAvsluttetDetaljer(
             "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
     }
 }
-

@@ -6,7 +6,6 @@ import no.nav.familie.klage.behandling.domain.tilEksternKlagebehandlingDto
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
-
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.KlagebehandlingDto
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
@@ -54,7 +53,6 @@ class EksternBehandlingController(
         // TODO fiks validering av at behandlinger tilhører samme person
         return Ressurs.success(behandlinger)
     }
-
 
     @PostMapping("/opprett")
     fun opprettBehandling(@RequestBody opprettKlageBehandlingDto: OpprettKlagebehandlingRequest) {
