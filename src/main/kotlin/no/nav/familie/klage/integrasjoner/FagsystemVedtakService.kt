@@ -13,7 +13,7 @@ class FagsystemVedtakService(
     private val fagsakService: FagsakService
 ) {
 
-    fun hentPåklagebareVedtak(behandlingId: UUID): List<FagsystemVedtak> {
+    fun hentFagsystemVedtak(behandlingId: UUID): List<FagsystemVedtak> {
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
 
         return when (fagsak.fagsystem) {

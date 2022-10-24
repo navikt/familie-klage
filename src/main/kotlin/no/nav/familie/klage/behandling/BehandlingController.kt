@@ -2,7 +2,6 @@ package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.HenlagtDto
-import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
@@ -50,17 +49,10 @@ class BehandlingController(
         return Ressurs.success(behandlingService.henleggBehandling(behandlingId, henlegg))
     }
 
-    @PostMapping("{behandlingId}/paklaget-vedtak")
-    fun settPåklagetVedtak(@PathVariable behandlingId: UUID, @RequestBody påklagetVedtakDto: PåklagetVedtakDto): Ressurs<Unit> {
-        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
-        tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
-        return Ressurs.success(behandlingService.oppdaterPåklagetVedtak(behandlingId, påklagetVedtakDto))
-    }
-
     @GetMapping("{behandlingId}/fagsystem-vedtak")
     fun hentFagsystemVedtak(@PathVariable behandlingId: UUID): Ressurs<List<FagsystemVedtak>> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
-        return Ressurs.success(fagsystemVedtakService.hentPåklagebareVedtak(behandlingId))
+        return Ressurs.success(fagsystemVedtakService.hentFagsystemVedtak(behandlingId))
     }
 }
