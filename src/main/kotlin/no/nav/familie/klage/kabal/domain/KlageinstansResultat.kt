@@ -5,10 +5,12 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
 import java.util.UUID
 
-class Klageresultat(
+@Table("klageresultat")
+class KlageinstansResultat(
     @Id
     val eventId: UUID,
     val type: BehandlingEventType,
@@ -19,7 +21,7 @@ class Klageresultat(
     val behandlingId: UUID
 )
 
-fun List<Klageresultat>.tilDto(): List<KlageinstansResultatDto> {
+fun List<KlageinstansResultat>.tilDto(): List<KlageinstansResultatDto> {
     return this.map {
         KlageinstansResultatDto(
             type = it.type,

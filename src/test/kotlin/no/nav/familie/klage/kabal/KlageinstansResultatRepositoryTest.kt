@@ -3,7 +3,7 @@ package no.nav.familie.klage.kabal
 import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration.StringListWrapper
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
-import no.nav.familie.klage.kabal.domain.Klageresultat
+import no.nav.familie.klage.kabal.domain.KlageinstansResultat
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.UUID
 
-class KlageresultatRepositoryTest : OppslagSpringRunnerTest() {
+class KlageinstansResultatRepositoryTest : OppslagSpringRunnerTest() {
 
     @Autowired
     private lateinit var klageresultatRepository: KlageresultatRepository
@@ -23,7 +23,7 @@ class KlageresultatRepositoryTest : OppslagSpringRunnerTest() {
     internal fun `skal kunne lagre og hente klageresultat`() {
         val fagsak = testoppsettService.lagreFagsak(fagsak())
         val behandling = testoppsettService.lagreBehandling(behandling(fagsak))
-        val klageresultat = Klageresultat(
+        val klageinstansResultat = KlageinstansResultat(
             eventId = UUID.randomUUID(),
             type = BehandlingEventType.ANKEBEHANDLING_AVSLUTTET,
             utfall = KlageinstansUtfall.OPPHEVET,
@@ -32,16 +32,16 @@ class KlageresultatRepositoryTest : OppslagSpringRunnerTest() {
             journalpostReferanser = StringListWrapper(listOf("ref1", "ref2")),
             behandlingId = behandling.id
         )
-        klageresultatRepository.insert(klageresultat)
+        klageresultatRepository.insert(klageinstansResultat)
 
-        val hentetKlageresultat = klageresultatRepository.findByIdOrThrow(klageresultat.eventId)
-        assertThat(hentetKlageresultat.eventId).isEqualTo(klageresultat.eventId)
-        assertThat(hentetKlageresultat.type).isEqualTo(klageresultat.type)
-        assertThat(hentetKlageresultat.utfall).isEqualTo(klageresultat.utfall)
-        assertThat(hentetKlageresultat.mottattEllerAvsluttetTidspunkt).isEqualTo(klageresultat.mottattEllerAvsluttetTidspunkt)
-        assertThat(hentetKlageresultat.kildereferanse).isEqualTo(klageresultat.kildereferanse)
-        assertThat(hentetKlageresultat.journalpostReferanser).isEqualTo(klageresultat.journalpostReferanser)
+        val hentetKlageresultat = klageresultatRepository.findByIdOrThrow(klageinstansResultat.eventId)
+        assertThat(hentetKlageresultat.eventId).isEqualTo(klageinstansResultat.eventId)
+        assertThat(hentetKlageresultat.type).isEqualTo(klageinstansResultat.type)
+        assertThat(hentetKlageresultat.utfall).isEqualTo(klageinstansResultat.utfall)
+        assertThat(hentetKlageresultat.mottattEllerAvsluttetTidspunkt).isEqualTo(klageinstansResultat.mottattEllerAvsluttetTidspunkt)
+        assertThat(hentetKlageresultat.kildereferanse).isEqualTo(klageinstansResultat.kildereferanse)
+        assertThat(hentetKlageresultat.journalpostReferanser).isEqualTo(klageinstansResultat.journalpostReferanser)
         assertThat(hentetKlageresultat.journalpostReferanser.verdier).hasSize(2)
-        assertThat(hentetKlageresultat.behandlingId).isEqualTo(klageresultat.behandlingId)
+        assertThat(hentetKlageresultat.behandlingId).isEqualTo(klageinstansResultat.behandlingId)
     }
 }

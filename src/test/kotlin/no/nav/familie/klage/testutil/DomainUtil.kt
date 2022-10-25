@@ -17,7 +17,7 @@ import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration
-import no.nav.familie.klage.kabal.domain.Klageresultat
+import no.nav.familie.klage.kabal.domain.KlageinstansResultat
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
@@ -170,8 +170,8 @@ object DomainUtil {
         kildereferanse: UUID = UUID.randomUUID(),
         journalpostReferanser: List<String> = listOf("1", "2"),
         behandlingId: UUID = UUID.randomUUID()
-    ): Klageresultat {
-        return Klageresultat(
+    ): KlageinstansResultat {
+        return KlageinstansResultat(
             eventId = eventId,
             type = type,
             utfall = utfall,
