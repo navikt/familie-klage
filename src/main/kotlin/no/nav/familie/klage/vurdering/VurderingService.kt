@@ -52,7 +52,8 @@ class VurderingService(
             vedtak = vurdering.vedtak,
             arsak = vurdering.arsak,
             hjemmel = vurdering.hjemmel,
-            beskrivelse = vurdering.beskrivelse
+            beskrivelse = vurdering.beskrivelse,
+            interntNotat = vurdering.interntNotat
         )
     )
 
@@ -62,7 +63,8 @@ class VurderingService(
                 vedtak = vurdering.vedtak,
                 beskrivelse = vurdering.beskrivelse,
                 arsak = vurdering.arsak,
-                hjemmel = vurdering.hjemmel
+                hjemmel = vurdering.hjemmel,
+                interntNotat = vurdering.interntNotat
             )
         )
     }

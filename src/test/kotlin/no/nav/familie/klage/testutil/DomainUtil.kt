@@ -85,26 +85,35 @@ object DomainUtil {
             resultat = resultat
         )
 
-    fun vurdering(behandlingId: UUID, vedtak: Vedtak = Vedtak.OPPRETTHOLD_VEDTAK, hjemmel: Hjemmel? = Hjemmel.FT_FEMTEN_FEM, årsak: Årsak? = null) =
+    fun vurdering(
+        behandlingId: UUID,
+        vedtak: Vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
+        hjemmel: Hjemmel? = Hjemmel.FT_FEMTEN_FEM,
+        årsak: Årsak? = null,
+        interntNOtat: String? = null
+    ) =
         Vurdering(
             behandlingId = behandlingId,
             vedtak = vedtak,
             hjemmel = hjemmel,
             beskrivelse = "En begrunnelse",
-            arsak = årsak
+            arsak = årsak,
+            interntNotat = interntNOtat
         )
 
     fun vurderingDto(
         behandlingId: UUID = UUID.randomUUID(),
         vedtak: Vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
         årsak: Årsak? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) null else Årsak.FEIL_I_LOVANDVENDELSE,
-        hjemmel: Hjemmel? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) Hjemmel.BT_FEM else null
+        hjemmel: Hjemmel? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) Hjemmel.BT_FEM else null,
+        interntNotat: String? = null
     ) = VurderingDto(
         behandlingId = behandlingId,
         vedtak = vedtak,
         arsak = årsak,
         hjemmel = hjemmel,
-        beskrivelse = "En begrunnelse"
+        beskrivelse = "En begrunnelse",
+        interntNotat = interntNotat
     )
 
     fun oppfyltForm(behandlingId: UUID) =
@@ -213,5 +222,6 @@ object DomainUtil {
 
     )
 
-    fun påklagetVedtakDto(): PåklagetVedtakDto = PåklagetVedtakDto(eksternFagsystemBehandlingId = null, påklagetVedtakstype = PåklagetVedtakstype.UTEN_VEDTAK)
+    fun påklagetVedtakDto(): PåklagetVedtakDto =
+        PåklagetVedtakDto(eksternFagsystemBehandlingId = null, påklagetVedtakstype = PåklagetVedtakstype.UTEN_VEDTAK)
 }
