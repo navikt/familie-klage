@@ -1,0 +1,1 @@
+UPDATE behandling SET paklaget_vedtak = 'VEDTAK' WHERE paklaget_vedtak = 'Vedtak'; -- Kun aktuelt for testdata
