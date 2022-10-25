@@ -7,11 +7,11 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration.StringListWrapper
 import no.nav.familie.klage.kabal.BehandlingEvent
-import no.nav.familie.klage.kabal.BehandlingEventType
 import no.nav.familie.klage.kabal.KlageresultatRepository
-import no.nav.familie.klage.kabal.domain.Klageresultat
+import no.nav.familie.klage.kabal.domain.KlageinstansResultat
 import no.nav.familie.klage.oppgave.OpprettKabalEventOppgaveTask
 import no.nav.familie.klage.oppgave.OpprettOppgavePayload
+import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.LoggerFactory
@@ -50,7 +50,7 @@ class BehandlingEventService(
     }
 
     private fun lagreKlageresultat(behandlingEvent: BehandlingEvent, behandling: Behandling) {
-        val klageresultat = Klageresultat(
+        val klageinstansResultat = KlageinstansResultat(
             eventId = behandlingEvent.eventId,
             type = behandlingEvent.type,
             utfall = behandlingEvent.utfall(),
@@ -60,7 +60,7 @@ class BehandlingEventService(
             behandlingId = behandling.id
         )
 
-        klageresultatRepository.insert(klageresultat)
+        klageresultatRepository.insert(klageinstansResultat)
     }
 
     private fun behandleAnke(behandling: Behandling, behandlingEvent: BehandlingEvent) {

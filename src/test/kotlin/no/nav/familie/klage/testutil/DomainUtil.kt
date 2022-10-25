@@ -17,9 +17,7 @@ import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration
-import no.nav.familie.klage.kabal.BehandlingEventType
-import no.nav.familie.klage.kabal.ExternalUtfall
-import no.nav.familie.klage.kabal.domain.Klageresultat
+import no.nav.familie.klage.kabal.domain.KlageinstansResultat
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
@@ -32,9 +30,11 @@ import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.kontrakter.felles.journalpost.RelevantDato
+import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.klage.Årsak
 import java.time.LocalDate
@@ -174,13 +174,13 @@ object DomainUtil {
     fun klageresultat(
         eventId: UUID = UUID.randomUUID(),
         type: BehandlingEventType = BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET,
-        utfall: ExternalUtfall = ExternalUtfall.MEDHOLD,
+        utfall: KlageinstansUtfall = KlageinstansUtfall.MEDHOLD,
         mottattEllerAvsluttetTidspunkt: LocalDateTime = SporbarUtils.now(),
         kildereferanse: UUID = UUID.randomUUID(),
         journalpostReferanser: List<String> = listOf("1", "2"),
         behandlingId: UUID = UUID.randomUUID()
-    ): Klageresultat {
-        return Klageresultat(
+    ): KlageinstansResultat {
+        return KlageinstansResultat(
             eventId = eventId,
             type = type,
             utfall = utfall,
