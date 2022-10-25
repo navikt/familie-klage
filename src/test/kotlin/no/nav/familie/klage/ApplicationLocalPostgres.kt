@@ -25,7 +25,7 @@ fun main(args: Array<String>) {
             "mock-pdl",
             // "mock-brev",
             // "mock-dokument",
-//            "mock-ef-sak",
+            "mock-ef-sak",
             "mock-kabal"
         )
         .properties(properties)
