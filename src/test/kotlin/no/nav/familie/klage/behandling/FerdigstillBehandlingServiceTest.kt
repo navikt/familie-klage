@@ -44,7 +44,6 @@ internal class FerdigstillBehandlingServiceTest {
     val oppgaveTaskService = mockk<OppgaveTaskService>()
     val brevService = mockk<BrevService>()
 
-
     val ferdigstillBehandlingService = FerdigstillBehandlingService(
         behandlingService = behandlingService,
         vurderingService = vurderingService,

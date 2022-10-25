@@ -2,7 +2,6 @@ package no.nav.familie.klage.formkrav
 
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.formkrav.dto.FormDto
-import no.nav.familie.klage.formkrav.dto.tilDto
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
@@ -28,7 +27,7 @@ class FormController(
     fun hentVilkår(@PathVariable behandlingId: UUID): Ressurs<FormDto> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleForBehandling(behandlingId)
-        return Ressurs.success(formService.hentForm(behandlingId).tilDto())
+        return Ressurs.success(formService.hentFormDto(behandlingId))
     }
 
     @PostMapping

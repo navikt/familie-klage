@@ -8,6 +8,7 @@ import no.nav.familie.klage.infrastruktur.config.RolleConfig
 import no.nav.familie.klage.oppgave.BehandleSakOppgave
 import no.nav.familie.klage.oppgave.BehandleSakOppgaveRepository
 import no.nav.familie.klage.testutil.BrukerContextUtil
+import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
 import no.nav.familie.klage.testutil.DomainUtil.fritekstbrev
@@ -61,7 +62,7 @@ internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
         testoppsettService.lagreBehandling(behandling)
 
         formService.opprettInitielleFormkrav(behandling.id)
-        formService.oppdaterForm(oppfyltForm(behandling.id).tilDto())
+        formService.oppdaterForm(oppfyltForm(behandling.id).tilDto(DomainUtil.påklagetVedtakDto()))
         vurderingService.opprettEllerOppdaterVurdering(vurdering)
 
         brevService.lagEllerOppdaterBrev(fritekstbrev)

@@ -18,6 +18,7 @@ fun main(args: Array<String>) {
             "mock-auditlogger",
             "mock-pdl",
             "mock-brev",
+            "mock-ef-sak",
             "mock-dokument",
             "mock-kabal"
         )
