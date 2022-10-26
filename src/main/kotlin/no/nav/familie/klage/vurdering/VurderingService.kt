@@ -46,6 +46,10 @@ class VurderingService(
         }
     }
 
+    fun slettVurderingForBehandling(behandlingId: UUID) {
+        vurderingRepository.deleteById(behandlingId)
+    }
+
     private fun opprettNyVurdering(vurdering: VurderingDto) = vurderingRepository.insert(
         Vurdering(
             behandlingId = vurdering.behandlingId,
