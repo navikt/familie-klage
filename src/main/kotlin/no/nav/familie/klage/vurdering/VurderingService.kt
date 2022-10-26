@@ -52,7 +52,7 @@ class VurderingService(
             vedtak = vurdering.vedtak,
             arsak = vurdering.arsak,
             hjemmel = vurdering.hjemmel,
-            beskrivelse = vurdering.beskrivelse,
+            innstillingKlageinstans = vurdering.innstillingKlageinstans,
             interntNotat = vurdering.interntNotat
         )
     )
@@ -61,7 +61,7 @@ class VurderingService(
         return vurderingRepository.update(
             eksisterendeVurdering.copy(
                 vedtak = vurdering.vedtak,
-                beskrivelse = vurdering.beskrivelse,
+                innstillingKlageinstans = vurdering.innstillingKlageinstans,
                 arsak = vurdering.arsak,
                 hjemmel = vurdering.hjemmel,
                 interntNotat = vurdering.interntNotat
