@@ -112,7 +112,7 @@ object DomainUtil {
         vedtak = vedtak,
         arsak = årsak,
         hjemmel = hjemmel,
-        innstillingKlageinstans = "En begrunnelse",
+        innstillingKlageinstans = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
         interntNotat = interntNotat
     )
 
