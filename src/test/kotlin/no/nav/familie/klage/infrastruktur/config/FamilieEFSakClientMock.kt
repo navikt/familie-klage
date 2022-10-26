@@ -33,7 +33,7 @@ class FamilieEFSakClientMock {
                 )
             ),
             FagsystemVedtak(
-                "123",
+                "124",
                 "Revurdering",
                 "Opphørt",
                 vedtakstidspunkt = LocalDateTime.of(

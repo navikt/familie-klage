@@ -29,24 +29,16 @@ internal class DistribusjonServiceTest {
 
     val distribusjonService = DistribusjonService(familieIntegrasjonerClient, fagsakService, behandlingService, brevService)
 
+    val ident = "1"
+    val fagsak = fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent(ident)))
+    val behandlendeEnhet = "enhet"
+    val behandling = behandling(fagsak = fagsak, behandlendeEnhet = behandlendeEnhet)
+
+    val journalpostSlot = slot<ArkiverDokumentRequest>()
+
     @BeforeEach
     fun setUp() {
         mockBrukerContext()
-    }
-
-    @AfterEach
-    fun tearDown() {
-        clearBrukerContext()
-    }
-
-    @Test
-    fun journalførBrev() {
-        val ident = "1"
-        val fagsak = fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent(ident)))
-        val behandlendeEnhet = "enhet"
-        val behandling = behandling(fagsak = fagsak, behandlendeEnhet = behandlendeEnhet)
-
-        val journalpostSlot = slot<ArkiverDokumentRequest>()
 
         every { fagsakService.hentFagsakForBehandling(any()) } returns fagsak
         every { behandlingService.hentBehandling(any()) } returns behandling
@@ -57,7 +49,15 @@ internal class DistribusjonServiceTest {
                 any()
             )
         } returns ArkiverDokumentResponse("journalpostId", false)
+    }
 
+    @AfterEach
+    fun tearDown() {
+        clearBrukerContext()
+    }
+
+    @Test
+    fun journalførBrev() {
         distribusjonService.journalførBrev(behandling.id, "saksbehandler")
 
         assertThat(journalpostSlot.captured.fagsakId).isEqualTo(fagsak.eksternId)
@@ -67,6 +67,19 @@ internal class DistribusjonServiceTest {
         assertThat(journalpostSlot.captured.hoveddokumentvarianter.map { it.dokument }).contains("123".toByteArray())
 
         assertThat(journalpostSlot.captured.eksternReferanseId).isEqualTo("${behandling.eksternBehandlingId}")
+    }
+
+    @Test
+    fun journalførSaksbehandlingsblankett() {
+        distribusjonService.journalførSaksbehandlingsblankett(behandling.id, "pdf".toByteArray(), "saksbehandler")
+
+        assertThat(journalpostSlot.captured.fagsakId).isEqualTo(fagsak.eksternId)
+        assertThat(journalpostSlot.captured.fnr).isEqualTo(ident)
+        assertThat(journalpostSlot.captured.journalførendeEnhet).isEqualTo(behandlendeEnhet)
+        assertThat(journalpostSlot.captured.forsøkFerdigstill).isEqualTo(true)
+        assertThat(journalpostSlot.captured.hoveddokumentvarianter.map { it.dokument }).contains("pdf".toByteArray())
+
+        assertThat(journalpostSlot.captured.eksternReferanseId).isEqualTo("${behandling.eksternBehandlingId}-blankett")
     }
 
     @Test
