@@ -2,14 +2,16 @@ package no.nav.familie.klage.infrastruktur
 
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.kabal.AnkebehandlingAvsluttetDetaljer
+import no.nav.familie.klage.kabal.AnkebehandlingOpprettetDetaljer
 import no.nav.familie.klage.kabal.BehandlingDetaljer
 import no.nav.familie.klage.kabal.BehandlingEvent
-import no.nav.familie.klage.kabal.BehandlingEventType
-import no.nav.familie.klage.kabal.ExternalUtfall
 import no.nav.familie.klage.kabal.KlagebehandlingAvsluttetDetaljer
 import no.nav.familie.klage.kabal.event.BehandlingEventService
 import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -53,8 +55,48 @@ class TestHendelseController(
                 detaljer = BehandlingDetaljer(
                     KlagebehandlingAvsluttetDetaljer(
                         avsluttet = LocalDateTime.now(),
-                        utfall = ExternalUtfall.AVVIST,
+                        utfall = KlageinstansUtfall.AVVIST,
                         journalpostReferanser = listOf("journalpost1")
+                    )
+                )
+            )
+        )
+    }
+
+    @PostMapping("{behandlingId}/startanke")
+    fun opprettDummyKabalAnkeEvent(@PathVariable behandlingId: UUID) {
+        val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
+        behandlingEventService.handleEvent(
+            BehandlingEvent(
+                eventId = UUID.randomUUID(),
+                kildeReferanse = behandling.eksternBehandlingId.toString(),
+                kilde = Fagsystem.EF.name,
+                kabalReferanse = UUID.randomUUID().toString(),
+                type = BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
+                detaljer = BehandlingDetaljer(
+                    ankebehandlingOpprettet = AnkebehandlingOpprettetDetaljer(
+                        mottattKlageinstans = LocalDateTime.now()
+                    )
+                )
+            )
+        )
+    }
+
+    @PostMapping("{behandlingId}/avsluttanke")
+    fun opprettDummyKabalAvsluttAnkeEvent(@PathVariable behandlingId: UUID) {
+        val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
+        behandlingEventService.handleEvent(
+            BehandlingEvent(
+                eventId = UUID.randomUUID(),
+                kildeReferanse = behandling.eksternBehandlingId.toString(),
+                kilde = Fagsystem.EF.name,
+                kabalReferanse = UUID.randomUUID().toString(),
+                type = BehandlingEventType.ANKEBEHANDLING_AVSLUTTET,
+                detaljer = BehandlingDetaljer(
+                    ankebehandlingAvsluttet = AnkebehandlingAvsluttetDetaljer(
+                        avsluttet = LocalDateTime.now(),
+                        utfall = KlageinstansUtfall.DELVIS_MEDHOLD,
+                        journalpostReferanser = listOf("1", "2", "3")
                     )
                 )
             )
