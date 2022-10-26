@@ -28,7 +28,7 @@ class DistribusjonService(
             behandlingId = behandlingId,
             pdf = brev,
             tittel = { "Brev for ${it.name.lowercase()}" }, // TODO: Utled en bra tittel her
-            dokumenttype = Dokumenttype.BARNETRYGD_VEDTAK_INNVILGELSE, // TODO: Riktig dokumenttype
+            dokumenttype = Dokumenttype.VEDTAKSBREV_OVERGANGSSTØNAD, // TODO: Riktig dokumenttype
             saksbehandler = saksbehandler
         )
     }
@@ -42,7 +42,7 @@ class DistribusjonService(
             behandlingId = behandlingId,
             pdf = saksbehandlingsblankettPdf,
             tittel = { "Saksbehandlingsblankett klage ${it.name.lowercase()}" },
-            dokumenttype = Dokumenttype.BARNETRYGD_VEDTAK_INNVILGELSE, // TODO: Riktig dokumenttype
+            dokumenttype = Dokumenttype.OVERGANGSSTØNAD_BLANKETT_SAKSBEHANDLING, // TODO: Riktig dokumenttype
             saksbehandler = saksbehandler,
             suffixEksternReferanseId = "-blankett"
         )
