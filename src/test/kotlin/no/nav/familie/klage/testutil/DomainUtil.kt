@@ -90,7 +90,7 @@ object DomainUtil {
         vedtak: Vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
         hjemmel: Hjemmel? = Hjemmel.FT_FEMTEN_FEM,
         årsak: Årsak? = null,
-        interntNOtat: String? = null,
+        interntNOtat: String? = null
     ) =
         Vurdering(
             behandlingId = behandlingId,
