@@ -96,7 +96,7 @@ object DomainUtil {
             behandlingId = behandlingId,
             vedtak = vedtak,
             hjemmel = hjemmel,
-            beskrivelse = "En begrunnelse",
+            innstillingKlageinstans = "En begrunnelse",
             arsak = årsak,
             interntNotat = interntNOtat
         )
@@ -112,7 +112,7 @@ object DomainUtil {
         vedtak = vedtak,
         arsak = årsak,
         hjemmel = hjemmel,
-        beskrivelse = "En begrunnelse",
+        innstillingKlageinstans = "En begrunnelse",
         interntNotat = interntNotat
     )
 
