@@ -2,6 +2,7 @@ package no.nav.familie.klage.oppgave
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.oppgave.OppgaveUtil.lagFristForOppgave
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
@@ -42,7 +43,7 @@ class OpprettBehandleSakOppgaveTask(
             enhetsnummer = behandling.behandlendeEnhet,
             behandlingstype = Behandlingstema.Klage.value,
             behandlesAvApplikasjon = "familie-klage",
-            tilordnetRessurs = task.metadata[saksbehandlerMetadataKey].toString(),
+            tilordnetRessurs = task.metadata.getProperty(saksbehandlerMetadataKey),
             behandlingstema = null
         )
 
@@ -54,6 +55,5 @@ class OpprettBehandleSakOppgaveTask(
 
     companion object {
         const val TYPE = "opprettBehandleSakoppgave"
-        const val saksbehandlerMetadataKey = "saksbehandler"
     }
 }

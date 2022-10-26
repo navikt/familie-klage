@@ -19,7 +19,7 @@ data class Klagebehandlingsesultat(
     val status: BehandlingStatus,
     val opprettet: LocalDateTime,
     val mottattDato: LocalDate,
-    val resultat: BehandlingResultat?,
+    val resultat: BehandlingResultat,
     val årsak: Årsak?,
     val vedtaksdato: LocalDateTime?
 )

@@ -23,17 +23,55 @@ class DistribusjonService(
 
     fun journalførBrev(behandlingId: UUID, saksbehandler: String): String {
         val brev = brevService.hentBrevPdf(behandlingId)
+
+        return journalfør(
+            behandlingId = behandlingId,
+            pdf = brev,
+            tittel = { "Brev for ${it.name.lowercase()}" }, // TODO: Utled en bra tittel her
+            dokumenttype = Dokumenttype.BARNETRYGD_VEDTAK_INNVILGELSE, // TODO: Riktig dokumenttype
+            saksbehandler = saksbehandler
+        )
+    }
+
+    fun journalførSaksbehandlingsblankett(
+        behandlingId: UUID,
+        saksbehandlingsblankettPdf: ByteArray,
+        saksbehandler: String
+    ): String {
+        return journalfør(
+            behandlingId = behandlingId,
+            pdf = saksbehandlingsblankettPdf,
+            tittel = { "Saksbehandlingsblankett klage ${it.name.lowercase()}" },
+            dokumenttype = Dokumenttype.BARNETRYGD_VEDTAK_INNVILGELSE, // TODO: Riktig dokumenttype
+            saksbehandler = saksbehandler,
+            suffixEksternReferanseId = "-blankett"
+        )
+    }
+
+    private fun journalfør(
+        behandlingId: UUID,
+        pdf: ByteArray,
+        tittel: (Stønadstype) -> String,
+        dokumenttype: Dokumenttype,
+        saksbehandler: String,
+        suffixEksternReferanseId: String = ""
+    ): String {
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         val behandling = behandlingService.hentBehandling(behandlingId)
 
-        val arkiverDokumentRequest = lagArkiverDokumentRequest(
-            personIdent = fagsak.hentAktivIdent(),
-            pdf = brev,
+        val dokument = lagDokument(
+            pdf = pdf,
+            dokumenttype = dokumenttype,
+            tittel = tittel(fagsak.stønadstype)
+        )
+        val arkiverDokumentRequest = ArkiverDokumentRequest(
+            fnr = fagsak.hentAktivIdent(),
+            forsøkFerdigstill = true,
+            hoveddokumentvarianter = listOf(dokument),
+            vedleggsdokumenter = listOf(),
             fagsakId = fagsak.eksternId,
-            eksternBehandlingId = behandling.eksternBehandlingId,
-            enhet = behandling.behandlendeEnhet,
-            stønadstype = fagsak.stønadstype,
-            dokumenttype = Dokumenttype.BARNETRYGD_VEDTAK_INNVILGELSE // TODO: Riktig dokumenttype
+            journalførendeEnhet = behandling.behandlendeEnhet,
+            eksternReferanseId = "${behandling.eksternBehandlingId}${suffixEksternReferanseId}"
         )
 
         return familieIntegrasjonerClient.arkiverDokument(
@@ -46,30 +84,17 @@ class DistribusjonService(
         return familieIntegrasjonerClient.distribuerBrev(journalpostId, Distribusjonstype.ANNET)
     }
 
-    private fun lagArkiverDokumentRequest(
-        personIdent: String,
+    private fun lagDokument(
         pdf: ByteArray,
-        fagsakId: String,
-        eksternBehandlingId: UUID,
-        enhet: String,
-        stønadstype: Stønadstype,
-        dokumenttype: Dokumenttype
-    ): ArkiverDokumentRequest {
-        val dokument = Dokument(
-            pdf,
-            Filtype.PDFA,
-            null,
-            "Brev for ${stønadstype.name.lowercase()}", // TODO: Utled en bra tittel her
-            dokumenttype
-        )
-        return ArkiverDokumentRequest(
-            fnr = personIdent,
-            forsøkFerdigstill = true,
-            hoveddokumentvarianter = listOf(dokument),
-            vedleggsdokumenter = listOf(),
-            fagsakId = fagsakId,
-            journalførendeEnhet = enhet,
-            eksternReferanseId = "$eksternBehandlingId"
+        dokumenttype: Dokumenttype,
+        tittel: String
+    ): Dokument {
+        return Dokument(
+            dokument = pdf,
+            filtype = Filtype.PDFA,
+            filnavn = null,
+            tittel = tittel,
+            dokumenttype = dokumenttype
         )
     }
 }

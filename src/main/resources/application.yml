@@ -164,6 +164,8 @@ KABAL_URL: https://kabal-api.intern.nav.no
 
 FAMILIE_EF_SAK_URL: http://familie-ef-sak
 
+FAMILIE_BLANKETT_API_URL: http://familie-ef-blankett
+
 rolle:
   ba:
     saksbehandler: "847e3d72-9dc1-41c3-80ff-f5d4acdd5d46"

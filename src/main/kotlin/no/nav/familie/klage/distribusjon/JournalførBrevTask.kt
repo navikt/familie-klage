@@ -1,6 +1,7 @@
 package no.nav.familie.klage.distribusjon
 
 import no.nav.familie.klage.behandling.BehandlingService
+import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.personopplysninger.pdl.logger
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.prosessering.AsyncTaskStep
@@ -23,7 +24,7 @@ class JournalførBrevTask(
 
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
-        val saksbehandler = task.metadata[saksbehandlerMetadataKey].toString()
+        val saksbehandler = task.metadata.getProperty(saksbehandlerMetadataKey)
         val journalpostId = distribusjonService.journalførBrev(behandlingId, saksbehandler)
         task.metadata.apply {
             this["journalpostId"] = journalpostId
@@ -62,6 +63,5 @@ class JournalførBrevTask(
 
     companion object {
         const val TYPE = "journalførBrevTask"
-        const val saksbehandlerMetadataKey = "saksbehandler"
     }
 }
