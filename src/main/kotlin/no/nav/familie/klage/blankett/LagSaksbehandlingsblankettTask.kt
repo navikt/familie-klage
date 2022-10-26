@@ -37,7 +37,7 @@ class LagSaksbehandlingsblankettTask(
 
     companion object {
 
-        const val TYPE = "LagBlankett"
+        const val TYPE = "LagSaksbehandlingsblankett"
 
         fun opprettTask(behandlingId: UUID): Task {
             return Task(TYPE, behandlingId.toString(), Properties().apply {
