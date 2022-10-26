@@ -43,7 +43,7 @@ class OpprettBehandleSakOppgaveTask(
             enhetsnummer = behandling.behandlendeEnhet,
             behandlingstype = Behandlingstema.Klage.value,
             behandlesAvApplikasjon = "familie-klage",
-            tilordnetRessurs = task.metadata.getProperty(saksbehandlerMetadataKey),
+            tilordnetRessurs = task.metadata[saksbehandlerMetadataKey].toString(),
             behandlingstema = null
         )
 

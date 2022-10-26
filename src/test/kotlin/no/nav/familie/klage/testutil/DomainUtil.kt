@@ -71,7 +71,7 @@ object DomainUtil {
         status: BehandlingStatus = BehandlingStatus.OPPRETTET,
         steg: StegType = StegType.FORMKRAV,
         behandlendeEnhet: String = "4489",
-        resultat: BehandlingResultat = BehandlingResultat.IKKE_SATT,
+        resultat: BehandlingResultat = BehandlingResultat.IKKE_SATT
     ): Behandling =
         Behandling(
             id = id,

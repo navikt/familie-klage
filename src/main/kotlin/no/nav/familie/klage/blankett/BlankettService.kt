@@ -16,7 +16,7 @@ class BlankettService(
     private val personopplysningerService: PersonopplysningerService,
     private val formService: FormService,
     private val vurderingService: VurderingService,
-    private val blankettClient: BlankettClient,
+    private val blankettClient: BlankettClient
 ) {
 
     fun lagBlankett(behandlingId: UUID): ByteArray {
@@ -55,7 +55,7 @@ class BlankettService(
         klageKonkret = formkrav.klageKonkret,
         klagefristOverholdt = formkrav.klagefristOverholdt,
         klageSignert = formkrav.klageSignert,
-        saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse,
+        saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse
     )
 
     private fun lagPersonopplysningerDto(behandling: BehandlingDto): PersonopplysningerDto {
@@ -63,5 +63,4 @@ class BlankettService(
         val navn = personopplysningerService.hentPersonopplysninger(behandling.id).navn
         return PersonopplysningerDto(navn, personIdent)
     }
-
 }

@@ -40,9 +40,13 @@ class LagSaksbehandlingsblankettTask(
         const val TYPE = "LagSaksbehandlingsblankett"
 
         fun opprettTask(behandlingId: UUID): Task {
-            return Task(TYPE, behandlingId.toString(), Properties().apply {
-                this.setProperty(saksbehandlerMetadataKey, SikkerhetContext.hentSaksbehandler(strict = true))
-            })
+            return Task(
+                type = TYPE,
+                payload = behandlingId.toString(),
+                properties = Properties().apply {
+                    setProperty(saksbehandlerMetadataKey, SikkerhetContext.hentSaksbehandler(strict = true))
+                }
+            )
         }
     }
 }

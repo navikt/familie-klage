@@ -71,7 +71,7 @@ internal class DistribusjonServiceTest {
 
     @Test
     fun journalførSaksbehandlingsblankett() {
-        distribusjonService.journalførSaksbehandlingsblankett(behandling.id, "pdf".toByteArray(),"saksbehandler")
+        distribusjonService.journalførSaksbehandlingsblankett(behandling.id, "pdf".toByteArray(), "saksbehandler")
 
         assertThat(journalpostSlot.captured.fagsakId).isEqualTo(fagsak.eksternId)
         assertThat(journalpostSlot.captured.fnr).isEqualTo(ident)

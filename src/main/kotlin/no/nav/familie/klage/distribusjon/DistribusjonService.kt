@@ -71,7 +71,7 @@ class DistribusjonService(
             vedleggsdokumenter = listOf(),
             fagsakId = fagsak.eksternId,
             journalførendeEnhet = behandling.behandlendeEnhet,
-            eksternReferanseId = "${behandling.eksternBehandlingId}${suffixEksternReferanseId}"
+            eksternReferanseId = "${behandling.eksternBehandlingId}$suffixEksternReferanseId"
         )
 
         return familieIntegrasjonerClient.arkiverDokument(
