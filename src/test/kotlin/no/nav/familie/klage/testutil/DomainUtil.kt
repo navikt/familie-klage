@@ -7,7 +7,6 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.brev.dto.AvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
-import no.nav.familie.klage.brev.dto.FritekstBrevtype
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
@@ -139,8 +138,7 @@ object DomainUtil {
     ) = FritekstBrevDto(
         overskrift = "Topp",
         avsnitt = avsnitt,
-        behandlingId = behandlingId,
-        brevType = FritekstBrevtype.VEDTAK_INVILGELSE
+        behandlingId = behandlingId
     )
 
     val defaultIdenter = setOf(PersonIdent("01010199999"))

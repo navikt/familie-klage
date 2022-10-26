@@ -9,7 +9,6 @@ import no.nav.familie.klage.brev.dto.AvsnittDto
 import no.nav.familie.klage.brev.dto.BrevMedAvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
-import no.nav.familie.klage.brev.dto.FritekstBrevtype
 import no.nav.familie.klage.brev.dto.tilDto
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.domain.Fil
@@ -73,8 +72,7 @@ class BrevService(
         lagEllerOppdaterBrev(
             behandlingId = fritekstbrevDto.behandlingId,
             overskrift = fritekstbrevDto.overskrift,
-            saksbehandlerHtml = html,
-            brevtype = fritekstbrevDto.brevType
+            saksbehandlerHtml = html
         )
 
         fritekstbrevDto.avsnitt.forEach {
@@ -92,14 +90,12 @@ class BrevService(
     private fun lagEllerOppdaterBrev(
         behandlingId: UUID,
         overskrift: String,
-        saksbehandlerHtml: String,
-        brevtype: FritekstBrevtype
+        saksbehandlerHtml: String
     ): Brev {
         val brev = Brev(
             behandlingId = behandlingId,
             overskrift = overskrift,
-            saksbehandlerHtml = saksbehandlerHtml,
-            brevtype = brevtype
+            saksbehandlerHtml = saksbehandlerHtml
         )
 
         return when (brevRepository.existsById(brev.behandlingId)) {

@@ -4,7 +4,6 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
-import no.nav.familie.klage.brev.dto.FritekstBrevtype
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.formkrav.dto.tilDto
@@ -159,7 +158,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
         }
 
         private fun lagEllerOppdaterBrev(behandlingId: UUID) {
-            brevService.lagEllerOppdaterBrev(FritekstBrevDto("", emptyList(), behandlingId, FritekstBrevtype.VEDTAK_AVSLAG))
+            brevService.lagEllerOppdaterBrev(FritekstBrevDto("", emptyList(), behandlingId))
         }
     }
 
