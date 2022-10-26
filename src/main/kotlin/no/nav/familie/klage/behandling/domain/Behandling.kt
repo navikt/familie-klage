@@ -55,6 +55,8 @@ enum class StegType(
     val rekkefølge: Int,
     val gjelderStatus: BehandlingStatus
 ) {
+    // Det blir opprettet et innslag i behandlingshistorikken ved opprettelse av behandlingen. Steget blir samtidig satt til FORMKRAV.
+    // En behandling vil derfor i praksis aldri befinne seg i steget OPPRETTET. Opprettet-innslaget brukes for visning i frontend.
     OPPRETTET(
         rekkefølge = 0,
         gjelderStatus = BehandlingStatus.OPPRETTET
