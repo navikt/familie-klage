@@ -2,14 +2,16 @@ package no.nav.familie.klage.distribusjon
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.distribusjon.DokumenttypeUtil.dokumenttypeBrev
+import no.nav.familie.klage.distribusjon.DokumenttypeUtil.dokumenttypeSaksbehandlingsblankett
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.Dokument
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.Filtype
 import no.nav.familie.kontrakter.felles.dokdist.Distribusjonstype
-import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -22,13 +24,15 @@ class DistribusjonService(
 ) {
 
     fun journalførBrev(behandlingId: UUID, saksbehandler: String): String {
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         val brev = brevService.hentBrevPdf(behandlingId)
 
         return journalfør(
             behandlingId = behandlingId,
+            fagsak = fagsak,
             pdf = brev,
-            tittel = { "Brev for ${it.name.lowercase()}" }, // TODO: Utled en bra tittel her
-            dokumenttype = Dokumenttype.VEDTAKSBREV_OVERGANGSSTØNAD, // TODO: Riktig dokumenttype
+            tittel = "Brev for klage av ${fagsak.stønadstype.name.lowercase()}", // TODO: Utled en bra tittel her
+            dokumenttype = dokumenttypeBrev(fagsak.stønadstype),
             saksbehandler = saksbehandler
         )
     }
@@ -38,11 +42,14 @@ class DistribusjonService(
         saksbehandlingsblankettPdf: ByteArray,
         saksbehandler: String
     ): String {
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
+
         return journalfør(
             behandlingId = behandlingId,
+            fagsak = fagsak,
             pdf = saksbehandlingsblankettPdf,
-            tittel = { "Saksbehandlingsblankett klage ${it.name.lowercase()}" },
-            dokumenttype = Dokumenttype.OVERGANGSSTØNAD_BLANKETT_SAKSBEHANDLING, // TODO: Riktig dokumenttype
+            tittel = "Blankett klage for ${fagsak.stønadstype.name.lowercase()}", // TODO: Utled en bra tittel her
+            dokumenttype = dokumenttypeSaksbehandlingsblankett(fagsak.stønadstype),
             saksbehandler = saksbehandler,
             suffixEksternReferanseId = "-blankett"
         )
@@ -50,19 +57,19 @@ class DistribusjonService(
 
     private fun journalfør(
         behandlingId: UUID,
+        fagsak: Fagsak,
         pdf: ByteArray,
-        tittel: (Stønadstype) -> String,
+        tittel: String,
         dokumenttype: Dokumenttype,
         saksbehandler: String,
         suffixEksternReferanseId: String = ""
     ): String {
-        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         val behandling = behandlingService.hentBehandling(behandlingId)
 
         val dokument = lagDokument(
             pdf = pdf,
             dokumenttype = dokumenttype,
-            tittel = tittel(fagsak.stønadstype)
+            tittel = tittel
         )
         val arkiverDokumentRequest = ArkiverDokumentRequest(
             fnr = fagsak.hentAktivIdent(),
