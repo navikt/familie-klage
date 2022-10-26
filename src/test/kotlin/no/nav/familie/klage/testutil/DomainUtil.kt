@@ -90,13 +90,13 @@ object DomainUtil {
         vedtak: Vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
         hjemmel: Hjemmel? = Hjemmel.FT_FEMTEN_FEM,
         årsak: Årsak? = null,
-        interntNOtat: String? = null
+        interntNOtat: String? = null,
     ) =
         Vurdering(
             behandlingId = behandlingId,
             vedtak = vedtak,
             hjemmel = hjemmel,
-            innstillingKlageinstans = "En begrunnelse",
+            innstillingKlageinstans = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
             arsak = årsak,
             interntNotat = interntNOtat
         )
