@@ -59,7 +59,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
     inner class Historikk {
 
         @Test
-        internal fun `OPPRETTHOLD_VEDTAK - når man sendt brev skal man vente på svar`() {
+        internal fun `OPPRETTHOLD_VEDTAK - når man har sendt brev skal man vente på svar`() {
             val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
                 val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
                 formService.oppdaterForm(oppfyltFormDto(behandlingId))
@@ -80,7 +80,8 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
                 StegType.VURDERING,
                 StegType.FORMKRAV,
                 StegType.VURDERING,
-                StegType.FORMKRAV
+                StegType.FORMKRAV,
+                StegType.OPPRETTET
             )
         }
 
@@ -114,7 +115,8 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
                 StegType.VURDERING,
                 StegType.FORMKRAV,
                 StegType.VURDERING,
-                StegType.FORMKRAV
+                StegType.FORMKRAV,
+                StegType.OPPRETTET
             )
         }
 
@@ -134,7 +136,8 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             assertThat(behandlingshistorikk.map { it.steg }).containsExactly(
                 StegType.BEHANDLING_FERDIGSTILT,
                 StegType.VURDERING,
-                StegType.FORMKRAV
+                StegType.FORMKRAV,
+                StegType.OPPRETTET
             )
         }
 
@@ -154,7 +157,8 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             assertThat(behandlingshistorikk.map { it.steg }).containsExactly(
                 StegType.BEHANDLING_FERDIGSTILT,
                 StegType.BREV,
-                StegType.FORMKRAV
+                StegType.FORMKRAV,
+                StegType.OPPRETTET
             )
         }
 
