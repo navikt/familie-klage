@@ -55,7 +55,10 @@ enum class StegType(
     val rekkefølge: Int,
     val gjelderStatus: BehandlingStatus
 ) {
-
+    OPPRETTET(
+        rekkefølge = 0,
+        gjelderStatus = BehandlingStatus.OPPRETTET
+    ),
     FORMKRAV(
         rekkefølge = 1,
         gjelderStatus = BehandlingStatus.UTREDES

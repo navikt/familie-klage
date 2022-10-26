@@ -71,7 +71,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
                 behandlingId
             }
 
-            val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikker(behandlingId)
+            val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
 
             assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.KABAL_VENTER_SVAR)
             assertThat(behandlingshistorikk.map { it.steg }).containsExactly(
@@ -103,7 +103,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
 
             testHendelseController.opprettDummyKabalEvent(behandlingId)
 
-            val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikker(behandlingId)
+            val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
 
             assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
             assertThat(behandlingshistorikk.map { it.steg }).containsExactly(
@@ -128,7 +128,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
                 behandlingId
             }
 
-            val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikker(behandlingId)
+            val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
 
             assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
             assertThat(behandlingshistorikk.map { it.steg }).containsExactly(
@@ -148,7 +148,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
                 behandlingId
             }
 
-            val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikker(behandlingId)
+            val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
 
             assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
             assertThat(behandlingshistorikk.map { it.steg }).containsExactly(
