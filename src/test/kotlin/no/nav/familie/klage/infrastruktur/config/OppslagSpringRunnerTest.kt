@@ -100,19 +100,19 @@ abstract class OppslagSpringRunnerTest {
 
     private fun resetDatabase() {
         listOf(
-                BehandleSakOppgave::class,
-                Behandlingshistorikk::class,
-                Avsnitt::class,
-                Brev::class,
-                Vurdering::class,
-                Form::class,
-                KlageinstansResultat::class,
-                Behandling::class,
-                FagsakDomain::class,
-                FagsakPerson::class,
-                PersonIdent::class,
-                TaskLogg::class,
-                Task::class
+            BehandleSakOppgave::class,
+            Behandlingshistorikk::class,
+            Avsnitt::class,
+            Brev::class,
+            Vurdering::class,
+            Form::class,
+            KlageinstansResultat::class,
+            Behandling::class,
+            FagsakDomain::class,
+            FagsakPerson::class,
+            PersonIdent::class,
+            TaskLogg::class,
+            Task::class
 
         ).forEach { jdbcAggregateOperations.deleteAll(it.java) }
     }
