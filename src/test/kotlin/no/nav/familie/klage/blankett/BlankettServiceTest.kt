@@ -23,6 +23,7 @@ import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 internal class BlankettServiceTest {
 
@@ -43,7 +44,8 @@ internal class BlankettServiceTest {
     private val blankettRequestSpot = slot<BlankettPdfRequest>()
     private val fagsak = fagsak()
     private val behandling = behandling(
-        påklagetVedtak = PåklagetVedtak("eksternId", PåklagetVedtakstype.VEDTAK)
+        påklagetVedtak = PåklagetVedtak("eksternId", PåklagetVedtakstype.VEDTAK),
+        klageMottatt = LocalDate.of(2022, 10, 26)
     ).tilDto(fagsak, emptyList())
 
     @BeforeEach
