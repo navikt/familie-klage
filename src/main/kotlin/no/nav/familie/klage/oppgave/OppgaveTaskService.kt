@@ -1,7 +1,7 @@
 package no.nav.familie.klage.oppgave
 
+import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
-import no.nav.familie.klage.oppgave.OpprettBehandleSakOppgaveTask.Companion.saksbehandlerMetadataKey
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.stereotype.Service
