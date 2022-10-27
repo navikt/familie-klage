@@ -73,11 +73,11 @@ class BrevService(
                 val instillingKlageinstans = vurdering?.innstillingKlageinstans
                     ?: throw Feil("Behandling med resultat $behandlingResultat mangler instillingKlageinstans for generering av brev")
 
-                BrevInnhold.lagOpprettholdelseBrev(fagsak.hentAktivIdent(), instillingKlageinstans, navn)
+                BrevInnhold.lagOpprettholdelseBrev(fagsak.hentAktivIdent(), instillingKlageinstans, navn, fagsak.stønadstype)
             }
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> {
                 val begrunnelse = "Begrunnelse for formkrav avvist" // TODO
-                BrevInnhold.lagFormkravAvvistBrev(fagsak.hentAktivIdent(), navn, begrunnelse)
+                BrevInnhold.lagFormkravAvvistBrev(fagsak.hentAktivIdent(), navn, begrunnelse, fagsak.stønadstype)
             }
             BehandlingResultat.MEDHOLD,
             BehandlingResultat.IKKE_SATT,
