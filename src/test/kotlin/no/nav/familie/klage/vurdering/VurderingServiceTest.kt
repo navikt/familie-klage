@@ -6,6 +6,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
@@ -20,7 +21,8 @@ class VurderingServiceTest {
 
     val vurderingRepository = mockk<VurderingRepository>()
     val stegService = mockk<StegService>()
-    val vurderingService = VurderingService(vurderingRepository, stegService)
+    val brevService = mockk<BrevService>()
+    val vurderingService = VurderingService(vurderingRepository, stegService, brevService)
 
     val omgjørVedtakVurdering = vurdering(
         behandlingId = UUID.randomUUID(),
@@ -40,6 +42,19 @@ class VurderingServiceTest {
         every { vurderingRepository.findByIdOrNull(any()) } returns omgjørVedtakVurdering
         every { vurderingRepository.update(any()) } answers { firstArg() }
         justRun { stegService.oppdaterSteg(any(), any(), any()) }
+        justRun { brevService.slettBrev(any()) }
+    }
+
+    @Test
+    internal fun `skal slette brev ved omgjøring`() {
+        vurderingService.opprettEllerOppdaterVurdering(omgjørVedtakVurdering.tilDto())
+        verify(exactly = 1) { brevService.slettBrev(any()) }
+    }
+
+    @Test
+    internal fun `skal ikke slette brev ved opprettholdelse`() {
+        vurderingService.opprettEllerOppdaterVurdering(opprettholdVedtakVurdering.tilDto())
+        verify(exactly = 0) { brevService.slettBrev(any()) }
     }
 
     @Test
