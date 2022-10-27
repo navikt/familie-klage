@@ -3,6 +3,8 @@ package no.nav.familie.klage.behandling
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
+import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
@@ -18,7 +20,8 @@ class OpprettBehandlingService(
     private val fagsakService: FagsakService,
     private val behandlingService: BehandlingService,
     private val formService: FormService,
-    private val oppgaveTaskService: OppgaveTaskService
+    private val oppgaveTaskService: OppgaveTaskService,
+    private val behandlingshistorikkService: BehandlingshistorikkService
 ) {
 
     @Transactional
@@ -47,6 +50,8 @@ class OpprettBehandlingService(
                 behandlendeEnhet = opprettKlagebehandlingRequest.behandlendeEnhet
             )
         ).id
+
+        behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.OPPRETTET)
 
         formService.opprettInitielleFormkrav(behandlingId)
 
