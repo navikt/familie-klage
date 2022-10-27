@@ -5,8 +5,11 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.brev.domain.Brev
+import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
+import no.nav.familie.klage.brev.dto.BrevmottakereDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
+import no.nav.familie.klage.brev.dto.tilDomene
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.felles.domain.Fil
@@ -34,6 +37,19 @@ class BrevService(
 ) {
 
     fun hentBrev(behandlingId: UUID): Brev = brevRepository.findByIdOrThrow(behandlingId)
+
+    fun hentBrevmottakere(behandlingId: UUID): Brevmottakere {
+        val brev = brevRepository.findByIdOrThrow(behandlingId)
+        return brev.mottakere ?: Brevmottakere()
+    }
+
+    fun settBrevmottakere(behandlingId: UUID, brevmottakere: BrevmottakereDto) {
+        val behandling = behandlingService.hentBehandling(behandlingId)
+        validerKanLageBrev(behandling)
+
+        val brev = brevRepository.findByIdOrThrow(behandlingId)
+        brevRepository.update(brev.copy(mottakere = brevmottakere.tilDomene()))
+    }
 
     fun lagBrev(behandlingId: UUID): ByteArray {
         val navn = behandlingService.hentNavnFraBehandlingsId(behandlingId)

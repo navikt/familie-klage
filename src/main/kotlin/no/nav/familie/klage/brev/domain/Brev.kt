@@ -27,8 +27,8 @@ data class BrevmottakereJournalpost(
 )
 
 data class Brevmottakere(
-    val personer: List<BrevmottakerPerson>,
-    val organisasjoner: List<BrevmottakerOrganisasjon>
+    val personer: List<BrevmottakerPerson> = emptyList(),
+    val organisasjoner: List<BrevmottakerOrganisasjon> = emptyList()
 )
 
 enum class MottakerRolle {
