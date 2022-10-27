@@ -5,6 +5,7 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.brev.domain.Brev
+import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
@@ -16,6 +17,8 @@ import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
@@ -29,6 +32,8 @@ class BrevService(
     private val formService: FormService,
     private val vurderingService: VurderingService
 ) {
+
+    fun hentBrev(behandlingId: UUID): Brev = brevRepository.findByIdOrThrow(behandlingId)
 
     fun lagBrev(behandlingId: UUID): ByteArray {
         val navn = behandlingService.hentNavnFraBehandlingsId(behandlingId)
@@ -113,6 +118,11 @@ class BrevService(
 
         val generertBrev = familieDokumentClient.genererPdfFraHtml(brev.saksbehandlerHtml)
         brevRepository.update(brev.copy(pdf = Fil(generertBrev)))
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    fun oppdaterMottakerJournalpost(behandlingId: UUID, brevmottakereJournalposter: BrevmottakereJournalposter) {
+        brevRepository.oppdaterMottakerJournalpost(behandlingId, brevmottakereJournalposter)
     }
 
     private fun utledBehandlingResultat(behandlingId: UUID): BehandlingResultat {

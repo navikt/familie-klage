@@ -27,7 +27,7 @@ internal class DistribusjonServiceTest {
     val familieIntegrasjonerClient = mockk<FamilieIntegrasjonerClient>()
     val brevService = mockk<BrevService>()
 
-    val distribusjonService = DistribusjonService(familieIntegrasjonerClient, fagsakService, behandlingService, brevService)
+    val distribusjonService = DistribusjonService(familieIntegrasjonerClient, fagsakService, behandlingService)
 
     val ident = "1"
     val fagsak = fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent(ident)))
@@ -42,7 +42,6 @@ internal class DistribusjonServiceTest {
 
         every { fagsakService.hentFagsakForBehandling(any()) } returns fagsak
         every { behandlingService.hentBehandling(any()) } returns behandling
-        every { brevService.hentBrevPdf(any()) } returns "123".toByteArray()
         every {
             familieIntegrasjonerClient.arkiverDokument(
                 capture(journalpostSlot),
@@ -58,7 +57,7 @@ internal class DistribusjonServiceTest {
 
     @Test
     fun journalførBrev() {
-        distribusjonService.journalførBrev(behandling.id, "saksbehandler")
+        distribusjonService.journalførBrev(behandling.id, byteArrayOf(), "saksbehandler")
 
         assertThat(journalpostSlot.captured.fagsakId).isEqualTo(fagsak.eksternId)
         assertThat(journalpostSlot.captured.fnr).isEqualTo(ident)

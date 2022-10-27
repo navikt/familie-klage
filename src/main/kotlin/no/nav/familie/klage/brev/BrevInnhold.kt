@@ -1,6 +1,5 @@
 package no.nav.familie.klage.brev
 
-import no.nav.familie.klage.brev.BrevInnhold.lesMerUrl
 import no.nav.familie.klage.brev.dto.AvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.kontrakter.felles.klage.Stønadstype

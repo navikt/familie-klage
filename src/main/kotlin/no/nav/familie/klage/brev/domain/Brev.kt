@@ -11,6 +11,40 @@ data class Brev(
     val behandlingId: UUID,
     val saksbehandlerHtml: String,
     val pdf: Fil? = null,
+    val mottakere: Brevmottakere? = null,
+    val mottakereJournalpost: BrevmottakereJournalposter? = null,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar()
+)
+
+data class BrevmottakereJournalposter(
+    val journalposter: List<BrevmottakereJournalpost>,
+)
+
+data class BrevmottakereJournalpost(
+    val ident: String,
+    val journalpostId: String
+)
+
+data class Brevmottakere(
+    val personer: List<BrevmottakerPerson>,
+    val organisasjoner: List<BrevmottakerOrganisasjon>
+)
+
+enum class MottakerRolle {
+    BRUKER,
+    VERGE,
+    FULLMAKT
+}
+
+data class BrevmottakerPerson(
+    val personIdent: String,
+    val navn: String,
+    val mottakerRolle: MottakerRolle
+)
+
+data class BrevmottakerOrganisasjon(
+    val organisasjonsnummer: String,
+    val navnHosOrganisasjon: String,
+    val mottakerRolle: MottakerRolle // TODO brukes denne egentlige til noe ?
 )

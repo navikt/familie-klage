@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 class DistribuerBrevTask(private val distribusjonService: DistribusjonService) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
-        val journalpostId = task.metadata["journalpostId"].toString()
+        val journalpostId = task.payload
         val distribusjonId = distribusjonService.distribuerBrev(journalpostId)
         task.metadata.apply {
             this["distribusjonId"] = distribusjonId
@@ -21,6 +21,7 @@ class DistribuerBrevTask(private val distribusjonService: DistribusjonService) :
     }
 
     companion object {
+
         const val TYPE = "distribuerBrevTask"
     }
 }
