@@ -6,6 +6,7 @@ import no.nav.familie.klage.distribusjon.DokumenttypeUtil.dokumenttypeBrev
 import no.nav.familie.klage.distribusjon.DokumenttypeUtil.dokumenttypeSaksbehandlingsblankett
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
+import no.nav.familie.klage.felles.util.TekstUtil.storForbokstav
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
@@ -31,7 +32,7 @@ class DistribusjonService(
             behandlingId = behandlingId,
             fagsak = fagsak,
             pdf = brev,
-            tittel = "Brev for klage av ${fagsak.stønadstype.name.lowercase()}", // TODO: Utled en bra tittel her
+            tittel = "Brev for klage på ${fagsak.stønadstype.name.storForbokstav()}",
             dokumenttype = dokumenttypeBrev(fagsak.stønadstype),
             saksbehandler = saksbehandler
         )
@@ -48,7 +49,7 @@ class DistribusjonService(
             behandlingId = behandlingId,
             fagsak = fagsak,
             pdf = saksbehandlingsblankettPdf,
-            tittel = "Blankett klage for ${fagsak.stønadstype.name.lowercase()}", // TODO: Utled en bra tittel her
+            tittel = "Blankett for klage på ${fagsak.stønadstype.name.storForbokstav()}",
             dokumenttype = dokumenttypeSaksbehandlingsblankett(fagsak.stønadstype),
             saksbehandler = saksbehandler,
             suffixEksternReferanseId = "-blankett"
