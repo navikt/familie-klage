@@ -1,7 +1,5 @@
 package no.nav.familie.klage.brev
 
-import no.nav.familie.klage.brev.dto.BrevMedAvsnittDto
-import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -10,7 +8,6 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
@@ -24,13 +21,6 @@ class BrevController(
     private val tilgangService: TilgangService
 ) {
 
-    @GetMapping("/{behandlingId}")
-    fun hentBrev(@PathVariable behandlingId: UUID): Ressurs<BrevMedAvsnittDto?> {
-        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
-        tilgangService.validerHarVeilederrolleForBehandling(behandlingId)
-        return Ressurs.success(brevService.hentMellomlagretBrev(behandlingId))
-    }
-
     @GetMapping("/{behandlingId}/pdf")
     fun hentBrevPdf(@PathVariable behandlingId: UUID): Ressurs<ByteArray> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
@@ -38,10 +28,10 @@ class BrevController(
         return Ressurs.success(brevService.hentBrevPdf(behandlingId))
     }
 
-    @PostMapping
-    fun lagEllerOppdaterBrev(@RequestBody brevInnhold: FritekstBrevDto): Ressurs<ByteArray> {
-        tilgangService.validerTilgangTilBehandling(brevInnhold.behandlingId, AuditLoggerEvent.UPDATE)
-        tilgangService.validerHarSaksbehandlerrolleForBehandling(brevInnhold.behandlingId)
-        return Ressurs.success(brevService.lagEllerOppdaterBrev(brevInnhold))
+    @PostMapping("/{behandlingId}")
+    fun lagEllerOppdaterBrev(@PathVariable behandlingId: UUID): Ressurs<ByteArray> {
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
+        return Ressurs.success(brevService.lagBrev(behandlingId))
     }
 }

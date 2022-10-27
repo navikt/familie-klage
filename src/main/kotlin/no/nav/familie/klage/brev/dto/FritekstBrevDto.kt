@@ -6,7 +6,6 @@ data class FritekstBrevDto(
     val overskrift: String,
     val avsnitt: List<AvsnittDto>,
     val behandlingId: UUID,
-    val brevType: FritekstBrevtype
 )
 
 data class FritekstBrevRequestDto(
