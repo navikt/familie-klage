@@ -4,7 +4,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
@@ -25,7 +24,6 @@ internal class DistribusjonServiceTest {
     val behandlingService = mockk<BehandlingService>()
     val fagsakService = mockk<FagsakService>()
     val familieIntegrasjonerClient = mockk<FamilieIntegrasjonerClient>()
-    val brevService = mockk<BrevService>()
 
     val distribusjonService = DistribusjonService(familieIntegrasjonerClient, fagsakService, behandlingService)
 
@@ -57,7 +55,7 @@ internal class DistribusjonServiceTest {
 
     @Test
     fun journalførBrev() {
-        distribusjonService.journalførBrev(behandling.id, byteArrayOf(), "saksbehandler")
+        distribusjonService.journalførBrev(behandling.id, "123".toByteArray(), "saksbehandler")
 
         assertThat(journalpostSlot.captured.fagsakId).isEqualTo(fagsak.eksternId)
         assertThat(journalpostSlot.captured.fnr).isEqualTo(ident)
@@ -65,7 +63,7 @@ internal class DistribusjonServiceTest {
         assertThat(journalpostSlot.captured.forsøkFerdigstill).isEqualTo(true)
         assertThat(journalpostSlot.captured.hoveddokumentvarianter.map { it.dokument }).contains("123".toByteArray())
 
-        assertThat(journalpostSlot.captured.eksternReferanseId).isEqualTo("${behandling.eksternBehandlingId}")
+        assertThat(journalpostSlot.captured.eksternReferanseId).isEqualTo("${behandling.eksternBehandlingId}-0")
     }
 
     @Test
