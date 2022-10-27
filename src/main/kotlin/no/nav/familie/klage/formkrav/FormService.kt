@@ -3,7 +3,6 @@ package no.nav.familie.klage.formkrav
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.formkrav.FormUtil.formkravErFerdigUtfyllt
 import no.nav.familie.klage.formkrav.FormUtil.formkravErOppfylt
 import no.nav.familie.klage.formkrav.domain.Form

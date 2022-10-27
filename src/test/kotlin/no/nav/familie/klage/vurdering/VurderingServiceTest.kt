@@ -39,13 +39,13 @@ class VurderingServiceTest {
     fun setup() {
         every { vurderingRepository.findByIdOrNull(any()) } returns omgjørVedtakVurdering
         every { vurderingRepository.update(any()) } answers { firstArg() }
-        justRun { stegService.oppdaterSteg(any(), any(), any()) }
+        justRun { stegService.oppdaterSteg(any(), any(), any(), any()) }
     }
 
     @Test
     fun `skal oppdatere steg ved omgjøring`() {
         vurderingService.opprettEllerOppdaterVurdering(omgjørVedtakVurdering.tilDto())
-        verify(exactly = 1) { stegService.oppdaterSteg(any(), any(), StegType.VURDERING) }
+        verify(exactly = 1) { stegService.oppdaterSteg(any(), any(), StegType.BREV) }
     }
 
     @Test
