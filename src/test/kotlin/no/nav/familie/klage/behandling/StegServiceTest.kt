@@ -16,6 +16,7 @@ import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.DomainUtil.behandling
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -108,7 +109,13 @@ internal class StegServiceTest {
     @Test
     fun `skal feile hvis saksbehandler mangler rolle`() {
         every { tilgangService.harTilgangTilBehandlingGittRolle(any(), any()) } returns false
-        val feil = assertThrows<Feil> { stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.VURDERING) }
+        val feil = assertThrows<Feil> {
+            stegService.oppdaterSteg(
+                behandlingId,
+                StegType.FORMKRAV,
+                StegType.VURDERING,
+            )
+        }
         assertThat(feil.frontendFeilmelding).contains("Saksbehandler har ikke tilgang til å oppdatere behandlingssteg")
     }
 
@@ -128,9 +135,19 @@ internal class StegServiceTest {
 
     @Test
     fun `skal ikke lagre behandlingshistorikk dersom en vurdering ferdigstilles ved omgjøring`() {
-        stegService.oppdaterSteg(behandlingId, StegType.VURDERING, StegType.BEHANDLING_FERDIGSTILT)
+        stegService.oppdaterSteg(behandlingId, StegType.BREV, StegType.BEHANDLING_FERDIGSTILT, BehandlingResultat.MEDHOLD)
 
         verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.VURDERING) }
+        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BREV) }
+        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BEHANDLING_FERDIGSTILT) }
+    }
+
+    @Test
+    fun `skal lagre behandlingshistorikk dersom en vurdering ferdigstilles ved opprettholdelse`() {
+        stegService.oppdaterSteg(behandlingId, StegType.BREV, StegType.BEHANDLING_FERDIGSTILT, BehandlingResultat.IKKE_MEDHOLD)
+
+        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.VURDERING) }
+        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BREV) }
         verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BEHANDLING_FERDIGSTILT) }
     }
 }
