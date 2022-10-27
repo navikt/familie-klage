@@ -158,7 +158,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
         }
 
         private fun lagEllerOppdaterBrev(behandlingId: UUID) {
-            brevService.lagEllerOppdaterBrev(FritekstBrevDto("", emptyList(), behandlingId))
+            brevService.lagBrev(behandlingId)
         }
     }
 

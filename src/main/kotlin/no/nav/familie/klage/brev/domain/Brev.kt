@@ -9,7 +9,6 @@ import java.util.UUID
 data class Brev(
     @Id
     val behandlingId: UUID,
-    val overskrift: String,
     val saksbehandlerHtml: String,
     val pdf: Fil? = null,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)

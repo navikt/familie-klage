@@ -1,85 +1,88 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.behandling.BehandlingService
+import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
-import no.nav.familie.klage.brev.domain.Avsnitt
 import no.nav.familie.klage.brev.domain.Brev
-import no.nav.familie.klage.brev.dto.AvsnittDto
-import no.nav.familie.klage.brev.dto.BrevMedAvsnittDto
-import no.nav.familie.klage.brev.dto.FritekstBrevDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
-import no.nav.familie.klage.brev.dto.tilDto
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.felles.domain.Fil
+import no.nav.familie.klage.formkrav.FormService
+import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.repository.findByIdOrThrow
-import org.springframework.data.repository.findByIdOrNull
+import no.nav.familie.klage.vurdering.VurderingService
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
 class BrevService(
     private val brevClient: BrevClient,
     private val brevRepository: BrevRepository,
-    private val avsnittRepository: AvsnittRepository,
     private val behandlingService: BehandlingService,
     private val familieDokumentClient: FamilieDokumentClient,
     private val brevsignaturService: BrevsignaturService,
-    private val fagsakService: FagsakService
+    private val fagsakService: FagsakService,
+    private val formService: FormService,
+    private val vurderingService: VurderingService
 ) {
 
-    fun hentMellomlagretBrev(behandlingId: UUID): BrevMedAvsnittDto? {
-        feilHvis(behandlingService.erLåstForVidereBehandling(behandlingId)) {
-            "Kan ikke hente mellomlagret brev når behandlingen er låst"
-        }
-        return brevRepository.findByIdOrNull(behandlingId)?.let {
-            val avsnitt = avsnittRepository.findByBehandlingId(behandlingId)
-            BrevMedAvsnittDto(behandlingId, it.overskrift, avsnitt.map { it.tilDto() })
-        }
+    fun lagBrev(behandlingId: UUID): ByteArray {
+        val navn = behandlingService.hentNavnFraBehandlingsId(behandlingId)
+        val behandling = behandlingService.hentBehandling(behandlingId)
+        val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
+
+        validerKanLageBrev(behandling)
+
+        val brevRequest = lagBrevRequest(behandlingId, fagsak, navn)
+
+        val signaturMedEnhet = brevsignaturService.lagSignatur(behandling.id)
+
+        val html = brevClient.genererHtmlFritekstbrev(
+            fritekstBrev = brevRequest,
+            saksbehandlerNavn = signaturMedEnhet.navn,
+            enhet = signaturMedEnhet.enhet
+        )
+
+        lagreEllerOppdaterBrev(
+            behandlingId = behandlingId,
+            saksbehandlerHtml = html
+        )
+
+        return familieDokumentClient.genererPdfFraHtml(html)
     }
 
-    @Transactional
-    fun lagEllerOppdaterBrev(fritekstbrevDto: FritekstBrevDto): ByteArray {
-        val navn = behandlingService.hentNavnFraBehandlingsId(fritekstbrevDto.behandlingId)
-        val behandling = behandlingService.hentBehandling(fritekstbrevDto.behandlingId)
-        val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
+    private fun validerKanLageBrev(behandling: Behandling) {
         feilHvis(behandling.status.erLåstForVidereBehandling()) {
             "Kan ikke oppdatere brev når behandlingen er låst"
         }
         feilHvis(behandling.steg != StegType.BREV) {
             "Behandlingen er i feil steg (${behandling.steg}) steg=${StegType.BREV} for å kunne oppdatere brevet"
         }
+    }
 
-        slettAvsnittOmEksisterer(fritekstbrevDto.behandlingId)
+    private fun lagBrevRequest(behandlingId: UUID, fagsak: Fagsak, navn: String): FritekstBrevRequestDto {
+        val behandlingResultat = utledBehandlingResultat(behandlingId)
+        val vurdering = vurderingService.hentVurdering(behandlingId)
 
-        val request = FritekstBrevRequestDto(
-            overskrift = fritekstbrevDto.overskrift,
-            avsnitt = fritekstbrevDto.avsnitt,
-            personIdent = fagsak.hentAktivIdent(),
-            navn = navn
-        )
+        return when (behandlingResultat) {
+            BehandlingResultat.IKKE_MEDHOLD -> {
+                val instillingKlageinstans = vurdering?.innstillingKlageinstans
+                    ?: throw Feil("Behandling med resultat $behandlingResultat mangler instillingKlageinstans for generering av brev")
 
-        val signaturMedEnhet = brevsignaturService.lagSignatur(behandling.id)
-
-        val html = brevClient.genererHtmlFritekstbrev(
-            fritekstBrev = request,
-            saksbehandlerNavn = signaturMedEnhet.navn,
-            enhet = signaturMedEnhet.enhet
-        )
-
-        lagEllerOppdaterBrev(
-            behandlingId = fritekstbrevDto.behandlingId,
-            overskrift = fritekstbrevDto.overskrift,
-            saksbehandlerHtml = html
-        )
-
-        fritekstbrevDto.avsnitt.forEach {
-            lagreAvsnitt(behandlingId = fritekstbrevDto.behandlingId, avsnitt = it)
+                BrevInnhold.lagOpprettholdelseBrev(fagsak.hentAktivIdent(), instillingKlageinstans, navn)
+            }
+            BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> {
+                val begrunnelse = "Begrunnelse for formkrav avvist" // TODO
+                BrevInnhold.lagFormkravAvvistBrev(fagsak.hentAktivIdent(), navn, begrunnelse)
+            }
+            BehandlingResultat.MEDHOLD,
+            BehandlingResultat.IKKE_SATT,
+            BehandlingResultat.HENLAGT -> throw Feil("Kan ikke lage brev for behandling med behandlingResultat=$behandlingResultat")
         }
-
-        return familieDokumentClient.genererPdfFraHtml(html)
     }
 
     fun hentBrevPdf(behandlingId: UUID): ByteArray {
@@ -87,14 +90,12 @@ class BrevService(
             ?: error("Finner ikke brev-pdf for behandling=$behandlingId")
     }
 
-    private fun lagEllerOppdaterBrev(
+    private fun lagreEllerOppdaterBrev(
         behandlingId: UUID,
-        overskrift: String,
         saksbehandlerHtml: String
     ): Brev {
         val brev = Brev(
             behandlingId = behandlingId,
-            overskrift = overskrift,
             saksbehandlerHtml = saksbehandlerHtml
         )
 
@@ -102,21 +103,6 @@ class BrevService(
             true -> brevRepository.update(brev)
             false -> brevRepository.insert(brev)
         }
-    }
-
-    private fun lagreAvsnitt(behandlingId: UUID, avsnitt: AvsnittDto): Avsnitt {
-        return avsnittRepository.insert(
-            Avsnitt(
-                behandlingId = behandlingId,
-                deloverskrift = avsnitt.deloverskrift,
-                innhold = avsnitt.innhold,
-                skalSkjulesIBrevbygger = avsnitt.skalSkjulesIBrevbygger
-            )
-        )
-    }
-
-    private fun slettAvsnittOmEksisterer(behandlingId: UUID) {
-        avsnittRepository.slettAvsnittMedBehandlingId(behandlingId)
     }
 
     fun lagBrevPdf(behandlingId: UUID) {
@@ -127,5 +113,14 @@ class BrevService(
 
         val generertBrev = familieDokumentClient.genererPdfFraHtml(brev.saksbehandlerHtml)
         brevRepository.update(brev.copy(pdf = Fil(generertBrev)))
+    }
+
+    private fun utledBehandlingResultat(behandlingId: UUID): BehandlingResultat {
+        return if (formService.formkravErOppfyltForBehandling(behandlingId)) {
+            vurderingService.hentVurdering(behandlingId)?.vedtak?.tilBehandlingResultat()
+                ?: throw Feil("Burde funnet behandling $behandlingId")
+        } else {
+            BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST
+        }
     }
 }

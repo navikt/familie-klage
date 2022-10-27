@@ -126,7 +126,6 @@ object DomainUtil {
         )
 
     fun avsnitt() = AvsnittDto(
-        avsnittId = UUID.randomUUID(),
         deloverskrift = "Deloverskrift",
         innhold = "Litt innhold",
         skalSkjulesIBrevbygger = false
