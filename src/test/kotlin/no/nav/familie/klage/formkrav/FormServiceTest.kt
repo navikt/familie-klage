@@ -14,6 +14,7 @@ import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
 import no.nav.familie.klage.vurdering.VurderingService
+import no.nav.familie.prosessering.domene.TaskRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -26,7 +27,8 @@ internal class FormServiceTest {
     private val stegService = mockk<StegService>()
     private val behandlingService = mockk<BehandlingService>()
     private val vurderingService = mockk<VurderingService>()
-    private val service = FormService(formRepository, stegService, behandlingService, vurderingService)
+    private val taskRepository = mockk<TaskRepository>()
+    private val service = FormService(formRepository, stegService, behandlingService, vurderingService, taskRepository)
 
     private val behandlingId = UUID.randomUUID()
 

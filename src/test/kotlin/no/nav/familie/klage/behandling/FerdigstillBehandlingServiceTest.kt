@@ -8,6 +8,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.blankett.LagSaksbehandlingsblankettTask
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.distribusjon.DistribusjonService
@@ -102,8 +103,8 @@ internal class FerdigstillBehandlingServiceTest {
 
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD)
         assertThat(stegSlot.captured).isEqualTo(StegType.KABAL_VENTER_SVAR)
-        verify(exactly = 2) { taskRepository.save(any()) }
-        assertThat(saveTaskSlot.map { it.type }).containsExactly(JournalførBrevTask.TYPE, LagSaksbehandlingsblankettTask.TYPE)
+        verify(exactly = 3) { taskRepository.save(any()) }
+        assertThat(saveTaskSlot.map { it.type }).containsExactly(JournalførBrevTask.TYPE, LagSaksbehandlingsblankettTask.TYPE, BehandlingsstatistikkTask.TYPE)
         verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id) }
     }
 
@@ -143,8 +144,8 @@ internal class FerdigstillBehandlingServiceTest {
         assertThat(stegSlot.captured).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.MEDHOLD)
 
-        verify(exactly = 1) { taskRepository.save(any()) }
-        assertThat(saveTaskSlot.map { it.type }).containsExactly(LagSaksbehandlingsblankettTask.TYPE)
+        verify(exactly = 2) { taskRepository.save(any()) }
+        assertThat(saveTaskSlot.map { it.type }).containsExactly(LagSaksbehandlingsblankettTask.TYPE, BehandlingsstatistikkTask.TYPE)
     }
 
     @Test

@@ -21,7 +21,7 @@ class FormService(
     private val formRepository: FormRepository,
     private val stegService: StegService,
     private val behandlingService: BehandlingService,
-    private val vurderingService: VurderingService
+    private val vurderingService: VurderingService,
     private val taskRepository: TaskRepository
 ) {
 
@@ -29,7 +29,7 @@ class FormService(
 
     @Transactional
     fun opprettInitielleFormkrav(behandlingId: UUID): Form {
-        taskRepository.save(BehandlingsstatistikkTask.opprettPåbegyntTask(behandlingId=behandlingId))
+        taskRepository.save(BehandlingsstatistikkTask.opprettPåbegyntTask(behandlingId = behandlingId))
         return formRepository.insert(Form(behandlingId = behandlingId))
     }
 
