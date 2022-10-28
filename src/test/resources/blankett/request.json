@@ -1,0 +1,28 @@
+{
+  "behandling" : {
+    "stønadstype" : "OVERGANGSSTØNAD",
+    "klageMottatt" : "2022-10-26",
+    "resultat" : "IKKE_SATT",
+    "påklagetVedtak" : {
+      "eksternFagsystemBehandlingId" : "eksternId"
+    }
+  },
+  "personopplysninger" : {
+    "navn" : "navn",
+    "personIdent" : "ident"
+  },
+  "formkrav" : {
+    "klagePart" : "OPPFYLT",
+    "klageKonkret" : "OPPFYLT",
+    "klagefristOverholdt" : "OPPFYLT",
+    "klageSignert" : "OPPFYLT",
+    "saksbehandlerBegrunnelse" : "Ok"
+  },
+  "vurdering" : {
+    "vedtak" : "OPPRETTHOLD_VEDTAK",
+    "arsak" : "FEIL_I_LOVANDVENDELSE",
+    "hjemmel" : "BT_FEM",
+    "innstillingKlageinstans" : "innstillingKlageinstans",
+    "interntNotat" : "interntNotat"
+  }
+}

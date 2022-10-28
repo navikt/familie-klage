@@ -10,12 +10,12 @@ import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.kabal.AnkebehandlingOpprettetDetaljer
 import no.nav.familie.klage.kabal.BehandlingDetaljer
 import no.nav.familie.klage.kabal.BehandlingEvent
-import no.nav.familie.klage.kabal.BehandlingEventType
-import no.nav.familie.klage.kabal.ExternalUtfall
 import no.nav.familie.klage.kabal.KlagebehandlingAvsluttetDetaljer
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.testutil.DomainUtil
+import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
+import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -121,7 +121,7 @@ internal class BehandlingEventServiceTest {
             detaljer = behandlingDetaljer ?: BehandlingDetaljer(
                 KlagebehandlingAvsluttetDetaljer(
                     LocalDateTime.now().minusDays(1),
-                    ExternalUtfall.MEDHOLD,
+                    KlageinstansUtfall.MEDHOLD,
                     listOf("journalpostReferanse1", "journalpostReferanse2")
                 )
             )

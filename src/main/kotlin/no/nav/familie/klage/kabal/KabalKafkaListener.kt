@@ -3,7 +3,9 @@ package no.nav.familie.klage.kabal
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.kabal.event.BehandlingEventService
+import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
@@ -68,7 +70,7 @@ data class BehandlingEvent(
         }
     }
 
-    fun utfall(): ExternalUtfall? {
+    fun utfall(): KlageinstansUtfall? {
         val feilmelding = "Burde hatt behandlingdetaljer for event fra kabal av type $type"
         return when (type) {
             BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> detaljer.klagebehandlingAvsluttet?.utfall ?: throw Feil(feilmelding)
@@ -84,10 +86,6 @@ data class BehandlingEvent(
             else -> listOf()
         }
     }
-}
-
-enum class BehandlingEventType {
-    KLAGEBEHANDLING_AVSLUTTET, ANKEBEHANDLING_OPPRETTET, ANKEBEHANDLING_AVSLUTTET, ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET // TODO ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET skal fjernes på sikt
 }
 
 data class BehandlingDetaljer(
@@ -110,7 +108,7 @@ data class BehandlingDetaljer(
 
 data class KlagebehandlingAvsluttetDetaljer(
     val avsluttet: LocalDateTime,
-    val utfall: ExternalUtfall,
+    val utfall: KlageinstansUtfall,
     val journalpostReferanser: List<String>
 ) {
 
@@ -132,7 +130,7 @@ data class AnkebehandlingOpprettetDetaljer(
 
 data class AnkebehandlingAvsluttetDetaljer(
     val avsluttet: LocalDateTime,
-    val utfall: ExternalUtfall,
+    val utfall: KlageinstansUtfall,
     val journalpostReferanser: List<String>
 ) {
 
@@ -141,15 +139,4 @@ data class AnkebehandlingAvsluttetDetaljer(
             "Avsluttet tidspunkt: $avsluttet. " +
             "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
     }
-}
-
-enum class ExternalUtfall(val navn: String) {
-    TRUKKET("Trukket"),
-    RETUR("Retur"),
-    OPPHEVET("Opphevet"),
-    MEDHOLD("Medhold"),
-    DELVIS_MEDHOLD("Delvis medhold"),
-    STADFESTELSE("Stadfestelse"),
-    UGUNST("Ugunst (Ugyldig)"),
-    AVVIST("Avvist");
 }

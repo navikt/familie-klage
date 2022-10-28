@@ -3,8 +3,6 @@ package no.nav.familie.klage.behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.brev.BrevService
-import no.nav.familie.klage.brev.dto.FritekstBrevDto
-import no.nav.familie.klage.brev.dto.FritekstBrevtype
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.formkrav.dto.tilDto
@@ -59,7 +57,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
     inner class Historikk {
 
         @Test
-        internal fun `OPPRETTHOLD_VEDTAK - når man sendt brev skal man vente på svar`() {
+        internal fun `OPPRETTHOLD_VEDTAK - når man har sendt brev skal man vente på svar`() {
             val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
                 val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
                 formService.oppdaterForm(oppfyltFormDto(behandlingId))
@@ -71,7 +69,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
                 behandlingId
             }
 
-            val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikker(behandlingId)
+            val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
 
             assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.KABAL_VENTER_SVAR)
             assertThat(behandlingshistorikk.map { it.steg }).containsExactly(
@@ -80,7 +78,8 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
                 StegType.VURDERING,
                 StegType.FORMKRAV,
                 StegType.VURDERING,
-                StegType.FORMKRAV
+                StegType.FORMKRAV,
+                StegType.OPPRETTET
             )
         }
 
@@ -103,7 +102,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
 
             testHendelseController.opprettDummyKabalEvent(behandlingId)
 
-            val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikker(behandlingId)
+            val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
 
             assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
             assertThat(behandlingshistorikk.map { it.steg }).containsExactly(
@@ -114,7 +113,8 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
                 StegType.VURDERING,
                 StegType.FORMKRAV,
                 StegType.VURDERING,
-                StegType.FORMKRAV
+                StegType.FORMKRAV,
+                StegType.OPPRETTET
             )
         }
 
@@ -128,13 +128,14 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
                 behandlingId
             }
 
-            val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikker(behandlingId)
+            val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
 
             assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
             assertThat(behandlingshistorikk.map { it.steg }).containsExactly(
                 StegType.BEHANDLING_FERDIGSTILT,
                 StegType.VURDERING,
-                StegType.FORMKRAV
+                StegType.FORMKRAV,
+                StegType.OPPRETTET
             )
         }
 
@@ -148,18 +149,19 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
                 behandlingId
             }
 
-            val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikker(behandlingId)
+            val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
 
             assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
             assertThat(behandlingshistorikk.map { it.steg }).containsExactly(
                 StegType.BEHANDLING_FERDIGSTILT,
                 StegType.BREV,
-                StegType.FORMKRAV
+                StegType.FORMKRAV,
+                StegType.OPPRETTET
             )
         }
 
         private fun lagEllerOppdaterBrev(behandlingId: UUID) {
-            brevService.lagEllerOppdaterBrev(FritekstBrevDto("", emptyList(), behandlingId, FritekstBrevtype.VEDTAK_AVSLAG))
+            brevService.lagBrev(behandlingId)
         }
     }
 
@@ -175,8 +177,8 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
         )
 
     private fun oppfyltFormDto(behandlingId: UUID) =
-        DomainUtil.oppfyltForm(behandlingId).tilDto()
+        DomainUtil.oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto())
 
     private fun ikkeOppfyltFormDto(behandlingId: UUID) =
-        DomainUtil.oppfyltForm(behandlingId).tilDto().copy(klagePart = FormVilkår.IKKE_OPPFYLT)
+        DomainUtil.oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto()).copy(klagePart = FormVilkår.IKKE_OPPFYLT)
 }

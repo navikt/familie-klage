@@ -1,5 +1,7 @@
 package no.nav.familie.klage.formkrav.dto
 
+import no.nav.familie.klage.behandling.domain.PåklagetVedtak
+import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import java.time.LocalDateTime
@@ -12,10 +14,11 @@ data class FormDto(
     val klagefristOverholdt: FormVilkår,
     val klageSignert: FormVilkår,
     val saksbehandlerBegrunnelse: String,
-    val endretTid: LocalDateTime
+    val endretTid: LocalDateTime,
+    val påklagetVedtak: PåklagetVedtakDto
 )
 
-fun Form.tilDto(): FormDto =
+fun Form.tilDto(påklagetVedtak: PåklagetVedtakDto): FormDto =
     FormDto(
         behandlingId = this.behandlingId,
         klagePart = this.klagePart,
@@ -23,5 +26,12 @@ fun Form.tilDto(): FormDto =
         klagefristOverholdt = this.klagefristOverholdt,
         klageSignert = this.klageSignert,
         saksbehandlerBegrunnelse = this.saksbehandlerBegrunnelse,
-        endretTid = this.sporbar.endret.endretTid
+        endretTid = this.sporbar.endret.endretTid,
+        påklagetVedtak = påklagetVedtak
+    )
+
+fun PåklagetVedtak.tilDto(): PåklagetVedtakDto =
+    PåklagetVedtakDto(
+        eksternFagsystemBehandlingId = this.eksternFagsystemBehandlingId,
+        påklagetVedtakstype = this.påklagetVedtakstype
     )

@@ -1,0 +1,1 @@
+ALTER TABLE vurdering ADD COLUMN internt_notat VARCHAR;

@@ -4,9 +4,9 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.brev.dto.AvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevDto
-import no.nav.familie.klage.brev.dto.FritekstBrevtype
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
@@ -16,9 +16,7 @@ import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration
-import no.nav.familie.klage.kabal.BehandlingEventType
-import no.nav.familie.klage.kabal.ExternalUtfall
-import no.nav.familie.klage.kabal.domain.Klageresultat
+import no.nav.familie.klage.kabal.domain.KlageinstansResultat
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
@@ -31,9 +29,11 @@ import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.kontrakter.felles.journalpost.RelevantDato
+import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.klage.Årsak
 import java.time.LocalDate
@@ -84,26 +84,36 @@ object DomainUtil {
             resultat = resultat
         )
 
-    fun vurdering(behandlingId: UUID, vedtak: Vedtak = Vedtak.OPPRETTHOLD_VEDTAK, hjemmel: Hjemmel? = Hjemmel.FT_FEMTEN_FEM, årsak: Årsak? = null) =
+    fun vurdering(
+        behandlingId: UUID,
+        vedtak: Vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
+        hjemmel: Hjemmel? = Hjemmel.FT_FEMTEN_FEM,
+        årsak: Årsak? = null,
+        interntNOtat: String? = null
+    ) =
         Vurdering(
             behandlingId = behandlingId,
             vedtak = vedtak,
             hjemmel = hjemmel,
-            beskrivelse = "En begrunnelse",
-            arsak = årsak
+            innstillingKlageinstans = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
+            arsak = årsak,
+            interntNotat = interntNOtat
         )
 
     fun vurderingDto(
         behandlingId: UUID = UUID.randomUUID(),
         vedtak: Vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
         årsak: Årsak? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) null else Årsak.FEIL_I_LOVANDVENDELSE,
-        hjemmel: Hjemmel? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) Hjemmel.BT_FEM else null
+        hjemmel: Hjemmel? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) Hjemmel.BT_FEM else null,
+        innstillingKlageinstans: String? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
+        interntNotat: String? = null
     ) = VurderingDto(
         behandlingId = behandlingId,
         vedtak = vedtak,
         arsak = årsak,
         hjemmel = hjemmel,
-        beskrivelse = "En begrunnelse"
+        innstillingKlageinstans = innstillingKlageinstans,
+        interntNotat = interntNotat
     )
 
     fun oppfyltForm(behandlingId: UUID) =
@@ -117,7 +127,6 @@ object DomainUtil {
         )
 
     fun avsnitt() = AvsnittDto(
-        avsnittId = UUID.randomUUID(),
         deloverskrift = "Deloverskrift",
         innhold = "Litt innhold",
         skalSkjulesIBrevbygger = false
@@ -129,8 +138,7 @@ object DomainUtil {
     ) = FritekstBrevDto(
         overskrift = "Topp",
         avsnitt = avsnitt,
-        behandlingId = behandlingId,
-        brevType = FritekstBrevtype.VEDTAK_INVILGELSE
+        behandlingId = behandlingId
     )
 
     val defaultIdenter = setOf(PersonIdent("01010199999"))
@@ -164,13 +172,13 @@ object DomainUtil {
     fun klageresultat(
         eventId: UUID = UUID.randomUUID(),
         type: BehandlingEventType = BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET,
-        utfall: ExternalUtfall = ExternalUtfall.MEDHOLD,
+        utfall: KlageinstansUtfall = KlageinstansUtfall.MEDHOLD,
         mottattEllerAvsluttetTidspunkt: LocalDateTime = SporbarUtils.now(),
         kildereferanse: UUID = UUID.randomUUID(),
         journalpostReferanser: List<String> = listOf("1", "2"),
         behandlingId: UUID = UUID.randomUUID()
-    ): Klageresultat {
-        return Klageresultat(
+    ): KlageinstansResultat {
+        return KlageinstansResultat(
             eventId = eventId,
             type = type,
             utfall = utfall,
@@ -211,4 +219,7 @@ object DomainUtil {
         logiskeVedlegg = listOf()
 
     )
+
+    fun påklagetVedtakDto(): PåklagetVedtakDto =
+        PåklagetVedtakDto(eksternFagsystemBehandlingId = null, påklagetVedtakstype = PåklagetVedtakstype.UTEN_VEDTAK)
 }

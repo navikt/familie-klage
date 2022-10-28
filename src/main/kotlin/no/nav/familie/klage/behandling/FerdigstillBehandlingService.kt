@@ -4,8 +4,10 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
+import no.nav.familie.klage.blankett.LagSaksbehandlingsblankettTask
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.distribusjon.JournalførBrevTask
+import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
@@ -43,14 +45,15 @@ class FerdigstillBehandlingService(
         val behandling = behandlingService.hentBehandling(behandlingId)
         val behandlingsresultat = utledBehandlingResultat(behandlingId)
 
-        validerKanFerdigstille(behandling, behandlingsresultat)
+        validerKanFerdigstille(behandling)
         if (behandlingsresultat != MEDHOLD) {
             brevService.lagBrevPdf(behandlingId)
             opprettJournalførBrevTask(behandlingId)
         }
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
         behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(behandlingId, behandlingsresultat)
-        stegService.oppdaterSteg(behandlingId, behandling.steg, stegForResultat(behandlingsresultat))
+        stegService.oppdaterSteg(behandlingId, behandling.steg, stegForResultat(behandlingsresultat), behandlingsresultat)
+        taskRepository.save(LagSaksbehandlingsblankettTask.opprettTask(behandlingId))
         taskRepository.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId))
     }
 
@@ -59,7 +62,7 @@ class FerdigstillBehandlingService(
             type = JournalførBrevTask.TYPE,
             payload = behandlingId.toString(),
             properties = Properties().apply {
-                this[JournalførBrevTask.saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
+                this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
             }
         )
         taskRepository.save(journalførBrevTask)
@@ -71,11 +74,11 @@ class FerdigstillBehandlingService(
         IKKE_SATT -> error("Kan ikke utlede neste steg når behandlingsresultatet er IKKE_SATT")
     }
 
-    private fun validerKanFerdigstille(behandling: Behandling, behandlingsresultat: BehandlingResultat) {
+    private fun validerKanFerdigstille(behandling: Behandling) {
         if (behandling.status.erLåstForVidereBehandling()) {
             throw Feil("Kan ikke ferdigstille behandlingen da den er låst for videre behandling")
         }
-        if (!(behandling.steg == StegType.BREV || behandlingsresultat == MEDHOLD)) {
+        if (behandling.steg != StegType.BREV) {
             throw Feil("Kan ikke ferdigstille behandlingen fra steg=${behandling.steg}")
         }
     }

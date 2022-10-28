@@ -13,7 +13,7 @@ import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.infrastruktur.db.DbContainerInitializer
-import no.nav.familie.klage.kabal.domain.Klageresultat
+import no.nav.familie.klage.kabal.domain.KlageinstansResultat
 import no.nav.familie.klage.oppgave.BehandleSakOppgave
 import no.nav.familie.klage.testutil.TestoppsettService
 import no.nav.familie.klage.testutil.TokenUtil
@@ -106,7 +106,7 @@ abstract class OppslagSpringRunnerTest {
             Brev::class,
             Vurdering::class,
             Form::class,
-            Klageresultat::class,
+            KlageinstansResultat::class,
             Behandling::class,
             FagsakDomain::class,
             FagsakPerson::class,

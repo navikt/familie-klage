@@ -2,7 +2,6 @@ package no.nav.familie.klage.behandlingsstatistikk
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
-import no.nav.familie.kontrakter.ef.iverksett.BehandlingMetode
 import no.nav.familie.kontrakter.ef.iverksett.Hendelse
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep

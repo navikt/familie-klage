@@ -3,6 +3,7 @@ package no.nav.familie.klage.behandling
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
+import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
@@ -21,6 +22,7 @@ class OpprettBehandlingService(
     private val behandlingService: BehandlingService,
     private val formService: FormService,
     private val oppgaveTaskService: OppgaveTaskService,
+    private val behandlingshistorikkService: BehandlingshistorikkService
     private val taskRepository: TaskRepository
 ) {
 
@@ -50,6 +52,8 @@ class OpprettBehandlingService(
                 behandlendeEnhet = opprettKlagebehandlingRequest.behandlendeEnhet
             )
         ).id
+
+        behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.OPPRETTET)
 
         formService.opprettInitielleFormkrav(behandlingId)
 

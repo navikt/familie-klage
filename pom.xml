@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.4</version>
+		<version>2.7.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<repositories>
@@ -30,13 +30,14 @@
 		<changelist>-SNAPSHOT</changelist>
 		<java.version>17</java.version>
 		<kotlin.version>1.7.20</kotlin.version>
-		<springdoc.version>1.6.11</springdoc.version>
+		<springdoc.version>1.6.12</springdoc.version>
 		<mockk-jvm.version>1.13.2</mockk-jvm.version>
 		<felles.version>1.20221006150009_46021ed</felles.version>
 		<prosessering.version>1.20220624132237_7f5ba9c</prosessering.version>
 		<start-class>no.nav.familie.klage.ApplicationKt</start-class>
-		<kontrakter.version>2.0_20221018092135_893cc71</kontrakter.version>
-		<eksterne-kontrakter.version>2.0_20221020152712_6e9af14</eksterne-kontrakter.version>
+		<kontrakter.version>2.0_20221026210949_b421514</kontrakter.version>
+		<eksterne-kontrakter.version>2.0_20221019110152_74f39dd</eksterne-kontrakter.version>
+		<saksstatistikk-klage.version>2.0_20221020152712_6e9af14</saksstatistikk-klage.version>
 		<nav.security.version>2.1.6</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
 		<okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
 		<unleash.version>4.4.1</unleash.version>
@@ -132,7 +133,7 @@
 		<dependency>
 			<groupId>no.nav.familie.eksterne.kontrakter</groupId>
 			<artifactId>saksstatistikk-klage</artifactId>
-			<version>${eksterne-kontrakter.version}</version>
+			<version>${saksstatistikk-klage.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>no.nav.familie.felles</groupId>
@@ -201,7 +202,7 @@
 		<dependency>
 			<groupId>dev.akkinoc.spring.boot</groupId>
 			<artifactId>logback-access-spring-boot-starter</artifactId>
-			<version>3.4.0</version>
+			<version>3.4.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

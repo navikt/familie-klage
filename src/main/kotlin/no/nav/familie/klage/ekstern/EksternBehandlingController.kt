@@ -44,7 +44,9 @@ class EksternBehandlingController(
          * TODO : Legg til sjekk via tilgangservice
          */
         val behandlinger = eksternFagsakIder.associateWith { eksternFagsakId ->
-            behandlingService.finnKlagebehandlingsresultat(eksternFagsakId, fagsystem).map { it.tilEksternKlagebehandlingDto() }
+            behandlingService.finnKlagebehandlingsresultat(eksternFagsakId, fagsystem).map {
+                it.tilEksternKlagebehandlingDto(behandlingService.hentKlageresultatDto(behandlingId = it.id))
+            }
         }
         val antallTreff = behandlinger.entries.associate { it.key to it.value.size }
         logger.info("Henter klagebehandlingsresultat for eksternFagsakIder=$eksternFagsakIder antallTreff=$antallTreff")

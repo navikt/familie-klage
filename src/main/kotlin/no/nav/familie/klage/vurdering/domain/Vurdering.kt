@@ -14,9 +14,10 @@ data class Vurdering(
     val vedtak: Vedtak,
     val arsak: Årsak? = null,
     val hjemmel: Hjemmel? = null,
-    val beskrivelse: String,
+    val innstillingKlageinstans: String? = null,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
-    val sporbar: Sporbar = Sporbar()
+    val sporbar: Sporbar = Sporbar(),
+    val interntNotat: String?
 )
 
 enum class Vedtak {
