@@ -5,7 +5,7 @@ import java.util.UUID
 data class FritekstBrevDto(
     val overskrift: String,
     val avsnitt: List<AvsnittDto>,
-    val behandlingId: UUID,
+    val behandlingId: UUID
 )
 
 data class FritekstBrevRequestDto(

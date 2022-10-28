@@ -1,7 +1,6 @@
 package no.nav.familie.klage.brev.dto
 
 import no.nav.familie.klage.brev.domain.Avsnitt
-import java.util.UUID
 
 data class AvsnittDto(
     val deloverskrift: String,

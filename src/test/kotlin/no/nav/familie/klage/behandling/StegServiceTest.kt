@@ -113,7 +113,7 @@ internal class StegServiceTest {
             stegService.oppdaterSteg(
                 behandlingId,
                 StegType.FORMKRAV,
-                StegType.VURDERING,
+                StegType.VURDERING
             )
         }
         assertThat(feil.frontendFeilmelding).contains("Saksbehandler har ikke tilgang til å oppdatere behandlingssteg")
