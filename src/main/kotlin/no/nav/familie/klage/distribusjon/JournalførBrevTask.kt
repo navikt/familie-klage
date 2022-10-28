@@ -48,7 +48,7 @@ class JournalførBrevTask(
     ) {
         val behandlingId = brev.behandlingId
         val avsenderMottakere = mapAvsenderMottaker(mottakere)
-        val journalposter = brev.mottakereJournalpost?.journalposter ?: emptyList()
+        val journalposter = brev.mottakereJournalposter?.journalposter ?: emptyList()
         val brevPdf = brev.brevPdf()
 
         avsenderMottakere.foldIndexed(journalposter) { index, acc, avsenderMottaker ->

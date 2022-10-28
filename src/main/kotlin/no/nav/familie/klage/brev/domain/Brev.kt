@@ -12,7 +12,7 @@ data class Brev(
     val saksbehandlerHtml: String,
     val pdf: Fil? = null,
     val mottakere: Brevmottakere? = null,
-    val mottakereJournalpost: BrevmottakereJournalposter? = null,
+    val mottakereJournalposter: BrevmottakereJournalposter? = null,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar()
 ) {

@@ -124,7 +124,7 @@ internal class DistribuerBrevTaskTest {
                 Brev(
                     behandlingId = behandlingId,
                     saksbehandlerHtml = "",
-                    mottakereJournalpost = journalposter?.let { BrevmottakereJournalposter(it) },
+                    mottakereJournalposter = journalposter?.let { BrevmottakereJournalposter(it) },
                     pdf = Fil(byteArrayOf())
                 )
     }

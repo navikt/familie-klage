@@ -68,7 +68,7 @@ class DistribuerBrevTask(
     }
 
     private fun mottakereJournalpost(brev: Brev): List<BrevmottakereJournalpost> {
-        return brev.mottakereJournalpost?.journalposter?.takeIf { it.isNotEmpty() }
+        return brev.mottakereJournalposter?.journalposter?.takeIf { it.isNotEmpty() }
             ?: error("Mangler journalposter koblet til brev=${brev.behandlingId}")
     }
 

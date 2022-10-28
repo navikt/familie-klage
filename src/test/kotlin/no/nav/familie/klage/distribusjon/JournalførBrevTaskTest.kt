@@ -166,7 +166,7 @@ internal class JournalførBrevTaskTest {
                     behandlingId = behandlingId,
                     saksbehandlerHtml = "",
                     mottakere = mottakere,
-                    mottakereJournalpost = mottakereJournalpost,
+                    mottakereJournalposter = mottakereJournalpost,
                     pdf = Fil(byteArrayOf())
                 )
     }
