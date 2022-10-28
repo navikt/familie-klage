@@ -2,7 +2,7 @@ package no.nav.familie.klage.vurdering
 
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.vurdering.VurderingValidator.validerVurdering
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
@@ -17,7 +17,7 @@ import java.util.UUID
 class VurderingService(
     private val vurderingRepository: VurderingRepository,
     private val stegService: StegService,
-    private val brevService: BrevService
+    private val brevRepository: BrevRepository
 ) {
 
     fun hentVurdering(behandlingId: UUID): Vurdering? =
@@ -34,14 +34,10 @@ class VurderingService(
     fun opprettEllerOppdaterVurdering(vurdering: VurderingDto): VurderingDto {
         validerVurdering(vurdering)
         if (vurdering.vedtak === Vedtak.OMGJØR_VEDTAK) {
-            brevService.slettBrev(vurdering.behandlingId)
+            brevRepository.deleteById(vurdering.behandlingId)
         }
 
-        if (vurdering.vedtak != Vedtak.OMGJØR_VEDTAK) {
-            stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING, StegType.BREV)
-        } else {
-            stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING, StegType.VURDERING)
-        }
+        stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING, StegType.BREV)
 
         val eksisterendeVurdering = vurderingRepository.findByIdOrNull(vurdering.behandlingId)
         return if (eksisterendeVurdering != null) {

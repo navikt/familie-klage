@@ -55,8 +55,6 @@ class BrevService(
         return familieDokumentClient.genererPdfFraHtml(html)
     }
 
-    fun slettBrev(behandlingId: UUID) = brevRepository.deleteById(behandlingId)
-
     private fun validerKanLageBrev(behandling: Behandling) {
         feilHvis(behandling.status.erLåstForVidereBehandling()) {
             "Kan ikke oppdatere brev når behandlingen er låst"
