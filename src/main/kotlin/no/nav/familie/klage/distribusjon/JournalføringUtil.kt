@@ -1,13 +1,13 @@
 package no.nav.familie.klage.distribusjon
 
-import no.nav.familie.klage.brev.domain.Brev
+import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
 
 object JournalføringUtil {
 
-    fun mapAvsenderMottaker(brev: Brev): List<AvsenderMottaker> {
-        return brev.mottakere?.let { mottakere ->
+    fun mapAvsenderMottaker(brevmottakere: Brevmottakere): List<AvsenderMottaker> {
+        return brevmottakere.let { mottakere ->
             mottakere.personer.map {
                 AvsenderMottaker(
                     id = it.personIdent,
@@ -21,7 +21,7 @@ object JournalføringUtil {
                     idType = BrukerIdType.ORGNR
                 )
             }
-        } ?: emptyList()
+        }
     }
 
 }

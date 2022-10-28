@@ -16,7 +16,6 @@ import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.testutil.DomainUtil
-import no.nav.familie.klage.testutil.DomainUtil.defaultIdent
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
@@ -71,7 +70,8 @@ internal class JournalførBrevTaskTest {
 
         journalførBrevTask.onCompletion(Task(JournalførBrevTask.TYPE, behandlingId.toString(), propertiesMedJournalpostId))
 
-        assertThat(taskSlots).hasSize(0)
+        assertThat(taskSlots).hasSize(1)
+        assertThat(taskSlots.first().type).isEqualTo(DistribuerBrevTask.TYPE)
     }
 
     @Test
@@ -82,41 +82,9 @@ internal class JournalførBrevTaskTest {
 
         journalførBrevTask.onCompletion(Task(JournalførBrevTask.TYPE, behandlingId.toString(), propertiesMedJournalpostId))
 
-        assertThat(taskSlots.single().type).isEqualTo(SendTilKabalTask.TYPE)
-    }
-
-    @Nested
-    inner class JournalførSøker {
-
-        @Test
-        internal fun `skal journalføre brev for søker når det ikke finnes mottakere`() {
-            mockHentBrev(mottakere = null)
-
-            runTask()
-
-            verify { distribusjonService.journalførBrev(behandlingId, any(), any(), 0, null) }
-
-            val brevmottakereJournalposter = slotBrevmottakereJournalposter.single()
-            val journalpost = brevmottakereJournalposter.journalposter.single()
-            assertThat(journalpost.ident).isEqualTo(defaultIdent)
-            assertThat(journalpost.journalpostId).isEqualTo("journalpostId-0")
-        }
-
-        @Test
-        internal fun `skal journalføre brev for søker når det finnes mottaker med tomme lister`() {
-            mockHentBrev(mottakere = Brevmottakere(emptyList(), emptyList()))
-
-            runTask()
-
-            verify { distribusjonService.journalførBrev(behandlingId, any(), any(), 0, null) }
-
-            val brevmottakereJournalposter = slotBrevmottakereJournalposter.single()
-            val journalpost = brevmottakereJournalposter.journalposter.single()
-            assertThat(journalpost.ident).isEqualTo(defaultIdent)
-            assertThat(journalpost.journalpostId).isEqualTo("journalpostId-0")
-            assertThat(slotSaveTask.single().payload).isEqualTo("journalpostId-0")
-        }
-
+        assertThat(taskSlots).hasSize(2)
+        assertThat(taskSlots.first().type).isEqualTo(SendTilKabalTask.TYPE)
+        assertThat(taskSlots.last().type).isEqualTo(DistribuerBrevTask.TYPE)
     }
 
     @Nested
@@ -148,7 +116,6 @@ internal class JournalførBrevTaskTest {
             }
 
             validerLagringAvBrevmottakereJournalposter(slotBrevmottakereJournalposter[2].journalposter)
-            validerOpprettetTasks()
         }
 
         @Test
@@ -167,17 +134,12 @@ internal class JournalførBrevTaskTest {
             }
 
             validerLagringAvBrevmottakereJournalposter(slotBrevmottakereJournalposter.single().journalposter)
-            validerOpprettetTasks()
         }
 
         private fun verifyJournalførtBrev(antallGanger: Int) {
             verify(exactly = antallGanger) {
                 distribusjonService.journalførBrev(behandlingId, any(), any(), any(), any())
             }
-        }
-
-        private fun validerOpprettetTasks() {
-            assertThat(slotSaveTask.map { it.payload }).containsExactly("journalpostId-0", "journalpostId-1", "journalpostId-2")
         }
 
         private fun validerLagringAvBrevmottakereJournalposter(

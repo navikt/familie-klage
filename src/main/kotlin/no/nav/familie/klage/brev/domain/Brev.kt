@@ -15,7 +15,10 @@ data class Brev(
     val mottakereJournalpost: BrevmottakereJournalposter? = null,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar()
-)
+) {
+
+    fun brevPdf() = this.pdf?.bytes ?: error("Mangler brev-pdf for behandling=$behandlingId")
+}
 
 data class BrevmottakereJournalposter(
     val journalposter: List<BrevmottakereJournalpost>,
@@ -23,7 +26,8 @@ data class BrevmottakereJournalposter(
 
 data class BrevmottakereJournalpost(
     val ident: String,
-    val journalpostId: String
+    val journalpostId: String,
+    val distribusjonId: String? = null
 )
 
 data class Brevmottakere(

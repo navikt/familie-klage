@@ -12,6 +12,7 @@ import no.nav.familie.klage.testutil.BrukerContextUtil.mockBrukerContext
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
+import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokdist.Distribusjonstype
 import org.assertj.core.api.Assertions.assertThat
@@ -55,7 +56,8 @@ internal class DistribusjonServiceTest {
 
     @Test
     fun journalførBrev() {
-        distribusjonService.journalførBrev(behandling.id, "123".toByteArray(), "saksbehandler")
+        val mottaker = AvsenderMottaker(null, null, "navn")
+        distribusjonService.journalførBrev(behandling.id, "123".toByteArray(), "saksbehandler", 0, mottaker)
 
         assertThat(journalpostSlot.captured.fagsakId).isEqualTo(fagsak.eksternId)
         assertThat(journalpostSlot.captured.fnr).isEqualTo(ident)
