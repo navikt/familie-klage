@@ -37,7 +37,7 @@ object BrevInnhold {
                 ),
                 AvsnittDto(
                     deloverskrift = "",
-                    innhold = "Dette er vurderingen vi har sendt til NAV Klageinstans\n$instillingKlageinstans)"
+                    innhold = "Dette er vurderingen vi har sendt til NAV Klageinstans\n$instillingKlageinstans"
                 ),
                 AvsnittDto(
                     deloverskrift = "",
