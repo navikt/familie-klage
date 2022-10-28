@@ -44,14 +44,14 @@ class FerdigstillBehandlingService(
         val behandling = behandlingService.hentBehandling(behandlingId)
         val behandlingsresultat = utledBehandlingResultat(behandlingId)
 
-        validerKanFerdigstille(behandling, behandlingsresultat)
+        validerKanFerdigstille(behandling)
         if (behandlingsresultat != MEDHOLD) {
             brevService.lagBrevPdf(behandlingId)
             opprettJournalførBrevTask(behandlingId)
         }
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
         behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(behandlingId, behandlingsresultat)
-        stegService.oppdaterSteg(behandlingId, behandling.steg, stegForResultat(behandlingsresultat))
+        stegService.oppdaterSteg(behandlingId, behandling.steg, stegForResultat(behandlingsresultat), behandlingsresultat)
         taskRepository.save(LagSaksbehandlingsblankettTask.opprettTask(behandlingId))
     }
 
@@ -72,11 +72,11 @@ class FerdigstillBehandlingService(
         IKKE_SATT -> error("Kan ikke utlede neste steg når behandlingsresultatet er IKKE_SATT")
     }
 
-    private fun validerKanFerdigstille(behandling: Behandling, behandlingsresultat: BehandlingResultat) {
+    private fun validerKanFerdigstille(behandling: Behandling) {
         if (behandling.status.erLåstForVidereBehandling()) {
             throw Feil("Kan ikke ferdigstille behandlingen da den er låst for videre behandling")
         }
-        if (!(behandling.steg == StegType.BREV || behandlingsresultat == MEDHOLD)) {
+        if (behandling.steg != StegType.BREV) {
             throw Feil("Kan ikke ferdigstille behandlingen fra steg=${behandling.steg}")
         }
     }

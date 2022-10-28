@@ -20,5 +20,4 @@ object DokumenttypeUtil {
         Stønadstype.BARNETRYGD -> Dokumenttype.KLAGE_BLANKETT_SAKSBEHANDLING_BARNETRYGD
         Stønadstype.KONTANTSTØTTE -> Dokumenttype.KLAGE_BLANKETT_SAKSBEHANDLING_KONTANTSTØTTE
     }
-
 }
