@@ -3,6 +3,7 @@ package no.nav.familie.klage.behandling
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
+import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.formkrav.FormService
@@ -50,6 +51,7 @@ class FerdigstillBehandlingService(
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
         behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(behandlingId, behandlingsresultat)
         stegService.oppdaterSteg(behandlingId, behandling.steg, stegForResultat(behandlingsresultat))
+        taskRepository.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId))
     }
 
     private fun opprettJournalførBrevTask(behandlingId: UUID) {

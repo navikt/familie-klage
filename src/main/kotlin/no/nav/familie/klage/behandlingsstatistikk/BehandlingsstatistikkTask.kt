@@ -30,13 +30,12 @@ class BehandlingsstatistikkTask(
 
     companion object {
 
-        fun opprettMottattTask(behandlingId: UUID, oppgaveId: Long?): Task =
+        fun opprettMottattTask(behandlingId: UUID): Task =
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = Hendelse.MOTTATT,
                 hendelseTidspunkt = LocalDateTime.now(),
-                gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(),
-                oppgaveId = oppgaveId
+                gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler()
             )
 
         fun opprettPåbegyntTask(behandlingId: UUID): Task =
@@ -45,24 +44,6 @@ class BehandlingsstatistikkTask(
                 hendelse = Hendelse.PÅBEGYNT,
                 hendelseTidspunkt = LocalDateTime.now(),
                 gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true)
-            )
-
-        fun opprettVedtattTask(behandlingId: UUID): Task =
-            opprettTask(
-                behandlingId = behandlingId,
-                hendelse = Hendelse.VEDTATT,
-                hendelseTidspunkt = LocalDateTime.now()
-            )
-
-        fun opprettBesluttetTask(
-            behandlingId: UUID,
-            oppgaveId: Long?
-        ): Task =
-            opprettTask(
-                behandlingId = behandlingId,
-                hendelse = Hendelse.BESLUTTET,
-                hendelseTidspunkt = LocalDateTime.now(),
-                oppgaveId = oppgaveId
             )
 
         fun opprettFerdigTask(behandlingId: UUID): Task =
@@ -76,9 +57,7 @@ class BehandlingsstatistikkTask(
             behandlingId: UUID,
             hendelse: Hendelse,
             hendelseTidspunkt: LocalDateTime = LocalDateTime.now(),
-            gjeldendeSaksbehandler: String? = null,
-            oppgaveId: Long? = null,
-            behandlingMetode: BehandlingMetode? = null
+            gjeldendeSaksbehandler: String? = null
         ): Task =
             Task(
                 type = TYPE,
