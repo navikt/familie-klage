@@ -92,14 +92,14 @@ internal class JournalførBrevTaskTest {
 
         val mottakerPerson = AvsenderMottaker("1", BrukerIdType.FNR, "1navn")
         val mottakerPerson2 = AvsenderMottaker("2", BrukerIdType.FNR, "2navn")
-        val mottakerOrganisasjon = AvsenderMottaker("org1", BrukerIdType.ORGNR, "orgnavn")
+        val mottakerOrganisasjon = AvsenderMottaker("org1", BrukerIdType.ORGNR, "mottaker")
 
         val mottakere = Brevmottakere(
             listOf(
                 BrevmottakerPerson("1", "1navn", MottakerRolle.BRUKER),
                 BrevmottakerPerson("2", "2navn", MottakerRolle.FULLMAKT)
             ),
-            listOf(BrevmottakerOrganisasjon("org1", "orgnavn", MottakerRolle.VERGE))
+            listOf(BrevmottakerOrganisasjon("org1", "orgnavn", "mottaker"))
         )
 
         @Test
@@ -162,12 +162,12 @@ internal class JournalførBrevTaskTest {
 
     private fun mockHentBrev(mottakere: Brevmottakere? = null, mottakereJournalpost: BrevmottakereJournalposter? = null) {
         every { brevService.hentBrev(behandlingId) } returns
-                Brev(
-                    behandlingId = behandlingId,
-                    saksbehandlerHtml = "",
-                    mottakere = mottakere,
-                    mottakereJournalposter = mottakereJournalpost,
-                    pdf = Fil(byteArrayOf())
-                )
+            Brev(
+                behandlingId = behandlingId,
+                saksbehandlerHtml = "",
+                mottakere = mottakere,
+                mottakereJournalposter = mottakereJournalpost,
+                pdf = Fil(byteArrayOf())
+            )
     }
 }

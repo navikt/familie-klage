@@ -21,7 +21,7 @@ data class Brev(
 }
 
 data class BrevmottakereJournalposter(
-    val journalposter: List<BrevmottakereJournalpost>,
+    val journalposter: List<BrevmottakereJournalpost>
 )
 
 data class BrevmottakereJournalpost(
@@ -49,6 +49,6 @@ data class BrevmottakerPerson(
 
 data class BrevmottakerOrganisasjon(
     val organisasjonsnummer: String,
-    val navnHosOrganisasjon: String,
-    val mottakerRolle: MottakerRolle // TODO brukes denne egentlige til noe ?
+    val organisasjonsnavn: String,
+    val navnHosOrganisasjon: String
 )

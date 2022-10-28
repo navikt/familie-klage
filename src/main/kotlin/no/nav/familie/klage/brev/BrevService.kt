@@ -83,7 +83,7 @@ class BrevService(
         lagreEllerOppdaterBrev(
             behandlingId = behandlingId,
             saksbehandlerHtml = html,
-            fagsak = fagsak,
+            fagsak = fagsak
         )
 
         return familieDokumentClient.genererPdfFraHtml(html)

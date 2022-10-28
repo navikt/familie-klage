@@ -62,7 +62,7 @@ internal class BrevRepositoryTest : OppslagSpringRunnerTest() {
             personer = listOf(
                 BrevmottakerPerson("ident", "navn", MottakerRolle.BRUKER)
             ),
-            organisasjoner = listOf(BrevmottakerOrganisasjon("orgnr", "navn", MottakerRolle.FULLMAKT))
+            organisasjoner = listOf(BrevmottakerOrganisasjon("orgnr", "navn", "mottaker"))
         ),
         mottakereJournalposter = BrevmottakereJournalposter(listOf(brevmottakereJournalpost("distId")))
     )

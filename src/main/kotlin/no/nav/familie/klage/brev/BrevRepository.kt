@@ -12,9 +12,7 @@ import java.util.UUID
 @Repository
 interface BrevRepository : RepositoryInterface<Brev, UUID>, InsertUpdateRepository<Brev> {
 
-
     @Modifying
     @Query("""UPDATE brev SET mottakere_journalposter = :brevmottakereJournalposter WHERE behandling_id = :behandlingId""")
     fun oppdaterMottakerJournalpost(behandlingId: UUID, brevmottakereJournalposter: BrevmottakereJournalposter)
-
 }

@@ -5,7 +5,6 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
-import no.nav.familie.klage.brev.dto.AvsnittDto
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson

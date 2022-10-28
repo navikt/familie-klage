@@ -55,7 +55,6 @@ internal class DistribuerBrevTaskTest {
 
             verifyAntallKall(0)
         }
-
     }
 
     @Test
@@ -121,11 +120,11 @@ internal class DistribuerBrevTaskTest {
 
     private fun mockHentBrev(journalposter: List<BrevmottakereJournalpost>? = null) {
         every { brevService.hentBrev(behandlingId) } returns
-                Brev(
-                    behandlingId = behandlingId,
-                    saksbehandlerHtml = "",
-                    mottakereJournalposter = journalposter?.let { BrevmottakereJournalposter(it) },
-                    pdf = Fil(byteArrayOf())
-                )
+            Brev(
+                behandlingId = behandlingId,
+                saksbehandlerHtml = "",
+                mottakereJournalposter = journalposter?.let { BrevmottakereJournalposter(it) },
+                pdf = Fil(byteArrayOf())
+            )
     }
 }
