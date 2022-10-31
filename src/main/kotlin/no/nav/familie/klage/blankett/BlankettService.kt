@@ -4,6 +4,7 @@ import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.formkrav.dto.FormDto
+import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.dto.VurderingDto
@@ -16,26 +17,38 @@ class BlankettService(
     private val personopplysningerService: PersonopplysningerService,
     private val formService: FormService,
     private val vurderingService: VurderingService,
-    private val blankettClient: BlankettClient
+    private val blankettClient: BlankettClient,
+    private val fagsystemVedtakService: FagsystemVedtakService
 ) {
 
     fun lagBlankett(behandlingId: UUID): ByteArray {
         val behandling = behandlingService.hentBehandlingDto(behandlingId)
         val formkrav = formService.hentFormDto(behandlingId)
         val vurdering = vurderingService.hentVurderingDto(behandlingId)
+        val påklagetVedtak = mapPåklagetVedtak(behandling)
 
         val blankettPdfRequest = BlankettPdfRequest(
             behandling = BlankettPdfBehandling(
+                eksternFagsakId = behandling.eksternFagsystemFagsakId,
                 stønadstype = behandling.stønadstype,
                 klageMottatt = behandling.klageMottatt,
                 resultat = behandling.resultat ?: error("Mangler resultat på behandling=$behandlingId"),
-                påklagetVedtak = BlankettPåklagetVedtakDto(behandling.påklagetVedtak.eksternFagsystemBehandlingId)
+                påklagetVedtak = påklagetVedtak
             ),
             personopplysninger = lagPersonopplysningerDto(behandling),
             formkrav = mapFormkrav(formkrav),
             vurdering = mapVurdering(vurdering)
         )
         return blankettClient.genererBlankett(blankettPdfRequest)
+    }
+
+    private fun mapPåklagetVedtak(behandling: BehandlingDto): BlankettPåklagetVedtakDto? {
+        return behandling.påklagetVedtak.eksternFagsystemBehandlingId?.let { påklagetBehandlingId ->
+            val fagsystemVedtak = fagsystemVedtakService.hentFagsystemVedtak(behandling.id)
+            val påklagetVedtak = fagsystemVedtak.singleOrNull { it.eksternBehandlingId == påklagetBehandlingId }
+                ?: error("Finner ikke fagsystemvedtak med eksternBehandlingId=$påklagetBehandlingId")
+            BlankettPåklagetVedtakDto(påklagetVedtak.behandlingstype, påklagetVedtak.resultat, påklagetVedtak.vedtakstidspunkt)
+        }
     }
 
     private fun mapVurdering(vurdering: VurderingDto?): BlankettVurderingDto? {

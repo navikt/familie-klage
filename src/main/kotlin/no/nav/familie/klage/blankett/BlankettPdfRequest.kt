@@ -7,6 +7,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.klage.Årsak
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class BlankettPdfRequest(
     val behandling: BlankettPdfBehandling,
@@ -16,14 +17,17 @@ data class BlankettPdfRequest(
 )
 
 data class BlankettPdfBehandling(
+    val eksternFagsakId: String,
     val stønadstype: Stønadstype,
     val klageMottatt: LocalDate,
     val resultat: BehandlingResultat,
-    val påklagetVedtak: BlankettPåklagetVedtakDto
+    val påklagetVedtak: BlankettPåklagetVedtakDto?
 )
 
 data class BlankettPåklagetVedtakDto(
-    val eksternFagsystemBehandlingId: String?
+    val behandlingstype: String,
+    val resultat: String,
+    val vedtakstidspunkt: LocalDateTime
 )
 
 data class PersonopplysningerDto(
