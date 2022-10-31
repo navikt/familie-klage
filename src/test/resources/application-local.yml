@@ -19,7 +19,7 @@ spring:
 no.nav.security.jwt:
   issuer.azuread:
     discoveryurl: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
-    accepted_audience: ${AZURE_CLIENT_ID}
+    accepted_audience: ${AZURE_APP_CLIENT_ID}
     cookie_name: azure_token
     proxy_url: #Default satt, skal være null lokalt
 
@@ -31,8 +31,6 @@ FAMILIE_EF_SAK_URL: http://localhost:8093
 FAMILIE_BLANKETT_API_URL: https://familie-ef-blankett.dev.intern.nav.no
 
 AZURE_APP_TENANT_ID: navq.onmicrosoft.com
-AZURE_APP_CLIENT_ID: ${AZURE_CLIENT_ID}
-AZURE_APP_CLIENT_SECRET: ${AZURE_CLIENT_SECRET}
 
 FAMILIE_INTEGRASJONER_SCOPE: api://dev-fss.teamfamilie.familie-integrasjoner/.default
 

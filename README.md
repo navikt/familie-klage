@@ -12,8 +12,8 @@ secret kan hentes fra cluster med
 `kubectl -n teamfamilie get secret azuread-familie-klage-lokal -o json | jq '.data | map_values(@base64d)'`
 `kubectl -n teamfamilie get secret azuread-familie-klage-frontend-lokal -o json | jq '.data | map_values(@base64d)'`
 
-* `AZURE_CLIENT_ID` (fra secret)
-* `AZURE_CLIENT_SECRET` (fra secret)
+* `AZURE_APP_CLIENT_ID` (fra secret)
+* `AZURE_APP_CLIENT_SECRET` (fra secret)
 * Scope for den aktuelle tjenesten (`FAMILIE_INTEGRASJONER_SCOPE`, `FAMILIE_OPPDRAG_SCOPE`, `EF_INFOTRYGD_FEED_SCOPE`, `EF_INFOTRYGD_REPLIKA_SCOPE`)
 
 Variablene legges inn under ApplicationLocal -> Edit Configurations -> Environment Variables.
