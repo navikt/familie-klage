@@ -9,7 +9,7 @@ object FormUtil {
     fun ferdigUtfylt(formkrav: Form, påklagetVedtak: PåklagetVedtakDto) =
             påklagetVedtak.harTattStillingTil() &&
             alleVilkårBesvart(formkrav) &&
-            formkrav.saksbehandlerBegrunnelse.isNotBlank()
+            (alleVilkårOppfylt(formkrav) || begrunnelseUtfylt(formkrav))
 
     fun alleVilkårOppfylt(formkrav: Form): Boolean {
         return formkrav.alleSvar().all { it == FormVilkår.OPPFYLT }

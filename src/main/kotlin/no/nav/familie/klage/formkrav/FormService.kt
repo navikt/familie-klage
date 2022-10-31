@@ -3,9 +3,8 @@ package no.nav.familie.klage.formkrav
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.klage.formkrav.FormUtil.alleVilkårBesvart
 import no.nav.familie.klage.formkrav.FormUtil.alleVilkårOppfylt
-import no.nav.familie.klage.formkrav.FormUtil.begrunnelseUtfylt
+import no.nav.familie.klage.formkrav.FormUtil.ferdigUtfylt
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.dto.FormkravDto
 import no.nav.familie.klage.formkrav.dto.tilDto
@@ -17,10 +16,10 @@ import java.util.UUID
 
 @Service
 class FormService(
-    private val formRepository: FormRepository,
-    private val stegService: StegService,
-    private val behandlingService: BehandlingService,
-    private val vurderingService: VurderingService
+        private val formRepository: FormRepository,
+        private val stegService: StegService,
+        private val behandlingService: BehandlingService,
+        private val vurderingService: VurderingService
 ) {
 
     fun hentForm(behandlingId: UUID): Form = formRepository.findByIdOrThrow(behandlingId)
@@ -44,16 +43,12 @@ class FormService(
         )
         behandlingService.oppdaterPåklagetVedtak(behandlingId, nyttPåklagetVedtak)
 
-        if (alleVilkårBesvart(oppdaterteFormkrav) && nyttPåklagetVedtak.harTattStillingTil()) {
+        if (ferdigUtfylt(oppdaterteFormkrav, nyttPåklagetVedtak)) {
             if (alleVilkårOppfylt(oppdaterteFormkrav)) {
                 stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.VURDERING)
             } else {
-                if (begrunnelseUtfylt(oppdaterteFormkrav)) {
-                    vurderingService.slettVurderingForBehandling(behandlingId)
-                    stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.BREV)
-                } else {
-                    stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.FORMKRAV)
-                }
+                vurderingService.slettVurderingForBehandling(behandlingId)
+                stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.BREV)
             }
         } else {
             stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.FORMKRAV)
