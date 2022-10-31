@@ -3,7 +3,7 @@ package no.nav.familie.klage.blankett
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.formkrav.FormService
-import no.nav.familie.klage.formkrav.dto.FormDto
+import no.nav.familie.klage.formkrav.dto.FormkravDto
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.vurdering.VurderingService
@@ -63,7 +63,7 @@ class BlankettService(
         }
     }
 
-    private fun mapFormkrav(formkrav: FormDto) = BlankettFormDto(
+    private fun mapFormkrav(formkrav: FormkravDto) = BlankettFormDto(
         klagePart = formkrav.klagePart,
         klageKonkret = formkrav.klageKonkret,
         klagefristOverholdt = formkrav.klagefristOverholdt,

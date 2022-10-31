@@ -1,7 +1,7 @@
 package no.nav.familie.klage.formkrav
 
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
-import no.nav.familie.klage.formkrav.dto.FormDto
+import no.nav.familie.klage.formkrav.dto.FormkravDto
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
@@ -24,16 +24,16 @@ class FormController(
 ) {
 
     @GetMapping("vilkar/{behandlingId}")
-    fun hentVilkår(@PathVariable behandlingId: UUID): Ressurs<FormDto> {
+    fun hentVilkår(@PathVariable behandlingId: UUID): Ressurs<FormkravDto> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleForBehandling(behandlingId)
         return Ressurs.success(formService.hentFormDto(behandlingId))
     }
 
     @PostMapping
-    fun oppdaterFormkravVilkår(@RequestBody form: FormDto): Ressurs<FormDto> {
+    fun oppdaterFormkravVilkår(@RequestBody form: FormkravDto): Ressurs<FormkravDto> {
         tilgangService.validerTilgangTilBehandling(form.behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleForBehandling(form.behandlingId)
-        return Ressurs.success(formService.oppdaterForm(form))
+        return Ressurs.success(formService.oppdaterFormkrav(form))
     }
 }

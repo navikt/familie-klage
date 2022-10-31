@@ -3,10 +3,10 @@ package no.nav.familie.klage.formkrav
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.klage.formkrav.FormUtil.formkravErFerdigUtfyllt
-import no.nav.familie.klage.formkrav.FormUtil.formkravErOppfylt
+import no.nav.familie.klage.formkrav.FormUtil.alleVilkårOppfylt
+import no.nav.familie.klage.formkrav.FormUtil.ferdigUtfylt
 import no.nav.familie.klage.formkrav.domain.Form
-import no.nav.familie.klage.formkrav.dto.FormDto
+import no.nav.familie.klage.formkrav.dto.FormkravDto
 import no.nav.familie.klage.formkrav.dto.tilDto
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
@@ -16,10 +16,10 @@ import java.util.UUID
 
 @Service
 class FormService(
-    private val formRepository: FormRepository,
-    private val stegService: StegService,
-    private val behandlingService: BehandlingService,
-    private val vurderingService: VurderingService
+        private val formRepository: FormRepository,
+        private val stegService: StegService,
+        private val behandlingService: BehandlingService,
+        private val vurderingService: VurderingService
 ) {
 
     fun hentForm(behandlingId: UUID): Form = formRepository.findByIdOrThrow(behandlingId)
@@ -30,20 +30,21 @@ class FormService(
     }
 
     @Transactional
-    fun oppdaterForm(form: FormDto): FormDto {
-        val behandlingId = form.behandlingId
-        val nyttPåklagetVedtak = form.påklagetVedtak
+    fun oppdaterFormkrav(formkrav: FormkravDto): FormkravDto {
+        val behandlingId = formkrav.behandlingId
+        val nyttPåklagetVedtak = formkrav.påklagetVedtak
 
-        val oppdatertForm = formRepository.findByIdOrThrow(behandlingId).copy(
-            klagePart = form.klagePart,
-            klagefristOverholdt = form.klagefristOverholdt,
-            klageKonkret = form.klageKonkret,
-            klageSignert = form.klageSignert,
-            saksbehandlerBegrunnelse = form.saksbehandlerBegrunnelse
+        val oppdaterteFormkrav = formRepository.findByIdOrThrow(behandlingId).copy(
+                klagePart = formkrav.klagePart,
+                klagefristOverholdt = formkrav.klagefristOverholdt,
+                klageKonkret = formkrav.klageKonkret,
+                klageSignert = formkrav.klageSignert,
+                saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse
         )
         behandlingService.oppdaterPåklagetVedtak(behandlingId, nyttPåklagetVedtak)
-        if (formkravErFerdigUtfyllt(oppdatertForm, nyttPåklagetVedtak)) {
-            if (formkravErOppfylt(oppdatertForm)) {
+
+        if (ferdigUtfylt(oppdaterteFormkrav, nyttPåklagetVedtak)) {
+            if (alleVilkårOppfylt(oppdaterteFormkrav)) {
                 stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.VURDERING)
             } else {
                 vurderingService.slettVurderingForBehandling(behandlingId)
@@ -53,15 +54,15 @@ class FormService(
             stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.FORMKRAV)
         }
 
-        return formRepository.update(oppdatertForm).tilDto(nyttPåklagetVedtak)
+        return formRepository.update(oppdaterteFormkrav).tilDto(nyttPåklagetVedtak)
     }
 
     fun formkravErOppfyltForBehandling(behandlingId: UUID): Boolean {
         val form = formRepository.findByIdOrThrow(behandlingId)
-        return formkravErOppfylt(form)
+        return alleVilkårOppfylt(form)
     }
 
-    fun hentFormDto(behandlingId: UUID): FormDto {
+    fun hentFormDto(behandlingId: UUID): FormkravDto {
         val påklagetVedtak = behandlingService.hentBehandling(behandlingId).påklagetVedtak
         return hentForm(behandlingId).tilDto(påklagetVedtak.tilDto())
     }

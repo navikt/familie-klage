@@ -6,14 +6,20 @@ import no.nav.familie.klage.formkrav.domain.FormVilkår
 
 object FormUtil {
 
-    fun formkravErFerdigUtfyllt(form: Form, påklagetVedtak: PåklagetVedtakDto) =
-        form.alleSvar().none { it == FormVilkår.IKKE_SATT } &&
-            form.saksbehandlerBegrunnelse.isNotBlank() &&
-            påklagetVedtak.harTattStillingTil()
+    fun ferdigUtfylt(formkrav: Form, påklagetVedtak: PåklagetVedtakDto) =
+            påklagetVedtak.harTattStillingTil() &&
+            alleVilkårBesvart(formkrav) &&
+            (alleVilkårOppfylt(formkrav) || begrunnelseUtfylt(formkrav))
 
-    fun formkravErOppfylt(form: Form): Boolean {
-        return form.alleSvar().all { it == FormVilkår.OPPFYLT }
+    fun alleVilkårOppfylt(formkrav: Form): Boolean {
+        return formkrav.alleSvar().all { it == FormVilkår.OPPFYLT }
     }
+
+    fun alleVilkårBesvart(formkrav: Form): Boolean {
+        return formkrav.alleSvar().none { it == FormVilkår.IKKE_SATT}
+    }
+
+    fun begrunnelseUtfylt(formkrav: Form) = formkrav.saksbehandlerBegrunnelse.isNotBlank()
 
     private fun Form.alleSvar() = setOf(
         klageKonkret,
