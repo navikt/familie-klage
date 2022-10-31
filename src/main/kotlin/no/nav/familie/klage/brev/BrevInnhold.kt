@@ -80,7 +80,7 @@ object BrevInnhold {
         )
     }
 
-    private fun Stønadstype.tilVisningsnavn() = this.toString().lowercase()
+    private fun Stønadstype.tilVisningsnavn() = this.name.lowercase()
 
     private fun Stønadstype.lesMerUrl() = when (this) {
         Stønadstype.OVERGANGSSTØNAD,
