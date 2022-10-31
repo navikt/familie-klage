@@ -83,6 +83,15 @@ no.nav.security.jwt:
           client-id: ${AZURE_APP_CLIENT_ID}
           client-secret: ${AZURE_APP_CLIENT_SECRET}
           client-auth-method: client_secret_basic
+      familie-ef-sak-clientcredentials:
+        resource-url: ${FAMILIE_EF_SAK_URL}
+        token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+        grant-type: client_credentials
+        scope: ${FAMILIE_EF_SAK_SCOPE}
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_basic
       ef-proxy:
         resource-url: ${FAMILIE_EF_PROXY_URL}
         token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
