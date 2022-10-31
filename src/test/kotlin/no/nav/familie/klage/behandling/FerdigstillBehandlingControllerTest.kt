@@ -11,7 +11,6 @@ import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
-import no.nav.familie.klage.testutil.DomainUtil.fritekstbrev
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
 import no.nav.familie.klage.testutil.DomainUtil.tilFagsak
 import no.nav.familie.klage.testutil.DomainUtil.vurderingDto
@@ -51,7 +50,6 @@ internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
     val fagsak = fagsakDomain().tilFagsak()
     val behandling = behandling(fagsak = fagsak)
     val vurdering = vurderingDto(behandlingId = behandling.id)
-    val fritekstbrev = fritekstbrev(behandlingId = behandling.id)
 
     @BeforeEach
     internal fun setUp() {
