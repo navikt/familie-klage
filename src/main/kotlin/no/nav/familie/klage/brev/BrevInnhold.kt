@@ -16,27 +16,23 @@ object BrevInnhold {
         val lesMerUrl = stønadstype.lesMerUrl()
 
         return FritekstBrevRequestDto(
-            overskrift = "",
+            overskrift = "Vi har sendt klagen din til NAV Klageinstans",
             navn = navn,
             personIdent = ident,
             avsnitt =
             listOf(
                 AvsnittDto(
                     deloverskrift = "",
-                    innhold = "Vi har sendt klagen din til NAV Klageinstans"
-                ),
-                AvsnittDto(
-                    deloverskrift = "",
                     innhold =
-                    "Vi har vurdert klagen din på vedtaket om $stønadstypeVisningsnavn, og kommet frem til at vedtaket ikke endres. NAV Klageinstans skal derfor vurdere saken din på nytt."
+                    "Vi har fått klagen din på vedtaket om $stønadstypeVisningsnavn, og kommet frem til at det ikke endres. NAV Klageinstans skal derfor vurdere saken din på nytt.."
                 ),
                 AvsnittDto(
                     deloverskrift = "",
                     innhold = "Saksbehandlingstidene finner du på nav.no/saksbehandlingstider."
                 ),
                 AvsnittDto(
-                    deloverskrift = "",
-                    innhold = "Dette er vurderingen vi har sendt til NAV Klageinstans\n$instillingKlageinstans"
+                    deloverskrift = "Dette er vurderingen vi har sendt til NAV Klageinstans",
+                    innhold = instillingKlageinstans
                 ),
                 AvsnittDto(
                     deloverskrift = "",
@@ -44,15 +40,19 @@ object BrevInnhold {
                     "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via nav.no/klage."
                 ),
                 AvsnittDto(
-                    deloverskrift = "",
-                    innhold =
-                    "Har du spørsmål?\nDu finner informasjon som kan være nyttig for deg på $lesMerUrl. Du kan også kontakte oss på nav.no/kontakt."
+                    deloverskrift = "Har du spørsmål?",
+                    innhold = "Du finner informasjon som kan være nyttig for deg på $lesMerUrl. Du kan også kontakte oss på nav.no/kontakt."
                 )
             )
         )
     }
 
-    fun lagFormkravAvvistBrev(ident: String, navn: String, begrunnelse: String, stønadstype: Stønadstype): FritekstBrevRequestDto {
+    fun lagFormkravAvvistBrev(
+        ident: String,
+        navn: String,
+        begrunnelse: String,
+        stønadstype: Stønadstype
+    ): FritekstBrevRequestDto {
         val lesMerUrl = stønadstype.lesMerUrl()
 
         return FritekstBrevRequestDto(
@@ -80,7 +80,7 @@ object BrevInnhold {
         )
     }
 
-    private fun Stønadstype.tilVisningsnavn() = this.toString().lowercase().replaceFirstChar { it.uppercase() }
+    private fun Stønadstype.tilVisningsnavn() = this.toString().lowercase()
 
     private fun Stønadstype.lesMerUrl() = when (this) {
         Stønadstype.OVERGANGSSTØNAD,
