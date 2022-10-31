@@ -33,7 +33,7 @@ internal class FormServiceTest {
 
     @BeforeEach
     internal fun setUp() {
-        justRun { stegService.oppdaterSteg(any(), any(), any()) }
+        justRun { stegService.oppdaterSteg(any(), any(), any(), any()) }
         justRun { behandlingService.oppdaterPåklagetVedtak(any(), any()) }
         justRun { vurderingService.slettVurderingForBehandling(any()) }
         every { behandlingService.hentBehandling(any()) } returns behandling(id = behandlingId)

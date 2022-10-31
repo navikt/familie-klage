@@ -83,6 +83,15 @@ no.nav.security.jwt:
           client-id: ${AZURE_APP_CLIENT_ID}
           client-secret: ${AZURE_APP_CLIENT_SECRET}
           client-auth-method: client_secret_basic
+      ef-proxy:
+        resource-url: ${FAMILIE_EF_PROXY_URL}
+        token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+        grant-type: client_credentials
+        scope: ${FAMILIE_EF_PROXY_SCOPE}
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_basic
 
 
 
@@ -90,6 +99,7 @@ no.nav.security.jwt:
 PDL_SCOPE: api://${DEPLOY_ENV}-fss.pdl.pdl-api/.default
 KABAL_SCOPE: api://${DEPLOY_ENV}-gcp.klage.kabal-api/.default
 FAMILIE_EF_SAK_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-ef-sak/.default
+FAMILIE_EF_PROXY_SCOPE: api://${DEPLOY_ENV}-fss.teamfamilie.familie-ef-proxy/.default
 
 
 spring:
@@ -163,6 +173,8 @@ PDL_URL: https://pdl-api.${ON_PREM_URL_ENV}-fss-pub.nais.io
 KABAL_URL: https://kabal-api.intern.nav.no
 
 FAMILIE_EF_SAK_URL: http://familie-ef-sak
+
+FAMILIE_EF_PROXY_URL: https://familie-ef-proxy.${ON_PREM_URL_ENV}-fss-pub.nais.io
 
 FAMILIE_BLANKETT_API_URL: http://familie-ef-blankett
 

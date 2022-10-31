@@ -23,6 +23,7 @@ class PdlClient(
         operations.optionsForAllow(pingUri)
     }
 
+    @Cacheable("hentPerson", cacheManager = "shortCache")
     fun hentPerson(personIdent: String): PdlSøker {
         val pdlPersonRequest = PdlPersonRequest(
             variables = PdlPersonRequestVariables(personIdent),
@@ -36,6 +37,7 @@ class PdlClient(
         return feilsjekkOgReturnerData(personIdent, pdlResponse) { it.person }
     }
 
+    @Cacheable("hentNavnBolk", cacheManager = "shortCache")
     fun hentNavnBolk(personIdenter: List<String>): Map<String, PdlNavn> {
         require(personIdenter.size <= 100) { "Liste med personidenter må være færre enn 100 st" }
         val pdlPersonRequest = PdlPersonBolkRequest(

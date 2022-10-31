@@ -1,7 +1,7 @@
 package no.nav.familie.klage.brev
 
-import no.nav.familie.klage.brev.dto.BrevMedAvsnittDto
-import no.nav.familie.klage.brev.dto.FritekstBrevDto
+import no.nav.familie.klage.brev.dto.BrevmottakereDto
+import no.nav.familie.klage.brev.dto.tilDto
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -24,13 +24,6 @@ class BrevController(
     private val tilgangService: TilgangService
 ) {
 
-    @GetMapping("/{behandlingId}")
-    fun hentBrev(@PathVariable behandlingId: UUID): Ressurs<BrevMedAvsnittDto?> {
-        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
-        tilgangService.validerHarVeilederrolleForBehandling(behandlingId)
-        return Ressurs.success(brevService.hentMellomlagretBrev(behandlingId))
-    }
-
     @GetMapping("/{behandlingId}/pdf")
     fun hentBrevPdf(@PathVariable behandlingId: UUID): Ressurs<ByteArray> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
@@ -38,10 +31,28 @@ class BrevController(
         return Ressurs.success(brevService.hentBrevPdf(behandlingId))
     }
 
-    @PostMapping
-    fun lagEllerOppdaterBrev(@RequestBody brevInnhold: FritekstBrevDto): Ressurs<ByteArray> {
-        tilgangService.validerTilgangTilBehandling(brevInnhold.behandlingId, AuditLoggerEvent.UPDATE)
-        tilgangService.validerHarSaksbehandlerrolleForBehandling(brevInnhold.behandlingId)
-        return Ressurs.success(brevService.lagEllerOppdaterBrev(brevInnhold))
+    @PostMapping("/{behandlingId}")
+    fun lagEllerOppdaterBrev(@PathVariable behandlingId: UUID): Ressurs<ByteArray> {
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
+        return Ressurs.success(brevService.lagBrev(behandlingId))
+    }
+
+    @GetMapping("/{behandlingId}/mottakere")
+    fun hentBrevmottakere(@PathVariable behandlingId: UUID): Ressurs<BrevmottakereDto> {
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerHarVeilederrolleForBehandling(behandlingId)
+        return Ressurs.success(brevService.hentBrevmottakere(behandlingId).tilDto())
+    }
+
+    @PostMapping("/{behandlingId}/mottakere")
+    fun oppdaterBrevmottakere(
+        @PathVariable behandlingId: UUID,
+        @RequestBody mottakere: BrevmottakereDto
+    ): Ressurs<BrevmottakereDto> {
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
+        brevService.settBrevmottakere(behandlingId, mottakere)
+        return Ressurs.success(mottakere)
     }
 }

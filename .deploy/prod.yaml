@@ -60,6 +60,7 @@ spec:
       rules:
         - application: familie-tilbake
         - application: familie-ef-sak
+        - application: familie-ef-proxy
         - application: familie-brev
         - application: familie-ef-blankett
         - application: familie-dokument

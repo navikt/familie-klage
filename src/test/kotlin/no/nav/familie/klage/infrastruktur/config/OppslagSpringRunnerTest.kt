@@ -46,7 +46,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
     "mock-integrasjoner",
     "mock-brev",
     "mock-kabal",
-    "mock-dokument"
+    "mock-dokument",
+    "mock-ereg"
 )
 @EnableMockOAuth2Server
 abstract class OppslagSpringRunnerTest {

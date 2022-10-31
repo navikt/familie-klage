@@ -2,15 +2,15 @@ package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.formkrav.FormRepository
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.testutil.BrukerContextUtil
-import no.nav.familie.klage.testutil.DomainUtil.avsnitt
+import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
-import no.nav.familie.klage.testutil.DomainUtil.fritekstbrev
+import no.nav.familie.klage.vurdering.VurderingRepository
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
-import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -26,6 +26,12 @@ internal class BrevServiceTest : OppslagSpringRunnerTest() {
     @Autowired
     lateinit var behandlingRepository: BehandlingRepository
 
+    @Autowired
+    lateinit var formRepository: FormRepository
+
+    @Autowired
+    lateinit var vurderingRepository: VurderingRepository
+
     private val fagsak = fagsak()
     private val fagsakFerdigstiltBehandling =
         fagsak(stønadstype = Stønadstype.SKOLEPENGER, fagsakPersonId = fagsak.fagsakPersonId)
@@ -39,6 +45,9 @@ internal class BrevServiceTest : OppslagSpringRunnerTest() {
 
         testoppsettService.lagreFagsak(fagsakFerdigstiltBehandling)
         testoppsettService.lagreBehandling(ferdigstiltBehandling)
+
+        formRepository.insert(DomainUtil.oppfyltForm(behandling.id))
+        vurderingRepository.insert(DomainUtil.vurdering(behandling.id))
         BrukerContextUtil.mockBrukerContext()
     }
 
@@ -52,54 +61,15 @@ internal class BrevServiceTest : OppslagSpringRunnerTest() {
 
         @Test
         internal fun `skal ikke kunne lage eller oppdatere når behandlingen er låst`() {
-            assertThatThrownBy { brevService.lagEllerOppdaterBrev(fritekstbrev(ferdigstiltBehandling.id)) }
+            assertThatThrownBy { brevService.lagBrev(ferdigstiltBehandling.id) }
                 .hasMessage("Kan ikke oppdatere brev når behandlingen er låst")
         }
 
         @Test
         internal fun `skal ikke kunne lage eller oppdatere når behandlingen ikke er i brevsteget`() {
             behandlingRepository.update(behandling.copy(steg = StegType.FORMKRAV))
-            assertThatThrownBy { brevService.lagEllerOppdaterBrev(fritekstbrev(behandling.id)) }
+            assertThatThrownBy { brevService.lagBrev(behandling.id) }
                 .hasMessageContaining("Behandlingen er i feil steg ")
-        }
-
-        @Test
-        internal fun `skal slette tidligere avsnitt når man lagrer på nytt`() {
-            val fritekstbrev1 = fritekstbrev(behandling.id, avsnitt = listOf(avsnitt(), avsnitt()))
-            val fritekstbrev2 = fritekstbrev(behandling.id)
-
-            brevService.lagEllerOppdaterBrev(fritekstbrev1)
-            assertThat(brevService.hentMellomlagretBrev(behandling.id)!!.avsnitt).hasSize(2)
-
-            brevService.lagEllerOppdaterBrev(fritekstbrev2)
-            assertThat(brevService.hentMellomlagretBrev(behandling.id)!!.avsnitt).hasSize(1)
-        }
-
-        @Test
-        internal fun `skal generere et nytt avsnittId for avsnitt som sendes inn fra frontend`() {
-            val avsnitt = avsnitt()
-            val fritekstbrev = fritekstbrev(behandling.id, avsnitt = listOf(avsnitt))
-
-            brevService.lagEllerOppdaterBrev(fritekstbrev)
-            val lagredeAvsnitt = brevService.hentMellomlagretBrev(behandling.id)!!.avsnitt
-            assertThat(lagredeAvsnitt).hasSize(1)
-            assertThat(lagredeAvsnitt[0].avsnittId).isNotEqualTo(avsnitt.avsnittId)
-
-            brevService.lagEllerOppdaterBrev(fritekstbrev)
-            val lagredeAvsnitt2 = brevService.hentMellomlagretBrev(behandling.id)!!.avsnitt
-            assertThat(lagredeAvsnitt).hasSize(1)
-            assertThat(lagredeAvsnitt2[0].avsnittId).isNotEqualTo(avsnitt.avsnittId)
-            assertThat(lagredeAvsnitt2[0].avsnittId).isNotEqualTo(lagredeAvsnitt[0].avsnittId)
-        }
-    }
-
-    @Nested
-    inner class hentMellomlagretBrev {
-
-        @Test
-        internal fun `skal ikke kunne hente når behandlingen er låst`() {
-            assertThatThrownBy { brevService.hentMellomlagretBrev(ferdigstiltBehandling.id) }
-                .hasMessage("Kan ikke hente mellomlagret brev når behandlingen er låst")
         }
     }
 
@@ -107,8 +77,8 @@ internal class BrevServiceTest : OppslagSpringRunnerTest() {
     inner class lagBrevSomPdf {
 
         @Test
-        internal fun `kan ikke lagre brevet 2 ganger`() {
-            brevService.lagEllerOppdaterBrev(fritekstbrev(behandling.id))
+        internal fun `kan ikke lage pdf 2 ganger`() {
+            brevService.lagBrev(behandling.id)
             brevService.lagBrevPdf(behandling.id)
 
             assertThatThrownBy { brevService.lagBrevPdf(behandling.id) }

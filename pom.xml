@@ -35,7 +35,7 @@
 		<felles.version>1.20221006150009_46021ed</felles.version>
 		<prosessering.version>1.20220624132237_7f5ba9c</prosessering.version>
 		<start-class>no.nav.familie.klage.ApplicationKt</start-class>
-		<kontrakter.version>2.0_20221025092054_4dc8e9b</kontrakter.version>
+		<kontrakter.version>2.0_20221027151559_d8da825</kontrakter.version>
 		<eksterne-kontrakter.version>2.0_20221019110152_74f39dd</eksterne-kontrakter.version>
 		<saksstatistikk-klage.version>2.0_20221020152712_6e9af14</saksstatistikk-klage.version>
 		<nav.security.version>2.1.6</nav.security.version> <!-- Denne burde være samme versjon som i felles -->

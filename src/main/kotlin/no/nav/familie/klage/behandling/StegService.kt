@@ -9,6 +9,7 @@ import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -21,22 +22,23 @@ class StegService(
 ) {
 
     @Transactional
-    fun oppdaterSteg(behandlingId: UUID, nåværendeSteg: StegType, nesteSteg: StegType) {
+    fun oppdaterSteg(behandlingId: UUID, nåværendeSteg: StegType, nesteSteg: StegType, behandlingsresultat: BehandlingResultat? = null) {
         val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
         validerHarSaksbehandlerRolle(behandlingId)
         validerGyldigNesteSteg(behandling)
-        oppdaterBehandlingOgHistorikk(behandling.id, nåværendeSteg, nesteSteg)
+        oppdaterBehandlingOgHistorikk(behandling.id, nåværendeSteg, nesteSteg, behandlingsresultat)
     }
 
     private fun oppdaterBehandlingOgHistorikk(
         behandlingId: UUID,
         nåværendeSteg: StegType,
-        nesteSteg: StegType
+        nesteSteg: StegType,
+        behandlingsresultat: BehandlingResultat? = null
     ) {
         behandlingRepository.updateSteg(behandlingId, nesteSteg)
         behandlingRepository.updateStatus(behandlingId, nesteSteg.gjelderStatus)
 
-        if (harIkkeAlleredeLagretBehandlingshistorikk(nåværendeSteg, nesteSteg)) {
+        if (skalOppretteHistorikkradForNåværendeSteg(nåværendeSteg, nesteSteg, behandlingsresultat)) {
             behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, nåværendeSteg)
         }
         if (nesteSteg == StegType.KABAL_VENTER_SVAR) {
@@ -47,10 +49,11 @@ class StegService(
         }
     }
 
-    private fun harIkkeAlleredeLagretBehandlingshistorikk(
+    private fun skalOppretteHistorikkradForNåværendeSteg(
         nåværendeSteg: StegType,
-        nesteSteg: StegType
-    ) = !(nåværendeSteg == StegType.VURDERING && nesteSteg == StegType.BEHANDLING_FERDIGSTILT)
+        nesteSteg: StegType,
+        behandlingsresultat: BehandlingResultat? = null
+    ) = !(nåværendeSteg == StegType.BREV && nesteSteg == StegType.BEHANDLING_FERDIGSTILT && behandlingsresultat == BehandlingResultat.MEDHOLD)
 
     private fun validerGyldigNesteSteg(behandling: Behandling) =
         feilHvis(behandling.status.erLåstForVidereBehandling()) {
