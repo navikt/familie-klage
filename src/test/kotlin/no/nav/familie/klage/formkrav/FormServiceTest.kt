@@ -72,8 +72,12 @@ internal class FormServiceTest {
 
         @Test
         internal fun `ikke valgt påklaget vedtak skal gå til steget formKrav`() {
-            service.oppdaterFormkrav(oppfyltFormDto().copy(påklagetVedtak = DomainUtil.påklagetVedtakDto()
-                    .copy(påklagetVedtakstype = PåklagetVedtakstype.IKKE_VALGT)))
+            service.oppdaterFormkrav(
+                oppfyltFormDto().copy(
+                    påklagetVedtak = DomainUtil.påklagetVedtakDto()
+                        .copy(påklagetVedtakstype = PåklagetVedtakstype.IKKE_VALGT)
+                )
+            )
 
             verify { stegService.oppdaterSteg(behandlingId, any(), StegType.FORMKRAV) }
             verify { formRepository.update(any()) }
@@ -123,7 +127,7 @@ internal class FormServiceTest {
                 behandlingshistorikk
             )
             every { taskRepository.save(any()) } returns mockk<Task>()
-            service.oppdaterForm(oppfyltFormDto())
+            service.oppdaterFormkrav(oppfyltFormDto())
             verify { taskRepository.save(any()) }
         }
 
@@ -138,7 +142,7 @@ internal class FormServiceTest {
                 behandlingshistorikk
             )
             every { taskRepository.save(any()) } returns mockk<Task>()
-            service.oppdaterForm(oppfyltFormDto())
+            service.oppdaterFormkrav(oppfyltFormDto())
             verify(exactly = 0) { taskRepository.save(any()) }
         }
     }

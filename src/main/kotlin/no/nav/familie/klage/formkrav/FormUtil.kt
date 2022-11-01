@@ -7,7 +7,7 @@ import no.nav.familie.klage.formkrav.domain.FormVilkår
 object FormUtil {
 
     fun ferdigUtfylt(formkrav: Form, påklagetVedtak: PåklagetVedtakDto) =
-            påklagetVedtak.harTattStillingTil() &&
+        påklagetVedtak.harTattStillingTil() &&
             alleVilkårBesvart(formkrav) &&
             (alleVilkårOppfylt(formkrav) || begrunnelseUtfylt(formkrav))
 
@@ -16,7 +16,7 @@ object FormUtil {
     }
 
     fun alleVilkårBesvart(formkrav: Form): Boolean {
-        return formkrav.alleSvar().none { it == FormVilkår.IKKE_SATT}
+        return formkrav.alleSvar().none { it == FormVilkår.IKKE_SATT }
     }
 
     fun begrunnelseUtfylt(formkrav: Form) = formkrav.saksbehandlerBegrunnelse.isNotBlank()

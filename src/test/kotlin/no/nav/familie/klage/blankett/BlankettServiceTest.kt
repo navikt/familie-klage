@@ -27,7 +27,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-
 internal class BlankettServiceTest {
 
     private val behandlingService = mockk<BehandlingService>()

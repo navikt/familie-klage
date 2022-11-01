@@ -2,8 +2,8 @@ package no.nav.familie.klage.formkrav
 
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
-import no.nav.familie.klage.formkrav.FormUtil.ferdigUtfylt
 import no.nav.familie.klage.formkrav.FormUtil.alleVilkårOppfylt
+import no.nav.familie.klage.formkrav.FormUtil.ferdigUtfylt
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
@@ -37,7 +37,6 @@ internal class FormUtilTest {
             assertThat(ferdigUtfylt(oppfyltForm, påklagetVedtakIkkeValgt)).isFalse
         }
     }
-
 
     @Nested
     inner class formkravErOppfylt {
