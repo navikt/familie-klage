@@ -26,7 +26,9 @@ internal class FormUtilTest {
             val oppfyltForm = oppfyltForm(UUID.randomUUID())
             assertThat(ferdigUtfylt(oppfyltForm, påklagetVedtakMedBehandling)).isTrue
             assertThat(ferdigUtfylt(oppfyltForm, påklagetVedtakUtenVedtak)).isTrue
-            assertThat(ferdigUtfylt(oppfyltForm.copy(klagePart = FormVilkår.IKKE_OPPFYLT, brevtekst = "brevtekst"), påklagetVedtakMedBehandling)).isTrue
+            assertThat(ferdigUtfylt(oppfyltForm.copy(saksbehandlerBegrunnelse = "Ok",
+                                                     klagePart = FormVilkår.IKKE_OPPFYLT,
+                                                     brevtekst = "brevtekst"), påklagetVedtakMedBehandling)).isTrue
         }
 
         @Test

@@ -13,8 +13,8 @@ data class FormkravDto(
     val klageKonkret: FormVilkår,
     val klagefristOverholdt: FormVilkår,
     val klageSignert: FormVilkår,
-    val saksbehandlerBegrunnelse: String,
-    val brevtekst: String,
+    val saksbehandlerBegrunnelse: String?,
+    val brevtekst: String?,
     val endretTid: LocalDateTime,
     val påklagetVedtak: PåklagetVedtakDto
 )

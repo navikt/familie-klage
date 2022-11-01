@@ -97,7 +97,9 @@ internal class FormServiceTest {
 
     private fun oppfyltFormDto() = oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto())
 
-    private fun ikkeOppfyltFormDto() = oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto()).copy(klagePart = FormVilkår.IKKE_OPPFYLT, brevtekst = "brevtekst")
+    private fun ikkeOppfyltFormDto() = oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto()).copy(klagePart = FormVilkår.IKKE_OPPFYLT,
+                                                                                                             saksbehandlerBegrunnelse = "Ok",
+                                                                                                             brevtekst = "brevtekst")
 
     private fun ikkeFerdigutfylt() = oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto()).copy(klagePart = FormVilkår.IKKE_SATT)
 }
