@@ -169,7 +169,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
         OpprettKlagebehandlingRequest(
             "ident",
             Stønadstype.OVERGANGSSTØNAD,
-            "eksternid",
+            UUID.randomUUID().toString(),
             "eksternId",
             Fagsystem.EF,
             LocalDate.now(),

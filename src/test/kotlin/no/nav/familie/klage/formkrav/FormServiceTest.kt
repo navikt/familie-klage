@@ -1,9 +1,13 @@
 package no.nav.familie.klage.formkrav
 
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.runs
+import io.mockk.unmockkAll
+import io.mockk.unmockkObject
 import io.mockk.verify
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.StegService
@@ -14,13 +18,17 @@ import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.formkrav.dto.tilDto
+import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
+import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
+import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -49,14 +57,21 @@ internal class FormServiceTest {
     @BeforeEach
     internal fun setUp() {
         mockkObject(SikkerhetContext)
-
-        every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler"
+        val behandlingshistorikk = mockk<Behandlingshistorikk>()
+        every { behandlingshistorikk.steg } returns StegType.FORMKRAV
+        every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler1"
         justRun { stegService.oppdaterSteg(any(), any(), any(), any()) }
         justRun { behandlingService.oppdaterPåklagetVedtak(any(), any()) }
         justRun { vurderingService.slettVurderingForBehandling(any()) }
         every { behandlingService.hentBehandling(any()) } returns behandling(id = behandlingId)
         every { formRepository.findByIdOrNull(any()) } returns Form(behandlingId)
         every { formRepository.update(any()) } answers { firstArg() }
+        every { behandlingshistorikkService.hentBehandlingshistorikk(any()) } returns listOf(behandlingshistorikk)
+    }
+
+    @AfterEach
+    internal fun tearDown() {
+        unmockkObject(SikkerhetContext)
     }
 
     @Nested
@@ -138,6 +153,7 @@ internal class FormServiceTest {
                 UUID.randomUUID(),
                 StegType.FORMKRAV
             )
+            every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler"
             every { behandlingshistorikkService.hentBehandlingshistorikk(any()) } returns listOf(
                 behandlingshistorikk
             )
