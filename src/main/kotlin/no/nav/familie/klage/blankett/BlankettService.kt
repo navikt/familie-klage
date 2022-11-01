@@ -68,7 +68,8 @@ class BlankettService(
         klageKonkret = formkrav.klageKonkret,
         klagefristOverholdt = formkrav.klagefristOverholdt,
         klageSignert = formkrav.klageSignert,
-        saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse
+        saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse,
+        brevtekst = formkrav.brevtekst
     )
 
     private fun lagPersonopplysningerDto(behandling: BehandlingDto): PersonopplysningerDto {

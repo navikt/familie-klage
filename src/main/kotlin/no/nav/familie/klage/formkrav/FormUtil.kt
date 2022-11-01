@@ -9,7 +9,7 @@ object FormUtil {
     fun ferdigUtfylt(formkrav: Form, påklagetVedtak: PåklagetVedtakDto) =
             påklagetVedtak.harTattStillingTil() &&
             alleVilkårBesvart(formkrav) &&
-            (alleVilkårOppfylt(formkrav) || begrunnelseUtfylt(formkrav))
+            (alleVilkårOppfylt(formkrav) || friteksterUtfylt(formkrav))
 
     fun alleVilkårOppfylt(formkrav: Form): Boolean {
         return formkrav.alleSvar().all { it == FormVilkår.OPPFYLT }
@@ -19,7 +19,11 @@ object FormUtil {
         return formkrav.alleSvar().none { it == FormVilkår.IKKE_SATT}
     }
 
-    fun begrunnelseUtfylt(formkrav: Form) = formkrav.saksbehandlerBegrunnelse.isNotBlank()
+    fun friteksterUtfylt(formkrav: Form) = formkrav.saksbehandlerBegrunnelse != null
+                                           && formkrav.saksbehandlerBegrunnelse.isNotBlank()
+                                           && formkrav.brevtekst != null
+                                           && formkrav.brevtekst.isNotBlank()
+
 
     private fun Form.alleSvar() = setOf(
         klageKonkret,

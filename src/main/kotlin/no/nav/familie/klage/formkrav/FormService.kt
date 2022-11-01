@@ -39,7 +39,8 @@ class FormService(
                 klagefristOverholdt = formkrav.klagefristOverholdt,
                 klageKonkret = formkrav.klageKonkret,
                 klageSignert = formkrav.klageSignert,
-                saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse
+                saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse,
+                brevtekst = formkrav.brevtekst
         )
         behandlingService.oppdaterPåklagetVedtak(behandlingId, nyttPåklagetVedtak)
 
