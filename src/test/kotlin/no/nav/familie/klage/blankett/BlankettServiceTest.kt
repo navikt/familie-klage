@@ -63,7 +63,8 @@ internal class BlankettServiceTest {
         val personopplysningerDto = mockk<PersonopplysningerDto>()
         every { personopplysningerDto.navn } returns "navn"
         every { personopplysningerService.hentPersonopplysninger(behandlingId) } returns personopplysningerDto
-        every { formService.hentFormDto(behandlingId) } returns oppfyltForm(behandlingId).tilDto(mockk())
+        every { formService.hentFormDto(behandlingId) } returns oppfyltForm(behandlingId).copy(brevtekst = "Brevtekst")
+            .tilDto(mockk())
         every { vurderingService.hentVurderingDto(behandlingId) } returns vurderingDto(
             vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
             årsak = Årsak.FEIL_I_LOVANDVENDELSE,
