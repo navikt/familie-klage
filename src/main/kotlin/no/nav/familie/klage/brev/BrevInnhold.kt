@@ -24,7 +24,7 @@ object BrevInnhold {
                 AvsnittDto(
                     deloverskrift = "",
                     innhold =
-                    "Vi har fått klagen din på vedtaket om $stønadstypeVisningsnavn, og kommet frem til at det ikke endres. NAV Klageinstans skal derfor vurdere saken din på nytt.."
+                    "Vi har fått klagen din på vedtaket om $stønadstypeVisningsnavn, og kommet frem til at det ikke endres. NAV Klageinstans skal derfor vurdere saken din på nytt."
                 ),
                 AvsnittDto(
                     deloverskrift = "",
