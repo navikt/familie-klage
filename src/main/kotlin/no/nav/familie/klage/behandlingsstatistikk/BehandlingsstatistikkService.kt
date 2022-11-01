@@ -54,7 +54,6 @@ class BehandlingsstatistikkService(
                 erStrengtFortrolig,
                 behandling.behandlendeEnhet
             ),
-            sakId = fagsak.eksternId,
             mottattTid = behandling.klageMottatt.atStartOfDay(zoneIdOslo),
             ferdigBehandletTid = if (hendelse == Hendelse.FERDIG) hendelseTidspunkt.atZone(zoneIdOslo) else null,
             vedtakTid = if (hendelse == Hendelse.VEDTATT) hendelseTidspunkt.atZone(zoneIdOslo) else null,
@@ -64,9 +63,7 @@ class BehandlingsstatistikkService(
             behandlingMetode = "MANUELL",
             saksbehandler = behandling.sporbar.endret.endretAv,
             avsender = "Klage familie",
-
-            // TODO : Fjern
-            saksnummer = ""
+            saksnummer = fagsak.eksternId
         )
     }
 

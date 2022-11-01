@@ -40,12 +40,12 @@ class FormService(
         val nyttPåklagetVedtak = formkrav.påklagetVedtak
 
         val oppdaterteFormkrav = formRepository.findByIdOrThrow(behandlingId).copy(
-                klagePart = formkrav.klagePart,
-                klagefristOverholdt = formkrav.klagefristOverholdt,
-                klageKonkret = formkrav.klageKonkret,
-                klageSignert = formkrav.klageSignert,
-                saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse,
-                brevtekst = formkrav.brevtekst
+            klagePart = formkrav.klagePart,
+            klagefristOverholdt = formkrav.klagefristOverholdt,
+            klageKonkret = formkrav.klageKonkret,
+            klageSignert = formkrav.klageSignert,
+            saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse,
+            brevtekst = formkrav.brevtekst
         )
         behandlingService.oppdaterPåklagetVedtak(behandlingId, nyttPåklagetVedtak)
 

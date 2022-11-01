@@ -19,11 +19,10 @@ object FormUtil {
         return formkrav.alleSvar().none { it == FormVilkår.IKKE_SATT }
     }
 
-    fun friteksterUtfylt(formkrav: Form) = formkrav.saksbehandlerBegrunnelse != null
-                                           && formkrav.saksbehandlerBegrunnelse.isNotBlank()
-                                           && formkrav.brevtekst != null
-                                           && formkrav.brevtekst.isNotBlank()
-
+    fun friteksterUtfylt(formkrav: Form) = formkrav.saksbehandlerBegrunnelse != null &&
+        formkrav.saksbehandlerBegrunnelse.isNotBlank() &&
+        formkrav.brevtekst != null &&
+        formkrav.brevtekst.isNotBlank()
 
     private fun Form.alleSvar() = setOf(
         klageKonkret,

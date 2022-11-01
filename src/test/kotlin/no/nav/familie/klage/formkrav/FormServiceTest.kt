@@ -1,12 +1,9 @@
 package no.nav.familie.klage.formkrav
 
-import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.mockkObject
-import io.mockk.runs
-import io.mockk.unmockkAll
 import io.mockk.unmockkObject
 import io.mockk.verify
 import no.nav.familie.klage.behandling.BehandlingService
@@ -18,16 +15,13 @@ import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.formkrav.dto.tilDto
-import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
-import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
-import org.junit.After
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -165,9 +159,11 @@ internal class FormServiceTest {
 
     private fun oppfyltFormDto() = oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto())
 
-    private fun ikkeOppfyltFormDto() = oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto()).copy(klagePart = FormVilkår.IKKE_OPPFYLT,
-                                                                                                             saksbehandlerBegrunnelse = "Ok",
-                                                                                                             brevtekst = "brevtekst")
+    private fun ikkeOppfyltFormDto() = oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto()).copy(
+        klagePart = FormVilkår.IKKE_OPPFYLT,
+        saksbehandlerBegrunnelse = "Ok",
+        brevtekst = "brevtekst"
+    )
 
     private fun ikkeFerdigutfylt() =
         oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto()).copy(klagePart = FormVilkår.IKKE_SATT)
