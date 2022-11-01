@@ -110,8 +110,8 @@ class BrevService(
                 BrevInnhold.lagOpprettholdelseBrev(fagsak.hentAktivIdent(), instillingKlageinstans, navn, fagsak.stønadstype)
             }
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> {
-                val begrunnelse = "Begrunnelse for formkrav avvist" // TODO
-                BrevInnhold.lagFormkravAvvistBrev(fagsak.hentAktivIdent(), navn, begrunnelse, fagsak.stønadstype)
+                val formkrav = formService.hentForm(behandlingId)
+                BrevInnhold.lagFormkravAvvistBrev(fagsak.hentAktivIdent(), navn, formkrav, fagsak.stønadstype)
             }
             BehandlingResultat.MEDHOLD,
             BehandlingResultat.IKKE_SATT,
