@@ -13,9 +13,9 @@ object FormBrevUtil {
             "Skal ikke kunne utlede innholdstekst til formkrav avvist brev uten ikke oppfylte formkrav"
         }
         if (formkravVilkår.size > 1) {
-            return "$tekstPrefix: ${formkravVilkår.joinToString("") { "\n  •  ${it.tekst}" }}"
+            return "$innholdstekstPrefix: ${formkravVilkår.joinToString("") { "\n  •  ${it.tekst}" }}"
         } else {
-            return "$tekstPrefix ${formkravVilkår.first().tekst}"
+            return "$innholdstekstPrefix ${formkravVilkår.first().tekst}"
         }
     }
 
@@ -28,7 +28,7 @@ object FormBrevUtil {
         ).filterNotNull().toSet()
     }
 
-    fun utledLovtekstInnhold(formkravVilkår: Set<FormkravVilkår>): String {
+    fun utledLovtekst(formkravVilkår: Set<FormkravVilkår>): String {
         val folketrygdloven = formkravVilkår.flatMap { it.folketrygdLoven }.sorted().toSet()
         val forvaltningsloven = formkravVilkår.flatMap { it.forvaltningsloven }.sorted().toSet()
         val harFolketrygdlov = folketrygdloven.isNotEmpty()
@@ -45,7 +45,6 @@ object FormBrevUtil {
         } else {
             throw Feil("Har ingen paragrafer å utlede i vedtaksbrev ved formkrav avvist")
         }
-
     }
 
     private fun utledParagrafer(paragrafer: Set<String>): String {
@@ -58,7 +57,7 @@ object FormBrevUtil {
         }
     }
 
-    const val tekstPrefix = "Vi har avvist klagen din fordi"
+    const val innholdstekstPrefix = "Vi har avvist klagen din fordi"
 
     enum class FormkravVilkår(val tekst: String, val folketrygdLoven: Set<String>, val forvaltningsloven: Set<String>) {
         KLAGE_KONKRET("du har ikke sagt hva du klager på.", emptySet(), setOf("32", "33")),
@@ -66,6 +65,4 @@ object FormBrevUtil {
         KLAGE_SIGNERT("du ikke har underskrevet den.", emptySet(), setOf("31", "33")),
         KLAGEFRIST_OVERHOLDT("du har klaget for sent.", setOf("21-12"), setOf("31", "33"))
     }
-
-
 }

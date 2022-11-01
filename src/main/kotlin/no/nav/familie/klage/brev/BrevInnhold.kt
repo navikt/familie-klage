@@ -2,7 +2,7 @@ package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.brev.FormBrevUtil.utledIkkeOppfylteFormkrav
 import no.nav.familie.klage.brev.FormBrevUtil.utledInnholdstekst
-import no.nav.familie.klage.brev.FormBrevUtil.utledLovtekstInnhold
+import no.nav.familie.klage.brev.FormBrevUtil.utledLovtekst
 import no.nav.familie.klage.brev.dto.AvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.formkrav.domain.Form
@@ -77,7 +77,7 @@ object BrevInnhold {
                 ),
                 AvsnittDto(
                         deloverskrift = "",
-                        innhold = utledLovtekstInnhold(ikkeOppfylteFormkrav)
+                        innhold = utledLovtekst(ikkeOppfylteFormkrav)
                 ),
                 AvsnittDto(
                     deloverskrift = "Du har rett til å klage",
