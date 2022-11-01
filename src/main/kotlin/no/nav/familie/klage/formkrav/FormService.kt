@@ -3,6 +3,7 @@ package no.nav.familie.klage.formkrav
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.formkrav.FormUtil.formkravErFerdigUtfyllt
 import no.nav.familie.klage.formkrav.FormUtil.formkravErOppfylt
@@ -21,6 +22,7 @@ class FormService(
     private val formRepository: FormRepository,
     private val stegService: StegService,
     private val behandlingService: BehandlingService,
+    private val behandlingshistorikkService: BehandlingshistorikkService,
     private val vurderingService: VurderingService,
     private val taskRepository: TaskRepository
 ) {
@@ -29,7 +31,6 @@ class FormService(
 
     @Transactional
     fun opprettInitielleFormkrav(behandlingId: UUID): Form {
-        taskRepository.save(BehandlingsstatistikkTask.opprettPåbegyntTask(behandlingId = behandlingId))
         return formRepository.insert(Form(behandlingId = behandlingId))
     }
 
@@ -56,7 +57,9 @@ class FormService(
         } else {
             stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.FORMKRAV)
         }
-
+        behandlingshistorikkService.hentBehandlingshistorikk(behandlingId).find { it.steg == StegType.FORMKRAV } ?: run {
+            taskRepository.save(BehandlingsstatistikkTask.opprettPåbegyntTask(behandlingId = behandlingId))
+        }
         return formRepository.update(oppdatertForm).tilDto(nyttPåklagetVedtak)
     }
 
