@@ -13,6 +13,7 @@ data class Form(
     val klageKonkret: FormVilkår = FormVilkår.IKKE_SATT,
     val klageSignert: FormVilkår = FormVilkår.IKKE_SATT,
     val saksbehandlerBegrunnelse: String = "",
+    val brevtekst: String = "",
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar()
 )

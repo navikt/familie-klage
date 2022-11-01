@@ -14,6 +14,7 @@ data class FormkravDto(
     val klagefristOverholdt: FormVilkår,
     val klageSignert: FormVilkår,
     val saksbehandlerBegrunnelse: String,
+    val brevtekst: String,
     val endretTid: LocalDateTime,
     val påklagetVedtak: PåklagetVedtakDto
 )
@@ -26,6 +27,7 @@ fun Form.tilDto(påklagetVedtak: PåklagetVedtakDto): FormkravDto =
         klagefristOverholdt = this.klagefristOverholdt,
         klageSignert = this.klageSignert,
         saksbehandlerBegrunnelse = this.saksbehandlerBegrunnelse,
+        brevtekst = this.brevtekst,
         endretTid = this.sporbar.endret.endretTid,
         påklagetVedtak = påklagetVedtak
     )
