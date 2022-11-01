@@ -19,7 +19,8 @@
     "klageKonkret" : "OPPFYLT",
     "klagefristOverholdt" : "OPPFYLT",
     "klageSignert" : "OPPFYLT",
-    "saksbehandlerBegrunnelse" : "Ok"
+    "saksbehandlerBegrunnelse" : "Ok",
+    "brevtekst" : "Brevtekst"
   },
   "vurdering" : {
     "vedtak" : "OPPRETTHOLD_VEDTAK",
