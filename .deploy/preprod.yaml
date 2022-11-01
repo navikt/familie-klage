@@ -60,6 +60,7 @@ spec:
     outbound:
       rules:
         - application: familie-ef-sak
+        - application: familie-ef-proxy
         - application: familie-tilbake
         - application: familie-brev
         - application: familie-ef-blankett

@@ -1,13 +1,13 @@
 package no.nav.familie.klage.distribusjon
 
 import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.distribusjon.DokumenttypeUtil.dokumenttypeBrev
 import no.nav.familie.klage.distribusjon.DokumenttypeUtil.dokumenttypeSaksbehandlingsblankett
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.felles.util.TekstUtil.storForbokstav
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
+import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.Dokument
@@ -20,13 +20,17 @@ import java.util.UUID
 class DistribusjonService(
     private val familieIntegrasjonerClient: FamilieIntegrasjonerClient,
     private val fagsakService: FagsakService,
-    private val behandlingService: BehandlingService,
-    private val brevService: BrevService
+    private val behandlingService: BehandlingService
 ) {
 
-    fun journalførBrev(behandlingId: UUID, saksbehandler: String): String {
+    fun journalførBrev(
+        behandlingId: UUID,
+        brev: ByteArray,
+        saksbehandler: String,
+        index: Int = 0,
+        mottaker: AvsenderMottaker
+    ): String {
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
-        val brev = brevService.hentBrevPdf(behandlingId)
 
         return journalfør(
             behandlingId = behandlingId,
@@ -34,7 +38,9 @@ class DistribusjonService(
             pdf = brev,
             tittel = "Brev for klage på ${fagsak.stønadstype.name.storForbokstav()}",
             dokumenttype = dokumenttypeBrev(fagsak.stønadstype),
-            saksbehandler = saksbehandler
+            saksbehandler = saksbehandler,
+            suffixEksternReferanseId = "-$index",
+            avsenderMottaker = mottaker
         )
     }
 
@@ -63,7 +69,8 @@ class DistribusjonService(
         tittel: String,
         dokumenttype: Dokumenttype,
         saksbehandler: String,
-        suffixEksternReferanseId: String = ""
+        suffixEksternReferanseId: String = "",
+        avsenderMottaker: AvsenderMottaker? = null
     ): String {
         val behandling = behandlingService.hentBehandling(behandlingId)
 
@@ -79,7 +86,8 @@ class DistribusjonService(
             vedleggsdokumenter = listOf(),
             fagsakId = fagsak.eksternId,
             journalførendeEnhet = behandling.behandlendeEnhet,
-            eksternReferanseId = "${behandling.eksternBehandlingId}$suffixEksternReferanseId"
+            eksternReferanseId = "${behandling.eksternBehandlingId}$suffixEksternReferanseId",
+            avsenderMottaker = avsenderMottaker
         )
 
         return familieIntegrasjonerClient.arkiverDokument(

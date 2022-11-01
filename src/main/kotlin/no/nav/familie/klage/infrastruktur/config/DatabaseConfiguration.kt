@@ -1,10 +1,15 @@
 package no.nav.familie.klage.infrastruktur.config
 
+import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.klage.brev.domain.Brevmottakere
+import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.felles.domain.Endret
 import no.nav.familie.klage.felles.domain.Fil
+import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.PropertiesWrapperTilStringConverter
 import no.nav.familie.prosessering.StringTilPropertiesWrapperConverter
 import org.apache.commons.lang3.StringUtils
+import org.postgresql.util.PGobject
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.flyway.FlywayConfigurationCustomizer
 import org.springframework.context.annotation.Bean
@@ -56,7 +61,11 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
                 StringListTilStringConverter(),
                 StringTilStringList(),
                 FilTilBytearrayConverter(),
-                BytearrayTilFilConverter()
+                BytearrayTilFilConverter(),
+                BrevmottakereTilBytearrayConverter(),
+                BytearrayTilBrevmottakereConverter(),
+                BrevmottakereJournalposterTilBytearrayConverter(),
+                BytearrayTilBrevmottakereJournalposterConverter()
             )
         )
     }
@@ -109,6 +118,40 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
 
         override fun convert(bytes: ByteArray): Fil {
             return Fil(bytes)
+        }
+    }
+
+    @WritingConverter
+    class BrevmottakereTilBytearrayConverter : Converter<Brevmottakere, PGobject> {
+
+        override fun convert(o: Brevmottakere): PGobject = PGobject().apply {
+            type = "json"
+            value = objectMapper.writeValueAsString(o)
+        }
+    }
+
+    @ReadingConverter
+    class BytearrayTilBrevmottakereConverter : Converter<PGobject, Brevmottakere> {
+
+        override fun convert(pGobject: PGobject): Brevmottakere {
+            return objectMapper.readValue(pGobject.value!!)
+        }
+    }
+
+    @WritingConverter
+    class BrevmottakereJournalposterTilBytearrayConverter : Converter<BrevmottakereJournalposter, PGobject> {
+
+        override fun convert(o: BrevmottakereJournalposter): PGobject = PGobject().apply {
+            type = "json"
+            value = objectMapper.writeValueAsString(o)
+        }
+    }
+
+    @ReadingConverter
+    class BytearrayTilBrevmottakereJournalposterConverter : Converter<PGobject, BrevmottakereJournalposter> {
+
+        override fun convert(pGobject: PGobject): BrevmottakereJournalposter {
+            return objectMapper.readValue(pGobject.value!!)
         }
     }
 }

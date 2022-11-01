@@ -7,7 +7,7 @@ import no.nav.familie.klage.formkrav.domain.FormVilkår
 import java.time.LocalDateTime
 import java.util.UUID
 
-data class FormDto(
+data class FormkravDto(
     val behandlingId: UUID,
     val klagePart: FormVilkår,
     val klageKonkret: FormVilkår,
@@ -18,8 +18,8 @@ data class FormDto(
     val påklagetVedtak: PåklagetVedtakDto
 )
 
-fun Form.tilDto(påklagetVedtak: PåklagetVedtakDto): FormDto =
-    FormDto(
+fun Form.tilDto(påklagetVedtak: PåklagetVedtakDto): FormkravDto =
+    FormkravDto(
         behandlingId = this.behandlingId,
         klagePart = this.klagePart,
         klageKonkret = this.klageKonkret,

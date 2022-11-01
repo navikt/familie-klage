@@ -1,10 +1,13 @@
 {
   "behandling" : {
+    "eksternFagsakId" : "1",
     "stønadstype" : "OVERGANGSSTØNAD",
     "klageMottatt" : "2022-10-26",
     "resultat" : "IKKE_SATT",
     "påklagetVedtak" : {
-      "eksternFagsystemBehandlingId" : "eksternId"
+      "behandlingstype" : "type",
+      "resultat" : "resultat",
+      "vedtakstidspunkt" : "2022-03-01T08:00:00"
     }
   },
   "personopplysninger" : {
