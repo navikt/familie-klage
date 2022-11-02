@@ -44,7 +44,7 @@ class BehandlingsstatistikkService(
             tekniskTid = ZonedDateTime.now(zoneIdOslo),
             sakYtelse = fagsak.stønadstype.name,
             relatertEksternBehandlingId = behandling.påklagetVedtak.eksternFagsystemBehandlingId,
-            behandlingStatus = behandling.status.name,
+            behandlingStatus = hendelse.name,
             opprettetAv = behandling.sporbar.opprettetAv,
             opprettetEnhet = maskerVerdiHvisStrengtFortrolig(
                 erStrengtFortrolig,
