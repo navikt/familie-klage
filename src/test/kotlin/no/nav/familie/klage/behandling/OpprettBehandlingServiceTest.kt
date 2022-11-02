@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
+import java.util.UUID
 import kotlin.test.assertFailsWith
 
 internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {
@@ -89,7 +90,7 @@ internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {
         OpprettKlagebehandlingRequest(
             ident = "1234",
             stønadstype = fagsak.stønadstype,
-            eksternBehandlingId = behandling.påklagetVedtak.eksternFagsystemBehandlingId,
+            eksternBehandlingId = behandling.påklagetVedtak.eksternFagsystemBehandlingId ?: UUID.randomUUID().toString(),
             eksternFagsakId = fagsak.eksternId,
             fagsystem = fagsak.fagsystem,
             klageMottatt = klageMottatt,

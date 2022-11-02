@@ -5,11 +5,13 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
+import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
+import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -21,7 +23,8 @@ class OpprettBehandlingService(
     private val behandlingService: BehandlingService,
     private val formService: FormService,
     private val oppgaveTaskService: OppgaveTaskService,
-    private val behandlingshistorikkService: BehandlingshistorikkService
+    private val behandlingshistorikkService: BehandlingshistorikkService,
+    private val taskRepository: TaskRepository
 ) {
 
     @Transactional
@@ -56,7 +59,9 @@ class OpprettBehandlingService(
         formService.opprettInitielleFormkrav(behandlingId)
 
         oppgaveTaskService.opprettBehandleSakOppgave(behandlingId)
-
+        taskRepository.save(
+            BehandlingsstatistikkTask.opprettMottattTask(behandlingId = UUID.fromString(opprettKlagebehandlingRequest.eksternBehandlingId))
+        )
         return behandlingId
     }
 }
