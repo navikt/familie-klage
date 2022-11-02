@@ -1,6 +1,8 @@
 package no.nav.familie.klage.behandlingsstatistikk
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.kontrakter.ef.iverksett.Hendelse
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -18,13 +20,16 @@ import java.util.UUID
     beskrivelse = "Sender behandlingsstatistikk til iverksett"
 )
 class BehandlingsstatistikkTask(
-    val behandlingStatistikkService: BehandlingsstatistikkService
+    private val behandlingStatistikkService: BehandlingsstatistikkService,
+    private val featureToggleService: FeatureToggleService
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
-        val (behandlingId, hendelse, hendelseTidspunkt, gjeldendeSaksbehandler) =
-            objectMapper.readValue<BehandlingsstatistikkTaskPayload>(task.payload)
-        behandlingStatistikkService.sendBehandlingstatistikk(behandlingId, hendelse, hendelseTidspunkt)
+        if (featureToggleService.isEnabled(Toggle.BEHANDLINGSSTATISTIKK)) {
+            val (behandlingId, hendelse, hendelseTidspunkt, gjeldendeSaksbehandler) =
+                objectMapper.readValue<BehandlingsstatistikkTaskPayload>(task.payload)
+            behandlingStatistikkService.sendBehandlingstatistikk(behandlingId, hendelse, hendelseTidspunkt)
+        }
     }
 
     companion object {

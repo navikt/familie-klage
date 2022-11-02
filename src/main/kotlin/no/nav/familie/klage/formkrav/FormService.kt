@@ -59,10 +59,15 @@ class FormService(
         } else {
             stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.FORMKRAV)
         }
-        behandlingshistorikkService.hentBehandlingshistorikk(behandlingId).find { it.steg == StegType.FORMKRAV } ?: run {
-            taskRepository.save(BehandlingsstatistikkTask.opprettPåbegyntTask(behandlingId = behandlingId))
-        }
+        opprettBehandlingsstatistikk(behandlingId)
         return formRepository.update(oppdaterteFormkrav).tilDto(nyttPåklagetVedtak)
+    }
+
+    private fun opprettBehandlingsstatistikk(behandlingId: UUID) {
+        behandlingshistorikkService.hentBehandlingshistorikk(behandlingId).find { it.steg == StegType.FORMKRAV }
+            ?: run {
+                taskRepository.save(BehandlingsstatistikkTask.opprettPåbegyntTask(behandlingId = behandlingId))
+            }
     }
 
     fun formkravErOppfyltForBehandling(behandlingId: UUID): Boolean {
