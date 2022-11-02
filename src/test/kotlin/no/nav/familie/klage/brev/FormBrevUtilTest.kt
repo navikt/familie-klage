@@ -1,9 +1,14 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.brev.FormBrevUtil.utledIkkeOppfylteFormkrav
-import no.nav.familie.klage.brev.FormBrevUtil.utledInnholdstekst
+import no.nav.familie.klage.brev.FormBrevUtil.utledÅrsakTilAvvisningstekst
 import no.nav.familie.klage.brev.FormBrevUtil.utledLovtekst
-import no.nav.familie.klage.formkrav.domain.FormVilkår
+import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkår
+import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkår.KLAGE_PART
+import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkår.KLAGE_SIGNERT
+import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkår.KLAGE_KONKRET
+import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkår.KLAGEFRIST_OVERHOLDT
+import no.nav.familie.klage.formkrav.domain.FormVilkår.IKKE_OPPFYLT
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
 import org.assertj.core.api.Assertions.assertThat
@@ -16,52 +21,49 @@ internal class FormBrevUtilTest {
 
     @Test
     internal fun `et formkrav ikke oppfylt`() {
-        val klagePart = oppfyltForm(UUID.randomUUID()).copy(klagePart = FormVilkår.IKKE_OPPFYLT)
-        val klageKonkret = oppfyltForm(UUID.randomUUID()).copy(klageKonkret = FormVilkår.IKKE_OPPFYLT)
-        val klageSignert = oppfyltForm(UUID.randomUUID()).copy(klageSignert = FormVilkår.IKKE_OPPFYLT)
-        val klagefristOverholdt = oppfyltForm(UUID.randomUUID()).copy(klagefristOverholdt = FormVilkår.IKKE_OPPFYLT)
+        val klagePart = oppfyltForm(UUID.randomUUID()).copy(klagePart = IKKE_OPPFYLT)
+        val klageKonkret = oppfyltForm(UUID.randomUUID()).copy(klageKonkret = IKKE_OPPFYLT)
+        val klageSignert = oppfyltForm(UUID.randomUUID()).copy(klageSignert = IKKE_OPPFYLT)
+        val klagefristOverholdt = oppfyltForm(UUID.randomUUID()).copy(klagefristOverholdt = IKKE_OPPFYLT)
 
-        assertThat(utledIkkeOppfylteFormkrav(klagePart)).isEqualTo(setOf(FormBrevUtil.FormkravVilkår.KLAGE_PART))
-        assertThat(utledIkkeOppfylteFormkrav(klageKonkret)).isEqualTo(setOf(FormBrevUtil.FormkravVilkår.KLAGE_KONKRET))
-        assertThat(utledIkkeOppfylteFormkrav(klageSignert)).isEqualTo(setOf(FormBrevUtil.FormkravVilkår.KLAGE_SIGNERT))
-        assertThat(utledIkkeOppfylteFormkrav(klagefristOverholdt)).isEqualTo(setOf(FormBrevUtil.FormkravVilkår.KLAGEFRIST_OVERHOLDT))
+        assertThat(utledIkkeOppfylteFormkrav(klagePart)).isEqualTo(setOf(KLAGE_PART))
+        assertThat(utledIkkeOppfylteFormkrav(klageKonkret)).isEqualTo(setOf(KLAGE_KONKRET))
+        assertThat(utledIkkeOppfylteFormkrav(klageSignert)).isEqualTo(setOf(KLAGE_SIGNERT))
+        assertThat(utledIkkeOppfylteFormkrav(klagefristOverholdt)).isEqualTo(setOf(KLAGEFRIST_OVERHOLDT))
     }
 
     @Test
     internal fun `ingen formkrav oppfylt`() {
-        val formkravFireIkkeOppfylt = oppfyltForm(UUID.randomUUID()).copy(klagePart = FormVilkår.IKKE_OPPFYLT,
-                                                                          klageSignert = FormVilkår.IKKE_OPPFYLT,
-                                                                          klageKonkret = FormVilkår.IKKE_OPPFYLT,
-                                                                          klagefristOverholdt = FormVilkår.IKKE_OPPFYLT)
+        val formkravFireIkkeOppfylt = oppfyltForm(UUID.randomUUID()).copy(klagePart = IKKE_OPPFYLT,
+                                                                          klageSignert = IKKE_OPPFYLT,
+                                                                          klageKonkret = IKKE_OPPFYLT,
+                                                                          klagefristOverholdt = IKKE_OPPFYLT)
 
-        assertThat(utledIkkeOppfylteFormkrav(formkravFireIkkeOppfylt)).isEqualTo(setOf(FormBrevUtil.FormkravVilkår.KLAGE_PART,
-                                                                                       FormBrevUtil.FormkravVilkår.KLAGE_SIGNERT,
-                                                                                       FormBrevUtil.FormkravVilkår.KLAGE_KONKRET,
-                                                                                       FormBrevUtil.FormkravVilkår.KLAGEFRIST_OVERHOLDT))
+        assertThat(utledIkkeOppfylteFormkrav(formkravFireIkkeOppfylt)).isEqualTo(setOf(KLAGE_PART, KLAGE_SIGNERT, KLAGE_KONKRET, KLAGEFRIST_OVERHOLDT))
     }
 
     @Test
     internal fun `skal ikke utlede innholdstekst dersom alle formkrav er oppfylt`() {
-        val feil = assertThrows<Feil> { utledInnholdstekst(tomIkkeOppfylteFormkrav) }
+        val feil = assertThrows<Feil> { utledÅrsakTilAvvisningstekst(tomIkkeOppfylteFormkrav) }
         assertThat(feil.frontendFeilmelding).isEqualTo("Skal ikke kunne utlede innholdstekst til formkrav avvist brev uten ikke oppfylte formkrav")
     }
 
     @Test
     internal fun `skal utlede riktig innholdstekst dersom kun et formkrav er ikke oppfylt`() {
-        assertThat(utledInnholdstekst(klagePart)).isEqualTo("$innholdstekstPrefix $klagePartTekst")
-        assertThat(utledInnholdstekst(klageKonkret)).isEqualTo("$innholdstekstPrefix $klageKonkretTekst")
-        assertThat(utledInnholdstekst(klageSignert)).isEqualTo("$innholdstekstPrefix $klageSignertTekst")
-        assertThat(utledInnholdstekst(klagefristOverholdt)).isEqualTo("$innholdstekstPrefix $klageFristOverholdtTekst")
+        assertThat(utledÅrsakTilAvvisningstekst(klagePart)).isEqualTo("$innholdstekstPrefix $klagePartTekst")
+        assertThat(utledÅrsakTilAvvisningstekst(klageKonkret)).isEqualTo("$innholdstekstPrefix $klageKonkretTekst")
+        assertThat(utledÅrsakTilAvvisningstekst(klageSignert)).isEqualTo("$innholdstekstPrefix $klageSignertTekst")
+        assertThat(utledÅrsakTilAvvisningstekst(klagefristOverholdt)).isEqualTo("$innholdstekstPrefix $klageFristOverholdtTekst")
     }
 
     @Test
     internal fun `skal utlede riktig innholdstekst dersom flere formkrav ikke er oppfylt`() {
-        val innholdstekst = utledInnholdstekst(ikkeOppfylteFormkrav)
+        val innholdstekst = utledÅrsakTilAvvisningstekst(ikkeOppfylteFormkrav)
 
         assertThat(innholdstekst).contains("$innholdstekstPrefix:")
-        assertThat(innholdstekst).contains("$klageKonkretTekst")
-        assertThat(innholdstekst).contains("$klageSignertTekst")
-        assertThat(innholdstekst).contains("$klageFristOverholdtTekst")
+        assertThat(innholdstekst).contains(klageKonkretTekst)
+        assertThat(innholdstekst).contains(klageSignertTekst)
+        assertThat(innholdstekst).contains(klageFristOverholdtTekst)
     }
 
     @Test
@@ -127,13 +129,10 @@ internal class FormBrevUtilTest {
     val folketrygdLovPrefix = "Vedtaket er gjort etter folketrygdloven"
     val forvaltningslovPrefix = "Vedtaket er gjort etter forvaltningsloven"
 
-    val tomIkkeOppfylteFormkrav = emptySet<FormBrevUtil.FormkravVilkår>()
-    val klagePart = setOf(FormBrevUtil.FormkravVilkår.KLAGE_PART)
-    val klageKonkret = setOf(FormBrevUtil.FormkravVilkår.KLAGE_KONKRET)
-    val klageSignert = setOf(FormBrevUtil.FormkravVilkår.KLAGE_SIGNERT)
-    val klagefristOverholdt = setOf(FormBrevUtil.FormkravVilkår.KLAGEFRIST_OVERHOLDT)
-    val ikkeOppfylteFormkrav = setOf(FormBrevUtil.FormkravVilkår.KLAGE_PART,
-                                     FormBrevUtil.FormkravVilkår.KLAGE_KONKRET,
-                                     FormBrevUtil.FormkravVilkår.KLAGE_SIGNERT,
-                                     FormBrevUtil.FormkravVilkår.KLAGEFRIST_OVERHOLDT)
+    val tomIkkeOppfylteFormkrav = emptySet<FormkravVilkår>()
+    val klagePart = setOf(KLAGE_PART)
+    val klageKonkret = setOf(KLAGE_KONKRET)
+    val klageSignert = setOf(KLAGE_SIGNERT)
+    val klagefristOverholdt = setOf(KLAGEFRIST_OVERHOLDT)
+    val ikkeOppfylteFormkrav = setOf(KLAGE_PART, KLAGE_KONKRET, KLAGE_SIGNERT, KLAGEFRIST_OVERHOLDT)
 }

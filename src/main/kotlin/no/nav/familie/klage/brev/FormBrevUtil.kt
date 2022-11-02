@@ -1,31 +1,31 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.formkrav.domain.Form
-import no.nav.familie.klage.formkrav.domain.FormVilkår
+import no.nav.familie.klage.formkrav.domain.FormVilkår.IKKE_OPPFYLT
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 
 
 object FormBrevUtil {
 
-    fun utledInnholdstekst(formkravVilkår: Set<FormkravVilkår>): String {
+    fun utledIkkeOppfylteFormkrav(formkrav: Form): Set<FormkravVilkår> {
+        return setOf(
+                if (formkrav.klagePart == IKKE_OPPFYLT) FormkravVilkår.KLAGE_PART else null,
+                if (formkrav.klageKonkret == IKKE_OPPFYLT) FormkravVilkår.KLAGE_KONKRET else null,
+                if (formkrav.klageSignert == IKKE_OPPFYLT) FormkravVilkår.KLAGE_SIGNERT else null,
+                if (formkrav.klagefristOverholdt == IKKE_OPPFYLT) FormkravVilkår.KLAGEFRIST_OVERHOLDT else null,
+        ).filterNotNull().toSet()
+    }
+
+    fun utledÅrsakTilAvvisningstekst(formkravVilkår: Set<FormkravVilkår>): String {
         feilHvis(formkravVilkår.isEmpty()) {
             "Skal ikke kunne utlede innholdstekst til formkrav avvist brev uten ikke oppfylte formkrav"
         }
         if (formkravVilkår.size > 1) {
             return "$innholdstekstPrefix: ${formkravVilkår.joinToString("") { "\n  •  ${it.tekst}" }}"
         } else {
-            return "$innholdstekstPrefix ${formkravVilkår.first().tekst}"
+            return "$innholdstekstPrefix ${formkravVilkår.single().tekst}"
         }
-    }
-
-    fun utledIkkeOppfylteFormkrav(formkrav: Form): Set<FormkravVilkår> {
-        return setOf(
-                if (formkrav.klagePart == FormVilkår.IKKE_OPPFYLT) FormkravVilkår.KLAGE_PART else null,
-                if (formkrav.klageKonkret == FormVilkår.IKKE_OPPFYLT) FormkravVilkår.KLAGE_KONKRET else null,
-                if (formkrav.klageSignert == FormVilkår.IKKE_OPPFYLT) FormkravVilkår.KLAGE_SIGNERT else null,
-                if (formkrav.klagefristOverholdt == FormVilkår.IKKE_OPPFYLT) FormkravVilkår.KLAGEFRIST_OVERHOLDT else null,
-        ).filterNotNull().toSet()
     }
 
     fun utledLovtekst(formkravVilkår: Set<FormkravVilkår>): String {

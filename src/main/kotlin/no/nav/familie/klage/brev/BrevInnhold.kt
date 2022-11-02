@@ -1,7 +1,7 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.brev.FormBrevUtil.utledIkkeOppfylteFormkrav
-import no.nav.familie.klage.brev.FormBrevUtil.utledInnholdstekst
+import no.nav.familie.klage.brev.FormBrevUtil.utledÅrsakTilAvvisningstekst
 import no.nav.familie.klage.brev.FormBrevUtil.utledLovtekst
 import no.nav.familie.klage.brev.dto.AvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
@@ -16,8 +16,6 @@ object BrevInnhold {
         navn: String,
         stønadstype: Stønadstype
     ): FritekstBrevRequestDto {
-        val stønadstypeVisningsnavn = stønadstype.tilVisningsnavn()
-        val lesMerUrl = stønadstype.lesMerUrl()
 
         return FritekstBrevRequestDto(
             overskrift = "Vi har sendt klagen din til NAV Klageinstans",
@@ -28,7 +26,7 @@ object BrevInnhold {
                 AvsnittDto(
                     deloverskrift = "",
                     innhold =
-                    "Vi har fått klagen din på vedtaket om $stønadstypeVisningsnavn, og kommet frem til at det ikke endres. NAV Klageinstans skal derfor vurdere saken din på nytt.."
+                    "Vi har fått klagen din på vedtaket om ${stønadstype.tilVisningsnavn()}, og kommet frem til at det ikke endres. NAV Klageinstans skal derfor vurdere saken din på nytt.."
                 ),
                 AvsnittDto(
                     deloverskrift = "",
@@ -45,7 +43,7 @@ object BrevInnhold {
                 ),
                 AvsnittDto(
                     deloverskrift = "Har du spørsmål?",
-                    innhold = "Du finner informasjon som kan være nyttig for deg på $lesMerUrl. Du kan også kontakte oss på nav.no/kontakt."
+                    innhold = "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. Du kan også kontakte oss på nav.no/kontakt."
                 )
             )
         )
@@ -57,19 +55,18 @@ object BrevInnhold {
             formkrav: Form,
             stønadstype: Stønadstype
     ): FritekstBrevRequestDto {
-        val lesMerUrl = stønadstype.lesMerUrl()
         val ikkeOppfylteFormkrav = utledIkkeOppfylteFormkrav(formkrav)
-        val innholdstekst = utledInnholdstekst(ikkeOppfylteFormkrav)
         val brevtekstFraSaksbehandler = formkrav.brevtekst ?: error("Må ha brevtekst fra saksbehandler for å generere brev ved formkrav ikke oppfylt")
+
         return FritekstBrevRequestDto(
             overskrift = "Vi har avvist klagen din på vedtaket om ${stønadstype.tilVisningsnavn()}",
             personIdent = ident,
             navn = navn,
-            avsnitt = listOf(
-
+            avsnitt =
+            listOf(
                 AvsnittDto(
                     deloverskrift = "Årsak til avvisning",
-                    innhold = innholdstekst
+                    innhold = utledÅrsakTilAvvisningstekst(ikkeOppfylteFormkrav)
                 ),
                 AvsnittDto(
                         deloverskrift = "",
@@ -92,7 +89,7 @@ object BrevInnhold {
                 AvsnittDto(
                         deloverskrift = "Har du spørsmål?",
                         innhold =
-                        "Du finner informasjon som kan være nyttig for deg på $lesMerUrl. Du kan også kontakte oss på nav.no/kontakt."
+                        "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. Du kan også kontakte oss på nav.no/kontakt."
                 )
             )
         )
@@ -106,9 +103,5 @@ object BrevInnhold {
         Stønadstype.SKOLEPENGER -> "nav.no/familie/alene-med-barn"
         Stønadstype.BARNETRYGD -> "nav.no/barnetrygd"
         Stønadstype.KONTANTSTØTTE -> "nav.no/kontantstotte"
-    }
-
-    private fun utledÅrsakTilAvvisning(formkrav: Form) = {
-
     }
 }
