@@ -1,6 +1,7 @@
 package no.nav.familie.klage.behandlingsstatistikk
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
@@ -25,11 +26,13 @@ class BehandlingsstatistikkTask(
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
-        if (featureToggleService.isEnabled(Toggle.BEHANDLINGSSTATISTIKK)) {
-            val (behandlingId, hendelse, hendelseTidspunkt, gjeldendeSaksbehandler) =
-                objectMapper.readValue<BehandlingsstatistikkTaskPayload>(task.payload)
-            behandlingStatistikkService.sendBehandlingstatistikk(behandlingId, hendelse, hendelseTidspunkt)
+        feilHvisIkke(featureToggleService.isEnabled(Toggle.BEHANDLINGSSTATISTIKK)) {
+            "Funksjonen for sending av behandlingsstatistikk er slått av"
         }
+        val (behandlingId, hendelse, hendelseTidspunkt, gjeldendeSaksbehandler) =
+            objectMapper.readValue<BehandlingsstatistikkTaskPayload>(task.payload)
+        behandlingStatistikkService.sendBehandlingstatistikk(behandlingId, hendelse, hendelseTidspunkt)
+
     }
 
     companion object {
