@@ -60,7 +60,7 @@ class OpprettBehandlingService(
 
         oppgaveTaskService.opprettBehandleSakOppgave(behandlingId)
         taskRepository.save(
-            BehandlingsstatistikkTask.opprettMottattTask(behandlingId = UUID.fromString(opprettKlagebehandlingRequest.eksternBehandlingId))
+            BehandlingsstatistikkTask.opprettMottattTask(behandlingId = behandlingId)
         )
         return behandlingId
     }
