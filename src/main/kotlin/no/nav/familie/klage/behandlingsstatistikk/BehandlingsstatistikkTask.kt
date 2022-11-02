@@ -18,7 +18,9 @@ import java.util.UUID
 @Service
 @TaskStepBeskrivelse(
     taskStepType = BehandlingsstatistikkTask.TYPE,
-    beskrivelse = "Sender behandlingsstatistikk til iverksett"
+    beskrivelse = "Sender behandlingsstatistikk til iverksett",
+    maxAntallFeil = 4,
+    settTilManuellOppfølgning = true
 )
 class BehandlingsstatistikkTask(
     private val behandlingStatistikkService: BehandlingsstatistikkService,
