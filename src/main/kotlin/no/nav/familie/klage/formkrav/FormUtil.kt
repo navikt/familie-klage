@@ -23,8 +23,6 @@ object FormUtil {
                                            && formkrav.saksbehandlerBegrunnelse.isNotBlank()
                                            && formkrav.brevtekst != null
                                            && formkrav.brevtekst.isNotBlank()
-
-
     private fun Form.alleSvar() = setOf(
         klageKonkret,
         klagePart,
