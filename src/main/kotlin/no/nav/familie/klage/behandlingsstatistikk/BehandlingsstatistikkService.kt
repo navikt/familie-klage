@@ -40,7 +40,7 @@ class BehandlingsstatistikkService(
             behandlingId = behandlingId,
             personIdent = fagsak.hentAktivIdent(),
             registrertTid = behandling.sporbar.opprettetTid.atZone(zoneIdOslo),
-            endretTid = behandling.sporbar.endret.endretTid.atZone(zoneIdOslo),
+            endretTid = hendelseTidspunkt.atZone(zoneIdOslo),
             tekniskTid = ZonedDateTime.now(zoneIdOslo),
             sakYtelse = fagsak.stønadstype.name,
             relatertEksternBehandlingId = behandling.påklagetVedtak.eksternFagsystemBehandlingId,
