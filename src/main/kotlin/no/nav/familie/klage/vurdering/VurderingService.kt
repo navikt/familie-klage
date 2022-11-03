@@ -56,6 +56,7 @@ class VurderingService(
             behandlingId = vurdering.behandlingId,
             vedtak = vurdering.vedtak,
             arsak = vurdering.arsak,
+            begrunnelseOmgjøring = vurdering.begrunnelseOmgjøring,
             hjemmel = vurdering.hjemmel,
             innstillingKlageinstans = vurdering.innstillingKlageinstans,
             interntNotat = vurdering.interntNotat
