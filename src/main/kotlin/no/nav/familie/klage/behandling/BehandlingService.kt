@@ -11,6 +11,7 @@ import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
+import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
@@ -23,6 +24,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus.FERDIGSTILT
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
+import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -36,7 +38,8 @@ class BehandlingService(
     private val fagsakService: FagsakService,
     private val klageresultatRepository: KlageresultatRepository,
     private val behandlinghistorikkService: BehandlingshistorikkService,
-    private val oppgaveTaskService: OppgaveTaskService
+    private val oppgaveTaskService: OppgaveTaskService,
+    private val taskRepository: TaskRepository
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -123,8 +126,8 @@ class BehandlingService(
 
         behandlinghistorikkService.opprettBehandlingshistorikk(behandlingId, BEHANDLING_FERDIGSTILT)
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
-
         behandlingRepository.update(henlagtBehandling)
+        taskRepository.save(taskRepository.save(BehandlingsstatistikkTask.opprettHenlagtTask(behandlingId = behandlingId)))
     }
 
     fun erLåstForVidereBehandling(behandlingId: UUID) =
