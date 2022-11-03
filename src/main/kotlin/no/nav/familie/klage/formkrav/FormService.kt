@@ -48,7 +48,7 @@ class FormService(
             brevtekst = formkrav.brevtekst
         )
         behandlingService.oppdaterPåklagetVedtak(behandlingId, nyttPåklagetVedtak)
-
+        opprettBehandlingsstatistikk(behandlingId)
         if (ferdigUtfylt(oppdaterteFormkrav, nyttPåklagetVedtak)) {
             if (alleVilkårOppfylt(oppdaterteFormkrav)) {
                 stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.VURDERING)
@@ -59,7 +59,6 @@ class FormService(
         } else {
             stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.FORMKRAV)
         }
-        opprettBehandlingsstatistikk(behandlingId)
         return formRepository.update(oppdaterteFormkrav).tilDto(nyttPåklagetVedtak)
     }
 
