@@ -104,6 +104,7 @@ object DomainUtil {
         behandlingId: UUID = UUID.randomUUID(),
         vedtak: Vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
         årsak: Årsak? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) null else Årsak.FEIL_I_LOVANDVENDELSE,
+        begrunnelseOmgjøring: String? = null,
         hjemmel: Hjemmel? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) Hjemmel.BT_FEM else null,
         innstillingKlageinstans: String? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
         interntNotat: String? = null
@@ -111,6 +112,7 @@ object DomainUtil {
         behandlingId = behandlingId,
         vedtak = vedtak,
         arsak = årsak,
+        begrunnelseOmgjøring = begrunnelseOmgjøring,
         hjemmel = hjemmel,
         innstillingKlageinstans = innstillingKlageinstans,
         interntNotat = interntNotat
