@@ -112,6 +112,7 @@ class BehandlingService(
         }
     }
 
+    @Transactional
     fun henleggBehandling(behandlingId: UUID, henlagt: HenlagtDto) {
         val behandling = hentBehandling(behandlingId)
 
@@ -127,7 +128,7 @@ class BehandlingService(
         behandlinghistorikkService.opprettBehandlingshistorikk(behandlingId, BEHANDLING_FERDIGSTILT)
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
         behandlingRepository.update(henlagtBehandling)
-        taskRepository.save(taskRepository.save(BehandlingsstatistikkTask.opprettHenlagtTask(behandlingId = behandlingId)))
+        taskRepository.save(taskRepository.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId)))
     }
 
     fun erLåstForVidereBehandling(behandlingId: UUID) =

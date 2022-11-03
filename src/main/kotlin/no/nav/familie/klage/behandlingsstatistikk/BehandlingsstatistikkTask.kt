@@ -61,13 +61,6 @@ class BehandlingsstatistikkTask(
                 hendelseTidspunkt = LocalDateTime.now()
             )
 
-        fun opprettHenlagtTask(behandlingId: UUID): Task =
-            opprettTask(
-                behandlingId = behandlingId,
-                hendelse = Hendelse.HENLAGT,
-                hendelseTidspunkt = LocalDateTime.now()
-            )
-
         private fun opprettTask(
             behandlingId: UUID,
             hendelse: Hendelse,
