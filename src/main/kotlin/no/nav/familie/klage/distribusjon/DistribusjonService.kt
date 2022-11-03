@@ -120,10 +120,11 @@ class DistribusjonService(
         val behandling = behandlingService.hentBehandling(behandlingId)
         val stønadstype = fagsakService.hentFagsakForBehandling(behandlingId).stønadstype
 
-        val tittelPrefix = if (behandling.resultat == BehandlingResultat.IKKE_MEDHOLD)
-            "Brev om oversendelse til NAV Klageinstans"
-        else
-            "Vedtak om avvist klage"
+        val tittelPrefix = when (behandling.resultat) {
+            BehandlingResultat.IKKE_MEDHOLD -> "Brev om oversendelse til NAV Klageinstans"
+            BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> "Vedtak om avvist klage"
+            else -> error("Kan ikke utlede brevtittel for behandlingsresultat ${behandling.resultat}")
+        }
 
         return when (stønadstype) {
             Stønadstype.BARNETRYGD, Stønadstype.OVERGANGSSTØNAD, Stønadstype.KONTANTSTØTTE -> "$tittelPrefix - ${stønadstype.name.lowercase()}"
