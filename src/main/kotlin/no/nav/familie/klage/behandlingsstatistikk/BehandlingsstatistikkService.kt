@@ -6,6 +6,7 @@ import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.ef.iverksett.Hendelse
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -59,7 +60,7 @@ class BehandlingsstatistikkService(
             vedtakTid = if (hendelse == Hendelse.VEDTATT) hendelseTidspunkt.atZone(zoneIdOslo) else null,
             sakUtland = "Nasjonal",
             behandlingResultat = behandling.resultat.name,
-            resultatBegrunnelse = vurdering?.arsak?.name,
+            resultatBegrunnelse = if (behandling.resultat == BehandlingResultat.HENLAGT) behandling.henlagtÅrsak?.name else vurdering?.arsak?.name,
             behandlingMetode = "MANUELL",
             saksbehandler = behandling.sporbar.endret.endretAv,
             avsender = "Klage familie",
