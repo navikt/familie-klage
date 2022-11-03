@@ -55,7 +55,7 @@ class BehandlingsstatistikkService(
                 behandling.behandlendeEnhet
             ),
             mottattTid = behandling.klageMottatt.atStartOfDay(zoneIdOslo),
-            ferdigBehandletTid = if (hendelse == Hendelse.FERDIG || hendelse == Hendelse.HENLAGT) hendelseTidspunkt.atZone(zoneIdOslo) else null,
+            ferdigBehandletTid = if (hendelse == Hendelse.FERDIG) hendelseTidspunkt.atZone(zoneIdOslo) else null,
             vedtakTid = if (hendelse == Hendelse.VEDTATT) hendelseTidspunkt.atZone(zoneIdOslo) else null,
             sakUtland = "Nasjonal",
             behandlingResultat = behandling.resultat.name,
