@@ -34,7 +34,6 @@ class BehandlingsstatistikkTask(
         val (behandlingId, hendelse, hendelseTidspunkt, gjeldendeSaksbehandler) =
             objectMapper.readValue<BehandlingsstatistikkTaskPayload>(task.payload)
         behandlingStatistikkService.sendBehandlingstatistikk(behandlingId, hendelse, hendelseTidspunkt)
-
     }
 
     companion object {
@@ -59,6 +58,13 @@ class BehandlingsstatistikkTask(
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = Hendelse.FERDIG,
+                hendelseTidspunkt = LocalDateTime.now()
+            )
+
+        fun opprettHenlagtTask(behandlingId: UUID): Task =
+            opprettTask(
+                behandlingId = behandlingId,
+                hendelse = Hendelse.HENLAGT,
                 hendelseTidspunkt = LocalDateTime.now()
             )
 
