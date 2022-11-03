@@ -65,7 +65,7 @@ object BrevInnhold {
             avsnitt =
             listOf(
                 AvsnittDto(
-                    deloverskrift = "Årsak til avvisning",
+                    deloverskrift = "",
                     innhold = utledÅrsakTilAvvisningstekst(ikkeOppfylteFormkrav)
                 ),
                 AvsnittDto(

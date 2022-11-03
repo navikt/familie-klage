@@ -1,0 +1,1 @@
+ALTER TABLE vurdering ADD COLUMN begrunnelse_omgjoring VARCHAR;
