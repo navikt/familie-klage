@@ -15,6 +15,7 @@ import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokdist.Distribusjonstype
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -31,7 +32,7 @@ internal class DistribusjonServiceTest {
     val ident = "1"
     val fagsak = fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent(ident)))
     val behandlendeEnhet = "enhet"
-    val behandling = behandling(fagsak = fagsak, behandlendeEnhet = behandlendeEnhet)
+    val behandling = behandling(fagsak = fagsak, behandlendeEnhet = behandlendeEnhet, resultat = BehandlingResultat.IKKE_MEDHOLD)
 
     val journalpostSlot = slot<ArkiverDokumentRequest>()
 

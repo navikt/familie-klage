@@ -124,7 +124,7 @@ object DomainUtil {
             klagePart = FormVilkår.OPPFYLT,
             klagefristOverholdt = FormVilkår.OPPFYLT,
             klageKonkret = FormVilkår.OPPFYLT,
-            klageSignert = FormVilkår.OPPFYLT,
+            klageSignert = FormVilkår.OPPFYLT
         )
 
     val defaultIdent = "01010199999"

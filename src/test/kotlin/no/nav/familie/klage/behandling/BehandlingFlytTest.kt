@@ -171,7 +171,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
         OpprettKlagebehandlingRequest(
             "ident",
             Stønadstype.OVERGANGSSTØNAD,
-            "eksternid",
+            UUID.randomUUID().toString(),
             "eksternId",
             Fagsystem.EF,
             LocalDate.now(),
@@ -182,7 +182,9 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
         DomainUtil.oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto())
 
     private fun ikkeOppfyltFormDto(behandlingId: UUID) =
-        DomainUtil.oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto()).copy(klagePart = FormVilkår.IKKE_OPPFYLT,
-                                                                                         saksbehandlerBegrunnelse = "Ok",
-                                                                                         brevtekst = "brevtekst")
+        DomainUtil.oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto()).copy(
+            klagePart = FormVilkår.IKKE_OPPFYLT,
+            saksbehandlerBegrunnelse = "Ok",
+            brevtekst = "brevtekst"
+        )
 }

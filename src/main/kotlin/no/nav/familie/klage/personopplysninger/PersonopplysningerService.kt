@@ -13,6 +13,7 @@ import no.nav.familie.klage.personopplysninger.pdl.PdlSøker
 import no.nav.familie.klage.personopplysninger.pdl.gjeldende
 import no.nav.familie.klage.personopplysninger.pdl.gjelende
 import no.nav.familie.klage.personopplysninger.pdl.visningsnavn
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -23,7 +24,7 @@ class PersonopplysningerService(
     private val pdlClient: PdlClient,
     private val integrasjonerClient: PersonopplysningerIntegrasjonerClient
 ) {
-
+    @Cacheable("hentPersonopplysninger", cacheManager = "shortCache")
     fun hentPersonopplysninger(behandlingId: UUID): PersonopplysningerDto {
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
