@@ -64,7 +64,7 @@ class BrevService(
     }
 
     fun lagBrev(behandlingId: UUID): ByteArray {
-        val navn = behandlingService.hentNavnFraBehandlingsId(behandlingId)
+        val navn = personopplysningerService.hentPersonopplysninger(behandlingId).navn
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
 

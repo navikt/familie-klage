@@ -7,12 +7,8 @@ import java.util.UUID
 
 @Service
 class BrevsignaturService() {
-    fun lagSignatur(behandlingId: UUID): SignaturDto {
-        return lagSignaturDto("ident") // TODO: endre til ekte data
-        // return lagSignaturDto(behandling.ident)
-    }
 
-    private fun lagSignaturDto(ident: String): SignaturDto {
+    fun lagSignatur(behandlingId: UUID): SignaturDto {
         return SignaturDto(SikkerhetContext.hentSaksbehandlerNavn(true), ENHET_NAY, false)
     }
 
