@@ -44,7 +44,7 @@ class SøkController(
 
     @GetMapping("organisasjon/{organisasjonsnummer}")
     fun søkOrganisasjon(
-        @PathVariable organisasjonsnummer: String,
+        @PathVariable organisasjonsnummer: String
     ): Ressurs<Organisasjon> {
         if (!ORGNR_REGEX.matches(organisasjonsnummer)) {
             throw ApiFeil("Ugyldig organisasjonsnummer", HttpStatus.BAD_REQUEST)
@@ -56,5 +56,4 @@ class SøkController(
 
         private val ORGNR_REGEX = """\d{9}""".toRegex()
     }
-
 }

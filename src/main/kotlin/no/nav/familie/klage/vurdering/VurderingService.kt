@@ -53,23 +53,25 @@ class VurderingService(
 
     private fun opprettNyVurdering(vurdering: VurderingDto) = vurderingRepository.insert(
         Vurdering(
-            behandlingId = vurdering.behandlingId,
-            vedtak = vurdering.vedtak,
-            arsak = vurdering.arsak,
-            hjemmel = vurdering.hjemmel,
-            innstillingKlageinstans = vurdering.innstillingKlageinstans,
-            interntNotat = vurdering.interntNotat
+                behandlingId = vurdering.behandlingId,
+                vedtak = vurdering.vedtak,
+                årsak = vurdering.årsak,
+                begrunnelseOmgjøring = vurdering.begrunnelseOmgjøring,
+                hjemmel = vurdering.hjemmel,
+                innstillingKlageinstans = vurdering.innstillingKlageinstans,
+                interntNotat = vurdering.interntNotat
         )
     )
 
     private fun oppdaterVurdering(vurdering: VurderingDto, eksisterendeVurdering: Vurdering): Vurdering {
         return vurderingRepository.update(
             eksisterendeVurdering.copy(
-                vedtak = vurdering.vedtak,
-                innstillingKlageinstans = vurdering.innstillingKlageinstans,
-                arsak = vurdering.arsak,
-                hjemmel = vurdering.hjemmel,
-                interntNotat = vurdering.interntNotat
+                    vedtak = vurdering.vedtak,
+                    innstillingKlageinstans = vurdering.innstillingKlageinstans,
+                    årsak = vurdering.årsak,
+                    begrunnelseOmgjøring = vurdering.begrunnelseOmgjøring,
+                    hjemmel = vurdering.hjemmel,
+                    interntNotat = vurdering.interntNotat
             )
         )
     }

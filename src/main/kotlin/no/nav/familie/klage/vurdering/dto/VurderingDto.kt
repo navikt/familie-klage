@@ -7,20 +7,22 @@ import no.nav.familie.kontrakter.felles.klage.Årsak
 import java.util.UUID
 
 data class VurderingDto(
-    val behandlingId: UUID,
-    val vedtak: Vedtak,
-    val arsak: Årsak? = null,
-    val hjemmel: Hjemmel? = null,
-    val innstillingKlageinstans: String? = null,
-    val interntNotat: String?
+        val behandlingId: UUID,
+        val vedtak: Vedtak,
+        val årsak: Årsak? = null,
+        val begrunnelseOmgjøring: String? = null,
+        val hjemmel: Hjemmel? = null,
+        val innstillingKlageinstans: String? = null,
+        val interntNotat: String?
 )
 
 fun Vurdering.tilDto(): VurderingDto =
     VurderingDto(
-        behandlingId = this.behandlingId,
-        vedtak = this.vedtak,
-        arsak = this.arsak,
-        hjemmel = this.hjemmel,
-        innstillingKlageinstans = this.innstillingKlageinstans,
-        interntNotat = this.interntNotat
+            behandlingId = this.behandlingId,
+            vedtak = this.vedtak,
+            årsak = this.årsak,
+            begrunnelseOmgjøring = this.begrunnelseOmgjøring,
+            hjemmel = this.hjemmel,
+            innstillingKlageinstans = this.innstillingKlageinstans,
+            interntNotat = this.interntNotat
     )

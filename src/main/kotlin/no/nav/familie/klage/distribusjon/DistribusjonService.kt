@@ -13,6 +13,8 @@ import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.Dokument
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.Filtype
 import no.nav.familie.kontrakter.felles.dokdist.Distribusjonstype
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -36,7 +38,7 @@ class DistribusjonService(
             behandlingId = behandlingId,
             fagsak = fagsak,
             pdf = brev,
-            tittel = "Brev for klage på ${fagsak.stønadstype.name.storForbokstav()}",
+            tittel = utledBrevtittel(behandlingId),
             dokumenttype = dokumenttypeBrev(fagsak.stønadstype),
             saksbehandler = saksbehandler,
             suffixEksternReferanseId = "-$index",
@@ -112,5 +114,22 @@ class DistribusjonService(
             tittel = tittel,
             dokumenttype = dokumenttype
         )
+    }
+
+    private fun utledBrevtittel(behandlingId: UUID): String {
+        val behandling = behandlingService.hentBehandling(behandlingId)
+        val stønadstype = fagsakService.hentFagsakForBehandling(behandlingId).stønadstype
+
+        val tittelPrefix = when (behandling.resultat) {
+            BehandlingResultat.IKKE_MEDHOLD -> "Brev om oversendelse til NAV Klageinstans"
+            BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> "Vedtak om avvist klage"
+            else -> error("Kan ikke utlede brevtittel for behandlingsresultat ${behandling.resultat}")
+        }
+
+        return when (stønadstype) {
+            Stønadstype.BARNETRYGD, Stønadstype.OVERGANGSSTØNAD, Stønadstype.KONTANTSTØTTE -> "$tittelPrefix - ${stønadstype.name.lowercase()}"
+            Stønadstype.BARNETILSYN -> "$tittelPrefix - stønad til barnetilsyn"
+            Stønadstype.SKOLEPENGER -> "$tittelPrefix - stønad til skolepenger"
+        }
     }
 }

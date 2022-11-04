@@ -26,7 +26,7 @@ object BrevInnhold {
                 AvsnittDto(
                     deloverskrift = "",
                     innhold =
-                    "Vi har fått klagen din på vedtaket om ${stønadstype.tilVisningsnavn()}, og kommet frem til at det ikke endres. NAV Klageinstans skal derfor vurdere saken din på nytt."
+                    "Vi har fått klagen din på vedtaket om ${stønadstype.tilVisningsnavn()}, og kommet frem til at vedtaket ikke endres. NAV Klageinstans skal derfor vurdere saken din på nytt."
                 ),
                 AvsnittDto(
                     deloverskrift = "",
@@ -65,7 +65,7 @@ object BrevInnhold {
             avsnitt =
             listOf(
                 AvsnittDto(
-                    deloverskrift = "Årsak til avvisning",
+                    deloverskrift = "",
                     innhold = utledÅrsakTilAvvisningstekst(ikkeOppfylteFormkrav)
                 ),
                 AvsnittDto(

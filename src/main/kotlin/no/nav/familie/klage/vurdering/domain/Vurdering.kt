@@ -5,6 +5,7 @@ import no.nav.familie.klage.kabal.KabalHjemmel
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.Årsak
 import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Embedded
 import java.util.UUID
 
@@ -12,7 +13,10 @@ data class Vurdering(
     @Id
     val behandlingId: UUID,
     val vedtak: Vedtak,
-    val arsak: Årsak? = null,
+    @Column("arsak")
+    val årsak: Årsak? = null,
+    @Column("begrunnelse_omgjoring")
+    val begrunnelseOmgjøring: String? = null,
     val hjemmel: Hjemmel? = null,
     val innstillingKlageinstans: String? = null,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)

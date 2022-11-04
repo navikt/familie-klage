@@ -55,7 +55,8 @@ class BlankettService(
         return vurdering?.let {
             BlankettVurderingDto(
                 vedtak = it.vedtak,
-                arsak = it.arsak,
+                årsak = it.årsak,
+                begrunnelseOmgjøring = it.begrunnelseOmgjøring,
                 hjemmel = it.hjemmel,
                 innstillingKlageinstans = it.innstillingKlageinstans,
                 interntNotat = it.interntNotat

@@ -119,11 +119,13 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
         }
 
         @Test
-        internal fun `OMGJØR_VEDTAK - når man ferdigstilt klagebehandling skal man vente på svar`() {
+        internal fun `OMGJØR_VEDTAK - når man har ferdigstilt klagebehandling skal man vente på svar`() {
             val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
                 val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
                 formService.oppdaterFormkrav(oppfyltFormDto(behandlingId))
-                vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId, Vedtak.OMGJØR_VEDTAK))
+                vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId = behandlingId,
+                                                                            vedtak = Vedtak.OMGJØR_VEDTAK,
+                                                                            begrunnelseOmgjøring = "begrunnelse"))
                 ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
                 behandlingId
             }
@@ -169,7 +171,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
         OpprettKlagebehandlingRequest(
             "ident",
             Stønadstype.OVERGANGSSTØNAD,
-            "eksternid",
+            UUID.randomUUID().toString(),
             "eksternId",
             Fagsystem.EF,
             LocalDate.now(),
@@ -180,7 +182,9 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
         DomainUtil.oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto())
 
     private fun ikkeOppfyltFormDto(behandlingId: UUID) =
-        DomainUtil.oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto()).copy(klagePart = FormVilkår.IKKE_OPPFYLT,
-                                                                                         saksbehandlerBegrunnelse = "Ok",
-                                                                                         brevtekst = "brevtekst")
+        DomainUtil.oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto()).copy(
+            klagePart = FormVilkår.IKKE_OPPFYLT,
+            saksbehandlerBegrunnelse = "Ok",
+            brevtekst = "brevtekst"
+        )
 }

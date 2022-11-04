@@ -27,7 +27,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-
 internal class BlankettServiceTest {
 
     private val behandlingService = mockk<BehandlingService>()
@@ -63,11 +62,12 @@ internal class BlankettServiceTest {
         val personopplysningerDto = mockk<PersonopplysningerDto>()
         every { personopplysningerDto.navn } returns "navn"
         every { personopplysningerService.hentPersonopplysninger(behandlingId) } returns personopplysningerDto
-        every { formService.hentFormDto(behandlingId) } returns oppfyltForm(behandlingId).copy(saksbehandlerBegrunnelse = "Ok",brevtekst = "Brevtekst")
+        every { formService.hentFormDto(behandlingId) } returns oppfyltForm(behandlingId).copy(saksbehandlerBegrunnelse = "Ok", brevtekst = "Brevtekst")
             .tilDto(mockk())
         every { vurderingService.hentVurderingDto(behandlingId) } returns vurderingDto(
             vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
             årsak = Årsak.FEIL_I_LOVANDVENDELSE,
+            begrunnelseOmgjøring = "begrunnelse",
             hjemmel = Hjemmel.BT_FEM,
             interntNotat = "interntNotat",
             innstillingKlageinstans = "innstillingKlageinstans"
