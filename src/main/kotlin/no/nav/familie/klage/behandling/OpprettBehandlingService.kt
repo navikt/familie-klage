@@ -12,6 +12,7 @@ import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import no.nav.familie.prosessering.domene.TaskRepository
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -27,19 +28,25 @@ class OpprettBehandlingService(
     private val taskRepository: TaskRepository
 ) {
 
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     @Transactional
     fun opprettBehandling(
         opprettKlagebehandlingRequest: OpprettKlagebehandlingRequest
     ): UUID {
-        feilHvis(opprettKlagebehandlingRequest.klageMottatt.isAfter(LocalDate.now())) {
+        val klageMottatt = opprettKlagebehandlingRequest.klageMottatt
+        val stønadstype = opprettKlagebehandlingRequest.stønadstype
+        val eksternFagsakId = opprettKlagebehandlingRequest.eksternFagsakId
+
+        feilHvis(klageMottatt.isAfter(LocalDate.now())) {
             "Kan ikke opprette klage med krav mottatt frem i tid for behandling med eksternBehandlingId=${opprettKlagebehandlingRequest.eksternBehandlingId}"
         }
 
         val fagsak = fagsakService.hentEllerOpprettFagsak(
             ident = opprettKlagebehandlingRequest.ident,
-            eksternId = opprettKlagebehandlingRequest.eksternFagsakId,
+            eksternId = eksternFagsakId,
             fagsystem = opprettKlagebehandlingRequest.fagsystem,
-            stønadstype = opprettKlagebehandlingRequest.stønadstype
+            stønadstype = stønadstype
         )
 
         val behandlingId = behandlingService.opprettBehandling(
@@ -49,7 +56,7 @@ class OpprettBehandlingService(
                     eksternFagsystemBehandlingId = opprettKlagebehandlingRequest.eksternBehandlingId,
                     påklagetVedtakstype = if (opprettKlagebehandlingRequest.eksternBehandlingId != null) PåklagetVedtakstype.VEDTAK else PåklagetVedtakstype.IKKE_VALGT
                 ),
-                klageMottatt = opprettKlagebehandlingRequest.klageMottatt,
+                klageMottatt = klageMottatt,
                 behandlendeEnhet = opprettKlagebehandlingRequest.behandlendeEnhet
             )
         ).id
@@ -61,6 +68,10 @@ class OpprettBehandlingService(
         oppgaveTaskService.opprettBehandleSakOppgave(behandlingId)
         taskRepository.save(
             BehandlingsstatistikkTask.opprettMottattTask(behandlingId = behandlingId)
+        )
+        logger.info(
+            "Opprettet behandling=$behandlingId for stønadstype=$stønadstype " +
+                    "eksternFagsakId=$eksternFagsakId klageMottatt=$klageMottatt"
         )
         return behandlingId
     }
