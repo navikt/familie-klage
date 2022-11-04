@@ -12,6 +12,9 @@ object VurderingValidator {
                 feilHvis(vurdering.arsak == null) {
                     "Mangler årsak på omgjør vedtak"
                 }
+                feilHvis(vurdering.begrunnelseOmgjøring == null) {
+                    "Mangler begrunnelse for omgjøring på omgjør vedtak"
+                }
                 feilHvis(vurdering.hjemmel != null) {
                     "Kan ikke lagre hjemmel på omgjør vedtak"
                 }
@@ -25,6 +28,9 @@ object VurderingValidator {
                 }
                 feilHvis(vurdering.arsak != null) {
                     "Kan ikke lagre årsak på oppretthold vedtak"
+                }
+                feilHvis(vurdering.begrunnelseOmgjøring != null) {
+                    "Kan ikke lagre begrunnelse på oppretthold vedtak"
                 }
                 feilHvis(vurdering.innstillingKlageinstans.isNullOrBlank()) {
                     "Må skrive innstilling til klageinstans ved opprettholdelse av vedtak"

@@ -56,6 +56,7 @@ class BlankettService(
             BlankettVurderingDto(
                 vedtak = it.vedtak,
                 arsak = it.arsak,
+                begrunnelseOmgjøring = it.begrunnelseOmgjøring,
                 hjemmel = it.hjemmel,
                 innstillingKlageinstans = it.innstillingKlageinstans,
                 interntNotat = it.interntNotat

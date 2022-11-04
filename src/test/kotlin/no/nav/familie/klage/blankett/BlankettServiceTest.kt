@@ -67,6 +67,7 @@ internal class BlankettServiceTest {
         every { vurderingService.hentVurderingDto(behandlingId) } returns vurderingDto(
             vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
             årsak = Årsak.FEIL_I_LOVANDVENDELSE,
+            begrunnelseOmgjøring = "begrunnelse",
             hjemmel = Hjemmel.BT_FEM,
             interntNotat = "interntNotat",
             innstillingKlageinstans = "innstillingKlageinstans"
