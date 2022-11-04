@@ -60,7 +60,7 @@ class BehandlingsstatistikkService(
             vedtakTid = if (hendelse == Hendelse.VEDTATT) hendelseTidspunkt.atZone(zoneIdOslo) else null,
             sakUtland = "Nasjonal",
             behandlingResultat = behandling.resultat.name,
-            resultatBegrunnelse = if (behandling.resultat == BehandlingResultat.HENLAGT) behandling.henlagtÅrsak?.name else vurdering?.arsak?.name,
+            resultatBegrunnelse = if (behandling.resultat == BehandlingResultat.HENLAGT) behandling.henlagtÅrsak?.name else vurdering?.årsak?.name,
             behandlingMetode = "MANUELL",
             saksbehandler = behandling.sporbar.endret.endretAv,
             avsender = "Klage familie",

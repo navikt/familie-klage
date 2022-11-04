@@ -9,7 +9,7 @@ object VurderingValidator {
     fun validerVurdering(vurdering: VurderingDto) {
         when (vurdering.vedtak) {
             Vedtak.OMGJØR_VEDTAK -> {
-                feilHvis(vurdering.arsak == null) {
+                feilHvis(vurdering.årsak == null) {
                     "Mangler årsak på omgjør vedtak"
                 }
                 feilHvis(vurdering.begrunnelseOmgjøring == null) {
@@ -26,7 +26,7 @@ object VurderingValidator {
                 feilHvis(vurdering.hjemmel == null) {
                     "Mangler hjemmel på oppretthold vedtak"
                 }
-                feilHvis(vurdering.arsak != null) {
+                feilHvis(vurdering.årsak != null) {
                     "Kan ikke lagre årsak på oppretthold vedtak"
                 }
                 feilHvis(vurdering.begrunnelseOmgjøring != null) {
