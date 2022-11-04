@@ -5,6 +5,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.KlagebehandlingDto
 import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
 import no.nav.familie.kontrakter.felles.klage.Årsak
+import org.springframework.data.relational.core.mapping.Column
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -20,6 +21,7 @@ data class Klagebehandlingsesultat(
     val opprettet: LocalDateTime,
     val mottattDato: LocalDate,
     val resultat: BehandlingResultat,
+    @Column("arsak")
     val årsak: Årsak?,
     val vedtaksdato: LocalDateTime?
 )
