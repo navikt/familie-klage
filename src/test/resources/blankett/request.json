@@ -24,7 +24,7 @@
   },
   "vurdering" : {
     "vedtak" : "OPPRETTHOLD_VEDTAK",
-    "arsak" : "FEIL_I_LOVANDVENDELSE",
+    "årsak" : "FEIL_I_LOVANDVENDELSE",
     "begrunnelseOmgjøring" : "begrunnelse",
     "hjemmel" : "BT_FEM",
     "innstillingKlageinstans" : "innstillingKlageinstans",

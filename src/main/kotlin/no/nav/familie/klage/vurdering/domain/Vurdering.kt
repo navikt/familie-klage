@@ -13,7 +13,8 @@ data class Vurdering(
     @Id
     val behandlingId: UUID,
     val vedtak: Vedtak,
-    val arsak: Årsak? = null,
+    @Column("arsak")
+    val årsak: Årsak? = null,
     @Column("begrunnelse_omgjoring")
     val begrunnelseOmgjøring: String? = null,
     val hjemmel: Hjemmel? = null,

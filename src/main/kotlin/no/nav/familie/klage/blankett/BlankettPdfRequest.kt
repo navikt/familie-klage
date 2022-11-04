@@ -46,7 +46,7 @@ data class BlankettFormDto(
 
 data class BlankettVurderingDto(
     val vedtak: Vedtak,
-    val arsak: Årsak?,
+    val årsak: Årsak?,
     val begrunnelseOmgjøring: String?,
     val hjemmel: Hjemmel?,
     val innstillingKlageinstans: String?,

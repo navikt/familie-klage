@@ -91,13 +91,13 @@ object DomainUtil {
          interntNotat: String? = null
     ) =
         Vurdering(
-            behandlingId = behandlingId,
-            vedtak = vedtak,
-            hjemmel = hjemmel,
-            innstillingKlageinstans = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
-            arsak = årsak,
-            begrunnelseOmgjøring = begrunnelseOmgjøring,
-            interntNotat = interntNotat
+                behandlingId = behandlingId,
+                vedtak = vedtak,
+                hjemmel = hjemmel,
+                innstillingKlageinstans = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
+                årsak = årsak,
+                begrunnelseOmgjøring = begrunnelseOmgjøring,
+                interntNotat = interntNotat
         )
 
     fun vurderingDto(
@@ -109,13 +109,13 @@ object DomainUtil {
         innstillingKlageinstans: String? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
         interntNotat: String? = null
     ) = VurderingDto(
-        behandlingId = behandlingId,
-        vedtak = vedtak,
-        arsak = årsak,
-        begrunnelseOmgjøring = begrunnelseOmgjøring,
-        hjemmel = hjemmel,
-        innstillingKlageinstans = innstillingKlageinstans,
-        interntNotat = interntNotat
+            behandlingId = behandlingId,
+            vedtak = vedtak,
+            årsak = årsak,
+            begrunnelseOmgjøring = begrunnelseOmgjøring,
+            hjemmel = hjemmel,
+            innstillingKlageinstans = innstillingKlageinstans,
+            interntNotat = interntNotat
     )
 
     fun oppfyltForm(behandlingId: UUID) =
