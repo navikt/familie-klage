@@ -3,6 +3,8 @@ package no.nav.familie.klage.behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.distribusjon.DistribuerBrevTask
+import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.formkrav.dto.tilDto
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
@@ -17,6 +19,8 @@ import no.nav.familie.klage.testutil.DomainUtil.tilFagsak
 import no.nav.familie.klage.testutil.DomainUtil.vurderingDto
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.prosessering.domene.Status
+import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -41,6 +45,9 @@ internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
 
     @Autowired
     private lateinit var brevService: BrevService
+
+    @Autowired
+    private lateinit var taskService: TaskService
 
     @Autowired
     private lateinit var behandleSakOppgaveRepository: BehandleSakOppgaveRepository
@@ -82,8 +89,13 @@ internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
     internal fun `skal ferdigstille behandling og opprette tasks for distribuering av data til dokarkiv og kabal`() {
         val ferdigstillResponse = ferdigstill(behandlingId = behandling.id)
         assertThat(ferdigstillResponse.statusCode).isEqualTo(HttpStatus.OK)
-        // TODO: Trigge plukk  av task - forvent at journalførBrevTask ferdigstilles
-        // TODO: Trigge plukk  av task - forvent at sendTilKabalTask og distribuerBrevTask ferdigstilles ?
+        val journalførTask = taskService.finnTaskMedPayloadOgType(behandling.id.toString(), JournalførBrevTask.TYPE)
+        assertThat(journalførTask).isNotNull
+        println(journalførTask)
+        if (journalførTask?.status == Status.FERDIG) {
+            println("STATUS ER FERDIG - sjekker for distribuertask")
+            assertThat(taskService.finnTaskMedPayloadOgType(behandling.id.toString(), DistribuerBrevTask.TYPE)).isNotNull
+        }
     }
 
     private fun ferdigstill(behandlingId: UUID): ResponseEntity<Ressurs<Unit>> {
