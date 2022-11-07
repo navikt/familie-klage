@@ -1,5 +1,7 @@
 package no.nav.familie.klage.behandling
 
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
+import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.formkrav.dto.tilDto
@@ -8,7 +10,6 @@ import no.nav.familie.klage.infrastruktur.config.RolleConfig
 import no.nav.familie.klage.oppgave.BehandleSakOppgave
 import no.nav.familie.klage.oppgave.BehandleSakOppgaveRepository
 import no.nav.familie.klage.testutil.BrukerContextUtil
-import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
@@ -60,11 +61,16 @@ internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
         testoppsettService.lagreBehandling(behandling)
 
         formService.opprettInitielleFormkrav(behandling.id)
-        formService.oppdaterFormkrav(oppfyltForm(behandling.id).tilDto(DomainUtil.påklagetVedtakDto()))
+        formService.oppdaterFormkrav(oppfyltForm(behandling.id).tilDto(PåklagetVedtakDto("123", VEDTAK)))
         vurderingService.opprettEllerOppdaterVurdering(vurdering)
 
         brevService.lagBrev(behandling.id)
-        behandleSakOppgaveRepository.insert(BehandleSakOppgave(behandlingId = behandling.id, oppgaveId = Random.nextLong().absoluteValue))
+        behandleSakOppgaveRepository.insert(
+            BehandleSakOppgave(
+                behandlingId = behandling.id,
+                oppgaveId = Random.nextLong().absoluteValue
+            )
+        )
     }
 
     @AfterEach

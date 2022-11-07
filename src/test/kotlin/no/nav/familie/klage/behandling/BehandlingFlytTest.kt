@@ -1,6 +1,10 @@
 package no.nav.familie.klage.behandling
 
+import no.nav.familie.klage.behandling.domain.PåklagetVedtak
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.formkrav.FormService
@@ -60,9 +64,9 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
         internal fun `OPPRETTHOLD_VEDTAK - når man har sendt brev skal man vente på svar`() {
             val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
                 val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
-                formService.oppdaterFormkrav(oppfyltFormDto(behandlingId))
+                formService.oppdaterFormkrav(oppfyltFormDto(behandlingId, påklagetVedtakDto))
                 vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
-                formService.oppdaterFormkrav(oppfyltFormDto(behandlingId))
+                formService.oppdaterFormkrav(oppfyltFormDto(behandlingId, påklagetVedtakDto))
                 vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
                 lagEllerOppdaterBrev(behandlingId)
                 ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
@@ -87,12 +91,12 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
         internal fun `OPPRETTHOLD_VEDTAK - skal kunne hoppe mellom steg`() {
             val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
                 val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
-                formService.oppdaterFormkrav(oppfyltFormDto(behandlingId))
+                formService.oppdaterFormkrav(oppfyltFormDto(behandlingId, påklagetVedtakDto))
                 vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
 
                 lagEllerOppdaterBrev(behandlingId)
 
-                formService.oppdaterFormkrav(oppfyltFormDto(behandlingId))
+                formService.oppdaterFormkrav(oppfyltFormDto(behandlingId, påklagetVedtakDto))
                 vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId))
 
                 lagEllerOppdaterBrev(behandlingId)
@@ -167,6 +171,8 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
         }
     }
 
+    private val påklagetVedtakDto = PåklagetVedtakDto(eksternFagsystemBehandlingId = "123", VEDTAK)
+
     private val opprettKlagebehandlingRequest =
         OpprettKlagebehandlingRequest(
             "ident",
@@ -178,8 +184,8 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             "enhet"
         )
 
-    private fun oppfyltFormDto(behandlingId: UUID) =
-        DomainUtil.oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto())
+    private fun oppfyltFormDto(behandlingId: UUID, påklagetVedtakDto: PåklagetVedtakDto = DomainUtil.påklagetVedtakDto()) =
+        DomainUtil.oppfyltForm(behandlingId).tilDto(påklagetVedtakDto)
 
     private fun ikkeOppfyltFormDto(behandlingId: UUID) =
         DomainUtil.oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto()).copy(
