@@ -3,6 +3,7 @@ package no.nav.familie.klage.ekstern
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.OpprettBehandlingService
 import no.nav.familie.klage.behandling.domain.tilEksternKlagebehandlingDto
+import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.util.UUID
 
 @RestController
 @RequestMapping(path = ["/api/ekstern/behandling"])
@@ -40,9 +42,6 @@ class EksternBehandlingController(
         feilHvis(eksternFagsakIder.isEmpty()) {
             "Mangler eksternFagsakId i query param"
         }
-        /**
-         * TODO : Legg til sjekk via tilgangservice
-         */
         val behandlinger = eksternFagsakIder.associateWith { eksternFagsakId ->
             behandlingService.finnKlagebehandlingsresultat(eksternFagsakId, fagsystem).map {
                 it.tilEksternKlagebehandlingDto(behandlingService.hentKlageresultatDto(behandlingId = it.id))
@@ -50,8 +49,16 @@ class EksternBehandlingController(
         }
         val antallTreff = behandlinger.entries.associate { it.key to it.value.size }
         logger.info("Henter klagebehandlingsresultat for eksternFagsakIder=$eksternFagsakIder antallTreff=$antallTreff")
-        // TODO fiks validering av at behandlinger tilhører samme person
+        validerTilgang(behandlinger)
+
         return Ressurs.success(behandlinger)
+    }
+
+    private fun validerTilgang(behandlinger: Map<String, List<KlagebehandlingDto>>) {
+        behandlinger.entries.flatMap { it.value }.map { it.fagsakId }.distinct().forEach {
+            tilgangService.validerTilgangTilFagsak(it, AuditLoggerEvent.ACCESS)
+        }
+        behandlinger.entries.flatMap { it.value }.map { it. }
     }
 
     @PostMapping("/opprett")
