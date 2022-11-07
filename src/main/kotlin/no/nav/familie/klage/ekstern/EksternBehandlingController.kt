@@ -58,7 +58,6 @@ class EksternBehandlingController(
         behandlinger.entries.flatMap { it.value }.map { it.fagsakId }.distinct().forEach {
             tilgangService.validerTilgangTilFagsak(it, AuditLoggerEvent.ACCESS)
         }
-        behandlinger.entries.flatMap { it.value }.map { it. }
     }
 
     @PostMapping("/opprett")
