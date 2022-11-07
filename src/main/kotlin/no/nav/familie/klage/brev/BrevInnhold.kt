@@ -1,8 +1,8 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.brev.FormBrevUtil.utledIkkeOppfylteFormkrav
-import no.nav.familie.klage.brev.FormBrevUtil.utledÅrsakTilAvvisningstekst
 import no.nav.familie.klage.brev.FormBrevUtil.utledLovtekst
+import no.nav.familie.klage.brev.FormBrevUtil.utledÅrsakTilAvvisningstekst
 import no.nav.familie.klage.brev.dto.AvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.formkrav.domain.Form
@@ -16,7 +16,6 @@ object BrevInnhold {
         navn: String,
         stønadstype: Stønadstype
     ): FritekstBrevRequestDto {
-
         return FritekstBrevRequestDto(
             overskrift = "Vi har sendt klagen din til NAV Klageinstans",
             navn = navn,
@@ -50,10 +49,10 @@ object BrevInnhold {
     }
 
     fun lagFormkravAvvistBrev(
-            ident: String,
-            navn: String,
-            formkrav: Form,
-            stønadstype: Stønadstype
+        ident: String,
+        navn: String,
+        formkrav: Form,
+        stønadstype: Stønadstype
     ): FritekstBrevRequestDto {
         val ikkeOppfylteFormkrav = utledIkkeOppfylteFormkrav(formkrav)
         val brevtekstFraSaksbehandler = formkrav.brevtekst ?: error("Må ha brevtekst fra saksbehandler for å generere brev ved formkrav ikke oppfylt")
@@ -69,12 +68,12 @@ object BrevInnhold {
                     innhold = utledÅrsakTilAvvisningstekst(ikkeOppfylteFormkrav)
                 ),
                 AvsnittDto(
-                        deloverskrift = "",
-                        innhold = brevtekstFraSaksbehandler
+                    deloverskrift = "",
+                    innhold = brevtekstFraSaksbehandler
                 ),
                 AvsnittDto(
-                        deloverskrift = "",
-                        innhold = utledLovtekst(ikkeOppfylteFormkrav)
+                    deloverskrift = "",
+                    innhold = utledLovtekst(ikkeOppfylteFormkrav)
                 ),
                 AvsnittDto(
                     deloverskrift = "Du har rett til å klage",
@@ -87,9 +86,9 @@ object BrevInnhold {
                     "På nav.no/dittnav kan du se dokumentene i saken din."
                 ),
                 AvsnittDto(
-                        deloverskrift = "Har du spørsmål?",
-                        innhold =
-                        "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. Du kan også kontakte oss på nav.no/kontakt."
+                    deloverskrift = "Har du spørsmål?",
+                    innhold =
+                    "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. Du kan også kontakte oss på nav.no/kontakt."
                 )
             )
         )

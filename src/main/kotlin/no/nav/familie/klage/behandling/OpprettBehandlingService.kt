@@ -71,7 +71,7 @@ class OpprettBehandlingService(
         )
         logger.info(
             "Opprettet behandling=$behandlingId for stønadstype=$stønadstype " +
-                    "eksternFagsakId=$eksternFagsakId klageMottatt=$klageMottatt"
+                "eksternFagsakId=$eksternFagsakId klageMottatt=$klageMottatt"
         )
         return behandlingId
     }

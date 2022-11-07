@@ -123,9 +123,13 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
                 val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
                 formService.oppdaterFormkrav(oppfyltFormDto(behandlingId))
-                vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId = behandlingId,
-                                                                            vedtak = Vedtak.OMGJØR_VEDTAK,
-                                                                            begrunnelseOmgjøring = "begrunnelse"))
+                vurderingService.opprettEllerOppdaterVurdering(
+                    vurderingDto(
+                        behandlingId = behandlingId,
+                        vedtak = Vedtak.OMGJØR_VEDTAK,
+                        begrunnelseOmgjøring = "begrunnelse"
+                    )
+                )
                 ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
                 behandlingId
             }

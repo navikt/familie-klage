@@ -16,10 +16,14 @@ internal class VurderingValidatorTest {
 
         @Test
         internal fun `skal validere når man har med årsak, men hjemmel er null`() {
-            validerVurdering(vurderingDto(vedtak = Vedtak.OMGJØR_VEDTAK,
-                                          hjemmel = null,
-                                          årsak = Årsak.FEIL_I_LOVANDVENDELSE,
-                                          begrunnelseOmgjøring = "begrunnelse"))
+            validerVurdering(
+                vurderingDto(
+                    vedtak = Vedtak.OMGJØR_VEDTAK,
+                    hjemmel = null,
+                    årsak = Årsak.FEIL_I_LOVANDVENDELSE,
+                    begrunnelseOmgjøring = "begrunnelse"
+                )
+            )
         }
 
         @Test
@@ -32,10 +36,14 @@ internal class VurderingValidatorTest {
         @Test
         internal fun `skal feile når hjemmel ikke er null`() {
             assertThatThrownBy {
-                validerVurdering(vurderingDto(vedtak = Vedtak.OMGJØR_VEDTAK,
-                                              hjemmel = Hjemmel.BT_FEM,
-                                              årsak = Årsak.ANNET,
-                                              begrunnelseOmgjøring = "begrunnelse"))
+                validerVurdering(
+                    vurderingDto(
+                        vedtak = Vedtak.OMGJØR_VEDTAK,
+                        hjemmel = Hjemmel.BT_FEM,
+                        årsak = Årsak.ANNET,
+                        begrunnelseOmgjøring = "begrunnelse"
+                    )
+                )
             }.hasMessage("Kan ikke lagre hjemmel på omgjør vedtak")
         }
 
@@ -72,9 +80,13 @@ internal class VurderingValidatorTest {
         @Test
         internal fun `skal feile når begrunnelse for omgjøring ikke er null`() {
             assertThatThrownBy {
-                validerVurdering(vurderingDto(vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
-                                              hjemmel = Hjemmel.BT_FEM,
-                                              begrunnelseOmgjøring = "begrunnelse"))
+                validerVurdering(
+                    vurderingDto(
+                        vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
+                        hjemmel = Hjemmel.BT_FEM,
+                        begrunnelseOmgjøring = "begrunnelse"
+                    )
+                )
             }.hasMessage("Kan ikke lagre begrunnelse på oppretthold vedtak")
         }
     }
