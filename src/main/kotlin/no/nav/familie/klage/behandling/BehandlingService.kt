@@ -57,11 +57,6 @@ class BehandlingService(
         return behandlingRepository.insert(behandling)
     }
 
-    // TODO
-    fun hentNavnFraBehandlingsId(behandlingId: UUID): String {
-        return "Navn Navnesen"
-    }
-
     fun hentKlageresultatDto(behandlingId: UUID): List<KlageinstansResultatDto> {
         val klageresultater = klageresultatRepository.findByBehandlingId(behandlingId)
         return klageresultater.tilDto()
