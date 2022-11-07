@@ -19,15 +19,19 @@ import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
+import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
+import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 import java.util.UUID
 
 @Service
@@ -40,7 +44,8 @@ class BrevService(
     private val fagsakService: FagsakService,
     private val formService: FormService,
     private val vurderingService: VurderingService,
-    private val personopplysningerService: PersonopplysningerService
+    private val personopplysningerService: PersonopplysningerService,
+    private val fagsystemVedtakService: FagsystemVedtakService
 ) {
 
     fun hentBrev(behandlingId: UUID): Brev = brevRepository.findByIdOrThrow(behandlingId)
@@ -67,10 +72,10 @@ class BrevService(
         val navn = personopplysningerService.hentPersonopplysninger(behandlingId).navn
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
-
+        val påklagetFagsystemVedtak: FagsystemVedtak? = utledPåklagetFagsystemVedtak(behandling)
         validerKanLageBrev(behandling)
 
-        val brevRequest = lagBrevRequest(behandlingId, fagsak, navn)
+        val brevRequest = lagBrevRequest(behandlingId, fagsak, navn, påklagetFagsystemVedtak, behandling.klageMottatt)
 
         val signaturMedEnhet = brevsignaturService.lagSignatur(behandling.id)
 
@@ -89,6 +94,14 @@ class BrevService(
         return familieDokumentClient.genererPdfFraHtml(html)
     }
 
+    private fun utledPåklagetFagsystemVedtak(behandling: Behandling): FagsystemVedtak? {
+        return behandling.påklagetVedtak.eksternFagsystemBehandlingId?.let { påklagetBehandlingId ->
+            val fagsystemVedtak = fagsystemVedtakService.hentFagsystemVedtak(behandling.id)
+            fagsystemVedtak.singleOrNull { it.eksternBehandlingId == påklagetBehandlingId }
+                ?: error("Finner ikke fagsystemvedtak med eksternBehandlingId=$påklagetBehandlingId")
+        }
+    }
+
     private fun validerKanLageBrev(behandling: Behandling) {
         feilHvis(behandling.status.erLåstForVidereBehandling()) {
             "Kan ikke oppdatere brev når behandlingen er låst"
@@ -98,7 +111,13 @@ class BrevService(
         }
     }
 
-    private fun lagBrevRequest(behandlingId: UUID, fagsak: Fagsak, navn: String): FritekstBrevRequestDto {
+    private fun lagBrevRequest(
+        behandlingId: UUID,
+        fagsak: Fagsak,
+        navn: String,
+        påklagetFagsystemVedtak: FagsystemVedtak?,
+        klageMottatt: LocalDate
+    ): FritekstBrevRequestDto {
         val behandlingResultat = utledBehandlingResultat(behandlingId)
         val vurdering = vurderingService.hentVurdering(behandlingId)
 
@@ -106,8 +125,17 @@ class BrevService(
             BehandlingResultat.IKKE_MEDHOLD -> {
                 val instillingKlageinstans = vurdering?.innstillingKlageinstans
                     ?: throw Feil("Behandling med resultat $behandlingResultat mangler instillingKlageinstans for generering av brev")
-
-                BrevInnhold.lagOpprettholdelseBrev(fagsak.hentAktivIdent(), instillingKlageinstans, navn, fagsak.stønadstype)
+                brukerfeilHvis(påklagetFagsystemVedtak == null) {
+                    "Kan ikke opprette brev til klageinstansen når det ikke er valgt et påklaget vedtak"
+                }
+                BrevInnhold.lagOpprettholdelseBrev(
+                    fagsak.hentAktivIdent(),
+                    instillingKlageinstans,
+                    navn,
+                    fagsak.stønadstype,
+                    påklagetFagsystemVedtak,
+                    klageMottatt
+                )
             }
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> {
                 val formkrav = formService.hentForm(behandlingId)
