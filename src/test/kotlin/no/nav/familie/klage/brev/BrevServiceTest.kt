@@ -1,6 +1,8 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.behandling.BehandlingRepository
+import no.nav.familie.klage.behandling.domain.PåklagetVedtak
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.formkrav.FormRepository
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
@@ -35,8 +37,12 @@ internal class BrevServiceTest : OppslagSpringRunnerTest() {
     private val fagsak = fagsak()
     private val fagsakFerdigstiltBehandling =
         fagsak(stønadstype = Stønadstype.SKOLEPENGER, fagsakPersonId = fagsak.fagsakPersonId)
-    private val behandling = behandling(fagsak, steg = StegType.BREV)
-    private val ferdigstiltBehandling = behandling(fagsakFerdigstiltBehandling, status = BehandlingStatus.FERDIGSTILT)
+    private val behandling = behandling(fagsak, steg = StegType.BREV, påklagetVedtak = PåklagetVedtak("123", VEDTAK))
+    private val ferdigstiltBehandling = behandling(
+        fagsakFerdigstiltBehandling,
+        status = BehandlingStatus.FERDIGSTILT,
+        påklagetVedtak = PåklagetVedtak("123", VEDTAK)
+    )
 
     @BeforeEach
     internal fun setUp() {
