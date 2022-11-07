@@ -50,17 +50,17 @@ internal class FormBrevUtilTest {
 
     @Test
     internal fun `skal utlede riktig innholdstekst dersom kun et formkrav er ikke oppfylt`() {
-        assertThat(utledÅrsakTilAvvisningstekst(klagePart)).isEqualTo("$innholdstekstPrefix $klagePartTekst")
-        assertThat(utledÅrsakTilAvvisningstekst(klageKonkret)).isEqualTo("$innholdstekstPrefix $klageKonkretTekst")
-        assertThat(utledÅrsakTilAvvisningstekst(klageSignert)).isEqualTo("$innholdstekstPrefix $klageSignertTekst")
-        assertThat(utledÅrsakTilAvvisningstekst(klagefristOverholdt)).isEqualTo("$innholdstekstPrefix $klageFristOverholdtTekst")
+        assertThat(utledÅrsakTilAvvisningstekst(klagePart)).isEqualTo("$innholdstekstPrefix $klagePartTekst.")
+        assertThat(utledÅrsakTilAvvisningstekst(klageKonkret)).isEqualTo("$innholdstekstPrefix $klageKonkretTekst.")
+        assertThat(utledÅrsakTilAvvisningstekst(klageSignert)).isEqualTo("$innholdstekstPrefix $klageSignertTekst.")
+        assertThat(utledÅrsakTilAvvisningstekst(klagefristOverholdt)).isEqualTo("$innholdstekstPrefix $klageFristOverholdtTekst.")
     }
 
     @Test
     internal fun `skal utlede riktig innholdstekst dersom flere formkrav ikke er oppfylt`() {
         val innholdstekst = utledÅrsakTilAvvisningstekst(ikkeOppfylteFormkrav)
 
-        assertThat(innholdstekst).contains("$innholdstekstPrefix:")
+        assertThat(innholdstekst).contains("$innholdstekstPrefix")
         assertThat(innholdstekst).contains(klageKonkretTekst)
         assertThat(innholdstekst).contains(klageSignertTekst)
         assertThat(innholdstekst).contains(klageFristOverholdtTekst)
@@ -121,10 +121,10 @@ internal class FormBrevUtilTest {
         assertThat(lovtekst).contains("21-12")
     }
 
-    val klagePartTekst = "du har klaget på et vedtak som ikke gjelder deg."
-    val klageKonkretTekst = "du har ikke sagt hva du klager på."
-    val klageSignertTekst = "du ikke har underskrevet den."
-    val klageFristOverholdtTekst = "du har klaget for sent."
+    val klagePartTekst = "du har klaget på et vedtak som ikke gjelder deg"
+    val klageKonkretTekst = "du har ikke sagt hva du klager på"
+    val klageSignertTekst = "du ikke har underskrevet den"
+    val klageFristOverholdtTekst = "du har klaget for sent"
     val innholdstekstPrefix = "Vi har avvist klagen din fordi"
     val folketrygdLovPrefix = "Vedtaket er gjort etter folketrygdloven"
     val forvaltningslovPrefix = "Vedtaket er gjort etter forvaltningsloven"

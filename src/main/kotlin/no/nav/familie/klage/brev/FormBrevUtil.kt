@@ -22,9 +22,9 @@ object FormBrevUtil {
             "Skal ikke kunne utlede innholdstekst til formkrav avvist brev uten ikke oppfylte formkrav"
         }
         if (formkravVilkår.size > 1) {
-            return "$innholdstekstPrefix: ${formkravVilkår.joinToString("") { "\n  •  ${it.tekst}" }}"
+            return "$innholdstekstPrefix ${formkravVilkår.joinToString("") { "\n  •  ${it.tekst}" }}"
         } else {
-            return "$innholdstekstPrefix ${formkravVilkår.single().tekst}"
+            return "$innholdstekstPrefix ${formkravVilkår.single().tekst}."
         }
     }
 
@@ -37,11 +37,11 @@ object FormBrevUtil {
         return if (harFolketrygdlov && harForvaltningslov) {
             "Vedtaket er gjort etter folketrygdloven ${utledParagrafer(folketrygdloven)} og forvaltningsloven ${
                 utledParagrafer(forvaltningsloven)
-            }"
+            }."
         } else if (harFolketrygdlov) {
-            "Vedtaket er gjort etter folketrygdloven ${utledParagrafer(folketrygdloven)}"
+            "Vedtaket er gjort etter folketrygdloven ${utledParagrafer(folketrygdloven)}."
         } else if (harForvaltningslov) {
-            "Vedtaket er gjort etter forvaltningsloven ${utledParagrafer(forvaltningsloven)}"
+            "Vedtaket er gjort etter forvaltningsloven ${utledParagrafer(forvaltningsloven)}."
         } else {
             throw Feil("Har ingen paragrafer å utlede i vedtaksbrev ved formkrav avvist")
         }
@@ -60,9 +60,9 @@ object FormBrevUtil {
     const val innholdstekstPrefix = "Vi har avvist klagen din fordi"
 
     enum class FormkravVilkår(val tekst: String, val folketrygdLoven: Set<String>, val forvaltningsloven: Set<String>) {
-        KLAGE_KONKRET("du har ikke sagt hva du klager på.", emptySet(), setOf("32", "33")),
-        KLAGE_PART("du har klaget på et vedtak som ikke gjelder deg.", emptySet(), setOf("28", "33")),
-        KLAGE_SIGNERT("du ikke har underskrevet den.", emptySet(), setOf("31", "33")),
-        KLAGEFRIST_OVERHOLDT("du har klaget for sent.", setOf("21-12"), setOf("31", "33"))
+        KLAGE_KONKRET("du har ikke sagt hva du klager på", emptySet(), setOf("32", "33")),
+        KLAGE_PART("du har klaget på et vedtak som ikke gjelder deg", emptySet(), setOf("28", "33")),
+        KLAGE_SIGNERT("du ikke har underskrevet den", emptySet(), setOf("31", "33")),
+        KLAGEFRIST_OVERHOLDT("du har klaget for sent", setOf("21-12"), setOf("31", "33"))
     }
 }
