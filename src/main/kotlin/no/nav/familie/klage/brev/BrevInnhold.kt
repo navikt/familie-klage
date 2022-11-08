@@ -43,7 +43,7 @@ object BrevInnhold {
                 AvsnittDto(
                     deloverskrift = "",
                     innhold =
-                    "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via ${stønadstype.klageUrl()}."
+                    "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via \n${stønadstype.klageUrl()}."
                 ),
                 AvsnittDto(
                     deloverskrift = "Har du spørsmål?",
