@@ -16,8 +16,8 @@ spec:
     retentionHours: 2160
   acl:
     - team: teamfamilie
-      application: familie-klage
+      application: familie-famklage
       access: readwrite
     - team: ptsak
-      application: pt-sak-klage
+      application: pt-sak-famklage
       access: read

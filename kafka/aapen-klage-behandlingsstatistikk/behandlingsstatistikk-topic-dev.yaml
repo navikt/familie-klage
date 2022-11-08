@@ -19,8 +19,8 @@ spec:
       application: familie-klage
       access: readwrite
     - team: ptsak
-      application: pt-sak-klage-preprod
+      application: pt-sak-famklage-preprod
       access: read
     - team: ptsak
-      application: pt-sak-klage-dev
+      application: pt-sak-famklage-dev
       access: read
