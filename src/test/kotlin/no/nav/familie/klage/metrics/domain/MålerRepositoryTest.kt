@@ -76,18 +76,18 @@ internal class MålerRepositoryTest : OppslagSpringRunnerTest() {
         val data = målerRepository.finnÅpneBehandlingerPerUke()
 
         assertThat(data).containsExactlyInAnyOrder(
-            ForekomsterPerUke(år, uke, Stønadstype.OVERGANGSSTØNAD, 1)
+            ÅpneBehandlingerFraUke(år, uke, Stønadstype.OVERGANGSSTØNAD, 1)
         )
     }
 
     @Test
     internal fun `finnVedtakPerUke`() {
-        val data = målerRepository.finnVedtakPerUke()
+        val data = målerRepository.antallVedtak()
 
         assertThat(data).containsExactlyInAnyOrder(
-            VedtakPerUke(år, uke, Stønadstype.OVERGANGSSTØNAD, BehandlingResultat.MEDHOLD, 1),
-            VedtakPerUke(år, uke, Stønadstype.OVERGANGSSTØNAD, BehandlingResultat.IKKE_MEDHOLD, 1),
-            VedtakPerUke(år, uke, Stønadstype.BARNETILSYN, BehandlingResultat.MEDHOLD, 1),
+            AntallVedtak(Stønadstype.OVERGANGSSTØNAD, BehandlingResultat.MEDHOLD, 1),
+            AntallVedtak(Stønadstype.OVERGANGSSTØNAD, BehandlingResultat.IKKE_MEDHOLD, 1),
+            AntallVedtak(Stønadstype.BARNETILSYN, BehandlingResultat.MEDHOLD, 1),
         )
     }
 }

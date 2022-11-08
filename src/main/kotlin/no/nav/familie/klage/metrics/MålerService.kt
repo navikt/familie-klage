@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service
 class MålerService(private val målerRepository: MålerRepository) {
 
     private val åpneBehandlingerPerUkeGauge = MultiGauge.builder("KlarTilBehandlingPerUke").register(Metrics.globalRegistry)
-    private val behandlingerPerStatus = MultiGauge.builder("BehandlingerPerStatus").register(Metrics.globalRegistry)
-    private val vedtakGauge = MultiGauge.builder("Vedtak").register(Metrics.globalRegistry)
+    private val behandlingerPerStatus = MultiGauge.builder("BehandlingStatus").register(Metrics.globalRegistry)
+    private val vedtakGauge = MultiGauge.builder("VedtakResultat").register(Metrics.globalRegistry)
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -60,7 +60,7 @@ class MålerService(private val målerRepository: MålerRepository) {
 
     @Scheduled(initialDelay = 180 * 1000L, fixedDelay = OPPDATERINGSFREKVENS)
     fun vedtakPerUke() {
-        val data = målerRepository.finnVedtakPerUke()
+        val data = målerRepository.antallVedtak()
         logger.info("Vedtak returnerte ${data.sumOf { it.antall }} fordelt på ${data.size} typer/uker.")
 
         val rows = data.map {
@@ -68,7 +68,6 @@ class MålerService(private val målerRepository: MålerRepository) {
                 Tags.of(
                     "ytelse", it.stonadstype.name,
                     "resultat", it.resultat.name,
-                    "uke", it.år.toString() + "-" + it.uke.toString().padStart(2, '0')
                 ),
                 it.antall
             )

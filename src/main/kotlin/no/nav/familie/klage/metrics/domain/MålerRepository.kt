@@ -34,21 +34,19 @@ interface MålerRepository : CrudRepository<Behandling, UUID> {
            WHERE status IN ('OPPRETTET', 'UTREDES')
            GROUP BY f.stonadstype, b.status, år, uke"""
     )
-    fun finnÅpneBehandlingerPerUke(): List<ForekomsterPerUke>
+    fun finnÅpneBehandlingerPerUke(): List<ÅpneBehandlingerFraUke>
 
     // language=PostgreSQL
     @Query(
         """SELECT 
             f.stonadstype,
             b.resultat,
-            EXTRACT(ISOYEAR FROM b.endret_tid) AS år,
-            EXTRACT(WEEK FROM b.endret_tid) AS uke,
             COUNT(*) AS antall
            FROM fagsak f
            JOIN behandling b ON f.id = b.fagsak_id
            WHERE b.status IN ('VENTER', 'FERDIGSTILT')
-           GROUP BY f.stonadstype, b.resultat, år, uke"""
+           GROUP BY f.stonadstype, b.resultat"""
     )
-    fun finnVedtakPerUke(): List<VedtakPerUke>
+    fun antallVedtak(): List<AntallVedtak>
 
 }
