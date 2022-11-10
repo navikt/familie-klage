@@ -11,7 +11,7 @@ import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -25,7 +25,7 @@ class OpprettBehandlingService(
     private val formService: FormService,
     private val oppgaveTaskService: OppgaveTaskService,
     private val behandlingshistorikkService: BehandlingshistorikkService,
-    private val taskRepository: TaskRepository
+    private val taskService: TaskService
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -66,7 +66,7 @@ class OpprettBehandlingService(
         formService.opprettInitielleFormkrav(behandlingId)
 
         oppgaveTaskService.opprettBehandleSakOppgave(behandlingId)
-        taskRepository.save(
+        taskService.save(
             BehandlingsstatistikkTask.opprettMottattTask(behandlingId = behandlingId)
         )
         logger.info(
