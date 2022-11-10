@@ -48,5 +48,4 @@ interface MålerRepository : CrudRepository<Behandling, UUID> {
            GROUP BY f.stonadstype, b.resultat"""
     )
     fun antallVedtak(): List<AntallVedtak>
-
 }

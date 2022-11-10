@@ -5,15 +5,14 @@ import no.nav.familie.klage.formkrav.domain.FormVilkår.IKKE_OPPFYLT
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 
-
 object FormBrevUtil {
 
     fun utledIkkeOppfylteFormkrav(formkrav: Form): Set<FormkravVilkår> {
         return setOf(
-                if (formkrav.klagePart == IKKE_OPPFYLT) FormkravVilkår.KLAGE_PART else null,
-                if (formkrav.klageKonkret == IKKE_OPPFYLT) FormkravVilkår.KLAGE_KONKRET else null,
-                if (formkrav.klageSignert == IKKE_OPPFYLT) FormkravVilkår.KLAGE_SIGNERT else null,
-                if (formkrav.klagefristOverholdt == IKKE_OPPFYLT) FormkravVilkår.KLAGEFRIST_OVERHOLDT else null,
+            if (formkrav.klagePart == IKKE_OPPFYLT) FormkravVilkår.KLAGE_PART else null,
+            if (formkrav.klageKonkret == IKKE_OPPFYLT) FormkravVilkår.KLAGE_KONKRET else null,
+            if (formkrav.klageSignert == IKKE_OPPFYLT) FormkravVilkår.KLAGE_SIGNERT else null,
+            if (formkrav.klagefristOverholdt == IKKE_OPPFYLT) FormkravVilkår.KLAGEFRIST_OVERHOLDT else null
         ).filterNotNull().toSet()
     }
 
@@ -36,7 +35,7 @@ object FormBrevUtil {
 
         return if (harFolketrygdlov && harForvaltningslov) {
             "Vedtaket er gjort etter folketrygdloven ${utledParagrafer(folketrygdloven)} og forvaltningsloven ${
-                utledParagrafer(forvaltningsloven)
+            utledParagrafer(forvaltningsloven)
             }."
         } else if (harFolketrygdlov) {
             "Vedtaket er gjort etter folketrygdloven ${utledParagrafer(folketrygdloven)}."

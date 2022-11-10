@@ -41,7 +41,7 @@ class MålerService(private val målerRepository: MålerRepository) {
         val behandlinger = målerRepository.finnBehandlingerPerStatus()
         logger.info(
             "Behandlinger per status returnerte ${behandlinger.sumOf { it.antall }} " +
-                    "fordelt på ${behandlinger.size} statuser."
+                "fordelt på ${behandlinger.size} statuser."
         )
         val rows = behandlinger.map {
             MultiGauge.Row.of(
@@ -66,8 +66,10 @@ class MålerService(private val målerRepository: MålerRepository) {
         val rows = data.map {
             MultiGauge.Row.of(
                 Tags.of(
-                    "ytelse", it.stonadstype.name,
-                    "resultat", it.resultat.name,
+                    "ytelse",
+                    it.stonadstype.name,
+                    "resultat",
+                    it.resultat.name
                 ),
                 it.antall
             )

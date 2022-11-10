@@ -1,13 +1,13 @@
 package no.nav.familie.klage.brev
 
-import no.nav.familie.klage.brev.FormBrevUtil.utledIkkeOppfylteFormkrav
-import no.nav.familie.klage.brev.FormBrevUtil.utledÅrsakTilAvvisningstekst
-import no.nav.familie.klage.brev.FormBrevUtil.utledLovtekst
 import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkår
+import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkår.KLAGEFRIST_OVERHOLDT
+import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkår.KLAGE_KONKRET
 import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkår.KLAGE_PART
 import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkår.KLAGE_SIGNERT
-import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkår.KLAGE_KONKRET
-import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkår.KLAGEFRIST_OVERHOLDT
+import no.nav.familie.klage.brev.FormBrevUtil.utledIkkeOppfylteFormkrav
+import no.nav.familie.klage.brev.FormBrevUtil.utledLovtekst
+import no.nav.familie.klage.brev.FormBrevUtil.utledÅrsakTilAvvisningstekst
 import no.nav.familie.klage.formkrav.domain.FormVilkår.IKKE_OPPFYLT
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
@@ -17,7 +17,6 @@ import org.junit.jupiter.api.assertThrows
 import java.util.UUID
 
 internal class FormBrevUtilTest {
-
 
     @Test
     internal fun `et formkrav ikke oppfylt`() {
@@ -34,10 +33,12 @@ internal class FormBrevUtilTest {
 
     @Test
     internal fun `ingen formkrav oppfylt`() {
-        val formkravFireIkkeOppfylt = oppfyltForm(UUID.randomUUID()).copy(klagePart = IKKE_OPPFYLT,
-                                                                          klageSignert = IKKE_OPPFYLT,
-                                                                          klageKonkret = IKKE_OPPFYLT,
-                                                                          klagefristOverholdt = IKKE_OPPFYLT)
+        val formkravFireIkkeOppfylt = oppfyltForm(UUID.randomUUID()).copy(
+            klagePart = IKKE_OPPFYLT,
+            klageSignert = IKKE_OPPFYLT,
+            klageKonkret = IKKE_OPPFYLT,
+            klagefristOverholdt = IKKE_OPPFYLT
+        )
 
         assertThat(utledIkkeOppfylteFormkrav(formkravFireIkkeOppfylt)).isEqualTo(setOf(KLAGE_PART, KLAGE_SIGNERT, KLAGE_KONKRET, KLAGEFRIST_OVERHOLDT))
     }

@@ -7,8 +7,6 @@ import io.mockk.verify
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.brev.BrevRepository
-import no.nav.familie.klage.infrastruktur.exception.Feil
-import org.assertj.core.api.Assertions.assertThat
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
@@ -16,7 +14,6 @@ import no.nav.familie.klage.vurdering.dto.tilDto
 import no.nav.familie.kontrakter.felles.klage.Årsak
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.springframework.data.repository.findByIdOrNull
 import java.util.UUID
 

@@ -1,7 +1,5 @@
 package no.nav.familie.klage.behandling
 
-import no.nav.familie.klage.behandling.domain.PåklagetVedtak
-import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
@@ -127,9 +125,13 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
                 val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
                 formService.oppdaterFormkrav(oppfyltFormDto(behandlingId))
-                vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId = behandlingId,
-                                                                            vedtak = Vedtak.OMGJØR_VEDTAK,
-                                                                            begrunnelseOmgjøring = "begrunnelse"))
+                vurderingService.opprettEllerOppdaterVurdering(
+                    vurderingDto(
+                        behandlingId = behandlingId,
+                        vedtak = Vedtak.OMGJØR_VEDTAK,
+                        begrunnelseOmgjøring = "begrunnelse"
+                    )
+                )
                 ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
                 behandlingId
             }
