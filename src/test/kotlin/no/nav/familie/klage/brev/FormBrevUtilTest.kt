@@ -123,7 +123,7 @@ internal class FormBrevUtilTest {
     }
 
     val klagePartTekst = "du har klaget på et vedtak som ikke gjelder deg"
-    val klageKonkretTekst = "du har ikke sagt hva du klager på"
+    val klageKonkretTekst = "du ikke har sagt hva du klager på"
     val klageSignertTekst = "du ikke har underskrevet den"
     val klageFristOverholdtTekst = "du har klaget for sent"
     val innholdstekstPrefix = "Vi har avvist klagen din fordi"
