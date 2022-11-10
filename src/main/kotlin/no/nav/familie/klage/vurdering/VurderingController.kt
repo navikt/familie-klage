@@ -38,11 +38,4 @@ class VurderingController(
         return Ressurs.success(vurderingService.opprettEllerOppdaterVurdering(vurdering))
     }
 
-    // TODO kan frontend bruke hentVurdering i stedet, så trenger vi ikke en ekstra endepunkt for å hente vedtak?
-    @GetMapping("{behandlingId}/vedtak")
-    fun hentVedtak(@PathVariable behandlingId: UUID): Ressurs<Vedtak?> {
-        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
-        tilgangService.validerHarVeilederrolleForBehandling(behandlingId)
-        return Ressurs.success(vurderingService.hentVedtak(behandlingId))
-    }
 }

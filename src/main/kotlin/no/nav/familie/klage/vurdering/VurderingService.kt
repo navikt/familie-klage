@@ -26,10 +26,6 @@ class VurderingService(
     fun hentVurderingDto(behandlingId: UUID): VurderingDto? =
         hentVurdering(behandlingId)?.tilDto()
 
-    fun hentVedtak(behandlingId: UUID): Vedtak? {
-        return vurderingRepository.findByIdOrNull(behandlingId)?.vedtak
-    }
-
     @Transactional
     fun opprettEllerOppdaterVurdering(vurdering: VurderingDto): VurderingDto {
         validerVurdering(vurdering)
