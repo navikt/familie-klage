@@ -59,7 +59,7 @@ object FormBrevUtil {
     const val innholdstekstPrefix = "Vi har avvist klagen din fordi"
 
     enum class FormkravVilkår(val tekst: String, val folketrygdLoven: Set<String>, val forvaltningsloven: Set<String>) {
-        KLAGE_KONKRET("du har ikke sagt hva du klager på", emptySet(), setOf("32", "33")),
+        KLAGE_KONKRET("du ikke har sagt hva du klager på", emptySet(), setOf("32", "33")),
         KLAGE_PART("du har klaget på et vedtak som ikke gjelder deg", emptySet(), setOf("28", "33")),
         KLAGE_SIGNERT("du ikke har underskrevet den", emptySet(), setOf("31", "33")),
         KLAGEFRIST_OVERHOLDT("du har klaget for sent", setOf("21-12"), setOf("31", "33"))
