@@ -35,7 +35,7 @@ object FormBrevUtil {
 
         return if (harFolketrygdlov && harForvaltningslov) {
             "Vedtaket er gjort etter folketrygdloven ${utledParagrafer(folketrygdloven)} og forvaltningsloven ${
-                utledParagrafer(forvaltningsloven)
+            utledParagrafer(forvaltningsloven)
             }."
         } else if (harFolketrygdlov) {
             "Vedtaket er gjort etter folketrygdloven ${utledParagrafer(folketrygdloven)}."

@@ -1,7 +1,5 @@
 package no.nav.familie.klage.behandling
 
-import no.nav.familie.klage.behandling.domain.PåklagetVedtak
-import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
