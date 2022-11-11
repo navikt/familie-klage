@@ -87,7 +87,7 @@ internal class FerdigstillBehandlingServiceTest {
     }
 
     @Test
-    internal fun `skal ferdigstille behandling`() {
+    internal fun `skal ferdigstille behandling, ikke medhold`() {
         val stegSlot = slot<StegType>()
         val behandlingsresultatSlot = slot<BehandlingResultat>()
         every { stegService.oppdaterSteg(any(), any(), capture(stegSlot), any()) } just Runs
@@ -103,8 +103,8 @@ internal class FerdigstillBehandlingServiceTest {
 
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD)
         assertThat(stegSlot.captured).isEqualTo(StegType.KABAL_VENTER_SVAR)
-        verify(exactly = 3) { taskRepository.save(any()) }
-        assertThat(saveTaskSlot.map { it.type }).containsExactly(JournalførBrevTask.TYPE, LagSaksbehandlingsblankettTask.TYPE, BehandlingsstatistikkTask.TYPE)
+        verify(exactly = 4) { taskRepository.save(any()) }
+        assertThat(saveTaskSlot.map { it.type }).containsExactly(JournalførBrevTask.TYPE, LagSaksbehandlingsblankettTask.TYPE, BehandlingsstatistikkTask.TYPE, BehandlingsstatistikkTask.TYPE)
         verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id) }
     }
 
