@@ -54,6 +54,9 @@ class FerdigstillBehandlingService(
         behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(behandlingId, behandlingsresultat)
         stegService.oppdaterSteg(behandlingId, behandling.steg, stegForResultat(behandlingsresultat), behandlingsresultat)
         taskRepository.save(LagSaksbehandlingsblankettTask.opprettTask(behandlingId))
+        if (behandlingsresultat == BehandlingResultat.IKKE_MEDHOLD) {
+            taskRepository.save(BehandlingsstatistikkTask.opprettSendtTilKATask(behandlingId = behandlingId))
+        }
         taskRepository.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId))
     }
 
