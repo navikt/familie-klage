@@ -33,10 +33,16 @@ class PatchStatistikkController(
             if (behandling.resultat == BehandlingResultat.IKKE_MEDHOLD) {
                 if (sendtTilKATaskErOpprettet(behandlingId, tasker)) {
                     logger.info("Det finnes allerede en task med behandlingId:$behandlingId som har status FERDIG av typen SENDT_TIL_KA")
-                    return@forEach
                 }
-                logger.info("Oppretter task for behandlingsstatistikk med hendelse SENDT_TIL_KA for behandlingId:${behandling.id} som har behandlingsresultat IKKE_MEDHOLD")
-                taskRepository.save(BehandlingsstatistikkTask.opprettSendtTilKATask(behandlingId = behandling.id, hendelseTidspunkt = task.opprettetTid))
+                else {
+                    logger.info("Oppretter task for behandlingsstatistikk med hendelse SENDT_TIL_KA for behandlingId:${behandling.id} som har behandlingsresultat IKKE_MEDHOLD")
+                    taskRepository.save(
+                        BehandlingsstatistikkTask.opprettSendtTilKATask(
+                            behandlingId = behandling.id,
+                            hendelseTidspunkt = task.opprettetTid
+                        )
+                    )
+                }
             }
         }
     }
