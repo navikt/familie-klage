@@ -60,7 +60,7 @@ class BehandlingsstatistikkTask(
                 hendelseTidspunkt = LocalDateTime.now()
             )
 
-        fun opprettSendtTilKATask(behandlingId: UUID, hendelseTidspunkt : LocalDateTime = LocalDateTime.now()): Task =
+        fun opprettSendtTilKATask(behandlingId: UUID, hendelseTidspunkt: LocalDateTime = LocalDateTime.now()): Task =
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.SENDT_TIL_KA,

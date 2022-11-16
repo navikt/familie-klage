@@ -17,7 +17,7 @@ import java.util.UUID
 @RestController
 @RequestMapping("/api/patch-statistikk")
 @Unprotected
-class PatchStatistikkController(
+class PatchBehandlingsstatistikkController(
     private val behandlingService: BehandlingService,
     private val taskRepository: TaskRepository
 ) {
@@ -33,8 +33,7 @@ class PatchStatistikkController(
             if (behandling.resultat == BehandlingResultat.IKKE_MEDHOLD) {
                 if (sendtTilKATaskErOpprettet(behandlingId, tasker)) {
                     logger.info("Det finnes allerede en task med behandlingId:$behandlingId som har status FERDIG av typen SENDT_TIL_KA")
-                }
-                else {
+                } else {
                     logger.info("Oppretter task for behandlingsstatistikk med hendelse SENDT_TIL_KA for behandlingId:${behandling.id} som har behandlingsresultat IKKE_MEDHOLD")
                     taskRepository.save(
                         BehandlingsstatistikkTask.opprettSendtTilKATask(
