@@ -42,12 +42,9 @@ class PatchStatistikkController(
     }
 
     private fun sendtTilKATaskErOpprettet(behandlingId: String, tasker: List<Task>): Boolean {
-        tasker.find { task ->
+        return tasker.any { task ->
             task.getProperty("behandlingId") == behandlingId && task.getProperty("hendelse") == BehandlingsstatistikkHendelse.SENDT_TIL_KA.name
-        }?.let {
-            return true
         }
-        return false
     }
 
     private fun hentOgFiltrerTaskerPåTriggertid(): List<Task> {
