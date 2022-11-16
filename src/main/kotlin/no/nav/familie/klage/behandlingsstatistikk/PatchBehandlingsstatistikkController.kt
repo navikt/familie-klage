@@ -25,7 +25,7 @@ class PatchStatistikkController(
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @PostMapping("/")
-    fun patchHenlagteBehandlingerTilStatistikk() {
+    fun patchTidligereBehandlingerMedIkkeMedhold() {
         val tasker = hentOgFiltrerTaskerPåTriggertid()
         tasker.forEach { task ->
             val behandlingId = task.getProperty("behandlingId")
