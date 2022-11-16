@@ -36,7 +36,7 @@ class PatchStatistikkController(
                     return@forEach
                 }
                 logger.info("Oppretter task for behandlingsstatistikk med hendelse SENDT_TIL_KA for behandlingId:${behandling.id} som har behandlingsresultat IKKE_MEDHOLD")
-                BehandlingsstatistikkTask.opprettSendtTilKATask(behandlingId = behandling.id, hendelseTidspunkt = task.opprettetTid)
+                taskRepository.save(BehandlingsstatistikkTask.opprettSendtTilKATask(behandlingId = behandling.id, hendelseTidspunkt = task.opprettetTid))
             }
         }
     }
@@ -53,7 +53,7 @@ class PatchStatistikkController(
     private fun hentOgFiltrerTaskerPåTriggertid(): List<Task> {
         return taskRepository.findByStatusInAndType(
             listOf(Status.FERDIG),
-            "behandlingsstatistikkKlageTask",
+            BehandlingsstatistikkTask.TYPE,
             Pageable.unpaged()
         ).filter { task ->
             task.triggerTid.toLocalDate().isBefore(triggerTid)
