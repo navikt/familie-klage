@@ -24,7 +24,7 @@ class PatchBehandlingsstatistikkController(
         val behandlinger = behandlingRepository.findAll()
         behandlinger.forEach { behandling ->
             if (behandling.resultat == BehandlingResultat.IKKE_MEDHOLD) {
-                logger.info("Oppretter task for behandlingsstatistikk med hendelse SENDT_TIL_KA for behandlingId:${behandling.id} som har behandlingsresultat ${behandling.resultat.name}. Dryrun : $dryrun")
+                logger.info("Oppretter task for behandlingsstatistikk med hendelse SENDT_TIL_KA for behandlingId:${behandling.id} som har behandlingsresultat ${behandling.resultat.name}. Liverun : ${liveRun.skalOpprette}")
                 if (liveRun.skalOpprette) {
                     val taskSomSkalOpprettes = BehandlingsstatistikkTask.opprettSendtTilKATask(
                         behandlingId = behandling.id,
