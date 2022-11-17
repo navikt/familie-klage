@@ -54,7 +54,7 @@ class PatchBehandlingsstatistikkController(
 
     private fun hentOgFiltrerTaskerPåTriggertid(): List<Task> {
         return taskRepository.findByStatusInAndType(
-            listOf(Status.FERDIG),
+            listOf(Status.MANUELL_OPPFØLGING),
             BehandlingsstatistikkTask.TYPE,
             Pageable.unpaged()
         ).filter { task ->
