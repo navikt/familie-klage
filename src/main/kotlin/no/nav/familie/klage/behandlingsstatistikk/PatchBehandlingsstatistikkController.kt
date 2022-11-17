@@ -21,7 +21,7 @@ class PatchBehandlingsstatistikkController(
     private val behandlingService: BehandlingService,
     private val taskRepository: TaskRepository
 ) {
-    private val triggerTid = LocalDate.of(2022, 11, 12)
+    private val triggerTid = LocalDate.of(2022, 11, 11)
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @PostMapping("/")
@@ -58,7 +58,7 @@ class PatchBehandlingsstatistikkController(
             BehandlingsstatistikkTask.TYPE,
             Pageable.unpaged()
         ).filter { task ->
-            task.triggerTid.toLocalDate().isBefore(triggerTid)
+            task.triggerTid.toLocalDate() <= triggerTid
         }
     }
 
