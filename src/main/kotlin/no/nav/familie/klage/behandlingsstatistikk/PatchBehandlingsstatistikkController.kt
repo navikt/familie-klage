@@ -27,7 +27,7 @@ class PatchBehandlingsstatistikkController(
     @PostMapping("/")
     fun patchTidligereBehandlingResultater() {
         val tasker = hentOgFiltrerTaskerPåTriggertid()
-        tasker.forEach { task ->
+        tasker.filter { it.erFerdig() }.forEach { task ->
             val behandlingId = task.getProperty("behandlingId")
             val behandling = behandlingService.hentBehandling(UUID.fromString(behandlingId))
             if (behandling.resultat == BehandlingResultat.IKKE_MEDHOLD) {
@@ -64,5 +64,9 @@ class PatchBehandlingsstatistikkController(
 
     private fun Task.getProperty(property: String): String {
         return this.metadataWrapper.properties.get(property).toString()
+    }
+
+    private fun Task.erFerdig(): Boolean {
+        return this.getProperty("hendelse") == BehandlingsstatistikkHendelse.FERDIG.name
     }
 }
