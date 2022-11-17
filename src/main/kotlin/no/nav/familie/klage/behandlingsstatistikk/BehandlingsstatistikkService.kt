@@ -63,7 +63,7 @@ class BehandlingsstatistikkService(
             mottattTid = behandling.klageMottatt.atStartOfDay(zoneIdOslo),
             ferdigBehandletTid = if (hendelse == BehandlingsstatistikkHendelse.FERDIG || hendelse == BehandlingsstatistikkHendelse.SENDT_TIL_KA) hendelseTidspunkt.atZone(zoneIdOslo) else null,
             sakUtland = "Nasjonal",
-            behandlingResultat = if (behandling.resultat != BehandlingResultat.IKKE_SATT) behandling.resultat.name else null,
+            behandlingResultat = if (hendelse == BehandlingsstatistikkHendelse.FERDIG || hendelse == BehandlingsstatistikkHendelse.SENDT_TIL_KA) behandling.resultat.name else null,
             resultatBegrunnelse = if (behandling.resultat == BehandlingResultat.HENLAGT) behandling.henlagtÅrsak?.name else vurdering?.årsak?.name,
             behandlingMetode = "MANUELL",
             saksbehandler = behandling.sporbar.endret.endretAv,
