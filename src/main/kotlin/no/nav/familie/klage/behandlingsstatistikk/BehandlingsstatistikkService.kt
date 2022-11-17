@@ -29,16 +29,29 @@ class BehandlingsstatistikkService(
     private val zoneIdOslo = ZoneId.of("Europe/Oslo")
 
     @Transactional
-    fun sendBehandlingstatistikk(behandlingsId: UUID, hendelse: BehandlingsstatistikkHendelse, hendelseTidspunkt: LocalDateTime) {
-        val behandlingsstatistikkKlage = mapTilBehandlingStatistikkKlage(behandlingsId, hendelse, hendelseTidspunkt)
+    fun sendBehandlingstatistikk(
+        behandlingsId: UUID,
+        hendelse: BehandlingsstatistikkHendelse,
+        hendelseTidspunkt: LocalDateTime,
+        gjeldendeSaksbehandler: String?
+    ) {
+        val behandlingsstatistikkKlage =
+            mapTilBehandlingStatistikkKlage(behandlingsId, hendelse, hendelseTidspunkt, gjeldendeSaksbehandler)
         behandlingsstatistikkProducer.sendBehandlingsstatistikk(behandlingsstatistikkKlage)
     }
 
-    private fun mapTilBehandlingStatistikkKlage(behandlingId: UUID, hendelse: BehandlingsstatistikkHendelse, hendelseTidspunkt: LocalDateTime): BehandlingsstatistikkKlage {
+    private fun mapTilBehandlingStatistikkKlage(
+        behandlingId: UUID,
+        hendelse: BehandlingsstatistikkHendelse,
+        hendelseTidspunkt: LocalDateTime,
+        gjeldendeSaksbehandler: String?
+    ): BehandlingsstatistikkKlage {
         val behandling = behandlingService.hentBehandling(behandlingId)
         val vurdering = vurderingService.hentVurdering(behandling.id)
         val fagsak = fagsakService.hentFagsakForBehandling(behandling.id)
-        val erStrengtFortrolig = personopplysningerService.hentPersonopplysninger(behandlingId).adressebeskyttelse?.erStrengtFortrolig() ?: false
+        val erStrengtFortrolig =
+            personopplysningerService.hentPersonopplysninger(behandlingId).adressebeskyttelse?.erStrengtFortrolig()
+                ?: false
 
         return BehandlingsstatistikkKlage(
             behandlingId = behandling.eksternBehandlingId,
@@ -61,12 +74,14 @@ class BehandlingsstatistikkService(
                 behandling.behandlendeEnhet
             ),
             mottattTid = behandling.klageMottatt.atStartOfDay(zoneIdOslo),
-            ferdigBehandletTid = if (hendelse == BehandlingsstatistikkHendelse.FERDIG || hendelse == BehandlingsstatistikkHendelse.SENDT_TIL_KA) hendelseTidspunkt.atZone(zoneIdOslo) else null,
+            ferdigBehandletTid = if (hendelse == BehandlingsstatistikkHendelse.FERDIG || hendelse == BehandlingsstatistikkHendelse.SENDT_TIL_KA) hendelseTidspunkt.atZone(
+                zoneIdOslo
+            ) else null,
             sakUtland = "Nasjonal",
             behandlingResultat = if (behandling.resultat != BehandlingResultat.IKKE_SATT) behandling.resultat.name else null,
             resultatBegrunnelse = if (behandling.resultat == BehandlingResultat.HENLAGT) behandling.henlagtÅrsak?.name else vurdering?.årsak?.name,
             behandlingMetode = "MANUELL",
-            saksbehandler = behandling.sporbar.endret.endretAv,
+            saksbehandler = gjeldendeSaksbehandler ?: behandling.sporbar.endret.endretAv,
             avsender = "Klage familie",
             saksnummer = fagsak.eksternId
         )
