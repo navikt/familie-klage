@@ -73,7 +73,7 @@ class BehandlingsstatistikkTask(
             behandlingId: UUID,
             hendelse: BehandlingsstatistikkHendelse,
             hendelseTidspunkt: LocalDateTime = LocalDateTime.now(),
-            gjeldendeSaksbehandler: String? = null
+            gjeldendeSaksbehandler: String
         ): Task =
             Task(
                 type = TYPE,
