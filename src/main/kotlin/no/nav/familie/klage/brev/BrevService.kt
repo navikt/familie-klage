@@ -69,7 +69,8 @@ class BrevService(
     }
 
     fun lagBrev(behandlingId: UUID): ByteArray {
-        val navn = personopplysningerService.hentPersonopplysninger(behandlingId).navn
+        val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
+        val navn = personopplysninger.navn
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
         val påklagetFagsystemVedtak: FagsystemVedtak? = utledPåklagetFagsystemVedtak(behandling)
@@ -77,7 +78,7 @@ class BrevService(
 
         val brevRequest = lagBrevRequest(behandlingId, fagsak, navn, påklagetFagsystemVedtak, behandling.klageMottatt)
 
-        val signaturMedEnhet = brevsignaturService.lagSignatur(behandling.id)
+        val signaturMedEnhet = brevsignaturService.lagSignatur(personopplysninger)
 
         val html = brevClient.genererHtmlFritekstbrev(
             fritekstBrev = brevRequest,
