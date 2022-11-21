@@ -25,6 +25,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingStatus.FERDIGSTILT
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
 import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -39,7 +40,7 @@ class BehandlingService(
     private val klageresultatRepository: KlageresultatRepository,
     private val behandlinghistorikkService: BehandlingshistorikkService,
     private val oppgaveTaskService: OppgaveTaskService,
-    private val taskRepository: TaskRepository
+    private val taskService: TaskService
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -123,7 +124,7 @@ class BehandlingService(
         behandlinghistorikkService.opprettBehandlingshistorikk(behandlingId, BEHANDLING_FERDIGSTILT)
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
         behandlingRepository.update(henlagtBehandling)
-        taskRepository.save(taskRepository.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId)))
+        taskService.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId))
     }
 
     fun erLåstForVidereBehandling(behandlingId: UUID) =

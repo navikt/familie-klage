@@ -13,6 +13,7 @@ import no.nav.familie.klage.formkrav.dto.tilDto
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -24,7 +25,7 @@ class FormService(
     private val behandlingService: BehandlingService,
     private val behandlingshistorikkService: BehandlingshistorikkService,
     private val vurderingService: VurderingService,
-    private val taskRepository: TaskRepository
+    private val taskService: TaskService
 ) {
 
     fun hentForm(behandlingId: UUID): Form = formRepository.findByIdOrThrow(behandlingId)
@@ -65,7 +66,7 @@ class FormService(
     private fun opprettBehandlingsstatistikk(behandlingId: UUID) {
         behandlingshistorikkService.hentBehandlingshistorikk(behandlingId).find { it.steg == StegType.FORMKRAV }
             ?: run {
-                taskRepository.save(BehandlingsstatistikkTask.opprettPåbegyntTask(behandlingId = behandlingId))
+                taskService.save(BehandlingsstatistikkTask.opprettPåbegyntTask(behandlingId = behandlingId))
             }
     }
 
