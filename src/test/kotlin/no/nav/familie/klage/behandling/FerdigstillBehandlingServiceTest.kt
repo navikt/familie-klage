@@ -27,7 +27,7 @@ import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -44,7 +44,7 @@ internal class FerdigstillBehandlingServiceTest {
 
     val formService = mockk<FormService>()
     val stegService = mockk<StegService>()
-    val taskRepository = mockk<TaskRepository>()
+    val taskService = mockk<TaskService>()
     val oppgaveTaskService = mockk<OppgaveTaskService>()
     val brevService = mockk<BrevService>()
 
@@ -53,7 +53,7 @@ internal class FerdigstillBehandlingServiceTest {
         vurderingService = vurderingService,
         formService = formService,
         stegService = stegService,
-        taskRepository = taskRepository,
+        taskService = taskService,
         oppgaveTaskService = oppgaveTaskService,
         brevService = brevService
     )
@@ -77,7 +77,7 @@ internal class FerdigstillBehandlingServiceTest {
         every { stegService.oppdaterSteg(any(), any(), any(), any()) } just Runs
         every { formService.formkravErOppfyltForBehandling(any()) } returns true
         every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), any()) } just Runs
-        every { taskRepository.save(capture(saveTaskSlot)) } answers { firstArg() }
+        every { taskService.save(capture(saveTaskSlot)) } answers { firstArg() }
         every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id) } just Runs
     }
 
@@ -103,7 +103,7 @@ internal class FerdigstillBehandlingServiceTest {
 
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD)
         assertThat(stegSlot.captured).isEqualTo(StegType.KABAL_VENTER_SVAR)
-        verify(exactly = 4) { taskRepository.save(any()) }
+        verify(exactly = 4) { taskService.save(any()) }
         assertThat(saveTaskSlot.map { it.type }).containsExactly(JournalførBrevTask.TYPE, LagSaksbehandlingsblankettTask.TYPE, BehandlingsstatistikkTask.TYPE, BehandlingsstatistikkTask.TYPE)
         verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id) }
     }
@@ -124,7 +124,7 @@ internal class FerdigstillBehandlingServiceTest {
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
         assertThat(stegSlot.captured).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST)
-        verify { taskRepository.save(any()) }
+        verify { taskService.save(any()) }
     }
 
     @Test
@@ -144,7 +144,7 @@ internal class FerdigstillBehandlingServiceTest {
         assertThat(stegSlot.captured).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.MEDHOLD)
 
-        verify(exactly = 2) { taskRepository.save(any()) }
+        verify(exactly = 2) { taskService.save(any()) }
         assertThat(saveTaskSlot.map { it.type }).containsExactly(LagSaksbehandlingsblankettTask.TYPE, BehandlingsstatistikkTask.TYPE)
     }
 

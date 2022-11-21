@@ -26,10 +26,12 @@ internal class OppgaveTaskServiceTest {
     val behandlingService = mockk<BehandlingService>()
     val behandleSakOppgaveRepository = mockk<BehandleSakOppgaveRepository>()
 
-//    val oppgaveService =
-//        OppgaveService(oppgaveClient = oppgaveClient, taskRepository = fagsakService, behandlingService = behandlingService, behandleSakOppgaveRepository = behandleSakOppgaveRepository)
-
-    val opprettBehandleSakOppgaveTask = OpprettBehandleSakOppgaveTask(fagsakService = fagsakService, oppgaveClient = oppgaveClient, behandlingService = behandlingService, behandleSakOppgaveRepository = behandleSakOppgaveRepository)
+    val opprettBehandleSakOppgaveTask = OpprettBehandleSakOppgaveTask(
+        fagsakService = fagsakService,
+        oppgaveClient = oppgaveClient,
+        behandlingService = behandlingService,
+        behandleSakOppgaveRepository = behandleSakOppgaveRepository
+    )
 
     val fagsak = DomainUtil.fagsak()
     val behandling = DomainUtil.behandling(fagsak = fagsak)

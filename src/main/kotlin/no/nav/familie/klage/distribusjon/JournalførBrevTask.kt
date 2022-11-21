@@ -14,7 +14,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -25,7 +25,7 @@ import java.util.UUID
 )
 class JournalførBrevTask(
     private val distribusjonService: DistribusjonService,
-    private val taskRepository: TaskRepository,
+    private val taskService: TaskService,
     private val behandlingService: BehandlingService,
     private val brevService: BrevService
 ) : AsyncTaskStep {
@@ -85,7 +85,7 @@ class JournalførBrevTask(
             payload = task.payload,
             properties = task.metadata
         )
-        taskRepository.save(sendTilKabalTask)
+        taskService.save(sendTilKabalTask)
     }
 
     private fun opprettSendTilKabalTask(task: Task) {
@@ -94,7 +94,7 @@ class JournalførBrevTask(
             payload = task.payload,
             properties = task.metadata
         )
-        taskRepository.save(sendTilKabalTask)
+        taskService.save(sendTilKabalTask)
     }
 
     companion object {

@@ -20,7 +20,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_MEDHOLD_FO
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_SATT
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.MEDHOLD
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Properties
@@ -32,7 +32,7 @@ class FerdigstillBehandlingService(
     private val vurderingService: VurderingService,
     private val formService: FormService,
     private val stegService: StegService,
-    private val taskRepository: TaskRepository,
+    private val taskService: TaskService,
     private val oppgaveTaskService: OppgaveTaskService,
     private val brevService: BrevService
 ) {
@@ -53,11 +53,11 @@ class FerdigstillBehandlingService(
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
         behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(behandlingId, behandlingsresultat)
         stegService.oppdaterSteg(behandlingId, behandling.steg, stegForResultat(behandlingsresultat), behandlingsresultat)
-        taskRepository.save(LagSaksbehandlingsblankettTask.opprettTask(behandlingId))
+        taskService.save(LagSaksbehandlingsblankettTask.opprettTask(behandlingId))
         if (behandlingsresultat == BehandlingResultat.IKKE_MEDHOLD) {
-            taskRepository.save(BehandlingsstatistikkTask.opprettSendtTilKATask(behandlingId = behandlingId))
+            taskService.save(BehandlingsstatistikkTask.opprettSendtTilKATask(behandlingId = behandlingId))
         }
-        taskRepository.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId))
+        taskService.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId))
     }
 
     private fun opprettJournalførBrevTask(behandlingId: UUID) {
@@ -68,7 +68,7 @@ class FerdigstillBehandlingService(
                 this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
             }
         )
-        taskRepository.save(journalførBrevTask)
+        taskService.save(journalførBrevTask)
     }
 
     private fun stegForResultat(resultat: BehandlingResultat): StegType = when (resultat) {
