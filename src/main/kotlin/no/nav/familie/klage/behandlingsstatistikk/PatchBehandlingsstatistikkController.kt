@@ -2,7 +2,7 @@ package no.nav.familie.klage.behandlingsstatistikk
 
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import no.nav.security.token.support.core.api.Unprotected
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.PostMapping
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 @Unprotected
 class PatchBehandlingsstatistikkController(
     private val behandlingRepository: BehandlingRepository,
-    private val taskRepository: TaskRepository
+    private val taskService: TaskService
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -30,7 +30,7 @@ class PatchBehandlingsstatistikkController(
                         behandlingId = behandling.id,
                         hendelseTidspunkt = behandling.sporbar.endret.endretTid,
                     )
-                    taskRepository.save(taskSomSkalOpprettes)
+                    taskService.save(taskSomSkalOpprettes)
                 }
             }
         }
