@@ -61,11 +61,11 @@ class BehandlingsstatistikkTask(
                 gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true)
             )
 
-        fun opprettSendtTilKATask(behandlingId: UUID): Task =
+        fun opprettSendtTilKATask(behandlingId: UUID, hendelseTidspunkt: LocalDateTime = LocalDateTime.now()): Task =
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.SENDT_TIL_KA,
-                hendelseTidspunkt = LocalDateTime.now(),
+                hendelseTidspunkt = hendelseTidspunkt,
                 gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true)
             )
 
