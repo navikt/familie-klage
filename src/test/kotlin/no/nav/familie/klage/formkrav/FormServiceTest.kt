@@ -21,7 +21,7 @@ import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -35,7 +35,7 @@ internal class FormServiceTest {
     private val stegService = mockk<StegService>()
     private val behandlingService = mockk<BehandlingService>()
     private val vurderingService = mockk<VurderingService>()
-    private val taskRepository = mockk<TaskRepository>()
+    private val taskService = mockk<TaskService>()
     private val behandlingshistorikkService = mockk<BehandlingshistorikkService>()
     private val service = FormService(
         formRepository,
@@ -43,7 +43,7 @@ internal class FormServiceTest {
         behandlingService,
         behandlingshistorikkService,
         vurderingService,
-        taskRepository
+        taskService
     )
 
     private val behandlingId = UUID.randomUUID()
@@ -135,9 +135,9 @@ internal class FormServiceTest {
             every { behandlingshistorikkService.hentBehandlingshistorikk(any()) } returns listOf(
                 behandlingshistorikk
             )
-            every { taskRepository.save(any()) } returns mockk<Task>()
+            every { taskService.save(any()) } returns mockk<Task>()
             service.oppdaterFormkrav(oppfyltFormDto())
-            verify { taskRepository.save(any()) }
+            verify { taskService.save(any()) }
         }
 
         @Test
@@ -151,9 +151,9 @@ internal class FormServiceTest {
             every { behandlingshistorikkService.hentBehandlingshistorikk(any()) } returns listOf(
                 behandlingshistorikk
             )
-            every { taskRepository.save(any()) } returns mockk<Task>()
+            every { taskService.save(any()) } returns mockk<Task>()
             service.oppdaterFormkrav(oppfyltFormDto())
-            verify(exactly = 0) { taskRepository.save(any()) }
+            verify(exactly = 0) { taskService.save(any()) }
         }
     }
 

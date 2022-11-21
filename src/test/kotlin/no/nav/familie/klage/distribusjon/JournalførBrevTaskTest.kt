@@ -21,7 +21,7 @@ import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -32,13 +32,13 @@ import java.util.UUID
 internal class JournalførBrevTaskTest {
 
     val behandlingService = mockk<BehandlingService>()
-    val taskRepository = mockk<TaskRepository>()
+    val taskService = mockk<TaskService>()
     val distribusjonService = mockk<DistribusjonService>()
     val brevService = mockk<BrevService>()
 
     val journalførBrevTask = JournalførBrevTask(
         distribusjonService = distribusjonService,
-        taskRepository = taskRepository,
+        taskService = taskService,
         behandlingService = behandlingService,
         brevService = brevService
     )
@@ -56,7 +56,7 @@ internal class JournalførBrevTaskTest {
     internal fun setUp() {
         every { behandlingService.hentAktivIdent(behandlingId) } returns Pair("ident", fagsak())
         justRun { brevService.oppdaterMottakerJournalpost(any(), capture(slotBrevmottakereJournalposter)) }
-        every { taskRepository.save(capture(slotSaveTask)) } answers { firstArg() }
+        every { taskService.save(capture(slotSaveTask)) } answers { firstArg() }
         every {
             distribusjonService.journalførBrev(any(), any(), any(), any(), any())
         } answers { "journalpostId-${(it.invocation.args[3] as Int)}" }
@@ -65,7 +65,7 @@ internal class JournalførBrevTaskTest {
     @Test
     internal fun `skal ikke opprette sendTilKabalTask hvis behandlingen har annen status enn IKKE_MEDHOLD`() {
         val taskSlots = mutableListOf<Task>()
-        every { taskRepository.save(capture(taskSlots)) } answers { firstArg() }
+        every { taskService.save(capture(taskSlots)) } answers { firstArg() }
         every { behandlingService.hentBehandling(any()) } returns DomainUtil.behandling(resultat = BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST)
 
         journalførBrevTask.onCompletion(Task(JournalførBrevTask.TYPE, behandlingId.toString(), propertiesMedJournalpostId))
@@ -77,7 +77,7 @@ internal class JournalførBrevTaskTest {
     @Test
     internal fun `skal opprette sendTilKabalTask og distribuerBrevTask hvis behandlingsresultatet er IKKE_MEDHOLD`() {
         val taskSlots = mutableListOf<Task>()
-        every { taskRepository.save(capture(taskSlots)) } answers { firstArg() }
+        every { taskService.save(capture(taskSlots)) } answers { firstArg() }
         every { behandlingService.hentBehandling(any()) } returns DomainUtil.behandling(resultat = BehandlingResultat.IKKE_MEDHOLD)
 
         journalførBrevTask.onCompletion(Task(JournalførBrevTask.TYPE, behandlingId.toString(), propertiesMedJournalpostId))

@@ -16,7 +16,7 @@ import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -26,7 +26,7 @@ internal class BehandlingEventServiceTest {
 
     private val behandlingRepository = mockk<BehandlingRepository>(relaxed = true)
     private val fagsakRepository = mockk<FagsakRepository>(relaxed = true)
-    private val taskRepository = mockk<TaskRepository>(relaxed = true)
+    private val taskService = mockk<TaskService>(relaxed = true)
     private val stegService = mockk<StegService>(relaxed = true)
     private val klageresultatRepository = mockk<KlageresultatRepository>(relaxed = true)
 
@@ -34,7 +34,7 @@ internal class BehandlingEventServiceTest {
         behandlingRepository = behandlingRepository,
         fagsakRepository = fagsakRepository,
         stegService = stegService,
-        taskRepository = taskRepository,
+        taskService = taskService,
         klageresultatRepository = klageresultatRepository
     )
 
@@ -42,7 +42,7 @@ internal class BehandlingEventServiceTest {
 
     @BeforeEach
     fun setUp() {
-        every { taskRepository.save(any()) } answers { firstArg() }
+        every { taskService.save(any()) } answers { firstArg() }
         every { behandlingRepository.findByEksternBehandlingId(any()) } returns behandlingMedStatusVenter
         every { klageresultatRepository.insert(any()) } answers { firstArg() }
         every { klageresultatRepository.existsById(any()) } returns false
@@ -54,7 +54,7 @@ internal class BehandlingEventServiceTest {
 
         behandlingEventService.handleEvent(behandlingEvent)
 
-        verify(exactly = 1) { taskRepository.save(any()) }
+        verify(exactly = 1) { taskService.save(any()) }
         verify(exactly = 1) {
             stegService.oppdaterSteg(
                 behandlingMedStatusVenter.id,
@@ -75,7 +75,7 @@ internal class BehandlingEventServiceTest {
 
         behandlingEventService.handleEvent(behandlingEvent)
 
-        verify(exactly = 1) { taskRepository.save(any()) }
+        verify(exactly = 1) { taskService.save(any()) }
         verify(exactly = 0) { stegService.oppdaterSteg(any(), any(), any()) }
     }
 
@@ -86,7 +86,7 @@ internal class BehandlingEventServiceTest {
         every { behandlingRepository.findByEksternBehandlingId(any()) } returns behandling
         behandlingEventService.handleEvent(behandlingEvent)
 
-        verify(exactly = 0) { taskRepository.save(any()) }
+        verify(exactly = 0) { taskService.save(any()) }
         verify(exactly = 0) { stegService.oppdaterSteg(behandling.id, any(), StegType.BEHANDLING_FERDIGSTILT) }
     }
 

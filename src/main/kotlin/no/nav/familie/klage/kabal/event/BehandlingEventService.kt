@@ -13,7 +13,7 @@ import no.nav.familie.klage.oppgave.OpprettKabalEventOppgaveTask
 import no.nav.familie.klage.oppgave.OpprettOppgavePayload
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -23,7 +23,7 @@ import java.util.UUID
 class BehandlingEventService(
     private val behandlingRepository: BehandlingRepository,
     private val fagsakRepository: FagsakRepository,
-    private val taskRepository: TaskRepository,
+    private val taskService: TaskService,
     private val klageresultatRepository: KlageresultatRepository,
     private val stegService: StegService
 ) {
@@ -84,7 +84,7 @@ class BehandlingEventService(
         val klageBehandlingEksternId = UUID.fromString(behandlingEvent.kildeReferanse)
         val opprettOppgavePayload = OpprettOppgavePayload(klageBehandlingEksternId, oppgaveTekst, fagsakDomain.fagsystem)
         val opprettOppgaveTask = OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload)
-        taskRepository.save(opprettOppgaveTask)
+        taskService.save(opprettOppgaveTask)
     }
 
     private fun ferdigstillKlagebehandling(behandling: Behandling) {

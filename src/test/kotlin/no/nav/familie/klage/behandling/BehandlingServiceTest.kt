@@ -25,7 +25,7 @@ import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -42,7 +42,7 @@ internal class BehandlingServiceTest {
     val fagsakService = mockk<FagsakService>()
     val behandlingRepository = mockk<BehandlingRepository>()
     val behandlinghistorikkService = mockk<BehandlingshistorikkService>()
-    val taskRepository = mockk<TaskRepository>()
+    val taskService = mockk<TaskService>()
     private val oppgaveTaskService = mockk<OppgaveTaskService>()
     val behandlingService = BehandlingService(
         behandlingRepository,
@@ -50,7 +50,7 @@ internal class BehandlingServiceTest {
         klageresultatRepository,
         behandlinghistorikkService,
         oppgaveTaskService,
-        taskRepository
+        taskService
     )
     val behandlingSlot = slot<Behandling>()
 
@@ -64,7 +64,7 @@ internal class BehandlingServiceTest {
         }
         every { behandlinghistorikkService.opprettBehandlingshistorikk(any(), any()) } returns mockk()
         every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any()) } returns mockk()
-        every { taskRepository.save(any()) } returns mockk<Task>()
+        every { taskService.save(any()) } returns mockk<Task>()
     }
 
     @AfterEach
