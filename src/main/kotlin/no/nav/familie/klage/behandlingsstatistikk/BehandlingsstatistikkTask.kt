@@ -5,7 +5,6 @@ import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
-import no.nav.familie.kontrakter.ef.iverksett.Hendelse
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
@@ -33,7 +32,7 @@ class BehandlingsstatistikkTask(
         }
         val (behandlingId, hendelse, hendelseTidspunkt, gjeldendeSaksbehandler) =
             objectMapper.readValue<BehandlingsstatistikkTaskPayload>(task.payload)
-        behandlingStatistikkService.sendBehandlingstatistikk(behandlingId, hendelse, hendelseTidspunkt)
+        behandlingStatistikkService.sendBehandlingstatistikk(behandlingId, hendelse, hendelseTidspunkt, gjeldendeSaksbehandler)
     }
 
     companion object {
@@ -41,7 +40,7 @@ class BehandlingsstatistikkTask(
         fun opprettMottattTask(behandlingId: UUID): Task =
             opprettTask(
                 behandlingId = behandlingId,
-                hendelse = Hendelse.MOTTATT,
+                hendelse = BehandlingsstatistikkHendelse.MOTTATT,
                 hendelseTidspunkt = LocalDateTime.now(),
                 gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler()
             )
@@ -49,7 +48,7 @@ class BehandlingsstatistikkTask(
         fun opprettPåbegyntTask(behandlingId: UUID): Task =
             opprettTask(
                 behandlingId = behandlingId,
-                hendelse = Hendelse.PÅBEGYNT,
+                hendelse = BehandlingsstatistikkHendelse.PÅBEGYNT,
                 hendelseTidspunkt = LocalDateTime.now(),
                 gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true)
             )
@@ -57,15 +56,24 @@ class BehandlingsstatistikkTask(
         fun opprettFerdigTask(behandlingId: UUID): Task =
             opprettTask(
                 behandlingId = behandlingId,
-                hendelse = Hendelse.FERDIG,
-                hendelseTidspunkt = LocalDateTime.now()
+                hendelse = BehandlingsstatistikkHendelse.FERDIG,
+                hendelseTidspunkt = LocalDateTime.now(),
+                gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true)
+            )
+
+        fun opprettSendtTilKATask(behandlingId: UUID, hendelseTidspunkt: LocalDateTime = LocalDateTime.now()): Task =
+            opprettTask(
+                behandlingId = behandlingId,
+                hendelse = BehandlingsstatistikkHendelse.SENDT_TIL_KA,
+                hendelseTidspunkt = hendelseTidspunkt,
+                gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true)
             )
 
         private fun opprettTask(
             behandlingId: UUID,
-            hendelse: Hendelse,
+            hendelse: BehandlingsstatistikkHendelse,
             hendelseTidspunkt: LocalDateTime = LocalDateTime.now(),
-            gjeldendeSaksbehandler: String? = null
+            gjeldendeSaksbehandler: String
         ): Task =
             Task(
                 type = TYPE,
@@ -91,7 +99,7 @@ class BehandlingsstatistikkTask(
 
 data class BehandlingsstatistikkTaskPayload(
     val behandlingId: UUID,
-    val hendelse: Hendelse,
+    val hendelse: BehandlingsstatistikkHendelse,
     val hendelseTidspunkt: LocalDateTime,
     val gjeldendeSaksbehandler: String?
 )
