@@ -32,7 +32,12 @@ class BehandlingsstatistikkTask(
         }
         val (behandlingId, hendelse, hendelseTidspunkt, gjeldendeSaksbehandler) =
             objectMapper.readValue<BehandlingsstatistikkTaskPayload>(task.payload)
-        behandlingStatistikkService.sendBehandlingstatistikk(behandlingId, hendelse, hendelseTidspunkt, gjeldendeSaksbehandler)
+        behandlingStatistikkService.sendBehandlingstatistikk(
+            behandlingId,
+            hendelse,
+            hendelseTidspunkt,
+            gjeldendeSaksbehandler
+        )
     }
 
     companion object {
@@ -61,12 +66,16 @@ class BehandlingsstatistikkTask(
                 gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true)
             )
 
-        fun opprettSendtTilKATask(behandlingId: UUID, hendelseTidspunkt: LocalDateTime = LocalDateTime.now()): Task =
+        fun opprettSendtTilKATask(
+            behandlingId: UUID,
+            hendelseTidspunkt: LocalDateTime = LocalDateTime.now(),
+            gjeldendeSaksbehandler: String = SikkerhetContext.hentSaksbehandler(true)
+        ): Task =
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.SENDT_TIL_KA,
                 hendelseTidspunkt = hendelseTidspunkt,
-                gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true)
+                gjeldendeSaksbehandler = gjeldendeSaksbehandler
             )
 
         private fun opprettTask(

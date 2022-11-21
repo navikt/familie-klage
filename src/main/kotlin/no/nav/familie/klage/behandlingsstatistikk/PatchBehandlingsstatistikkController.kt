@@ -29,6 +29,7 @@ class PatchBehandlingsstatistikkController(
                     val taskSomSkalOpprettes = BehandlingsstatistikkTask.opprettSendtTilKATask(
                         behandlingId = behandling.id,
                         hendelseTidspunkt = behandling.sporbar.endret.endretTid,
+                        gjeldendeSaksbehandler = behandling.sporbar.endret.endretAv
                     )
                     taskService.save(taskSomSkalOpprettes)
                 }
