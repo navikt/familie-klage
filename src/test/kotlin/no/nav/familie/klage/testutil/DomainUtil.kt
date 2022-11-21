@@ -31,6 +31,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.klage.Årsak
@@ -68,7 +69,9 @@ object DomainUtil {
         status: BehandlingStatus = BehandlingStatus.OPPRETTET,
         steg: StegType = StegType.FORMKRAV,
         behandlendeEnhet: String = "4489",
-        resultat: BehandlingResultat = BehandlingResultat.IKKE_SATT
+        resultat: BehandlingResultat = BehandlingResultat.IKKE_SATT,
+        vedtakDato: LocalDateTime? = null,
+        henlagtÅrsak: HenlagtÅrsak? = null
     ): Behandling =
         Behandling(
             id = id,
@@ -79,7 +82,9 @@ object DomainUtil {
             status = status,
             steg = steg,
             behandlendeEnhet = behandlendeEnhet,
-            resultat = resultat
+            resultat = resultat,
+            henlagtÅrsak = henlagtÅrsak,
+            vedtakDato = vedtakDato
         )
 
     fun vurdering(

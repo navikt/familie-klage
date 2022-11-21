@@ -10,6 +10,7 @@ import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -38,7 +39,8 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
                 fagsak = fagsak,
                 id = id,
                 klageMottatt = LocalDate.now(),
-                påklagetVedtak = PåklagetVedtak("1234", PåklagetVedtakstype.VEDTAK)
+                påklagetVedtak = PåklagetVedtak("1234", PåklagetVedtakstype.VEDTAK),
+                henlagtÅrsak = HenlagtÅrsak.TRUKKET_TILBAKE
             )
         )
 
@@ -51,6 +53,7 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
         assertThat(behandling.påklagetVedtak.eksternFagsystemBehandlingId).isEqualTo(hentetBehandling.påklagetVedtak.eksternFagsystemBehandlingId)
         assertThat(behandling.klageMottatt).isEqualTo(hentetBehandling.klageMottatt)
         assertThat(behandling.resultat).isEqualTo(hentetBehandling.resultat)
+        assertThat(behandling.henlagtÅrsak).isEqualTo(HenlagtÅrsak.TRUKKET_TILBAKE)
         assertThat(behandling.sporbar.opprettetAv).isEqualTo(hentetBehandling.sporbar.opprettetAv)
         assertThat(behandling.sporbar.opprettetTid).isEqualTo(hentetBehandling.sporbar.opprettetTid)
         assertThat(behandling.sporbar.endret.endretTid).isEqualTo(hentetBehandling.sporbar.endret.endretTid)

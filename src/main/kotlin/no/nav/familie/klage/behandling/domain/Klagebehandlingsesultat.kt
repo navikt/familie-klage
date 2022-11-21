@@ -2,6 +2,7 @@ package no.nav.familie.klage.behandling.domain
 
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
+import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import no.nav.familie.kontrakter.felles.klage.KlagebehandlingDto
 import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
 import no.nav.familie.kontrakter.felles.klage.Årsak
@@ -23,7 +24,9 @@ data class Klagebehandlingsesultat(
     val resultat: BehandlingResultat,
     @Column("arsak")
     val årsak: Årsak?,
-    val vedtaksdato: LocalDateTime?
+    val vedtaksdato: LocalDateTime?,
+    @Column("henlagt_arsak")
+    val henlagtÅrsak: HenlagtÅrsak?
 )
 
 fun Klagebehandlingsesultat.tilEksternKlagebehandlingDto(klageinstansResultat: List<KlageinstansResultatDto>) = KlagebehandlingDto(
@@ -35,5 +38,6 @@ fun Klagebehandlingsesultat.tilEksternKlagebehandlingDto(klageinstansResultat: L
     resultat = this.resultat,
     årsak = this.årsak,
     vedtaksdato = this.vedtaksdato,
-    klageinstansResultat = klageinstansResultat
+    klageinstansResultat = klageinstansResultat,
+    henlagtÅrsak = this.henlagtÅrsak
 )

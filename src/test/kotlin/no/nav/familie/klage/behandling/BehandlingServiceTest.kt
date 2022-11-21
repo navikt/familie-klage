@@ -8,8 +8,6 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.HenlagtDto
-import no.nav.familie.klage.behandling.dto.HenlagtÅrsak
-import no.nav.familie.klage.behandling.dto.HenlagtÅrsak.TRUKKET_TILBAKE
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.fagsak.FagsakService
@@ -24,6 +22,8 @@ import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
+import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
+import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak.TRUKKET_TILBAKE
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat

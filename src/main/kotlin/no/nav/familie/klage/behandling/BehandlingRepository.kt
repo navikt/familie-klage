@@ -41,7 +41,8 @@ interface BehandlingRepository : RepositoryInterface<Behandling, UUID>, InsertUp
              b.klage_mottatt mottatt_dato,
              b.resultat,
              v.arsak,
-             b.vedtak_dato vedtaksdato
+             b.vedtak_dato vedtaksdato,
+             b.henlagt_arsak
             FROM behandling b
             JOIN fagsak f ON f.id = b.fagsak_id
             LEFT JOIN vurdering v ON v.behandling_id = b.id
