@@ -2,6 +2,7 @@ package no.nav.familie.klage.ekstern
 
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.fagsak.domain.PersonIdent
+import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.testutil.DomainUtil
@@ -68,7 +69,7 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
 
         @Test
         internal fun `skal returnere behandling når man spør etter eksternFagsakId`() {
-            val vedtakDato = LocalDateTime.now()
+            val vedtakDato = SporbarUtils.now()
             val henlagtÅrsak = HenlagtÅrsak.TRUKKET_TILBAKE
             val behandling = behandlingRepository.insert(
                 behandling(fagsak, vedtakDato = vedtakDato, henlagtÅrsak = henlagtÅrsak)
