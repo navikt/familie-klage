@@ -1,6 +1,7 @@
 package no.nav.familie.klage.infrastruktur.config
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.felles.domain.Endret
@@ -65,7 +66,9 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
                 BrevmottakereTilBytearrayConverter(),
                 BytearrayTilBrevmottakereConverter(),
                 BrevmottakereJournalposterTilBytearrayConverter(),
-                BytearrayTilBrevmottakereJournalposterConverter()
+                BytearrayTilBrevmottakereJournalposterConverter(),
+                PåklagetVedtakDetaljerTilBytearrayConverter(),
+                BytearrayTilPåklagetVedtakDetaljerConverter()
             )
         )
     }
@@ -151,6 +154,23 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
     class BytearrayTilBrevmottakereJournalposterConverter : Converter<PGobject, BrevmottakereJournalposter> {
 
         override fun convert(pGobject: PGobject): BrevmottakereJournalposter {
+            return objectMapper.readValue(pGobject.value!!)
+        }
+    }
+
+    @WritingConverter
+    class PåklagetVedtakDetaljerTilBytearrayConverter : Converter<PåklagetVedtakDetaljer, PGobject> {
+
+        override fun convert(o: PåklagetVedtakDetaljer): PGobject = PGobject().apply {
+            type = "json"
+            value = objectMapper.writeValueAsString(o)
+        }
+    }
+
+    @ReadingConverter
+    class BytearrayTilPåklagetVedtakDetaljerConverter : Converter<PGobject, PåklagetVedtakDetaljer> {
+
+        override fun convert(pGobject: PGobject): PåklagetVedtakDetaljer {
             return objectMapper.readValue(pGobject.value!!)
         }
     }

@@ -1,5 +1,6 @@
 package no.nav.familie.klage.infrastruktur.config
 
+import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.familie.klage.integrasjoner.FamilieEFSakClient
@@ -19,23 +20,32 @@ class FamilieEFSakClientMock {
     @Bean
     @Primary
     fun hentVedtak(): FamilieEFSakClient {
-        val familieEFSakClient: FamilieEFSakClient = mockk()
-        every { familieEFSakClient.hentVedtak(any()) } returns listOf(
-            FagsystemVedtak(
-                "123",
-                "Førstegangsbehandling",
-                "Innvilget",
-                vedtakstidspunkt = LocalDateTime.of(2022, Month.AUGUST, 1, 8, 0),
-                fagsystemType = FagsystemType.ORDNIÆR
-            ),
-            FagsystemVedtak(
-                "124",
-                "Revurdering",
-                "Opphørt",
-                vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 0),
-                fagsystemType = FagsystemType.ORDNIÆR
+        return resetMock(mockk())
+    }
+
+    companion object {
+
+        fun resetMock(mock: FamilieEFSakClient): FamilieEFSakClient {
+            clearMocks(mock)
+
+            every { mock.hentVedtak(any()) } returns listOf(
+                FagsystemVedtak(
+                    "123",
+                    "Førstegangsbehandling",
+                    "Innvilget",
+                    vedtakstidspunkt = LocalDateTime.of(2022, Month.AUGUST, 1, 8, 0),
+                    fagsystemType = FagsystemType.ORDNIÆR
+                ),
+                FagsystemVedtak(
+                    "124",
+                    "Revurdering",
+                    "Opphørt",
+                    vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 0),
+                    fagsystemType = FagsystemType.ORDNIÆR
+                )
             )
-        )
-        return familieEFSakClient
+            return mock
+        }
+
     }
 }

@@ -1,0 +1,1 @@
+ALTER TABLE behandling ADD COLUMN paklaget_vedtak_detaljer JSON;

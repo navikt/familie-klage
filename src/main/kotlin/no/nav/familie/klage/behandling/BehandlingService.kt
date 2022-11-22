@@ -3,9 +3,11 @@ package no.nav.familie.klage.behandling
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.Klagebehandlingsesultat
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.StegType.BEHANDLING_FERDIGSTILT
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandling.domain.erUnderArbeidAvSaksbehandler
+import no.nav.familie.klage.behandling.domain.tilPåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
@@ -16,6 +18,7 @@ import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
+import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.tilDto
 import no.nav.familie.klage.oppgave.OppgaveTaskService
@@ -39,7 +42,8 @@ class BehandlingService(
     private val klageresultatRepository: KlageresultatRepository,
     private val behandlinghistorikkService: BehandlingshistorikkService,
     private val oppgaveTaskService: OppgaveTaskService,
-    private val taskService: TaskService
+    private val taskService: TaskService,
+    private val fagsystemVedtakService: FagsystemVedtakService
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -90,14 +94,29 @@ class BehandlingService(
         feilHvisIkke(påklagetVedtakDto.erGyldig()) {
             "Påklaget vedtak er i en ugyldig tilstand: EksternFagsystemBehandlingId:${påklagetVedtakDto.eksternFagsystemBehandlingId}, PåklagetVedtakType: ${påklagetVedtakDto.påklagetVedtakstype}"
         }
+
+        val påklagetVedtakDetaljer = påklagetVedtakDetaljer(behandlingId, påklagetVedtakDto)
+
         val behandlingMedPåklagetVedtak = behandling.copy(
             påklagetVedtak = PåklagetVedtak(
                 eksternFagsystemBehandlingId = påklagetVedtakDto.eksternFagsystemBehandlingId,
-                påklagetVedtakstype = påklagetVedtakDto.påklagetVedtakstype
+                påklagetVedtakstype = påklagetVedtakDto.påklagetVedtakstype,
+                påklagetVedtakDetaljer = påklagetVedtakDetaljer
             )
         )
         behandlingRepository.update(behandlingMedPåklagetVedtak)
     }
+
+    private fun påklagetVedtakDetaljer(
+        behandlingId: UUID,
+        påklagetVedtakDto: PåklagetVedtakDto
+    ): PåklagetVedtakDetaljer? =
+        påklagetVedtakDto.eksternFagsystemBehandlingId?.let { påklagetBehandlingId ->
+            fagsystemVedtakService.hentFagsystemVedtak(behandlingId)
+                .singleOrNull { it.eksternBehandlingId == påklagetBehandlingId }
+                ?.tilPåklagetVedtakDetaljer()
+                ?: error("Finner ikke vedtak for behandling=$behandlingId eksternBehandling=$påklagetBehandlingId")
+        }
 
     private fun validerKanOppretteBehandling(fagsakId: UUID) {
         val behandlinger = behandlingRepository.findByFagsakId(fagsakId)

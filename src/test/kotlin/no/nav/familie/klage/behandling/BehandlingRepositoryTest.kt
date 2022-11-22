@@ -1,6 +1,7 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.domain.PersonIdent
@@ -10,6 +11,7 @@ import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
@@ -34,12 +37,14 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
     fun insertBehandling() {
         val id = UUID.randomUUID()
 
+        val påklagetVedtakDetaljer =
+            PåklagetVedtakDetaljer(FagsystemType.ORDNIÆR, "1234", "type", "resultat", LocalDateTime.now())
         val behandling = behandlingRepository.insert(
             behandling(
                 fagsak = fagsak,
                 id = id,
                 klageMottatt = LocalDate.now(),
-                påklagetVedtak = PåklagetVedtak("1234", PåklagetVedtakstype.VEDTAK),
+                påklagetVedtak = PåklagetVedtak("1234", PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer),
                 henlagtÅrsak = HenlagtÅrsak.TRUKKET_TILBAKE
             )
         )
@@ -49,8 +54,7 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
         assertThat(behandling.id).isEqualTo(hentetBehandling.id)
         assertThat(behandling.fagsakId).isEqualTo(hentetBehandling.fagsakId)
         assertThat(behandling.eksternBehandlingId).isEqualTo(hentetBehandling.eksternBehandlingId)
-        assertThat(behandling.påklagetVedtak.påklagetVedtakstype).isEqualTo(hentetBehandling.påklagetVedtak.påklagetVedtakstype)
-        assertThat(behandling.påklagetVedtak.eksternFagsystemBehandlingId).isEqualTo(hentetBehandling.påklagetVedtak.eksternFagsystemBehandlingId)
+        assertThat(behandling.påklagetVedtak).isEqualTo(hentetBehandling.påklagetVedtak)
         assertThat(behandling.klageMottatt).isEqualTo(hentetBehandling.klageMottatt)
         assertThat(behandling.resultat).isEqualTo(hentetBehandling.resultat)
         assertThat(behandling.henlagtÅrsak).isEqualTo(HenlagtÅrsak.TRUKKET_TILBAKE)

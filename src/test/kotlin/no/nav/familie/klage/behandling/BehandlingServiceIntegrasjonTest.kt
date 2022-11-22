@@ -1,16 +1,22 @@
 package no.nav.familie.klage.behandling
 
+import io.mockk.every
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
+import no.nav.familie.klage.behandling.domain.tilPåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
+import no.nav.familie.klage.infrastruktur.config.FamilieEFSakClientMock
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
+import no.nav.familie.klage.integrasjoner.FamilieEFSakClient
 import no.nav.familie.klage.testutil.BrukerContextUtil
-import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
-import no.nav.familie.klage.testutil.DomainUtil.tilFagsak
+import no.nav.familie.klage.testutil.DomainUtil.fagsak
+import no.nav.familie.klage.testutil.DomainUtil.fagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDateTime.now
@@ -20,23 +26,27 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
     @Autowired
     private lateinit var behandlingService: BehandlingService
 
+    @Autowired
+    private lateinit var efSakClientMock: FamilieEFSakClient
+
+    private val fagsak = fagsak()
+    private val behandling = behandling(fagsak)
+
     @BeforeEach
     internal fun setUp() {
         BrukerContextUtil.mockBrukerContext()
+        testoppsettService.lagreFagsak(fagsak)
+        testoppsettService.lagreBehandling(behandling)
     }
 
     @AfterEach
     internal fun tearDown() {
+        FamilieEFSakClientMock.resetMock(efSakClientMock)
         BrukerContextUtil.clearBrukerContext()
     }
 
     @Test
     internal fun `skal oppdatere behandlingsresultat og vedtakstidspunkt`() {
-        val fagsak = DomainUtil.fagsakDomain().tilFagsak("1234")
-        val behandling = behandling(fagsak = fagsak)
-        testoppsettService.lagreFagsak(fagsak)
-        testoppsettService.lagreBehandling(behandling)
-
         val persistertBehandling = behandlingService.hentBehandling(behandlingId = behandling.id)
         assertThat(persistertBehandling.vedtakDato).isNull()
         assertThat(persistertBehandling.resultat).isEqualTo(BehandlingResultat.IKKE_SATT)
@@ -47,17 +57,37 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
         assertThat(oppdatertBehandling.resultat).isEqualTo(BehandlingResultat.IKKE_MEDHOLD)
     }
 
-    @Test
-    internal fun `skal oppdatere påklaget vedtak`() {
-        val fagsak = DomainUtil.fagsakDomain().tilFagsak("12345")
-        val behandling = behandling(fagsak = fagsak)
-        val påklagetVedtak =
-            PåklagetVedtakDto(eksternFagsystemBehandlingId = "14", påklagetVedtakstype = PåklagetVedtakstype.VEDTAK)
-        testoppsettService.lagreFagsak(fagsak)
-        testoppsettService.lagreBehandling(behandling)
-        behandlingService.oppdaterPåklagetVedtak(behandlingId = behandling.id, påklagetVedtakDto = påklagetVedtak)
-        val oppdatertBehandling = behandlingService.hentBehandling(behandling.id)
-        assertThat(oppdatertBehandling.påklagetVedtak.påklagetVedtakstype).isEqualTo(påklagetVedtak.påklagetVedtakstype)
-        assertThat(oppdatertBehandling.påklagetVedtak.eksternFagsystemBehandlingId).isEqualTo(påklagetVedtak.eksternFagsystemBehandlingId)
+    @Nested
+    inner class oppdaterPåklagetVedtak {
+
+        @Test
+        internal fun `skal oppdatere påklaget vedtak`() {
+            val påklagetBehandlingId = "påklagetBehandlingId"
+            val fagsystemVedtak = fagsystemVedtak(eksternBehandlingId = påklagetBehandlingId)
+            every { efSakClientMock.hentVedtak(fagsak.eksternId) } returns listOf(fagsystemVedtak)
+
+            val påklagetVedtak = PåklagetVedtakDto(
+                eksternFagsystemBehandlingId = påklagetBehandlingId,
+                påklagetVedtakstype = PåklagetVedtakstype.VEDTAK
+            )
+            behandlingService.oppdaterPåklagetVedtak(behandlingId = behandling.id, påklagetVedtakDto = påklagetVedtak)
+            val oppdatertBehandling = behandlingService.hentBehandling(behandling.id)
+            val oppdatertPåklagetVedtak = oppdatertBehandling.påklagetVedtak
+
+            assertThat(oppdatertPåklagetVedtak.påklagetVedtakstype).isEqualTo(påklagetVedtak.påklagetVedtakstype)
+            assertThat(oppdatertPåklagetVedtak.eksternFagsystemBehandlingId).isEqualTo(påklagetVedtak.eksternFagsystemBehandlingId)
+            assertThat(oppdatertPåklagetVedtak.påklagetVedtakDetaljer).isEqualTo(fagsystemVedtak.tilPåklagetVedtakDetaljer())
+        }
+
+        @Test
+        internal fun `skal feile hvis påklaget vedtak ikke finnes`() {
+            every { efSakClientMock.hentVedtak(fagsak.eksternId) } returns emptyList()
+            val påklagetVedtak =
+                PåklagetVedtakDto(eksternFagsystemBehandlingId = "finner ikke", påklagetVedtakstype = PåklagetVedtakstype.VEDTAK)
+            assertThatThrownBy {
+                behandlingService.oppdaterPåklagetVedtak(behandlingId = behandling.id, påklagetVedtakDto = påklagetVedtak)
+            }.hasMessageContaining("Finner ikke vedtak for behandling")
+        }
     }
+
 }
