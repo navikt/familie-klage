@@ -5,6 +5,7 @@ import no.nav.familie.klage.distribusjon.DokumenttypeUtil.dokumenttypeBrev
 import no.nav.familie.klage.distribusjon.DokumenttypeUtil.dokumenttypeSaksbehandlingsblankett
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
+import no.nav.familie.klage.felles.util.StønadstypeVisningsnavn.visningsnavn
 import no.nav.familie.klage.felles.util.TekstUtil.storForbokstav
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
@@ -14,7 +15,6 @@ import no.nav.familie.kontrakter.felles.dokarkiv.v2.Dokument
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.Filtype
 import no.nav.familie.kontrakter.felles.dokdist.Distribusjonstype
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
-import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -116,6 +116,7 @@ class DistribusjonService(
         )
     }
 
+    // TODO må ha med tilbakekreving i brevtittel?
     private fun utledBrevtittel(behandlingId: UUID): String {
         val behandling = behandlingService.hentBehandling(behandlingId)
         val stønadstype = fagsakService.hentFagsakForBehandling(behandlingId).stønadstype
@@ -126,10 +127,7 @@ class DistribusjonService(
             else -> error("Kan ikke utlede brevtittel for behandlingsresultat ${behandling.resultat}")
         }
 
-        return when (stønadstype) {
-            Stønadstype.BARNETRYGD, Stønadstype.OVERGANGSSTØNAD, Stønadstype.KONTANTSTØTTE -> "$tittelPrefix - ${stønadstype.name.lowercase()}"
-            Stønadstype.BARNETILSYN -> "$tittelPrefix - stønad til barnetilsyn"
-            Stønadstype.SKOLEPENGER -> "$tittelPrefix - stønad til skolepenger"
-        }
+        return "$tittelPrefix - ${stønadstype.visningsnavn()}"
+
     }
 }
