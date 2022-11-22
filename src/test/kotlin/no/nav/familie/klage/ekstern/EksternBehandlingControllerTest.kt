@@ -2,15 +2,22 @@ package no.nav.familie.klage.ekstern
 
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.fagsak.domain.PersonIdent
+import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
+import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
+import no.nav.familie.klage.testutil.DomainUtil.klageresultat
+import no.nav.familie.klage.testutil.DomainUtil.vurdering
+import no.nav.familie.klage.vurdering.VurderingRepository
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Status
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import no.nav.familie.kontrakter.felles.klage.KlagebehandlingDto
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
+import no.nav.familie.kontrakter.felles.klage.Årsak
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -21,11 +28,18 @@ import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import java.time.LocalDateTime
 
 internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
 
     @Autowired
     private lateinit var behandlingRepository: BehandlingRepository
+
+    @Autowired
+    private lateinit var vurderingRepository: VurderingRepository
+
+    @Autowired
+    private lateinit var klageresultatRepository: KlageresultatRepository
 
     private val fagsak = DomainUtil.fagsakDomain(eksternId = "1", stønadstype = Stønadstype.OVERGANGSSTØNAD)
         .tilFagsakMedPerson(setOf(PersonIdent("1")))
@@ -55,7 +69,13 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
 
         @Test
         internal fun `skal returnere behandling når man spør etter eksternFagsakId`() {
-            val behandling = behandlingRepository.insert(behandling(fagsak))
+            val vedtakDato = SporbarUtils.now()
+            val henlagtÅrsak = HenlagtÅrsak.TRUKKET_TILBAKE
+            val behandling = behandlingRepository.insert(
+                behandling(fagsak, vedtakDato = vedtakDato, henlagtÅrsak = henlagtÅrsak)
+            )
+            vurderingRepository.insert(vurdering(behandling.id, årsak = Årsak.FEIL_PROSESSUELL))
+            val klageresultat = klageresultatRepository.insert(klageresultat(behandlingId = behandling.id))
 
             val url = "$hentBehandlingUrl?eksternFagsakId=${fagsak.eksternId}"
             val response = hentBehandlinger(url)
@@ -76,8 +96,19 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
             assertThat(klagebehandling.mottattDato).isEqualTo(behandling.klageMottatt)
             assertThat(klagebehandling.opprettet).isEqualTo(behandling.sporbar.opprettetTid)
             assertThat(klagebehandling.resultat).isEqualTo(BehandlingResultat.IKKE_SATT)
-            assertThat(klagebehandling.årsak).isNull()
-            assertThat(klagebehandling.vedtaksdato).isNull()
+            assertThat(klagebehandling.årsak).isEqualTo(Årsak.FEIL_PROSESSUELL)
+            assertThat(klagebehandling.vedtaksdato).isEqualTo(vedtakDato)
+            assertThat(klagebehandling.henlagtÅrsak).isEqualTo(henlagtÅrsak)
+
+            val klageinstansResultat = klagebehandling.klageinstansResultat
+            assertThat(klageinstansResultat).hasSize(1)
+            assertThat(klageinstansResultat[0].type).isEqualTo(klageresultat.type)
+            assertThat(klageinstansResultat[0].utfall).isEqualTo(klageresultat.utfall)
+            assertThat(klageinstansResultat[0].mottattEllerAvsluttetTidspunkt)
+                .isEqualTo(klageresultat.mottattEllerAvsluttetTidspunkt)
+            assertThat(klageinstansResultat[0].journalpostReferanser)
+                .containsExactlyInAnyOrderElementsOf(klageresultat.journalpostReferanser.verdier)
+
         }
 
         @Test
