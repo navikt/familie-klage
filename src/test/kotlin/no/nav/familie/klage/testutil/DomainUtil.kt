@@ -15,6 +15,10 @@ import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration
 import no.nav.familie.klage.kabal.domain.KlageinstansResultat
+import no.nav.familie.klage.personopplysninger.dto.Adressebeskyttelse
+import no.nav.familie.klage.personopplysninger.dto.Folkeregisterpersonstatus
+import no.nav.familie.klage.personopplysninger.dto.Kjønn
+import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerDto
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
@@ -31,6 +35,8 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.FagsystemType
+import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
@@ -71,7 +77,8 @@ object DomainUtil {
         behandlendeEnhet: String = "4489",
         resultat: BehandlingResultat = BehandlingResultat.IKKE_SATT,
         vedtakDato: LocalDateTime? = null,
-        henlagtÅrsak: HenlagtÅrsak? = null
+        henlagtÅrsak: HenlagtÅrsak? = null,
+        sporbar: Sporbar = Sporbar()
     ): Behandling =
         Behandling(
             id = id,
@@ -84,7 +91,8 @@ object DomainUtil {
             behandlendeEnhet = behandlendeEnhet,
             resultat = resultat,
             henlagtÅrsak = henlagtÅrsak,
-            vedtakDato = vedtakDato
+            vedtakDato = vedtakDato,
+            sporbar = sporbar
         )
 
     fun vurdering(
@@ -214,4 +222,33 @@ object DomainUtil {
 
     fun påklagetVedtakDto(): PåklagetVedtakDto =
         PåklagetVedtakDto(eksternFagsystemBehandlingId = null, påklagetVedtakstype = PåklagetVedtakstype.UTEN_VEDTAK)
+
+    fun personopplysningerDto(
+        personIdent: String = "123",
+        adressebeskyttelse: Adressebeskyttelse? = null
+    ) = PersonopplysningerDto(
+        personIdent = personIdent,
+        navn = "navn",
+        kjønn = Kjønn.MANN,
+        adressebeskyttelse = adressebeskyttelse,
+        folkeregisterpersonstatus = Folkeregisterpersonstatus.BOSATT,
+        dødsdato = null,
+        fullmakt = emptyList(),
+        egenAnsatt = false,
+        vergemål = emptyList()
+    )
+
+    fun fagsystemVedtak(
+        eksternBehandlingId: String,
+        behandlingstype: String = "type",
+        resultat: String = "resultat",
+        vedtakstidspunkt: LocalDateTime = LocalDate.of(2022, 3, 1).atTime(8, 0),
+        fagsystemType: FagsystemType = FagsystemType.ORDNIÆR
+    ) = FagsystemVedtak(
+        eksternBehandlingId = eksternBehandlingId,
+        behandlingstype = behandlingstype,
+        resultat = resultat,
+        vedtakstidspunkt = vedtakstidspunkt,
+        fagsystemType = fagsystemType
+    )
 }

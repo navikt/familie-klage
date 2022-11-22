@@ -14,12 +14,12 @@ import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerDto
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
+import no.nav.familie.klage.testutil.DomainUtil.fagsystemVedtak
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
 import no.nav.familie.klage.testutil.DomainUtil.vurderingDto
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
-import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.Årsak
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
@@ -74,12 +74,7 @@ internal class BlankettServiceTest {
         )
         every { blankettClient.genererBlankett(capture(blankettRequestSpot)) } returns byteArrayOf()
         every { fagsystemVedtakService.hentFagsystemVedtak(behandlingId) } returns listOf(
-            FagsystemVedtak(
-                eksternBehandlingId = eksternFagsystemBehandlingId,
-                "type",
-                "resultat",
-                LocalDate.of(2022, 3, 1).atTime(8, 0)
-            )
+            fagsystemVedtak(eksternBehandlingId = eksternFagsystemBehandlingId,)
         )
     }
 

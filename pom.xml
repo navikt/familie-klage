@@ -35,9 +35,8 @@
 		<felles.version>1.20221101085322_cc4d556</felles.version>
 		<prosessering.version>1.20221110194901_e9e0d90</prosessering.version>
 		<start-class>no.nav.familie.klage.ApplicationKt</start-class>
-		<kontrakter.version>2.0_20221122075741_be66bed</kontrakter.version>
-		<eksterne-kontrakter.version>2.0_20221019110152_74f39dd</eksterne-kontrakter.version>
-		<saksstatistikk-klage.version>2.0_20221110161710_7cacc91</saksstatistikk-klage.version>
+		<kontrakter.version>2.0_20221122093344_b16e671</kontrakter.version>
+		<saksstatistikk-klage.version>2.0_20221122113504_2968071</saksstatistikk-klage.version>
 		<nav.security.version>2.1.6</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
 		<okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
 		<unleash.version>4.4.1</unleash.version>

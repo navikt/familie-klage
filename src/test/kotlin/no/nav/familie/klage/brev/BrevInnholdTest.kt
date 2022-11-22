@@ -1,9 +1,9 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.brev.BrevInnhold.lagOpprettholdelseBrev
-import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
+import no.nav.familie.klage.testutil.DomainUtil.fagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -20,12 +20,12 @@ internal class BrevInnholdTest {
             "Innstilling abc",
             "Navn Navnesen",
             Stønadstype.OVERGANGSSTØNAD,
-            FagsystemVedtak("123", "type", "resultat", vedtakstidspunkt),
+            fagsystemVedtak("123", vedtakstidspunkt = vedtakstidspunkt),
             mottattDato
         )
 
-        Assertions.assertThat(brev.avsnitt.first().innhold).contains("01.01.2020")
-        Assertions.assertThat(brev.avsnitt.first().innhold).contains("05.11.2021")
-        Assertions.assertThat(brev.avsnitt.first().innhold).contains("overgangsstønad")
+        assertThat(brev.avsnitt.first().innhold).contains("01.01.2020")
+        assertThat(brev.avsnitt.first().innhold).contains("05.11.2021")
+        assertThat(brev.avsnitt.first().innhold).contains("overgangsstønad")
     }
 }
