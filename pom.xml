@@ -29,7 +29,7 @@
 		<sha1/>
 		<changelist>-SNAPSHOT</changelist>
 		<java.version>17</java.version>
-		<kotlin.version>1.7.20</kotlin.version>
+		<kotlin.version>1.7.21</kotlin.version>
 		<springdoc.version>1.6.12</springdoc.version>
 		<mockk-jvm.version>1.13.2</mockk-jvm.version>
 		<felles.version>1.20221101085322_cc4d556</felles.version>
