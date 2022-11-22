@@ -1,6 +1,7 @@
 package no.nav.familie.klage.integrasjoner
 
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
@@ -15,10 +16,11 @@ class FagsystemVedtakService(
 
     fun hentFagsystemVedtak(behandlingId: UUID): List<FagsystemVedtak> {
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
+        return hentFagsystemVedtak(fagsak)
+    }
 
-        return when (fagsak.fagsystem) {
-            Fagsystem.EF -> familieEFSakClient.hentVedtak(fagsak.eksternId)
-            else -> throw Feil("Ikke implementert henting av vedtak for BA og KS")
-        }
+    fun hentFagsystemVedtak(fagsak: Fagsak): List<FagsystemVedtak> = when (fagsak.fagsystem) {
+        Fagsystem.EF -> familieEFSakClient.hentVedtak(fagsak.eksternId)
+        else -> throw Feil("Ikke implementert henting av vedtak for BA og KS")
     }
 }
