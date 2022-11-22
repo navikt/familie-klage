@@ -107,7 +107,7 @@ internal class BehandlingsstatistikkServiceTest {
         assertThat(captured.sakYtelse).isEqualTo(fagsak.stønadstype.name)
         assertThat(captured.saksbehandler).isEqualTo(gjeldendeSaksbehandler)
         assertThat(captured.saksnummer).isEqualTo(fagsak.eksternId)
-        assertThat(captured.tekniskTid.toLocalDate()).isAfter(LocalDate.now())
+        assertThat(captured.tekniskTid.toLocalDate()).isEqualTo(LocalDate.now())
     }
 
     @Test
