@@ -107,7 +107,6 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
                 .isEqualTo(klageresultat.mottattEllerAvsluttetTidspunkt)
             assertThat(klageinstansResultat[0].journalpostReferanser)
                 .containsExactlyInAnyOrderElementsOf(klageresultat.journalpostReferanser.verdier)
-
         }
 
         @Test
