@@ -70,6 +70,7 @@ For å koble til preprod kan du kjøre kommandoene:
 2. Legge inn eventuelle roller som kreves for å kunne saksbehandle gitt stønad i `TilgangService.harTilgangTilGittRolleForFagsystem`
 3. Se over felter som sendes til DVH
 4. Se over brevtekster
+5. Se over enhet i brevsignatur 
 
 #### I fagsystemet
 1. Fagsystemet må implementere et endepunkt for å hente ut alle vedtak
