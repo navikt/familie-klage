@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
 import java.time.LocalDateTime
 import java.time.Month
+import java.util.UUID
 
 @Configuration
 @Profile("mock-ef-sak")
@@ -34,6 +35,13 @@ class FamilieEFSakClientMock {
                 "Opphørt",
                 vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 0),
                 fagsystemType = FagsystemType.ORDNIÆR
+            ),
+            FagsystemVedtak(
+                "tilbake-123",
+                "Tilbakekreving",
+                "Full tilbakekreving",
+                vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 10, 2),
+                fagsystemType = FagsystemType.TILBAKEKREVING
             )
         )
         return familieEFSakClient
