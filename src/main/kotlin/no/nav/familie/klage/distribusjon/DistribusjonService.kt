@@ -116,7 +116,6 @@ class DistribusjonService(
         )
     }
 
-    // TODO må ha med tilbakekreving i brevtittel?
     private fun utledBrevtittel(behandlingId: UUID): String {
         val behandling = behandlingService.hentBehandling(behandlingId)
         val stønadstype = fagsakService.hentFagsakForBehandling(behandlingId).stønadstype
