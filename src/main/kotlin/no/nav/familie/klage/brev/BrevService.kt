@@ -22,7 +22,6 @@ import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
-import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
@@ -44,8 +43,7 @@ class BrevService(
     private val fagsakService: FagsakService,
     private val formService: FormService,
     private val vurderingService: VurderingService,
-    private val personopplysningerService: PersonopplysningerService,
-    private val fagsystemVedtakService: FagsystemVedtakService
+    private val personopplysningerService: PersonopplysningerService
 ) {
 
     fun hentBrev(behandlingId: UUID): Brev = brevRepository.findByIdOrThrow(behandlingId)

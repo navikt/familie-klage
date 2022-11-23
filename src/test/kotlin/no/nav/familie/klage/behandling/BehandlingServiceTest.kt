@@ -29,7 +29,6 @@ import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak.TRUKKET_TILBAKE
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -180,16 +179,6 @@ internal class BehandlingServiceTest {
             verify(exactly = 3) { behandlingRepository.update(any()) }
         }
 
-        @Test
-        internal fun `skal feile når man ikke finner fagsystemVedtak`() {
-            val behandling = behandling(fagsak(), status = BehandlingStatus.UTREDES)
-            every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
-            mockHentFagsystemVedtak(behandling, "annet id")
-
-            val medVedtak = PåklagetVedtakDto("123", PåklagetVedtakstype.VEDTAK)
-            assertThatThrownBy { behandlingService.oppdaterPåklagetVedtak(behandling.id, medVedtak) }
-                .hasMessageContaining("Finner ikke vedtak for behandling")
-        }
     }
 
     fun mockHentFagsystemVedtak(
@@ -197,6 +186,8 @@ internal class BehandlingServiceTest {
         eksternBehandlingId: String
     ) {
         val fagsystemVedtak = fagsystemVedtak(eksternBehandlingId = eksternBehandlingId)
-        every { fagsystemVedtakService.hentFagsystemVedtak(behandling.id) } returns listOf(fagsystemVedtak)
+        every {
+            fagsystemVedtakService.hentFagsystemVedtakForPåklagetBehandlingId(behandling.id, eksternBehandlingId)
+        } returns fagsystemVedtak
     }
 }

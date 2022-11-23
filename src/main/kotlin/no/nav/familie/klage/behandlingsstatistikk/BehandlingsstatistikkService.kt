@@ -4,13 +4,10 @@ import no.nav.familie.eksterne.kontrakter.saksstatistikk.klage.Behandlingsstatis
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.fagsak.domain.Fagsak
-import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
-import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -31,8 +28,7 @@ class BehandlingsstatistikkService(
     private val behandlingService: BehandlingService,
     private val vurderingService: VurderingService,
     private val fagsakService: FagsakService,
-    private val personopplysningerService: PersonopplysningerService,
-    private val fagsystemVedtakService: FagsystemVedtakService
+    private val personopplysningerService: PersonopplysningerService
 ) {
 
     private val zoneIdOslo = ZoneId.of("Europe/Oslo")

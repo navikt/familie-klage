@@ -19,8 +19,16 @@ class FagsystemVedtakService(
         return hentFagsystemVedtak(fagsak)
     }
 
-    fun hentFagsystemVedtak(fagsak: Fagsak): List<FagsystemVedtak> = when (fagsak.fagsystem) {
+    private fun hentFagsystemVedtak(fagsak: Fagsak): List<FagsystemVedtak> = when (fagsak.fagsystem) {
         Fagsystem.EF -> familieEFSakClient.hentVedtak(fagsak.eksternId)
-        else -> throw Feil("Ikke implementert henting av vedtak for BA og KS")
+        else -> throw Feil("Ikke implementert henting av vedtak for BA og KS fagsak=${fagsak.id}")
     }
+
+    fun hentFagsystemVedtakForPåklagetBehandlingId(
+        behandlingId: UUID,
+        påklagetBehandlingId: String
+    ): FagsystemVedtak =
+        hentFagsystemVedtak(behandlingId)
+            .singleOrNull { it.eksternBehandlingId == påklagetBehandlingId }
+            ?: error("Finner ikke vedtak for behandling=$behandlingId eksternBehandling=$påklagetBehandlingId")
 }

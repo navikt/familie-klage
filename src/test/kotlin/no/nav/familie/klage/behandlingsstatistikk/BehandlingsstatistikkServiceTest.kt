@@ -9,15 +9,12 @@ import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.felles.domain.Sporbar
-import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.personopplysninger.dto.Adressebeskyttelse
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
-import no.nav.familie.klage.testutil.DomainUtil.fagsystemVedtak
 import no.nav.familie.klage.testutil.DomainUtil.personopplysningerDto
 import no.nav.familie.klage.testutil.DomainUtil.påklagetVedtakDetaljer
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
@@ -39,15 +36,13 @@ internal class BehandlingsstatistikkServiceTest {
     private val vurderingService = mockk<VurderingService>()
     private val fagsakService = mockk<FagsakService>()
     private val personopplysningerService = mockk<PersonopplysningerService>()
-    private val fagsystemVedtakService = mockk<FagsystemVedtakService>()
 
     private val service = BehandlingsstatistikkService(
         behandlingsstatistikkProducer = behandlingsstatistikkProducer,
         behandlingService = behandlingService,
         vurderingService = vurderingService,
         fagsakService = fagsakService,
-        personopplysningerService = personopplysningerService,
-        fagsystemVedtakService = fagsystemVedtakService
+        personopplysningerService = personopplysningerService
     )
 
     private val behandlingsstatistikkKlageSlot = slot<BehandlingsstatistikkKlage>()
@@ -72,7 +67,6 @@ internal class BehandlingsstatistikkServiceTest {
 
         every { vurderingService.hentVurdering(behandling.id) } returns vurdering
         every { personopplysningerService.hentPersonopplysninger(behandling.id) } returns personopplysningerDto(personIdent = personIdent)
-        every { fagsystemVedtakService.hentFagsystemVedtak(any<Fagsak>()) } returns listOf(fagsystemVedtak(påklagetBehandlingId))
 
         justRun { behandlingsstatistikkProducer.sendBehandlingsstatistikk(capture(behandlingsstatistikkKlageSlot)) }
     }

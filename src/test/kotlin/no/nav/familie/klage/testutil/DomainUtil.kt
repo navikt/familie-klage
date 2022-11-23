@@ -166,7 +166,13 @@ object DomainUtil {
             stønadstype = stønadstype,
             sporbar = sporbar,
             eksternId = "1",
-            fagsystem = Fagsystem.EF
+            fagsystem = when (stønadstype) {
+                Stønadstype.OVERGANGSSTØNAD,
+                Stønadstype.BARNETILSYN,
+                Stønadstype.SKOLEPENGER -> Fagsystem.EF
+                Stønadstype.BARNETRYGD -> Fagsystem.BA
+                Stønadstype.KONTANTSTØTTE -> Fagsystem.KS
+            }
         )
     }
 
@@ -230,9 +236,9 @@ object DomainUtil {
     )
 
     fun påklagetVedtakDetaljer(
-        eksternFagsystemBehandlingId: String= "123",
+        eksternFagsystemBehandlingId: String = "123",
         fagsystemType: FagsystemType = FagsystemType.ORDNIÆR,
-        vedtakstidspunkt: LocalDateTime = LocalDateTime.now()
+        vedtakstidspunkt: LocalDateTime = LocalDate.of(2022, 3, 1).atTime(8, 0)
     ) = PåklagetVedtakDetaljer(
         fagsystemType = fagsystemType,
         eksternFagsystemBehandlingId = eksternFagsystemBehandlingId,
