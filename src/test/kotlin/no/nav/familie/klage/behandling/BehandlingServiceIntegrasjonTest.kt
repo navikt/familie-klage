@@ -2,8 +2,8 @@ package no.nav.familie.klage.behandling
 
 import io.mockk.every
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
-import no.nav.familie.klage.behandling.domain.tilPåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
+import no.nav.familie.klage.behandling.dto.tilPåklagetVedtakDetaljer
 import no.nav.familie.klage.infrastruktur.config.FamilieEFSakClientMock
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.integrasjoner.FamilieEFSakClient

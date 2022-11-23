@@ -46,6 +46,5 @@ class FamilieEFSakClientMock {
             )
             return mock
         }
-
     }
 }

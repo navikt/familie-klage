@@ -1,7 +1,7 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
-import no.nav.familie.klage.behandling.domain.tilPåklagetVedtakDetaljer
+import no.nav.familie.klage.behandling.dto.tilPåklagetVedtakDetaljer
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
@@ -47,10 +47,10 @@ class PatchPåklagetBehandlingDetaljerController(
         val behandlingerSomSkalOppdateres = behandlingerSomManglerData
             .map { behandling ->
                 val påklagetBehandlingId = behandling.påklagetVedtak.eksternFagsystemBehandlingId ?: error("Mangler behandlingId")
-                val påklagetVedtakDetaljer = (fagsystemVedtakService.hentFagsystemVedtak(behandling.id)
+                val påklagetVedtakDetaljer = fagsystemVedtakService.hentFagsystemVedtak(behandling.id)
                     .singleOrNull { it.eksternBehandlingId == påklagetBehandlingId }
                     ?.tilPåklagetVedtakDetaljer()
-                    ?: error("Finner ikke vedtak til behandling=${behandling.id}"))
+                    ?: error("Finner ikke vedtak til behandling=${behandling.id}")
                 behandling.id to påklagetVedtakDetaljer
             }
 
@@ -61,5 +61,4 @@ class PatchPåklagetBehandlingDetaljerController(
             }
         }
     }
-
 }

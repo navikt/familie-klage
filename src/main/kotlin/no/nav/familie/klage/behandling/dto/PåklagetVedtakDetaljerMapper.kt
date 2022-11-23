@@ -1,5 +1,6 @@
-package no.nav.familie.klage.behandling.domain
+package no.nav.familie.klage.behandling.dto
 
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 
 fun FagsystemVedtak.tilPåklagetVedtakDetaljer() = PåklagetVedtakDetaljer(
