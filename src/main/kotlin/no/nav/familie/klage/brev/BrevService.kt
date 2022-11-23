@@ -130,17 +130,23 @@ class BrevService(
                     "Kan ikke opprette brev til klageinstansen når det ikke er valgt et påklaget vedtak"
                 }
                 BrevInnhold.lagOpprettholdelseBrev(
-                    fagsak.hentAktivIdent(),
-                    instillingKlageinstans,
-                    navn,
-                    fagsak.stønadstype,
-                    påklagetFagsystemVedtak,
-                    klageMottatt
+                    ident = fagsak.hentAktivIdent(),
+                    instillingKlageinstans = instillingKlageinstans,
+                    navn = navn,
+                    stønadstype = fagsak.stønadstype,
+                    påklagetFagsystemVedtak = påklagetFagsystemVedtak,
+                    klageMottatt = klageMottatt
                 )
             }
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> {
                 val formkrav = formService.hentForm(behandlingId)
-                BrevInnhold.lagFormkravAvvistBrev(fagsak.hentAktivIdent(), navn, formkrav, fagsak.stønadstype)
+                BrevInnhold.lagFormkravAvvistBrev(
+                    ident = fagsak.hentAktivIdent(),
+                    navn = navn,
+                    formkrav = formkrav,
+                    stønadstype = fagsak.stønadstype,
+                    påklagetFagsystemVedtak = påklagetFagsystemVedtak
+                )
             }
             BehandlingResultat.MEDHOLD,
             BehandlingResultat.IKKE_SATT,

@@ -61,12 +61,6 @@ class EksternBehandlingController(
 
     @PostMapping("/opprett")
     fun opprettBehandling(@RequestBody opprettKlageBehandlingDto: OpprettKlagebehandlingRequest) {
-        // TODO burde man sende med FagsystemVedtak i requesten i stedet for eksternBehandlingId ?
-        //  Hvis ikke så må klage hente FagsystemVedtak fra ef-sak i det att eks ef-sak gjør et kall till klage
-        // [eksternBehandlingId] funksjonaliteten er ikke tatt i bruk ennå fra ef-sak
-        feilHvis(opprettKlageBehandlingDto.eksternBehandlingId != null) {
-            "Kan ikke opprette behandling koblet til ekstern behandling akkurat nå"
-        }
         opprettBehandlingService.opprettBehandling(opprettKlageBehandlingDto)
     }
 }

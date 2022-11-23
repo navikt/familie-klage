@@ -5,8 +5,10 @@ import no.nav.familie.klage.brev.FormBrevUtil.utledLovtekst
 import no.nav.familie.klage.brev.FormBrevUtil.utledÅrsakTilAvvisningstekst
 import no.nav.familie.klage.brev.dto.AvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
+import no.nav.familie.klage.felles.util.StønadstypeVisningsnavn.visningsnavn
 import no.nav.familie.klage.felles.util.TekstUtil.norskFormat
 import no.nav.familie.klage.formkrav.domain.Form
+import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import java.time.LocalDate
@@ -30,7 +32,10 @@ object BrevInnhold {
                 AvsnittDto(
                     deloverskrift = "",
                     innhold =
-                    "Vi har ${klageMottatt.norskFormat()} fått klagen din på vedtaket om ${stønadstype.tilVisningsnavn()} som ble gjort ${påklagetFagsystemVedtak.vedtakstidspunkt.norskFormat()}, og kommet frem til at vedtaket ikke endres. NAV Klageinstans skal derfor vurdere saken din på nytt."
+                    "Vi har ${klageMottatt.norskFormat()} fått klagen din på vedtaket om " +
+                            "${visningsnavn(stønadstype, påklagetFagsystemVedtak)} som ble gjort " +
+                            "${påklagetFagsystemVedtak.vedtakstidspunkt.norskFormat()}, " +
+                            "og kommet frem til at vedtaket ikke endres. NAV Klageinstans skal derfor vurdere saken din på nytt."
                 ),
                 AvsnittDto(
                     deloverskrift = "",
@@ -47,7 +52,8 @@ object BrevInnhold {
                 ),
                 AvsnittDto(
                     deloverskrift = "Har du spørsmål?",
-                    innhold = "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. Du kan også kontakte oss på nav.no/kontakt."
+                    innhold = "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. " +
+                            "Du kan også kontakte oss på nav.no/kontakt."
                 )
             )
         )
@@ -57,14 +63,15 @@ object BrevInnhold {
         ident: String,
         navn: String,
         formkrav: Form,
-        stønadstype: Stønadstype
+        stønadstype: Stønadstype,
+        påklagetFagsystemVedtak: FagsystemVedtak?
     ): FritekstBrevRequestDto {
         val ikkeOppfylteFormkrav = utledIkkeOppfylteFormkrav(formkrav)
         val brevtekstFraSaksbehandler =
             formkrav.brevtekst ?: error("Må ha brevtekst fra saksbehandler for å generere brev ved formkrav ikke oppfylt")
 
         return FritekstBrevRequestDto(
-            overskrift = "Vi har avvist klagen din på vedtaket om ${stønadstype.tilVisningsnavn()}",
+            overskrift = "Vi har avvist klagen din på vedtaket om ${visningsnavn(stønadstype, påklagetFagsystemVedtak)}",
             personIdent = ident,
             navn = navn,
             avsnitt =
@@ -84,7 +91,8 @@ object BrevInnhold {
                 AvsnittDto(
                     deloverskrift = "Du har rett til å klage",
                     innhold =
-                    "Hvis du vil klage, må du gjøre dette innen 3 uker fra den datoen du fikk dette brevet. Du finner skjema og informasjon på ${stønadstype.klageUrl()}."
+                    "Hvis du vil klage, må du gjøre dette innen 3 uker fra den datoen du fikk dette brevet. " +
+                            "Du finner skjema og informasjon på ${stønadstype.klageUrl()}."
                 ),
                 AvsnittDto(
                     deloverskrift = "Du har rett til innsyn",
@@ -94,13 +102,19 @@ object BrevInnhold {
                 AvsnittDto(
                     deloverskrift = "Har du spørsmål?",
                     innhold =
-                    "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. Du kan også kontakte oss på nav.no/kontakt."
+                    "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. " +
+                            "Du kan også kontakte oss på nav.no/kontakt."
                 )
             )
         )
     }
 
-    private fun Stønadstype.tilVisningsnavn() = this.name.lowercase()
+    private fun visningsnavn(stønadstype: Stønadstype, påklagetFagsystemVedtak: FagsystemVedtak?): String =
+        if (påklagetFagsystemVedtak?.fagsystemType == FagsystemType.TILBAKEKREVING) {
+            "tilbakebetaling av ${stønadstype.visningsnavn()}"
+        } else {
+            stønadstype.visningsnavn()
+        }
 
     private fun Stønadstype.lesMerUrl() = when (this) {
         Stønadstype.OVERGANGSSTØNAD,

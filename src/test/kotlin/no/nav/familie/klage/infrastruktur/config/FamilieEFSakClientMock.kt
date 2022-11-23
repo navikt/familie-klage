@@ -42,6 +42,13 @@ class FamilieEFSakClientMock {
                     "Opphørt",
                     vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 0),
                     fagsystemType = FagsystemType.ORDNIÆR
+                ),
+                FagsystemVedtak(
+                    "tilbake-123",
+                    "Tilbakekreving",
+                    "Full tilbakekreving",
+                    vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 10, 2),
+                    fagsystemType = FagsystemType.TILBAKEKREVING
                 )
             )
             return mock
