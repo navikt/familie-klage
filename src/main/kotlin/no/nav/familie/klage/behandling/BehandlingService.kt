@@ -99,7 +99,6 @@ class BehandlingService(
 
         val behandlingMedPåklagetVedtak = behandling.copy(
             påklagetVedtak = PåklagetVedtak(
-                eksternFagsystemBehandlingId = påklagetVedtakDto.eksternFagsystemBehandlingId,
                 påklagetVedtakstype = påklagetVedtakDto.påklagetVedtakstype,
                 påklagetVedtakDetaljer = påklagetVedtakDetaljer
             )

@@ -34,6 +34,6 @@ fun Form.tilDto(påklagetVedtak: PåklagetVedtakDto): FormkravDto =
 
 fun PåklagetVedtak.tilDto(): PåklagetVedtakDto =
     PåklagetVedtakDto(
-        eksternFagsystemBehandlingId = this.eksternFagsystemBehandlingId,
+        eksternFagsystemBehandlingId = this.påklagetVedtakDetaljer?.eksternFagsystemBehandlingId,
         påklagetVedtakstype = this.påklagetVedtakstype
     )

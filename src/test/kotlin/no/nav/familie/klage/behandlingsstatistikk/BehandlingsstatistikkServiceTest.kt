@@ -19,6 +19,7 @@ import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.klage.testutil.DomainUtil.fagsystemVedtak
 import no.nav.familie.klage.testutil.DomainUtil.personopplysningerDto
+import no.nav.familie.klage.testutil.DomainUtil.påklagetVedtakDetaljer
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
@@ -56,7 +57,7 @@ internal class BehandlingsstatistikkServiceTest {
     private val påklagetBehandlingId = UUID.randomUUID().toString()
     private val behandling = behandling(
         fagsak,
-        påklagetVedtak = PåklagetVedtak(eksternFagsystemBehandlingId = påklagetBehandlingId, PåklagetVedtakstype.VEDTAK),
+        påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer(påklagetBehandlingId)),
         resultat = BehandlingResultat.MEDHOLD,
         sporbar = Sporbar(opprettetAv = "Sakbeh")
     )

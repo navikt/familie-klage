@@ -67,6 +67,8 @@ class BehandlingsstatistikkService(
             behandling.behandlendeEnhet
         )
 
+        val påklagetVedtakDetaljer = behandling.påklagetVedtak.påklagetVedtakDetaljer
+
         return BehandlingsstatistikkKlage(
             behandlingId = behandling.eksternBehandlingId,
             personIdent = fagsak.hentAktivIdent(),
@@ -76,8 +78,8 @@ class BehandlingsstatistikkService(
             behandlingType = "KLAGE",
             sakYtelse = fagsak.stønadstype.name,
             fagsystem = fagsak.fagsystem.name,
-            relatertEksternBehandlingId = behandling.påklagetVedtak.eksternFagsystemBehandlingId,
-            relatertFagsystemType = hentPåklagetFagsystemType(fagsak, behandling)?.name,
+            relatertEksternBehandlingId = påklagetVedtakDetaljer?.eksternFagsystemBehandlingId,
+            relatertFagsystemType = påklagetVedtakDetaljer?.fagsystemType?.name,
             behandlingStatus = hendelse.name,
             opprettetAv = maskerVerdiHvisStrengtFortrolig(erStrengtFortrolig, behandling.sporbar.opprettetAv),
             opprettetEnhet = behandlendeEnhet,
@@ -96,17 +98,6 @@ class BehandlingsstatistikkService(
             saksnummer = fagsak.eksternId
         )
     }
-
-    // TODO fjerne denne når vi lagrer påklaget informasjon i behandling
-    private fun hentPåklagetFagsystemType(
-        fagsak: Fagsak,
-        behandling: Behandling
-    ): FagsystemType? =
-        behandling.påklagetVedtak.eksternFagsystemBehandlingId?.let { påklagetBehandlingId ->
-            fagsystemVedtakService.hentFagsystemVedtak(fagsak)
-                .single { it.eksternBehandlingId == påklagetBehandlingId }
-                .fagsystemType
-        }
 
     private fun resultatBegrunnelse(
         behandling: Behandling,

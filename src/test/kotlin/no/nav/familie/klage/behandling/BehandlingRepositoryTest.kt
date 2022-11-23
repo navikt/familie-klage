@@ -44,7 +44,7 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
                 fagsak = fagsak,
                 id = id,
                 klageMottatt = LocalDate.now(),
-                påklagetVedtak = PåklagetVedtak("1234", PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer),
+                påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer),
                 henlagtÅrsak = HenlagtÅrsak.TRUKKET_TILBAKE
             )
         )

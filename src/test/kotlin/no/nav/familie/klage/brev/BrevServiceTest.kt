@@ -10,6 +10,7 @@ import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
+import no.nav.familie.klage.testutil.DomainUtil.påklagetVedtakDetaljer
 import no.nav.familie.klage.vurdering.VurderingRepository
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
@@ -37,11 +38,12 @@ internal class BrevServiceTest : OppslagSpringRunnerTest() {
     private val fagsak = fagsak()
     private val fagsakFerdigstiltBehandling =
         fagsak(stønadstype = Stønadstype.SKOLEPENGER, fagsakPersonId = fagsak.fagsakPersonId)
-    private val behandling = behandling(fagsak, steg = StegType.BREV, påklagetVedtak = PåklagetVedtak("123", VEDTAK))
+    private val påklagetVedtak = PåklagetVedtak(VEDTAK, påklagetVedtakDetaljer("123"))
+    private val behandling = behandling(fagsak, steg = StegType.BREV, påklagetVedtak = påklagetVedtak)
     private val ferdigstiltBehandling = behandling(
         fagsakFerdigstiltBehandling,
         status = BehandlingStatus.FERDIGSTILT,
-        påklagetVedtak = PåklagetVedtak("123", VEDTAK)
+        påklagetVedtak = påklagetVedtak
     )
 
     @BeforeEach

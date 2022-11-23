@@ -16,6 +16,7 @@ import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.klage.testutil.DomainUtil.fagsystemVedtak
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
+import no.nav.familie.klage.testutil.DomainUtil.påklagetVedtakDetaljer
 import no.nav.familie.klage.testutil.DomainUtil.vurderingDto
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.domain.Hjemmel
@@ -50,7 +51,7 @@ internal class BlankettServiceTest {
     private val blankettRequestSpot = slot<BlankettPdfRequest>()
     private val fagsak = fagsak()
     private val behandling = behandling(
-        påklagetVedtak = PåklagetVedtak(eksternFagsystemBehandlingId, PåklagetVedtakstype.VEDTAK),
+        påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer(eksternFagsystemBehandlingId)),
         klageMottatt = LocalDate.of(2022, 10, 26)
     ).tilDto(fagsak, emptyList())
 
