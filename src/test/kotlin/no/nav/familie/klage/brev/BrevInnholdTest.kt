@@ -64,7 +64,7 @@ internal class BrevInnholdTest {
         )
 
         assertThat(brev.overskrift).isEqualTo(
-            "Vi har avvist klagen din på vedtaket om tilbakebetaling av skolepenger"
+            "Vi har avvist klagen din på vedtaket om stønad til skolepenger"
         )
     }
 
@@ -79,7 +79,7 @@ internal class BrevInnholdTest {
             Stønadstype.BARNETILSYN,
             påklagetFagsystemVedtak
         )
-        assertThat(brev.overskrift).isEqualTo("Vi har avvist klagen din på vedtaket om tilbakebetaling av barnetilsyn")
+        assertThat(brev.overskrift).isEqualTo("Vi har avvist klagen din på vedtaket om tilbakebetaling av stønad til barnetilsyn")
     }
 
     private fun ikkeOppfyltForm() =
