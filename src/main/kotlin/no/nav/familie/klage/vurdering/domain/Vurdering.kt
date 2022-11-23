@@ -48,6 +48,7 @@ enum class Hjemmel(val kabalHjemmel: KabalHjemmel) {
     FT_FEMTEN_ELLEVE(KabalHjemmel.FTRL_15_11),
     FT_FEMTEN_TOLV(KabalHjemmel.FTRL_15_12),
     FT_FEMTEN_TRETTEN(KabalHjemmel.FTRL_15_13),
+    FT_TJUETO_FEMTEN(KabalHjemmel.FTRL_22_15),
     BT_TO(KabalHjemmel.BTRL_2),
     BT_FIRE(KabalHjemmel.BTRL_4),
     BT_FEM(KabalHjemmel.BTRL_5),
