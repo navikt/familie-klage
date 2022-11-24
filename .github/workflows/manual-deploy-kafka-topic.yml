@@ -16,3 +16,10 @@ jobs:
           CLUSTER: dev-gcp
           RESOURCE: kafka/aapen-klage-behandlingsstatistikk/behandlingsstatistikk-topic-dev.yaml
           PRINT_PAYLOAD: true
+      - name: deploy behandlingsstatistikk to prod
+        uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: prod-gcp
+          RESOURCE: kafka/aapen-klage-behandlingsstatistikk/behandlingsstatistikk-topic-prod.yaml
+          PRINT_PAYLOAD: true
