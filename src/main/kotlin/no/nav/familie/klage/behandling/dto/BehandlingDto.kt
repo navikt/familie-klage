@@ -23,7 +23,7 @@ data class BehandlingDto(
     val steg: StegType,
     val status: BehandlingStatus,
     val sistEndret: LocalDateTime,
-    val resultat: BehandlingResultat?,
+    val resultat: BehandlingResultat,
     val opprettet: LocalDateTime,
     val vedtaksdato: LocalDateTime? = null,
     val stønadstype: Stønadstype,
