@@ -68,8 +68,7 @@ For å koble til preprod kan du kjøre kommandoene:
 1. Fagsystemet må implementere et endepunkt for å hente ut alle vedtak
    1. `fagsystemUrl/api/ekstern/vedtak` som returnerer `Ressurs<List<FagsystemVedtak>>`
 2. Må legge inn fagsystemet i inbound og outbound i `preprod.yaml` og `prod.yaml`
-3. For å opprette en klage må fagsystemet kalle på `api/ekstern/behandling/opprett` med `OpprettKlagebehandlingRequest`. 
-   1. EksternBehandlingId er optional og kan velges manuelt/overstyres i klageløsningen 
+3. For å opprette en klage må fagsystemet kalle på `api/ekstern/behandling/opprett` med `OpprettKlagebehandlingRequest`.  
 4. For å hente ut alle klager må fagsystemet kalle på `api/ekstern/behandling/{fagsystem}?eksternFagsakIder={eksternFagsakId}`
 
 # Henvendelser
