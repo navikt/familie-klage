@@ -85,9 +85,4 @@ internal class FagsystemVedtakServiceTest {
         }
     }
 
-    @Test
-    internal fun name() {
-        // denne skal feile for å ikke merge inn denne branch av feil før data er patchet for påklagetVedtakDetaljer
-        TODO("Not yet implemented")
-    }
 }
