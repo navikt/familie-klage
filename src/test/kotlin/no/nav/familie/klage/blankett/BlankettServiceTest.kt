@@ -74,7 +74,7 @@ internal class BlankettServiceTest {
         )
         every { blankettClient.genererBlankett(capture(blankettRequestSpot)) } returns byteArrayOf()
         every { fagsystemVedtakService.hentFagsystemVedtak(behandlingId) } returns listOf(
-            fagsystemVedtak(eksternBehandlingId = eksternFagsystemBehandlingId,)
+            fagsystemVedtak(eksternBehandlingId = eksternFagsystemBehandlingId)
         )
     }
 

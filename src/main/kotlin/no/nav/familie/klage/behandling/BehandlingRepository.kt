@@ -2,6 +2,7 @@ package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.Klagebehandlingsesultat
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.repository.InsertUpdateRepository
 import no.nav.familie.klage.repository.RepositoryInterface
@@ -55,4 +56,8 @@ interface BehandlingRepository : RepositoryInterface<Behandling, UUID>, InsertUp
     ): List<Klagebehandlingsesultat>
 
     fun findByFagsakId(fagsakId: UUID): List<Behandling>
+
+    @Modifying
+    @Query("UPDATE behandling SET paklaget_vedtak_detaljer=:detaljer WHERE id=:id")
+    fun oppdaterPåklagetVedtakDetaljer(detaljer: PåklagetVedtakDetaljer, id: UUID)
 }
