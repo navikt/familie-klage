@@ -5,6 +5,7 @@ import no.nav.familie.klage.behandling.dto.tilPåklagetVedtakDetaljer
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
+import no.nav.security.token.support.core.api.Unprotected
 import org.slf4j.LoggerFactory
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PathVariable
@@ -23,6 +24,7 @@ class PatchPåklagetBehandlingDetaljerController(
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
+    @Unprotected
     @PostMapping("{dryRun}")
     fun ferdigstillBehandling(@PathVariable dryRun: Boolean) {
         logger.info("Dryrun = $dryRun")
