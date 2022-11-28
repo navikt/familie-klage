@@ -10,7 +10,7 @@ data class Form(
     val behandlingId: UUID,
     val klagePart: FormVilkår = FormVilkår.IKKE_SATT,
     val klagefristOverholdt: FormVilkår = FormVilkår.IKKE_SATT,
-    val klagefristOverholdtUnntak: FormkravFristUnntak = FormkravFristUnntak.IKKE_SATT, // TODO  - slett denne kommentaren! hmmm hvor mange unntak får vi etterhvert. Lage noe generellt, eller bare fikse for frist?
+    val klagefristOverholdtUnntak: FormkravFristUnntak = FormkravFristUnntak.IKKE_SATT,
     val klageKonkret: FormVilkår = FormVilkår.IKKE_SATT,
     val klageSignert: FormVilkår = FormVilkår.IKKE_SATT,
     val saksbehandlerBegrunnelse: String? = null,
