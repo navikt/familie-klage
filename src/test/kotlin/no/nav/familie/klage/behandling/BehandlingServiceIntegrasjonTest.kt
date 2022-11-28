@@ -75,7 +75,6 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
             val oppdatertPåklagetVedtak = oppdatertBehandling.påklagetVedtak
 
             assertThat(oppdatertPåklagetVedtak.påklagetVedtakstype).isEqualTo(påklagetVedtak.påklagetVedtakstype)
-            assertThat(oppdatertPåklagetVedtak.eksternFagsystemBehandlingId).isEqualTo(påklagetVedtak.eksternFagsystemBehandlingId)
             assertThat(oppdatertPåklagetVedtak.påklagetVedtakDetaljer).isEqualTo(fagsystemVedtak.tilPåklagetVedtakDetaljer())
         }
 

@@ -53,7 +53,6 @@ class OpprettBehandlingService(
             Behandling(
                 fagsakId = fagsak.id,
                 påklagetVedtak = PåklagetVedtak(
-                    eksternFagsystemBehandlingId = null,
                     påklagetVedtakstype = PåklagetVedtakstype.IKKE_VALGT
                 ),
                 klageMottatt = klageMottatt,

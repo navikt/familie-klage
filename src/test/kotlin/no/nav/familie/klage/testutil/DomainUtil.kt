@@ -2,6 +2,7 @@ package no.nav.familie.klage.testutil
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
@@ -70,7 +71,7 @@ object DomainUtil {
         fagsak: Fagsak = fagsak(),
         id: UUID = UUID.randomUUID(),
         eksternBehandlingId: UUID = UUID.randomUUID(),
-        påklagetVedtak: PåklagetVedtak = PåklagetVedtak(null, PåklagetVedtakstype.IKKE_VALGT),
+        påklagetVedtak: PåklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.IKKE_VALGT, null),
         klageMottatt: LocalDate = LocalDate.now(),
         status: BehandlingStatus = BehandlingStatus.OPPRETTET,
         steg: StegType = StegType.FORMKRAV,
@@ -165,7 +166,13 @@ object DomainUtil {
             stønadstype = stønadstype,
             sporbar = sporbar,
             eksternId = "1",
-            fagsystem = Fagsystem.EF
+            fagsystem = when (stønadstype) {
+                Stønadstype.OVERGANGSSTØNAD,
+                Stønadstype.BARNETILSYN,
+                Stønadstype.SKOLEPENGER -> Fagsystem.EF
+                Stønadstype.BARNETRYGD -> Fagsystem.BA
+                Stønadstype.KONTANTSTØTTE -> Fagsystem.KS
+            }
         )
     }
 
@@ -218,6 +225,26 @@ object DomainUtil {
         dokumentvarianter = dokumentvarianter,
         logiskeVedlegg = listOf()
 
+    )
+
+    fun påklagetVedtak(
+        påklagetVedtakstype: PåklagetVedtakstype = PåklagetVedtakstype.UTEN_VEDTAK,
+        påklagetVedtakDetaljer: PåklagetVedtakDetaljer? = null
+    ): PåklagetVedtak = PåklagetVedtak(
+        påklagetVedtakstype = påklagetVedtakstype,
+        påklagetVedtakDetaljer = påklagetVedtakDetaljer
+    )
+
+    fun påklagetVedtakDetaljer(
+        eksternFagsystemBehandlingId: String = "123",
+        fagsystemType: FagsystemType = FagsystemType.ORDNIÆR,
+        vedtakstidspunkt: LocalDateTime = LocalDate.of(2022, 3, 1).atTime(8, 0)
+    ) = PåklagetVedtakDetaljer(
+        fagsystemType = fagsystemType,
+        eksternFagsystemBehandlingId = eksternFagsystemBehandlingId,
+        behandlingstype = "type",
+        resultat = "resultat",
+        vedtakstidspunkt = vedtakstidspunkt
     )
 
     fun påklagetVedtakDto(): PåklagetVedtakDto =

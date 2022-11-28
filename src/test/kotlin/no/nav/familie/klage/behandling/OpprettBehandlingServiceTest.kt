@@ -1,6 +1,5 @@
 package no.nav.familie.klage.behandling
 
-import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
@@ -19,7 +18,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
-import java.util.UUID
 import kotlin.test.assertFailsWith
 
 internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {

@@ -99,7 +99,6 @@ class BehandlingService(
 
         val behandlingMedPåklagetVedtak = behandling.copy(
             påklagetVedtak = PåklagetVedtak(
-                eksternFagsystemBehandlingId = påklagetVedtakDto.eksternFagsystemBehandlingId,
                 påklagetVedtakstype = påklagetVedtakDto.påklagetVedtakstype,
                 påklagetVedtakDetaljer = påklagetVedtakDetaljer
             )
@@ -111,11 +110,9 @@ class BehandlingService(
         behandlingId: UUID,
         påklagetVedtakDto: PåklagetVedtakDto
     ): PåklagetVedtakDetaljer? =
-        påklagetVedtakDto.eksternFagsystemBehandlingId?.let { påklagetBehandlingId ->
-            fagsystemVedtakService.hentFagsystemVedtak(behandlingId)
-                .singleOrNull { it.eksternBehandlingId == påklagetBehandlingId }
-                ?.tilPåklagetVedtakDetaljer()
-                ?: error("Finner ikke vedtak for behandling=$behandlingId eksternBehandling=$påklagetBehandlingId")
+        påklagetVedtakDto.eksternFagsystemBehandlingId?.let {
+            fagsystemVedtakService.hentFagsystemVedtakForPåklagetBehandlingId(behandlingId, it)
+                .tilPåklagetVedtakDetaljer()
         }
 
     private fun validerKanOppretteBehandling(fagsakId: UUID) {

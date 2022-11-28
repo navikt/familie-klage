@@ -41,9 +41,8 @@ data class PåklagetVedtakDetaljer(
 )
 
 data class PåklagetVedtak(
-    val eksternFagsystemBehandlingId: String?,
     @Column("paklaget_vedtak")
-    val påklagetVedtakstype: PåklagetVedtakstype,
+    val påklagetVedtakstype: PåklagetVedtakstype = PåklagetVedtakstype.IKKE_VALGT,
     @Column("paklaget_vedtak_detaljer")
     val påklagetVedtakDetaljer: PåklagetVedtakDetaljer? = null
 )
