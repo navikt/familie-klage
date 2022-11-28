@@ -32,7 +32,7 @@ class BlankettService(
                 eksternFagsakId = behandling.eksternFagsystemFagsakId,
                 stønadstype = behandling.stønadstype,
                 klageMottatt = behandling.klageMottatt,
-                resultat = behandling.resultat ?: error("Mangler resultat på behandling=$behandlingId"),
+                resultat = behandling.resultat,
                 påklagetVedtak = påklagetVedtak
             ),
             personopplysninger = lagPersonopplysningerDto(behandling),

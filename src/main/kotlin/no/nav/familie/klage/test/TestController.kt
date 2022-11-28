@@ -29,7 +29,6 @@ class TestController(private val opprettBehandlingService: OpprettBehandlingServ
                 OpprettKlagebehandlingRequest(
                     request.ident,
                     request.stønadstype,
-                    request.eksternBehandlingId,
                     request.eksternFagsakId,
                     request.fagsystem,
                     request.klageMottatt,
@@ -42,7 +41,6 @@ class TestController(private val opprettBehandlingService: OpprettBehandlingServ
     data class DummybehandlingRequest(
         val ident: String,
         val stønadstype: Stønadstype,
-        val eksternBehandlingId: String = Random.nextInt().toString(),
         val eksternFagsakId: String = Random.nextInt().toString(),
         val fagsystem: Fagsystem = Fagsystem.EF,
         val klageMottatt: LocalDate = LocalDate.now(),

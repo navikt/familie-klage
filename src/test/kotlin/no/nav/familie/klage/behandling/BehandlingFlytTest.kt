@@ -180,7 +180,6 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             "ident",
             Stønadstype.OVERGANGSSTØNAD,
             UUID.randomUUID().toString(),
-            "eksternId",
             Fagsystem.EF,
             LocalDate.now(),
             "enhet"
