@@ -23,7 +23,7 @@ enum class FormkravFristUnntak {
     UNNTAK_KAN_IKKE_LASTES,
     UNNTAK_SÆRLIG_GRUNN,
     IKKE_UNNTAK,
-    IKKE_SATT
+    IKKE_SATT;
 }
 
 enum class FormVilkår {

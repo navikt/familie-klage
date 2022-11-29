@@ -88,5 +88,4 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
             }.hasMessageContaining("Finner ikke vedtak for behandling")
         }
     }
-
 }

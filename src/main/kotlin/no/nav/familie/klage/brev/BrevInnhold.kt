@@ -33,9 +33,9 @@ object BrevInnhold {
                     deloverskrift = "",
                     innhold =
                     "Vi har ${klageMottatt.norskFormat()} fått klagen din på vedtaket om " +
-                            "${visningsnavn(stønadstype, påklagetVedtakDetaljer)} som ble gjort " +
-                            "${påklagetVedtakDetaljer.vedtakstidspunkt.norskFormat()}, " +
-                            "og kommet frem til at vedtaket ikke endres. NAV Klageinstans skal derfor vurdere saken din på nytt."
+                        "${visningsnavn(stønadstype, påklagetVedtakDetaljer)} som ble gjort " +
+                        "${påklagetVedtakDetaljer.vedtakstidspunkt.norskFormat()}, " +
+                        "og kommet frem til at vedtaket ikke endres. NAV Klageinstans skal derfor vurdere saken din på nytt."
                 ),
                 AvsnittDto(
                     deloverskrift = "",
@@ -53,7 +53,7 @@ object BrevInnhold {
                 AvsnittDto(
                     deloverskrift = "Har du spørsmål?",
                     innhold = "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. " +
-                            "Du kan også kontakte oss på nav.no/kontakt."
+                        "Du kan også kontakte oss på nav.no/kontakt."
                 )
             )
         )
@@ -92,7 +92,7 @@ object BrevInnhold {
                     deloverskrift = "Du har rett til å klage",
                     innhold =
                     "Hvis du vil klage, må du gjøre dette innen 3 uker fra den datoen du fikk dette brevet. " +
-                            "Du finner skjema og informasjon på ${stønadstype.klageUrl()}."
+                        "Du finner skjema og informasjon på ${stønadstype.klageUrl()}."
                 ),
                 AvsnittDto(
                     deloverskrift = "Du har rett til innsyn",
@@ -103,7 +103,7 @@ object BrevInnhold {
                     deloverskrift = "Har du spørsmål?",
                     innhold =
                     "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. " +
-                            "Du kan også kontakte oss på nav.no/kontakt."
+                        "Du kan også kontakte oss på nav.no/kontakt."
                 )
             )
         )

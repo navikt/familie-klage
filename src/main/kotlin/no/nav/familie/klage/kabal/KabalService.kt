@@ -7,7 +7,6 @@ import no.nav.familie.klage.fagsak.domain.tilYtelse
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
-import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import org.springframework.stereotype.Service
 
 @Service
@@ -53,7 +52,7 @@ class KabalService(
         return if (påklagetVedtakDetaljer != null) {
             "$fagsystemUrl/fagsak/${fagsak.eksternId}/${påklagetVedtakDetaljer.eksternFagsystemBehandlingId}"
         } else {
-                "$fagsystemUrl/fagsak/${fagsak.eksternId}/saksoversikt"
+            "$fagsystemUrl/fagsak/${fagsak.eksternId}/saksoversikt"
         }
     }
 }

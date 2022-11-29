@@ -41,7 +41,7 @@ class FormService(
         val behandlingId = formkrav.behandlingId
         val nyttPåklagetVedtak = formkrav.påklagetVedtak
 
-        val klagefristOverholdtUnntak = when(formkrav.klagefristOverholdt){
+        val klagefristOverholdtUnntak = when (formkrav.klagefristOverholdt) {
             FormVilkår.IKKE_OPPFYLT -> formkrav.klagefristOverholdtUnntak
             FormVilkår.OPPFYLT -> FormkravFristUnntak.IKKE_SATT
             FormVilkår.IKKE_SATT -> FormkravFristUnntak.IKKE_SATT

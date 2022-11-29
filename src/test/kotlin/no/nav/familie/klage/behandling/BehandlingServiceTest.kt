@@ -178,7 +178,6 @@ internal class BehandlingServiceTest {
             behandlingService.oppdaterPåklagetVedtak(behandling.id, medVedtak)
             verify(exactly = 3) { behandlingRepository.update(any()) }
         }
-
     }
 
     fun mockHentFagsystemVedtak(
