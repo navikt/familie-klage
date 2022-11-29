@@ -8,6 +8,8 @@ import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.formkrav.FormUtil.alleVilkårOppfylt
 import no.nav.familie.klage.formkrav.FormUtil.ferdigUtfylt
 import no.nav.familie.klage.formkrav.domain.Form
+import no.nav.familie.klage.formkrav.domain.FormVilkår
+import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
 import no.nav.familie.klage.formkrav.dto.FormkravDto
 import no.nav.familie.klage.formkrav.dto.tilDto
 import no.nav.familie.klage.repository.findByIdOrThrow
@@ -39,10 +41,16 @@ class FormService(
         val behandlingId = formkrav.behandlingId
         val nyttPåklagetVedtak = formkrav.påklagetVedtak
 
+        val klagefristOverholdtUnntak = when(formkrav.klagefristOverholdt){
+            FormVilkår.IKKE_OPPFYLT -> formkrav.klagefristOverholdtUnntak
+            FormVilkår.OPPFYLT -> FormkravFristUnntak.IKKE_SATT
+            FormVilkår.IKKE_SATT -> FormkravFristUnntak.IKKE_SATT
+        }
+
         val oppdaterteFormkrav = formRepository.findByIdOrThrow(behandlingId).copy(
             klagePart = formkrav.klagePart,
             klagefristOverholdt = formkrav.klagefristOverholdt,
-            klagefristOverholdtUnntak = formkrav.klagefristOverholdtUnntak,
+            klagefristOverholdtUnntak = klagefristOverholdtUnntak,
             klageKonkret = formkrav.klageKonkret,
             klageSignert = formkrav.klageSignert,
             saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse,
