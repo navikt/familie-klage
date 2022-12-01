@@ -22,30 +22,44 @@ class StegService(
 ) {
 
     @Transactional
-    fun oppdaterSteg(behandlingId: UUID, nåværendeSteg: StegType, nesteSteg: StegType, behandlingsresultat: BehandlingResultat? = null) {
-        val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
-        validerHarSaksbehandlerRolle(behandlingId)
-        validerGyldigNesteSteg(behandling)
-        oppdaterBehandlingOgHistorikk(behandling.id, nåværendeSteg, nesteSteg, behandlingsresultat)
-    }
-
-    private fun oppdaterBehandlingOgHistorikk(
+    fun <E : Enum<E>> oppdaterSteg(
         behandlingId: UUID,
         nåværendeSteg: StegType,
         nesteSteg: StegType,
-        behandlingsresultat: BehandlingResultat? = null
+        historikkResultat: Enum<E>? = null
     ) {
+        feilHvis(historikkResultat is BehandlingResultat) {
+            "Skal ikke sende inn BehandlingResultat som historikkResultat til oppdaterSteg, det plukkes ut fra behandlingen"
+        }
+        val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
+        validerHarSaksbehandlerRolle(behandlingId)
+        validerGyldigNesteSteg(behandling)
+        oppdaterBehandlingOgHistorikk(behandling, nåværendeSteg, nesteSteg, historikkResultat)
+    }
+
+    private fun <E : Enum<E>> oppdaterBehandlingOgHistorikk(
+        behandling: Behandling,
+        nåværendeSteg: StegType,
+        nesteSteg: StegType,
+        historikkResultat: Enum<E>? = null
+    ) {
+        val behandlingId = behandling.id
+        val behandlingsresultat = behandling.resultat
         behandlingRepository.updateSteg(behandlingId, nesteSteg)
         behandlingRepository.updateStatus(behandlingId, nesteSteg.gjelderStatus)
-
         if (skalOppretteHistorikkradForNåværendeSteg(nåværendeSteg, nesteSteg, behandlingsresultat)) {
-            behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, nåværendeSteg)
+            val resultat = if (nåværendeSteg == StegType.KABAL_VENTER_SVAR) null else historikkResultat
+            behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, nåværendeSteg, resultat)
         }
         if (nesteSteg == StegType.KABAL_VENTER_SVAR) {
             behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.OVERFØRING_TIL_KABAL)
         }
         if (nesteSteg == StegType.BEHANDLING_FERDIGSTILT) {
-            behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BEHANDLING_FERDIGSTILT)
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                behandlingId,
+                StegType.BEHANDLING_FERDIGSTILT,
+                historikkResultat ?: behandlingsresultat,
+            )
         }
     }
 

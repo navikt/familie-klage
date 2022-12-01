@@ -54,7 +54,8 @@ internal class FormServiceTest {
         val behandlingshistorikk = mockk<Behandlingshistorikk>()
         every { behandlingshistorikk.steg } returns StegType.FORMKRAV
         every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler1"
-        justRun { stegService.oppdaterSteg(any(), any(), any(), any()) }
+        justRun { stegService.oppdaterSteg(any(), any(), any(), any<FormVilkår>()) }
+        justRun { stegService.oppdaterSteg(any(), any(), any(), null) }
         justRun { behandlingService.oppdaterPåklagetVedtak(any(), any()) }
         justRun { vurderingService.slettVurderingForBehandling(any()) }
         every { behandlingService.hentBehandling(any()) } returns behandling(id = behandlingId)
@@ -75,7 +76,7 @@ internal class FormServiceTest {
         internal fun `ikke alle vilkår besvart skal gå til steget formKrav`() {
             service.oppdaterFormkrav(ikkeFerdigutfylt())
 
-            verify { stegService.oppdaterSteg(behandlingId, any(), StegType.FORMKRAV) }
+            verify { stegService.oppdaterSteg(behandlingId, any(), StegType.FORMKRAV, FormVilkår.IKKE_SATT) }
             verify { formRepository.update(any()) }
         }
 
@@ -88,7 +89,7 @@ internal class FormServiceTest {
                 )
             )
 
-            verify { stegService.oppdaterSteg(behandlingId, any(), StegType.FORMKRAV) }
+            verify { stegService.oppdaterSteg(behandlingId, any(), StegType.FORMKRAV, FormVilkår.IKKE_SATT) }
             verify { formRepository.update(any()) }
         }
 
@@ -96,7 +97,7 @@ internal class FormServiceTest {
         internal fun `påklaget vedtak og oppfylte vilkår skal gå videre til vurdering`() {
             service.oppdaterFormkrav(oppfyltFormDto())
 
-            verify { stegService.oppdaterSteg(behandlingId, any(), StegType.VURDERING) }
+            verify { stegService.oppdaterSteg(behandlingId, any(), StegType.VURDERING, FormVilkår.OPPFYLT) }
             verify { formRepository.update(any()) }
         }
 
@@ -104,7 +105,7 @@ internal class FormServiceTest {
         internal fun `påklaget vedtak og oppfylte vilkår skal ikke behøve begrunnelse`() {
             service.oppdaterFormkrav(oppfyltFormDto().copy(saksbehandlerBegrunnelse = ""))
 
-            verify { stegService.oppdaterSteg(behandlingId, any(), StegType.VURDERING) }
+            verify { stegService.oppdaterSteg(behandlingId, any(), StegType.VURDERING, FormVilkår.OPPFYLT) }
             verify { formRepository.update(any()) }
         }
 
@@ -112,7 +113,7 @@ internal class FormServiceTest {
         internal fun `påklaget vedtak og underkjente vilkår uten begrunnelse skal gå til steget formkrav`() {
             service.oppdaterFormkrav(ikkeOppfyltFormDto().copy(saksbehandlerBegrunnelse = ""))
 
-            verify { stegService.oppdaterSteg(behandlingId, any(), StegType.FORMKRAV) }
+            verify { stegService.oppdaterSteg(behandlingId, any(), StegType.FORMKRAV, FormVilkår.IKKE_SATT) }
             verify { formRepository.update(any()) }
         }
 
@@ -120,7 +121,7 @@ internal class FormServiceTest {
         internal fun `påklaget vedtak og underkjente vilkår med begrunnelse skal gå videre til brev`() {
             service.oppdaterFormkrav(ikkeOppfyltFormDto())
 
-            verify { stegService.oppdaterSteg(behandlingId, any(), StegType.BREV) }
+            verify { stegService.oppdaterSteg(behandlingId, any(), StegType.BREV, FormVilkår.IKKE_OPPFYLT) }
             verify { vurderingService.slettVurderingForBehandling(behandlingId) }
             verify { formRepository.update(any()) }
         }

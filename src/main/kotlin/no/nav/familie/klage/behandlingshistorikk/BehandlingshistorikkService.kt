@@ -11,9 +11,13 @@ class BehandlingshistorikkService(private val behandlingshistorikkRepository: Be
     fun hentBehandlingshistorikk(id: UUID): List<Behandlingshistorikk> =
         behandlingshistorikkRepository.findByBehandlingIdOrderByEndretTidDesc(id)
 
-    fun opprettBehandlingshistorikk(behandlingId: UUID, steg: StegType): Behandlingshistorikk {
+    fun <E : Enum<E>> opprettBehandlingshistorikk(
+        behandlingId: UUID,
+        steg: StegType,
+        resultat: Enum<E>? = null
+    ): Behandlingshistorikk {
         return behandlingshistorikkRepository.insert(
-            Behandlingshistorikk(behandlingId = behandlingId, steg = steg)
+            Behandlingshistorikk(behandlingId = behandlingId, steg = steg, resultat = resultat?.name)
         )
     }
 }

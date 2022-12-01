@@ -19,6 +19,7 @@ import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -56,7 +57,7 @@ internal class StegServiceTest {
         every { behandlingRepository.findByIdOrThrow(behandlingId) } returns behandling
         every { behandlingRepository.updateSteg(behandlingId, capture(stegSlot)) } just Runs
         every { behandlingRepository.updateStatus(behandlingId, capture(statusSlot)) } just Runs
-        every { behandlingshistorikkService.opprettBehandlingshistorikk(any(), capture(historikkSlot)) } returns mockk()
+        every { behandlingshistorikkService.opprettBehandlingshistorikk(any(), capture(historikkSlot), any<BehandlingResultat>()) } returns mockk()
     }
 
     @AfterEach
@@ -92,8 +93,8 @@ internal class StegServiceTest {
         stegService.oppdaterSteg(behandlingId, behandling.steg, StegType.BEHANDLING_FERDIGSTILT)
 
         verifyOrder {
-            behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, behandling.steg)
-            behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BEHANDLING_FERDIGSTILT)
+            behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, behandling.steg, null)
+            behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BEHANDLING_FERDIGSTILT, behandling.resultat)
         }
     }
 
@@ -134,20 +135,33 @@ internal class StegServiceTest {
     }
 
     @Test
-    fun `skal ikke lagre behandlingshistorikk dersom en vurdering ferdigstilles ved omgjøring`() {
-        stegService.oppdaterSteg(behandlingId, StegType.BREV, StegType.BEHANDLING_FERDIGSTILT, BehandlingResultat.MEDHOLD)
+    fun `skal bruke behandlingsresultat fra opphentet behandling, og ikke fra innsendt historikkresultat`() {
+        assertThatThrownBy {
+            stegService.oppdaterSteg(behandlingId, StegType.BREV, StegType.BEHANDLING_FERDIGSTILT, BehandlingResultat.MEDHOLD)
+        }.hasMessageContaining("Skal ikke sende inn BehandlingResultat som historikkResultat")
+    }
 
-        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.VURDERING) }
-        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BREV) }
-        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BEHANDLING_FERDIGSTILT) }
+    @Test
+    fun `skal ikke lagre behandlingshistorikk dersom en vurdering ferdigstilles ved omgjøring`() {
+        every { behandlingRepository.findByIdOrThrow(behandlingId) } returns behandling.copy(resultat = BehandlingResultat.MEDHOLD)
+        stegService.oppdaterSteg(behandlingId, StegType.BREV, StegType.BEHANDLING_FERDIGSTILT)
+
+        verifyOpprettBehandlingsstatistikk(exactly = 0, StegType.VURDERING)
+        verifyOpprettBehandlingsstatistikk(exactly = 0, StegType.BREV)
+        verifyOpprettBehandlingsstatistikk(exactly = 1, StegType.BEHANDLING_FERDIGSTILT)
     }
 
     @Test
     fun `skal lagre behandlingshistorikk dersom en vurdering ferdigstilles ved opprettholdelse`() {
-        stegService.oppdaterSteg(behandlingId, StegType.BREV, StegType.BEHANDLING_FERDIGSTILT, BehandlingResultat.IKKE_MEDHOLD)
+        every { behandlingRepository.findByIdOrThrow(behandlingId) } returns behandling.copy(resultat = BehandlingResultat.IKKE_MEDHOLD)
+        stegService.oppdaterSteg(behandlingId, StegType.BREV, StegType.BEHANDLING_FERDIGSTILT)
 
-        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.VURDERING) }
-        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BREV) }
-        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BEHANDLING_FERDIGSTILT) }
+        verifyOpprettBehandlingsstatistikk(exactly = 0, StegType.VURDERING)
+        verifyOpprettBehandlingsstatistikk(exactly = 1, StegType.BREV)
+        verifyOpprettBehandlingsstatistikk(exactly = 1, StegType.BEHANDLING_FERDIGSTILT)
+    }
+
+    private fun verifyOpprettBehandlingsstatistikk(exactly: Int = 0, stegType: StegType) {
+        verify(exactly = exactly) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, stegType, any<BehandlingResultat>()) }
     }
 }

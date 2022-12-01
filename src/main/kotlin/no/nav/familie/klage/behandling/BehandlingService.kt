@@ -27,6 +27,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus.FERDIGSTILT
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
+import no.nav.familie.kontrakter.felles.tilbakekreving.Behandlingsresultatstype
 import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -136,14 +137,15 @@ class BehandlingService(
             status = FERDIGSTILT
         )
 
-        behandlinghistorikkService.opprettBehandlingshistorikk(behandlingId, BEHANDLING_FERDIGSTILT)
+        behandlinghistorikkService.opprettBehandlingshistorikk(
+            behandlingId,
+            BEHANDLING_FERDIGSTILT,
+            Behandlingsresultatstype.HENLAGT
+        )
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
         behandlingRepository.update(henlagtBehandling)
         taskService.save(taskService.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId)))
     }
-
-    fun erLåstForVidereBehandling(behandlingId: UUID) =
-        behandlingRepository.findByIdOrThrow(behandlingId).status.erLåstForVidereBehandling()
 
     private fun validerKanHenleggeBehandling(behandling: Behandling) {
         brukerfeilHvis(behandling.status.erLåstForVidereBehandling()) {

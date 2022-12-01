@@ -26,6 +26,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak.TRUKKET_TILBAKE
+import no.nav.familie.kontrakter.felles.tilbakekreving.Behandlingsresultatstype
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
@@ -67,7 +68,8 @@ internal class BehandlingServiceTest {
         } answers {
             behandlingSlot.captured
         }
-        every { behandlinghistorikkService.opprettBehandlingshistorikk(any(), any()) } returns mockk()
+        every { behandlinghistorikkService.opprettBehandlingshistorikk(any(), any(), any<Behandlingsresultatstype>()) } returns mockk()
+        every { behandlinghistorikkService.opprettBehandlingshistorikk(any(), any(), null) } returns mockk()
         every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any()) } returns mockk()
         every { taskService.save(any()) } returns mockk<Task>()
     }
@@ -126,7 +128,7 @@ internal class BehandlingServiceTest {
         internal fun `henlegg og forvent historikkinnslag`() {
             val behandling = behandling(fagsak(), status = BehandlingStatus.UTREDES)
             henleggOgForventOk(behandling, TRUKKET_TILBAKE)
-            verify { behandlinghistorikkService.opprettBehandlingshistorikk(any(), StegType.BEHANDLING_FERDIGSTILT) }
+            verify { behandlinghistorikkService.opprettBehandlingshistorikk(any(), StegType.BEHANDLING_FERDIGSTILT, any<Behandlingsresultatstype>()) }
             verify(exactly = 1) { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any()) }
         }
     }

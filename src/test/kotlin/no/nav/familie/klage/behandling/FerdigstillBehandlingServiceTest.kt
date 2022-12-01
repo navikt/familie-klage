@@ -74,7 +74,7 @@ internal class FerdigstillBehandlingServiceTest {
         every { distribusjonService.distribuerBrev(any()) } returns brevDistribusjonId
         every { vurderingService.hentVurdering(any()) } returns vurdering
         every { kabalService.sendTilKabal(any(), any(), any()) } just Runs
-        every { stegService.oppdaterSteg(any(), any(), any(), any()) } just Runs
+        every { stegService.oppdaterSteg(any(), any(), any()) } just Runs
         every { formService.formkravErOppfyltForBehandling(any()) } returns true
         every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), any()) } just Runs
         every { taskService.save(capture(saveTaskSlot)) } answers { firstArg() }
@@ -90,7 +90,7 @@ internal class FerdigstillBehandlingServiceTest {
     internal fun `skal ferdigstille behandling, ikke medhold`() {
         val stegSlot = slot<StegType>()
         val behandlingsresultatSlot = slot<BehandlingResultat>()
-        every { stegService.oppdaterSteg(any(), any(), capture(stegSlot), any()) } just Runs
+        every { stegService.oppdaterSteg(any(), any(), capture(stegSlot)) } just Runs
         justRun { brevService.lagBrevPdf(any()) }
         every {
             behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(
@@ -113,7 +113,7 @@ internal class FerdigstillBehandlingServiceTest {
         val stegSlot = slot<StegType>()
         val behandlingsresultatSlot = slot<BehandlingResultat>()
         justRun { brevService.lagBrevPdf(any()) }
-        every { stegService.oppdaterSteg(any(), any(), capture(stegSlot), any()) } just Runs
+        every { stegService.oppdaterSteg(any(), any(), capture(stegSlot)) } just Runs
         every { formService.formkravErOppfyltForBehandling(any()) } returns false
         every {
             behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(
@@ -138,7 +138,7 @@ internal class FerdigstillBehandlingServiceTest {
                 capture(behandlingsresultatSlot)
             )
         } just Runs
-        every { stegService.oppdaterSteg(any(), any(), capture(stegSlot), any()) } just Runs
+        every { stegService.oppdaterSteg(any(), any(), capture(stegSlot)) } just Runs
         every { vurderingService.hentVurdering(any()) } returns vurdering.copy(vedtak = Vedtak.OMGJØR_VEDTAK)
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
         assertThat(stegSlot.captured).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)

@@ -33,7 +33,7 @@ class VurderingService(
             brevRepository.deleteById(vurdering.behandlingId)
         }
 
-        stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING, StegType.BREV)
+        stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING, StegType.BREV, vurdering.vedtak)
 
         val eksisterendeVurdering = vurderingRepository.findByIdOrNull(vurdering.behandlingId)
         return if (eksisterendeVurdering != null) {

@@ -72,7 +72,7 @@ class BehandlingEventService(
             BehandlingStatus.FERDIGSTILT -> logger.error("Mottatt event på ferdigstilt behandling $behandlingEvent - event kan være lest fra før") // TODO korrigeringer - kan vi få det?
             else -> {
                 opprettOppgaveTask(behandlingEvent, behandling)
-                ferdigstillKlagebehandling(behandling)
+                ferdigstillKlagebehandling(behandlingEvent, behandling)
             }
         }
     }
@@ -87,7 +87,7 @@ class BehandlingEventService(
         taskService.save(opprettOppgaveTask)
     }
 
-    private fun ferdigstillKlagebehandling(behandling: Behandling) {
-        stegService.oppdaterSteg(behandling.id, StegType.KABAL_VENTER_SVAR, StegType.BEHANDLING_FERDIGSTILT)
+    private fun ferdigstillKlagebehandling(behandlingEvent: BehandlingEvent, behandling: Behandling) {
+        stegService.oppdaterSteg(behandling.id, StegType.KABAL_VENTER_SVAR, StegType.BEHANDLING_FERDIGSTILT, behandlingEvent.utfall())
     }
 }

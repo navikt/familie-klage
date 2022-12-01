@@ -10,6 +10,7 @@ import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
+import no.nav.familie.klage.vurdering.domain.Vurdering
 import no.nav.familie.klage.vurdering.dto.tilDto
 import no.nav.familie.kontrakter.felles.klage.Årsak
 import org.junit.jupiter.api.BeforeEach
@@ -42,7 +43,7 @@ class VurderingServiceTest {
     fun setup() {
         every { vurderingRepository.findByIdOrNull(any()) } returns omgjørVedtakVurdering
         every { vurderingRepository.update(any()) } answers { firstArg() }
-        justRun { stegService.oppdaterSteg(any(), any(), any(), any()) }
+        justRun { stegService.oppdaterSteg(any(), any(), any(), any<Vedtak>()) }
         justRun { brevRepository.deleteById(any()) }
     }
 
@@ -61,12 +62,12 @@ class VurderingServiceTest {
     @Test
     fun `skal oppdatere steg ved omgjøring`() {
         vurderingService.opprettEllerOppdaterVurdering(omgjørVedtakVurdering.tilDto())
-        verify(exactly = 1) { stegService.oppdaterSteg(any(), any(), StegType.BREV) }
+        verify(exactly = 1) { stegService.oppdaterSteg(any(), any(), StegType.BREV, Vedtak.OMGJØR_VEDTAK) }
     }
 
     @Test
     fun `skal oppdatere steg ved opprettholdelse av klage`() {
         vurderingService.opprettEllerOppdaterVurdering(opprettholdVedtakVurdering.tilDto())
-        verify(exactly = 1) { stegService.oppdaterSteg(any(), any(), StegType.BREV) }
+        verify(exactly = 1) { stegService.oppdaterSteg(any(), any(), StegType.BREV, Vedtak.OPPRETTHOLD_VEDTAK) }
     }
 }

@@ -59,7 +59,8 @@ internal class BehandlingEventServiceTest {
             stegService.oppdaterSteg(
                 behandlingMedStatusVenter.id,
                 any(),
-                StegType.BEHANDLING_FERDIGSTILT
+                StegType.BEHANDLING_FERDIGSTILT,
+                KlageinstansUtfall.MEDHOLD
             )
         }
     }

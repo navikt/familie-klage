@@ -2,6 +2,7 @@ package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.brev.BrevService
@@ -11,12 +12,17 @@ import no.nav.familie.klage.formkrav.dto.tilDto
 import no.nav.familie.klage.infrastruktur.TestHendelseController
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.infrastruktur.config.RolleConfig
+import no.nav.familie.klage.kabal.event.BehandlingEventService
 import no.nav.familie.klage.testutil.BrukerContextUtil.testWithBrukerContext
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.vurderingDto
+import no.nav.familie.klage.testutil.KabalEventUtil
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.domain.Vedtak
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
+import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.assertj.core.api.Assertions.assertThat
@@ -44,9 +50,6 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
     private lateinit var ferdigstillBehandlingService: FerdigstillBehandlingService
 
     @Autowired
-    private lateinit var testHendelseController: TestHendelseController
-
-    @Autowired
     private lateinit var behandlingService: BehandlingService
 
     @Autowired
@@ -54,6 +57,9 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
 
     @Autowired
     private lateinit var rolleConfig: RolleConfig
+
+    @Autowired
+    private lateinit var behandlingEventService: BehandlingEventService
 
     @Nested
     inner class Historikk {
@@ -74,14 +80,14 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
 
             assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.KABAL_VENTER_SVAR)
-            assertThat(behandlingshistorikk.map { it.steg }).containsExactly(
-                StegType.OVERFØRING_TIL_KABAL,
-                StegType.BREV,
-                StegType.VURDERING,
-                StegType.FORMKRAV,
-                StegType.VURDERING,
-                StegType.FORMKRAV,
-                StegType.OPPRETTET
+            assertThat(behandlingshistorikk.map { it.steg to it.resultat }).containsExactly(
+                StegType.OVERFØRING_TIL_KABAL to null,
+                StegType.BREV to null,
+                StegType.VURDERING to Vedtak.OPPRETTHOLD_VEDTAK.name,
+                StegType.FORMKRAV to FormVilkår.OPPFYLT.name,
+                StegType.VURDERING to Vedtak.OPPRETTHOLD_VEDTAK.name,
+                StegType.FORMKRAV to FormVilkår.OPPFYLT.name,
+                StegType.OPPRETTET to null
             )
         }
 
@@ -101,22 +107,23 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
                 ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
                 behandlingId
             }
+            val behandling = behandlingService.hentBehandling(behandlingId)
 
-            testHendelseController.opprettDummyKabalEvent(behandlingId)
+            behandlingEventService.handleEvent(KabalEventUtil.klagebehandlingAvsluttet(behandling, KlageinstansUtfall.DELVIS_MEDHOLD))
 
             val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
 
             assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
-            assertThat(behandlingshistorikk.map { it.steg }).containsExactly(
-                StegType.BEHANDLING_FERDIGSTILT,
-                StegType.KABAL_VENTER_SVAR,
-                StegType.OVERFØRING_TIL_KABAL,
-                StegType.BREV,
-                StegType.VURDERING,
-                StegType.FORMKRAV,
-                StegType.VURDERING,
-                StegType.FORMKRAV,
-                StegType.OPPRETTET
+            assertThat(behandlingshistorikk.map { it.steg to it.resultat }).containsExactly(
+                StegType.BEHANDLING_FERDIGSTILT to KlageinstansUtfall.DELVIS_MEDHOLD.name,
+                StegType.KABAL_VENTER_SVAR to null,
+                StegType.OVERFØRING_TIL_KABAL to null,
+                StegType.BREV to null,
+                StegType.VURDERING to Vedtak.OPPRETTHOLD_VEDTAK.name,
+                StegType.FORMKRAV to FormVilkår.OPPFYLT.name,
+                StegType.VURDERING to Vedtak.OPPRETTHOLD_VEDTAK.name,
+                StegType.FORMKRAV to FormVilkår.OPPFYLT.name,
+                StegType.OPPRETTET to null
             )
         }
 
@@ -139,11 +146,11 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
 
             assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
-            assertThat(behandlingshistorikk.map { it.steg }).containsExactly(
-                StegType.BEHANDLING_FERDIGSTILT,
-                StegType.VURDERING,
-                StegType.FORMKRAV,
-                StegType.OPPRETTET
+            assertThat(behandlingshistorikk.map { it.steg to it.resultat }).containsExactly(
+                StegType.BEHANDLING_FERDIGSTILT to BehandlingResultat.MEDHOLD.name,
+                StegType.VURDERING to Vedtak.OMGJØR_VEDTAK.name,
+                StegType.FORMKRAV to FormVilkår.OPPFYLT.name,
+                StegType.OPPRETTET to null
             )
         }
 
@@ -160,11 +167,45 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
 
             assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
-            assertThat(behandlingshistorikk.map { it.steg }).containsExactly(
-                StegType.BEHANDLING_FERDIGSTILT,
-                StegType.BREV,
-                StegType.FORMKRAV,
-                StegType.OPPRETTET
+            assertThat(behandlingshistorikk.map { it.steg to it.resultat }).containsExactly(
+                StegType.BEHANDLING_FERDIGSTILT to BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST.name,
+                StegType.BREV to null,
+                StegType.FORMKRAV to FormVilkår.IKKE_OPPFYLT.name,
+                StegType.OPPRETTET to null
+            )
+        }
+
+        @Test
+        internal fun `henlegger behandling`() {
+            val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
+                val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
+                behandlingService.henleggBehandling(behandlingId, HenlagtDto(HenlagtÅrsak.FEILREGISTRERT)) // TODO få inn detaljer i historikk?
+                behandlingId
+            }
+
+            val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
+
+            assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
+            assertThat(behandlingshistorikk.map { it.steg to it.resultat }).containsExactly(
+                StegType.BEHANDLING_FERDIGSTILT to BehandlingResultat.HENLAGT.name,
+                StegType.OPPRETTET to null
+            )
+        }
+
+        @Test
+        internal fun `ikke ferdigutfylde krav`() {
+            val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
+                val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
+                formService.oppdaterFormkrav(oppfyltFormDto(behandlingId).copy(klagePart = FormVilkår.IKKE_SATT))
+                behandlingId
+            }
+
+            val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
+
+            assertThat(behandlingService.hentBehandling(behandlingId).steg).isEqualTo(StegType.FORMKRAV)
+            assertThat(behandlingshistorikk.map { it.steg to it.resultat }).containsExactly(
+                StegType.FORMKRAV to FormVilkår.IKKE_SATT.name,
+                StegType.OPPRETTET to null
             )
         }
 

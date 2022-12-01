@@ -1,0 +1,1 @@
+ALTER TABLE behandlingshistorikk ADD COLUMN resultat VARCHAR;

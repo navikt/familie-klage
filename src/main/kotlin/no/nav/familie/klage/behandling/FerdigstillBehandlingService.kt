@@ -52,9 +52,9 @@ class FerdigstillBehandlingService(
         }
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
         behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(behandlingId, behandlingsresultat)
-        stegService.oppdaterSteg(behandlingId, behandling.steg, stegForResultat(behandlingsresultat), behandlingsresultat)
+        stegService.oppdaterSteg(behandlingId, behandling.steg, stegForResultat(behandlingsresultat))
         taskService.save(LagSaksbehandlingsblankettTask.opprettTask(behandlingId))
-        if (behandlingsresultat == BehandlingResultat.IKKE_MEDHOLD) {
+        if (behandlingsresultat == IKKE_MEDHOLD) {
             taskService.save(BehandlingsstatistikkTask.opprettSendtTilKATask(behandlingId = behandlingId))
         }
         taskService.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId))

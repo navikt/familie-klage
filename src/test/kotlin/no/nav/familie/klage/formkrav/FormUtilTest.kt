@@ -3,7 +3,7 @@ package no.nav.familie.klage.formkrav
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.formkrav.FormUtil.alleVilkårOppfylt
-import no.nav.familie.klage.formkrav.FormUtil.ferdigUtfylt
+import no.nav.familie.klage.formkrav.FormUtil.formresultat
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
@@ -18,32 +18,38 @@ internal class FormUtilTest {
     val påklagetVedtakUtenVedtak = PåklagetVedtakDto(eksternFagsystemBehandlingId = null, PåklagetVedtakstype.UTEN_VEDTAK)
     val påklagetVedtakIkkeValgt = PåklagetVedtakDto(eksternFagsystemBehandlingId = null, PåklagetVedtakstype.IKKE_VALGT)
 
+    val oppfyltForm = oppfyltForm(UUID.randomUUID())
+    val ikkeOppfyltForm = oppfyltForm.copy(
+        saksbehandlerBegrunnelse = "Ok",
+        klagePart = FormVilkår.IKKE_OPPFYLT,
+        brevtekst = "brevtekst"
+    )
+    val ikkeFerdigUtfyltForm = Form(UUID.randomUUID())
+
     @Nested
-    inner class formkravErFerdigUtfyllt {
+    inner class formresultat {
 
         @Test
         internal fun `alle er ferdigutfylte`() {
-            val oppfyltForm = oppfyltForm(UUID.randomUUID())
-            assertThat(ferdigUtfylt(oppfyltForm, påklagetVedtakMedBehandling)).isTrue
-            assertThat(ferdigUtfylt(oppfyltForm, påklagetVedtakUtenVedtak)).isTrue
-            assertThat(
-                ferdigUtfylt(
-                    oppfyltForm.copy(
-                        saksbehandlerBegrunnelse = "Ok",
-                        klagePart = FormVilkår.IKKE_OPPFYLT,
-                        brevtekst = "brevtekst"
-                    ),
-                    påklagetVedtakMedBehandling
-                )
-            ).isTrue
+            assertThat(formresultat(oppfyltForm, påklagetVedtakMedBehandling)).isEqualTo(FormVilkår.OPPFYLT)
+            assertThat(formresultat(oppfyltForm, påklagetVedtakUtenVedtak)).isEqualTo(FormVilkår.OPPFYLT)
+            assertThat(formresultat(ikkeOppfyltForm, påklagetVedtakMedBehandling)).isEqualTo(FormVilkår.IKKE_OPPFYLT)
+            assertThat(formresultat(ikkeOppfyltForm, påklagetVedtakUtenVedtak)).isEqualTo(FormVilkår.IKKE_OPPFYLT)
         }
 
         @Test
         internal fun `et eller flere er ikke utfylt`() {
-            val oppfyltForm = oppfyltForm(UUID.randomUUID())
-            assertThat(ferdigUtfylt(oppfyltForm.copy(klagePart = FormVilkår.IKKE_SATT), påklagetVedtakMedBehandling)).isFalse
-            assertThat(ferdigUtfylt(Form(UUID.randomUUID()), påklagetVedtakMedBehandling)).isFalse
-            assertThat(ferdigUtfylt(oppfyltForm, påklagetVedtakIkkeValgt)).isFalse
+            val formMedEttVilkårSomIkkeErSatt = oppfyltForm.copy(klagePart = FormVilkår.IKKE_SATT)
+            assertThat(formresultat(formMedEttVilkårSomIkkeErSatt, påklagetVedtakMedBehandling)).isEqualTo(FormVilkår.IKKE_SATT)
+            assertThat(formresultat(ikkeFerdigUtfyltForm, påklagetVedtakMedBehandling)).isEqualTo(FormVilkår.IKKE_SATT)
+            assertThat(formresultat(ikkeFerdigUtfyltForm, påklagetVedtakIkkeValgt)).isEqualTo(FormVilkår.IKKE_SATT)
+        }
+
+        @Test
+        internal fun `ikke tatt stilling til påklagetVedtak`() {
+            assertThat(formresultat(oppfyltForm, påklagetVedtakIkkeValgt)).isEqualTo(FormVilkår.IKKE_SATT)
+            assertThat(formresultat(ikkeOppfyltForm, påklagetVedtakIkkeValgt)).isEqualTo(FormVilkår.IKKE_SATT)
+            assertThat(formresultat(ikkeFerdigUtfyltForm, påklagetVedtakIkkeValgt)).isEqualTo(FormVilkår.IKKE_SATT)
         }
     }
 
@@ -57,12 +63,11 @@ internal class FormUtilTest {
 
         @Test
         internal fun `et eller flere vilkår er ikke oppfylt`() {
-            val form = Form(UUID.randomUUID())
-            assertThat(alleVilkårOppfylt(form)).isFalse
-            assertThat(alleVilkårOppfylt(form.copy(klagePart = FormVilkår.OPPFYLT))).isFalse
+            assertThat(alleVilkårOppfylt(ikkeFerdigUtfyltForm)).isFalse
+            assertThat(alleVilkårOppfylt(ikkeFerdigUtfyltForm.copy(klagePart = FormVilkår.OPPFYLT))).isFalse
 
-            assertThat(alleVilkårOppfylt(oppfyltForm(UUID.randomUUID()).copy(klagePart = FormVilkår.IKKE_OPPFYLT))).isFalse
-            assertThat(alleVilkårOppfylt(oppfyltForm(UUID.randomUUID()).copy(klagePart = FormVilkår.IKKE_SATT))).isFalse
+            assertThat(alleVilkårOppfylt(oppfyltForm.copy(klagePart = FormVilkår.IKKE_OPPFYLT))).isFalse
+            assertThat(alleVilkårOppfylt(oppfyltForm.copy(klagePart = FormVilkår.IKKE_SATT))).isFalse
         }
     }
 }
