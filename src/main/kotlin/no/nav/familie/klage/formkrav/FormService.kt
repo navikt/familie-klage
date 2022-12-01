@@ -41,16 +41,10 @@ class FormService(
         val behandlingId = formkrav.behandlingId
         val nyttPåklagetVedtak = formkrav.påklagetVedtak
 
-        val klagefristOverholdtUnntak = when (formkrav.klagefristOverholdt) {
-            FormVilkår.IKKE_OPPFYLT -> formkrav.klagefristOverholdtUnntak
-            FormVilkår.OPPFYLT -> FormkravFristUnntak.IKKE_SATT
-            FormVilkår.IKKE_SATT -> FormkravFristUnntak.IKKE_SATT
-        }
-
         val oppdaterteFormkrav = formRepository.findByIdOrThrow(behandlingId).copy(
             klagePart = formkrav.klagePart,
             klagefristOverholdt = formkrav.klagefristOverholdt,
-            klagefristOverholdtUnntak = klagefristOverholdtUnntak,
+            klagefristOverholdtUnntak = formkrav.klagefristOverholdtUnntak,
             klageKonkret = formkrav.klageKonkret,
             klageSignert = formkrav.klageSignert,
             saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse,

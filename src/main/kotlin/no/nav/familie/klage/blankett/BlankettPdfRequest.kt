@@ -40,7 +40,7 @@ data class BlankettFormDto(
     val klagePart: FormVilkår,
     val klageKonkret: FormVilkår,
     val klagefristOverholdt: FormVilkår,
-    val klagefristOverholdtUnntak: FormkravFristUnntak,
+    val klagefristOverholdtUnntak: FormkravFristUnntak?,
     val klageSignert: FormVilkår,
     val saksbehandlerBegrunnelse: String?,
     val brevtekst: String?

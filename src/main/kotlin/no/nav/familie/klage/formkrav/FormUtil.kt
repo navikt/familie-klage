@@ -8,36 +8,34 @@ import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
 object FormUtil {
 
     fun ferdigUtfylt(formkrav: Form, påklagetVedtak: PåklagetVedtakDto) =
-        påklagetVedtak.harTattStillingTil() &&
-            alleVilkårBesvart(formkrav) &&
+            påklagetVedtak.harTattStillingTil() &&
+            alleVilkårTattStillingTil(formkrav) &&
             (alleVilkårOppfylt(formkrav) || friteksterUtfylt(formkrav))
 
     fun alleVilkårOppfylt(formkrav: Form): Boolean {
-        return formkrav.alleSvar().all { it == FormVilkår.OPPFYLT } || oppfyllerMedUnntak(formkrav)
+        return formkrav.alleSvar().all { it == FormVilkår.OPPFYLT } ||
+               (alleVilkårOppfyltUntattKlagefrist(formkrav) && klagefristUnntakErValgtOgOppfylt(formkrav.klagefristOverholdtUnntak))
     }
 
-    private fun oppfyllerMedUnntak(formkrav: Form): Boolean {
-        val andreErOppfylt = formkrav.alleSvarBortsettFraFrist().all { it == FormVilkår.OPPFYLT }
-        val fristIkkeOppfylt = formkrav.klagefristOverholdt == FormVilkår.IKKE_OPPFYLT
-        return andreErOppfylt && fristIkkeOppfylt && unntakOppfylt(formkrav)
+    private fun klagefristUnntakErValgtOgOppfylt(unntak: FormkravFristUnntak?) =
+            unntak !== null && klagefristUnntakOppfylt(unntak)
+
+
+    private fun alleVilkårOppfyltUntattKlagefrist(formkrav: Form) =
+        formkrav.alleSvarBortsettFraFrist().all { it == FormVilkår.OPPFYLT } && formkrav.klagefristOverholdt == FormVilkår.IKKE_OPPFYLT
+
+    private fun klagefristUnntakOppfylt(unntak: FormkravFristUnntak) =
+        unntak != FormkravFristUnntak.IKKE_UNNTAK && unntak != FormkravFristUnntak.IKKE_SATT
+
+    fun alleVilkårTattStillingTil(formkrav: Form): Boolean {
+        return formkrav.alleSvar().none { it == FormVilkår.IKKE_SATT } && klagefristUnntakTattStillingTil(formkrav)
     }
 
-    private fun unntakOppfylt(formkrav: Form) =
-        formkrav.klagefristOverholdtUnntak == FormkravFristUnntak.UNNTAK_SÆRLIG_GRUNN || formkrav.klagefristOverholdtUnntak == FormkravFristUnntak.UNNTAK_KAN_IKKE_LASTES
-
-    fun alleVilkårBesvart(formkrav: Form): Boolean {
-        return formkrav.alleSvar().none { it == FormVilkår.IKKE_SATT } && unntakBesvartDersomFristIkkeOppfylt(formkrav)
-    }
-
-    private fun unntakBesvartDersomFristIkkeOppfylt(formkrav: Form): Boolean {
-        val andreErBesvart = formkrav.alleSvarBortsettFraFrist().none { it == FormVilkår.IKKE_SATT }
-
-        val hvisFristIkkeErOppfyltMåUnntakVæreBesvart = when (formkrav.klagefristOverholdt) {
-            FormVilkår.IKKE_OPPFYLT -> formkrav.klagefristOverholdtUnntak != FormkravFristUnntak.IKKE_SATT
-            else -> true
-        }
-        return andreErBesvart && hvisFristIkkeErOppfyltMåUnntakVæreBesvart
-    }
+    private fun klagefristUnntakTattStillingTil(formkrav: Form) =
+        formkrav.klagefristOverholdt === FormVilkår.OPPFYLT ||
+        (formkrav.klagefristOverholdt === FormVilkår.IKKE_OPPFYLT &&
+         formkrav.klagefristOverholdtUnntak != null &&
+         formkrav.klagefristOverholdtUnntak != FormkravFristUnntak.IKKE_SATT)
 
     fun friteksterUtfylt(formkrav: Form) = formkrav.saksbehandlerBegrunnelse != null &&
         formkrav.saksbehandlerBegrunnelse.isNotBlank() &&
