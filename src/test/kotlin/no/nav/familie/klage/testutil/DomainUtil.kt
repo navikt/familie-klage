@@ -137,6 +137,7 @@ object DomainUtil {
             behandlingId = behandlingId,
             klagePart = FormVilkår.OPPFYLT,
             klagefristOverholdt = FormVilkår.OPPFYLT,
+            klagefristOverholdtUnntak = null,
             klageKonkret = FormVilkår.OPPFYLT,
             klageSignert = FormVilkår.OPPFYLT
         )

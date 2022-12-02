@@ -9,6 +9,7 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.formkrav.FormService
+import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
 import no.nav.familie.klage.formkrav.dto.tilDto
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
@@ -67,7 +68,10 @@ internal class BlankettServiceTest {
         every { personopplysningerDto.navn } returns "navn"
         every { personopplysningerService.hentPersonopplysninger(behandlingId) } returns personopplysningerDto
         every { formService.hentFormDto(behandlingId) } returns
-            oppfyltForm(behandlingId).copy(saksbehandlerBegrunnelse = "Ok", brevtekst = "Brevtekst").tilDto(mockk())
+            oppfyltForm(behandlingId).copy(saksbehandlerBegrunnelse = "Ok",
+                                           brevtekst = "Brevtekst",
+                                           klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_SATT
+            ).tilDto(mockk())
         every { vurderingService.hentVurderingDto(behandlingId) } returns vurderingDto(
             vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
             årsak = Årsak.FEIL_I_LOVANDVENDELSE,
