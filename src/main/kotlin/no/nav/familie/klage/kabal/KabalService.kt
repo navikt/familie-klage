@@ -49,7 +49,7 @@ class KabalService(
             Fagsystem.KS -> error("Ikke implementert støtte for KS")
         }
         val påklagetVedtakDetaljer = påklagetVedtak.påklagetVedtakDetaljer
-        return if (påklagetVedtakDetaljer != null) {
+        return if (påklagetVedtakDetaljer != null && påklagetVedtakDetaljer.fagsystemType == FagsystemType.ORDNIÆR) {
             "$fagsystemUrl/fagsak/${fagsak.eksternId}/${påklagetVedtakDetaljer.eksternFagsystemBehandlingId}"
         } else {
             "$fagsystemUrl/fagsak/${fagsak.eksternId}/saksoversikt"

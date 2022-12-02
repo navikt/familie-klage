@@ -1,6 +1,5 @@
 package no.nav.familie.klage.formkrav.dto
 
-import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
@@ -33,10 +32,4 @@ fun Form.tilDto(påklagetVedtak: PåklagetVedtakDto): FormkravDto =
         brevtekst = this.brevtekst,
         endretTid = this.sporbar.endret.endretTid,
         påklagetVedtak = påklagetVedtak
-    )
-
-fun PåklagetVedtak.tilDto(): PåklagetVedtakDto =
-    PåklagetVedtakDto(
-        eksternFagsystemBehandlingId = this.påklagetVedtakDetaljer?.eksternFagsystemBehandlingId,
-        påklagetVedtakstype = this.påklagetVedtakstype
     )

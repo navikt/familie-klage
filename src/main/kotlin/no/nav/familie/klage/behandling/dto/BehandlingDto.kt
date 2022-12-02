@@ -7,10 +7,10 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.UTEN_VEDTAK
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.domain.Fagsak
-import no.nav.familie.klage.formkrav.dto.tilDto
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import java.time.LocalDate
@@ -34,9 +34,13 @@ data class BehandlingDto(
     val klageMottatt: LocalDate
 )
 
+/**
+ * @param fagsystemVedtak skal ikke brukes ved innsending, men kun når vi sender ut data
+ */
 data class PåklagetVedtakDto(
     val eksternFagsystemBehandlingId: String?,
-    val påklagetVedtakstype: PåklagetVedtakstype
+    val påklagetVedtakstype: PåklagetVedtakstype,
+    val fagsystemVedtak: FagsystemVedtak? = null
 ) {
     fun erGyldig(): Boolean = when (eksternFagsystemBehandlingId) {
         null -> påklagetVedtakstype != VEDTAK
