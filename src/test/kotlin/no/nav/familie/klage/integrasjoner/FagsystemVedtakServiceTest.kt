@@ -84,5 +84,4 @@ internal class FagsystemVedtakServiceTest {
             }.hasMessageContaining("Finner ikke vedtak for behandling")
         }
     }
-
 }

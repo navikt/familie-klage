@@ -12,5 +12,4 @@ object StønadstypeVisningsnavn {
         Stønadstype.KONTANTSTØTTE,
         Stønadstype.BARNETRYGD -> this.name.lowercase()
     }
-
 }
