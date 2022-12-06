@@ -29,13 +29,13 @@
 		<sha1/>
 		<changelist>-SNAPSHOT</changelist>
 		<java.version>17</java.version>
-		<kotlin.version>1.7.21</kotlin.version>
-		<springdoc.version>1.6.12</springdoc.version>
-		<mockk-jvm.version>1.13.2</mockk-jvm.version>
-		<felles.version>1.20221101085322_cc4d556</felles.version>
+		<kotlin.version>1.7.22</kotlin.version>
+		<springdoc.version>1.6.13</springdoc.version>
+		<mockk-jvm.version>1.13.3</mockk-jvm.version>
+		<felles.version>1.20221202080911_bcf8f33</felles.version>
 		<prosessering.version>1.20221110194901_e9e0d90</prosessering.version>
 		<start-class>no.nav.familie.klage.ApplicationKt</start-class>
-		<kontrakter.version>2.0_20221130100143_7cb5205</kontrakter.version>
+		<kontrakter.version>2.0_20221202084337_d05f555</kontrakter.version>
 		<saksstatistikk-klage.version>2.0_20221122113504_2968071</saksstatistikk-klage.version>
 		<nav.security.version>2.1.6</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
 		<okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
@@ -201,7 +201,7 @@
 		<dependency>
 			<groupId>dev.akkinoc.spring.boot</groupId>
 			<artifactId>logback-access-spring-boot-starter</artifactId>
-			<version>3.4.1</version>
+			<version>3.4.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

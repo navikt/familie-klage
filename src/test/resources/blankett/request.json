@@ -18,6 +18,7 @@
     "klagePart" : "OPPFYLT",
     "klageKonkret" : "OPPFYLT",
     "klagefristOverholdt" : "OPPFYLT",
+    "klagefristOverholdtUnntak" : "IKKE_SATT",
     "klageSignert" : "OPPFYLT",
     "saksbehandlerBegrunnelse" : "Ok",
     "brevtekst" : "Brevtekst"
