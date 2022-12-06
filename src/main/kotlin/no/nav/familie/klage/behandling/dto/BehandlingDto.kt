@@ -3,6 +3,7 @@ package no.nav.familie.klage.behandling.dto
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.IKKE_VALGT
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.UTEN_VEDTAK
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.domain.StegType
@@ -40,7 +41,8 @@ data class BehandlingDto(
 data class PåklagetVedtakDto(
     val eksternFagsystemBehandlingId: String?,
     val påklagetVedtakstype: PåklagetVedtakstype,
-    val fagsystemVedtak: FagsystemVedtak? = null
+    val fagsystemVedtak: FagsystemVedtak? = null,
+    val vedtaksdatoInfotrygd: LocalDate? = null
 ) {
     fun erGyldig(): Boolean = when (eksternFagsystemBehandlingId) {
         null -> påklagetVedtakstype != VEDTAK
@@ -49,7 +51,14 @@ data class PåklagetVedtakDto(
 
     fun harTattStillingTil(): Boolean = when (påklagetVedtakstype) {
         IKKE_VALGT -> false
-        UTEN_VEDTAK, VEDTAK -> true
+        INFOTRYGD_TILBAKEKREVING, UTEN_VEDTAK, VEDTAK -> true
+    }
+
+    fun manglerVedtaksDato(): Boolean {
+        if (påklagetVedtakstype == INFOTRYGD_TILBAKEKREVING) {
+            return vedtaksdatoInfotrygd == null
+        }
+        return false
     }
 }
 

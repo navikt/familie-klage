@@ -34,7 +34,7 @@ data class Behandling(
 
 data class PåklagetVedtakDetaljer(
     val fagsystemType: FagsystemType,
-    val eksternFagsystemBehandlingId: String,
+    val eksternFagsystemBehandlingId: String?,
     val behandlingstype: String,
     val resultat: String,
     val vedtakstidspunkt: LocalDateTime
@@ -49,6 +49,7 @@ data class PåklagetVedtak(
 
 enum class PåklagetVedtakstype {
     VEDTAK,
+    INFOTRYGD_TILBAKEKREVING,
     UTEN_VEDTAK,
     IKKE_VALGT
 }

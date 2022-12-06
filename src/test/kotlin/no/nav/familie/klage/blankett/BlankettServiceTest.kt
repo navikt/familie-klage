@@ -67,7 +67,7 @@ internal class BlankettServiceTest {
         every { personopplysningerDto.navn } returns "navn"
         every { personopplysningerService.hentPersonopplysninger(behandlingId) } returns personopplysningerDto
         every { formService.hentFormDto(behandlingId) } returns
-                oppfyltForm(behandlingId).copy(saksbehandlerBegrunnelse = "Ok", brevtekst = "Brevtekst").tilDto(mockk())
+            oppfyltForm(behandlingId).copy(saksbehandlerBegrunnelse = "Ok", brevtekst = "Brevtekst").tilDto(mockk())
         every { vurderingService.hentVurderingDto(behandlingId) } returns vurderingDto(
             vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
             årsak = Årsak.FEIL_I_LOVANDVENDELSE,

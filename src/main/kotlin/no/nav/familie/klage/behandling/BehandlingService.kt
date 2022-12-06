@@ -4,6 +4,7 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.Klagebehandlingsesultat
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType.BEHANDLING_FERDIGSTILT
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandling.domain.erUnderArbeidAvSaksbehandler
@@ -17,6 +18,7 @@ import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
+import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.kabal.KlageresultatRepository
@@ -26,6 +28,7 @@ import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus.FERDIGSTILT
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
 import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.Logger
@@ -95,6 +98,10 @@ class BehandlingService(
             "Påklaget vedtak er i en ugyldig tilstand: EksternFagsystemBehandlingId:${påklagetVedtakDto.eksternFagsystemBehandlingId}, PåklagetVedtakType: ${påklagetVedtakDto.påklagetVedtakstype}"
         }
 
+        feilHvis(påklagetVedtakDto.manglerVedtaksDato()) {
+            "Må fylle inn vedtaksdato når valgt vedtakstype er ${påklagetVedtakDto.påklagetVedtakstype}"
+        }
+
         val påklagetVedtakDetaljer = påklagetVedtakDetaljer(behandlingId, påklagetVedtakDto)
 
         val behandlingMedPåklagetVedtak = behandling.copy(
@@ -109,11 +116,24 @@ class BehandlingService(
     private fun påklagetVedtakDetaljer(
         behandlingId: UUID,
         påklagetVedtakDto: PåklagetVedtakDto
-    ): PåklagetVedtakDetaljer? =
-        påklagetVedtakDto.eksternFagsystemBehandlingId?.let {
+    ): PåklagetVedtakDetaljer? {
+        if (påklagetVedtakDto.påklagetVedtakstype == PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING) {
+            return tilPåklagetVedtakDetaljerForInfotrygdVedtak(påklagetVedtakDto)
+        }
+        return påklagetVedtakDto.eksternFagsystemBehandlingId?.let {
             fagsystemVedtakService.hentFagsystemVedtakForPåklagetBehandlingId(behandlingId, it)
                 .tilPåklagetVedtakDetaljer()
         }
+    }
+
+    private fun tilPåklagetVedtakDetaljerForInfotrygdVedtak(påklagetVedtakDto: PåklagetVedtakDto) =
+        PåklagetVedtakDetaljer(
+            fagsystemType = FagsystemType.TILBAKEKREVING,
+            eksternFagsystemBehandlingId = null,
+            behandlingstype = "",
+            resultat = "",
+            vedtakstidspunkt = påklagetVedtakDto.vedtaksdatoInfotrygd?.atStartOfDay() ?: error("Mangler vedtaksdato")
+        )
 
     private fun validerKanOppretteBehandling(fagsakId: UUID) {
         val behandlinger = behandlingRepository.findByFagsakId(fagsakId)
