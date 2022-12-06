@@ -7,10 +7,9 @@ import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.formkrav.FormUtil.alleVilkårOppfylt
-import no.nav.familie.klage.formkrav.FormUtil.ferdigUtfylt
+import no.nav.familie.klage.formkrav.FormUtil.utledFormresultat
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
-import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
 import no.nav.familie.klage.formkrav.dto.FormkravDto
 import no.nav.familie.klage.formkrav.dto.tilDto
 import no.nav.familie.klage.repository.findByIdOrThrow
@@ -53,15 +52,19 @@ class FormService(
         )
         behandlingService.oppdaterPåklagetVedtak(behandlingId, nyttPåklagetVedtak)
         opprettBehandlingsstatistikk(behandlingId)
-        if (ferdigUtfylt(oppdaterteFormkrav, nyttPåklagetVedtak)) {
-            if (alleVilkårOppfylt(oppdaterteFormkrav)) {
+        val formresultat = utledFormresultat(oppdaterteFormkrav, nyttPåklagetVedtak)
+        when(formresultat) {
+            FormVilkår.OPPFYLT -> {
                 stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.VURDERING)
-            } else {
+            }
+            FormVilkår.IKKE_OPPFYLT -> {
                 vurderingService.slettVurderingForBehandling(behandlingId)
                 stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.BREV)
             }
-        } else {
-            stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.FORMKRAV)
+            FormVilkår.IKKE_SATT -> {
+                vurderingService.slettVurderingForBehandling(behandlingId)
+                stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.FORMKRAV)
+            }
         }
         return formRepository.update(oppdaterteFormkrav).tilDto(nyttPåklagetVedtak)
     }

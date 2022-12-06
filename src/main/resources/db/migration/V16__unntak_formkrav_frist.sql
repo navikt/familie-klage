@@ -1,1 +1,1 @@
-alter table form add klagefrist_overholdt_unntak varchar;
+alter table form add klagefrist_overholdt_unntak varchar NOT NULL DEFAULT 'IKKE_SATT';

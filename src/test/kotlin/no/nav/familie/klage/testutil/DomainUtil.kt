@@ -14,6 +14,7 @@ import no.nav.familie.klage.felles.domain.Sporbar
 import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
+import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration
 import no.nav.familie.klage.kabal.domain.KlageinstansResultat
 import no.nav.familie.klage.personopplysninger.dto.Adressebeskyttelse
@@ -137,7 +138,7 @@ object DomainUtil {
             behandlingId = behandlingId,
             klagePart = FormVilkår.OPPFYLT,
             klagefristOverholdt = FormVilkår.OPPFYLT,
-            klagefristOverholdtUnntak = null,
+            klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_SATT,
             klageKonkret = FormVilkår.OPPFYLT,
             klageSignert = FormVilkår.OPPFYLT
         )

@@ -10,7 +10,7 @@ data class Form(
     val behandlingId: UUID,
     val klagePart: FormVilkår = FormVilkår.IKKE_SATT,
     val klagefristOverholdt: FormVilkår = FormVilkår.IKKE_SATT,
-    val klagefristOverholdtUnntak: FormkravFristUnntak? = null,
+    val klagefristOverholdtUnntak: FormkravFristUnntak = FormkravFristUnntak.IKKE_SATT,
     val klageKonkret: FormVilkår = FormVilkår.IKKE_SATT,
     val klageSignert: FormVilkår = FormVilkår.IKKE_SATT,
     val saksbehandlerBegrunnelse: String? = null,
