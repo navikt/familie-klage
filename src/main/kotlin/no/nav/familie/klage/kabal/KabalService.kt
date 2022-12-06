@@ -53,7 +53,7 @@ class KabalService(
         return if (påklagetVedtakDetaljer != null && påklagetVedtakDetaljer.fagsystemType == FagsystemType.ORDNIÆR) {
             "$fagsystemUrl/fagsak/${fagsak.eksternId}/${påklagetVedtakDetaljer.eksternFagsystemBehandlingId}"
         } else {
-                "$fagsystemUrl/fagsak/${fagsak.eksternId}/saksoversikt"
+            "$fagsystemUrl/fagsak/${fagsak.eksternId}/saksoversikt"
         }
     }
 }

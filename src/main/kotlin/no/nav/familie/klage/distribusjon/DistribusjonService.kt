@@ -127,6 +127,5 @@ class DistribusjonService(
         }
 
         return "$tittelPrefix - ${stønadstype.visningsnavn()}"
-
     }
 }
