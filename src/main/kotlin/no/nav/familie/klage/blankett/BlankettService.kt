@@ -71,6 +71,7 @@ class BlankettService(
         klagePart = formkrav.klagePart,
         klageKonkret = formkrav.klageKonkret,
         klagefristOverholdt = formkrav.klagefristOverholdt,
+        klagefristOverholdtUnntak = formkrav.klagefristOverholdtUnntak,
         klageSignert = formkrav.klageSignert,
         saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse,
         brevtekst = formkrav.brevtekst

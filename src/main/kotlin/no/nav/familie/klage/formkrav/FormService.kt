@@ -7,7 +7,7 @@ import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.formkrav.FormUtil.alleVilkårOppfylt
-import no.nav.familie.klage.formkrav.FormUtil.formresultat
+import no.nav.familie.klage.formkrav.FormUtil.utledFormresultat
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.formkrav.dto.FormkravDto
@@ -44,6 +44,7 @@ class FormService(
         val oppdaterteFormkrav = formRepository.findByIdOrThrow(behandlingId).copy(
             klagePart = formkrav.klagePart,
             klagefristOverholdt = formkrav.klagefristOverholdt,
+            klagefristOverholdtUnntak = formkrav.klagefristOverholdtUnntak,
             klageKonkret = formkrav.klageKonkret,
             klageSignert = formkrav.klageSignert,
             saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse,
@@ -51,7 +52,7 @@ class FormService(
         )
         behandlingService.oppdaterPåklagetVedtak(behandlingId, nyttPåklagetVedtak)
         opprettBehandlingsstatistikk(behandlingId)
-        val formresultat = formresultat(oppdaterteFormkrav, nyttPåklagetVedtak)
+        val formresultat = utledFormresultat(oppdaterteFormkrav, nyttPåklagetVedtak)
         when(formresultat) {
             FormVilkår.OPPFYLT -> {
                 stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.VURDERING)
