@@ -42,7 +42,7 @@ internal class FormUtilTest {
         @Test
         internal fun `et eller flere formkrav er ikke utfylt`() {
             assertThat(utledFormresultat(ikkeOppfyltForm, påklagetVedtakMedBehandling)).isEqualTo(FormVilkår.IKKE_OPPFYLT)
-            assertThat(utledFormresultat(ikkeOppfyltForm, påklagetVedtakUtenBehandling)).isEqualTo(FormVilkår.IKKE_OPPFYLT )
+            assertThat(utledFormresultat(ikkeOppfyltForm, påklagetVedtakUtenBehandling)).isEqualTo(FormVilkår.IKKE_OPPFYLT)
             assertThat(utledFormresultat(ikkeOppfyltForm, påklagetVedtakIkkeValgt)).isEqualTo(FormVilkår.IKKE_SATT)
             assertThat(utledFormresultat(ikkeFerdigUtfyltForm, påklagetVedtakMedBehandling)).isEqualTo(FormVilkår.IKKE_SATT)
             assertThat(utledFormresultat(ikkeFerdigUtfyltForm, påklagetVedtakUtenBehandling)).isEqualTo(FormVilkår.IKKE_SATT)

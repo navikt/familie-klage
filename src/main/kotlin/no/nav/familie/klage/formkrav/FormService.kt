@@ -53,7 +53,7 @@ class FormService(
         behandlingService.oppdaterPåklagetVedtak(behandlingId, nyttPåklagetVedtak)
         opprettBehandlingsstatistikk(behandlingId)
         val formresultat = utledFormresultat(oppdaterteFormkrav, nyttPåklagetVedtak)
-        when(formresultat) {
+        when (formresultat) {
             FormVilkår.OPPFYLT -> {
                 stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.VURDERING)
             }

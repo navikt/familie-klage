@@ -25,7 +25,7 @@ object FormUtil {
     private fun alleVilkårOppfyltUntattKlagefrist(formkrav: Form) =
         formkrav.alleSvarBortsettFraFrist().all { it == FormVilkår.OPPFYLT } && formkrav.klagefristOverholdt == FormVilkår.IKKE_OPPFYLT
 
-    private fun klagefristUnntakOppfylt(unntak: FormkravFristUnntak) = when(unntak) {
+    private fun klagefristUnntakOppfylt(unntak: FormkravFristUnntak) = when (unntak) {
         FormkravFristUnntak.IKKE_UNNTAK, FormkravFristUnntak.IKKE_SATT -> false
         FormkravFristUnntak.UNNTAK_SÆRLIG_GRUNN, FormkravFristUnntak.UNNTAK_KAN_IKKE_LASTES -> true
     }
@@ -36,8 +36,10 @@ object FormUtil {
 
     private fun klagefristUnntakBesvart(formkrav: Form) =
         formkrav.klagefristOverholdt === FormVilkår.OPPFYLT ||
-        (formkrav.klagefristOverholdt === FormVilkår.IKKE_OPPFYLT &&
-         formkrav.klagefristOverholdtUnntak != FormkravFristUnntak.IKKE_SATT)
+            (
+                formkrav.klagefristOverholdt === FormVilkår.IKKE_OPPFYLT &&
+                    formkrav.klagefristOverholdtUnntak != FormkravFristUnntak.IKKE_SATT
+                )
 
     private fun friteksterUtfylt(formkrav: Form) = formkrav.saksbehandlerBegrunnelse != null &&
         formkrav.saksbehandlerBegrunnelse.isNotBlank() &&

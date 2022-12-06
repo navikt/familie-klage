@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
 import org.springframework.http.HttpStatus
+import java.time.LocalDate
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 internal class BehandlingServiceTest {
@@ -151,12 +152,14 @@ internal class BehandlingServiceTest {
             val behandling = behandling(fagsak(), status = BehandlingStatus.UTREDES)
             every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
             val ugyldigManglerBehandlingId = PåklagetVedtakDto(null, PåklagetVedtakstype.VEDTAK)
+            val ugyldigManglerVedtaksdato = PåklagetVedtakDto(null, PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING)
             val ugyldigUtenVedtakMedBehandlingId = PåklagetVedtakDto("123", PåklagetVedtakstype.UTEN_VEDTAK)
             val ugyldigIkkeValgtMedBehandlingId = PåklagetVedtakDto("123", PåklagetVedtakstype.IKKE_VALGT)
 
             assertThrows<Feil> { behandlingService.oppdaterPåklagetVedtak(behandling.id, ugyldigManglerBehandlingId) }
             assertThrows<Feil> { behandlingService.oppdaterPåklagetVedtak(behandling.id, ugyldigUtenVedtakMedBehandlingId) }
             assertThrows<Feil> { behandlingService.oppdaterPåklagetVedtak(behandling.id, ugyldigIkkeValgtMedBehandlingId) }
+            assertThrows<Feil> { behandlingService.oppdaterPåklagetVedtak(behandling.id, ugyldigManglerVedtaksdato) }
         }
 
         @Test
@@ -168,6 +171,7 @@ internal class BehandlingServiceTest {
             val medVedtak = PåklagetVedtakDto("123", PåklagetVedtakstype.VEDTAK)
             val utenVedtak = PåklagetVedtakDto(null, PåklagetVedtakstype.UTEN_VEDTAK)
             val ikkeValgt = PåklagetVedtakDto(null, PåklagetVedtakstype.IKKE_VALGT)
+            val gjelderInfotrygd = PåklagetVedtakDto(null, PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING, vedtaksdatoInfotrygd = LocalDate.now())
 
             behandlingService.oppdaterPåklagetVedtak(behandling.id, ikkeValgt)
             verify(exactly = 1) { behandlingRepository.update(any()) }
@@ -177,6 +181,9 @@ internal class BehandlingServiceTest {
 
             behandlingService.oppdaterPåklagetVedtak(behandling.id, medVedtak)
             verify(exactly = 3) { behandlingRepository.update(any()) }
+
+            behandlingService.oppdaterPåklagetVedtak(behandling.id, gjelderInfotrygd)
+            verify(exactly = 4) { behandlingRepository.update(any()) }
         }
     }
 

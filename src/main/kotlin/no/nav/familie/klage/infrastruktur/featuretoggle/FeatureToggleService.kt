@@ -13,7 +13,8 @@ interface FeatureToggleService : DisposableBean {
 
 enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
     START_BEHANDLING("familie.klage.start-behandling"),
-    BEHANDLINGSSTATISTIKK("familie.klage.behandlingsstatistikk");
+    BEHANDLINGSSTATISTIKK("familie.klage.behandlingsstatistikk"),
+    TILBAKEKREVING_INFOTRYGD_PÅKLAGET_VEDTAK("familie.klage.infotrygd-vedtak");
 
     companion object {
         private val toggles: Map<String, Toggle> = values().associateBy { it.name }
