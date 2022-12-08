@@ -3,6 +3,7 @@ package no.nav.familie.klage.behandling
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
+import no.nav.familie.klage.behandling.domain.tilFagsystemRevurdering
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.blankett.LagSaksbehandlingsblankettTask
 import no.nav.familie.klage.brev.BrevService
@@ -11,6 +12,7 @@ import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
+import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
@@ -34,7 +36,8 @@ class FerdigstillBehandlingService(
     private val stegService: StegService,
     private val taskService: TaskService,
     private val oppgaveTaskService: OppgaveTaskService,
-    private val brevService: BrevService
+    private val brevService: BrevService,
+    private val fagsystemVedtakService: FagsystemVedtakService
 ) {
 
     /**
@@ -51,13 +54,29 @@ class FerdigstillBehandlingService(
             opprettJournalførBrevTask(behandlingId)
         }
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
-        behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(behandlingId, behandlingsresultat)
+
+        val opprettetRevurdering = opprettRevurdering(behandlingId, behandlingsresultat)
+
+        behandlingService.oppdaterBehandlingMedResultat(behandlingId, behandlingsresultat, opprettetRevurdering)
         stegService.oppdaterSteg(behandlingId, behandling.steg, stegForResultat(behandlingsresultat), behandlingsresultat)
         taskService.save(LagSaksbehandlingsblankettTask.opprettTask(behandlingId))
-        if (behandlingsresultat == BehandlingResultat.IKKE_MEDHOLD) {
+        if (behandlingsresultat == IKKE_MEDHOLD) {
             taskService.save(BehandlingsstatistikkTask.opprettSendtTilKATask(behandlingId = behandlingId))
         }
         taskService.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId))
+    }
+
+    /**
+     * Oppretter revurdering automatisk ved medhold
+     * Dette skjer synkront og kan vurderes å endres til async med task eller kafka ved behov
+     */
+    private fun opprettRevurdering(
+        behandlingId: UUID,
+        behandlingsresultat: BehandlingResultat
+    ) = if (behandlingsresultat == MEDHOLD) {
+        fagsystemVedtakService.opprettRevurdering(behandlingId).tilFagsystemRevurdering()
+    } else {
+        null
     }
 
     private fun opprettJournalførBrevTask(behandlingId: UUID) {

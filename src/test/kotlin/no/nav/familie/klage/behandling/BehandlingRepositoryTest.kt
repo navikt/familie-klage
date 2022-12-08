@@ -1,5 +1,7 @@
 package no.nav.familie.klage.behandling
 
+import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
+import no.nav.familie.klage.behandling.domain.Opprettet
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
@@ -39,13 +41,15 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
 
         val påklagetVedtakDetaljer =
             PåklagetVedtakDetaljer(FagsystemType.ORDNIÆR, "1234", "type", "resultat", LocalDateTime.now())
+        val fagsystemRevurdering = FagsystemRevurdering(true, Opprettet("id", LocalDateTime.now()), null)
         val behandling = behandlingRepository.insert(
             behandling(
                 fagsak = fagsak,
                 id = id,
                 klageMottatt = LocalDate.now(),
                 påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer),
-                henlagtÅrsak = HenlagtÅrsak.TRUKKET_TILBAKE
+                henlagtÅrsak = HenlagtÅrsak.TRUKKET_TILBAKE,
+                fagsystemRevurdering = fagsystemRevurdering
             )
         )
 
@@ -62,6 +66,7 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
         assertThat(behandling.sporbar.opprettetTid).isEqualTo(hentetBehandling.sporbar.opprettetTid)
         assertThat(behandling.sporbar.endret.endretTid).isEqualTo(hentetBehandling.sporbar.endret.endretTid)
         assertThat(behandling.sporbar.endret.endretAv).isEqualTo(hentetBehandling.sporbar.endret.endretAv)
+        assertThat(behandling.fagsystemRevurdering).isEqualTo(hentetBehandling.fagsystemRevurdering)
     }
 
     @Test

@@ -1,6 +1,7 @@
 package no.nav.familie.klage.testutil
 
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
@@ -80,7 +81,8 @@ object DomainUtil {
         resultat: BehandlingResultat = BehandlingResultat.IKKE_SATT,
         vedtakDato: LocalDateTime? = null,
         henlagtÅrsak: HenlagtÅrsak? = null,
-        sporbar: Sporbar = Sporbar()
+        sporbar: Sporbar = Sporbar(),
+        fagsystemRevurdering: FagsystemRevurdering? = null
     ): Behandling =
         Behandling(
             id = id,
@@ -94,7 +96,8 @@ object DomainUtil {
             resultat = resultat,
             henlagtÅrsak = henlagtÅrsak,
             vedtakDato = vedtakDato,
-            sporbar = sporbar
+            sporbar = sporbar,
+            fagsystemRevurdering = fagsystemRevurdering
         )
 
     fun vurdering(

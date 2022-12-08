@@ -6,8 +6,10 @@ import no.nav.familie.klage.repository.RepositoryInterface
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.data.jdbc.repository.query.Query
+import org.springframework.stereotype.Repository
 import java.util.UUID
 
+@Repository
 interface FagsakRepository : RepositoryInterface<FagsakDomain, UUID>, InsertUpdateRepository<FagsakDomain> {
 
     fun findByEksternIdAndFagsystemAndStønadstype(

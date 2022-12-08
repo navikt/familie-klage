@@ -4,6 +4,7 @@ import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.getDataOrThrow
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
+import no.nav.familie.kontrakter.felles.klage.OpprettRevurderingResponse
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -18,7 +19,16 @@ class FamilieEFSakClient(
 ) : AbstractRestClient(restOperations, "familie.ef.sak") {
 
     fun hentVedtak(fagsystemEksternFagsakId: String): List<FagsystemVedtak> {
-        val hentVedtakUri = UriComponentsBuilder.fromUri(familieEfSakUri).pathSegment("api/ekstern/vedtak/$fagsystemEksternFagsakId").build().toUri()
+        val hentVedtakUri = UriComponentsBuilder.fromUri(familieEfSakUri)
+            .pathSegment("api/ekstern/vedtak/$fagsystemEksternFagsakId")
+            .build().toUri()
         return getForEntity<Ressurs<List<FagsystemVedtak>>>(hentVedtakUri).getDataOrThrow()
+    }
+
+    fun opprettRevurdering(fagsystemEksternFagsakId: String): OpprettRevurderingResponse {
+        val hentVedtakUri = UriComponentsBuilder.fromUri(familieEfSakUri)
+            .pathSegment("api/ekstern/behandling/opprett-revurdering-klage/$fagsystemEksternFagsakId")
+            .build().toUri()
+        return getForEntity<Ressurs<OpprettRevurderingResponse>>(hentVedtakUri).getDataOrThrow()
     }
 }

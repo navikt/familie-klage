@@ -2,6 +2,7 @@ package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.Klagebehandlingsesultat
+import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
@@ -79,12 +80,16 @@ class BehandlingService(
         return Pair(fagsak.hentAktivIdent(), fagsak)
     }
 
-    fun oppdaterBehandlingsresultatOgVedtaksdato(behandlingId: UUID, behandlingsresultat: BehandlingResultat) {
+    fun oppdaterBehandlingMedResultat(behandlingId: UUID, behandlingsresultat: BehandlingResultat, opprettetRevurdering: FagsystemRevurdering?) {
         val behandling = hentBehandling(behandlingId)
         if (behandling.resultat != BehandlingResultat.IKKE_SATT) {
             error("Kan ikke endre på et resultat som allerede er satt")
         }
-        val oppdatertBehandling = behandling.copy(resultat = behandlingsresultat, vedtakDato = LocalDateTime.now())
+        val oppdatertBehandling = behandling.copy(
+            resultat = behandlingsresultat,
+            vedtakDato = LocalDateTime.now(),
+            fagsystemRevurdering = opprettetRevurdering
+        )
         behandlingRepository.update(oppdatertBehandling)
     }
 

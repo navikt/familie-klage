@@ -7,6 +7,7 @@ import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.blankett.LagSaksbehandlingsblankettTask
@@ -16,6 +17,7 @@ import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.kabal.KabalService
 import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.klage.testutil.BrukerContextUtil
@@ -26,6 +28,8 @@ import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
+import no.nav.familie.kontrakter.felles.klage.OpprettRevurderingResponse
+import no.nav.familie.kontrakter.felles.klage.Opprettet
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
@@ -47,6 +51,7 @@ internal class FerdigstillBehandlingServiceTest {
     val taskService = mockk<TaskService>()
     val oppgaveTaskService = mockk<OppgaveTaskService>()
     val brevService = mockk<BrevService>()
+    val fagsystemVedtakService = mockk<FagsystemVedtakService>()
 
     val ferdigstillBehandlingService = FerdigstillBehandlingService(
         behandlingService = behandlingService,
@@ -55,7 +60,8 @@ internal class FerdigstillBehandlingServiceTest {
         stegService = stegService,
         taskService = taskService,
         oppgaveTaskService = oppgaveTaskService,
-        brevService = brevService
+        brevService = brevService,
+        fagsystemVedtakService = fagsystemVedtakService
     )
     val fagsak = DomainUtil.fagsakDomain().tilFagsak()
     val behandling = DomainUtil.behandling(fagsak = fagsak, steg = StegType.BREV, status = BehandlingStatus.UTREDES)
@@ -65,8 +71,13 @@ internal class FerdigstillBehandlingServiceTest {
 
     val saveTaskSlot = mutableListOf<Task>()
 
+    val stegSlot = slot<StegType>()
+    val behandlingsresultatSlot = slot<BehandlingResultat>()
+    val fagsystemRevurderingSlot = mutableListOf<FagsystemRevurdering?>()
+
     @BeforeEach
     internal fun setUp() {
+        fagsystemRevurderingSlot.clear()
         BrukerContextUtil.mockBrukerContext("halla")
         every { behandlingService.hentBehandling(any()) } returns behandling
         every { fagsakService.hentFagsakForBehandling(any()) } returns fagsak
@@ -74,11 +85,14 @@ internal class FerdigstillBehandlingServiceTest {
         every { distribusjonService.distribuerBrev(any()) } returns brevDistribusjonId
         every { vurderingService.hentVurdering(any()) } returns vurdering
         every { kabalService.sendTilKabal(any(), any(), any()) } just Runs
-        every { stegService.oppdaterSteg(any(), any(), any(), any()) } just Runs
+        justRun { stegService.oppdaterSteg(any(), any(), capture(stegSlot), any()) }
         every { formService.formkravErOppfyltForBehandling(any()) } returns true
-        every { behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(any(), any()) } just Runs
+        justRun { behandlingService.oppdaterBehandlingMedResultat(any(), capture(behandlingsresultatSlot), null) }
+        justRun { behandlingService.oppdaterBehandlingMedResultat(any(), capture(behandlingsresultatSlot), captureNullable(fagsystemRevurderingSlot)) }
         every { taskService.save(capture(saveTaskSlot)) } answers { firstArg() }
         every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id) } just Runs
+        justRun { brevService.lagBrevPdf(any()) }
+        every { fagsystemVedtakService.opprettRevurdering(any()) } returns OpprettRevurderingResponse(Opprettet("opprettetId"))
     }
 
     @AfterEach
@@ -88,64 +102,51 @@ internal class FerdigstillBehandlingServiceTest {
 
     @Test
     internal fun `skal ferdigstille behandling, ikke medhold`() {
-        val stegSlot = slot<StegType>()
-        val behandlingsresultatSlot = slot<BehandlingResultat>()
-        every { stegService.oppdaterSteg(any(), any(), capture(stegSlot), any()) } just Runs
-        justRun { brevService.lagBrevPdf(any()) }
-        every {
-            behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(
-                any(),
-                capture(behandlingsresultatSlot)
-            )
-        } just Runs
-
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
 
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD)
+        assertThat(fagsystemRevurderingSlot.single()).isNull()
         assertThat(stegSlot.captured).isEqualTo(StegType.KABAL_VENTER_SVAR)
+
         verify(exactly = 4) { taskService.save(any()) }
-        assertThat(saveTaskSlot.map { it.type }).containsExactly(JournalførBrevTask.TYPE, LagSaksbehandlingsblankettTask.TYPE, BehandlingsstatistikkTask.TYPE, BehandlingsstatistikkTask.TYPE)
+        assertThat(saveTaskSlot.map { it.type }).containsExactly(
+            JournalførBrevTask.TYPE,
+            LagSaksbehandlingsblankettTask.TYPE,
+            BehandlingsstatistikkTask.TYPE,
+            BehandlingsstatistikkTask.TYPE
+        )
         verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id) }
     }
 
     @Test
     internal fun `skal ikke sende til kabal hvis formkrav ikke er oppfylt`() {
-        val stegSlot = slot<StegType>()
-        val behandlingsresultatSlot = slot<BehandlingResultat>()
-        justRun { brevService.lagBrevPdf(any()) }
-        every { stegService.oppdaterSteg(any(), any(), capture(stegSlot), any()) } just Runs
         every { formService.formkravErOppfyltForBehandling(any()) } returns false
-        every {
-            behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(
-                any(),
-                capture(behandlingsresultatSlot)
-            )
-        } just Runs
+
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
+
         assertThat(stegSlot.captured).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST)
+        assertThat(fagsystemRevurderingSlot.single()).isNull()
+
         verify { taskService.save(any()) }
     }
 
     @Test
     internal fun `skal ikke sende til kabal hvis klage tas til følge`() {
-        val stegSlot = slot<StegType>()
-        val behandlingsresultatSlot = slot<BehandlingResultat>()
-
-        every {
-            behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(
-                any(),
-                capture(behandlingsresultatSlot)
-            )
-        } just Runs
-        every { stegService.oppdaterSteg(any(), any(), capture(stegSlot), any()) } just Runs
         every { vurderingService.hentVurdering(any()) } returns vurdering.copy(vedtak = Vedtak.OMGJØR_VEDTAK)
+
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
+
         assertThat(stegSlot.captured).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.MEDHOLD)
+        assertThat(fagsystemRevurderingSlot.single()).isNotNull
 
         verify(exactly = 2) { taskService.save(any()) }
-        assertThat(saveTaskSlot.map { it.type }).containsExactly(LagSaksbehandlingsblankettTask.TYPE, BehandlingsstatistikkTask.TYPE)
+        verify(exactly = 1) { fagsystemVedtakService.opprettRevurdering(behandling.id) }
+        assertThat(saveTaskSlot.map { it.type }).containsExactly(
+            LagSaksbehandlingsblankettTask.TYPE,
+            BehandlingsstatistikkTask.TYPE
+        )
     }
 
     @Test
