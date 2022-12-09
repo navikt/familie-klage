@@ -22,12 +22,13 @@ data class FagsystemRevurdering(
 
 data class Opprettet(val eksternBehandlingId: String, val opprettetTid: LocalDateTime)
 data class IkkeOpprettet(
-    val årsak: IkkeOpprettetBehandlingÅrsak,
+    val årsak: IkkeOpprettetÅrsak,
     val detaljer: String? = null
 )
 
-enum class IkkeOpprettetBehandlingÅrsak {
+enum class IkkeOpprettetÅrsak {
     ÅPEN_BEHANDLING,
+    INGEN_BEHANDLING,
     FEIL
 }
 
@@ -35,7 +36,7 @@ fun OpprettRevurderingResponse.tilFagsystemRevurdering(): FagsystemRevurdering {
     val opprettet = this.opprettet?.let { Opprettet(it.eksternBehandlingId, opprettetTid = LocalDateTime.now()) }
     val ikkeOpprettet = this.ikkeOpprettet?.let {
         IkkeOpprettet(
-            IkkeOpprettetBehandlingÅrsak.valueOf(it.årsak.name),
+            IkkeOpprettetÅrsak.valueOf(it.årsak.name),
             it.detaljer
         )
     }
