@@ -24,6 +24,7 @@ import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.tilFagsak
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
+import no.nav.familie.klage.testutil.mockFeatureToggleService
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
@@ -61,7 +62,8 @@ internal class FerdigstillBehandlingServiceTest {
         taskService = taskService,
         oppgaveTaskService = oppgaveTaskService,
         brevService = brevService,
-        fagsystemVedtakService = fagsystemVedtakService
+        fagsystemVedtakService = fagsystemVedtakService,
+        mockFeatureToggleService()
     )
     val fagsak = DomainUtil.fagsakDomain().tilFagsak()
     val behandling = DomainUtil.behandling(fagsak = fagsak, steg = StegType.BREV, status = BehandlingStatus.UTREDES)

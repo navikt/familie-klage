@@ -1,6 +1,7 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandling.domain.tilFagsystemRevurdering
@@ -11,6 +12,8 @@ import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.oppgave.OppgaveTaskService
@@ -37,7 +40,8 @@ class FerdigstillBehandlingService(
     private val taskService: TaskService,
     private val oppgaveTaskService: OppgaveTaskService,
     private val brevService: BrevService,
-    private val fagsystemVedtakService: FagsystemVedtakService
+    private val fagsystemVedtakService: FagsystemVedtakService,
+    private val featureToggleService: FeatureToggleService
 ) {
 
     /**
@@ -55,7 +59,7 @@ class FerdigstillBehandlingService(
         }
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
 
-        val opprettetRevurdering = opprettRevurdering(behandlingId, behandlingsresultat)
+        val opprettetRevurdering = opprettRevurderingHvisMedhold(behandlingId, behandlingsresultat)
 
         behandlingService.oppdaterBehandlingMedResultat(behandlingId, behandlingsresultat, opprettetRevurdering)
         stegService.oppdaterSteg(behandlingId, behandling.steg, stegForResultat(behandlingsresultat), behandlingsresultat)
@@ -70,13 +74,15 @@ class FerdigstillBehandlingService(
      * Oppretter revurdering automatisk ved medhold
      * Dette skjer synkront og kan vurderes å endres til async med task eller kafka ved behov
      */
-    private fun opprettRevurdering(
+    private fun opprettRevurderingHvisMedhold(
         behandlingId: UUID,
         behandlingsresultat: BehandlingResultat
-    ) = if (behandlingsresultat == MEDHOLD) {
-        fagsystemVedtakService.opprettRevurdering(behandlingId).tilFagsystemRevurdering()
-    } else {
-        null
+    ): FagsystemRevurdering? {
+        return if (behandlingsresultat == MEDHOLD && featureToggleService.isEnabled(Toggle.OPPRETT_REVURDERING)) {
+            fagsystemVedtakService.opprettRevurdering(behandlingId).tilFagsystemRevurdering()
+        } else {
+            null
+        }
     }
 
     private fun opprettJournalførBrevTask(behandlingId: UUID) {
