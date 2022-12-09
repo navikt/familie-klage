@@ -53,7 +53,7 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
         assertThat(persistertBehandling.vedtakDato).isNull()
         assertThat(persistertBehandling.resultat).isEqualTo(BehandlingResultat.IKKE_SATT)
 
-        behandlingService.oppdaterBehandlingsresultatOgVedtaksdato(behandling.id, BehandlingResultat.IKKE_MEDHOLD)
+        behandlingService.oppdaterBehandlingMedResultat(behandling.id, BehandlingResultat.IKKE_MEDHOLD, null)
         val oppdatertBehandling = behandlingService.hentBehandling(behandlingId = behandling.id)
         assertThat(oppdatertBehandling.vedtakDato).isEqualToIgnoringMinutes(now())
         assertThat(oppdatertBehandling.resultat).isEqualTo(BehandlingResultat.IKKE_MEDHOLD)

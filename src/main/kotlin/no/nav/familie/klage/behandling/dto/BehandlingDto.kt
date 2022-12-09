@@ -1,6 +1,7 @@
 package no.nav.familie.klage.behandling.dto
 
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.IKKE_VALGT
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING
@@ -32,7 +33,8 @@ data class BehandlingDto(
     val påklagetVedtak: PåklagetVedtakDto,
     val eksternFagsystemFagsakId: String,
     val fagsystem: Fagsystem,
-    val klageMottatt: LocalDate
+    val klageMottatt: LocalDate,
+    val fagsystemRevurdering: FagsystemRevurdering?
 )
 
 /**
@@ -76,5 +78,6 @@ fun Behandling.tilDto(fagsak: Fagsak, klageinstansResultat: List<KlageinstansRes
         eksternFagsystemFagsakId = fagsak.eksternId,
         klageinstansResultat = klageinstansResultat,
         påklagetVedtak = this.påklagetVedtak.tilDto(),
-        klageMottatt = this.klageMottatt
+        klageMottatt = this.klageMottatt,
+        fagsystemRevurdering = this.fagsystemRevurdering
     )

@@ -6,12 +6,17 @@ import io.mockk.mockk
 import no.nav.familie.klage.integrasjoner.FamilieEFSakClient
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
+import no.nav.familie.kontrakter.felles.klage.IkkeOpprettet
+import no.nav.familie.kontrakter.felles.klage.IkkeOpprettetÅrsak
+import no.nav.familie.kontrakter.felles.klage.OpprettRevurderingResponse
+import no.nav.familie.kontrakter.felles.klage.Opprettet
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
 import java.time.LocalDateTime
 import java.time.Month
+import java.util.UUID
 
 @Configuration
 @Profile("mock-ef-sak")
@@ -51,6 +56,17 @@ class FamilieEFSakClientMock {
                     fagsystemType = FagsystemType.TILBAKEKREVING
                 )
             )
+            // mocker annen hver
+            var opprettet = true
+            every { mock.opprettRevurdering(any()) } answers {
+                opprettet = !opprettet
+                if (opprettet) {
+                    OpprettRevurderingResponse(Opprettet(eksternBehandlingId = UUID.randomUUID().toString()))
+                } else {
+                    OpprettRevurderingResponse(IkkeOpprettet(årsak = IkkeOpprettetÅrsak.ÅPEN_BEHANDLING))
+                }
+            }
+
             return mock
         }
     }
