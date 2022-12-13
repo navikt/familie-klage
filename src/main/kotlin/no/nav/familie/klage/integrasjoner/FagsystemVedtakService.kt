@@ -7,6 +7,7 @@ import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.IkkeOpprettet
 import no.nav.familie.kontrakter.felles.klage.IkkeOpprettetÅrsak
+import no.nav.familie.kontrakter.felles.klage.KanOppretteRevurderingResponse
 import no.nav.familie.kontrakter.felles.klage.OpprettRevurderingResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -47,6 +48,14 @@ class FagsystemVedtakService(
             .singleOrNull { it.eksternBehandlingId == påklagetBehandlingId }
             ?: error("Finner ikke vedtak for behandling=$behandlingId eksternBehandling=$påklagetBehandlingId")
 
+    fun kanOppretteRevurdering(behandlingId: UUID): KanOppretteRevurderingResponse {
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
+        return when (fagsak.fagsystem) {
+            Fagsystem.EF -> familieEFSakClient.kanOppretteRevurdering(fagsak.eksternId)
+            else -> throw Feil("Ikke implementert sjekk for å opprette revurdering for fagsak=${fagsak.id} fagsystem=${fagsak.fagsystem}")
+        }
+    }
+
     fun opprettRevurdering(behandlingId: UUID): OpprettRevurderingResponse {
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         return when (fagsak.fagsystem) {
@@ -59,7 +68,7 @@ class FagsystemVedtakService(
 
                 ukjentFeilVedOpprettRevurdering
             }
-            else -> throw Feil("Ikke implementert opprette revurdering for BA og KS fagsak=${fagsak.id}")
+            else -> throw Feil("Ikke implementert opprette revurdering for fagsak=${fagsak.id} fagsystem=${fagsak.fagsystem}")
         }
     }
 }
