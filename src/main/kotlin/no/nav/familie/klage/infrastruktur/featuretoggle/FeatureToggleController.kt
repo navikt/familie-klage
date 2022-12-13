@@ -15,6 +15,7 @@ class FeatureToggleController(private val featureToggleService: FeatureToggleSer
 
     private val funksjonsbrytere = setOf(
         Toggle.START_BEHANDLING,
+        Toggle.OPPRETT_REVURDERING,
         Toggle.TILBAKEKREVING_INFOTRYGD_PÅKLAGET_VEDTAK
     )
 
