@@ -1,6 +1,7 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.brev.BrevInnhold.lagFormkravAvvistBrev
+import no.nav.familie.klage.brev.BrevInnhold.lagFormkravAvvistBrevIkkePåklagetVedtak
 import no.nav.familie.klage.brev.BrevInnhold.lagOpprettholdelseBrev
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
@@ -69,7 +70,7 @@ internal class BrevInnholdTest {
     }
 
     @Test
-    internal fun `brev for avvist formkra skal ha med info om tilbakebetaling`() {
+    internal fun `brev for avvist formkrav skal ha med info om tilbakebetaling`() {
         val påklagetVedtakDetaljer =
             påklagetVedtakDetaljer("123", vedtakstidspunkt = vedtakstidspunkt, fagsystemType = FagsystemType.TILBAKEKREVING)
         val brev = lagFormkravAvvistBrev(
@@ -80,6 +81,24 @@ internal class BrevInnholdTest {
             påklagetVedtakDetaljer
         )
         assertThat(brev.overskrift).isEqualTo("Vi har avvist klagen din på vedtaket om tilbakebetaling av stønad til barnetilsyn")
+    }
+
+    @Test
+    internal fun `brev for avvist formkrav uten påklaget vedtak skal føre til et eget avvisningsbrev`() {
+        val brev = lagFormkravAvvistBrevIkkePåklagetVedtak(
+            "123456789",
+            "Innstilling abc",
+            ikkeOppfyltForm(),
+            Stønadstype.BARNETILSYN,
+        )
+        assertThat(brev.overskrift).isEqualTo("Vi har avvist klagen din")
+        assertThat(brev.avsnitt.first().innhold).isEqualTo("Vi har avvist klagen din fordi du ikke har klaget på et vedtak.")
+        assertThat(brev.avsnitt.elementAt(1).innhold).isEqualTo("brevtekst")
+        assertThat(brev.avsnitt.elementAt(2).innhold).isEqualTo("Vedtaket er gjort etter forvaltningsloven §§ 28 og 33.")
+        assertThat(brev.avsnitt.elementAt(3).deloverskrift).isEqualTo("Du har rett til å klage")
+        assertThat(brev.avsnitt.elementAt(4).deloverskrift).isEqualTo("Du har rett til innsyn")
+        assertThat(brev.avsnitt.elementAt(5).deloverskrift).isEqualTo("Har du spørsmål?")
+        assertThat(brev.avsnitt.size).isEqualTo(6)
     }
 
     private fun ikkeOppfyltForm() =
