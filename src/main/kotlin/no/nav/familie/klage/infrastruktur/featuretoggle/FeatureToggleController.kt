@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 class FeatureToggleController(private val featureToggleService: FeatureToggleService) {
 
     private val funksjonsbrytere = setOf(
+        Toggle.OPPRETT_REVURDERING,
         Toggle.TILBAKEKREVING_INFOTRYGD_PÅKLAGET_VEDTAK
     )
 
