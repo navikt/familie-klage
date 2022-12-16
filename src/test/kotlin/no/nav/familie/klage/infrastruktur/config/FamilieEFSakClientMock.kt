@@ -8,6 +8,8 @@ import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.IkkeOpprettet
 import no.nav.familie.kontrakter.felles.klage.IkkeOpprettetÅrsak
+import no.nav.familie.kontrakter.felles.klage.KanIkkeOppretteRevurderingÅrsak
+import no.nav.familie.kontrakter.felles.klage.KanOppretteRevurderingResponse
 import no.nav.familie.kontrakter.felles.klage.OpprettRevurderingResponse
 import no.nav.familie.kontrakter.felles.klage.Opprettet
 import org.springframework.context.annotation.Bean
@@ -64,6 +66,16 @@ class FamilieEFSakClientMock {
                     OpprettRevurderingResponse(Opprettet(eksternBehandlingId = UUID.randomUUID().toString()))
                 } else {
                     OpprettRevurderingResponse(IkkeOpprettet(årsak = IkkeOpprettetÅrsak.ÅPEN_BEHANDLING))
+                }
+            }
+
+            var kanOpprette = true
+            every { mock.kanOppretteRevurdering(any()) } answers {
+                kanOpprette = !kanOpprette
+                if (kanOpprette) {
+                    KanOppretteRevurderingResponse(true, null)
+                } else {
+                    KanOppretteRevurderingResponse(false, KanIkkeOppretteRevurderingÅrsak.ÅPEN_BEHANDLING)
                 }
             }
 

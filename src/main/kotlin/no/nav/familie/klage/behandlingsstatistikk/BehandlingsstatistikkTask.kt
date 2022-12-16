@@ -27,9 +27,6 @@ class BehandlingsstatistikkTask(
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
-        feilHvisIkke(featureToggleService.isEnabled(Toggle.BEHANDLINGSSTATISTIKK)) {
-            "Funksjonen for sending av behandlingsstatistikk er slått av"
-        }
         val (behandlingId, hendelse, hendelseTidspunkt, gjeldendeSaksbehandler) =
             objectMapper.readValue<BehandlingsstatistikkTaskPayload>(task.payload)
         behandlingStatistikkService.sendBehandlingstatistikk(
