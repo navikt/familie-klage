@@ -3,6 +3,7 @@ package no.nav.familie.klage.brev
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.brev.BrevmottakerUtil.validerMinimumEnMottaker
@@ -74,7 +75,7 @@ class BrevService(
         val påklagetVedtakDetaljer = behandling.påklagetVedtak.påklagetVedtakDetaljer
         validerKanLageBrev(behandling)
 
-        val brevRequest = lagBrevRequest(behandlingId, fagsak, navn, påklagetVedtakDetaljer, behandling.klageMottatt)
+        val brevRequest = lagBrevRequest(behandling, fagsak, navn, påklagetVedtakDetaljer, behandling.klageMottatt)
 
         val signaturMedEnhet = brevsignaturService.lagSignatur(personopplysninger)
 
@@ -103,14 +104,14 @@ class BrevService(
     }
 
     private fun lagBrevRequest(
-        behandlingId: UUID,
+        behandling: Behandling,
         fagsak: Fagsak,
         navn: String,
         påklagetVedtakDetaljer: PåklagetVedtakDetaljer?,
         klageMottatt: LocalDate
     ): FritekstBrevRequestDto {
-        val behandlingResultat = utledBehandlingResultat(behandlingId)
-        val vurdering = vurderingService.hentVurdering(behandlingId)
+        val behandlingResultat = utledBehandlingResultat(behandling.id)
+        val vurdering = vurderingService.hentVurdering(behandling.id)
 
         return when (behandlingResultat) {
             BehandlingResultat.IKKE_MEDHOLD -> {
@@ -129,14 +130,22 @@ class BrevService(
                 )
             }
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> {
-                val formkrav = formService.hentForm(behandlingId)
-                BrevInnhold.lagFormkravAvvistBrev(
-                    ident = fagsak.hentAktivIdent(),
-                    navn = navn,
-                    formkrav = formkrav,
-                    stønadstype = fagsak.stønadstype,
-                    påklagetVedtakDetaljer = påklagetVedtakDetaljer
-                )
+                val formkrav = formService.hentForm(behandling.id)
+                return when (behandling.påklagetVedtak.påklagetVedtakstype) {
+                    PåklagetVedtakstype.UTEN_VEDTAK -> BrevInnhold.lagFormkravAvvistBrevIkkePåklagetVedtak(
+                        ident = fagsak.hentAktivIdent(),
+                        navn = navn,
+                        formkrav = formkrav,
+                        stønadstype = fagsak.stønadstype,
+                    )
+                    else -> BrevInnhold.lagFormkravAvvistBrev(
+                        ident = fagsak.hentAktivIdent(),
+                        navn = navn,
+                        formkrav = formkrav,
+                        stønadstype = fagsak.stønadstype,
+                        påklagetVedtakDetaljer = påklagetVedtakDetaljer
+                    )
+                }
             }
             BehandlingResultat.MEDHOLD,
             BehandlingResultat.IKKE_SATT,
