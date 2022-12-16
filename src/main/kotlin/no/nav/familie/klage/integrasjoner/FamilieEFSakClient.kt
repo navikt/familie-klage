@@ -25,7 +25,7 @@ class FamilieEFSakClient(
             .build().toUri()
         return getForEntity<Ressurs<List<FagsystemVedtak>>>(hentVedtakUri).getDataOrThrow()
     }
-    
+
     fun kanOppretteRevurdering(fagsystemEksternFagsakId: String): KanOppretteRevurderingResponse {
         val hentVedtakUri = UriComponentsBuilder.fromUri(familieEfSakUri)
             .pathSegment("api/ekstern/behandling/kan-opprette-revurdering-klage/$fagsystemEksternFagsakId")

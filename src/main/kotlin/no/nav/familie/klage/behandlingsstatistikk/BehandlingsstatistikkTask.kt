@@ -1,9 +1,7 @@
 package no.nav.familie.klage.behandlingsstatistikk
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep

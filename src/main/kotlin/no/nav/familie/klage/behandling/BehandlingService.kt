@@ -1,8 +1,8 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
-import no.nav.familie.klage.behandling.domain.Klagebehandlingsesultat
 import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
+import no.nav.familie.klage.behandling.domain.Klagebehandlingsesultat
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype

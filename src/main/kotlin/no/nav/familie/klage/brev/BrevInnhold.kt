@@ -9,8 +9,8 @@ import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.felles.util.StønadstypeVisningsnavn.visningsnavn
 import no.nav.familie.klage.felles.util.TekstUtil.norskFormat
 import no.nav.familie.klage.formkrav.domain.Form
-import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
+import no.nav.familie.kontrakter.felles.klage.VedtakType
 import java.time.LocalDate
 
 object BrevInnhold {
@@ -113,7 +113,7 @@ object BrevInnhold {
         ident: String,
         navn: String,
         formkrav: Form,
-        stønadstype: Stønadstype,
+        stønadstype: Stønadstype
     ): FritekstBrevRequestDto {
         val brevtekstFraSaksbehandler =
             formkrav.brevtekst ?: error("Må ha brevtekst fra saksbehandler for å generere brev ved formkrav ikke oppfylt")
@@ -140,7 +140,7 @@ object BrevInnhold {
                     deloverskrift = "Du har rett til å klage",
                     innhold =
                     "Hvis du vil klage, må du gjøre dette innen 3 uker fra den datoen du fikk dette brevet. " +
-                            "Du finner skjema og informasjon på ${stønadstype.klageUrl()}."
+                        "Du finner skjema og informasjon på ${stønadstype.klageUrl()}."
                 ),
                 AvsnittDto(
                     deloverskrift = "Du har rett til innsyn",
@@ -151,17 +151,17 @@ object BrevInnhold {
                     deloverskrift = "Har du spørsmål?",
                     innhold =
                     "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. " +
-                            "Du kan også kontakte oss på nav.no/kontakt."
+                        "Du kan også kontakte oss på nav.no/kontakt."
                 )
             )
         )
     }
 
     private fun visningsnavn(stønadstype: Stønadstype, påklagetVedtakDetaljer: PåklagetVedtakDetaljer?): String =
-        if (påklagetVedtakDetaljer?.fagsystemType == FagsystemType.TILBAKEKREVING) {
-            "tilbakebetaling av ${stønadstype.visningsnavn()}"
-        } else {
-            stønadstype.visningsnavn()
+        when (påklagetVedtakDetaljer?.vedtakType) {
+            VedtakType.TILBAKEKREVING -> "tilbakebetaling av ${stønadstype.visningsnavn()}"
+            VedtakType.SANKSJON_1_MND -> "sanksjon"
+            else -> stønadstype.visningsnavn()
         }
 
     private fun Stønadstype.lesMerUrl() = when (this) {

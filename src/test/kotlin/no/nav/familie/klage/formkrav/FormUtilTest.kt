@@ -112,7 +112,7 @@ internal class FormUtilTest {
             assertThat(
                 utledFormresultat(
                     Form(
-                        behandlingId= behandlingId,
+                        behandlingId = behandlingId,
                         klagePart = FormVilkår.IKKE_SATT,
                         klagefristOverholdt = FormVilkår.IKKE_SATT,
                         klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_SATT,
@@ -120,7 +120,8 @@ internal class FormUtilTest {
                         klageSignert = FormVilkår.IKKE_SATT,
                         brevtekst = "brevtekst",
                         saksbehandlerBegrunnelse = "begrunnelse"
-                    ), påklagetVedtakUtenBehandling
+                    ),
+                    påklagetVedtakUtenBehandling
                 )
             ).isEqualTo(FormVilkår.IKKE_OPPFYLT)
         }
@@ -130,7 +131,7 @@ internal class FormUtilTest {
             assertThat(
                 utledFormresultat(
                     Form(
-                        behandlingId= behandlingId,
+                        behandlingId = behandlingId,
                         klagePart = FormVilkår.IKKE_SATT,
                         klagefristOverholdt = FormVilkår.IKKE_SATT,
                         klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_SATT,
@@ -138,7 +139,8 @@ internal class FormUtilTest {
                         klageSignert = FormVilkår.IKKE_SATT,
                         brevtekst = null,
                         saksbehandlerBegrunnelse = null
-                    ), påklagetVedtakUtenBehandling
+                    ),
+                    påklagetVedtakUtenBehandling
                 )
             ).isEqualTo(FormVilkår.IKKE_SATT)
         }
