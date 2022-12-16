@@ -1,5 +1,6 @@
 package no.nav.familie.klage.formkrav
 
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
@@ -8,6 +9,11 @@ import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
 object FormUtil {
 
     fun utledFormresultat(formkrav: Form, påklagetVedtak: PåklagetVedtakDto): FormVilkår {
+
+        if (påklagetVedtak.påklagetVedtakstype === PåklagetVedtakstype.UTEN_VEDTAK && friteksterUtfylt(formkrav)) {
+            return FormVilkår.IKKE_OPPFYLT
+        }
+
         return when {
             !påklagetVedtak.harTattStillingTil() -> FormVilkår.IKKE_SATT
             !alleVilkårBesvart(formkrav) -> FormVilkår.IKKE_SATT

@@ -109,6 +109,54 @@ object BrevInnhold {
         )
     }
 
+    fun lagFormkravAvvistBrevIkkePåklagetVedtak(
+        ident: String,
+        navn: String,
+        formkrav: Form,
+        stønadstype: Stønadstype,
+    ): FritekstBrevRequestDto {
+        val brevtekstFraSaksbehandler =
+            formkrav.brevtekst ?: error("Må ha brevtekst fra saksbehandler for å generere brev ved formkrav ikke oppfylt")
+
+        return FritekstBrevRequestDto(
+            overskrift = "Vi har avvist klagen din",
+            personIdent = ident,
+            navn = navn,
+            avsnitt =
+            listOf(
+                AvsnittDto(
+                    deloverskrift = "",
+                    innhold = "Vi har avvist klagen din fordi du ikke har klaget på et vedtak."
+                ),
+                AvsnittDto(
+                    deloverskrift = "",
+                    innhold = brevtekstFraSaksbehandler
+                ),
+                AvsnittDto(
+                    deloverskrift = "",
+                    innhold = "Vedtaket er gjort etter forvaltningsloven §§ 28 og 33."
+                ),
+                AvsnittDto(
+                    deloverskrift = "Du har rett til å klage",
+                    innhold =
+                    "Hvis du vil klage, må du gjøre dette innen 3 uker fra den datoen du fikk dette brevet. " +
+                            "Du finner skjema og informasjon på ${stønadstype.klageUrl()}."
+                ),
+                AvsnittDto(
+                    deloverskrift = "Du har rett til innsyn",
+                    innhold =
+                    "På nav.no/dittnav kan du se dokumentene i saken din."
+                ),
+                AvsnittDto(
+                    deloverskrift = "Har du spørsmål?",
+                    innhold =
+                    "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. " +
+                            "Du kan også kontakte oss på nav.no/kontakt."
+                )
+            )
+        )
+    }
+
     private fun visningsnavn(stønadstype: Stønadstype, påklagetVedtakDetaljer: PåklagetVedtakDetaljer?): String =
         if (påklagetVedtakDetaljer?.fagsystemType == FagsystemType.TILBAKEKREVING) {
             "tilbakebetaling av ${stønadstype.visningsnavn()}"

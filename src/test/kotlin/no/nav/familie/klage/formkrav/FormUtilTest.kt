@@ -103,4 +103,44 @@ internal class FormUtilTest {
             assertThat(alleVilkårOppfylt(toFormKravIkkeSatt.copy(klagefristOverholdtUnntak = FormkravFristUnntak.UNNTAK_SÆRLIG_GRUNN))).isFalse
         }
     }
+
+    @Nested
+    inner class ikkePåklagetVedtak {
+
+        @Test
+        internal fun `valgt ikkePåklaget vedtak og ikke oppfylte fritekstfelter gir formkravresultat ikke satt`() {
+            assertThat(
+                utledFormresultat(
+                    Form(
+                        behandlingId= behandlingId,
+                        klagePart = FormVilkår.IKKE_SATT,
+                        klagefristOverholdt = FormVilkår.IKKE_SATT,
+                        klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_SATT,
+                        klageKonkret = FormVilkår.IKKE_SATT,
+                        klageSignert = FormVilkår.IKKE_SATT,
+                        brevtekst = "brevtekst",
+                        saksbehandlerBegrunnelse = "begrunnelse"
+                    ), påklagetVedtakUtenBehandling
+                )
+            ).isEqualTo(FormVilkår.IKKE_OPPFYLT)
+        }
+
+        @Test
+        internal fun `valgt ikkePåklaget vedtak og oppfylte fritekstfelter gir formkravresultat ikke oppfylt`() {
+            assertThat(
+                utledFormresultat(
+                    Form(
+                        behandlingId= behandlingId,
+                        klagePart = FormVilkår.IKKE_SATT,
+                        klagefristOverholdt = FormVilkår.IKKE_SATT,
+                        klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_SATT,
+                        klageKonkret = FormVilkår.IKKE_SATT,
+                        klageSignert = FormVilkår.IKKE_SATT,
+                        brevtekst = null,
+                        saksbehandlerBegrunnelse = null
+                    ), påklagetVedtakUtenBehandling
+                )
+            ).isEqualTo(FormVilkår.IKKE_SATT)
+        }
+    }
 }
