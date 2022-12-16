@@ -12,6 +12,7 @@ import no.nav.familie.kontrakter.felles.klage.KanIkkeOppretteRevurderingÅrsak
 import no.nav.familie.kontrakter.felles.klage.KanOppretteRevurderingResponse
 import no.nav.familie.kontrakter.felles.klage.OpprettRevurderingResponse
 import no.nav.familie.kontrakter.felles.klage.Opprettet
+import no.nav.familie.kontrakter.felles.klage.VedtakType
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -41,21 +42,24 @@ class FamilieEFSakClientMock {
                     "Førstegangsbehandling",
                     "Innvilget",
                     vedtakstidspunkt = LocalDateTime.of(2022, Month.AUGUST, 1, 8, 0),
-                    fagsystemType = FagsystemType.ORDNIÆR
+                    fagsystemType = FagsystemType.ORDNIÆR,
+                    vedtakType = VedtakType.ORDINÆR
                 ),
                 FagsystemVedtak(
                     "124",
                     "Revurdering",
                     "Opphørt",
                     vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 0),
-                    fagsystemType = FagsystemType.ORDNIÆR
+                    fagsystemType = FagsystemType.ORDNIÆR,
+                    vedtakType = VedtakType.ORDINÆR
                 ),
                 FagsystemVedtak(
                     "tilbake-123",
                     "Tilbakekreving",
                     "Full tilbakekreving",
                     vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 10, 2),
-                    fagsystemType = FagsystemType.TILBAKEKREVING
+                    fagsystemType = FagsystemType.TILBAKEKREVING,
+                    vedtakType = VedtakType.TILBAKEKREVING
                 )
             )
             // mocker annen hver

@@ -15,6 +15,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
+import no.nav.familie.kontrakter.felles.klage.VedtakType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -40,7 +41,7 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
         val id = UUID.randomUUID()
 
         val påklagetVedtakDetaljer =
-            PåklagetVedtakDetaljer(FagsystemType.ORDNIÆR, "1234", "type", "resultat", LocalDateTime.now())
+            PåklagetVedtakDetaljer(FagsystemType.ORDNIÆR, VedtakType.ORDINÆR, "1234", "type", "resultat", LocalDateTime.now())
         val fagsystemRevurdering = FagsystemRevurdering(true, Opprettet("id", LocalDateTime.now()), null)
         val behandling = behandlingRepository.insert(
             behandling(

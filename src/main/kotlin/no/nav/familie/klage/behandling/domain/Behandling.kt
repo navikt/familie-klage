@@ -6,6 +6,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
+import no.nav.familie.kontrakter.felles.klage.VedtakType
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Embedded
@@ -35,6 +36,7 @@ data class Behandling(
 
 data class PåklagetVedtakDetaljer(
     val fagsystemType: FagsystemType,
+    val vedtakType: VedtakType,
     val eksternFagsystemBehandlingId: String?,
     val behandlingstype: String,
     val resultat: String,

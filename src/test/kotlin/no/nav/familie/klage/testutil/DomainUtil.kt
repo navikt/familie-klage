@@ -43,6 +43,7 @@ import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
+import no.nav.familie.kontrakter.felles.klage.VedtakType
 import no.nav.familie.kontrakter.felles.klage.Årsak
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -243,9 +244,11 @@ object DomainUtil {
     fun påklagetVedtakDetaljer(
         eksternFagsystemBehandlingId: String = "123",
         fagsystemType: FagsystemType = FagsystemType.ORDNIÆR,
+        vedtakType: VedtakType = VedtakType.ORDINÆR,
         vedtakstidspunkt: LocalDateTime = LocalDate.of(2022, 3, 1).atTime(8, 0)
     ) = PåklagetVedtakDetaljer(
         fagsystemType = fagsystemType,
+        vedtakType = vedtakType,
         eksternFagsystemBehandlingId = eksternFagsystemBehandlingId,
         behandlingstype = "type",
         resultat = "resultat",
@@ -275,12 +278,14 @@ object DomainUtil {
         behandlingstype: String = "type",
         resultat: String = "resultat",
         vedtakstidspunkt: LocalDateTime = LocalDate.of(2022, 3, 1).atTime(8, 0),
-        fagsystemType: FagsystemType = FagsystemType.ORDNIÆR
+        fagsystemType: FagsystemType = FagsystemType.ORDNIÆR,
+        vedtakType: VedtakType = VedtakType.ORDINÆR
     ) = FagsystemVedtak(
         eksternBehandlingId = eksternBehandlingId,
         behandlingstype = behandlingstype,
         resultat = resultat,
         vedtakstidspunkt = vedtakstidspunkt,
-        fagsystemType = fagsystemType
+        fagsystemType = fagsystemType,
+        vedtakType = vedtakType
     )
 }

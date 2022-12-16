@@ -31,6 +31,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingStatus.FERDIGSTILT
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
+import no.nav.familie.kontrakter.felles.klage.VedtakType
 import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -134,6 +135,7 @@ class BehandlingService(
     private fun tilPåklagetVedtakDetaljerForInfotrygdVedtak(påklagetVedtakDto: PåklagetVedtakDto) =
         PåklagetVedtakDetaljer(
             fagsystemType = FagsystemType.TILBAKEKREVING,
+            vedtakType = VedtakType.TILBAKEKREVING,
             eksternFagsystemBehandlingId = null,
             behandlingstype = "",
             resultat = "",
