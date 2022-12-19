@@ -41,7 +41,7 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
         val id = UUID.randomUUID()
 
         val påklagetVedtakDetaljer =
-            PåklagetVedtakDetaljer(FagsystemType.ORDNIÆR, VedtakType.ORDINÆR, "1234", "type", "resultat", LocalDateTime.now())
+            PåklagetVedtakDetaljer(VedtakType.ORDINÆR, "1234", "type", "resultat", LocalDateTime.now())
         val fagsystemRevurdering = FagsystemRevurdering(true, Opprettet("id", LocalDateTime.now()), null)
         val behandling = behandlingRepository.insert(
             behandling(

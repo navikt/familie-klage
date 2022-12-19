@@ -8,6 +8,7 @@ import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
 import no.nav.familie.klage.testutil.DomainUtil.påklagetVedtakDetaljer
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
+import no.nav.familie.kontrakter.felles.klage.VedtakType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -39,7 +40,7 @@ internal class BrevInnholdTest {
     @Test
     internal fun `brev for opprettholdelse skal ha med info om tilbakebetaling`() {
         val påklagetVedtakDetaljer =
-            påklagetVedtakDetaljer("123", vedtakstidspunkt = vedtakstidspunkt, fagsystemType = FagsystemType.TILBAKEKREVING)
+            påklagetVedtakDetaljer("123", vedtakstidspunkt = vedtakstidspunkt, vedtakType = VedtakType.TILBAKEKREVING)
         val brev = lagOpprettholdelseBrev(
             "123456789",
             "Innstilling abc",
@@ -72,7 +73,7 @@ internal class BrevInnholdTest {
     @Test
     internal fun `brev for avvist formkrav skal ha med info om tilbakebetaling`() {
         val påklagetVedtakDetaljer =
-            påklagetVedtakDetaljer("123", vedtakstidspunkt = vedtakstidspunkt, fagsystemType = FagsystemType.TILBAKEKREVING)
+            påklagetVedtakDetaljer("123", vedtakstidspunkt = vedtakstidspunkt, vedtakType = VedtakType.TILBAKEKREVING)
         val brev = lagFormkravAvvistBrev(
             "123456789",
             "Innstilling abc",

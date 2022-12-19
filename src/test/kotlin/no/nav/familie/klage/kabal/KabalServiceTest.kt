@@ -16,6 +16,7 @@ import no.nav.familie.klage.testutil.DomainUtil.vurdering
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
+import no.nav.familie.kontrakter.felles.klage.VedtakType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -65,7 +66,7 @@ internal class KabalServiceTest {
 
     @Test
     internal fun `skal sette innsynUrl til saksoversikten hvis påklaget vedtakstype gjelder tilbakekreving`() {
-        val påklagetVedtakDetaljer = påklagetVedtakDetaljer(fagsystemType = FagsystemType.TILBAKEKREVING)
+        val påklagetVedtakDetaljer = påklagetVedtakDetaljer(vedtakType = VedtakType.TILBAKEKREVING)
         val behandling = behandling(fagsak, påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer))
         val vurdering = vurdering(behandlingId = behandling.id, hjemmel = hjemmel)
 

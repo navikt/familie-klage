@@ -243,12 +243,10 @@ object DomainUtil {
 
     fun påklagetVedtakDetaljer(
         eksternFagsystemBehandlingId: String = "123",
-        fagsystemType: FagsystemType = FagsystemType.ORDNIÆR,
         vedtakType: VedtakType = VedtakType.ORDINÆR,
         vedtakstidspunkt: LocalDateTime = LocalDate.of(2022, 3, 1).atTime(8, 0)
     ) = PåklagetVedtakDetaljer(
-        fagsystemType = fagsystemType,
-        vedtakType = vedtakType,
+        fagsystemType = vedtakType,
         eksternFagsystemBehandlingId = eksternFagsystemBehandlingId,
         behandlingstype = "type",
         resultat = "resultat",

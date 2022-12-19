@@ -11,6 +11,7 @@ import no.nav.familie.klage.felles.util.TekstUtil.norskFormat
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
+import no.nav.familie.kontrakter.felles.klage.VedtakType
 import java.time.LocalDate
 
 object BrevInnhold {
@@ -158,7 +159,7 @@ object BrevInnhold {
     }
 
     private fun visningsnavn(stønadstype: Stønadstype, påklagetVedtakDetaljer: PåklagetVedtakDetaljer?): String =
-        if (påklagetVedtakDetaljer?.fagsystemType == FagsystemType.TILBAKEKREVING) {
+        if (påklagetVedtakDetaljer?.fagsystemType == VedtakType.TILBAKEKREVING) {
             "tilbakebetaling av ${stønadstype.visningsnavn()}"
         } else {
             stønadstype.visningsnavn()

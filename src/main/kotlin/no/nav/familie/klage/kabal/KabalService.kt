@@ -8,6 +8,7 @@ import no.nav.familie.klage.infrastruktur.config.LenkeConfig
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
+import no.nav.familie.kontrakter.felles.klage.VedtakType
 import org.springframework.stereotype.Service
 
 @Service
@@ -50,7 +51,7 @@ class KabalService(
             Fagsystem.KS -> error("Ikke implementert støtte for KS")
         }
         val påklagetVedtakDetaljer = påklagetVedtak.påklagetVedtakDetaljer
-        return if (påklagetVedtakDetaljer != null && påklagetVedtakDetaljer.fagsystemType == FagsystemType.ORDNIÆR && påklagetVedtakDetaljer.eksternFagsystemBehandlingId != null) {
+        return if (påklagetVedtakDetaljer != null && påklagetVedtakDetaljer.fagsystemType == VedtakType.ORDINÆR && påklagetVedtakDetaljer.eksternFagsystemBehandlingId != null) {
             "$fagsystemUrl/fagsak/${fagsak.eksternId}/${påklagetVedtakDetaljer.eksternFagsystemBehandlingId}"
         } else {
             "$fagsystemUrl/fagsak/${fagsak.eksternId}/saksoversikt"

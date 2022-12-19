@@ -134,8 +134,7 @@ class BehandlingService(
 
     private fun tilPåklagetVedtakDetaljerForInfotrygdVedtak(påklagetVedtakDto: PåklagetVedtakDto) =
         PåklagetVedtakDetaljer(
-            fagsystemType = FagsystemType.TILBAKEKREVING,
-            vedtakType = VedtakType.TILBAKEKREVING,
+            fagsystemType = VedtakType.TILBAKEKREVING,
             eksternFagsystemBehandlingId = null,
             behandlingstype = "",
             resultat = "",
