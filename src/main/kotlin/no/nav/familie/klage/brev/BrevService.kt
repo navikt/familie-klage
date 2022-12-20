@@ -136,7 +136,7 @@ class BrevService(
                         ident = fagsak.hentAktivIdent(),
                         navn = navn,
                         formkrav = formkrav,
-                        stønadstype = fagsak.stønadstype,
+                        stønadstype = fagsak.stønadstype
                     )
                     else -> BrevInnhold.lagFormkravAvvistBrev(
                         ident = fagsak.hentAktivIdent(),

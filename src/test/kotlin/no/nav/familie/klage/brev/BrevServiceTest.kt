@@ -52,7 +52,6 @@ internal class BrevServiceTest : OppslagSpringRunnerTest() {
     private val behandlingUtenPåklagetVedtak =
         behandling(fagsakBehandlingUtenPåklagetVedtak, steg = StegType.BREV, påklagetVedtak = påklagetVedtak.copy(påklagetVedtakstype = UTEN_VEDTAK))
 
-
     @BeforeEach
     internal fun setUp() {
         testoppsettService.lagreFagsak(fagsak)

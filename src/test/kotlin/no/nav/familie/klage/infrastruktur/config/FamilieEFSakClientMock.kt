@@ -56,6 +56,13 @@ class FamilieEFSakClientMock {
                     "Full tilbakekreving",
                     vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 10, 2),
                     fagsystemType = FagsystemType.TILBAKEKREVING
+                ),
+                FagsystemVedtak(
+                    "sanksjon-123",
+                    "Revurdering",
+                    "Sanksjon 1 måned",
+                    vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 15, 2),
+                    fagsystemType = FagsystemType.SANKSJON_1_MND
                 )
             )
             // mocker annen hver
