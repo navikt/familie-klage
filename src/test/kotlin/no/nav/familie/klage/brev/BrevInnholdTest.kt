@@ -55,6 +55,24 @@ internal class BrevInnholdTest {
     }
 
     @Test
+    internal fun `brev for opprettholdelse skal ha med info om sanksjon`() {
+        val påklagetVedtakDetaljer =
+            påklagetVedtakDetaljer("123", vedtakstidspunkt = vedtakstidspunkt, fagsystemType = FagsystemType.SANKSJON_1_MND)
+        val brev = lagOpprettholdelseBrev(
+            "123456789",
+            "Innstilling abc",
+            "Navn Navnesen",
+            Stønadstype.OVERGANGSSTØNAD,
+            påklagetVedtakDetaljer,
+            mottattDato
+        )
+        assertThat(brev.avsnitt.first().innhold).isEqualTo(
+            "Vi har 01.01.2020 fått klagen din på vedtaket om sanksjon som ble gjort 05.11.2021, " +
+                "og kommet frem til at vedtaket ikke endres. NAV Klageinstans skal derfor vurdere saken din på nytt."
+        )
+    }
+
+    @Test
     internal fun `brev for avvist formkrav skal inneholde blant annat dato og stønadstype`() {
         val brev = lagFormkravAvvistBrev(
             "123456789",
@@ -84,12 +102,26 @@ internal class BrevInnholdTest {
     }
 
     @Test
+    internal fun `brev for avvist formkrav skal ha med info om sanksjon`() {
+        val påklagetVedtakDetaljer =
+            påklagetVedtakDetaljer("123", vedtakstidspunkt = vedtakstidspunkt, fagsystemType = FagsystemType.SANKSJON_1_MND)
+        val brev = lagFormkravAvvistBrev(
+            "123456789",
+            "Innstilling abc",
+            ikkeOppfyltForm(),
+            Stønadstype.BARNETILSYN,
+            påklagetVedtakDetaljer
+        )
+        assertThat(brev.overskrift).isEqualTo("Vi har avvist klagen din på vedtaket om sanksjon")
+    }
+
+    @Test
     internal fun `brev for avvist formkrav uten påklaget vedtak skal føre til et eget avvisningsbrev`() {
         val brev = lagFormkravAvvistBrevIkkePåklagetVedtak(
             "123456789",
             "Innstilling abc",
             ikkeOppfyltForm(),
-            Stønadstype.BARNETILSYN,
+            Stønadstype.BARNETILSYN
         )
         assertThat(brev.overskrift).isEqualTo("Vi har avvist klagen din")
         assertThat(brev.avsnitt.first().innhold).isEqualTo("Vi har avvist klagen din fordi du ikke har klaget på et vedtak.")

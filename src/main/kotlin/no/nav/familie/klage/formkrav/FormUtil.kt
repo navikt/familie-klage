@@ -9,7 +9,6 @@ import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
 object FormUtil {
 
     fun utledFormresultat(formkrav: Form, påklagetVedtak: PåklagetVedtakDto): FormVilkår {
-
         if (påklagetVedtak.påklagetVedtakstype === PåklagetVedtakstype.UTEN_VEDTAK && friteksterUtfylt(formkrav)) {
             return FormVilkår.IKKE_OPPFYLT
         }
