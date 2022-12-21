@@ -1,5 +1,6 @@
 package no.nav.familie.klage.integrasjoner
 
+import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.exception.Feil
@@ -24,7 +25,9 @@ private val ukjentFeilVedOpprettRevurdering = OpprettRevurderingResponse(
 @Service
 class FagsystemVedtakService(
     private val familieEFSakClient: FamilieEFSakClient,
-    private val fagsakService: FagsakService
+    private val familieKSSakClient: FamilieKSSakClient,
+    private val fagsakService: FagsakService,
+    private val behandlingService: BehandlingService
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -37,6 +40,7 @@ class FagsystemVedtakService(
 
     private fun hentFagsystemVedtak(fagsak: Fagsak): List<FagsystemVedtak> = when (fagsak.fagsystem) {
         Fagsystem.EF -> familieEFSakClient.hentVedtak(fagsak.eksternId)
+        Fagsystem.KS -> familieKSSakClient.hentVedtak(fagsak.eksternId)
         else -> throw Feil("Ikke implementert henting av vedtak for BA og KS fagsak=${fagsak.id}")
     }
 
@@ -52,23 +56,30 @@ class FagsystemVedtakService(
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         return when (fagsak.fagsystem) {
             Fagsystem.EF -> familieEFSakClient.kanOppretteRevurdering(fagsak.eksternId)
+            Fagsystem.KS -> familieKSSakClient.kanOppretteRevurdering(fagsak.eksternId)
             else -> throw Feil("Ikke implementert sjekk for å opprette revurdering for fagsak=${fagsak.id} fagsystem=${fagsak.fagsystem}")
         }
     }
 
     fun opprettRevurdering(behandlingId: UUID): OpprettRevurderingResponse {
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
-        return when (fagsak.fagsystem) {
-            Fagsystem.EF -> try {
-                familieEFSakClient.opprettRevurdering(fagsak.eksternId)
-            } catch (e: Exception) {
-                val errorSuffix = "Feilet opprettelse av revurdering for behandling=$behandlingId eksternFagsakId=${fagsak.eksternId}"
-                logger.warn("$errorSuffix, se detaljer i secureLogs")
-                secureLogger.warn(errorSuffix, e)
+        val behandling = behandlingService.hentBehandling(behandlingId)
+        return try {
+            when (fagsak.fagsystem) {
+                Fagsystem.EF ->
+                    familieEFSakClient.opprettRevurdering(fagsak.eksternId)
 
-                ukjentFeilVedOpprettRevurdering
+                Fagsystem.KS -> familieKSSakClient.opprettRevurdering(
+                    eksternFagsystemBehandlingId = behandling.påklagetVedtak.påklagetVedtakDetaljer?.eksternFagsystemBehandlingId
+                )
+                Fagsystem.BA -> throw Feil("Kan ikke opprette revurdering for BA enda")
             }
-            else -> throw Feil("Ikke implementert opprette revurdering for fagsak=${fagsak.id} fagsystem=${fagsak.fagsystem}")
+        } catch (e: Exception) {
+            val errorSuffix = "Feilet opprettelse av revurdering for behandling=$behandlingId eksternFagsakId=${fagsak.eksternId}"
+            logger.warn("$errorSuffix, se detaljer i secureLogs")
+            secureLogger.warn(errorSuffix, e)
+
+            ukjentFeilVedOpprettRevurdering
         }
     }
 }
