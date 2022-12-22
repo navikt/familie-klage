@@ -6,6 +6,7 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.IKKE_VALGT
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.UTEN_VEDTAK
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.UTESTENGELSE
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.domain.Fagsak
@@ -44,7 +45,9 @@ data class PåklagetVedtakDto(
     val eksternFagsystemBehandlingId: String?,
     val påklagetVedtakstype: PåklagetVedtakstype,
     val fagsystemVedtak: FagsystemVedtak? = null,
-    val vedtaksdatoInfotrygd: LocalDate? = null
+    @Deprecated("Bruk manuell vedtaksdato")
+    val vedtaksdatoInfotrygd: LocalDate? = null,
+    val manuellVedtaksdato: LocalDate? = null
 ) {
     fun erGyldig(): Boolean = when (eksternFagsystemBehandlingId) {
         null -> påklagetVedtakstype != VEDTAK
@@ -53,14 +56,24 @@ data class PåklagetVedtakDto(
 
     fun harTattStillingTil(): Boolean = when (påklagetVedtakstype) {
         IKKE_VALGT -> false
-        INFOTRYGD_TILBAKEKREVING, UTEN_VEDTAK, VEDTAK -> true
+        INFOTRYGD_TILBAKEKREVING, UTEN_VEDTAK, VEDTAK, UTESTENGELSE -> true
     }
 
     fun manglerVedtaksDato(): Boolean {
-        if (påklagetVedtakstype == INFOTRYGD_TILBAKEKREVING) {
-            return vedtaksdatoInfotrygd == null
+        if (påklagetVedtakstype == INFOTRYGD_TILBAKEKREVING || påklagetVedtakstype == UTESTENGELSE) {
+            return utledManuellVedtaksdato() == null
         }
         return false
+    }
+
+    fun utledManuellVedtaksdato(): LocalDate? {
+        return if(manuellVedtaksdato != null){
+            manuellVedtaksdato
+        } else if(vedtaksdatoInfotrygd != null){
+            vedtaksdatoInfotrygd
+        } else {
+            null
+        }
     }
 }
 

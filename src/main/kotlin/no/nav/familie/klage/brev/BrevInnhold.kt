@@ -161,6 +161,7 @@ object BrevInnhold {
         when (påklagetVedtakDetaljer?.fagsystemType) {
             FagsystemType.TILBAKEKREVING -> "tilbakebetaling av ${stønadstype.visningsnavn()}"
             FagsystemType.SANKSJON_1_MND -> "sanksjon"
+            FagsystemType.UTESTENGELSE -> "utestengelse"
             else ->
                 stønadstype.visningsnavn()
         }
