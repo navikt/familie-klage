@@ -16,25 +16,25 @@ import java.net.URI
 @Component
 class FamilieKSSakClient(
     @Qualifier("azure") restOperations: RestOperations,
-    @Value("\${FAMILIE_KS_SAK_URL}") private val familieEfSakUri: URI
+    @Value("\${FAMILIE_KS_SAK_URL}") private val familieKsSakUri: URI
 ) : AbstractRestClient(restOperations, "familie.ks.sak") {
 
     fun hentVedtak(fagsystemEksternFagsakId: String): List<FagsystemVedtak> {
-        val hentVedtakUri = UriComponentsBuilder.fromUri(familieEfSakUri)
+        val hentVedtakUri = UriComponentsBuilder.fromUri(familieKsSakUri)
             .pathSegment("api/ekstern/vedtak/$fagsystemEksternFagsakId")
             .build().toUri()
         return getForEntity<Ressurs<List<FagsystemVedtak>>>(hentVedtakUri).getDataOrThrow()
     }
 
     fun kanOppretteRevurdering(fagsystemEksternFagsakId: String): KanOppretteRevurderingResponse {
-        val hentVedtakUri = UriComponentsBuilder.fromUri(familieEfSakUri)
+        val hentVedtakUri = UriComponentsBuilder.fromUri(familieKsSakUri)
             .pathSegment("api/ekstern/behandling/kan-opprette-revurdering-klage/$fagsystemEksternFagsakId")
             .build().toUri()
         return getForEntity<Ressurs<KanOppretteRevurderingResponse>>(hentVedtakUri).getDataOrThrow()
     }
 
     fun opprettRevurdering(eksternFagsystemBehandlingId: String?): OpprettRevurderingResponse {
-        val hentVedtakUri = UriComponentsBuilder.fromUri(familieEfSakUri)
+        val hentVedtakUri = UriComponentsBuilder.fromUri(familieKsSakUri)
             .pathSegment("api/ekstern/behandling/opprett-revurdering-klage/$eksternFagsystemBehandlingId")
             .build().toUri()
         return postForEntity<Ressurs<OpprettRevurderingResponse>>(hentVedtakUri, emptyMap<String, String>()).getDataOrThrow()
