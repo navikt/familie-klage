@@ -3,6 +3,7 @@ package no.nav.familie.klage.integrasjoner
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
@@ -17,8 +18,15 @@ import org.junit.jupiter.api.Test
 internal class FagsystemVedtakServiceTest {
 
     private val efSakClient = mockk<FamilieEFSakClient>()
+    private val ksSakClient = mockk<FamilieKSSakClient>()
     private val fagsakService = mockk<FagsakService>()
-    private val service = FagsystemVedtakService(efSakClient, fagsakService)
+    private val behandlingService = mockk<BehandlingService>()
+    private val service = FagsystemVedtakService(
+        familieEFSakClient = efSakClient,
+        familieKSSakClient = ksSakClient,
+        fagsakService = fagsakService,
+        behandlingService = behandlingService
+    )
 
     private val fagsakEF = fagsak(stønadstype = Stønadstype.OVERGANGSSTØNAD)
     private val fagsakBA = fagsak(stønadstype = Stønadstype.BARNETRYGD)
@@ -38,7 +46,10 @@ internal class FagsystemVedtakServiceTest {
         every { fagsakService.hentFagsakForBehandling(behandlingBA.id) } returns fagsakBA
         every { fagsakService.hentFagsakForBehandling(behandlingKS.id) } returns fagsakKS
 
+        every { behandlingService.hentBehandling(behandlingKS.id) } returns behandlingKS
+
         every { efSakClient.hentVedtak(fagsakEF.eksternId) } returns listOf(vedtak)
+        every { ksSakClient.hentVedtak(fagsakKS.eksternId) } returns listOf(vedtak)
     }
 
     @Nested
@@ -59,10 +70,10 @@ internal class FagsystemVedtakServiceTest {
         }
 
         @Test
-        internal fun `har ikke lagt inn støtte for kontantstøtte`() {
-            assertThatThrownBy {
-                service.hentFagsystemVedtak(behandlingKS.id)
-            }.hasMessageContaining("Ikke implementert henting av vedtak for BA og KS ")
+        internal fun `skal kalle på ks-klient for ks-behandling`() {
+            service.hentFagsystemVedtak(behandlingKS.id)
+
+            verify { ksSakClient.hentVedtak(any()) }
         }
     }
 
