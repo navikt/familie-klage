@@ -112,7 +112,7 @@ class BehandlingService(
         val behandlingMedPåklagetVedtak = behandling.copy(
             påklagetVedtak = PåklagetVedtak(
                 påklagetVedtakstype = påklagetVedtakDto.påklagetVedtakstype,
-                påklagetVedtakDetaljer = påklagetVedtakDetaljer
+                påklagetVedtakDetaljer = påklagetVedtakDetaljer,
             )
         )
         behandlingRepository.update(behandlingMedPåklagetVedtak)
@@ -122,8 +122,8 @@ class BehandlingService(
         behandlingId: UUID,
         påklagetVedtakDto: PåklagetVedtakDto
     ): PåklagetVedtakDetaljer? {
-        if (påklagetVedtakDto.påklagetVedtakstype == PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING) {
-            return tilPåklagetVedtakDetaljerForInfotrygdVedtak(påklagetVedtakDto)
+        if (påklagetVedtakDto.påklagetVedtakstype == PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING || påklagetVedtakDto.påklagetVedtakstype == PåklagetVedtakstype.UTESTENGELSE) {
+            return tilPåklagetVedtakDetaljerMedManuellDato(påklagetVedtakDto)
         }
         return påklagetVedtakDto.eksternFagsystemBehandlingId?.let {
             fagsystemVedtakService.hentFagsystemVedtakForPåklagetBehandlingId(behandlingId, it)
@@ -131,14 +131,22 @@ class BehandlingService(
         }
     }
 
-    private fun tilPåklagetVedtakDetaljerForInfotrygdVedtak(påklagetVedtakDto: PåklagetVedtakDto) =
+    private fun tilPåklagetVedtakDetaljerMedManuellDato(påklagetVedtakDto: PåklagetVedtakDto) =
         PåklagetVedtakDetaljer(
-            fagsystemType = FagsystemType.TILBAKEKREVING,
+            fagsystemType = utledFagsystemType(påklagetVedtakDto),
             eksternFagsystemBehandlingId = null,
             behandlingstype = "",
             resultat = "",
-            vedtakstidspunkt = påklagetVedtakDto.vedtaksdatoInfotrygd?.atStartOfDay() ?: error("Mangler vedtaksdato")
+            vedtakstidspunkt = påklagetVedtakDto.utledManuellVedtaksdato()?.atStartOfDay() ?: error("Mangler vedtaksdato")
         )
+
+    private fun utledFagsystemType(påklagetVedtakDto: PåklagetVedtakDto): FagsystemType {
+        return when (påklagetVedtakDto.påklagetVedtakstype) {
+            PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING -> FagsystemType.TILBAKEKREVING
+            PåklagetVedtakstype.UTESTENGELSE -> FagsystemType.UTESTENGELSE
+            else -> error("Kan ikke utlede fagsystemType for påklagetVedtakType ${påklagetVedtakDto.påklagetVedtakstype}")
+        }
+    }
 
     private fun validerKanOppretteBehandling(fagsakId: UUID) {
         val behandlinger = behandlingRepository.findByFagsakId(fagsakId)

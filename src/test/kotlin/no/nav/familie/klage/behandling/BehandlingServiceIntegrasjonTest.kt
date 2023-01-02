@@ -89,7 +89,7 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
             val vedtaksdatoInfotrygd = LocalDate.now()
             val påklagetVedtak = PåklagetVedtakDto(
                 eksternFagsystemBehandlingId = null,
-                vedtaksdatoInfotrygd = vedtaksdatoInfotrygd,
+                manuellVedtaksdato = vedtaksdatoInfotrygd,
                 påklagetVedtakstype = PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING
             )
             behandlingService.oppdaterPåklagetVedtak(behandlingId = behandling.id, påklagetVedtakDto = påklagetVedtak)
@@ -99,6 +99,27 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
             assertThat(oppdatertPåklagetVedtak.påklagetVedtakstype).isEqualTo(påklagetVedtak.påklagetVedtakstype)
             assertThat(oppdatertPåklagetVedtak.påklagetVedtakDetaljer?.vedtakstidspunkt?.toLocalDate()).isEqualTo(vedtaksdatoInfotrygd)
             assertThat(oppdatertPåklagetVedtak.påklagetVedtakDetaljer?.fagsystemType).isEqualTo(FagsystemType.TILBAKEKREVING)
+        }
+
+        @Test
+        internal fun `skal oppdatere påklaget vedtak utestengelse`() {
+            val påklagetBehandlingId = "påklagetBehandlingId"
+            val fagsystemVedtak = fagsystemVedtak(eksternBehandlingId = påklagetBehandlingId)
+            every { efSakClientMock.hentVedtak(fagsak.eksternId) } returns listOf(fagsystemVedtak)
+
+            val vedtaksdato = LocalDate.now()
+            val påklagetVedtak = PåklagetVedtakDto(
+                eksternFagsystemBehandlingId = null,
+                manuellVedtaksdato = vedtaksdato,
+                påklagetVedtakstype = PåklagetVedtakstype.UTESTENGELSE
+            )
+            behandlingService.oppdaterPåklagetVedtak(behandlingId = behandling.id, påklagetVedtakDto = påklagetVedtak)
+            val oppdatertBehandling = behandlingService.hentBehandling(behandling.id)
+            val oppdatertPåklagetVedtak = oppdatertBehandling.påklagetVedtak
+
+            assertThat(oppdatertPåklagetVedtak.påklagetVedtakstype).isEqualTo(påklagetVedtak.påklagetVedtakstype)
+            assertThat(oppdatertPåklagetVedtak.påklagetVedtakDetaljer?.vedtakstidspunkt?.toLocalDate()).isEqualTo(vedtaksdato)
+            assertThat(oppdatertPåklagetVedtak.påklagetVedtakDetaljer?.fagsystemType).isEqualTo(FagsystemType.UTESTENGELSE)
         }
 
         @Test

@@ -26,5 +26,6 @@ fun PåklagetVedtak.tilDto(): PåklagetVedtakDto =
         eksternFagsystemBehandlingId = this.påklagetVedtakDetaljer?.eksternFagsystemBehandlingId,
         påklagetVedtakstype = this.påklagetVedtakstype,
         fagsystemVedtak = this.påklagetVedtakDetaljer?.tilFagsystemVedtak(),
-        vedtaksdatoInfotrygd = if (påklagetVedtakstype == PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING) this.påklagetVedtakDetaljer?.vedtakstidspunkt?.toLocalDate() else null
+        vedtaksdatoInfotrygd = if (påklagetVedtakstype == PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING) this.påklagetVedtakDetaljer?.vedtakstidspunkt?.toLocalDate() else null,
+        manuellVedtaksdato = if (påklagetVedtakstype == PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING || påklagetVedtakstype == PåklagetVedtakstype.UTESTENGELSE) this.påklagetVedtakDetaljer?.vedtakstidspunkt?.toLocalDate() else null
     )
