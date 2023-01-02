@@ -66,12 +66,16 @@ class FagsystemVedtakService(
         val behandling = behandlingService.hentBehandling(behandlingId)
         return try {
             when (fagsak.fagsystem) {
-                Fagsystem.EF ->
-                    familieEFSakClient.opprettRevurdering(fagsak.eksternId)
+                Fagsystem.EF -> familieEFSakClient.opprettRevurdering(fagsak.eksternId)
 
-                Fagsystem.KS -> familieKSSakClient.opprettRevurdering(
-                    eksternFagsystemBehandlingId = behandling.påklagetVedtak.påklagetVedtakDetaljer?.eksternFagsystemBehandlingId
-                )
+                Fagsystem.KS -> {
+                    val eksternFagsystemBehandlingId =
+                        behandling.påklagetVedtak.påklagetVedtakDetaljer?.eksternFagsystemBehandlingId
+                            ?: throw Feil("eksternFagsystemBehandlingId er ikke satt på påklagetVedtak for ks-behandling")
+
+                    familieKSSakClient.opprettRevurdering(eksternFagsystemBehandlingId)
+                }
+
                 Fagsystem.BA -> throw Feil("Kan ikke opprette revurdering for BA enda")
             }
         } catch (e: Exception) {

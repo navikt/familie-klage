@@ -33,7 +33,7 @@ class FamilieKSSakClient(
         return getForEntity<Ressurs<KanOppretteRevurderingResponse>>(hentVedtakUri).getDataOrThrow()
     }
 
-    fun opprettRevurdering(eksternFagsystemBehandlingId: String?): OpprettRevurderingResponse {
+    fun opprettRevurdering(eksternFagsystemBehandlingId: String): OpprettRevurderingResponse {
         val hentVedtakUri = UriComponentsBuilder.fromUri(familieKsSakUri)
             .pathSegment("api/ekstern/behandling/opprett-revurdering-klage/$eksternFagsystemBehandlingId")
             .build().toUri()
