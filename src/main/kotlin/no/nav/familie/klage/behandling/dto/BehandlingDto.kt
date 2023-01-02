@@ -54,10 +54,7 @@ data class PåklagetVedtakDto(
         else -> påklagetVedtakstype == VEDTAK
     }
 
-    fun harTattStillingTil(): Boolean = when (påklagetVedtakstype) {
-        IKKE_VALGT -> false
-        INFOTRYGD_TILBAKEKREVING, UTEN_VEDTAK, VEDTAK, UTESTENGELSE -> true
-    }
+    fun harTattStillingTil(): Boolean = påklagetVedtakstype != IKKE_VALGT
 
     fun manglerVedtaksDato(): Boolean {
         if (påklagetVedtakstype == INFOTRYGD_TILBAKEKREVING || påklagetVedtakstype == UTESTENGELSE) {
@@ -67,9 +64,9 @@ data class PåklagetVedtakDto(
     }
 
     fun utledManuellVedtaksdato(): LocalDate? {
-        return if(manuellVedtaksdato != null){
+        return if (manuellVedtaksdato != null) {
             manuellVedtaksdato
-        } else if(vedtaksdatoInfotrygd != null){
+        } else if (vedtaksdatoInfotrygd != null) {
             vedtaksdatoInfotrygd
         } else {
             null
