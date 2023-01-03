@@ -5,7 +5,6 @@ import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.IKKE_VALGT
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING
-import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.UTEN_VEDTAK
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.UTESTENGELSE
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.domain.StegType
@@ -45,8 +44,6 @@ data class PåklagetVedtakDto(
     val eksternFagsystemBehandlingId: String?,
     val påklagetVedtakstype: PåklagetVedtakstype,
     val fagsystemVedtak: FagsystemVedtak? = null,
-    @Deprecated("Bruk manuell vedtaksdato")
-    val vedtaksdatoInfotrygd: LocalDate? = null,
     val manuellVedtaksdato: LocalDate? = null
 ) {
     fun erGyldig(): Boolean = when (eksternFagsystemBehandlingId) {
@@ -58,19 +55,9 @@ data class PåklagetVedtakDto(
 
     fun manglerVedtaksDato(): Boolean {
         if (påklagetVedtakstype == INFOTRYGD_TILBAKEKREVING || påklagetVedtakstype == UTESTENGELSE) {
-            return utledManuellVedtaksdato() == null
+            return manuellVedtaksdato == null
         }
         return false
-    }
-
-    fun utledManuellVedtaksdato(): LocalDate? {
-        return if (manuellVedtaksdato != null) {
-            manuellVedtaksdato
-        } else if (vedtaksdatoInfotrygd != null) {
-            vedtaksdatoInfotrygd
-        } else {
-            null
-        }
     }
 }
 
