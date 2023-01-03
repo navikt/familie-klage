@@ -5,7 +5,6 @@ import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.IKKE_VALGT
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING
-import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.UTEN_VEDTAK
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.UTESTENGELSE
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.domain.StegType
