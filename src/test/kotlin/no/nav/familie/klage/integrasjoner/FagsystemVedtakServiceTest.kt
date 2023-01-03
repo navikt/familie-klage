@@ -3,9 +3,7 @@ package no.nav.familie.klage.integrasjoner
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.klage.testutil.DomainUtil.fagsystemVedtak
@@ -21,12 +19,10 @@ internal class FagsystemVedtakServiceTest {
     private val efSakClient = mockk<FamilieEFSakClient>()
     private val ksSakClient = mockk<FamilieKSSakClient>()
     private val fagsakService = mockk<FagsakService>()
-    private val behandlingRepository = mockk<BehandlingRepository>()
     private val service = FagsystemVedtakService(
         familieEFSakClient = efSakClient,
         familieKSSakClient = ksSakClient,
-        fagsakService = fagsakService,
-        behandlingRepository = behandlingRepository
+        fagsakService = fagsakService
     )
 
     private val fagsakEF = fagsak(stønadstype = Stønadstype.OVERGANGSSTØNAD)
@@ -46,8 +42,6 @@ internal class FagsystemVedtakServiceTest {
         every { fagsakService.hentFagsakForBehandling(behandlingEf.id) } returns fagsakEF
         every { fagsakService.hentFagsakForBehandling(behandlingBA.id) } returns fagsakBA
         every { fagsakService.hentFagsakForBehandling(behandlingKS.id) } returns fagsakKS
-
-        every { behandlingRepository.findByIdOrThrow(behandlingKS.id) } returns behandlingKS
 
         every { efSakClient.hentVedtak(fagsakEF.eksternId) } returns listOf(vedtak)
         every { ksSakClient.hentVedtak(fagsakKS.eksternId) } returns listOf(vedtak)

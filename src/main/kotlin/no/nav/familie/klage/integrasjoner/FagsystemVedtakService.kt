@@ -1,10 +1,8 @@
 package no.nav.familie.klage.integrasjoner
 
-import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.exception.Feil
-import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.IkkeOpprettet
@@ -27,8 +25,7 @@ private val ukjentFeilVedOpprettRevurdering = OpprettRevurderingResponse(
 class FagsystemVedtakService(
     private val familieEFSakClient: FamilieEFSakClient,
     private val familieKSSakClient: FamilieKSSakClient,
-    private val fagsakService: FagsakService,
-    private val behandlingRepository: BehandlingRepository
+    private val fagsakService: FagsakService
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -64,19 +61,10 @@ class FagsystemVedtakService(
 
     fun opprettRevurdering(behandlingId: UUID): OpprettRevurderingResponse {
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
-        val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
         return try {
             when (fagsak.fagsystem) {
                 Fagsystem.EF -> familieEFSakClient.opprettRevurdering(fagsak.eksternId)
-
-                Fagsystem.KS -> {
-                    val eksternFagsystemBehandlingId =
-                        behandling.påklagetVedtak.påklagetVedtakDetaljer?.eksternFagsystemBehandlingId
-                            ?: throw Feil("eksternFagsystemBehandlingId er ikke satt på påklagetVedtak for ks-behandling")
-
-                    familieKSSakClient.opprettRevurdering(eksternFagsystemBehandlingId)
-                }
-
+                Fagsystem.KS -> familieKSSakClient.opprettRevurdering(fagsak.eksternId)
                 Fagsystem.BA -> throw Feil("Kan ikke opprette revurdering for BA enda")
             }
         } catch (e: Exception) {
