@@ -109,6 +109,7 @@ PDL_SCOPE: api://${DEPLOY_ENV}-fss.pdl.pdl-api/.default
 KABAL_SCOPE: api://${DEPLOY_ENV}-gcp.klage.kabal-api/.default
 FAMILIE_EF_SAK_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-ef-sak/.default
 FAMILIE_EF_PROXY_SCOPE: api://${DEPLOY_ENV}-fss.teamfamilie.familie-ef-proxy/.default
+FAMILIE_INTEGRASJONER_SCOPE: api://${DEPLOY_ENV}-fss.teamfamilie.familie-integrasjoner/.default
 
 
 spring:
