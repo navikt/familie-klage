@@ -112,7 +112,7 @@ class BehandlingService(
         val behandlingMedPåklagetVedtak = behandling.copy(
             påklagetVedtak = PåklagetVedtak(
                 påklagetVedtakstype = påklagetVedtakDto.påklagetVedtakstype,
-                påklagetVedtakDetaljer = påklagetVedtakDetaljer,
+                påklagetVedtakDetaljer = påklagetVedtakDetaljer
             )
         )
         behandlingRepository.update(behandlingMedPåklagetVedtak)
