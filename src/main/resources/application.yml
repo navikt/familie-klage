@@ -198,6 +198,8 @@ FAMILIE_EF_PROXY_URL: https://familie-ef-proxy.${ON_PREM_URL_ENV}-fss-pub.nais.i
 
 FAMILIE_KS_SAK_URL: http://familie-ks-sak
 
+FAMILIE_BA_SAK_URL: http://familie-ba-sak
+
 FAMILIE_BLANKETT_API_URL: http://familie-ef-blankett
 
 rolle:
