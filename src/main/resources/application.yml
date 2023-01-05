@@ -101,6 +101,15 @@ no.nav.security.jwt:
           client-id: ${AZURE_APP_CLIENT_ID}
           client-secret: ${AZURE_APP_CLIENT_SECRET}
           client-auth-method: client_secret_basic
+      familie-ks-sak:
+        resource-url: ${FAMILIE_KS_SAK_URL}
+        token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        scope: ${FAMILIE_KS_SAK_SCOPE}
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_basic
 
 
 
@@ -109,6 +118,7 @@ PDL_SCOPE: api://${DEPLOY_ENV}-fss.pdl.pdl-api/.default
 KABAL_SCOPE: api://${DEPLOY_ENV}-gcp.klage.kabal-api/.default
 FAMILIE_EF_SAK_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-ef-sak/.default
 FAMILIE_EF_PROXY_SCOPE: api://${DEPLOY_ENV}-fss.teamfamilie.familie-ef-proxy/.default
+FAMILIE_KS_SAK_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-ks-sak/.default
 FAMILIE_INTEGRASJONER_SCOPE: api://${DEPLOY_ENV}-fss.teamfamilie.familie-integrasjoner/.default
 
 
@@ -185,6 +195,8 @@ KABAL_URL: https://kabal-api.intern.nav.no
 FAMILIE_EF_SAK_URL: http://familie-ef-sak
 
 FAMILIE_EF_PROXY_URL: https://familie-ef-proxy.${ON_PREM_URL_ENV}-fss-pub.nais.io
+
+FAMILIE_KS_SAK_URL: http://familie-ks-sak
 
 FAMILIE_BLANKETT_API_URL: http://familie-ef-blankett
 
