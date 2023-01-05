@@ -21,21 +21,21 @@ class FamilieKSSakClient(
 
     fun hentVedtak(fagsystemEksternFagsakId: String): List<FagsystemVedtak> {
         val hentVedtakUri = UriComponentsBuilder.fromUri(familieKsSakUri)
-            .pathSegment("api/ekstern/vedtak/$fagsystemEksternFagsakId")
+            .pathSegment("api/ekstern/fagsaker/$fagsystemEksternFagsakId/vedtak")
             .build().toUri()
         return getForEntity<Ressurs<List<FagsystemVedtak>>>(hentVedtakUri).getDataOrThrow()
     }
 
     fun kanOppretteRevurdering(fagsystemEksternFagsakId: String): KanOppretteRevurderingResponse {
         val hentVedtakUri = UriComponentsBuilder.fromUri(familieKsSakUri)
-            .pathSegment("api/ekstern/behandling/kan-opprette-revurdering/$fagsystemEksternFagsakId")
+            .pathSegment("api/ekstern/fagsaker/$fagsystemEksternFagsakId/kan-opprette-revurdering-klage")
             .build().toUri()
         return getForEntity<Ressurs<KanOppretteRevurderingResponse>>(hentVedtakUri).getDataOrThrow()
     }
 
     fun opprettRevurdering(fagsystemEksternFagsakId: String): OpprettRevurderingResponse {
         val hentVedtakUri = UriComponentsBuilder.fromUri(familieKsSakUri)
-            .pathSegment("api/ekstern/behandling/opprett-revurdering-klage/$fagsystemEksternFagsakId")
+            .pathSegment("api/ekstern/fagsaker/$fagsystemEksternFagsakId/behandling/opprett-revurdering-klage/")
             .build().toUri()
         return postForEntity<Ressurs<OpprettRevurderingResponse>>(hentVedtakUri, emptyMap<String, String>()).getDataOrThrow()
     }
