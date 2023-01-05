@@ -2,7 +2,6 @@ package no.nav.familie.klage.integrasjoner
 
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
-import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.IkkeOpprettet
@@ -25,6 +24,7 @@ private val ukjentFeilVedOpprettRevurdering = OpprettRevurderingResponse(
 class FagsystemVedtakService(
     private val familieEFSakClient: FamilieEFSakClient,
     private val familieKSSakClient: FamilieKSSakClient,
+    private val familieBASakClient: FamilieBASakClient,
     private val fagsakService: FagsakService
 ) {
 
@@ -39,7 +39,7 @@ class FagsystemVedtakService(
     private fun hentFagsystemVedtak(fagsak: Fagsak): List<FagsystemVedtak> = when (fagsak.fagsystem) {
         Fagsystem.EF -> familieEFSakClient.hentVedtak(fagsak.eksternId)
         Fagsystem.KS -> familieKSSakClient.hentVedtak(fagsak.eksternId)
-        else -> throw Feil("Ikke implementert henting av vedtak for BA og KS fagsak=${fagsak.id}")
+        Fagsystem.BA -> familieBASakClient.hentVedtak(fagsak.eksternId)
     }
 
     fun hentFagsystemVedtakForPåklagetBehandlingId(
@@ -55,7 +55,7 @@ class FagsystemVedtakService(
         return when (fagsak.fagsystem) {
             Fagsystem.EF -> familieEFSakClient.kanOppretteRevurdering(fagsak.eksternId)
             Fagsystem.KS -> familieKSSakClient.kanOppretteRevurdering(fagsak.eksternId)
-            else -> throw Feil("Ikke implementert sjekk for å opprette revurdering for fagsak=${fagsak.id} fagsystem=${fagsak.fagsystem}")
+            Fagsystem.BA -> familieBASakClient.kanOppretteRevurdering(fagsak.eksternId)
         }
     }
 
@@ -65,7 +65,7 @@ class FagsystemVedtakService(
             when (fagsak.fagsystem) {
                 Fagsystem.EF -> familieEFSakClient.opprettRevurdering(fagsak.eksternId)
                 Fagsystem.KS -> familieKSSakClient.opprettRevurdering(fagsak.eksternId)
-                Fagsystem.BA -> throw Feil("Kan ikke opprette revurdering for BA enda")
+                Fagsystem.BA -> familieBASakClient.opprettRevurdering(fagsak.eksternId)
             }
         } catch (e: Exception) {
             val errorSuffix = "Feilet opprettelse av revurdering for behandling=$behandlingId eksternFagsakId=${fagsak.eksternId}"

@@ -18,10 +18,12 @@ internal class FagsystemVedtakServiceTest {
 
     private val efSakClient = mockk<FamilieEFSakClient>()
     private val ksSakClient = mockk<FamilieKSSakClient>()
+    private val baSakClient = mockk<FamilieBASakClient>()
     private val fagsakService = mockk<FagsakService>()
     private val service = FagsystemVedtakService(
         familieEFSakClient = efSakClient,
         familieKSSakClient = ksSakClient,
+        familieBASakClient = baSakClient,
         fagsakService = fagsakService
     )
 
@@ -29,7 +31,7 @@ internal class FagsystemVedtakServiceTest {
     private val fagsakBA = fagsak(stønadstype = Stønadstype.BARNETRYGD)
     private val fagsakKS = fagsak(stønadstype = Stønadstype.KONTANTSTØTTE)
 
-    private val behandlingEf = behandling(fagsakEF)
+    private val behandlingEF = behandling(fagsakEF)
     private val behandlingBA = behandling(fagsakBA)
     private val behandlingKS = behandling(fagsakKS)
 
@@ -39,12 +41,13 @@ internal class FagsystemVedtakServiceTest {
 
     @BeforeEach
     internal fun setUp() {
-        every { fagsakService.hentFagsakForBehandling(behandlingEf.id) } returns fagsakEF
+        every { fagsakService.hentFagsakForBehandling(behandlingEF.id) } returns fagsakEF
         every { fagsakService.hentFagsakForBehandling(behandlingBA.id) } returns fagsakBA
         every { fagsakService.hentFagsakForBehandling(behandlingKS.id) } returns fagsakKS
 
         every { efSakClient.hentVedtak(fagsakEF.eksternId) } returns listOf(vedtak)
         every { ksSakClient.hentVedtak(fagsakKS.eksternId) } returns listOf(vedtak)
+        every { baSakClient.hentVedtak(fagsakBA.eksternId) } returns listOf(vedtak)
     }
 
     @Nested
@@ -52,16 +55,16 @@ internal class FagsystemVedtakServiceTest {
 
         @Test
         internal fun `skal kalle på ef-klient for ef-behandling`() {
-            service.hentFagsystemVedtak(behandlingEf.id)
+            service.hentFagsystemVedtak(behandlingEF.id)
 
             verify { efSakClient.hentVedtak(any()) }
         }
 
         @Test
         internal fun `har ikke lagt inn støtte for barnetrygd`() {
-            assertThatThrownBy {
-                service.hentFagsystemVedtak(behandlingBA.id)
-            }.hasMessageContaining("Ikke implementert henting av vedtak for BA og KS ")
+            service.hentFagsystemVedtak(behandlingBA.id)
+
+            verify { baSakClient.hentVedtak(any()) }
         }
 
         @Test
@@ -77,7 +80,7 @@ internal class FagsystemVedtakServiceTest {
 
         @Test
         internal fun `skal returnere fagsystemVedtak`() {
-            val fagsystemVedtak = service.hentFagsystemVedtakForPåklagetBehandlingId(behandlingEf.id, påklagetBehandlingId)
+            val fagsystemVedtak = service.hentFagsystemVedtakForPåklagetBehandlingId(behandlingEF.id, påklagetBehandlingId)
 
             assertThat(fagsystemVedtak).isNotNull
             verify { efSakClient.hentVedtak(any()) }
@@ -86,7 +89,7 @@ internal class FagsystemVedtakServiceTest {
         @Test
         internal fun `skal kaste feil hvis fagsystemVedtak ikke finnes med forventet eksternBehandlingId`() {
             assertThatThrownBy {
-                service.hentFagsystemVedtakForPåklagetBehandlingId(behandlingEf.id, "finnes ikke")
+                service.hentFagsystemVedtakForPåklagetBehandlingId(behandlingEF.id, "finnes ikke")
             }.hasMessageContaining("Finner ikke vedtak for behandling")
         }
     }
