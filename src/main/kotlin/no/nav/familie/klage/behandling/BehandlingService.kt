@@ -137,7 +137,7 @@ class BehandlingService(
             eksternFagsystemBehandlingId = null,
             behandlingstype = "",
             resultat = "",
-            vedtakstidspunkt = påklagetVedtakDto.utledManuellVedtaksdato()?.atStartOfDay() ?: error("Mangler vedtaksdato")
+            vedtakstidspunkt = påklagetVedtakDto.manuellVedtaksdato?.atStartOfDay() ?: error("Mangler vedtaksdato")
         )
 
     private fun utledFagsystemType(påklagetVedtakDto: PåklagetVedtakDto): FagsystemType {

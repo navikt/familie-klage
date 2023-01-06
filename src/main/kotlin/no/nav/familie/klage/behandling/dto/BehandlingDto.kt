@@ -44,8 +44,6 @@ data class PåklagetVedtakDto(
     val eksternFagsystemBehandlingId: String?,
     val påklagetVedtakstype: PåklagetVedtakstype,
     val fagsystemVedtak: FagsystemVedtak? = null,
-    @Deprecated("Bruk manuell vedtaksdato")
-    val vedtaksdatoInfotrygd: LocalDate? = null,
     val manuellVedtaksdato: LocalDate? = null
 ) {
     fun erGyldig(): Boolean = when (eksternFagsystemBehandlingId) {
@@ -57,19 +55,9 @@ data class PåklagetVedtakDto(
 
     fun manglerVedtaksDato(): Boolean {
         if (påklagetVedtakstype == INFOTRYGD_TILBAKEKREVING || påklagetVedtakstype == UTESTENGELSE) {
-            return utledManuellVedtaksdato() == null
+            return manuellVedtaksdato == null
         }
         return false
-    }
-
-    fun utledManuellVedtaksdato(): LocalDate? {
-        return if (manuellVedtaksdato != null) {
-            manuellVedtaksdato
-        } else if (vedtaksdatoInfotrygd != null) {
-            vedtaksdatoInfotrygd
-        } else {
-            null
-        }
     }
 }
 
