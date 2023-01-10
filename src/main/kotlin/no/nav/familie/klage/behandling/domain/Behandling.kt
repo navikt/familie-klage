@@ -2,6 +2,7 @@ package no.nav.familie.klage.behandling.domain
 
 import no.nav.familie.klage.felles.domain.Sporbar
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
+import no.nav.familie.kontrakter.felles.Regelverk
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
@@ -38,7 +39,8 @@ data class PåklagetVedtakDetaljer(
     val eksternFagsystemBehandlingId: String?,
     val behandlingstype: String,
     val resultat: String,
-    val vedtakstidspunkt: LocalDateTime
+    val vedtakstidspunkt: LocalDateTime,
+    val regelverk: Regelverk
 )
 
 data class PåklagetVedtak(

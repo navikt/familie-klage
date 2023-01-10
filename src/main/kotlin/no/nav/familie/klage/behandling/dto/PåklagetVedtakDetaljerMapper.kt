@@ -10,7 +10,8 @@ fun FagsystemVedtak.tilPåklagetVedtakDetaljer() = PåklagetVedtakDetaljer(
     eksternFagsystemBehandlingId = this.eksternBehandlingId,
     fagsystemType = this.fagsystemType,
     resultat = this.resultat,
-    vedtakstidspunkt = this.vedtakstidspunkt
+    vedtakstidspunkt = this.vedtakstidspunkt,
+    regelverk = this.regelverk
 )
 
 fun PåklagetVedtakDetaljer.tilFagsystemVedtak() = FagsystemVedtak(
@@ -18,7 +19,8 @@ fun PåklagetVedtakDetaljer.tilFagsystemVedtak() = FagsystemVedtak(
     eksternBehandlingId = this.eksternFagsystemBehandlingId ?: "",
     fagsystemType = this.fagsystemType,
     resultat = this.resultat,
-    vedtakstidspunkt = this.vedtakstidspunkt
+    vedtakstidspunkt = this.vedtakstidspunkt,
+    regelverk = this.regelverk
 )
 
 fun PåklagetVedtak.tilDto(): PåklagetVedtakDto =

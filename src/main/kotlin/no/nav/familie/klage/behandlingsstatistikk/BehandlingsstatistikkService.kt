@@ -7,6 +7,7 @@ import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.domain.Vurdering
+import no.nav.familie.kontrakter.felles.Regelverk
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -65,6 +66,7 @@ class BehandlingsstatistikkService(
 
         val påklagetVedtakDetaljer = behandling.påklagetVedtak.påklagetVedtakDetaljer
 
+        val erUtenlandssak = behandling.påklagetVedtak.påklagetVedtakDetaljer?.regelverk == Regelverk.EØS
         return BehandlingsstatistikkKlage(
             behandlingId = behandling.eksternBehandlingId,
             personIdent = fagsak.hentAktivIdent(),
@@ -82,7 +84,7 @@ class BehandlingsstatistikkService(
             ansvarligEnhet = behandlendeEnhet,
             mottattTid = behandling.klageMottatt.atStartOfDay(zoneIdOslo),
             ferdigBehandletTid = ferdigBehandletTid(hendelse, hendelseTidspunkt),
-            sakUtland = "Nasjonal",
+            sakUtland = if (erUtenlandssak) "Utland" else "Nasjonal",
             behandlingResultat = behandlingResultat(hendelse, behandling),
             resultatBegrunnelse = resultatBegrunnelse(behandling, vurdering),
             behandlingMetode = "MANUELL",
