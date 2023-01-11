@@ -4,6 +4,7 @@ import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.familie.klage.integrasjoner.FamilieEFSakClient
+import no.nav.familie.kontrakter.felles.Regelverk
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.IkkeOpprettet
@@ -41,28 +42,32 @@ class FamilieEFSakClientMock {
                     "Førstegangsbehandling",
                     "Innvilget",
                     vedtakstidspunkt = LocalDateTime.of(2022, Month.AUGUST, 1, 8, 0),
-                    fagsystemType = FagsystemType.ORDNIÆR
+                    fagsystemType = FagsystemType.ORDNIÆR,
+                    regelverk = Regelverk.NASJONAL
                 ),
                 FagsystemVedtak(
                     "124",
                     "Revurdering",
                     "Opphørt",
                     vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 0),
-                    fagsystemType = FagsystemType.ORDNIÆR
+                    fagsystemType = FagsystemType.ORDNIÆR,
+                    regelverk = Regelverk.NASJONAL
                 ),
                 FagsystemVedtak(
                     "tilbake-123",
                     "Tilbakekreving",
                     "Full tilbakekreving",
                     vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 10, 2),
-                    fagsystemType = FagsystemType.TILBAKEKREVING
+                    fagsystemType = FagsystemType.TILBAKEKREVING,
+                    regelverk = Regelverk.NASJONAL
                 ),
                 FagsystemVedtak(
                     "sanksjon-123",
                     "Revurdering",
                     "Sanksjon 1 måned",
                     vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 15, 2),
-                    fagsystemType = FagsystemType.SANKSJON_1_MND
+                    fagsystemType = FagsystemType.SANKSJON_1_MND,
+                    regelverk = Regelverk.NASJONAL
                 )
             )
             // mocker annen hver
