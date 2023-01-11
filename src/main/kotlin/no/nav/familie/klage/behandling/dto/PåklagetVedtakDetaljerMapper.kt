@@ -21,7 +21,7 @@ fun PåklagetVedtakDetaljer.tilFagsystemVedtak() = FagsystemVedtak(
     fagsystemType = this.fagsystemType,
     resultat = this.resultat,
     vedtakstidspunkt = this.vedtakstidspunkt,
-    regelverk = this.regelverk ?: Regelverk.NASJONAL
+    regelverk = this.regelverk
 )
 
 fun PåklagetVedtak.tilDto(): PåklagetVedtakDto =
