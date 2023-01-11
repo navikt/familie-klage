@@ -40,7 +40,7 @@ data class PåklagetVedtakDetaljer(
     val behandlingstype: String,
     val resultat: String,
     val vedtakstidspunkt: LocalDateTime,
-    val regelverk: Regelverk
+    val regelverk: Regelverk? = Regelverk.NASJONAL
 )
 
 data class PåklagetVedtak(
