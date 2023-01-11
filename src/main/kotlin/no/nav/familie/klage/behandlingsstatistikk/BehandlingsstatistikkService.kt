@@ -66,7 +66,6 @@ class BehandlingsstatistikkService(
 
         val påklagetVedtakDetaljer = behandling.påklagetVedtak.påklagetVedtakDetaljer
 
-        val erUtenlandssak = behandling.påklagetVedtak.påklagetVedtakDetaljer?.regelverk == Regelverk.EØS
         return BehandlingsstatistikkKlage(
             behandlingId = behandling.eksternBehandlingId,
             personIdent = fagsak.hentAktivIdent(),
@@ -84,7 +83,7 @@ class BehandlingsstatistikkService(
             ansvarligEnhet = behandlendeEnhet,
             mottattTid = behandling.klageMottatt.atStartOfDay(zoneIdOslo),
             ferdigBehandletTid = ferdigBehandletTid(hendelse, hendelseTidspunkt),
-            sakUtland = if (erUtenlandssak) "Utland" else "Nasjonal",
+            sakUtland = behandling.påklagetVedtak.påklagetVedtakDetaljer?.regelverk.tilDVHSakNasjonalitet(),
             behandlingResultat = behandlingResultat(hendelse, behandling),
             resultatBegrunnelse = resultatBegrunnelse(behandling, vurdering),
             behandlingMetode = "MANUELL",
@@ -132,5 +131,11 @@ class BehandlingsstatistikkService(
             return "-5"
         }
         return verdi
+    }
+
+    private fun Regelverk?.tilDVHSakNasjonalitet(): String? = when (this) {
+        Regelverk.NASJONAL -> "Nasjonal"
+        Regelverk.EØS -> "Utland"
+        null -> null
     }
 }
