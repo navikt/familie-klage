@@ -233,14 +233,6 @@ object DomainUtil {
 
     )
 
-    fun påklagetVedtak(
-        påklagetVedtakstype: PåklagetVedtakstype = PåklagetVedtakstype.UTEN_VEDTAK,
-        påklagetVedtakDetaljer: PåklagetVedtakDetaljer? = null
-    ): PåklagetVedtak = PåklagetVedtak(
-        påklagetVedtakstype = påklagetVedtakstype,
-        påklagetVedtakDetaljer = påklagetVedtakDetaljer
-    )
-
     fun påklagetVedtakDetaljer(
         eksternFagsystemBehandlingId: String = "123",
         fagsystemType: FagsystemType = FagsystemType.ORDNIÆR,

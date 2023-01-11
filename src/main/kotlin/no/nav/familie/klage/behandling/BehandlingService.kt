@@ -176,9 +176,6 @@ class BehandlingService(
         taskService.save(taskService.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId)))
     }
 
-    fun erLåstForVidereBehandling(behandlingId: UUID) =
-        behandlingRepository.findByIdOrThrow(behandlingId).status.erLåstForVidereBehandling()
-
     private fun validerKanHenleggeBehandling(behandling: Behandling) {
         brukerfeilHvis(behandling.status.erLåstForVidereBehandling()) {
             "Kan ikke henlegge behandling med status ${behandling.status}"
