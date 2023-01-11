@@ -3,6 +3,7 @@ package no.nav.familie.klage.behandling.dto
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
+import no.nav.familie.kontrakter.felles.Regelverk
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 
 fun FagsystemVedtak.tilPåklagetVedtakDetaljer() = PåklagetVedtakDetaljer(
@@ -20,7 +21,7 @@ fun PåklagetVedtakDetaljer.tilFagsystemVedtak() = FagsystemVedtak(
     fagsystemType = this.fagsystemType,
     resultat = this.resultat,
     vedtakstidspunkt = this.vedtakstidspunkt,
-    regelverk = this.regelverk
+    regelverk = this.regelverk ?: Regelverk.NASJONAL
 )
 
 fun PåklagetVedtak.tilDto(): PåklagetVedtakDto =
