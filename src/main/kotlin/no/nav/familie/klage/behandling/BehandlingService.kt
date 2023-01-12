@@ -137,7 +137,8 @@ class BehandlingService(
             eksternFagsystemBehandlingId = null,
             behandlingstype = "",
             resultat = "",
-            vedtakstidspunkt = påklagetVedtakDto.manuellVedtaksdato?.atStartOfDay() ?: error("Mangler vedtaksdato")
+            vedtakstidspunkt = påklagetVedtakDto.manuellVedtaksdato?.atStartOfDay() ?: error("Mangler vedtaksdato"),
+            regelverk = påklagetVedtakDto.regelverk
         )
 
     private fun utledFagsystemType(påklagetVedtakDto: PåklagetVedtakDto): FagsystemType {
@@ -174,9 +175,6 @@ class BehandlingService(
         behandlingRepository.update(henlagtBehandling)
         taskService.save(taskService.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId)))
     }
-
-    fun erLåstForVidereBehandling(behandlingId: UUID) =
-        behandlingRepository.findByIdOrThrow(behandlingId).status.erLåstForVidereBehandling()
 
     private fun validerKanHenleggeBehandling(behandling: Behandling) {
         brukerfeilHvis(behandling.status.erLåstForVidereBehandling()) {
