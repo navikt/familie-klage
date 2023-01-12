@@ -3,7 +3,6 @@ package no.nav.familie.klage.behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
-import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
-import kotlin.test.assertFailsWith
 
 internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {
 
@@ -39,18 +37,16 @@ internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {
     }
 
     @Test
-    internal fun `skal ikke opprette ny klagebehandling dersom en behandling under arbeid allerede eksisterer på samme  fagsak`() {
+    internal fun `skal kunne opprette ny klagebehandling selv om en behandling under arbeid allerede eksisterer på samme  fagsak`() {
         val fagsak = DomainUtil.fagsakDomain().tilFagsak("1234")
         val behandling = behandling(fagsak = fagsak)
         testoppsettService.lagreFagsak(fagsak)
         testoppsettService.lagreBehandling(behandling)
         assertThat(behandlingService.hentBehandling(behandling.id).status).isEqualTo(BehandlingStatus.OPPRETTET)
 
-        val feil = assertFailsWith<ApiFeil> {
-            opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest(fagsak))
-        }
-        assertThat(feil.message)
-            .contains("Det eksisterer allerede en klagebehandling som ikke er ferdigstilt på fagsak med id=")
+        val nyBehandling = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest(fagsak))
+
+        assertThat(behandlingService.hentBehandling(nyBehandling).status).isEqualTo(BehandlingStatus.OPPRETTET)
     }
 
     @Test
