@@ -24,3 +24,4 @@ rolle:
 lenker:
   EF_SAK_FRONTEND_URL: "https://ensligmorellerfar.dev.intern.nav.no/ekstern"
   BA_SAK_FRONTEND_URL: "https://barnetrygd.dev.intern.nav.no"
+  KS_SAK_FRONTEND_URL: "https://kontantstotte.dev.intern.nav.no"

@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test
 internal class KabalServiceTest {
 
     val kabalClient = mockk<KabalClient>()
-    val lenkeConfig = LenkeConfig(efSakLenke = "BASEURL_EF", baSakLenke = "BASEURL_BA")
+    val lenkeConfig = LenkeConfig(efSakLenke = "BASEURL_EF", baSakLenke = "BASEURL_BA", ksSakLenke = "BASEURL_KS")
     val kabalService = KabalService(kabalClient, lenkeConfig)
     val fagsak = fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent("1")))
 
