@@ -9,6 +9,7 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.UTESTENGELSE
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.domain.Fagsak
+import no.nav.familie.kontrakter.felles.Regelverk
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
@@ -44,7 +45,8 @@ data class PåklagetVedtakDto(
     val eksternFagsystemBehandlingId: String?,
     val påklagetVedtakstype: PåklagetVedtakstype,
     val fagsystemVedtak: FagsystemVedtak? = null,
-    val manuellVedtaksdato: LocalDate? = null
+    val manuellVedtaksdato: LocalDate? = null,
+    val regelverk: Regelverk? = null
 ) {
     fun erGyldig(): Boolean = when (eksternFagsystemBehandlingId) {
         null -> påklagetVedtakstype != VEDTAK

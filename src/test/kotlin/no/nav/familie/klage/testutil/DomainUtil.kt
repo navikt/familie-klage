@@ -26,6 +26,7 @@ import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import no.nav.familie.klage.vurdering.dto.VurderingDto
+import no.nav.familie.kontrakter.felles.Regelverk
 import no.nav.familie.kontrakter.felles.journalpost.DokumentInfo
 import no.nav.familie.kontrakter.felles.journalpost.Dokumentstatus
 import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariant
@@ -232,24 +233,18 @@ object DomainUtil {
 
     )
 
-    fun påklagetVedtak(
-        påklagetVedtakstype: PåklagetVedtakstype = PåklagetVedtakstype.UTEN_VEDTAK,
-        påklagetVedtakDetaljer: PåklagetVedtakDetaljer? = null
-    ): PåklagetVedtak = PåklagetVedtak(
-        påklagetVedtakstype = påklagetVedtakstype,
-        påklagetVedtakDetaljer = påklagetVedtakDetaljer
-    )
-
     fun påklagetVedtakDetaljer(
         eksternFagsystemBehandlingId: String = "123",
         fagsystemType: FagsystemType = FagsystemType.ORDNIÆR,
-        vedtakstidspunkt: LocalDateTime = LocalDate.of(2022, 3, 1).atTime(8, 0)
+        vedtakstidspunkt: LocalDateTime = LocalDate.of(2022, 3, 1).atTime(8, 0),
+        regelverk: Regelverk = Regelverk.NASJONAL
     ) = PåklagetVedtakDetaljer(
         fagsystemType = fagsystemType,
         eksternFagsystemBehandlingId = eksternFagsystemBehandlingId,
         behandlingstype = "type",
         resultat = "resultat",
-        vedtakstidspunkt = vedtakstidspunkt
+        vedtakstidspunkt = vedtakstidspunkt,
+        regelverk = regelverk
     )
 
     fun påklagetVedtakDto(): PåklagetVedtakDto =
@@ -275,12 +270,14 @@ object DomainUtil {
         behandlingstype: String = "type",
         resultat: String = "resultat",
         vedtakstidspunkt: LocalDateTime = LocalDate.of(2022, 3, 1).atTime(8, 0),
-        fagsystemType: FagsystemType = FagsystemType.ORDNIÆR
+        fagsystemType: FagsystemType = FagsystemType.ORDNIÆR,
+        regelverk: Regelverk = Regelverk.NASJONAL
     ) = FagsystemVedtak(
         eksternBehandlingId = eksternBehandlingId,
         behandlingstype = behandlingstype,
         resultat = resultat,
         vedtakstidspunkt = vedtakstidspunkt,
-        fagsystemType = fagsystemType
+        fagsystemType = fagsystemType,
+        regelverk = regelverk
     )
 }

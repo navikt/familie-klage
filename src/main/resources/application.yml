@@ -246,5 +246,6 @@ prosessering:
 lenker:
   EF_SAK_FRONTEND_URL: "https://ensligmorellerfar.intern.nav.no/ekstern"
   BA_SAK_FRONTEND_URL: "https://barnetrygd.intern.nav.no"
+  KS_SAK_FRONTEND_URL: "https://kontantstotte.intern.nav.no"
 
 BEHANDLINGSSTATISTIKK_TOPIC: teamfamilie.aapen-klage-behandlingsstatistikk

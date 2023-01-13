@@ -11,6 +11,7 @@ import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
+import no.nav.familie.kontrakter.felles.Regelverk
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
@@ -40,7 +41,14 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
         val id = UUID.randomUUID()
 
         val påklagetVedtakDetaljer =
-            PåklagetVedtakDetaljer(FagsystemType.ORDNIÆR, "1234", "type", "resultat", LocalDateTime.now())
+            PåklagetVedtakDetaljer(
+                fagsystemType = FagsystemType.ORDNIÆR,
+                eksternFagsystemBehandlingId = "1234",
+                behandlingstype = "type",
+                resultat = "resultat",
+                vedtakstidspunkt = LocalDateTime.now(),
+                regelverk = Regelverk.NASJONAL
+            )
         val fagsystemRevurdering = FagsystemRevurdering(true, Opprettet("id", LocalDateTime.now()), null)
         val behandling = behandlingRepository.insert(
             behandling(

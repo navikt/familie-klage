@@ -47,7 +47,7 @@ class KabalService(
         val fagsystemUrl = when (fagsak.fagsystem) {
             Fagsystem.EF -> lenkeConfig.efSakLenke
             Fagsystem.BA -> lenkeConfig.baSakLenke
-            Fagsystem.KS -> error("Ikke implementert støtte for KS")
+            Fagsystem.KS -> lenkeConfig.ksSakLenke
         }
         val påklagetVedtakDetaljer = påklagetVedtak.påklagetVedtakDetaljer
         return if (påklagetVedtakDetaljer != null && påklagetVedtakDetaljer.fagsystemType == FagsystemType.ORDNIÆR && påklagetVedtakDetaljer.eksternFagsystemBehandlingId != null) {

@@ -61,7 +61,6 @@ class BehandlingService(
     }
 
     fun opprettBehandling(behandling: Behandling): Behandling {
-        validerKanOppretteBehandling(behandling.fagsakId)
         return behandlingRepository.insert(behandling)
     }
 
@@ -137,7 +136,8 @@ class BehandlingService(
             eksternFagsystemBehandlingId = null,
             behandlingstype = "",
             resultat = "",
-            vedtakstidspunkt = påklagetVedtakDto.manuellVedtaksdato?.atStartOfDay() ?: error("Mangler vedtaksdato")
+            vedtakstidspunkt = påklagetVedtakDto.manuellVedtaksdato?.atStartOfDay() ?: error("Mangler vedtaksdato"),
+            regelverk = påklagetVedtakDto.regelverk
         )
 
     private fun utledFagsystemType(påklagetVedtakDto: PåklagetVedtakDto): FagsystemType {
@@ -145,14 +145,6 @@ class BehandlingService(
             PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING -> FagsystemType.TILBAKEKREVING
             PåklagetVedtakstype.UTESTENGELSE -> FagsystemType.UTESTENGELSE
             else -> error("Kan ikke utlede fagsystemType for påklagetVedtakType ${påklagetVedtakDto.påklagetVedtakstype}")
-        }
-    }
-
-    private fun validerKanOppretteBehandling(fagsakId: UUID) {
-        val behandlinger = behandlingRepository.findByFagsakId(fagsakId)
-
-        brukerfeilHvis(behandlinger.any { it.status.erUnderArbeidAvSaksbehandler() }) {
-            "Det eksisterer allerede en klagebehandling som ikke er ferdigstilt på fagsak med id=$fagsakId"
         }
     }
 
@@ -174,9 +166,6 @@ class BehandlingService(
         behandlingRepository.update(henlagtBehandling)
         taskService.save(taskService.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId)))
     }
-
-    fun erLåstForVidereBehandling(behandlingId: UUID) =
-        behandlingRepository.findByIdOrThrow(behandlingId).status.erLåstForVidereBehandling()
 
     private fun validerKanHenleggeBehandling(behandling: Behandling) {
         brukerfeilHvis(behandling.status.erLåstForVidereBehandling()) {
