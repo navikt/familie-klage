@@ -70,9 +70,9 @@ enum class Hjemmel(val kabalHjemmel: KabalHjemmel) {
     KS_TOLV(KabalHjemmel.KONTSL_12),
     KS_TRETTEN(KabalHjemmel.KONTSL_13),
     KS_SEKSTEN(KabalHjemmel.KONTSL_16),
-    FT_EØS(KabalHjemmel.EOES_AVTALEN),
-    NORDISK(KabalHjemmel.NORDISK_KONVENSJON),
-    TA(KabalHjemmel.ANDRE_TRYGDEAVTALER),
-    FT_EØS_FOR_FEM(KabalHjemmel.EOES_883_2004_5),
-    FT_EØS_FOR_SEKS(KabalHjemmel.EOES_883_2004_6)
+    UTLAND_EØS(KabalHjemmel.EOES_AVTALEN),
+    UTLAND_NORDISK(KabalHjemmel.NORDISK_KONVENSJON),
+    UTLAND_TRYGDEAVTALER(KabalHjemmel.ANDRE_TRYGDEAVTALER),
+    UTLAND_EØS_FORORDNINGEN_FEM(KabalHjemmel.EOES_883_2004_5),
+    UTLAND_EØS_FORORDNINGEN_SEKS(KabalHjemmel.EOES_883_2004_6)
 }
