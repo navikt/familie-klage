@@ -61,7 +61,6 @@ class BehandlingService(
     }
 
     fun opprettBehandling(behandling: Behandling): Behandling {
-        validerKanOppretteBehandling(behandling.fagsakId)
         return behandlingRepository.insert(behandling)
     }
 
@@ -146,14 +145,6 @@ class BehandlingService(
             PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING -> FagsystemType.TILBAKEKREVING
             PåklagetVedtakstype.UTESTENGELSE -> FagsystemType.UTESTENGELSE
             else -> error("Kan ikke utlede fagsystemType for påklagetVedtakType ${påklagetVedtakDto.påklagetVedtakstype}")
-        }
-    }
-
-    private fun validerKanOppretteBehandling(fagsakId: UUID) {
-        val behandlinger = behandlingRepository.findByFagsakId(fagsakId)
-
-        brukerfeilHvis(behandlinger.any { it.status.erUnderArbeidAvSaksbehandler() }) {
-            "Det eksisterer allerede en klagebehandling som ikke er ferdigstilt på fagsak med id=$fagsakId"
         }
     }
 
