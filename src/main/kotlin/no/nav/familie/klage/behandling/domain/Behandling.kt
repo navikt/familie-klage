@@ -55,7 +55,8 @@ enum class PåklagetVedtakstype {
     INFOTRYGD_TILBAKEKREVING,
     UTEN_VEDTAK,
     IKKE_VALGT,
-    UTESTENGELSE
+    UTESTENGELSE,
+    INFOTRYGD_ORDINÆRT_VEDTAK
 }
 
 fun BehandlingStatus.erLåstForVidereBehandling() =

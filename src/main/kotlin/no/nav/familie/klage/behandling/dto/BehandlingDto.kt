@@ -4,6 +4,7 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.IKKE_VALGT
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.UTESTENGELSE
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
@@ -56,7 +57,7 @@ data class PåklagetVedtakDto(
     fun harTattStillingTil(): Boolean = påklagetVedtakstype != IKKE_VALGT
 
     fun manglerVedtaksDato(): Boolean {
-        if (påklagetVedtakstype == INFOTRYGD_TILBAKEKREVING || påklagetVedtakstype == UTESTENGELSE) {
+        if (påklagetVedtakstype == INFOTRYGD_TILBAKEKREVING || påklagetVedtakstype == UTESTENGELSE || påklagetVedtakstype == INFOTRYGD_ORDINÆRT_VEDTAK) {
             return manuellVedtaksdato == null
         }
         return false
