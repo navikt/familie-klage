@@ -8,7 +8,6 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType.BEHANDLING_FERDIGSTILT
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
-import no.nav.familie.klage.behandling.domain.erUnderArbeidAvSaksbehandler
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
