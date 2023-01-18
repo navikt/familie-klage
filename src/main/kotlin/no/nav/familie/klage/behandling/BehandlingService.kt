@@ -8,6 +8,7 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType.BEHANDLING_FERDIGSTILT
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
+import no.nav.familie.klage.behandling.domain.harManuellVedtaksdato
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
@@ -78,7 +79,11 @@ class BehandlingService(
         return Pair(fagsak.hentAktivIdent(), fagsak)
     }
 
-    fun oppdaterBehandlingMedResultat(behandlingId: UUID, behandlingsresultat: BehandlingResultat, opprettetRevurdering: FagsystemRevurdering?) {
+    fun oppdaterBehandlingMedResultat(
+        behandlingId: UUID,
+        behandlingsresultat: BehandlingResultat,
+        opprettetRevurdering: FagsystemRevurdering?
+    ) {
         val behandling = hentBehandling(behandlingId)
         if (behandling.resultat != BehandlingResultat.IKKE_SATT) {
             error("Kan ikke endre på et resultat som allerede er satt")
@@ -120,7 +125,7 @@ class BehandlingService(
         behandlingId: UUID,
         påklagetVedtakDto: PåklagetVedtakDto
     ): PåklagetVedtakDetaljer? {
-        if (påklagetVedtakDto.påklagetVedtakstype == PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING || påklagetVedtakDto.påklagetVedtakstype == PåklagetVedtakstype.UTESTENGELSE) {
+        if (påklagetVedtakDto.påklagetVedtakstype.harManuellVedtaksdato()) {
             return tilPåklagetVedtakDetaljerMedManuellDato(påklagetVedtakDto)
         }
         return påklagetVedtakDto.eksternFagsystemBehandlingId?.let {
@@ -143,6 +148,7 @@ class BehandlingService(
         return when (påklagetVedtakDto.påklagetVedtakstype) {
             PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING -> FagsystemType.TILBAKEKREVING
             PåklagetVedtakstype.UTESTENGELSE -> FagsystemType.UTESTENGELSE
+            PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK -> FagsystemType.ORDNIÆR
             else -> error("Kan ikke utlede fagsystemType for påklagetVedtakType ${påklagetVedtakDto.påklagetVedtakstype}")
         }
     }
