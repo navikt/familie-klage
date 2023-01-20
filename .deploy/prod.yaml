@@ -65,6 +65,7 @@ spec:
         - application: familie-ks-sak
         - application: familie-ba-sak
         - application: familie-ef-proxy
+          cluster: prod-fss
         - application: familie-brev
         - application: familie-ef-blankett
         - application: familie-dokument
@@ -77,6 +78,7 @@ spec:
         - host: familie-oppdrag.prod-fss-pub.nais.io
         - host: familie-integrasjoner.prod-fss-pub.nais.io
         - host: familie-ef-infotrygd.prod-fss-pub.nais.io
+        - host: familie-ef-proxy.prod-fss-pub.nais.io
   azure:
     application:
       enabled: true
