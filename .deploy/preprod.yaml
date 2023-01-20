@@ -59,12 +59,6 @@ spec:
         - application: familie-ba-sak
         - application: familie-prosessering
         - application: familie-prosessering-lokal
-        - application: familie-ef-proxy
-          namespace: teamfamilie
-          cluster: dev-fss
-        - application: familie-ef-proxy-test
-          namespace: teamfamilie
-          cluster: dev-fss
     outbound:
       rules:
         - application: familie-ef-sak

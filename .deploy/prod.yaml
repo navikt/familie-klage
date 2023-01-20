@@ -58,9 +58,6 @@ spec:
         - application: familie-ks-sak
         - application: familie-ba-sak
         - application: familie-prosessering
-        - application: familie-ef-proxy
-          namespace: teamfamilie
-          cluster: prod-fss
     outbound:
       rules:
         - application: familie-tilbake
