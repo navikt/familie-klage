@@ -55,8 +55,14 @@ enum class PåklagetVedtakstype {
     INFOTRYGD_TILBAKEKREVING,
     UTEN_VEDTAK,
     IKKE_VALGT,
-    UTESTENGELSE
+    UTESTENGELSE,
+    INFOTRYGD_ORDINÆRT_VEDTAK
 }
+
+fun PåklagetVedtakstype.harManuellVedtaksdato(): Boolean =
+    this == PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING ||
+        this == PåklagetVedtakstype.UTESTENGELSE ||
+        this == PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK
 
 fun BehandlingStatus.erLåstForVidereBehandling() =
     when (SikkerhetContext.hentSaksbehandler()) {
