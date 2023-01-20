@@ -2,7 +2,7 @@ package no.nav.familie.klage.behandling.dto
 
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
-import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
+import no.nav.familie.klage.behandling.domain.harManuellVedtaksdato
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 
 fun FagsystemVedtak.tilPåklagetVedtakDetaljer() = PåklagetVedtakDetaljer(
@@ -28,6 +28,6 @@ fun PåklagetVedtak.tilDto(): PåklagetVedtakDto =
         eksternFagsystemBehandlingId = this.påklagetVedtakDetaljer?.eksternFagsystemBehandlingId,
         påklagetVedtakstype = this.påklagetVedtakstype,
         fagsystemVedtak = this.påklagetVedtakDetaljer?.tilFagsystemVedtak(),
-        manuellVedtaksdato = if (påklagetVedtakstype == PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING || påklagetVedtakstype == PåklagetVedtakstype.UTESTENGELSE) this.påklagetVedtakDetaljer?.vedtakstidspunkt?.toLocalDate() else null,
+        manuellVedtaksdato = if (påklagetVedtakstype.harManuellVedtaksdato()) this.påklagetVedtakDetaljer?.vedtakstidspunkt?.toLocalDate() else null,
         regelverk = this.påklagetVedtakDetaljer?.regelverk
     )
