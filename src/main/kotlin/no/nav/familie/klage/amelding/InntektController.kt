@@ -1,4 +1,4 @@
-package no.nav.familie.ef.sak.amelding
+package no.nav.familie.klage.amelding
 
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
@@ -21,8 +21,8 @@ class InntektController(
     private val inntektService: InntektService
 ) {
     @GetMapping("fagsak/{fagsakId}/generer-url")
-    fun genererAInntektUrlFagsak(@PathVariable("fagsakId") fagsakId: UUID): Ressurs<String> {
+    fun genererAInntektUrl(@PathVariable("fagsakId") fagsakId: UUID): Ressurs<String> {
         tilgangService.validerTilgangTilFagsak(fagsakId, AuditLoggerEvent.ACCESS)
-        return success(inntektService.genererAInntektUrlFagsak(fagsakId))
+        return success(inntektService.genererAInntektUrlPåFagsak(fagsakId))
     }
 }
