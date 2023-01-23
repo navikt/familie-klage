@@ -43,6 +43,8 @@ enum class KabalHjemmel(
     FTRL_15_12("442", LovKilde.FOLKETRYGDLOVEN, "§ 15-12"),
     FTRL_15_13("443", LovKilde.FOLKETRYGDLOVEN, "§ 15-13"),
 
+    FTRL_22_12("1000.022.012", LovKilde.FOLKETRYGDLOVEN, "§ 22-12"),
+    FTRL_22_13("1000.022.013", LovKilde.FOLKETRYGDLOVEN, "§ 22-13"),
     FTRL_22_15("1000.022.015", LovKilde.FOLKETRYGDLOVEN, "§ 22-15"),
 
     EOES_AVTALEN("601", LovKilde.EØS_AVTALEN, "EØS-avtalen"),
