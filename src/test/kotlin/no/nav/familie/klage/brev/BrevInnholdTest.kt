@@ -32,7 +32,7 @@ internal class BrevInnholdTest {
 
         assertThat(brev.avsnitt.first().innhold).isEqualTo(
             "Vi har 01.01.2020 fått klagen din på vedtaket om overgangsstønad som ble gjort 05.11.2021, " +
-                "og kommet frem til at vedtaket ikke endres. NAV Klageinstans skal derfor vurdere saken din på nytt."
+                "og kommet frem til at vi ikke endrer vedtaket. NAV Klageinstans skal derfor vurdere saken din på nytt."
         )
     }
 
@@ -50,7 +50,7 @@ internal class BrevInnholdTest {
         )
         assertThat(brev.avsnitt.first().innhold).isEqualTo(
             "Vi har 01.01.2020 fått klagen din på vedtaket om tilbakebetaling av overgangsstønad som ble gjort 05.11.2021, " +
-                "og kommet frem til at vedtaket ikke endres. NAV Klageinstans skal derfor vurdere saken din på nytt."
+                "og kommet frem til at vi ikke endrer vedtaket. NAV Klageinstans skal derfor vurdere saken din på nytt."
         )
     }
 
@@ -68,7 +68,7 @@ internal class BrevInnholdTest {
         )
         assertThat(brev.avsnitt.first().innhold).isEqualTo(
             "Vi har 01.01.2020 fått klagen din på vedtaket om sanksjon som ble gjort 05.11.2021, " +
-                "og kommet frem til at vedtaket ikke endres. NAV Klageinstans skal derfor vurdere saken din på nytt."
+                "og kommet frem til at vi ikke endrer vedtaket. NAV Klageinstans skal derfor vurdere saken din på nytt."
         )
     }
 
