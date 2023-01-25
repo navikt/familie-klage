@@ -24,7 +24,7 @@ object BrevInnhold {
         klageMottatt: LocalDate
     ): FritekstBrevRequestDto {
         return FritekstBrevRequestDto(
-            overskrift = "Vi har sendt klagen din til NAV Klageinstans",
+            overskrift = "Vi har sendt klagen din til NAV Klageinstans Nord",
             navn = navn,
             personIdent = ident,
             avsnitt =
@@ -35,7 +35,7 @@ object BrevInnhold {
                     "Vi har ${klageMottatt.norskFormat()} fått klagen din på vedtaket om " +
                         "${visningsnavn(stønadstype, påklagetVedtakDetaljer)} som ble gjort " +
                         "${påklagetVedtakDetaljer.vedtakstidspunkt.norskFormat()}, " +
-                        "og kommet frem til at vedtaket ikke endres. NAV Klageinstans skal derfor vurdere saken din på nytt."
+                        "og kommet frem til at vi ikke endrer vedtaket. NAV Klageinstans skal derfor vurdere saken din på nytt."
                 ),
                 AvsnittDto(
                     deloverskrift = "",
@@ -46,7 +46,7 @@ object BrevInnhold {
                     innhold = instillingKlageinstans
                 ),
                 AvsnittDto(
-                    deloverskrift = "",
+                    deloverskrift = "Har du nye opplysninger?",
                     innhold =
                     "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via \n${stønadstype.klageUrl()}."
                 ),
@@ -169,7 +169,7 @@ object BrevInnhold {
     private fun Stønadstype.lesMerUrl() = when (this) {
         Stønadstype.OVERGANGSSTØNAD,
         Stønadstype.BARNETILSYN,
-        Stønadstype.SKOLEPENGER -> "nav.no/familie/alene-med-barn"
+        Stønadstype.SKOLEPENGER -> "nav.no/alene-med-barn"
         Stønadstype.BARNETRYGD -> "nav.no/barnetrygd"
         Stønadstype.KONTANTSTØTTE -> "nav.no/kontantstotte"
     }
