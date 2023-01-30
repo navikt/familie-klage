@@ -34,7 +34,7 @@ data class BehandlingDto(
     val eksternFagsystemFagsakId: String,
     val fagsystem: Fagsystem,
     val klageMottatt: LocalDate,
-    val fagsystemRevurdering: FagsystemRevurdering?
+    val fagsystemRevurdering: FagsystemRevurdering?,
 )
 
 /**
@@ -45,7 +45,7 @@ data class PåklagetVedtakDto(
     val påklagetVedtakstype: PåklagetVedtakstype,
     val fagsystemVedtak: FagsystemVedtak? = null,
     val manuellVedtaksdato: LocalDate? = null,
-    val regelverk: Regelverk? = null
+    val regelverk: Regelverk? = null,
 ) {
     fun erGyldig(): Boolean = when (eksternFagsystemBehandlingId) {
         null -> påklagetVedtakstype != VEDTAK
@@ -77,5 +77,5 @@ fun Behandling.tilDto(fagsak: Fagsak, klageinstansResultat: List<KlageinstansRes
         klageinstansResultat = klageinstansResultat,
         påklagetVedtak = this.påklagetVedtak.tilDto(),
         klageMottatt = this.klageMottatt,
-        fagsystemRevurdering = this.fagsystemRevurdering
+        fagsystemRevurdering = this.fagsystemRevurdering,
     )

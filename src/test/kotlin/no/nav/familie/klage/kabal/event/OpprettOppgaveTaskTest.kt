@@ -50,9 +50,9 @@ class OpprettOppgaveTaskTest : OppslagSpringRunnerTest() {
         val fagsak = testoppsettService.lagreFagsak(
             fagsakDomain().tilFagsakMedPerson(
                 setOf(
-                    PersonIdent(personIdent)
-                )
-            )
+                    PersonIdent(personIdent),
+                ),
+            ),
         )
         val behandling = behandling(fagsak = fagsak)
         behandlingRepository.insert(behandling)

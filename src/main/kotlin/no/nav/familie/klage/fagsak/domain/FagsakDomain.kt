@@ -17,7 +17,7 @@ data class Fagsak(
     val eksternId: String,
     val stønadstype: Stønadstype,
     val fagsystem: Fagsystem,
-    val sporbar: Sporbar
+    val sporbar: Sporbar,
 ) {
     fun hentAktivIdent(): String {
         return personIdenter.maxByOrNull { it.sporbar.endret.endretTid }?.ident ?: error("Fant ingen ident på fagsak $id")
@@ -34,7 +34,7 @@ data class FagsakDomain(
     val fagsystem: Fagsystem,
     val eksternId: String,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
-    val sporbar: Sporbar = Sporbar()
+    val sporbar: Sporbar = Sporbar(),
 ) {
     fun tilFagsakMedPerson(identer: Set<PersonIdent>): Fagsak =
         Fagsak(
@@ -44,7 +44,7 @@ data class FagsakDomain(
             eksternId = eksternId,
             stønadstype = stønadstype,
             fagsystem = fagsystem,
-            sporbar = sporbar
+            sporbar = sporbar,
         )
 }
 

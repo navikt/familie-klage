@@ -14,10 +14,10 @@ class FamilieDokumentClient(
     @Value("\${FAMILIE_DOKUMENT_URL}")
     private val familieDokumentUrl: String,
     @Qualifier("utenAuth")
-    private val restOperations: RestOperations
+    private val restOperations: RestOperations,
 ) : AbstractRestClient(
     restOperations,
-    "familie.dokument"
+    "familie.dokument",
 ) {
 
     fun genererPdfFraHtml(html: String): ByteArray {
@@ -29,7 +29,7 @@ class FamilieDokumentClient(
             httpHeaders = HttpHeaders().apply {
                 this.contentType = MediaType.TEXT_HTML
                 this.accept = listOf(MediaType.APPLICATION_PDF)
-            }
+            },
         )
     }
 

@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
             "mock-ef-sak",
             "mock-dokument",
             "mock-kabal",
-            "mock-ereg"
+            "mock-ereg",
         )
         .run(*args)
 }

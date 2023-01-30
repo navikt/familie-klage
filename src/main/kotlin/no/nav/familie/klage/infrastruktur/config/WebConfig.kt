@@ -18,7 +18,7 @@ class WebConfig(private val tilgangInterceptor: TilgangInterceptor) : WebMvcConf
             "/swagger-ui/**",
             "/swagger-ui",
             "/v2/api-docs/**",
-            "/v2/api-docs"
+            "/v2/api-docs",
         )
 
     override fun addInterceptors(registry: InterceptorRegistry) {

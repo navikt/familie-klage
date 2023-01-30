@@ -12,7 +12,7 @@ data class PersonopplysningerDto(
     val dødsdato: LocalDate?,
     val fullmakt: List<FullmaktDto>,
     val egenAnsatt: Boolean,
-    val vergemål: List<VergemålDto>
+    val vergemål: List<VergemålDto>,
 )
 
 data class FullmaktDto(
@@ -20,7 +20,7 @@ data class FullmaktDto(
     val gyldigTilOgMed: LocalDate,
     val motpartsPersonident: String,
     val navn: String?,
-    val områder: List<String>
+    val områder: List<String>,
 )
 
 @Suppress("unused") // Kopi fra PDL
@@ -29,7 +29,8 @@ enum class Adressebeskyttelse {
     STRENGT_FORTROLIG,
     STRENGT_FORTROLIG_UTLAND,
     FORTROLIG,
-    UGRADERT;
+    UGRADERT,
+    ;
 
     fun erStrengtFortrolig() = this == STRENGT_FORTROLIG || this == STRENGT_FORTROLIG_UTLAND
 }
@@ -39,7 +40,7 @@ enum class Kjønn {
 
     KVINNE,
     MANN,
-    UKJENT
+    UKJENT,
 }
 
 data class VergemålDto(
@@ -47,7 +48,7 @@ data class VergemålDto(
     val type: String?,
     val motpartsPersonident: String?,
     val navn: String?,
-    val omfang: String?
+    val omfang: String?,
 )
 
 @Suppress("unused")
@@ -61,7 +62,8 @@ enum class Folkeregisterpersonstatus(private val pdlStatus: String) {
     FØDSELSREGISTRERT("foedselsregistrert"),
     MIDLERTIDIG("midlertidig"),
     INAKTIV("inaktiv"),
-    UKJENT("ukjent");
+    UKJENT("ukjent"),
+    ;
 
     companion object {
 

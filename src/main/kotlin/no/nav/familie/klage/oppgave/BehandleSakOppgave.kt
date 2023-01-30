@@ -10,5 +10,5 @@ data class BehandleSakOppgave(
     val behandlingId: UUID,
     val oppgaveId: Long,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
-    val sporbar: Sporbar = Sporbar()
+    val sporbar: Sporbar = Sporbar(),
 )

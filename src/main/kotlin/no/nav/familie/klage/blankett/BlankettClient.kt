@@ -14,10 +14,10 @@ class BlankettClient(
     @Value("\${FAMILIE_BLANKETT_API_URL}")
     private val familieBlankettUri: String,
     @Qualifier("utenAuth")
-    private val restOperations: RestOperations
+    private val restOperations: RestOperations,
 ) : AbstractPingableRestClient(
     restOperations,
-    "familie.blankett"
+    "familie.blankett",
 ) {
 
     private val pdfUrl = URI.create("$familieBlankettUri/api/klage/pdf")

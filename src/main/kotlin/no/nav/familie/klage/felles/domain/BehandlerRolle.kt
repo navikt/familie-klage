@@ -5,5 +5,5 @@ enum class BehandlerRolle(val nivå: Int) {
     BESLUTTER(3),
     SAKSBEHANDLER(2),
     VEILEDER(1),
-    UKJENT(0)
+    UKJENT(0),
 }

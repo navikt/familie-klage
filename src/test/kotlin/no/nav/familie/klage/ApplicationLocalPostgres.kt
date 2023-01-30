@@ -28,7 +28,7 @@ fun main(args: Array<String>) {
             "mock-ef-sak",
             "mock-kabal",
             "mock-ereg",
-            "mock-inntekt"
+            "mock-inntekt",
         )
         .properties(properties)
         .run(*args)

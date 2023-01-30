@@ -54,13 +54,13 @@ object FormUtil {
     private fun Form.alleSvarBortsettFraFrist() = setOf(
         klageKonkret,
         klagePart,
-        klageSignert
+        klageSignert,
     )
 
     private fun Form.alleSvar() = setOf(
         klageKonkret,
         klagePart,
         klageSignert,
-        klagefristOverholdt
+        klagefristOverholdt,
     )
 }

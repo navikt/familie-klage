@@ -6,7 +6,7 @@ data class OrganisasjonDto(
     val organisasjonsnummer: String,
     val type: String,
     val navn: Navn,
-    val organisasjonDetaljer: OrganisasjonDetaljer
+    val organisasjonDetaljer: OrganisasjonDetaljer,
 )
 
 data class Navn(
@@ -17,17 +17,17 @@ data class Navn(
     val navnelinje3: String?,
     val navnelinje4: String?,
     val navnelinje5: String?,
-    val redigertnavn: String?
+    val redigertnavn: String?,
 )
 
 data class Bruksperiode(
     val fom: LocalDate?,
-    val tom: LocalDate?
+    val tom: LocalDate?,
 )
 
 data class Gyldighetsperiode(
     val fom: LocalDate?,
-    val tom: LocalDate?
+    val tom: LocalDate?,
 )
 
 data class OrganisasjonDetaljer(
@@ -36,13 +36,13 @@ data class OrganisasjonDetaljer(
     val navn: List<Navn>?,
     val forretningsAdresser: List<ForretningsAdresse>?,
     val postAdresser: List<Postadresse>?,
-    val sistEndret: LocalDate?
+    val sistEndret: LocalDate?,
 )
 
 data class Enhetstype(
     val bruksperiode: Bruksperiode?,
     val enhetstype: String?,
-    val gyldighetsperiode: Gyldighetsperiode?
+    val gyldighetsperiode: Gyldighetsperiode?,
 )
 
 data class ForretningsAdresse(
@@ -54,7 +54,7 @@ data class ForretningsAdresse(
     val kommunenr: String?,
     val landkode: String?,
     val postnummer: String?,
-    val poststed: String?
+    val poststed: String?,
 )
 
 data class Postadresse(
@@ -66,5 +66,5 @@ data class Postadresse(
     val kommunenr: String?,
     val landkode: String?,
     val postnummer: String?,
-    val poststed: String?
+    val poststed: String?,
 )

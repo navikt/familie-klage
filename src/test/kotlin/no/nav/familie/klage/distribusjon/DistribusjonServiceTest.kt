@@ -45,7 +45,7 @@ internal class DistribusjonServiceTest {
         every {
             familieIntegrasjonerClient.arkiverDokument(
                 capture(journalpostSlot),
-                any()
+                any(),
             )
         } returns ArkiverDokumentResponse("journalpostId", false)
     }
@@ -91,7 +91,7 @@ internal class DistribusjonServiceTest {
         every {
             familieIntegrasjonerClient.distribuerBrev(
                 capture(journalpostSlot),
-                capture(distribusjonstypeSlot)
+                capture(distribusjonstypeSlot),
             )
         } returns "distribusjonsnummer"
 

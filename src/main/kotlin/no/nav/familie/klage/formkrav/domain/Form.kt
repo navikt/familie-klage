@@ -16,18 +16,18 @@ data class Form(
     val saksbehandlerBegrunnelse: String? = null,
     val brevtekst: String? = null,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
-    val sporbar: Sporbar = Sporbar()
+    val sporbar: Sporbar = Sporbar(),
 )
 
 enum class FormkravFristUnntak {
     UNNTAK_KAN_IKKE_LASTES,
     UNNTAK_SÆRLIG_GRUNN,
     IKKE_UNNTAK,
-    IKKE_SATT;
+    IKKE_SATT,
 }
 
 enum class FormVilkår {
     OPPFYLT,
     IKKE_OPPFYLT,
-    IKKE_SATT
+    IKKE_SATT,
 }

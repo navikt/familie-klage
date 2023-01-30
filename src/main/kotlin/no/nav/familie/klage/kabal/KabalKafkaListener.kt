@@ -23,7 +23,7 @@ class KabalKafkaListener(val behandlingEventService: BehandlingEventService) : C
     @KafkaListener(
         id = "familie-klage",
         topics = ["klage.behandling-events.v1"],
-        autoStartup = "\${kafka.enabled:true}"
+        autoStartup = "\${kafka.enabled:true}",
     )
     fun listen(behandlingEventJson: String) {
         secureLogger.info("Klage-kabal-event: $behandlingEventJson")
@@ -56,7 +56,7 @@ data class BehandlingEvent(
     val kilde: String,
     val kabalReferanse: String,
     val type: BehandlingEventType,
-    val detaljer: BehandlingDetaljer
+    val detaljer: BehandlingDetaljer,
 ) {
     fun mottattEllerAvsluttetTidspunkt(): LocalDateTime {
         val feilmelding = "Burde hatt behandlingdetaljer for event fra kabal av type $type"
@@ -91,7 +91,7 @@ data class BehandlingEvent(
 data class BehandlingDetaljer(
     val klagebehandlingAvsluttet: KlagebehandlingAvsluttetDetaljer? = null,
     val ankebehandlingOpprettet: AnkebehandlingOpprettetDetaljer? = null,
-    val ankebehandlingAvsluttet: AnkebehandlingAvsluttetDetaljer? = null
+    val ankebehandlingAvsluttet: AnkebehandlingAvsluttetDetaljer? = null,
 ) {
 
     fun journalpostReferanser(): List<String> {
@@ -109,7 +109,7 @@ data class BehandlingDetaljer(
 data class KlagebehandlingAvsluttetDetaljer(
     val avsluttet: LocalDateTime,
     val utfall: KlageinstansUtfall,
-    val journalpostReferanser: List<String>
+    val journalpostReferanser: List<String>,
 ) {
 
     fun oppgaveTekst(): String {
@@ -120,7 +120,7 @@ data class KlagebehandlingAvsluttetDetaljer(
 }
 
 data class AnkebehandlingOpprettetDetaljer(
-    val mottattKlageinstans: LocalDateTime
+    val mottattKlageinstans: LocalDateTime,
 ) {
 
     fun oppgaveTekst(): String {
@@ -131,7 +131,7 @@ data class AnkebehandlingOpprettetDetaljer(
 data class AnkebehandlingAvsluttetDetaljer(
     val avsluttet: LocalDateTime,
     val utfall: KlageinstansUtfall,
-    val journalpostReferanser: List<String>
+    val journalpostReferanser: List<String>,
 ) {
 
     fun oppgaveTekst(): String {

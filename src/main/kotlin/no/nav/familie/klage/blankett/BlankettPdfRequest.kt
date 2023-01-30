@@ -14,7 +14,7 @@ data class BlankettPdfRequest(
     val behandling: BlankettPdfBehandling,
     val personopplysninger: PersonopplysningerDto,
     val formkrav: BlankettFormDto,
-    val vurdering: BlankettVurderingDto?
+    val vurdering: BlankettVurderingDto?,
 )
 
 data class BlankettPdfBehandling(
@@ -22,18 +22,18 @@ data class BlankettPdfBehandling(
     val stønadstype: Stønadstype,
     val klageMottatt: LocalDate,
     val resultat: BehandlingResultat,
-    val påklagetVedtak: BlankettPåklagetVedtakDto?
+    val påklagetVedtak: BlankettPåklagetVedtakDto?,
 )
 
 data class BlankettPåklagetVedtakDto(
     val behandlingstype: String,
     val resultat: String,
-    val vedtakstidspunkt: LocalDateTime
+    val vedtakstidspunkt: LocalDateTime,
 )
 
 data class PersonopplysningerDto(
     val navn: String,
-    val personIdent: String
+    val personIdent: String,
 )
 
 data class BlankettFormDto(
@@ -43,7 +43,7 @@ data class BlankettFormDto(
     val klagefristOverholdtUnntak: FormkravFristUnntak?,
     val klageSignert: FormVilkår,
     val saksbehandlerBegrunnelse: String?,
-    val brevtekst: String?
+    val brevtekst: String?,
 )
 
 data class BlankettVurderingDto(
@@ -52,5 +52,5 @@ data class BlankettVurderingDto(
     val begrunnelseOmgjøring: String?,
     val hjemmel: Hjemmel?,
     val innstillingKlageinstans: String?,
-    val interntNotat: String?
+    val interntNotat: String?,
 )

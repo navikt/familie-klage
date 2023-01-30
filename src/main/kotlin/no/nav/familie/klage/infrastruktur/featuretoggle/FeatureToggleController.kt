@@ -15,7 +15,7 @@ class FeatureToggleController(private val featureToggleService: FeatureToggleSer
 
     private val funksjonsbrytere = setOf(
         Toggle.OPPRETT_REVURDERING,
-        Toggle.TILBAKEKREVING_INFOTRYGD_PÅKLAGET_VEDTAK
+        Toggle.TILBAKEKREVING_INFOTRYGD_PÅKLAGET_VEDTAK,
     )
 
     @GetMapping
@@ -26,7 +26,7 @@ class FeatureToggleController(private val featureToggleService: FeatureToggleSer
     @GetMapping("/{toggleId}")
     fun sjekkFunksjonsbryter(
         @PathVariable toggleId: String,
-        @RequestParam("defaultverdi") defaultVerdi: Boolean? = false
+        @RequestParam("defaultverdi") defaultVerdi: Boolean? = false,
     ): Boolean {
         val toggle = Toggle.byToggleId(toggleId)
         return featureToggleService.isEnabled(toggle, defaultVerdi ?: false)

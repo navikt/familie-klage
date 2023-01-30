@@ -22,7 +22,7 @@ class PersonopplysningerService(
     private val behandlingService: BehandlingService,
     private val fagsakService: FagsakService,
     private val pdlClient: PdlClient,
-    private val integrasjonerClient: PersonopplysningerIntegrasjonerClient
+    private val integrasjonerClient: PersonopplysningerIntegrasjonerClient,
 ) {
     @Cacheable("hentPersonopplysninger", cacheManager = "shortCache")
     fun hentPersonopplysninger(behandlingId: UUID): PersonopplysningerDto {
@@ -43,7 +43,7 @@ class PersonopplysningerService(
             dødsdato = pdlSøker.dødsfall.gjeldende()?.dødsdato,
             fullmakt = mapFullmakt(pdlSøker, andreParterNavn),
             egenAnsatt = egenAnsatt,
-            vergemål = mapVergemål(pdlSøker)
+            vergemål = mapVergemål(pdlSøker),
         )
     }
 
@@ -66,7 +66,7 @@ class PersonopplysningerService(
             gyldigTilOgMed = it.gyldigTilOgMed,
             motpartsPersonident = it.motpartsPersonident,
             navn = andreParterNavn[it.motpartsPersonident] ?: error("Finner ikke navn til ${it.motpartsPersonident}"),
-            områder = it.omraader.map { område -> mapOmråde(område) }
+            områder = it.omraader.map { område -> mapOmråde(område) },
         )
     }.sortedByDescending(FullmaktDto::gyldigFraOgMed)
 
@@ -77,7 +77,7 @@ class PersonopplysningerService(
                 type = it.type,
                 motpartsPersonident = it.vergeEllerFullmektig.motpartsPersonident,
                 navn = it.vergeEllerFullmektig.navn?.visningsnavn(),
-                omfang = it.vergeEllerFullmektig.omfang
+                omfang = it.vergeEllerFullmektig.omfang,
             )
         }
 

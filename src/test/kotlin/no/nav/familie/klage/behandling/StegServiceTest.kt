@@ -35,7 +35,7 @@ internal class StegServiceTest {
     val stegService = StegService(
         behandlingRepository,
         behandlingshistorikkService,
-        tilgangService
+        tilgangService,
     )
     val behandlingId = UUID.randomUUID()
     val behandling = behandling(id = behandlingId)
@@ -113,7 +113,7 @@ internal class StegServiceTest {
             stegService.oppdaterSteg(
                 behandlingId,
                 StegType.FORMKRAV,
-                StegType.VURDERING
+                StegType.VURDERING,
             )
         }
         assertThat(feil.frontendFeilmelding).contains("Saksbehandler har ikke tilgang til å oppdatere behandlingssteg")
@@ -127,7 +127,7 @@ internal class StegServiceTest {
             stegService.oppdaterSteg(
                 UUID.randomUUID(),
                 StegType.VURDERING,
-                StegType.BREV
+                StegType.BREV,
             )
         }
         assertThat(feil.frontendFeilmelding).contains("Behandlingen er låst for videre behandling")

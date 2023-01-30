@@ -13,7 +13,7 @@ class BehandlingshistorikkService(private val behandlingshistorikkRepository: Be
 
     fun opprettBehandlingshistorikk(behandlingId: UUID, steg: StegType): Behandlingshistorikk {
         return behandlingshistorikkRepository.insert(
-            Behandlingshistorikk(behandlingId = behandlingId, steg = steg)
+            Behandlingshistorikk(behandlingId = behandlingId, steg = steg),
         )
     }
 }

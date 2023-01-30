@@ -24,10 +24,10 @@ object PdlTestdata {
                 ident = ident,
                 code = "ok",
                 person = PdlNavn(
-                    navn = navn
-                )
-            )
-        )
+                    navn = navn,
+                ),
+            ),
+        ),
     )
 
     val pdlSøkerData =
@@ -43,8 +43,8 @@ object PdlTestdata {
                         LocalDate.now(),
                         "",
                         MotpartsRolle.FULLMAKTSGIVER,
-                        listOf("")
-                    )
+                        listOf(""),
+                    ),
                 ),
                 navn,
                 listOf(
@@ -56,10 +56,10 @@ object PdlTestdata {
                             "",
                             Personnavn("", "", ""),
                             "",
-                            true
-                        )
-                    )
-                )
-            )
+                            true,
+                        ),
+                    ),
+                ),
+            ),
         )
 }

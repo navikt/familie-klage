@@ -14,11 +14,11 @@ import java.util.UUID
 @Service
 @TaskStepBeskrivelse(
     taskStepType = DistribuerBrevTask.TYPE,
-    beskrivelse = "Distribuer brev etter klagebehandling"
+    beskrivelse = "Distribuer brev etter klagebehandling",
 )
 class DistribuerBrevTask(
     private val brevService: BrevService,
-    private val distribusjonService: DistribusjonService
+    private val distribusjonService: DistribusjonService,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
@@ -40,7 +40,7 @@ class DistribuerBrevTask(
     private fun distribuerOgLagreJournalposter(
         behandlingId: UUID,
         acc: List<BrevmottakereJournalpost>,
-        journalpost: BrevmottakereJournalpost
+        journalpost: BrevmottakereJournalpost,
     ): List<BrevmottakereJournalpost> {
         return if (journalpost.distribusjonId == null) {
             val distribusjonId = distribusjonService.distribuerBrev(journalpost.journalpostId)
@@ -60,7 +60,7 @@ class DistribuerBrevTask(
 
     private fun validerHarJournalposter(
         behandlingId: UUID,
-        journalposter: List<BrevmottakereJournalpost>
+        journalposter: List<BrevmottakereJournalpost>,
     ) {
         feilHvis(journalposter.isEmpty()) {
             "Mangler journalposter for behandling=$behandlingId"

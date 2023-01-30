@@ -16,7 +16,7 @@ import java.net.URI
 @Component
 class FamilieEFSakClient(
     @Qualifier("azure") restOperations: RestOperations,
-    @Value("\${FAMILIE_EF_SAK_URL}") private val familieEfSakUri: URI
+    @Value("\${FAMILIE_EF_SAK_URL}") private val familieEfSakUri: URI,
 ) : AbstractRestClient(restOperations, "familie.ef.sak") {
 
     fun hentVedtak(fagsystemEksternFagsakId: String): List<FagsystemVedtak> {

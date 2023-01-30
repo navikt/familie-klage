@@ -46,7 +46,7 @@ internal class BrevServiceTest : OppslagSpringRunnerTest() {
     private val ferdigstiltBehandling = behandling(
         fagsakFerdigstiltBehandling,
         status = BehandlingStatus.FERDIGSTILT,
-        påklagetVedtak = påklagetVedtak
+        påklagetVedtak = påklagetVedtak,
     )
     private val fagsakBehandlingUtenPåklagetVedtak = fagsak(identer = setOf(PersonIdent("11010199999")))
     private val behandlingUtenPåklagetVedtak =

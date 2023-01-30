@@ -17,11 +17,11 @@ import java.util.UUID
     taskStepType = BehandlingsstatistikkTask.TYPE,
     beskrivelse = "Sender behandlingsstatistikk til iverksett",
     maxAntallFeil = 4,
-    settTilManuellOppfølgning = true
+    settTilManuellOppfølgning = true,
 )
 class BehandlingsstatistikkTask(
     private val behandlingStatistikkService: BehandlingsstatistikkService,
-    private val featureToggleService: FeatureToggleService
+    private val featureToggleService: FeatureToggleService,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
@@ -31,7 +31,7 @@ class BehandlingsstatistikkTask(
             behandlingId,
             hendelse,
             hendelseTidspunkt,
-            gjeldendeSaksbehandler
+            gjeldendeSaksbehandler,
         )
     }
 
@@ -42,7 +42,7 @@ class BehandlingsstatistikkTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.MOTTATT,
                 hendelseTidspunkt = LocalDateTime.now(),
-                gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler()
+                gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(),
             )
 
         fun opprettPåbegyntTask(behandlingId: UUID): Task =
@@ -50,7 +50,7 @@ class BehandlingsstatistikkTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.PÅBEGYNT,
                 hendelseTidspunkt = LocalDateTime.now(),
-                gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true)
+                gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true),
             )
 
         fun opprettFerdigTask(behandlingId: UUID): Task =
@@ -58,26 +58,26 @@ class BehandlingsstatistikkTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.FERDIG,
                 hendelseTidspunkt = LocalDateTime.now(),
-                gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true)
+                gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true),
             )
 
         fun opprettSendtTilKATask(
             behandlingId: UUID,
             hendelseTidspunkt: LocalDateTime = LocalDateTime.now(),
-            gjeldendeSaksbehandler: String = SikkerhetContext.hentSaksbehandler(true)
+            gjeldendeSaksbehandler: String = SikkerhetContext.hentSaksbehandler(true),
         ): Task =
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.SENDT_TIL_KA,
                 hendelseTidspunkt = hendelseTidspunkt,
-                gjeldendeSaksbehandler = gjeldendeSaksbehandler
+                gjeldendeSaksbehandler = gjeldendeSaksbehandler,
             )
 
         private fun opprettTask(
             behandlingId: UUID,
             hendelse: BehandlingsstatistikkHendelse,
             hendelseTidspunkt: LocalDateTime = LocalDateTime.now(),
-            gjeldendeSaksbehandler: String
+            gjeldendeSaksbehandler: String,
         ): Task =
             Task(
                 type = TYPE,
@@ -86,15 +86,15 @@ class BehandlingsstatistikkTask(
                         behandlingId,
                         hendelse,
                         hendelseTidspunkt,
-                        gjeldendeSaksbehandler
-                    )
+                        gjeldendeSaksbehandler,
+                    ),
                 ),
                 properties = Properties().apply {
                     this["saksbehandler"] = gjeldendeSaksbehandler
                     this["behandlingId"] = behandlingId.toString()
                     this["hendelse"] = hendelse.name
                     this["hendelseTidspunkt"] = hendelseTidspunkt.toString()
-                }
+                },
             )
 
         const val TYPE = "behandlingsstatistikkKlageTask"
@@ -105,5 +105,5 @@ data class BehandlingsstatistikkTaskPayload(
     val behandlingId: UUID,
     val hendelse: BehandlingsstatistikkHendelse,
     val hendelseTidspunkt: LocalDateTime,
-    val gjeldendeSaksbehandler: String?
+    val gjeldendeSaksbehandler: String?,
 )

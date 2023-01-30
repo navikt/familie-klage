@@ -13,7 +13,7 @@ data class VurderingDto(
     val begrunnelseOmgjøring: String? = null,
     val hjemmel: Hjemmel? = null,
     val innstillingKlageinstans: String? = null,
-    val interntNotat: String?
+    val interntNotat: String?,
 )
 
 fun Vurdering.tilDto(): VurderingDto =
@@ -24,5 +24,5 @@ fun Vurdering.tilDto(): VurderingDto =
         begrunnelseOmgjøring = this.begrunnelseOmgjøring,
         hjemmel = this.hjemmel,
         innstillingKlageinstans = this.innstillingKlageinstans,
-        interntNotat = this.interntNotat
+        interntNotat = this.interntNotat,
     )

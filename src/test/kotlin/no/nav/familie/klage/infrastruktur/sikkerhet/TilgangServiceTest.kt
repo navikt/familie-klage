@@ -35,7 +35,7 @@ internal class TilgangServiceTest {
         cacheManager,
         auditLogger,
         behandlingService,
-        fagsakService
+        fagsakService,
     )
 
     private val fagsakEf = fagsak()

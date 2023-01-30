@@ -29,7 +29,7 @@ import java.util.UUID
 @Unprotected
 class TestHendelseController(
     private val behandlingRepository: BehandlingRepository,
-    private val behandlingEventService: BehandlingEventService
+    private val behandlingEventService: BehandlingEventService,
 ) {
 
     @GetMapping("{behandlingId}")
@@ -56,10 +56,10 @@ class TestHendelseController(
                     KlagebehandlingAvsluttetDetaljer(
                         avsluttet = LocalDateTime.now(),
                         utfall = KlageinstansUtfall.AVVIST,
-                        journalpostReferanser = listOf("journalpost1")
-                    )
-                )
-            )
+                        journalpostReferanser = listOf("journalpost1"),
+                    ),
+                ),
+            ),
         )
     }
 
@@ -75,10 +75,10 @@ class TestHendelseController(
                 type = BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
                 detaljer = BehandlingDetaljer(
                     ankebehandlingOpprettet = AnkebehandlingOpprettetDetaljer(
-                        mottattKlageinstans = LocalDateTime.now()
-                    )
-                )
-            )
+                        mottattKlageinstans = LocalDateTime.now(),
+                    ),
+                ),
+            ),
         )
     }
 
@@ -96,10 +96,10 @@ class TestHendelseController(
                     ankebehandlingAvsluttet = AnkebehandlingAvsluttetDetaljer(
                         avsluttet = LocalDateTime.now(),
                         utfall = KlageinstansUtfall.DELVIS_MEDHOLD,
-                        journalpostReferanser = listOf("1", "2", "3")
-                    )
-                )
-            )
+                        journalpostReferanser = listOf("1", "2", "3"),
+                    ),
+                ),
+            ),
         )
     }
 }

@@ -13,13 +13,13 @@ import java.util.UUID
 @Service
 @TaskStepBeskrivelse(
     taskStepType = SendTilKabalTask.TYPE,
-    beskrivelse = "Send klage til kabal"
+    beskrivelse = "Send klage til kabal",
 )
 class SendTilKabalTask(
     private val fagsakService: FagsakService,
     private val behandlingService: BehandlingService,
     private val kabalService: KabalService,
-    private val vurderingService: VurderingService
+    private val vurderingService: VurderingService,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
