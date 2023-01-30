@@ -78,7 +78,7 @@ class FerdigstillBehandlingService(
         behandlingId: UUID,
         behandlingsresultat: BehandlingResultat
     ): FagsystemRevurdering? {
-        return if (behandlingsresultat == MEDHOLD && featureToggleService.isEnabled(Toggle.OPPRETT_REVURDERING)) {
+        return if (behandlingsresultat == MEDHOLD) {
             fagsystemVedtakService.opprettRevurdering(behandlingId).tilFagsystemRevurdering()
         } else {
             null

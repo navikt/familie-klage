@@ -12,7 +12,6 @@ interface FeatureToggleService : DisposableBean {
 }
 
 enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
-    OPPRETT_REVURDERING("familie.klage.opprett-revurdering"),
     TILBAKEKREVING_INFOTRYGD_PÅKLAGET_VEDTAK("familie.klage.infotrygd-vedtak");
 
     companion object {
