@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 @Unprotected
 class FeatureToggleController(private val featureToggleService: FeatureToggleService) {
 
-    private val funksjonsbrytere: Set<Toggle> = setOf(
-    )
+    private val funksjonsbrytere: Set<Toggle> = setOf()
 
     @GetMapping
     fun sjekkAlle(): Map<String, Boolean> {

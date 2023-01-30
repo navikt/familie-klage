@@ -14,9 +14,8 @@ import java.net.URI
 @Component
 class AMeldingInntektClient(
     @Value("\${FAMILIE_EF_PROXY_URL}") private val uri: URI,
-    @Qualifier("azure") restOperations: RestOperations,
+    @Qualifier("azure") restOperations: RestOperations
 ) : AbstractRestClient(restOperations, "inntekt") {
-
 
     private val genererUrlUri = UriComponentsBuilder.fromUri(uri).pathSegment("api/ainntekt/generer-url").build().toUri()
 
@@ -29,5 +28,4 @@ class AMeldingInntektClient(
             }
         )
     }
-
 }

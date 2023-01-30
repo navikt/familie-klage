@@ -11,8 +11,10 @@ interface FeatureToggleService : DisposableBean {
     fun isEnabled(toggle: Toggle, defaultValue: Boolean): Boolean
 }
 
+@Suppress("ktlint:trailing-comma-on-declaration-site")
 enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
-;
+    ;
+
     companion object {
         private val toggles: Map<String, Toggle> = values().associateBy { it.name }
 
