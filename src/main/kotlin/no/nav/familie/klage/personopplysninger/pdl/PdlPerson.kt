@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 data class PdlResponse<T>(
     val data: T,
-    val errors: List<PdlError>?
+    val errors: List<PdlError>?,
 ) {
 
     fun harFeil(): Boolean {
@@ -27,7 +27,7 @@ data class PdlBolkResponse<T>(val data: PersonBolk<T>?, val errors: List<PdlErro
 
 data class PdlError(
     val message: String,
-    val extensions: PdlExtensions?
+    val extensions: PdlExtensions?,
 )
 
 data class PdlExtensions(val code: String?) {
@@ -51,7 +51,7 @@ data class PersonDataBolk<T>(val ident: String, val code: String, val person: T?
 data class PersonBolk<T>(val personBolk: List<PersonDataBolk<T>>)
 
 data class PdlNavn(
-    val navn: List<Navn>
+    val navn: List<Navn>,
 )
 
 data class PdlSøker(
@@ -61,14 +61,14 @@ data class PdlSøker(
     val folkeregisterpersonstatus: List<Folkeregisterpersonstatus>,
     val fullmakt: List<Fullmakt>,
     val navn: List<Navn>,
-    val vergemaalEllerFremtidsfullmakt: List<VergemaalEllerFremtidsfullmakt>
+    val vergemaalEllerFremtidsfullmakt: List<VergemaalEllerFremtidsfullmakt>,
 )
 
 data class Metadata(val historisk: Boolean)
 
 data class Folkeregistermetadata(
     val gyldighetstidspunkt: LocalDateTime?,
-    @JsonProperty("opphoerstidspunkt") val opphørstidspunkt: LocalDateTime?
+    @JsonProperty("opphoerstidspunkt") val opphørstidspunkt: LocalDateTime?,
 )
 
 data class Adressebeskyttelse(val gradering: AdressebeskyttelseGradering, val metadata: Metadata) {
@@ -81,7 +81,7 @@ enum class AdressebeskyttelseGradering {
     STRENGT_FORTROLIG,
     STRENGT_FORTROLIG_UTLAND,
     FORTROLIG,
-    UGRADERT
+    UGRADERT,
 }
 
 data class Dødsfall(@JsonProperty("doedsdato") val dødsdato: LocalDate?)
@@ -89,7 +89,7 @@ data class Dødsfall(@JsonProperty("doedsdato") val dødsdato: LocalDate?)
 data class Folkeregisterpersonstatus(
     val status: String,
     val forenkletStatus: String,
-    val metadata: Metadata
+    val metadata: Metadata,
 )
 
 data class Fullmakt(
@@ -97,12 +97,12 @@ data class Fullmakt(
     val gyldigTilOgMed: LocalDate,
     val motpartsPersonident: String,
     val motpartsRolle: MotpartsRolle,
-    val omraader: List<String>
+    val omraader: List<String>,
 )
 
 enum class MotpartsRolle {
     FULLMAKTSGIVER,
-    FULLMEKTIG
+    FULLMEKTIG,
 }
 
 data class Kjønn(@JsonProperty("kjoenn") val kjønn: KjønnType)
@@ -110,32 +110,32 @@ data class Kjønn(@JsonProperty("kjoenn") val kjønn: KjønnType)
 enum class KjønnType {
     KVINNE,
     MANN,
-    UKJENT
+    UKJENT,
 }
 
 data class Navn(
     val fornavn: String,
     val mellomnavn: String?,
     val etternavn: String,
-    val metadata: Metadata
+    val metadata: Metadata,
 )
 
 data class Personnavn(
     val etternavn: String,
     val fornavn: String,
-    val mellomnavn: String?
+    val mellomnavn: String?,
 )
 
 data class VergeEllerFullmektig(
     val motpartsPersonident: String?,
     val navn: Personnavn?,
     val omfang: String?,
-    val omfangetErInnenPersonligOmraade: Boolean
+    val omfangetErInnenPersonligOmraade: Boolean,
 )
 
 data class VergemaalEllerFremtidsfullmakt(
     val embete: String?,
     val folkeregistermetadata: Folkeregistermetadata?,
     val type: String?,
-    val vergeEllerFullmektig: VergeEllerFullmektig
+    val vergeEllerFullmektig: VergeEllerFullmektig,
 )

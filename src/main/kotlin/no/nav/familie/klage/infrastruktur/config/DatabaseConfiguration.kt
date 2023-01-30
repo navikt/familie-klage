@@ -71,15 +71,15 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
                 PåklagetVedtakDetaljerTilBytearrayConverter(),
                 BytearrayTilPåklagetVedtakDetaljerConverter(),
                 OpprettetRevurderingTilBytearrayConverter(),
-                BytearrayTilOpprettetRevurderingConverter()
-            )
+                BytearrayTilOpprettetRevurderingConverter(),
+            ),
         )
     }
 
     @Bean
     fun verifyIgnoreIfProd(
         @Value("\${spring.flyway.placeholders.ignoreIfProd}") ignoreIfProd: String,
-        environment: Environment
+        environment: Environment,
     ): FlywayConfigurationCustomizer {
         val isProd = environment.activeProfiles.contains("prod")
         val ignore = ignoreIfProd == "--"

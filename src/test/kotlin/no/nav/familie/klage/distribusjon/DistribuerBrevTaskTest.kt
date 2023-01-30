@@ -69,9 +69,9 @@ internal class DistribuerBrevTaskTest {
                 BrevmottakereJournalposter(
                     listOf(
                         journalpost("1", "distId-1"),
-                        journalpost("2")
-                    )
-                )
+                        journalpost("2"),
+                    ),
+                ),
             )
             distribusjonService.distribuerBrev("2")
             brevService.oppdaterMottakerJournalpost(
@@ -79,9 +79,9 @@ internal class DistribuerBrevTaskTest {
                 BrevmottakereJournalposter(
                     listOf(
                         journalpost("1", "distId-1"),
-                        journalpost("2", "distId-2")
-                    )
-                )
+                        journalpost("2", "distId-2"),
+                    ),
+                ),
             )
         }
     }
@@ -99,9 +99,9 @@ internal class DistribuerBrevTaskTest {
                 BrevmottakereJournalposter(
                     listOf(
                         journalpost("1", "distId-1"),
-                        journalpost("2", "distId-2")
-                    )
-                )
+                        journalpost("2", "distId-2"),
+                    ),
+                ),
             )
         }
     }
@@ -124,7 +124,7 @@ internal class DistribuerBrevTaskTest {
                 behandlingId = behandlingId,
                 saksbehandlerHtml = "",
                 mottakereJournalposter = journalposter?.let { BrevmottakereJournalposter(it) },
-                pdf = Fil(byteArrayOf())
+                pdf = Fil(byteArrayOf()),
             )
     }
 }

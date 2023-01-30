@@ -19,13 +19,13 @@ import java.util.UUID
 @Service
 @TaskStepBeskrivelse(
     taskStepType = OpprettBehandleSakOppgaveTask.TYPE,
-    beskrivelse = "Opprett behandle sak oppgave"
+    beskrivelse = "Opprett behandle sak oppgave",
 )
 class OpprettBehandleSakOppgaveTask(
     private val fagsakService: FagsakService,
     private val behandlingService: BehandlingService,
     private val oppgaveClient: OppgaveClient,
-    private val behandleSakOppgaveRepository: BehandleSakOppgaveRepository
+    private val behandleSakOppgaveRepository: BehandleSakOppgaveRepository,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
@@ -44,12 +44,12 @@ class OpprettBehandleSakOppgaveTask(
             behandlingstype = Behandlingstema.Klage.value,
             behandlesAvApplikasjon = "familie-klage",
             tilordnetRessurs = task.metadata[saksbehandlerMetadataKey].toString(),
-            behandlingstema = null
+            behandlingstema = null,
         )
 
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest = oppgaveRequest)
         behandleSakOppgaveRepository.insert(
-            BehandleSakOppgave(behandlingId = behandling.id, oppgaveId = oppgaveId)
+            BehandleSakOppgave(behandlingId = behandling.id, oppgaveId = oppgaveId),
         )
     }
 

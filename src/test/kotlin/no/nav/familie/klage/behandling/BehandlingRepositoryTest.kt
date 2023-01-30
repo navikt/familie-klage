@@ -47,7 +47,7 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
                 behandlingstype = "type",
                 resultat = "resultat",
                 vedtakstidspunkt = LocalDateTime.now(),
-                regelverk = Regelverk.NASJONAL
+                regelverk = Regelverk.NASJONAL,
             )
         val fagsystemRevurdering = FagsystemRevurdering(true, Opprettet("id", LocalDateTime.now()), null)
         val behandling = behandlingRepository.insert(
@@ -57,8 +57,8 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
                 klageMottatt = LocalDate.now(),
                 påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer),
                 henlagtÅrsak = HenlagtÅrsak.TRUKKET_TILBAKE,
-                fagsystemRevurdering = fagsystemRevurdering
-            )
+                fagsystemRevurdering = fagsystemRevurdering,
+            ),
         )
 
         val hentetBehandling = behandlingRepository.findByIdOrThrow(id)
@@ -110,14 +110,14 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
     internal fun `findByEksternBehandlingIdAndFagsystem - forvent treff`() {
         val fagsakPersistert = testoppsettService.lagreFagsak(
             fagsakDomain().tilFagsakMedPerson(
-                setOf(PersonIdent("12345678901"))
-            )
+                setOf(PersonIdent("12345678901")),
+            ),
         )
 
         val fagsakPersistert2 = testoppsettService.lagreFagsak(
             fagsakDomain().tilFagsakMedPerson(
-                setOf(PersonIdent("12345678902"))
-            )
+                setOf(PersonIdent("12345678902")),
+            ),
         )
 
         val behandlingPersistert = behandlingRepository.insert(behandling(fagsakPersistert))

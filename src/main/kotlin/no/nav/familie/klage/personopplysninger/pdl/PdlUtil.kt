@@ -11,7 +11,7 @@ val logger: Logger = LoggerFactory.getLogger(PdlClient::class.java)
 inline fun <reified DATA : Any, reified T : Any> feilsjekkOgReturnerData(
     ident: String?,
     pdlResponse: PdlResponse<DATA>,
-    dataMapper: (DATA) -> T?
+    dataMapper: (DATA) -> T?,
 ): T {
     if (pdlResponse.harFeil()) {
         if (pdlResponse.errors?.any { it.extensions?.notFound() == true } == true) {
@@ -26,7 +26,7 @@ inline fun <reified DATA : Any, reified T : Any> feilsjekkOgReturnerData(
         val errorMelding = if (ident != null) "Feil ved oppslag på ident $ident. " else "Feil ved oppslag på person."
         secureLogger.error(
             errorMelding +
-                "PDL rapporterte ingen feil men returnerte tomt datafelt"
+                "PDL rapporterte ingen feil men returnerte tomt datafelt",
         )
         throw PdlRequestException("Manglende ${T::class} ved feilfri respons fra PDL. Se secure logg for detaljer.")
     }

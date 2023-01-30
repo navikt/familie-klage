@@ -81,7 +81,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
                 StegType.FORMKRAV,
                 StegType.VURDERING,
                 StegType.FORMKRAV,
-                StegType.OPPRETTET
+                StegType.OPPRETTET,
             )
         }
 
@@ -116,7 +116,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
                 StegType.FORMKRAV,
                 StegType.VURDERING,
                 StegType.FORMKRAV,
-                StegType.OPPRETTET
+                StegType.OPPRETTET,
             )
         }
 
@@ -129,8 +129,8 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
                     vurderingDto(
                         behandlingId = behandlingId,
                         vedtak = Vedtak.OMGJØR_VEDTAK,
-                        begrunnelseOmgjøring = "begrunnelse"
-                    )
+                        begrunnelseOmgjøring = "begrunnelse",
+                    ),
                 )
                 ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
                 behandlingId
@@ -143,7 +143,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
                 StegType.BEHANDLING_FERDIGSTILT,
                 StegType.VURDERING,
                 StegType.FORMKRAV,
-                StegType.OPPRETTET
+                StegType.OPPRETTET,
             )
         }
 
@@ -164,7 +164,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
                 StegType.BEHANDLING_FERDIGSTILT,
                 StegType.BREV,
                 StegType.FORMKRAV,
-                StegType.OPPRETTET
+                StegType.OPPRETTET,
             )
         }
 
@@ -182,7 +182,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             UUID.randomUUID().toString(),
             Fagsystem.EF,
             LocalDate.now(),
-            "enhet"
+            "enhet",
         )
 
     private fun oppfyltFormDto(behandlingId: UUID, påklagetVedtakDto: PåklagetVedtakDto = DomainUtil.påklagetVedtakDto()) =
@@ -192,6 +192,6 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
         DomainUtil.oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto()).copy(
             klagePart = FormVilkår.IKKE_OPPFYLT,
             saksbehandlerBegrunnelse = "Ok",
-            brevtekst = "brevtekst"
+            brevtekst = "brevtekst",
         )
 }

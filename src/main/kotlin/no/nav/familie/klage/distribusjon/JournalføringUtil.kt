@@ -12,13 +12,13 @@ object JournalføringUtil {
                 AvsenderMottaker(
                     id = it.personIdent,
                     navn = it.navn,
-                    idType = BrukerIdType.FNR
+                    idType = BrukerIdType.FNR,
                 )
             } + mottakere.organisasjoner.map {
                 AvsenderMottaker(
                     id = it.organisasjonsnummer,
                     navn = it.navnHosOrganisasjon,
-                    idType = BrukerIdType.ORGNR
+                    idType = BrukerIdType.ORGNR,
                 )
             }
         }

@@ -30,7 +30,7 @@ internal class OppgaveTaskServiceTest {
         fagsakService = fagsakService,
         oppgaveClient = oppgaveClient,
         behandlingService = behandlingService,
-        behandleSakOppgaveRepository = behandleSakOppgaveRepository
+        behandleSakOppgaveRepository = behandleSakOppgaveRepository,
     )
 
     val fagsak = DomainUtil.fagsak()
@@ -57,7 +57,7 @@ internal class OppgaveTaskServiceTest {
 
         val behandleSakOppgaveTask = Task(
             type = OpprettBehandleSakOppgaveTask.TYPE,
-            payload = behandling.id.toString()
+            payload = behandling.id.toString(),
         )
 
         opprettBehandleSakOppgaveTask.doTask(behandleSakOppgaveTask)
@@ -81,7 +81,7 @@ internal class OppgaveTaskServiceTest {
         every { behandleSakOppgaveRepository.insert(capture(behandleSakOppgaveSlot)) } answers { firstArg() }
         val behandleSakOppgaveTask = Task(
             type = OpprettBehandleSakOppgaveTask.TYPE,
-            payload = behandling.id.toString()
+            payload = behandling.id.toString(),
         )
 
         opprettBehandleSakOppgaveTask.doTask(behandleSakOppgaveTask)

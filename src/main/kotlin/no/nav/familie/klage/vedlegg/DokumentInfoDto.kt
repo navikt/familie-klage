@@ -12,7 +12,7 @@ data class DokumentinfoDto(
     val dato: LocalDateTime?,
     val journalstatus: Journalstatus,
     val journalposttype: Journalposttype,
-    val logiskeVedlegg: List<LogiskVedleggDto>
+    val logiskeVedlegg: List<LogiskVedleggDto>,
 )
 
 data class LogiskVedleggDto(val tittel: String)

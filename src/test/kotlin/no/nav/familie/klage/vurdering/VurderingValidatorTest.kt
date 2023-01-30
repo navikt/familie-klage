@@ -21,8 +21,8 @@ internal class VurderingValidatorTest {
                     vedtak = Vedtak.OMGJØR_VEDTAK,
                     hjemmel = null,
                     årsak = Årsak.FEIL_I_LOVANDVENDELSE,
-                    begrunnelseOmgjøring = "begrunnelse"
-                )
+                    begrunnelseOmgjøring = "begrunnelse",
+                ),
             )
         }
 
@@ -41,8 +41,8 @@ internal class VurderingValidatorTest {
                         vedtak = Vedtak.OMGJØR_VEDTAK,
                         hjemmel = Hjemmel.BT_FEM,
                         årsak = Årsak.ANNET,
-                        begrunnelseOmgjøring = "begrunnelse"
-                    )
+                        begrunnelseOmgjøring = "begrunnelse",
+                    ),
                 )
             }.hasMessage("Kan ikke lagre hjemmel på omgjør vedtak")
         }
@@ -84,8 +84,8 @@ internal class VurderingValidatorTest {
                     vurderingDto(
                         vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
                         hjemmel = Hjemmel.BT_FEM,
-                        begrunnelseOmgjøring = "begrunnelse"
-                    )
+                        begrunnelseOmgjøring = "begrunnelse",
+                    ),
                 )
             }.hasMessage("Kan ikke lagre begrunnelse på oppretthold vedtak")
         }

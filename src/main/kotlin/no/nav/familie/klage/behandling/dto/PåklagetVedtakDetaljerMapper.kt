@@ -11,7 +11,7 @@ fun FagsystemVedtak.tilPåklagetVedtakDetaljer() = PåklagetVedtakDetaljer(
     fagsystemType = this.fagsystemType,
     resultat = this.resultat,
     vedtakstidspunkt = this.vedtakstidspunkt,
-    regelverk = this.regelverk
+    regelverk = this.regelverk,
 )
 
 fun PåklagetVedtakDetaljer.tilFagsystemVedtak() = FagsystemVedtak(
@@ -20,7 +20,7 @@ fun PåklagetVedtakDetaljer.tilFagsystemVedtak() = FagsystemVedtak(
     fagsystemType = this.fagsystemType,
     resultat = this.resultat,
     vedtakstidspunkt = this.vedtakstidspunkt,
-    regelverk = this.regelverk
+    regelverk = this.regelverk,
 )
 
 fun PåklagetVedtak.tilDto(): PåklagetVedtakDto =
@@ -29,5 +29,5 @@ fun PåklagetVedtak.tilDto(): PåklagetVedtakDto =
         påklagetVedtakstype = this.påklagetVedtakstype,
         fagsystemVedtak = this.påklagetVedtakDetaljer?.tilFagsystemVedtak(),
         manuellVedtaksdato = if (påklagetVedtakstype.harManuellVedtaksdato()) this.påklagetVedtakDetaljer?.vedtakstidspunkt?.toLocalDate() else null,
-        regelverk = this.påklagetVedtakDetaljer?.regelverk
+        regelverk = this.påklagetVedtakDetaljer?.regelverk,
     )

@@ -18,7 +18,7 @@ import java.util.UUID
 @Validated
 class InntektController(
     private val tilgangService: TilgangService,
-    private val inntektService: InntektService
+    private val inntektService: InntektService,
 ) {
     @GetMapping("fagsak/{fagsakId}/generer-url")
     fun genererAInntektUrl(@PathVariable("fagsakId") fagsakId: UUID): Ressurs<String> {

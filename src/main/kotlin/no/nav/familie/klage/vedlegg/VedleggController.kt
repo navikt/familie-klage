@@ -24,7 +24,7 @@ class VedleggController(
     private val vedleggService: VedleggService,
     private val tilgangService: TilgangService,
     private val journalpostService: JournalpostService,
-    private val pdlClient: PdlClient
+    private val pdlClient: PdlClient,
 ) {
 
     @GetMapping("/{behandlingId}")

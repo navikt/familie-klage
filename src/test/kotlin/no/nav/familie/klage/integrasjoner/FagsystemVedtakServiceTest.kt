@@ -24,7 +24,7 @@ internal class FagsystemVedtakServiceTest {
         familieEFSakClient = efSakClient,
         familieKSSakClient = ksSakClient,
         familieBASakClient = baSakClient,
-        fagsakService = fagsakService
+        fagsakService = fagsakService,
     )
 
     private val fagsakEF = fagsak(stønadstype = Stønadstype.OVERGANGSSTØNAD)

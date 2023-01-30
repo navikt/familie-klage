@@ -63,7 +63,7 @@ internal class FerdigstillBehandlingServiceTest {
         oppgaveTaskService = oppgaveTaskService,
         brevService = brevService,
         fagsystemVedtakService = fagsystemVedtakService,
-        mockFeatureToggleService()
+        mockFeatureToggleService(),
     )
     val fagsak = DomainUtil.fagsakDomain().tilFagsak()
     val behandling = DomainUtil.behandling(fagsak = fagsak, steg = StegType.BREV, status = BehandlingStatus.UTREDES)
@@ -115,7 +115,7 @@ internal class FerdigstillBehandlingServiceTest {
             JournalførBrevTask.TYPE,
             LagSaksbehandlingsblankettTask.TYPE,
             BehandlingsstatistikkTask.TYPE,
-            BehandlingsstatistikkTask.TYPE
+            BehandlingsstatistikkTask.TYPE,
         )
         verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id) }
     }
@@ -147,7 +147,7 @@ internal class FerdigstillBehandlingServiceTest {
         verify(exactly = 1) { fagsystemVedtakService.opprettRevurdering(behandling.id) }
         assertThat(saveTaskSlot.map { it.type }).containsExactly(
             LagSaksbehandlingsblankettTask.TYPE,
-            BehandlingsstatistikkTask.TYPE
+            BehandlingsstatistikkTask.TYPE,
         )
     }
 
@@ -157,7 +157,7 @@ internal class FerdigstillBehandlingServiceTest {
             StegType.BEHANDLING_FERDIGSTILT,
             StegType.FORMKRAV,
             StegType.OVERFØRING_TIL_KABAL,
-            StegType.VURDERING
+            StegType.VURDERING,
         ).forEach { steg ->
             every { behandlingService.hentBehandling(any()) } returns behandling.copy(steg = steg)
             assertThrows<Feil> {
@@ -170,7 +170,7 @@ internal class FerdigstillBehandlingServiceTest {
     internal fun `skal feile dersom behandlingen har feil status`() {
         listOf(
             BehandlingStatus.FERDIGSTILT,
-            BehandlingStatus.VENTER
+            BehandlingStatus.VENTER,
         ).forEach { status ->
             every { behandlingService.hentBehandling(any()) } returns behandling.copy(status = status)
             assertThrows<Feil> {

@@ -16,7 +16,7 @@ import java.util.UUID
 class FagsakService(
     private val fagsakRepository: FagsakRepository,
     private val fagsakPersonService: FagsakPersonService,
-    private val pdlClient: PdlClient
+    private val pdlClient: PdlClient,
 ) {
 
     @Transactional
@@ -46,15 +46,15 @@ class FagsakService(
         stønadstype: Stønadstype,
         eksternId: String,
         fagsystem: Fagsystem,
-        fagsakPerson: FagsakPerson
+        fagsakPerson: FagsakPerson,
     ): FagsakDomain {
         return fagsakRepository.insert(
             FagsakDomain(
                 fagsakPersonId = fagsakPerson.id,
                 stønadstype = stønadstype,
                 eksternId = eksternId,
-                fagsystem = fagsystem
-            )
+                fagsystem = fagsystem,
+            ),
         )
     }
 }

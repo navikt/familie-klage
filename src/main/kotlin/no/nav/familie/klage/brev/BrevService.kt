@@ -44,7 +44,7 @@ class BrevService(
     private val fagsakService: FagsakService,
     private val formService: FormService,
     private val vurderingService: VurderingService,
-    private val personopplysningerService: PersonopplysningerService
+    private val personopplysningerService: PersonopplysningerService,
 ) {
 
     fun hentBrev(behandlingId: UUID): Brev = brevRepository.findByIdOrThrow(behandlingId)
@@ -82,13 +82,13 @@ class BrevService(
         val html = brevClient.genererHtmlFritekstbrev(
             fritekstBrev = brevRequest,
             saksbehandlerNavn = signaturMedEnhet.navn,
-            enhet = signaturMedEnhet.enhet
+            enhet = signaturMedEnhet.enhet,
         )
 
         lagreEllerOppdaterBrev(
             behandlingId = behandlingId,
             saksbehandlerHtml = html,
-            fagsak = fagsak
+            fagsak = fagsak,
         )
 
         return familieDokumentClient.genererPdfFraHtml(html)
@@ -108,7 +108,7 @@ class BrevService(
         fagsak: Fagsak,
         navn: String,
         påklagetVedtakDetaljer: PåklagetVedtakDetaljer?,
-        klageMottatt: LocalDate
+        klageMottatt: LocalDate,
     ): FritekstBrevRequestDto {
         val behandlingResultat = utledBehandlingResultat(behandling.id)
         val vurdering = vurderingService.hentVurdering(behandling.id)
@@ -126,7 +126,7 @@ class BrevService(
                     navn = navn,
                     stønadstype = fagsak.stønadstype,
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
-                    klageMottatt = klageMottatt
+                    klageMottatt = klageMottatt,
                 )
             }
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> {
@@ -136,20 +136,21 @@ class BrevService(
                         ident = fagsak.hentAktivIdent(),
                         navn = navn,
                         formkrav = formkrav,
-                        stønadstype = fagsak.stønadstype
+                        stønadstype = fagsak.stønadstype,
                     )
                     else -> BrevInnhold.lagFormkravAvvistBrev(
                         ident = fagsak.hentAktivIdent(),
                         navn = navn,
                         formkrav = formkrav,
                         stønadstype = fagsak.stønadstype,
-                        påklagetVedtakDetaljer = påklagetVedtakDetaljer
+                        påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                     )
                 }
             }
             BehandlingResultat.MEDHOLD,
             BehandlingResultat.IKKE_SATT,
-            BehandlingResultat.HENLAGT -> throw Feil("Kan ikke lage brev for behandling med behandlingResultat=$behandlingResultat")
+            BehandlingResultat.HENLAGT,
+            -> throw Feil("Kan ikke lage brev for behandling med behandlingResultat=$behandlingResultat")
         }
     }
 
@@ -161,7 +162,7 @@ class BrevService(
     private fun lagreEllerOppdaterBrev(
         behandlingId: UUID,
         saksbehandlerHtml: String,
-        fagsak: Fagsak
+        fagsak: Fagsak,
     ): Brev {
         val brev = brevRepository.findByIdOrNull(behandlingId)
         return if (brev != null) {
@@ -171,23 +172,23 @@ class BrevService(
                 Brev(
                     behandlingId = behandlingId,
                     saksbehandlerHtml = saksbehandlerHtml,
-                    mottakere = initialiserBrevmottakere(behandlingId, fagsak)
-                )
+                    mottakere = initialiserBrevmottakere(behandlingId, fagsak),
+                ),
             )
         }
     }
 
     private fun initialiserBrevmottakere(
         behandlingId: UUID,
-        fagsak: Fagsak
+        fagsak: Fagsak,
     ) = Brevmottakere(
         personer = listOf(
             BrevmottakerPerson(
                 personIdent = fagsak.hentAktivIdent(),
                 navn = personopplysningerService.hentPersonopplysninger(behandlingId).navn,
-                mottakerRolle = MottakerRolle.BRUKER
-            )
-        )
+                mottakerRolle = MottakerRolle.BRUKER,
+            ),
+        ),
     )
 
     fun lagBrevPdf(behandlingId: UUID) {

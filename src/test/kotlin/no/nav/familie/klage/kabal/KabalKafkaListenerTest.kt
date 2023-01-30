@@ -37,7 +37,7 @@ class KabalKafkaListenerTest {
     }
 
     private fun lagBehandlingEvent(
-        kilde: String
+        kilde: String,
     ): String {
         val behandlingEvent = BehandlingEvent(
             UUID.randomUUID(),
@@ -49,9 +49,9 @@ class KabalKafkaListenerTest {
                 KlagebehandlingAvsluttetDetaljer(
                     LocalDateTime.now().minusDays(1),
                     KlageinstansUtfall.MEDHOLD,
-                    listOf("journalpostReferanse1", "journalpostReferanse2")
-                )
-            )
+                    listOf("journalpostReferanse1", "journalpostReferanse2"),
+                ),
+            ),
         )
         return objectMapper.writeValueAsString(behandlingEvent)
     }

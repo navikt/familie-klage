@@ -16,7 +16,7 @@ class OppgaveTaskService(private val taskService: TaskService) {
             payload = behandlingId.toString(),
             properties = Properties().apply {
                 this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
-            }
+            },
         )
         taskService.save(behandleSakOppgaveTask)
     }
@@ -24,7 +24,7 @@ class OppgaveTaskService(private val taskService: TaskService) {
     fun lagFerdigstillOppgaveForBehandlingTask(behandlingId: UUID) {
         val ferdigstillbehandlesakOppgave = Task(
             type = OpprettFerdigstillOppgaveTask.TYPE,
-            payload = behandlingId.toString()
+            payload = behandlingId.toString(),
         )
         taskService.save(ferdigstillbehandlesakOppgave)
     }

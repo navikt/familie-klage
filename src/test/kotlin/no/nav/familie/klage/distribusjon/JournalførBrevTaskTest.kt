@@ -40,7 +40,7 @@ internal class JournalførBrevTaskTest {
         distribusjonService = distribusjonService,
         taskService = taskService,
         behandlingService = behandlingService,
-        brevService = brevService
+        brevService = brevService,
     )
 
     val behandlingId = UUID.randomUUID()
@@ -97,9 +97,9 @@ internal class JournalførBrevTaskTest {
         val mottakere = Brevmottakere(
             listOf(
                 BrevmottakerPerson("1", "1navn", MottakerRolle.BRUKER),
-                BrevmottakerPerson("2", "2navn", MottakerRolle.FULLMAKT)
+                BrevmottakerPerson("2", "2navn", MottakerRolle.FULLMAKT),
             ),
-            listOf(BrevmottakerOrganisasjon("org1", "orgnavn", "mottaker"))
+            listOf(BrevmottakerOrganisasjon("org1", "orgnavn", "mottaker")),
         )
 
         @Test
@@ -122,7 +122,7 @@ internal class JournalførBrevTaskTest {
         internal fun `skal fortsette fra forrige state`() {
             val journalposter = listOf(
                 BrevmottakereJournalpost(mottakerPerson.id!!, "journalpostId-0"),
-                BrevmottakereJournalpost(mottakerPerson2.id!!, "journalpostId-1")
+                BrevmottakereJournalpost(mottakerPerson2.id!!, "journalpostId-1"),
             )
             mockHentBrev(mottakere = mottakere, BrevmottakereJournalposter(journalposter))
 
@@ -144,7 +144,7 @@ internal class JournalførBrevTaskTest {
 
         private fun validerLagringAvBrevmottakereJournalposter(
             journalposter: List<BrevmottakereJournalpost>,
-            mottakere: List<AvsenderMottaker> = listOf(mottakerPerson, mottakerPerson2, mottakerOrganisasjon)
+            mottakere: List<AvsenderMottaker> = listOf(mottakerPerson, mottakerPerson2, mottakerOrganisasjon),
         ) {
             assertThat(journalposter).hasSize(3)
             mottakere.forEachIndexed { index, avsenderMottaker ->
@@ -167,7 +167,7 @@ internal class JournalførBrevTaskTest {
                 saksbehandlerHtml = "",
                 mottakere = mottakere,
                 mottakereJournalposter = mottakereJournalpost,
-                pdf = Fil(byteArrayOf())
+                pdf = Fil(byteArrayOf()),
             )
     }
 }

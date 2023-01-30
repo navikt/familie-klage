@@ -12,7 +12,7 @@ import java.net.URI
 @Service
 class PdlClient(
     val pdlConfig: PdlConfig,
-    @Qualifier("azureClientCredential") restTemplate: RestOperations
+    @Qualifier("azureClientCredential") restTemplate: RestOperations,
 ) :
     AbstractPingableRestClient(restTemplate, "pdl.personinfo") {
 
@@ -27,12 +27,12 @@ class PdlClient(
     fun hentPerson(personIdent: String): PdlSøker {
         val pdlPersonRequest = PdlPersonRequest(
             variables = PdlPersonRequestVariables(personIdent),
-            query = PdlConfig.søkerQuery
+            query = PdlConfig.søkerQuery,
         )
         val pdlResponse: PdlResponse<PdlSøkerData> = postForEntity(
             pdlConfig.pdlUri,
             pdlPersonRequest,
-            httpHeaders()
+            httpHeaders(),
         )
         return feilsjekkOgReturnerData(personIdent, pdlResponse) { it.person }
     }
@@ -42,12 +42,12 @@ class PdlClient(
         require(personIdenter.size <= 100) { "Liste med personidenter må være færre enn 100 st" }
         val pdlPersonRequest = PdlPersonBolkRequest(
             variables = PdlPersonBolkRequestVariables(personIdenter),
-            query = PdlConfig.bolkNavnQuery
+            query = PdlConfig.bolkNavnQuery,
         )
         val pdlResponse: PdlBolkResponse<PdlNavn> = postForEntity(
             pdlConfig.pdlUri,
             pdlPersonRequest,
-            httpHeaders()
+            httpHeaders(),
         )
         return feilsjekkOgReturnerData(pdlResponse)
     }
@@ -61,12 +61,12 @@ class PdlClient(
     fun hentPersonidenter(ident: String, historikk: Boolean = false): PdlIdenter {
         val pdlIdentRequest = PdlIdentRequest(
             variables = PdlIdentRequestVariables(ident, "FOLKEREGISTERIDENT", historikk),
-            query = PdlConfig.hentIdentQuery
+            query = PdlConfig.hentIdentQuery,
         )
         val pdlResponse: PdlResponse<PdlHentIdenter> = postForEntity(
             pdlConfig.pdlUri,
             pdlIdentRequest,
-            httpHeaders()
+            httpHeaders(),
         )
         return feilsjekkOgReturnerData(ident, pdlResponse) { it.hentIdenter }
     }

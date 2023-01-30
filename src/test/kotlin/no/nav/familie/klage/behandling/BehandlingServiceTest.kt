@@ -56,7 +56,7 @@ internal class BehandlingServiceTest {
         behandlinghistorikkService,
         oppgaveTaskService,
         taskService,
-        fagsystemVedtakService
+        fagsystemVedtakService,
     )
     val behandlingSlot = slot<Behandling>()
 
@@ -142,7 +142,7 @@ internal class BehandlingServiceTest {
             assertThrows<ApiFeil> {
                 behandlingService.oppdaterPåklagetVedtak(
                     behandlingId = behandling.id,
-                    PåklagetVedtakDto(null, PåklagetVedtakstype.UTEN_VEDTAK)
+                    PåklagetVedtakDto(null, PåklagetVedtakstype.UTEN_VEDTAK),
                 )
             }
         }
@@ -197,7 +197,7 @@ internal class BehandlingServiceTest {
 
     fun mockHentFagsystemVedtak(
         behandling: Behandling,
-        eksternBehandlingId: String
+        eksternBehandlingId: String,
     ) {
         val fagsystemVedtak = fagsystemVedtak(eksternBehandlingId = eksternBehandlingId)
         every {

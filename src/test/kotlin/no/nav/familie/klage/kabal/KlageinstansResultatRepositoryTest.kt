@@ -30,7 +30,7 @@ class KlageinstansResultatRepositoryTest : OppslagSpringRunnerTest() {
             mottattEllerAvsluttetTidspunkt = SporbarUtils.now(),
             kildereferanse = UUID.randomUUID(),
             journalpostReferanser = StringListWrapper(listOf("ref1", "ref2")),
-            behandlingId = behandling.id
+            behandlingId = behandling.id,
         )
         klageresultatRepository.insert(klageinstansResultat)
 

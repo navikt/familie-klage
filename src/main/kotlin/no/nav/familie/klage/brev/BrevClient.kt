@@ -15,7 +15,7 @@ class BrevClient(
     @Value("\${FAMILIE_BREV_API_URL}")
     private val familieBrevUri: String,
     @Qualifier("utenAuth")
-    private val restOperations: RestOperations
+    private val restOperations: RestOperations,
 ) : AbstractPingableRestClient(restOperations, "familie.brev") {
 
     override val pingUri: URI = URI.create("$familieBrevUri/api/status")
@@ -31,9 +31,9 @@ class BrevClient(
             FritekstBrevRequestMedSignatur(
                 fritekstBrev,
                 saksbehandlerNavn,
-                enhet
+                enhet,
             ),
-            HttpHeaders().medContentTypeJsonUTF8()
+            HttpHeaders().medContentTypeJsonUTF8(),
         )
     }
 
@@ -47,5 +47,5 @@ class BrevClient(
 data class FritekstBrevRequestMedSignatur(
     val brevFraSaksbehandler: FritekstBrevRequestDto,
     val saksbehandlersignatur: String,
-    val enhet: String
+    val enhet: String,
 )

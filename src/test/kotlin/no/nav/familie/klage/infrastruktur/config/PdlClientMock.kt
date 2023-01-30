@@ -57,14 +57,14 @@ class PdlClientMock {
                 adressebeskyttelse = listOf(
                     Adressebeskyttelse(
                         gradering = AdressebeskyttelseGradering.UGRADERT,
-                        metadata = metadataGjeldende
-                    )
+                        metadata = metadataGjeldende,
+                    ),
                 ),
                 dødsfall = listOf(),
                 fullmakt = fullmakter(),
                 kjønn = lagKjønn(KjønnType.KVINNE),
                 navn = listOf(lagNavn()),
-                vergemaalEllerFremtidsfullmakt = vergemaalEllerFremtidsfullmakt()
+                vergemaalEllerFremtidsfullmakt = vergemaalEllerFremtidsfullmakt(),
             )
 
         private fun fullmakter(): List<Fullmakt> =
@@ -74,8 +74,8 @@ class PdlClientMock {
                     gyldigFraOgMed = sluttdato,
                     motpartsPersonident = "11111133333",
                     motpartsRolle = MotpartsRolle.FULLMEKTIG,
-                    omraader = listOf()
-                )
+                    omraader = listOf(),
+                ),
             )
 
         private fun vergemaalEllerFremtidsfullmakt(): List<VergemaalEllerFremtidsfullmakt> {
@@ -89,8 +89,8 @@ class PdlClientMock {
                         motpartsPersonident = annenForelderFnr,
                         navn = null,
                         omfang = "personligeOgOekonomiskeInteresser",
-                        omfangetErInnenPersonligOmraade = false
-                    )
+                        omfangetErInnenPersonligOmraade = false,
+                    ),
                 ),
                 VergemaalEllerFremtidsfullmakt(
                     embete = null,
@@ -101,9 +101,9 @@ class PdlClientMock {
                         motpartsPersonident = annenForelderFnr,
                         navn = null,
                         omfang = "personligeOgOekonomiskeInteresser",
-                        omfangetErInnenPersonligOmraade = false
-                    )
-                )
+                        omfangetErInnenPersonligOmraade = false,
+                    ),
+                ),
             )
         }
     }

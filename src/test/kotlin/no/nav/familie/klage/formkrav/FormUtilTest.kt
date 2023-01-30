@@ -24,7 +24,7 @@ internal class FormUtilTest {
     val ikkeOppfyltForm = oppfyltForm.copy(
         saksbehandlerBegrunnelse = "Ok",
         klagePart = FormVilkår.IKKE_OPPFYLT,
-        brevtekst = "brevtekst"
+        brevtekst = "brevtekst",
     )
     val ikkeFerdigUtfyltForm = Form(UUID.randomUUID())
 
@@ -119,10 +119,10 @@ internal class FormUtilTest {
                         klageKonkret = FormVilkår.IKKE_SATT,
                         klageSignert = FormVilkår.IKKE_SATT,
                         brevtekst = "brevtekst",
-                        saksbehandlerBegrunnelse = "begrunnelse"
+                        saksbehandlerBegrunnelse = "begrunnelse",
                     ),
-                    påklagetVedtakUtenBehandling
-                )
+                    påklagetVedtakUtenBehandling,
+                ),
             ).isEqualTo(FormVilkår.IKKE_OPPFYLT)
         }
 
@@ -138,10 +138,10 @@ internal class FormUtilTest {
                         klageKonkret = FormVilkår.IKKE_SATT,
                         klageSignert = FormVilkår.IKKE_SATT,
                         brevtekst = null,
-                        saksbehandlerBegrunnelse = null
+                        saksbehandlerBegrunnelse = null,
                     ),
-                    påklagetVedtakUtenBehandling
-                )
+                    påklagetVedtakUtenBehandling,
+                ),
             ).isEqualTo(FormVilkår.IKKE_SATT)
         }
     }

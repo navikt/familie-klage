@@ -6,5 +6,5 @@ import no.nav.familie.kontrakter.felles.klage.Stønadstype
 data class AntallVedtak(
     val stonadstype: Stønadstype,
     val resultat: BehandlingResultat,
-    val antall: Int
+    val antall: Int,
 )

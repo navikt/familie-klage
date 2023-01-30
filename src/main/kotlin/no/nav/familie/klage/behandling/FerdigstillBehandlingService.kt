@@ -41,7 +41,7 @@ class FerdigstillBehandlingService(
     private val oppgaveTaskService: OppgaveTaskService,
     private val brevService: BrevService,
     private val fagsystemVedtakService: FagsystemVedtakService,
-    private val featureToggleService: FeatureToggleService
+    private val featureToggleService: FeatureToggleService,
 ) {
 
     /**
@@ -76,7 +76,7 @@ class FerdigstillBehandlingService(
      */
     private fun opprettRevurderingHvisMedhold(
         behandlingId: UUID,
-        behandlingsresultat: BehandlingResultat
+        behandlingsresultat: BehandlingResultat,
     ): FagsystemRevurdering? {
         return if (behandlingsresultat == MEDHOLD && featureToggleService.isEnabled(Toggle.OPPRETT_REVURDERING)) {
             fagsystemVedtakService.opprettRevurdering(behandlingId).tilFagsystemRevurdering()
@@ -91,7 +91,7 @@ class FerdigstillBehandlingService(
             payload = behandlingId.toString(),
             properties = Properties().apply {
                 this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
-            }
+            },
         )
         taskService.save(journalførBrevTask)
     }

@@ -5,7 +5,7 @@ package no.nav.familie.klage.kabal
 enum class KabalHjemmel(
     val id: String,
     val lovKilde: LovKilde,
-    val spesifikasjon: String
+    val spesifikasjon: String,
 ) {
 
     BTRL_2("619", LovKilde.BARNETRYGDLOVEN, "§ 2"),
@@ -51,5 +51,5 @@ enum class KabalHjemmel(
     NORDISK_KONVENSJON("NORDISK_KONVENSJON", LovKilde.NORDISK_KONVENSJON, "Nordisk konvensjon"),
     ANDRE_TRYGDEAVTALER("ANDRE_TRYGDEAVTALER", LovKilde.ANDRE_TRYGDEAVTALER, "Andre trygdeavtaler"),
     EOES_883_2004_5("EOES_883_2004_5", LovKilde.EØS_FORORDNING_883_2004, "art. 5"),
-    EOES_883_2004_6("228", LovKilde.EØS_FORORDNING_883_2004, "art. 6")
+    EOES_883_2004_6("228", LovKilde.EØS_FORORDNING_883_2004, "art. 6"),
 }

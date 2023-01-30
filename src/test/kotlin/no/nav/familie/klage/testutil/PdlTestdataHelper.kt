@@ -22,21 +22,21 @@ object PdlTestdataHelper {
         fornavn: String = "Fornavn",
         mellomnavn: String? = "mellomnavn",
         etternavn: String = "Etternavn",
-        historisk: Boolean = false
+        historisk: Boolean = false,
     ): Navn {
         return Navn(
             fornavn,
             mellomnavn,
             etternavn,
-            Metadata(historisk = historisk)
+            Metadata(historisk = historisk),
         )
     }
 
     fun pdlNavn(
-        navn: List<Navn> = emptyList()
+        navn: List<Navn> = emptyList(),
     ) =
         PdlNavn(
-            navn
+            navn,
         )
 
     fun pdlSøker(
@@ -46,7 +46,7 @@ object PdlTestdataHelper {
         fullmakt: List<Fullmakt> = emptyList(),
         kjønn: Kjønn? = null,
         navn: List<Navn> = emptyList(),
-        vergemaalEllerFremtidsfullmakt: List<VergemaalEllerFremtidsfullmakt> = emptyList()
+        vergemaalEllerFremtidsfullmakt: List<VergemaalEllerFremtidsfullmakt> = emptyList(),
     ) =
         PdlSøker(
             adressebeskyttelse,
@@ -55,6 +55,6 @@ object PdlTestdataHelper {
             folkeregisterpersonstatus,
             fullmakt,
             navn,
-            vergemaalEllerFremtidsfullmakt
+            vergemaalEllerFremtidsfullmakt,
         )
 }

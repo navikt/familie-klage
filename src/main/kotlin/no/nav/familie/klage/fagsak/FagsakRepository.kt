@@ -15,7 +15,7 @@ interface FagsakRepository : RepositoryInterface<FagsakDomain, UUID>, InsertUpda
     fun findByEksternIdAndFagsystemAndStønadstype(
         eksternId: String,
         fagsystem: Fagsystem,
-        stønadstype: Stønadstype
+        stønadstype: Stønadstype,
     ): FagsakDomain?
 
     @Query(
@@ -23,7 +23,7 @@ interface FagsakRepository : RepositoryInterface<FagsakDomain, UUID>, InsertUpda
                     FROM fagsak f
                     JOIN behandling b 
                         ON b.fagsak_id = f.id 
-                    WHERE b.id = :behandlingId"""
+                    WHERE b.id = :behandlingId""",
     )
     fun finnFagsakForBehandlingId(behandlingId: UUID): FagsakDomain?
 }
