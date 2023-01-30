@@ -72,6 +72,9 @@ For å koble til preprod kan du kjøre kommandoene:
 4. Se over brevtekster
 5. Se over enhet i brevsignatur 
 
+### Familie-blankett
+1. Må eventuellt oppdatere enums i familie-blankett
+
 #### I fagsystemet
 1. Fagsystemet må implementere et endepunkt for å hente ut alle vedtak
    1. `fagsystemUrl/api/ekstern/vedtak` som returnerer `Ressurs<List<FagsystemVedtak>>`

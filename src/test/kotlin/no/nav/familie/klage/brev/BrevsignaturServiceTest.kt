@@ -35,5 +35,4 @@ internal class BrevsignaturServiceTest {
         assertThat(signaturMedEnhet.enhet).isEqualTo(BrevsignaturService.ENHET_NAY)
         assertThat(signaturMedEnhet.navn).isEqualTo("Julenissen")
     }
-
 }

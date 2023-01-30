@@ -88,6 +88,7 @@ internal class FormServiceTest {
                 )
             )
 
+            verify { vurderingService.slettVurderingForBehandling(behandlingId) }
             verify { stegService.oppdaterSteg(behandlingId, any(), StegType.FORMKRAV) }
             verify { formRepository.update(any()) }
         }

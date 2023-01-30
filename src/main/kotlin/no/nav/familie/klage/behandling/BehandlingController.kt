@@ -7,6 +7,7 @@ import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
+import no.nav.familie.kontrakter.felles.klage.KanOppretteRevurderingResponse
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -54,5 +55,12 @@ class BehandlingController(
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
         return Ressurs.success(fagsystemVedtakService.hentFagsystemVedtak(behandlingId))
+    }
+
+    @GetMapping("{behandlingId}/kan-opprette-revurdering")
+    fun kanOppretteRevurdering(@PathVariable behandlingId: UUID): Ressurs<KanOppretteRevurderingResponse> {
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
+        return Ressurs.success(fagsystemVedtakService.kanOppretteRevurdering(behandlingId))
     }
 }

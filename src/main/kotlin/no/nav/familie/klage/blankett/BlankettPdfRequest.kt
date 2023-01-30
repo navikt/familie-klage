@@ -1,6 +1,7 @@
 package no.nav.familie.klage.blankett
 
 import no.nav.familie.klage.formkrav.domain.FormVilkår
+import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
@@ -39,6 +40,7 @@ data class BlankettFormDto(
     val klagePart: FormVilkår,
     val klageKonkret: FormVilkår,
     val klagefristOverholdt: FormVilkår,
+    val klagefristOverholdtUnntak: FormkravFristUnntak?,
     val klageSignert: FormVilkår,
     val saksbehandlerBegrunnelse: String?,
     val brevtekst: String?

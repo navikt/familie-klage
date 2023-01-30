@@ -6,8 +6,10 @@ import io.mockk.slot
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
-import no.nav.familie.klage.behandling.dto.tilDto
+import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.formkrav.FormService
+import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
 import no.nav.familie.klage.formkrav.dto.tilDto
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
@@ -16,6 +18,7 @@ import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.klage.testutil.DomainUtil.fagsystemVedtak
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
+import no.nav.familie.klage.testutil.DomainUtil.påklagetVedtakDetaljer
 import no.nav.familie.klage.testutil.DomainUtil.vurderingDto
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.domain.Hjemmel
@@ -29,6 +32,7 @@ import java.time.LocalDate
 
 internal class BlankettServiceTest {
 
+    private val fagsakService = mockk<FagsakService>()
     private val behandlingService = mockk<BehandlingService>()
     private val personopplysningerService = mockk<PersonopplysningerService>()
     private val formService = mockk<FormService>()
@@ -37,33 +41,38 @@ internal class BlankettServiceTest {
     private val fagsystemVedtakService = mockk<FagsystemVedtakService>()
 
     private val service = BlankettService(
+        fagsakService,
         behandlingService,
         personopplysningerService,
         formService,
         vurderingService,
-        blankettClient,
-        fagsystemVedtakService
+        blankettClient
     )
 
     private val eksternFagsystemBehandlingId = "eksternFagsystemBehandlingId"
 
     private val blankettRequestSpot = slot<BlankettPdfRequest>()
-    private val fagsak = fagsak()
+    private val fagsak = fagsak(setOf(PersonIdent("ident")))
     private val behandling = behandling(
-        påklagetVedtak = PåklagetVedtak(eksternFagsystemBehandlingId, PåklagetVedtakstype.VEDTAK),
+        fagsak = fagsak,
+        påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer(eksternFagsystemBehandlingId)),
         klageMottatt = LocalDate.of(2022, 10, 26)
-    ).tilDto(fagsak, emptyList())
+    )
 
     @BeforeEach
     internal fun setUp() {
         val behandlingId = behandling.id
-        every { behandlingService.hentBehandlingDto(behandlingId) } returns behandling
-        every { behandlingService.hentAktivIdent(behandlingId) } returns Pair("ident", fagsak)
+        every { fagsakService.hentFagsak(fagsak.id) } returns fagsak
+        every { behandlingService.hentBehandling(behandlingId) } returns behandling
         val personopplysningerDto = mockk<PersonopplysningerDto>()
         every { personopplysningerDto.navn } returns "navn"
         every { personopplysningerService.hentPersonopplysninger(behandlingId) } returns personopplysningerDto
-        every { formService.hentFormDto(behandlingId) } returns oppfyltForm(behandlingId).copy(saksbehandlerBegrunnelse = "Ok", brevtekst = "Brevtekst")
-            .tilDto(mockk())
+        every { formService.hentFormDto(behandlingId) } returns
+            oppfyltForm(behandlingId).copy(
+                saksbehandlerBegrunnelse = "Ok",
+                brevtekst = "Brevtekst",
+                klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_SATT
+            ).tilDto(mockk())
         every { vurderingService.hentVurderingDto(behandlingId) } returns vurderingDto(
             vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
             årsak = Årsak.FEIL_I_LOVANDVENDELSE,
@@ -74,7 +83,7 @@ internal class BlankettServiceTest {
         )
         every { blankettClient.genererBlankett(capture(blankettRequestSpot)) } returns byteArrayOf()
         every { fagsystemVedtakService.hentFagsystemVedtak(behandlingId) } returns listOf(
-            fagsystemVedtak(eksternBehandlingId = eksternFagsystemBehandlingId,)
+            fagsystemVedtak(eksternBehandlingId = eksternFagsystemBehandlingId)
         )
     }
 

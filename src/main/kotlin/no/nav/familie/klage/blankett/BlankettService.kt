@@ -1,10 +1,11 @@
 package no.nav.familie.klage.blankett
 
 import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.behandling.dto.BehandlingDto
+import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.formkrav.dto.FormkravDto
-import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.dto.VurderingDto
@@ -13,41 +14,43 @@ import java.util.UUID
 
 @Service
 class BlankettService(
+    private val fagsakService: FagsakService,
     private val behandlingService: BehandlingService,
     private val personopplysningerService: PersonopplysningerService,
     private val formService: FormService,
     private val vurderingService: VurderingService,
-    private val blankettClient: BlankettClient,
-    private val fagsystemVedtakService: FagsystemVedtakService
+    private val blankettClient: BlankettClient
 ) {
 
     fun lagBlankett(behandlingId: UUID): ByteArray {
-        val behandling = behandlingService.hentBehandlingDto(behandlingId)
+        val behandling = behandlingService.hentBehandling(behandlingId)
+        val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
         val formkrav = formService.hentFormDto(behandlingId)
         val vurdering = vurderingService.hentVurderingDto(behandlingId)
         val påklagetVedtak = mapPåklagetVedtak(behandling)
 
         val blankettPdfRequest = BlankettPdfRequest(
             behandling = BlankettPdfBehandling(
-                eksternFagsakId = behandling.eksternFagsystemFagsakId,
-                stønadstype = behandling.stønadstype,
+                eksternFagsakId = fagsak.eksternId,
+                stønadstype = fagsak.stønadstype,
                 klageMottatt = behandling.klageMottatt,
-                resultat = behandling.resultat ?: error("Mangler resultat på behandling=$behandlingId"),
+                resultat = behandling.resultat,
                 påklagetVedtak = påklagetVedtak
             ),
-            personopplysninger = lagPersonopplysningerDto(behandling),
+            personopplysninger = lagPersonopplysningerDto(behandling, fagsak),
             formkrav = mapFormkrav(formkrav),
             vurdering = mapVurdering(vurdering)
         )
         return blankettClient.genererBlankett(blankettPdfRequest)
     }
 
-    private fun mapPåklagetVedtak(behandling: BehandlingDto): BlankettPåklagetVedtakDto? {
-        return behandling.påklagetVedtak.eksternFagsystemBehandlingId?.let { påklagetBehandlingId ->
-            val fagsystemVedtak = fagsystemVedtakService.hentFagsystemVedtak(behandling.id)
-            val påklagetVedtak = fagsystemVedtak.singleOrNull { it.eksternBehandlingId == påklagetBehandlingId }
-                ?: error("Finner ikke fagsystemvedtak med eksternBehandlingId=$påklagetBehandlingId")
-            BlankettPåklagetVedtakDto(påklagetVedtak.behandlingstype, påklagetVedtak.resultat, påklagetVedtak.vedtakstidspunkt)
+    private fun mapPåklagetVedtak(behandling: Behandling): BlankettPåklagetVedtakDto? {
+        return behandling.påklagetVedtak.påklagetVedtakDetaljer?.let { påklagetVedtakDetaljer ->
+            BlankettPåklagetVedtakDto(
+                behandlingstype = påklagetVedtakDetaljer.behandlingstype,
+                resultat = påklagetVedtakDetaljer.resultat,
+                vedtakstidspunkt = påklagetVedtakDetaljer.vedtakstidspunkt
+            )
         }
     }
 
@@ -68,13 +71,14 @@ class BlankettService(
         klagePart = formkrav.klagePart,
         klageKonkret = formkrav.klageKonkret,
         klagefristOverholdt = formkrav.klagefristOverholdt,
+        klagefristOverholdtUnntak = formkrav.klagefristOverholdtUnntak,
         klageSignert = formkrav.klageSignert,
         saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse,
         brevtekst = formkrav.brevtekst
     )
 
-    private fun lagPersonopplysningerDto(behandling: BehandlingDto): PersonopplysningerDto {
-        val (personIdent, _) = behandlingService.hentAktivIdent(behandling.id)
+    private fun lagPersonopplysningerDto(behandling: Behandling, fagsak: Fagsak): PersonopplysningerDto {
+        val personIdent = fagsak.hentAktivIdent()
         val navn = personopplysningerService.hentPersonopplysninger(behandling.id).navn
         return PersonopplysningerDto(navn, personIdent)
     }

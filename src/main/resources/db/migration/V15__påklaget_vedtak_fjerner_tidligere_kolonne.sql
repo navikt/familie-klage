@@ -1,0 +1,1 @@
+ALTER TABLE behandling DROP COLUMN ekstern_fagsystem_behandling_id;

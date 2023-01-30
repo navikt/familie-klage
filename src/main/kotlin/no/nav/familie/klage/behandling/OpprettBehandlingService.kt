@@ -39,7 +39,7 @@ class OpprettBehandlingService(
         val eksternFagsakId = opprettKlagebehandlingRequest.eksternFagsakId
 
         feilHvis(klageMottatt.isAfter(LocalDate.now())) {
-            "Kan ikke opprette klage med krav mottatt frem i tid for behandling med eksternBehandlingId=${opprettKlagebehandlingRequest.eksternBehandlingId}"
+            "Kan ikke opprette klage med krav mottatt frem i tid for eksternFagsakId=$eksternFagsakId"
         }
 
         val fagsak = fagsakService.hentEllerOpprettFagsak(
@@ -53,8 +53,7 @@ class OpprettBehandlingService(
             Behandling(
                 fagsakId = fagsak.id,
                 påklagetVedtak = PåklagetVedtak(
-                    eksternFagsystemBehandlingId = opprettKlagebehandlingRequest.eksternBehandlingId,
-                    påklagetVedtakstype = if (opprettKlagebehandlingRequest.eksternBehandlingId != null) PåklagetVedtakstype.VEDTAK else PåklagetVedtakstype.IKKE_VALGT
+                    påklagetVedtakstype = PåklagetVedtakstype.IKKE_VALGT
                 ),
                 klageMottatt = klageMottatt,
                 behandlendeEnhet = opprettKlagebehandlingRequest.behandlendeEnhet

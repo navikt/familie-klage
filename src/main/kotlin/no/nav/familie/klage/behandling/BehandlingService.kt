@@ -1,21 +1,27 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
 import no.nav.familie.klage.behandling.domain.Klagebehandlingsesultat
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType.BEHANDLING_FERDIGSTILT
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
-import no.nav.familie.klage.behandling.domain.erUnderArbeidAvSaksbehandler
+import no.nav.familie.klage.behandling.domain.harManuellVedtaksdato
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandling.dto.tilDto
+import no.nav.familie.klage.behandling.dto.tilPåklagetVedtakDetaljer
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
+import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
+import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.tilDto
 import no.nav.familie.klage.oppgave.OppgaveTaskService
@@ -23,6 +29,7 @@ import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus.FERDIGSTILT
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
 import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.Logger
@@ -39,7 +46,8 @@ class BehandlingService(
     private val klageresultatRepository: KlageresultatRepository,
     private val behandlinghistorikkService: BehandlingshistorikkService,
     private val oppgaveTaskService: OppgaveTaskService,
-    private val taskService: TaskService
+    private val taskService: TaskService,
+    private val fagsystemVedtakService: FagsystemVedtakService
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -53,7 +61,6 @@ class BehandlingService(
     }
 
     fun opprettBehandling(behandling: Behandling): Behandling {
-        validerKanOppretteBehandling(behandling.fagsakId)
         return behandlingRepository.insert(behandling)
     }
 
@@ -72,12 +79,20 @@ class BehandlingService(
         return Pair(fagsak.hentAktivIdent(), fagsak)
     }
 
-    fun oppdaterBehandlingsresultatOgVedtaksdato(behandlingId: UUID, behandlingsresultat: BehandlingResultat) {
+    fun oppdaterBehandlingMedResultat(
+        behandlingId: UUID,
+        behandlingsresultat: BehandlingResultat,
+        opprettetRevurdering: FagsystemRevurdering?
+    ) {
         val behandling = hentBehandling(behandlingId)
         if (behandling.resultat != BehandlingResultat.IKKE_SATT) {
             error("Kan ikke endre på et resultat som allerede er satt")
         }
-        val oppdatertBehandling = behandling.copy(resultat = behandlingsresultat, vedtakDato = LocalDateTime.now())
+        val oppdatertBehandling = behandling.copy(
+            resultat = behandlingsresultat,
+            vedtakDato = LocalDateTime.now(),
+            fagsystemRevurdering = opprettetRevurdering
+        )
         behandlingRepository.update(oppdatertBehandling)
     }
 
@@ -90,20 +105,51 @@ class BehandlingService(
         feilHvisIkke(påklagetVedtakDto.erGyldig()) {
             "Påklaget vedtak er i en ugyldig tilstand: EksternFagsystemBehandlingId:${påklagetVedtakDto.eksternFagsystemBehandlingId}, PåklagetVedtakType: ${påklagetVedtakDto.påklagetVedtakstype}"
         }
+
+        feilHvis(påklagetVedtakDto.manglerVedtaksDato()) {
+            "Må fylle inn vedtaksdato når valgt vedtakstype er ${påklagetVedtakDto.påklagetVedtakstype}"
+        }
+
+        val påklagetVedtakDetaljer = påklagetVedtakDetaljer(behandlingId, påklagetVedtakDto)
+
         val behandlingMedPåklagetVedtak = behandling.copy(
             påklagetVedtak = PåklagetVedtak(
-                eksternFagsystemBehandlingId = påklagetVedtakDto.eksternFagsystemBehandlingId,
-                påklagetVedtakstype = påklagetVedtakDto.påklagetVedtakstype
+                påklagetVedtakstype = påklagetVedtakDto.påklagetVedtakstype,
+                påklagetVedtakDetaljer = påklagetVedtakDetaljer
             )
         )
         behandlingRepository.update(behandlingMedPåklagetVedtak)
     }
 
-    private fun validerKanOppretteBehandling(fagsakId: UUID) {
-        val behandlinger = behandlingRepository.findByFagsakId(fagsakId)
+    private fun påklagetVedtakDetaljer(
+        behandlingId: UUID,
+        påklagetVedtakDto: PåklagetVedtakDto
+    ): PåklagetVedtakDetaljer? {
+        if (påklagetVedtakDto.påklagetVedtakstype.harManuellVedtaksdato()) {
+            return tilPåklagetVedtakDetaljerMedManuellDato(påklagetVedtakDto)
+        }
+        return påklagetVedtakDto.eksternFagsystemBehandlingId?.let {
+            fagsystemVedtakService.hentFagsystemVedtakForPåklagetBehandlingId(behandlingId, it)
+                .tilPåklagetVedtakDetaljer()
+        }
+    }
 
-        brukerfeilHvis(behandlinger.any { it.status.erUnderArbeidAvSaksbehandler() }) {
-            "Det eksisterer allerede en klagebehandling som ikke er ferdigstilt på fagsak med id=$fagsakId"
+    private fun tilPåklagetVedtakDetaljerMedManuellDato(påklagetVedtakDto: PåklagetVedtakDto) =
+        PåklagetVedtakDetaljer(
+            fagsystemType = utledFagsystemType(påklagetVedtakDto),
+            eksternFagsystemBehandlingId = null,
+            behandlingstype = "",
+            resultat = "",
+            vedtakstidspunkt = påklagetVedtakDto.manuellVedtaksdato?.atStartOfDay() ?: error("Mangler vedtaksdato"),
+            regelverk = påklagetVedtakDto.regelverk
+        )
+
+    private fun utledFagsystemType(påklagetVedtakDto: PåklagetVedtakDto): FagsystemType {
+        return when (påklagetVedtakDto.påklagetVedtakstype) {
+            PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING -> FagsystemType.TILBAKEKREVING
+            PåklagetVedtakstype.UTESTENGELSE -> FagsystemType.UTESTENGELSE
+            PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK -> FagsystemType.ORDNIÆR
+            else -> error("Kan ikke utlede fagsystemType for påklagetVedtakType ${påklagetVedtakDto.påklagetVedtakstype}")
         }
     }
 
@@ -125,9 +171,6 @@ class BehandlingService(
         behandlingRepository.update(henlagtBehandling)
         taskService.save(taskService.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId)))
     }
-
-    fun erLåstForVidereBehandling(behandlingId: UUID) =
-        behandlingRepository.findByIdOrThrow(behandlingId).status.erLåstForVidereBehandling()
 
     private fun validerKanHenleggeBehandling(behandling: Behandling) {
         brukerfeilHvis(behandling.status.erLåstForVidereBehandling()) {

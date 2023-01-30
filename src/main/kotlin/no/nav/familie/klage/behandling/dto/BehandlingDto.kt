@@ -1,16 +1,18 @@
 package no.nav.familie.klage.behandling.dto
 
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.IKKE_VALGT
-import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.UTEN_VEDTAK
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.behandling.domain.harManuellVedtaksdato
 import no.nav.familie.klage.fagsak.domain.Fagsak
-import no.nav.familie.klage.formkrav.dto.tilDto
+import no.nav.familie.kontrakter.felles.Regelverk
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import java.time.LocalDate
@@ -23,7 +25,7 @@ data class BehandlingDto(
     val steg: StegType,
     val status: BehandlingStatus,
     val sistEndret: LocalDateTime,
-    val resultat: BehandlingResultat?,
+    val resultat: BehandlingResultat,
     val opprettet: LocalDateTime,
     val vedtaksdato: LocalDateTime? = null,
     val stønadstype: Stønadstype,
@@ -31,21 +33,32 @@ data class BehandlingDto(
     val påklagetVedtak: PåklagetVedtakDto,
     val eksternFagsystemFagsakId: String,
     val fagsystem: Fagsystem,
-    val klageMottatt: LocalDate
+    val klageMottatt: LocalDate,
+    val fagsystemRevurdering: FagsystemRevurdering?
 )
 
+/**
+ * @param fagsystemVedtak skal ikke brukes ved innsending, men kun når vi sender ut data
+ */
 data class PåklagetVedtakDto(
     val eksternFagsystemBehandlingId: String?,
-    val påklagetVedtakstype: PåklagetVedtakstype
+    val påklagetVedtakstype: PåklagetVedtakstype,
+    val fagsystemVedtak: FagsystemVedtak? = null,
+    val manuellVedtaksdato: LocalDate? = null,
+    val regelverk: Regelverk? = null
 ) {
     fun erGyldig(): Boolean = when (eksternFagsystemBehandlingId) {
         null -> påklagetVedtakstype != VEDTAK
         else -> påklagetVedtakstype == VEDTAK
     }
 
-    fun harTattStillingTil(): Boolean = when (påklagetVedtakstype) {
-        IKKE_VALGT -> false
-        UTEN_VEDTAK, VEDTAK -> true
+    fun harTattStillingTil(): Boolean = påklagetVedtakstype != IKKE_VALGT
+
+    fun manglerVedtaksDato(): Boolean {
+        if (påklagetVedtakstype.harManuellVedtaksdato()) {
+            return manuellVedtaksdato == null
+        }
+        return false
     }
 }
 
@@ -63,5 +76,6 @@ fun Behandling.tilDto(fagsak: Fagsak, klageinstansResultat: List<KlageinstansRes
         eksternFagsystemFagsakId = fagsak.eksternId,
         klageinstansResultat = klageinstansResultat,
         påklagetVedtak = this.påklagetVedtak.tilDto(),
-        klageMottatt = this.klageMottatt
+        klageMottatt = this.klageMottatt,
+        fagsystemRevurdering = this.fagsystemRevurdering
     )

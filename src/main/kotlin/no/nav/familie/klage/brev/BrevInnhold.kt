@@ -1,5 +1,6 @@
 package no.nav.familie.klage.brev
 
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.brev.FormBrevUtil.utledIkkeOppfylteFormkrav
 import no.nav.familie.klage.brev.FormBrevUtil.utledLovtekst
 import no.nav.familie.klage.brev.FormBrevUtil.utledÅrsakTilAvvisningstekst
@@ -9,7 +10,6 @@ import no.nav.familie.klage.felles.util.StønadstypeVisningsnavn.visningsnavn
 import no.nav.familie.klage.felles.util.TekstUtil.norskFormat
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
-import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import java.time.LocalDate
 
@@ -20,11 +20,11 @@ object BrevInnhold {
         instillingKlageinstans: String,
         navn: String,
         stønadstype: Stønadstype,
-        påklagetFagsystemVedtak: FagsystemVedtak,
+        påklagetVedtakDetaljer: PåklagetVedtakDetaljer,
         klageMottatt: LocalDate
     ): FritekstBrevRequestDto {
         return FritekstBrevRequestDto(
-            overskrift = "Vi har sendt klagen din til NAV Klageinstans",
+            overskrift = "Vi har sendt klagen din til NAV Klageinstans Nord",
             navn = navn,
             personIdent = ident,
             avsnitt =
@@ -33,9 +33,9 @@ object BrevInnhold {
                     deloverskrift = "",
                     innhold =
                     "Vi har ${klageMottatt.norskFormat()} fått klagen din på vedtaket om " +
-                            "${visningsnavn(stønadstype, påklagetFagsystemVedtak)} som ble gjort " +
-                            "${påklagetFagsystemVedtak.vedtakstidspunkt.norskFormat()}, " +
-                            "og kommet frem til at vedtaket ikke endres. NAV Klageinstans skal derfor vurdere saken din på nytt."
+                        "${visningsnavn(stønadstype, påklagetVedtakDetaljer)} som ble gjort " +
+                        "${påklagetVedtakDetaljer.vedtakstidspunkt.norskFormat()}, " +
+                        "og kommet frem til at vi ikke endrer vedtaket. NAV Klageinstans skal derfor vurdere saken din på nytt."
                 ),
                 AvsnittDto(
                     deloverskrift = "",
@@ -46,14 +46,14 @@ object BrevInnhold {
                     innhold = instillingKlageinstans
                 ),
                 AvsnittDto(
-                    deloverskrift = "",
+                    deloverskrift = "Har du nye opplysninger?",
                     innhold =
                     "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via \n${stønadstype.klageUrl()}."
                 ),
                 AvsnittDto(
                     deloverskrift = "Har du spørsmål?",
                     innhold = "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. " +
-                            "Du kan også kontakte oss på nav.no/kontakt."
+                        "Du kan også kontakte oss på nav.no/kontakt."
                 )
             )
         )
@@ -64,14 +64,14 @@ object BrevInnhold {
         navn: String,
         formkrav: Form,
         stønadstype: Stønadstype,
-        påklagetFagsystemVedtak: FagsystemVedtak?
+        påklagetVedtakDetaljer: PåklagetVedtakDetaljer?
     ): FritekstBrevRequestDto {
         val ikkeOppfylteFormkrav = utledIkkeOppfylteFormkrav(formkrav)
         val brevtekstFraSaksbehandler =
             formkrav.brevtekst ?: error("Må ha brevtekst fra saksbehandler for å generere brev ved formkrav ikke oppfylt")
 
         return FritekstBrevRequestDto(
-            overskrift = "Vi har avvist klagen din på vedtaket om ${visningsnavn(stønadstype, påklagetFagsystemVedtak)}",
+            overskrift = "Vi har avvist klagen din på vedtaket om ${visningsnavn(stønadstype, påklagetVedtakDetaljer)}",
             personIdent = ident,
             navn = navn,
             avsnitt =
@@ -92,7 +92,7 @@ object BrevInnhold {
                     deloverskrift = "Du har rett til å klage",
                     innhold =
                     "Hvis du vil klage, må du gjøre dette innen 3 uker fra den datoen du fikk dette brevet. " +
-                            "Du finner skjema og informasjon på ${stønadstype.klageUrl()}."
+                        "Du finner skjema og informasjon på ${stønadstype.klageUrl()}."
                 ),
                 AvsnittDto(
                     deloverskrift = "Du har rett til innsyn",
@@ -103,23 +103,73 @@ object BrevInnhold {
                     deloverskrift = "Har du spørsmål?",
                     innhold =
                     "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. " +
-                            "Du kan også kontakte oss på nav.no/kontakt."
+                        "Du kan også kontakte oss på nav.no/kontakt."
                 )
             )
         )
     }
 
-    private fun visningsnavn(stønadstype: Stønadstype, påklagetFagsystemVedtak: FagsystemVedtak?): String =
-        if (påklagetFagsystemVedtak?.fagsystemType == FagsystemType.TILBAKEKREVING) {
-            "tilbakebetaling av ${stønadstype.visningsnavn()}"
-        } else {
-            stønadstype.visningsnavn()
+    fun lagFormkravAvvistBrevIkkePåklagetVedtak(
+        ident: String,
+        navn: String,
+        formkrav: Form,
+        stønadstype: Stønadstype
+    ): FritekstBrevRequestDto {
+        val brevtekstFraSaksbehandler =
+            formkrav.brevtekst ?: error("Må ha brevtekst fra saksbehandler for å generere brev ved formkrav ikke oppfylt")
+
+        return FritekstBrevRequestDto(
+            overskrift = "Vi har avvist klagen din",
+            personIdent = ident,
+            navn = navn,
+            avsnitt =
+            listOf(
+                AvsnittDto(
+                    deloverskrift = "",
+                    innhold = "Vi har avvist klagen din fordi du ikke har klaget på et vedtak."
+                ),
+                AvsnittDto(
+                    deloverskrift = "",
+                    innhold = brevtekstFraSaksbehandler
+                ),
+                AvsnittDto(
+                    deloverskrift = "",
+                    innhold = "Vedtaket er gjort etter forvaltningsloven §§ 28 og 33."
+                ),
+                AvsnittDto(
+                    deloverskrift = "Du har rett til å klage",
+                    innhold =
+                    "Hvis du vil klage, må du gjøre dette innen 3 uker fra den datoen du fikk dette brevet. " +
+                        "Du finner skjema og informasjon på ${stønadstype.klageUrl()}."
+                ),
+                AvsnittDto(
+                    deloverskrift = "Du har rett til innsyn",
+                    innhold =
+                    "På nav.no/dittnav kan du se dokumentene i saken din."
+                ),
+                AvsnittDto(
+                    deloverskrift = "Har du spørsmål?",
+                    innhold =
+                    "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. " +
+                        "Du kan også kontakte oss på nav.no/kontakt."
+                )
+            )
+        )
+    }
+
+    private fun visningsnavn(stønadstype: Stønadstype, påklagetVedtakDetaljer: PåklagetVedtakDetaljer?): String =
+        when (påklagetVedtakDetaljer?.fagsystemType) {
+            FagsystemType.TILBAKEKREVING -> "tilbakebetaling av ${stønadstype.visningsnavn()}"
+            FagsystemType.SANKSJON_1_MND -> "sanksjon"
+            FagsystemType.UTESTENGELSE -> "utestengelse"
+            else ->
+                stønadstype.visningsnavn()
         }
 
     private fun Stønadstype.lesMerUrl() = when (this) {
         Stønadstype.OVERGANGSSTØNAD,
         Stønadstype.BARNETILSYN,
-        Stønadstype.SKOLEPENGER -> "nav.no/familie/alene-med-barn"
+        Stønadstype.SKOLEPENGER -> "nav.no/alene-med-barn"
         Stønadstype.BARNETRYGD -> "nav.no/barnetrygd"
         Stønadstype.KONTANTSTØTTE -> "nav.no/kontantstotte"
     }
