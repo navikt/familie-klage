@@ -71,7 +71,7 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
             val vedtakDato = SporbarUtils.now()
             val henlagtÅrsak = HenlagtÅrsak.TRUKKET_TILBAKE
             val behandling = behandlingRepository.insert(
-                behandling(fagsak, vedtakDato = vedtakDato, henlagtÅrsak = henlagtÅrsak)
+                behandling(fagsak, vedtakDato = vedtakDato, henlagtÅrsak = henlagtÅrsak),
             )
             vurderingRepository.insert(vurdering(behandling.id, årsak = Årsak.FEIL_PROSESSUELL))
             val klageresultat = klageresultatRepository.insert(klageresultat(behandlingId = behandling.id))
@@ -115,7 +115,7 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
             val fagsak2 = DomainUtil.fagsakDomain(
                 personId = fagsak.fagsakPersonId,
                 eksternId = "2",
-                stønadstype = Stønadstype.BARNETILSYN
+                stønadstype = Stønadstype.BARNETILSYN,
             ).tilFagsakMedPerson(fagsak.personIdenter)
 
             testoppsettService.lagreFagsak(fagsak2)
@@ -142,7 +142,7 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
             val fagsakAnnenPerson = DomainUtil.fagsakDomain(
                 personId = fagsak.fagsakPersonId,
                 eksternId = "2",
-                stønadstype = Stønadstype.BARNETILSYN
+                stønadstype = Stønadstype.BARNETILSYN,
             ).tilFagsakMedPerson(setOf(PersonIdent("2")))
 
             testoppsettService.lagreFagsak(fagsakAnnenPerson)

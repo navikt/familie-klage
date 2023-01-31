@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 data class FagsystemRevurdering(
     val opprettetBehandling: Boolean,
     val opprettet: Opprettet? = null,
-    val ikkeOpprettet: IkkeOpprettet? = null
+    val ikkeOpprettet: IkkeOpprettet? = null,
 ) {
 
     init {
@@ -23,13 +23,13 @@ data class FagsystemRevurdering(
 data class Opprettet(val eksternBehandlingId: String, val opprettetTid: LocalDateTime)
 data class IkkeOpprettet(
     val årsak: IkkeOpprettetÅrsak,
-    val detaljer: String? = null
+    val detaljer: String? = null,
 )
 
 enum class IkkeOpprettetÅrsak {
     ÅPEN_BEHANDLING,
     INGEN_BEHANDLING,
-    FEIL
+    FEIL,
 }
 
 fun OpprettRevurderingResponse.tilFagsystemRevurdering(): FagsystemRevurdering {
@@ -37,12 +37,12 @@ fun OpprettRevurderingResponse.tilFagsystemRevurdering(): FagsystemRevurdering {
     val ikkeOpprettet = this.ikkeOpprettet?.let {
         IkkeOpprettet(
             IkkeOpprettetÅrsak.valueOf(it.årsak.name),
-            it.detaljer
+            it.detaljer,
         )
     }
     return FagsystemRevurdering(
         opprettetBehandling = this.opprettetBehandling,
         opprettet = opprettet,
-        ikkeOpprettet = ikkeOpprettet
+        ikkeOpprettet = ikkeOpprettet,
     )
 }

@@ -23,24 +23,24 @@ class JournalpostService(private val familieIntegrasjonerClient: FamilieIntegras
         personIdent: String,
         stønadType: Stønadstype,
         antall: Int = 200,
-        typer: List<Journalposttype> = Journalposttype.values().toList()
+        typer: List<Journalposttype> = Journalposttype.values().toList(),
     ): List<Journalpost> {
         return familieIntegrasjonerClient.finnJournalposter(
             JournalposterForBrukerRequest(
                 brukerId = Bruker(
                     id = personIdent,
-                    type = BrukerIdType.FNR
+                    type = BrukerIdType.FNR,
                 ),
                 antall = antall,
                 tema = listOf(stønadType.tilTema()),
-                journalposttype = typer
-            )
+                journalposttype = typer,
+            ),
         )
     }
 
     fun hentDokument(
         journalpost: Journalpost,
-        dokumentInfoId: String
+        dokumentInfoId: String,
     ): ByteArray {
         validerDokumentKanHentes(journalpost, dokumentInfoId)
         return familieIntegrasjonerClient.hentDokument(journalpost.journalpostId, dokumentInfoId)
@@ -48,7 +48,7 @@ class JournalpostService(private val familieIntegrasjonerClient: FamilieIntegras
 
     private fun validerDokumentKanHentes(
         journalpost: Journalpost,
-        dokumentInfoId: String
+        dokumentInfoId: String,
     ) {
         val dokument = journalpost.dokumenter?.find { it.dokumentInfoId == dokumentInfoId }
         feilHvis(dokument == null) {

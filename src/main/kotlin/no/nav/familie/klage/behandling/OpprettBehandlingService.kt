@@ -25,14 +25,14 @@ class OpprettBehandlingService(
     private val formService: FormService,
     private val oppgaveTaskService: OppgaveTaskService,
     private val behandlingshistorikkService: BehandlingshistorikkService,
-    private val taskService: TaskService
+    private val taskService: TaskService,
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @Transactional
     fun opprettBehandling(
-        opprettKlagebehandlingRequest: OpprettKlagebehandlingRequest
+        opprettKlagebehandlingRequest: OpprettKlagebehandlingRequest,
     ): UUID {
         val klageMottatt = opprettKlagebehandlingRequest.klageMottatt
         val stønadstype = opprettKlagebehandlingRequest.stønadstype
@@ -46,18 +46,18 @@ class OpprettBehandlingService(
             ident = opprettKlagebehandlingRequest.ident,
             eksternId = eksternFagsakId,
             fagsystem = opprettKlagebehandlingRequest.fagsystem,
-            stønadstype = stønadstype
+            stønadstype = stønadstype,
         )
 
         val behandlingId = behandlingService.opprettBehandling(
             Behandling(
                 fagsakId = fagsak.id,
                 påklagetVedtak = PåklagetVedtak(
-                    påklagetVedtakstype = PåklagetVedtakstype.IKKE_VALGT
+                    påklagetVedtakstype = PåklagetVedtakstype.IKKE_VALGT,
                 ),
                 klageMottatt = klageMottatt,
-                behandlendeEnhet = opprettKlagebehandlingRequest.behandlendeEnhet
-            )
+                behandlendeEnhet = opprettKlagebehandlingRequest.behandlendeEnhet,
+            ),
         ).id
 
         behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.OPPRETTET)
@@ -66,11 +66,11 @@ class OpprettBehandlingService(
 
         oppgaveTaskService.opprettBehandleSakOppgave(behandlingId)
         taskService.save(
-            BehandlingsstatistikkTask.opprettMottattTask(behandlingId = behandlingId)
+            BehandlingsstatistikkTask.opprettMottattTask(behandlingId = behandlingId),
         )
         logger.info(
             "Opprettet behandling=$behandlingId for stønadstype=$stønadstype " +
-                "eksternFagsakId=$eksternFagsakId klageMottatt=$klageMottatt"
+                "eksternFagsakId=$eksternFagsakId klageMottatt=$klageMottatt",
         )
         return behandlingId
     }

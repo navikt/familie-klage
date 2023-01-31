@@ -14,11 +14,11 @@ import java.util.UUID
 @Service
 @TaskStepBeskrivelse(
     taskStepType = LagSaksbehandlingsblankettTask.TYPE,
-    beskrivelse = "Lager og journalfører blankett"
+    beskrivelse = "Lager og journalfører blankett",
 )
 class LagSaksbehandlingsblankettTask(
     private val blankettService: BlankettService,
-    private val distribusjonService: DistribusjonService
+    private val distribusjonService: DistribusjonService,
 ) : AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -29,7 +29,7 @@ class LagSaksbehandlingsblankettTask(
         val journalpostId = distribusjonService.journalførSaksbehandlingsblankett(
             behandlingId,
             blankettPdf,
-            task.metadata.getProperty(saksbehandlerMetadataKey)
+            task.metadata.getProperty(saksbehandlerMetadataKey),
         )
 
         logger.info("Lagret saksbehandlingsblankett for behandling=$behandlingId på journapost=$journalpostId")
@@ -45,7 +45,7 @@ class LagSaksbehandlingsblankettTask(
                 payload = behandlingId.toString(),
                 properties = Properties().apply {
                     setProperty(saksbehandlerMetadataKey, SikkerhetContext.hentSaksbehandler(strict = true))
-                }
+                },
             )
         }
     }

@@ -27,12 +27,12 @@ internal class BrevInnholdTest {
             "Navn Navnesen",
             Stønadstype.OVERGANGSSTØNAD,
             påklagetVedtakDetaljer("123", vedtakstidspunkt = vedtakstidspunkt),
-            mottattDato
+            mottattDato,
         )
 
         assertThat(brev.avsnitt.first().innhold).isEqualTo(
             "Vi har 01.01.2020 fått klagen din på vedtaket om overgangsstønad som ble gjort 05.11.2021, " +
-                "og kommet frem til at vi ikke endrer vedtaket. NAV Klageinstans skal derfor vurdere saken din på nytt."
+                "og kommet frem til at vi ikke endrer vedtaket. NAV Klageinstans skal derfor vurdere saken din på nytt.",
         )
     }
 
@@ -46,11 +46,11 @@ internal class BrevInnholdTest {
             "Navn Navnesen",
             Stønadstype.OVERGANGSSTØNAD,
             påklagetVedtakDetaljer,
-            mottattDato
+            mottattDato,
         )
         assertThat(brev.avsnitt.first().innhold).isEqualTo(
             "Vi har 01.01.2020 fått klagen din på vedtaket om tilbakebetaling av overgangsstønad som ble gjort 05.11.2021, " +
-                "og kommet frem til at vi ikke endrer vedtaket. NAV Klageinstans skal derfor vurdere saken din på nytt."
+                "og kommet frem til at vi ikke endrer vedtaket. NAV Klageinstans skal derfor vurdere saken din på nytt.",
         )
     }
 
@@ -64,11 +64,11 @@ internal class BrevInnholdTest {
             "Navn Navnesen",
             Stønadstype.OVERGANGSSTØNAD,
             påklagetVedtakDetaljer,
-            mottattDato
+            mottattDato,
         )
         assertThat(brev.avsnitt.first().innhold).isEqualTo(
             "Vi har 01.01.2020 fått klagen din på vedtaket om sanksjon som ble gjort 05.11.2021, " +
-                "og kommet frem til at vi ikke endrer vedtaket. NAV Klageinstans skal derfor vurdere saken din på nytt."
+                "og kommet frem til at vi ikke endrer vedtaket. NAV Klageinstans skal derfor vurdere saken din på nytt.",
         )
     }
 
@@ -79,11 +79,11 @@ internal class BrevInnholdTest {
             "Innstilling abc",
             ikkeOppfyltForm(),
             Stønadstype.SKOLEPENGER,
-            påklagetVedtakDetaljer("123", vedtakstidspunkt = vedtakstidspunkt)
+            påklagetVedtakDetaljer("123", vedtakstidspunkt = vedtakstidspunkt),
         )
 
         assertThat(brev.overskrift).isEqualTo(
-            "Vi har avvist klagen din på vedtaket om stønad til skolepenger"
+            "Vi har avvist klagen din på vedtaket om stønad til skolepenger",
         )
     }
 
@@ -96,7 +96,7 @@ internal class BrevInnholdTest {
             "Innstilling abc",
             ikkeOppfyltForm(),
             Stønadstype.BARNETILSYN,
-            påklagetVedtakDetaljer
+            påklagetVedtakDetaljer,
         )
         assertThat(brev.overskrift).isEqualTo("Vi har avvist klagen din på vedtaket om tilbakebetaling av stønad til barnetilsyn")
     }
@@ -110,7 +110,7 @@ internal class BrevInnholdTest {
             "Innstilling abc",
             ikkeOppfyltForm(),
             Stønadstype.BARNETILSYN,
-            påklagetVedtakDetaljer
+            påklagetVedtakDetaljer,
         )
         assertThat(brev.overskrift).isEqualTo("Vi har avvist klagen din på vedtaket om sanksjon")
     }
@@ -121,7 +121,7 @@ internal class BrevInnholdTest {
             "123456789",
             "Innstilling abc",
             ikkeOppfyltForm(),
-            Stønadstype.BARNETILSYN
+            Stønadstype.BARNETILSYN,
         )
         assertThat(brev.overskrift).isEqualTo("Vi har avvist klagen din")
         assertThat(brev.avsnitt.first().innhold).isEqualTo("Vi har avvist klagen din fordi du ikke har klaget på et vedtak.")

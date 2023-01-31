@@ -22,7 +22,7 @@ import java.util.UUID
 class DistribusjonService(
     private val familieIntegrasjonerClient: FamilieIntegrasjonerClient,
     private val fagsakService: FagsakService,
-    private val behandlingService: BehandlingService
+    private val behandlingService: BehandlingService,
 ) {
 
     fun journalførBrev(
@@ -30,7 +30,7 @@ class DistribusjonService(
         brev: ByteArray,
         saksbehandler: String,
         index: Int = 0,
-        mottaker: AvsenderMottaker
+        mottaker: AvsenderMottaker,
     ): String {
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
 
@@ -42,14 +42,14 @@ class DistribusjonService(
             dokumenttype = dokumenttypeBrev(fagsak.stønadstype),
             saksbehandler = saksbehandler,
             suffixEksternReferanseId = "-$index",
-            avsenderMottaker = mottaker
+            avsenderMottaker = mottaker,
         )
     }
 
     fun journalførSaksbehandlingsblankett(
         behandlingId: UUID,
         saksbehandlingsblankettPdf: ByteArray,
-        saksbehandler: String
+        saksbehandler: String,
     ): String {
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
 
@@ -60,7 +60,7 @@ class DistribusjonService(
             tittel = "Blankett for klage på ${fagsak.stønadstype.name.storForbokstav()}",
             dokumenttype = dokumenttypeSaksbehandlingsblankett(fagsak.stønadstype),
             saksbehandler = saksbehandler,
-            suffixEksternReferanseId = "-blankett"
+            suffixEksternReferanseId = "-blankett",
         )
     }
 
@@ -72,14 +72,14 @@ class DistribusjonService(
         dokumenttype: Dokumenttype,
         saksbehandler: String,
         suffixEksternReferanseId: String = "",
-        avsenderMottaker: AvsenderMottaker? = null
+        avsenderMottaker: AvsenderMottaker? = null,
     ): String {
         val behandling = behandlingService.hentBehandling(behandlingId)
 
         val dokument = lagDokument(
             pdf = pdf,
             dokumenttype = dokumenttype,
-            tittel = tittel
+            tittel = tittel,
         )
         val arkiverDokumentRequest = ArkiverDokumentRequest(
             fnr = fagsak.hentAktivIdent(),
@@ -89,12 +89,12 @@ class DistribusjonService(
             fagsakId = fagsak.eksternId,
             journalførendeEnhet = behandling.behandlendeEnhet,
             eksternReferanseId = "${behandling.eksternBehandlingId}$suffixEksternReferanseId",
-            avsenderMottaker = avsenderMottaker
+            avsenderMottaker = avsenderMottaker,
         )
 
         return familieIntegrasjonerClient.arkiverDokument(
             arkiverDokumentRequest,
-            saksbehandler
+            saksbehandler,
         ).journalpostId
     }
 
@@ -105,14 +105,14 @@ class DistribusjonService(
     private fun lagDokument(
         pdf: ByteArray,
         dokumenttype: Dokumenttype,
-        tittel: String
+        tittel: String,
     ): Dokument {
         return Dokument(
             dokument = pdf,
             filtype = Filtype.PDFA,
             filnavn = null,
             tittel = tittel,
-            dokumenttype = dokumenttype
+            dokumenttype = dokumenttype,
         )
     }
 

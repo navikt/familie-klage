@@ -70,7 +70,7 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
 
             val påklagetVedtak = PåklagetVedtakDto(
                 eksternFagsystemBehandlingId = påklagetBehandlingId,
-                påklagetVedtakstype = PåklagetVedtakstype.VEDTAK
+                påklagetVedtakstype = PåklagetVedtakstype.VEDTAK,
             )
             behandlingService.oppdaterPåklagetVedtak(behandlingId = behandling.id, påklagetVedtakDto = påklagetVedtak)
             val oppdatertBehandling = behandlingService.hentBehandling(behandling.id)
@@ -90,7 +90,7 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
             val påklagetVedtak = PåklagetVedtakDto(
                 eksternFagsystemBehandlingId = null,
                 manuellVedtaksdato = vedtaksdatoInfotrygd,
-                påklagetVedtakstype = PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING
+                påklagetVedtakstype = PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING,
             )
             behandlingService.oppdaterPåklagetVedtak(behandlingId = behandling.id, påklagetVedtakDto = påklagetVedtak)
             val oppdatertBehandling = behandlingService.hentBehandling(behandling.id)
@@ -111,7 +111,7 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
             val påklagetVedtak = PåklagetVedtakDto(
                 eksternFagsystemBehandlingId = null,
                 manuellVedtaksdato = vedtaksdato,
-                påklagetVedtakstype = PåklagetVedtakstype.UTESTENGELSE
+                påklagetVedtakstype = PåklagetVedtakstype.UTESTENGELSE,
             )
             behandlingService.oppdaterPåklagetVedtak(behandlingId = behandling.id, påklagetVedtakDto = påklagetVedtak)
             val oppdatertBehandling = behandlingService.hentBehandling(behandling.id)

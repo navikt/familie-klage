@@ -28,9 +28,9 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
             fagsakDomain().tilFagsakMedPerson(
                 setOf(
                     PersonIdent("12345678901"),
-                    PersonIdent("98765432109")
-                )
-            )
+                    PersonIdent("98765432109"),
+                ),
+            ),
         )
         val fagsak = fagsakRepository.findByIdOrNull(fagsakPersistert.id) ?: error("Finner ikke fagsak med id")
 
@@ -61,14 +61,14 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
             fagsakDomain(
                 eksternId = eksternId,
                 fagsystem = fagsystem,
-                stønadstype = stønadstype
-            ).tilFagsakMedPerson(setOf(PersonIdent("1")))
+                stønadstype = stønadstype,
+            ).tilFagsakMedPerson(setOf(PersonIdent("1"))),
         )
 
         val fagsak = fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(
             eksternId = eksternId,
             fagsystem = fagsystem,
-            stønadstype = stønadstype
+            stønadstype = stønadstype,
         )!!
 
         assertThat(lagretFagsak.id).isEqualTo(fagsak.id)

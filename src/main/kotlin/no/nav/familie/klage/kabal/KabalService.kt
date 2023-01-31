@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 @Service
 class KabalService(
     private val kabalClient: KabalClient,
-    private val lenkeConfig: LenkeConfig
+    private val lenkeConfig: LenkeConfig,
 ) {
 
     fun sendTilKabal(fagsak: Fagsak, behandling: Behandling, vurdering: Vurdering) {
@@ -27,8 +27,8 @@ class KabalService(
             klager = OversendtKlager(
                 id = OversendtPartId(
                     type = OversendtPartIdType.PERSON,
-                    verdi = fagsak.hentAktivIdent()
-                )
+                    verdi = fagsak.hentAktivIdent(),
+                ),
             ),
             fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem),
             kildeReferanse = behandling.eksternBehandlingId.toString(),
@@ -39,7 +39,7 @@ class KabalService(
             brukersHenvendelseMottattNavDato = behandling.klageMottatt,
             innsendtTilNav = behandling.klageMottatt,
             kilde = fagsak.fagsystem,
-            ytelse = fagsak.stønadstype.tilYtelse()
+            ytelse = fagsak.stønadstype.tilYtelse(),
         )
     }
 

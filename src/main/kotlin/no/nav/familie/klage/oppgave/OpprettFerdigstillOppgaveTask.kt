@@ -9,11 +9,11 @@ import java.util.UUID
 @Service
 @TaskStepBeskrivelse(
     taskStepType = OpprettFerdigstillOppgaveTask.TYPE,
-    beskrivelse = "Ferdigstill oppgave knyttet til behandling"
+    beskrivelse = "Ferdigstill oppgave knyttet til behandling",
 )
 class OpprettFerdigstillOppgaveTask(
     private val oppgaveClient: OppgaveClient,
-    private val behandleSakOppgaveRepository: BehandleSakOppgaveRepository
+    private val behandleSakOppgaveRepository: BehandleSakOppgaveRepository,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {

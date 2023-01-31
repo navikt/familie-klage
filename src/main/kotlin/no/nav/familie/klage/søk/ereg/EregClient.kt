@@ -13,7 +13,7 @@ class EregClient(
     @Value("\${FAMILIE_EF_PROXY_URL}")
     private val familieEfProxyUri: URI,
     @Qualifier("azure")
-    private val restOperations: RestOperations
+    private val restOperations: RestOperations,
 ) : AbstractPingableRestClient(restOperations, "familie.proxy.ereg") {
 
     fun hentOrganisasjoner(organisasjonsnumre: List<String>): List<OrganisasjonDto> {

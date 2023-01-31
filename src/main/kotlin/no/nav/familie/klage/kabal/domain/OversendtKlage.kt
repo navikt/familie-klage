@@ -19,46 +19,46 @@ data class OversendtKlageAnkeV3(
     val innsendtTilNav: LocalDate,
     val kilde: Fagsystem,
     val ytelse: Ytelse,
-    val kommentar: String? = null
+    val kommentar: String? = null,
 )
 
 enum class Type(override val id: String, override val navn: String, override val beskrivelse: String) : Kode {
     KLAGE("1", "Klage", "Klage"),
-    ANKE("2", "Anke", "Anke")
+    ANKE("2", "Anke", "Anke"),
 }
 
 enum class OversendtPartIdType {
     PERSON,
-    VIRKSOMHET
+    VIRKSOMHET,
 }
 
 data class OversendtPartId(
     val type: OversendtPartIdType,
-    val verdi: String
+    val verdi: String,
 )
 
 data class OversendtKlager(
     val id: OversendtPartId,
-    val klagersProsessfullmektig: OversendtProsessfullmektig? = null
+    val klagersProsessfullmektig: OversendtProsessfullmektig? = null,
 )
 
 data class OversendtProsessfullmektig(
     val id: OversendtPartId,
-    val skalKlagerMottaKopi: Boolean
+    val skalKlagerMottaKopi: Boolean,
 )
 
 data class OversendtSakenGjelder(
     val id: OversendtPartId,
-    val skalMottaKopi: Boolean
+    val skalMottaKopi: Boolean,
 )
 
 data class OversendtSak(
     val fagsakId: String? = null,
-    val fagsystem: Fagsystem
+    val fagsystem: Fagsystem,
 )
 
 data class OversendtDokumentReferanse(
-    val type: MottakDokumentType
+    val type: MottakDokumentType,
 )
 
 enum class MottakDokumentType {
@@ -68,13 +68,13 @@ enum class MottakDokumentType {
     BRUKERS_ANKE,
     OVERSENDELSESBREV,
     KLAGE_VEDTAK,
-    ANNET
+    ANNET,
 }
 
 enum class Ytelse {
     ENF_ENF,
     BAR_BAR,
-    KON_KON
+    KON_KON,
 }
 
 interface Kode {
@@ -145,5 +145,5 @@ enum class LovKilde(override val id: String, override val navn: String, override
     HOVEDNUMMER_42_TRYGDEAVTALER("58", "Hovednummer 42 - Trygdeavtaler", "Hnr. 42"),
     DEKNINGSLOVEN("59", "Dekningsloven", "Dekningsloven"),
 
-    UKJENT("999", "Ukjent", "Ukjent")
+    UKJENT("999", "Ukjent", "Ukjent"),
 }

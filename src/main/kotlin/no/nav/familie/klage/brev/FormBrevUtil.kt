@@ -12,7 +12,7 @@ object FormBrevUtil {
             if (formkrav.klagePart == IKKE_OPPFYLT) FormkravVilkår.KLAGE_PART else null,
             if (formkrav.klageKonkret == IKKE_OPPFYLT) FormkravVilkår.KLAGE_KONKRET else null,
             if (formkrav.klageSignert == IKKE_OPPFYLT) FormkravVilkår.KLAGE_SIGNERT else null,
-            if (formkrav.klagefristOverholdt == IKKE_OPPFYLT) FormkravVilkår.KLAGEFRIST_OVERHOLDT else null
+            if (formkrav.klagefristOverholdt == IKKE_OPPFYLT) FormkravVilkår.KLAGEFRIST_OVERHOLDT else null,
         ).filterNotNull().toSet()
     }
 
@@ -35,7 +35,7 @@ object FormBrevUtil {
 
         return if (harFolketrygdlov && harForvaltningslov) {
             "Vedtaket er gjort etter folketrygdloven ${utledParagrafer(folketrygdloven)} og forvaltningsloven ${
-            utledParagrafer(forvaltningsloven)
+                utledParagrafer(forvaltningsloven)
             }."
         } else if (harFolketrygdlov) {
             "Vedtaket er gjort etter folketrygdloven ${utledParagrafer(folketrygdloven)}."
@@ -62,6 +62,6 @@ object FormBrevUtil {
         KLAGE_KONKRET("du ikke har sagt hva du klager på", emptySet(), setOf("32", "33")),
         KLAGE_PART("du har klaget på et vedtak som ikke gjelder deg", emptySet(), setOf("28", "33")),
         KLAGE_SIGNERT("du ikke har underskrevet den", emptySet(), setOf("31", "33")),
-        KLAGEFRIST_OVERHOLDT("du har klaget for sent", setOf("21-12"), setOf("31", "33"))
+        KLAGEFRIST_OVERHOLDT("du har klaget for sent", setOf("21-12"), setOf("31", "33")),
     }
 }

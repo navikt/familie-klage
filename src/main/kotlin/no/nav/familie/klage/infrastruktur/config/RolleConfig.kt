@@ -8,11 +8,11 @@ import org.springframework.boot.context.properties.ConstructorBinding
 class RolleConfig(
     val ba: FagsystemRolleConfig,
     val ef: FagsystemRolleConfig,
-    val ks: FagsystemRolleConfig
+    val ks: FagsystemRolleConfig,
 )
 
 data class FagsystemRolleConfig(
     val saksbehandler: String,
     val beslutter: String,
-    val veileder: String
+    val veileder: String,
 )

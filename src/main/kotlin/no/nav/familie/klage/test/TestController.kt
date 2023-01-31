@@ -24,7 +24,7 @@ import java.util.UUID
 class TestController(
     private val fagsakPersonService: FagsakPersonService,
     private val fagsakRepository: FagsakRepository,
-    private val opprettBehandlingService: OpprettBehandlingService
+    private val opprettBehandlingService: OpprettBehandlingService,
 ) {
 
     @PostMapping("opprett")
@@ -43,9 +43,9 @@ class TestController(
                     eksternFagsakId,
                     request.fagsystem,
                     request.klageMottatt,
-                    request.behandlendeEnhet
-                )
-            )
+                    request.behandlendeEnhet,
+                ),
+            ),
         )
     }
 
@@ -54,6 +54,6 @@ class TestController(
         val stønadstype: Stønadstype,
         val fagsystem: Fagsystem = Fagsystem.EF,
         val klageMottatt: LocalDate = LocalDate.now(),
-        val behandlendeEnhet: String = "4489"
+        val behandlendeEnhet: String = "4489",
     )
 }

@@ -75,8 +75,8 @@ internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
         behandleSakOppgaveRepository.insert(
             BehandleSakOppgave(
                 behandlingId = behandling.id,
-                oppgaveId = Random.nextLong().absoluteValue
-            )
+                oppgaveId = Random.nextLong().absoluteValue,
+            ),
         )
     }
 
@@ -102,7 +102,7 @@ internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
         return restTemplate.exchange(
             localhost("/api/behandling/$behandlingId/ferdigstill"),
             HttpMethod.POST,
-            HttpEntity(null, headers)
+            HttpEntity(null, headers),
         )
     }
 }

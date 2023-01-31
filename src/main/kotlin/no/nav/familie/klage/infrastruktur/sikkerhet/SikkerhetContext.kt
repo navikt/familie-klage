@@ -25,7 +25,7 @@ object SikkerhetContext {
                 onSuccess = {
                     it.getClaims("azuread")?.get("NAVident")?.toString() ?: SYSTEM_FORKORTELSE
                 },
-                onFailure = { SYSTEM_FORKORTELSE }
+                onFailure = { SYSTEM_FORKORTELSE },
             )
         if (strict && result == SYSTEM_FORKORTELSE) {
             error("Finner ikke NAVident i token")
@@ -40,7 +40,7 @@ object SikkerhetContext {
                     it.getClaims("azuread")?.get("name")?.toString()
                         ?: if (strict) error("Finner ikke navn i azuread token") else SYSTEM_NAVN
                 },
-                onFailure = { if (strict) error("Finner ikke navn på innlogget bruker") else SYSTEM_NAVN }
+                onFailure = { if (strict) error("Finner ikke navn på innlogget bruker") else SYSTEM_NAVN },
             )
     }
 
@@ -51,7 +51,7 @@ object SikkerhetContext {
                     @Suppress("UNCHECKED_CAST")
                     it.getClaims("azuread")?.get("groups") as List<String>? ?: emptyList()
                 },
-                onFailure = { emptyList() }
+                onFailure = { emptyList() },
             )
     }
 }

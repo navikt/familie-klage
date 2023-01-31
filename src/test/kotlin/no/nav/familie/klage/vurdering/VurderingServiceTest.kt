@@ -29,13 +29,13 @@ class VurderingServiceTest {
         vedtak = Vedtak.OMGJØR_VEDTAK,
         hjemmel = null,
         årsak = Årsak.FEIL_I_LOVANDVENDELSE,
-        begrunnelseOmgjøring = "begrunnelse"
+        begrunnelseOmgjøring = "begrunnelse",
     )
 
     val opprettholdVedtakVurdering = vurdering(
         behandlingId = UUID.randomUUID(),
         vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
-        hjemmel = Hjemmel.FT_FEMTEN_FEM
+        hjemmel = Hjemmel.FT_FEMTEN_FEM,
     )
 
     @BeforeEach

@@ -17,7 +17,7 @@ import java.util.UUID
 class VurderingService(
     private val vurderingRepository: VurderingRepository,
     private val stegService: StegService,
-    private val brevRepository: BrevRepository
+    private val brevRepository: BrevRepository,
 ) {
 
     fun hentVurdering(behandlingId: UUID): Vurdering? =
@@ -55,8 +55,8 @@ class VurderingService(
             begrunnelseOmgjøring = vurdering.begrunnelseOmgjøring,
             hjemmel = vurdering.hjemmel,
             innstillingKlageinstans = vurdering.innstillingKlageinstans,
-            interntNotat = vurdering.interntNotat
-        )
+            interntNotat = vurdering.interntNotat,
+        ),
     )
 
     private fun oppdaterVurdering(vurdering: VurderingDto, eksisterendeVurdering: Vurdering): Vurdering {
@@ -67,8 +67,8 @@ class VurderingService(
                 årsak = vurdering.årsak,
                 begrunnelseOmgjøring = vurdering.begrunnelseOmgjøring,
                 hjemmel = vurdering.hjemmel,
-                interntNotat = vurdering.interntNotat
-            )
+                interntNotat = vurdering.interntNotat,
+            ),
         )
     }
 }

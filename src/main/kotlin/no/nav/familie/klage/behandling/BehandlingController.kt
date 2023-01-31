@@ -26,7 +26,7 @@ class BehandlingController(
     private val behandlingService: BehandlingService,
     private val tilgangService: TilgangService,
     private val ferdigstillBehandlingService: FerdigstillBehandlingService,
-    private val fagsystemVedtakService: FagsystemVedtakService
+    private val fagsystemVedtakService: FagsystemVedtakService,
 ) {
 
     @GetMapping("{behandlingId}")

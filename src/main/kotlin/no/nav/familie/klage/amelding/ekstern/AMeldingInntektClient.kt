@@ -25,7 +25,7 @@ class AMeldingInntektClient(
             PersonIdent(personIdent),
             HttpHeaders().apply {
                 accept = listOf(MediaType.TEXT_PLAIN)
-            }
+            },
         )
     }
 }

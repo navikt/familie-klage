@@ -43,7 +43,7 @@ internal class FormServiceTest {
         behandlingService,
         behandlingshistorikkService,
         vurderingService,
-        taskService
+        taskService,
     )
 
     private val behandlingId = UUID.randomUUID()
@@ -84,8 +84,8 @@ internal class FormServiceTest {
             service.oppdaterFormkrav(
                 oppfyltFormDto().copy(
                     påklagetVedtak = DomainUtil.påklagetVedtakDto()
-                        .copy(påklagetVedtakstype = PåklagetVedtakstype.IKKE_VALGT)
-                )
+                        .copy(påklagetVedtakstype = PåklagetVedtakstype.IKKE_VALGT),
+                ),
             )
 
             verify { vurderingService.slettVurderingForBehandling(behandlingId) }
@@ -131,10 +131,10 @@ internal class FormServiceTest {
             val behandlingshistorikk = Behandlingshistorikk(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
-                StegType.OPPRETTET
+                StegType.OPPRETTET,
             )
             every { behandlingshistorikkService.hentBehandlingshistorikk(any()) } returns listOf(
-                behandlingshistorikk
+                behandlingshistorikk,
             )
             every { taskService.save(any()) } returns mockk<Task>()
             service.oppdaterFormkrav(oppfyltFormDto())
@@ -146,11 +146,11 @@ internal class FormServiceTest {
             val behandlingshistorikk = Behandlingshistorikk(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
-                StegType.FORMKRAV
+                StegType.FORMKRAV,
             )
             every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler"
             every { behandlingshistorikkService.hentBehandlingshistorikk(any()) } returns listOf(
-                behandlingshistorikk
+                behandlingshistorikk,
             )
             every { taskService.save(any()) } returns mockk<Task>()
             service.oppdaterFormkrav(oppfyltFormDto())
@@ -163,7 +163,7 @@ internal class FormServiceTest {
     private fun ikkeOppfyltFormDto() = oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto()).copy(
         klagePart = FormVilkår.IKKE_OPPFYLT,
         saksbehandlerBegrunnelse = "Ok",
-        brevtekst = "brevtekst"
+        brevtekst = "brevtekst",
     )
 
     private fun ikkeFerdigutfylt() =

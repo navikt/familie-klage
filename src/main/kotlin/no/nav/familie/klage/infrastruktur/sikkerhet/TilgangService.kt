@@ -26,7 +26,7 @@ class TilgangService(
     private val cacheManager: CacheManager,
     private val auditLogger: AuditLogger,
     private val behandlingService: BehandlingService,
-    private val fagsakService: FagsakService
+    private val fagsakService: FagsakService,
 ) {
 
     fun validerTilgangTilPersonMedBarn(personIdent: String, event: AuditLoggerEvent) {
@@ -36,7 +36,7 @@ class TilgangService(
             throw ManglerTilgang(
                 melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
                     "har ikke tilgang til $personIdent eller dets barn",
-                frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}"
+                frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}",
             )
         }
     }
@@ -52,15 +52,15 @@ class TilgangService(
                 event,
                 personIdent,
                 tilgang,
-                custom1 = CustomKeyValue("behandling", behandlingId.toString())
-            )
+                custom1 = CustomKeyValue("behandling", behandlingId.toString()),
+            ),
         )
 
         if (!tilgang.harTilgang) {
             throw ManglerTilgang(
                 melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
                     "har ikke tilgang til behandling=$behandlingId",
-                frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}"
+                frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}",
             )
         }
     }
@@ -93,7 +93,7 @@ class TilgangService(
             throw ManglerTilgang(
                 melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
                     "har ikke tilgang til fagsak=$fagsakId",
-                frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}"
+                frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}",
             )
         }
     }
@@ -117,7 +117,7 @@ class TilgangService(
             throw ManglerTilgang(
                 melding = "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} har ikke tilgang " +
                     "til å utføre denne operasjonen som krever minimumsrolle $minumumRolle",
-                frontendFeilmelding = "Mangler nødvendig saksbehandlerrolle for å utføre handlingen"
+                frontendFeilmelding = "Mangler nødvendig saksbehandlerrolle for å utføre handlingen",
             )
         }
     }
@@ -147,7 +147,7 @@ class TilgangService(
 
     private fun harTilgangTilGittRolleForFagsystem(
         fagsystemRolleConfig: FagsystemRolleConfig,
-        minimumsrolle: BehandlerRolle
+        minimumsrolle: BehandlerRolle,
     ): Boolean {
         val rollerFraToken = SikkerhetContext.hentGrupperFraToken()
         val rollerForBruker = when {
@@ -155,16 +155,16 @@ class TilgangService(
                 BehandlerRolle.SYSTEM,
                 BehandlerRolle.BESLUTTER,
                 BehandlerRolle.SAKSBEHANDLER,
-                BehandlerRolle.VEILEDER
+                BehandlerRolle.VEILEDER,
             )
             rollerFraToken.contains(fagsystemRolleConfig.beslutter) -> listOf(
                 BehandlerRolle.BESLUTTER,
                 BehandlerRolle.SAKSBEHANDLER,
-                BehandlerRolle.VEILEDER
+                BehandlerRolle.VEILEDER,
             )
             rollerFraToken.contains(fagsystemRolleConfig.saksbehandler) -> listOf(
                 BehandlerRolle.SAKSBEHANDLER,
-                BehandlerRolle.VEILEDER
+                BehandlerRolle.VEILEDER,
             )
             rollerFraToken.contains(fagsystemRolleConfig.veileder) -> listOf(BehandlerRolle.VEILEDER)
             else -> listOf(BehandlerRolle.UKJENT)

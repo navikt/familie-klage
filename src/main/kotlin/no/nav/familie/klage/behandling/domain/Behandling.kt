@@ -31,7 +31,7 @@ data class Behandling(
     val eksternBehandlingId: UUID = UUID.randomUUID(),
     @Column("henlagt_arsak")
     val henlagtÅrsak: HenlagtÅrsak? = null,
-    val fagsystemRevurdering: FagsystemRevurdering? = null
+    val fagsystemRevurdering: FagsystemRevurdering? = null,
 )
 
 data class PåklagetVedtakDetaljer(
@@ -40,14 +40,14 @@ data class PåklagetVedtakDetaljer(
     val behandlingstype: String,
     val resultat: String,
     val vedtakstidspunkt: LocalDateTime,
-    val regelverk: Regelverk?
+    val regelverk: Regelverk?,
 )
 
 data class PåklagetVedtak(
     @Column("paklaget_vedtak")
     val påklagetVedtakstype: PåklagetVedtakstype = PåklagetVedtakstype.IKKE_VALGT,
     @Column("paklaget_vedtak_detaljer")
-    val påklagetVedtakDetaljer: PåklagetVedtakDetaljer? = null
+    val påklagetVedtakDetaljer: PåklagetVedtakDetaljer? = null,
 )
 
 enum class PåklagetVedtakstype {
@@ -56,7 +56,7 @@ enum class PåklagetVedtakstype {
     UTEN_VEDTAK,
     IKKE_VALGT,
     UTESTENGELSE,
-    INFOTRYGD_ORDINÆRT_VEDTAK
+    INFOTRYGD_ORDINÆRT_VEDTAK,
 }
 
 fun PåklagetVedtakstype.harManuellVedtaksdato(): Boolean =
@@ -74,36 +74,36 @@ fun BehandlingStatus.erUnderArbeidAvSaksbehandler() = setOf(BehandlingStatus.OPP
 
 enum class StegType(
     val rekkefølge: Int,
-    val gjelderStatus: BehandlingStatus
+    val gjelderStatus: BehandlingStatus,
 ) {
     // Det blir opprettet et innslag i behandlingshistorikken ved opprettelse av behandlingen. Steget blir samtidig satt til FORMKRAV.
     // En behandling vil derfor i praksis aldri befinne seg i steget OPPRETTET. Opprettet-innslaget brukes for visning i frontend.
     OPPRETTET(
         rekkefølge = 0,
-        gjelderStatus = BehandlingStatus.OPPRETTET
+        gjelderStatus = BehandlingStatus.OPPRETTET,
     ),
     FORMKRAV(
         rekkefølge = 1,
-        gjelderStatus = BehandlingStatus.UTREDES
+        gjelderStatus = BehandlingStatus.UTREDES,
     ),
     VURDERING(
         rekkefølge = 2,
-        gjelderStatus = BehandlingStatus.UTREDES
+        gjelderStatus = BehandlingStatus.UTREDES,
     ),
     BREV(
         rekkefølge = 3,
-        gjelderStatus = BehandlingStatus.UTREDES
+        gjelderStatus = BehandlingStatus.UTREDES,
     ),
     OVERFØRING_TIL_KABAL(
         rekkefølge = 4,
-        gjelderStatus = BehandlingStatus.VENTER
+        gjelderStatus = BehandlingStatus.VENTER,
     ),
     KABAL_VENTER_SVAR(
         rekkefølge = 5,
-        gjelderStatus = BehandlingStatus.VENTER
+        gjelderStatus = BehandlingStatus.VENTER,
     ),
     BEHANDLING_FERDIGSTILT(
         rekkefølge = 6,
-        gjelderStatus = BehandlingStatus.FERDIGSTILT
-    );
+        gjelderStatus = BehandlingStatus.FERDIGSTILT,
+    ),
 }

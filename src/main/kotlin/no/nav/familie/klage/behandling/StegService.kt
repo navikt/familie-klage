@@ -18,7 +18,7 @@ import java.util.UUID
 class StegService(
     private val behandlingRepository: BehandlingRepository,
     private val behandlingshistorikkService: BehandlingshistorikkService,
-    private val tilgangService: TilgangService
+    private val tilgangService: TilgangService,
 ) {
 
     @Transactional
@@ -33,7 +33,7 @@ class StegService(
         behandlingId: UUID,
         nåværendeSteg: StegType,
         nesteSteg: StegType,
-        behandlingsresultat: BehandlingResultat? = null
+        behandlingsresultat: BehandlingResultat? = null,
     ) {
         behandlingRepository.updateSteg(behandlingId, nesteSteg)
         behandlingRepository.updateStatus(behandlingId, nesteSteg.gjelderStatus)
@@ -52,7 +52,7 @@ class StegService(
     private fun skalOppretteHistorikkradForNåværendeSteg(
         nåværendeSteg: StegType,
         nesteSteg: StegType,
-        behandlingsresultat: BehandlingResultat? = null
+        behandlingsresultat: BehandlingResultat? = null,
     ) = !(nåværendeSteg == StegType.BREV && nesteSteg == StegType.BEHANDLING_FERDIGSTILT && behandlingsresultat == BehandlingResultat.MEDHOLD)
 
     private fun validerGyldigNesteSteg(behandling: Behandling) =
@@ -62,6 +62,6 @@ class StegService(
 
     private fun validerHarSaksbehandlerRolle(behandlingId: UUID) =
         feilHvisIkke(
-            tilgangService.harTilgangTilBehandlingGittRolle(behandlingId, BehandlerRolle.SAKSBEHANDLER)
+            tilgangService.harTilgangTilBehandlingGittRolle(behandlingId, BehandlerRolle.SAKSBEHANDLER),
         ) { "Saksbehandler har ikke tilgang til å oppdatere behandlingssteg" }
 }

@@ -19,13 +19,13 @@ interface BehandlingRepository : RepositoryInterface<Behandling, UUID>, InsertUp
 
     @Modifying
     @Query(
-        """UPDATE behandling SET steg = :steg WHERE id = :behandling_id"""
+        """UPDATE behandling SET steg = :steg WHERE id = :behandling_id""",
     )
     fun updateSteg(behandling_id: UUID, steg: StegType)
 
     @Modifying
     @Query(
-        """UPDATE behandling SET status = :nyStatus WHERE id = :behandling_id"""
+        """UPDATE behandling SET status = :nyStatus WHERE id = :behandling_id""",
     )
     fun updateStatus(@Param("behandling_id") behandlingId: UUID, nyStatus: BehandlingStatus)
 
@@ -48,11 +48,11 @@ interface BehandlingRepository : RepositoryInterface<Behandling, UUID>, InsertUp
             JOIN fagsak f ON f.id = b.fagsak_id
             LEFT JOIN vurdering v ON v.behandling_id = b.id
             WHERE f.ekstern_id = :eksternFagsakId AND f.fagsystem = :fagsystem
-        """
+        """,
     )
     fun finnKlagebehandlingsresultat(
         @Param("eksternFagsakId") eksternFagsakId: String,
-        @Param("fagsystem") fagsystem: Fagsystem
+        @Param("fagsystem") fagsystem: Fagsystem,
     ): List<Klagebehandlingsesultat>
 
     fun findByFagsakId(fagsakId: UUID): List<Behandling>

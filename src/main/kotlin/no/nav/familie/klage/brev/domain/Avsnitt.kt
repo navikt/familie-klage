@@ -15,5 +15,5 @@ data class Avsnitt(
     @Column("skal_skjules_i_brevbygger")
     val skalSkjulesIBrevbygger: Boolean? = false,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
-    val sporbar: Sporbar = Sporbar()
+    val sporbar: Sporbar = Sporbar(),
 )

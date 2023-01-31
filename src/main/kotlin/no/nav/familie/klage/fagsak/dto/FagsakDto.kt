@@ -11,7 +11,7 @@ data class FagsakDto(
     val personIdent: String,
     val stønadstype: Stønadstype,
     val eksternId: String,
-    val fagsystem: Fagsystem
+    val fagsystem: Fagsystem,
 )
 
 fun Fagsak.tilDto(): FagsakDto =
@@ -21,5 +21,5 @@ fun Fagsak.tilDto(): FagsakDto =
         personIdent = this.hentAktivIdent(),
         stønadstype = stønadstype,
         eksternId = this.eksternId,
-        fagsystem = this.fagsystem
+        fagsystem = this.fagsystem,
     )

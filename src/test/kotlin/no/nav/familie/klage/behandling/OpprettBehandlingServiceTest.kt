@@ -77,7 +77,7 @@ internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {
 
     private fun opprettKlagebehandlingRequest(
         fagsak: Fagsak,
-        klageMottatt: LocalDate = LocalDate.now().minusDays(1)
+        klageMottatt: LocalDate = LocalDate.now().minusDays(1),
     ) =
         OpprettKlagebehandlingRequest(
             ident = "1234",
@@ -85,6 +85,6 @@ internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {
             eksternFagsakId = fagsak.eksternId,
             fagsystem = fagsak.fagsystem,
             klageMottatt = klageMottatt,
-            behandlendeEnhet = "4489"
+            behandlendeEnhet = "4489",
         )
 }

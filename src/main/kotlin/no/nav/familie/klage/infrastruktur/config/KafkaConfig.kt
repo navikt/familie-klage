@@ -15,7 +15,7 @@ import org.springframework.kafka.support.LoggingProducerListener
 @EnableKafka
 @Configuration
 @Import(
-    KafkaErrorHandler::class
+    KafkaErrorHandler::class,
 )
 class KafkaConfig {
 

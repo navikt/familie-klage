@@ -46,7 +46,7 @@ internal class BlankettServiceTest {
         personopplysningerService,
         formService,
         vurderingService,
-        blankettClient
+        blankettClient,
     )
 
     private val eksternFagsystemBehandlingId = "eksternFagsystemBehandlingId"
@@ -56,7 +56,7 @@ internal class BlankettServiceTest {
     private val behandling = behandling(
         fagsak = fagsak,
         påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer(eksternFagsystemBehandlingId)),
-        klageMottatt = LocalDate.of(2022, 10, 26)
+        klageMottatt = LocalDate.of(2022, 10, 26),
     )
 
     @BeforeEach
@@ -71,7 +71,7 @@ internal class BlankettServiceTest {
             oppfyltForm(behandlingId).copy(
                 saksbehandlerBegrunnelse = "Ok",
                 brevtekst = "Brevtekst",
-                klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_SATT
+                klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_SATT,
             ).tilDto(mockk())
         every { vurderingService.hentVurderingDto(behandlingId) } returns vurderingDto(
             vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
@@ -79,11 +79,11 @@ internal class BlankettServiceTest {
             begrunnelseOmgjøring = "begrunnelse",
             hjemmel = Hjemmel.BT_FEM,
             interntNotat = "interntNotat",
-            innstillingKlageinstans = "innstillingKlageinstans"
+            innstillingKlageinstans = "innstillingKlageinstans",
         )
         every { blankettClient.genererBlankett(capture(blankettRequestSpot)) } returns byteArrayOf()
         every { fagsystemVedtakService.hentFagsystemVedtak(behandlingId) } returns listOf(
-            fagsystemVedtak(eksternBehandlingId = eksternFagsystemBehandlingId)
+            fagsystemVedtak(eksternBehandlingId = eksternFagsystemBehandlingId),
         )
     }
 

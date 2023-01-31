@@ -80,11 +80,11 @@ class ApplicationConfig {
     @Bean("utenAuth")
     fun restTemplate(
         restTemplateBuilder: RestTemplateBuilder,
-        consumerIdClientInterceptor: ConsumerIdClientInterceptor
+        consumerIdClientInterceptor: ConsumerIdClientInterceptor,
     ): RestOperations {
         return restTemplateBuilder.additionalInterceptors(
             consumerIdClientInterceptor,
-            MdcValuesPropagatingClientInterceptor()
+            MdcValuesPropagatingClientInterceptor(),
         ).build()
     }
 
@@ -99,7 +99,7 @@ class ApplicationConfig {
         return RetryOAuth2HttpClient(
             RestTemplateBuilder()
                 .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
-                .setReadTimeout(Duration.of(2, ChronoUnit.SECONDS))
+                .setReadTimeout(Duration.of(2, ChronoUnit.SECONDS)),
         )
     }
 }

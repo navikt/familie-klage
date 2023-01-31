@@ -19,7 +19,7 @@ class BlankettService(
     private val personopplysningerService: PersonopplysningerService,
     private val formService: FormService,
     private val vurderingService: VurderingService,
-    private val blankettClient: BlankettClient
+    private val blankettClient: BlankettClient,
 ) {
 
     fun lagBlankett(behandlingId: UUID): ByteArray {
@@ -35,11 +35,11 @@ class BlankettService(
                 stønadstype = fagsak.stønadstype,
                 klageMottatt = behandling.klageMottatt,
                 resultat = behandling.resultat,
-                påklagetVedtak = påklagetVedtak
+                påklagetVedtak = påklagetVedtak,
             ),
             personopplysninger = lagPersonopplysningerDto(behandling, fagsak),
             formkrav = mapFormkrav(formkrav),
-            vurdering = mapVurdering(vurdering)
+            vurdering = mapVurdering(vurdering),
         )
         return blankettClient.genererBlankett(blankettPdfRequest)
     }
@@ -49,7 +49,7 @@ class BlankettService(
             BlankettPåklagetVedtakDto(
                 behandlingstype = påklagetVedtakDetaljer.behandlingstype,
                 resultat = påklagetVedtakDetaljer.resultat,
-                vedtakstidspunkt = påklagetVedtakDetaljer.vedtakstidspunkt
+                vedtakstidspunkt = påklagetVedtakDetaljer.vedtakstidspunkt,
             )
         }
     }
@@ -62,7 +62,7 @@ class BlankettService(
                 begrunnelseOmgjøring = it.begrunnelseOmgjøring,
                 hjemmel = it.hjemmel,
                 innstillingKlageinstans = it.innstillingKlageinstans,
-                interntNotat = it.interntNotat
+                interntNotat = it.interntNotat,
             )
         }
     }
@@ -74,7 +74,7 @@ class BlankettService(
         klagefristOverholdtUnntak = formkrav.klagefristOverholdtUnntak,
         klageSignert = formkrav.klageSignert,
         saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse,
-        brevtekst = formkrav.brevtekst
+        brevtekst = formkrav.brevtekst,
     )
 
     private fun lagPersonopplysningerDto(behandling: Behandling, fagsak: Fagsak): PersonopplysningerDto {

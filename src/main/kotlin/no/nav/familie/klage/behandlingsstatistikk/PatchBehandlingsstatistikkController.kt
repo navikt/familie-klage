@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 @Unprotected
 class PatchBehandlingsstatistikkController(
     private val behandlingRepository: BehandlingRepository,
-    private val taskService: TaskService
+    private val taskService: TaskService,
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -29,7 +29,7 @@ class PatchBehandlingsstatistikkController(
                     val taskSomSkalOpprettes = BehandlingsstatistikkTask.opprettSendtTilKATask(
                         behandlingId = behandling.id,
                         hendelseTidspunkt = behandling.sporbar.endret.endretTid,
-                        gjeldendeSaksbehandler = behandling.sporbar.endret.endretAv
+                        gjeldendeSaksbehandler = behandling.sporbar.endret.endretAv,
                     )
                     taskService.save(taskSomSkalOpprettes)
                 }

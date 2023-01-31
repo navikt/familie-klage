@@ -17,7 +17,7 @@ data class FormkravDto(
     val saksbehandlerBegrunnelse: String?,
     val brevtekst: String?,
     val endretTid: LocalDateTime,
-    val påklagetVedtak: PåklagetVedtakDto
+    val påklagetVedtak: PåklagetVedtakDto,
 )
 
 fun Form.tilDto(påklagetVedtak: PåklagetVedtakDto): FormkravDto =
@@ -31,5 +31,5 @@ fun Form.tilDto(påklagetVedtak: PåklagetVedtakDto): FormkravDto =
         saksbehandlerBegrunnelse = this.saksbehandlerBegrunnelse,
         brevtekst = this.brevtekst,
         endretTid = this.sporbar.endret.endretTid,
-        påklagetVedtak = påklagetVedtak
+        påklagetVedtak = påklagetVedtak,
     )

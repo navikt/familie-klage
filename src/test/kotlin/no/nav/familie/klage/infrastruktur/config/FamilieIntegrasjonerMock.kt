@@ -83,10 +83,10 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                     okJson(
                         objectMapper.writeValueAsString(
                             Ressurs.success(
-                                objectMapper.writeValueAsBytes(Testsøknad.søknadOvergangsstønad)
-                            )
-                        )
-                    )
+                                objectMapper.writeValueAsBytes(Testsøknad.søknadOvergangsstønad),
+                            ),
+                        ),
+                    ),
                 ),
             get(urlPathMatching("${integrasjonerConfig.journalPostUri.path}/hentdokument/([0-9]*)/([0-9]*)"))
                 .withQueryParam("variantFormat", equalTo("ARKIV"))
@@ -103,35 +103,35 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                         objectMapper.writeValueAsString(
                             Ressurs.success(
                                 ADRESSEBESKYTTELSEGRADERING
-                                    .UGRADERT
-                            )
-                        )
-                    )
+                                    .UGRADERT,
+                            ),
+                        ),
+                    ),
                 ),
             post(urlEqualTo(integrasjonerConfig.distribuerDokumentUri.path))
                 .willReturn(
                     okJson(
                         objectMapper.writeValueAsString(
                             Ressurs.success(
-                                "123"
-                            )
-                        )
-                    ).withStatus(200)
+                                "123",
+                            ),
+                        ),
+                    ).withStatus(200),
                 ),
             post(urlEqualTo(integrasjonerConfig.sendTilKabalUri.path))
                 .willReturn(
                     okJson(
                         objectMapper.writeValueAsString(
                             Ressurs.success(
-                                "123456"
-                            )
-                        )
-                    ).withStatus(200)
+                                "123456",
+                            ),
+                        ),
+                    ).withStatus(200),
                 ),
             post(urlEqualTo("${integrasjonerConfig.oppgaveUri.path}/opprett"))
                 .willReturn(okJson(objectMapper.writeValueAsString(Ressurs.success(OppgaveResponse(Random.nextLong().absoluteValue))))),
             patch(urlPathMatching("${integrasjonerConfig.oppgaveUri.path}/([0-9]*)/ferdigstill"))
-                .willReturn(okJson(objectMapper.writeValueAsString(Ressurs.success(OppgaveResponse(Random.nextLong().absoluteValue)))))
+                .willReturn(okJson(objectMapper.writeValueAsString(Ressurs.success(OppgaveResponse(Random.nextLong().absoluteValue))))),
 
         )
 
@@ -139,7 +139,7 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
         false,
         "Mock sier: Du har " +
             "ikke tilgang " +
-            "til person ikkeTilgang"
+            "til person ikkeTilgang",
     )
 
     @Bean("mock-integrasjoner")
@@ -186,22 +186,22 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                         dokumentvarianter =
                         listOf(
                             Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV),
-                            Dokumentvariant(variantformat = Dokumentvariantformat.ORIGINAL)
-                        )
+                            Dokumentvariant(variantformat = Dokumentvariantformat.ORIGINAL),
+                        ),
                     ),
                     DokumentInfo(
                         dokumentInfoId = "12345",
                         tittel = "Søknad om barnetilsyn - dokument 1",
                         brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
                         dokumentvarianter =
-                        listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV))
+                        listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV)),
                     ),
                     DokumentInfo(
                         dokumentInfoId = "12345",
                         tittel = "Samboeravtale",
                         brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
                         dokumentvarianter =
-                        listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV))
+                        listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV)),
                     ),
                     DokumentInfo(
                         dokumentInfoId = "12345",
@@ -212,36 +212,36 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                         logiskeVedlegg = listOf(
                             LogiskVedlegg(
                                 logiskVedleggId = "1",
-                                tittel = "Manuelt skannet samværsavtale"
+                                tittel = "Manuelt skannet samværsavtale",
                             ),
                             LogiskVedlegg(
                                 logiskVedleggId = "2",
-                                tittel = "Annen fritekst fra gosys"
-                            )
-                        )
+                                tittel = "Annen fritekst fra gosys",
+                            ),
+                        ),
                     ),
                     DokumentInfo(
                         dokumentInfoId = "12345",
                         tittel = "EtFrykteligLangtDokumentNavnSomTroligIkkeBrekkerOgØdeleggerGUI",
                         brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
                         dokumentvarianter =
-                        listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV))
+                        listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV)),
                     ),
                     DokumentInfo(
                         dokumentInfoId = "12345",
                         tittel = "Søknad om overgangsstønad - dokument 2",
                         brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
                         dokumentvarianter =
-                        listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV))
+                        listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV)),
                     ),
                     DokumentInfo(
                         dokumentInfoId = "12345",
                         tittel = "Søknad om overgangsstønad - dokument 3",
                         brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
                         dokumentvarianter =
-                        listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV))
-                    )
-                )
+                        listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV)),
+                    ),
+                ),
             )
         private val journalpostPapirsøknadFraIntegrasjoner =
             Journalpost(
@@ -262,9 +262,9 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                         tittel = "Søknad om overgangsstønad - dokument 1",
                         brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
                         dokumentvarianter =
-                        listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV))
-                    )
-                )
+                        listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV)),
+                    ),
+                ),
             )
 
         private val journalpost = Ressurs.success(journalpostFraIntegrasjoner)
@@ -275,8 +275,8 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                 enhetId = 100000194,
                 navn = "NAV Kristiansand",
                 enhetNr = "1001",
-                status = "Aktiv"
-            )
+                status = "Aktiv",
+            ),
         )
     }
 }

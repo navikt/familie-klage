@@ -20,7 +20,7 @@ enum class BehandlingsstatistikkHendelse {
     MOTTATT,
     PÅBEGYNT,
     FERDIG,
-    SENDT_TIL_KA
+    SENDT_TIL_KA,
 }
 
 @Service
@@ -29,7 +29,7 @@ class BehandlingsstatistikkService(
     private val behandlingService: BehandlingService,
     private val vurderingService: VurderingService,
     private val fagsakService: FagsakService,
-    private val personopplysningerService: PersonopplysningerService
+    private val personopplysningerService: PersonopplysningerService,
 ) {
 
     private val zoneIdOslo = ZoneId.of("Europe/Oslo")
@@ -39,7 +39,7 @@ class BehandlingsstatistikkService(
         behandlingsId: UUID,
         hendelse: BehandlingsstatistikkHendelse,
         hendelseTidspunkt: LocalDateTime,
-        gjeldendeSaksbehandler: String?
+        gjeldendeSaksbehandler: String?,
     ) {
         val behandlingsstatistikkKlage =
             mapTilBehandlingStatistikkKlage(behandlingsId, hendelse, hendelseTidspunkt, gjeldendeSaksbehandler)
@@ -50,7 +50,7 @@ class BehandlingsstatistikkService(
         behandlingId: UUID,
         hendelse: BehandlingsstatistikkHendelse,
         hendelseTidspunkt: LocalDateTime,
-        gjeldendeSaksbehandler: String?
+        gjeldendeSaksbehandler: String?,
     ): BehandlingsstatistikkKlage {
         val behandling = behandlingService.hentBehandling(behandlingId)
         val vurdering = vurderingService.hentVurdering(behandling.id)
@@ -61,7 +61,7 @@ class BehandlingsstatistikkService(
 
         val behandlendeEnhet = maskerVerdiHvisStrengtFortrolig(
             erStrengtFortrolig,
-            behandling.behandlendeEnhet
+            behandling.behandlendeEnhet,
         )
 
         val påklagetVedtakDetaljer = behandling.påklagetVedtak.påklagetVedtakDetaljer
@@ -89,16 +89,16 @@ class BehandlingsstatistikkService(
             behandlingMetode = "MANUELL",
             saksbehandler = maskerVerdiHvisStrengtFortrolig(
                 erStrengtFortrolig,
-                gjeldendeSaksbehandler ?: behandling.sporbar.endret.endretAv
+                gjeldendeSaksbehandler ?: behandling.sporbar.endret.endretAv,
             ),
             avsender = "Klage familie",
-            saksnummer = fagsak.eksternId
+            saksnummer = fagsak.eksternId,
         )
     }
 
     private fun resultatBegrunnelse(
         behandling: Behandling,
-        vurdering: Vurdering?
+        vurdering: Vurdering?,
     ) = if (behandling.resultat == BehandlingResultat.HENLAGT) {
         behandling.henlagtÅrsak?.name
     } else {
@@ -107,7 +107,7 @@ class BehandlingsstatistikkService(
 
     private fun behandlingResultat(
         hendelse: BehandlingsstatistikkHendelse,
-        behandling: Behandling
+        behandling: Behandling,
     ) = if (hendelse == BehandlingsstatistikkHendelse.FERDIG || hendelse == BehandlingsstatistikkHendelse.SENDT_TIL_KA) {
         behandling.resultat.name
     } else {
@@ -116,7 +116,7 @@ class BehandlingsstatistikkService(
 
     private fun ferdigBehandletTid(
         hendelse: BehandlingsstatistikkHendelse,
-        hendelseTidspunkt: LocalDateTime
+        hendelseTidspunkt: LocalDateTime,
     ) = if (hendelse == BehandlingsstatistikkHendelse.FERDIG || hendelse == BehandlingsstatistikkHendelse.SENDT_TIL_KA) {
         hendelseTidspunkt.atZone(zoneIdOslo)
     } else {
@@ -125,7 +125,7 @@ class BehandlingsstatistikkService(
 
     private fun maskerVerdiHvisStrengtFortrolig(
         erStrengtFortrolig: Boolean,
-        verdi: String
+        verdi: String,
     ): String {
         if (erStrengtFortrolig) {
             return "-5"

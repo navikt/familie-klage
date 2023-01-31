@@ -37,7 +37,7 @@ internal class FormBrevUtilTest {
             klagePart = IKKE_OPPFYLT,
             klageSignert = IKKE_OPPFYLT,
             klageKonkret = IKKE_OPPFYLT,
-            klagefristOverholdt = IKKE_OPPFYLT
+            klagefristOverholdt = IKKE_OPPFYLT,
         )
 
         assertThat(utledIkkeOppfylteFormkrav(formkravFireIkkeOppfylt)).isEqualTo(setOf(KLAGE_PART, KLAGE_SIGNERT, KLAGE_KONKRET, KLAGEFRIST_OVERHOLDT))
