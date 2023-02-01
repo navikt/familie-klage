@@ -3,7 +3,7 @@ services:
 
   # SQL database
   postgres:
-    image: "postgres:11.5"
+    image: "postgres:14.6"
     volumes:
       - "familie-klage-data:/var/lib/postgresql/data"
     ports:
