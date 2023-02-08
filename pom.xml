@@ -37,7 +37,7 @@
 		<start-class>no.nav.familie.klage.ApplicationKt</start-class>
 		<kontrakter.version> 2.0_20230111110429_b460008</kontrakter.version>
 		<saksstatistikk-klage.version>2.0_20221122113504_2968071</saksstatistikk-klage.version>
-		<nav.security.version>2.1.6</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
+		<nav.security.version>3.0.2</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
 		<okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
 		<unleash.version>7.1.0</unleash.version>
 	</properties>
