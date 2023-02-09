@@ -1,5 +1,6 @@
 package no.nav.familie.klage.behandling
 
+import no.nav.familie.klage.behandling.OpprettRevurderingUtil.skalOppretteRevurderingAutomatisk
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
 import no.nav.familie.klage.behandling.domain.StegType
@@ -58,7 +59,7 @@ class FerdigstillBehandlingService(
         }
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
 
-        val opprettetRevurdering = opprettRevurderingHvisMedhold(behandlingId, behandlingsresultat)
+        val opprettetRevurdering = opprettRevurderingHvisMedhold(behandling, behandlingsresultat)
 
         behandlingService.oppdaterBehandlingMedResultat(behandlingId, behandlingsresultat, opprettetRevurdering)
         stegService.oppdaterSteg(behandlingId, behandling.steg, stegForResultat(behandlingsresultat), behandlingsresultat)
@@ -74,11 +75,12 @@ class FerdigstillBehandlingService(
      * Dette skjer synkront og kan vurderes å endres til async med task eller kafka ved behov
      */
     private fun opprettRevurderingHvisMedhold(
-        behandlingId: UUID,
+        behandling: Behandling,
         behandlingsresultat: BehandlingResultat,
     ): FagsystemRevurdering? {
-        return if (behandlingsresultat == MEDHOLD) {
-            fagsystemVedtakService.opprettRevurdering(behandlingId).tilFagsystemRevurdering()
+        return if (behandlingsresultat == MEDHOLD &&
+            skalOppretteRevurderingAutomatisk(behandling.påklagetVedtak.påklagetVedtakstype)) {
+            fagsystemVedtakService.opprettRevurdering(behandling.id).tilFagsystemRevurdering()
         } else {
             null
         }

@@ -8,6 +8,8 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
+import no.nav.familie.klage.behandling.domain.PåklagetVedtak
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.blankett.LagSaksbehandlingsblankettTask
@@ -141,10 +143,10 @@ internal class FerdigstillBehandlingServiceTest {
 
         assertThat(stegSlot.captured).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.MEDHOLD)
-        assertThat(fagsystemRevurderingSlot.single()).isNotNull
+        assertThat(fagsystemRevurderingSlot.single()).isNull()
 
         verify(exactly = 2) { taskService.save(any()) }
-        verify(exactly = 1) { fagsystemVedtakService.opprettRevurdering(behandling.id) }
+        verify(exactly = 0) { fagsystemVedtakService.opprettRevurdering(behandling.id) }
         assertThat(saveTaskSlot.map { it.type }).containsExactly(
             LagSaksbehandlingsblankettTask.TYPE,
             BehandlingsstatistikkTask.TYPE,
@@ -177,5 +179,17 @@ internal class FerdigstillBehandlingServiceTest {
                 ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
             }
         }
+    }
+
+    @Test
+    internal fun `skal opprette revurdering automatisk påklaget vedtak er vedtak i fagsystemet`() {
+        every { vurderingService.hentVurdering(any()) } returns vurdering.copy(vedtak = Vedtak.OMGJØR_VEDTAK)
+        every { behandlingService.hentBehandling(any()) } returns
+                behandling.copy(påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, null))
+
+        ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
+
+        assertThat(fagsystemRevurderingSlot.single()).isNotNull
+        verify(exactly = 1) { fagsystemVedtakService.opprettRevurdering(behandling.id) }
     }
 }
