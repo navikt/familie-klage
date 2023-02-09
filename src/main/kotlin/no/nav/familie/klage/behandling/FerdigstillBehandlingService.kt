@@ -79,7 +79,7 @@ class FerdigstillBehandlingService(
         behandlingsresultat: BehandlingResultat,
     ): FagsystemRevurdering? {
         return if (behandlingsresultat == MEDHOLD &&
-            skalOppretteRevurderingAutomatisk(behandling.påklagetVedtak.påklagetVedtakstype)) {
+            skalOppretteRevurderingAutomatisk(behandling.påklagetVedtak)) {
             fagsystemVedtakService.opprettRevurdering(behandling.id).tilFagsystemRevurdering()
         } else {
             null

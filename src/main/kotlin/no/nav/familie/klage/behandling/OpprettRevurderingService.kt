@@ -14,7 +14,7 @@ class OpprettRevurderingService(
 
     fun kanOppretteRevurdering(behandlingId: UUID): KanOppretteRevurderingResponse {
         val behandling = behandlingService.hentBehandling(behandlingId)
-        return if (skalOppretteRevurderingAutomatisk(behandling.påklagetVedtak.påklagetVedtakstype)) {
+        return if (skalOppretteRevurderingAutomatisk(behandling.påklagetVedtak)) {
             fagsystemVedtakService.kanOppretteRevurdering(behandlingId)
         } else {
             KanOppretteRevurderingResponse(false, null)
