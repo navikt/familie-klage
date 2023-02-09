@@ -47,8 +47,8 @@ internal class OpprettRevurderingServiceTest {
 
     @EnumSource(
         value = FagsystemType::class,
-        names = ["ORDNIÆR", "SANKSJON_1_MND"],
-        mode = EnumSource.Mode.INCLUDE
+        names = ["TILBAKEKREVING", "UTESTENGELSE"],
+        mode = EnumSource.Mode.EXCLUDE
     )
     @ParameterizedTest
     internal fun `kan opprette revurdering for vedtak i fagsystem`(fagsystemType: FagsystemType) {
