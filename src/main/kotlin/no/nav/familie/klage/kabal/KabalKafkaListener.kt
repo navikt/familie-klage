@@ -4,7 +4,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.kabal.event.BehandlingEventService
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
-import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
@@ -28,9 +27,7 @@ class KabalKafkaListener(val behandlingEventService: BehandlingEventService) : C
     fun listen(behandlingEventJson: String) {
         secureLogger.info("Klage-kabal-event: $behandlingEventJson")
         val behandlingEvent = objectMapper.readValue<BehandlingEvent>(behandlingEventJson)
-        if (behandlingEvent.kilde == Fagsystem.EF.name) { // BA og KS kan legges til her ved behov
-            behandlingEventService.handleEvent(behandlingEvent)
-        }
+        behandlingEventService.handleEvent(behandlingEvent)
         secureLogger.info("Serialisert behandlingEvent: $behandlingEvent")
     }
 
