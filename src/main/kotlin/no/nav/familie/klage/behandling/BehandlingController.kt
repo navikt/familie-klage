@@ -27,6 +27,7 @@ class BehandlingController(
     private val tilgangService: TilgangService,
     private val ferdigstillBehandlingService: FerdigstillBehandlingService,
     private val fagsystemVedtakService: FagsystemVedtakService,
+    private val opprettRevurderingService: OpprettRevurderingService
 ) {
 
     @GetMapping("{behandlingId}")
@@ -61,6 +62,6 @@ class BehandlingController(
     fun kanOppretteRevurdering(@PathVariable behandlingId: UUID): Ressurs<KanOppretteRevurderingResponse> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
-        return Ressurs.success(fagsystemVedtakService.kanOppretteRevurdering(behandlingId))
+        return Ressurs.success(opprettRevurderingService.kanOppretteRevurdering(behandlingId))
     }
 }
