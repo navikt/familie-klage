@@ -16,7 +16,6 @@ import java.util.UUID
 @Component
 class KabalKafkaListener(val behandlingEventService: BehandlingEventService) : ConsumerSeekAware {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     @KafkaListener(
