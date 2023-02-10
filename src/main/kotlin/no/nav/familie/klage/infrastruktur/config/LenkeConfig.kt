@@ -10,5 +10,5 @@ class LenkeConfig(
     @Value("lenker.BA_SAK_FRONTEND_URL")
     val baSakLenke: String,
     @Value("lenker.KS_SAK_FRONTEND_URL")
-    val ksSakLenke: String
+    val ksSakLenke: String,
 )

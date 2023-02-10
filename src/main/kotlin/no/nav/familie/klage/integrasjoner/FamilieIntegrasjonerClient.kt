@@ -31,7 +31,7 @@ class FamilieIntegrasjonerClient(
     @Qualifier("azure") restOperations: RestOperations,
     @Value("\${FAMILIE_INTEGRASJONER_URL}")
     private val integrasjonUri: URI,
-    private val integrasjonerConfig: IntegrasjonerConfig
+    private val integrasjonerConfig: IntegrasjonerConfig,
 
 ) : AbstractPingableRestClient(restOperations, "journalpost") {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -46,7 +46,7 @@ class FamilieIntegrasjonerClient(
         return postForEntity<Ressurs<ArkiverDokumentResponse>>(
             URI.create("$dokuarkivUri/v4/"),
             arkiverDokumentRequest,
-            headerMedSaksbehandler(saksbehandler)
+            headerMedSaksbehandler(saksbehandler),
         ).data
             ?: error("Kunne ikke arkivere dokument med fagsakid ${arkiverDokumentRequest.fagsakId}")
     }
@@ -57,13 +57,13 @@ class FamilieIntegrasjonerClient(
             journalpostId = journalpostId,
             bestillendeFagsystem = no.nav.familie.kontrakter.felles.Fagsystem.EF,
             dokumentProdApp = "FAMILIE_KLAGE",
-            distribusjonstype = distribusjonstype
+            distribusjonstype = distribusjonstype,
         )
 
         return postForEntity<Ressurs<String>>(
             integrasjonerConfig.distribuerDokumentUri,
             journalpostRequest,
-            HttpHeaders().medContentTypeJsonUTF8()
+            HttpHeaders().medContentTypeJsonUTF8(),
         ).getDataOrThrow()
     }
 
@@ -90,11 +90,11 @@ class FamilieIntegrasjonerClient(
             UriComponentsBuilder
                 .fromUriString(
                     "$journalpostURI/hentdokument/" +
-                        "$journalpostId/$dokumentInfoId"
+                        "$journalpostId/$dokumentInfoId",
                 )
                 .queryParam("variantFormat", Dokumentvariantformat.ARKIV)
                 .build()
-                .toUri()
+                .toUri(),
         )
             .getDataOrThrow()
     }

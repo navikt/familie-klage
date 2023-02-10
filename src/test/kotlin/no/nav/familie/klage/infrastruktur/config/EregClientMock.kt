@@ -32,7 +32,7 @@ class EregClientMock {
             navn = null,
             forretningsAdresser = null,
             postAdresser = null,
-            sistEndret = null
+            sistEndret = null,
         )
 
     private fun lagNavn() =
@@ -44,17 +44,17 @@ class EregClientMock {
             navnelinje3 = null,
             navnelinje4 = null,
             navnelinje5 = null,
-            redigertnavn = null
+            redigertnavn = null,
         )
 
     private fun lagOrganisasjonDto(
         navn: Navn,
-        organisasjonDetaljer: OrganisasjonDetaljer
+        organisasjonDetaljer: OrganisasjonDetaljer,
     ) =
         OrganisasjonDto(
             organisasjonsnummer = "123456789",
             type = "type",
             navn = navn,
-            organisasjonDetaljer = organisasjonDetaljer
+            organisasjonDetaljer = organisasjonDetaljer,
         )
 }

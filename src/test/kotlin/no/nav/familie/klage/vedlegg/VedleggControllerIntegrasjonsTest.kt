@@ -49,7 +49,7 @@ internal class VedleggControllerIntegrasjonsTest : OppslagSpringRunnerTest() {
         return restTemplate.exchange(
             localhost("/api/vedlegg/$behandlingId"),
             HttpMethod.GET,
-            HttpEntity(null, headers)
+            HttpEntity(null, headers),
         )
     }
 
@@ -57,7 +57,7 @@ internal class VedleggControllerIntegrasjonsTest : OppslagSpringRunnerTest() {
         return restTemplate.exchange(
             localhost("/api/vedlegg/$journalpostId/dokument-pdf/$dokumentinfoId"),
             HttpMethod.GET,
-            HttpEntity(null, headers)
+            HttpEntity(null, headers),
         )
     }
 }

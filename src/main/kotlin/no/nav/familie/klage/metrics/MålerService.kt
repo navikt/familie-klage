@@ -27,9 +27,9 @@ class MålerService(private val målerRepository: MålerRepository) {
                     "ytelse",
                     it.stonadstype.name,
                     "uke",
-                    it.år.toString() + "-" + it.uke.toString().padStart(2, '0')
+                    it.år.toString() + "-" + it.uke.toString().padStart(2, '0'),
                 ),
-                it.antall
+                it.antall,
             )
         }
 
@@ -41,7 +41,7 @@ class MålerService(private val målerRepository: MålerRepository) {
         val behandlinger = målerRepository.finnBehandlingerPerStatus()
         logger.info(
             "Behandlinger per status returnerte ${behandlinger.sumOf { it.antall }} " +
-                "fordelt på ${behandlinger.size} statuser."
+                "fordelt på ${behandlinger.size} statuser.",
         )
         val rows = behandlinger.map {
             MultiGauge.Row.of(
@@ -49,9 +49,9 @@ class MålerService(private val målerRepository: MålerRepository) {
                     "ytelse",
                     it.stonadstype.name,
                     "status",
-                    it.status.name
+                    it.status.name,
                 ),
-                it.antall
+                it.antall,
             )
         }
 
@@ -69,9 +69,9 @@ class MålerService(private val målerRepository: MålerRepository) {
                     "ytelse",
                     it.stonadstype.name,
                     "resultat",
-                    it.resultat.name
+                    it.resultat.name,
                 ),
-                it.antall
+                it.antall,
             )
         }
         vedtakGauge.register(rows)

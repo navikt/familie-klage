@@ -15,7 +15,7 @@ class EregService(private val eregClient: EregClient) {
 
         return organisasjon?.let { mapOrganisasjonDto(it) } ?: throw ApiFeil(
             "Finner ingen organisasjon for søket",
-            HttpStatus.BAD_REQUEST
+            HttpStatus.BAD_REQUEST,
         )
     }
 }

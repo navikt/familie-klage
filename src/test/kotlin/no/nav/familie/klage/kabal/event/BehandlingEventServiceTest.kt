@@ -35,7 +35,7 @@ internal class BehandlingEventServiceTest {
         fagsakRepository = fagsakRepository,
         stegService = stegService,
         taskService = taskService,
-        klageresultatRepository = klageresultatRepository
+        klageresultatRepository = klageresultatRepository,
     )
 
     val behandlingMedStatusVenter = DomainUtil.behandling(status = BehandlingStatus.VENTER)
@@ -59,7 +59,7 @@ internal class BehandlingEventServiceTest {
             stegService.oppdaterSteg(
                 behandlingMedStatusVenter.id,
                 any(),
-                StegType.BEHANDLING_FERDIGSTILT
+                StegType.BEHANDLING_FERDIGSTILT,
             )
         }
     }
@@ -69,8 +69,8 @@ internal class BehandlingEventServiceTest {
         val behandlingEvent = lagBehandlingEvent(
             behandlingEventType = BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
             behandlingDetaljer = BehandlingDetaljer(
-                ankebehandlingOpprettet = AnkebehandlingOpprettetDetaljer(LocalDateTime.now())
-            )
+                ankebehandlingOpprettet = AnkebehandlingOpprettetDetaljer(LocalDateTime.now()),
+            ),
         )
 
         behandlingEventService.handleEvent(behandlingEvent)
@@ -110,7 +110,7 @@ internal class BehandlingEventServiceTest {
 
     private fun lagBehandlingEvent(
         behandlingEventType: BehandlingEventType = BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET,
-        behandlingDetaljer: BehandlingDetaljer? = null
+        behandlingDetaljer: BehandlingDetaljer? = null,
     ): BehandlingEvent {
         return BehandlingEvent(
             eventId = UUID.randomUUID(),
@@ -122,9 +122,9 @@ internal class BehandlingEventServiceTest {
                 KlagebehandlingAvsluttetDetaljer(
                     LocalDateTime.now().minusDays(1),
                     KlageinstansUtfall.MEDHOLD,
-                    listOf("journalpostReferanse1", "journalpostReferanse2")
-                )
-            )
+                    listOf("journalpostReferanse1", "journalpostReferanse2"),
+                ),
+            ),
         )
     }
 }

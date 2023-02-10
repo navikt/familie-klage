@@ -17,7 +17,6 @@ class AMeldingInntektClient(
     @Qualifier("azure") restOperations: RestOperations,
 ) : AbstractRestClient(restOperations, "inntekt") {
 
-
     private val genererUrlUri = UriComponentsBuilder.fromUri(uri).pathSegment("api/ainntekt/generer-url").build().toUri()
 
     fun genererAInntektUrl(personIdent: String): String {
@@ -26,8 +25,7 @@ class AMeldingInntektClient(
             PersonIdent(personIdent),
             HttpHeaders().apply {
                 accept = listOf(MediaType.TEXT_PLAIN)
-            }
+            },
         )
     }
-
 }

@@ -42,7 +42,7 @@ internal class BehandlingsstatistikkServiceTest {
         behandlingService = behandlingService,
         vurderingService = vurderingService,
         fagsakService = fagsakService,
-        personopplysningerService = personopplysningerService
+        personopplysningerService = personopplysningerService,
     )
 
     private val behandlingsstatistikkKlageSlot = slot<BehandlingsstatistikkKlage>()
@@ -54,7 +54,7 @@ internal class BehandlingsstatistikkServiceTest {
         fagsak,
         påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer(påklagetBehandlingId)),
         resultat = BehandlingResultat.MEDHOLD,
-        sporbar = Sporbar(opprettetAv = "Sakbeh")
+        sporbar = Sporbar(opprettetAv = "Sakbeh"),
     )
     private val vurdering = vurdering(behandling.id, årsak = Årsak.FEIL_I_LOVANDVENDELSE)
 

@@ -26,7 +26,7 @@ class FormService(
     private val behandlingService: BehandlingService,
     private val behandlingshistorikkService: BehandlingshistorikkService,
     private val vurderingService: VurderingService,
-    private val taskService: TaskService
+    private val taskService: TaskService,
 ) {
 
     fun hentForm(behandlingId: UUID): Form = formRepository.findByIdOrThrow(behandlingId)
@@ -48,7 +48,7 @@ class FormService(
             klageKonkret = formkrav.klageKonkret,
             klageSignert = formkrav.klageSignert,
             saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse,
-            brevtekst = formkrav.brevtekst
+            brevtekst = formkrav.brevtekst,
         )
         behandlingService.oppdaterPåklagetVedtak(behandlingId, nyttPåklagetVedtak)
         opprettBehandlingsstatistikk(behandlingId)

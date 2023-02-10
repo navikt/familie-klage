@@ -18,7 +18,7 @@ class KlageinstansResultat(
     val mottattEllerAvsluttetTidspunkt: LocalDateTime,
     val kildereferanse: UUID,
     val journalpostReferanser: StringListWrapper,
-    val behandlingId: UUID
+    val behandlingId: UUID,
 )
 
 fun List<KlageinstansResultat>.tilDto(): List<KlageinstansResultatDto> {
@@ -27,7 +27,7 @@ fun List<KlageinstansResultat>.tilDto(): List<KlageinstansResultatDto> {
             type = it.type,
             utfall = it.utfall,
             mottattEllerAvsluttetTidspunkt = it.mottattEllerAvsluttetTidspunkt,
-            journalpostReferanser = it.journalpostReferanser.verdier
+            journalpostReferanser = it.journalpostReferanser.verdier,
         )
     }
 }

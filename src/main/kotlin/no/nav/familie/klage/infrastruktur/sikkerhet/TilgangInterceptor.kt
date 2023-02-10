@@ -18,7 +18,7 @@ class TilgangInterceptor(private val tilgangService: TilgangService) : AsyncHand
             logger.warn("Saksbehandler ${SikkerhetContext.hentSaksbehandler()} har ikke tilgang til saksbehandlingsløsningen")
             throw ManglerTilgang(
                 melding = "Bruker har ikke tilgang til saksbehandlingsløsningen",
-                frontendFeilmelding = "Du mangler tilgang til denne saksbehandlingsløsningen"
+                frontendFeilmelding = "Du mangler tilgang til denne saksbehandlingsløsningen",
             )
         }
     }

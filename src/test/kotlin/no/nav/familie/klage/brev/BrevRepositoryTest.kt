@@ -60,16 +60,16 @@ internal class BrevRepositoryTest : OppslagSpringRunnerTest() {
         pdf = Fil("123".toByteArray()),
         mottakere = Brevmottakere(
             personer = listOf(
-                BrevmottakerPerson("ident", "navn", MottakerRolle.BRUKER)
+                BrevmottakerPerson("ident", "navn", MottakerRolle.BRUKER),
             ),
-            organisasjoner = listOf(BrevmottakerOrganisasjon("orgnr", "navn", "mottaker"))
+            organisasjoner = listOf(BrevmottakerOrganisasjon("orgnr", "navn", "mottaker")),
         ),
-        mottakereJournalposter = BrevmottakereJournalposter(listOf(brevmottakereJournalpost("distId")))
+        mottakereJournalposter = BrevmottakereJournalposter(listOf(brevmottakereJournalpost("distId"))),
     )
 
     private fun brevmottakereJournalpost(distribusjonId: String? = null) = BrevmottakereJournalpost(
         "ident",
         "journalpostId",
-        distribusjonId
+        distribusjonId,
     )
 }

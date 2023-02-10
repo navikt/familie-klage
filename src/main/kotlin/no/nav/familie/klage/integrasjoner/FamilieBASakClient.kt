@@ -16,7 +16,7 @@ import java.net.URI
 @Component
 class FamilieBASakClient(
     @Qualifier("azure") restOperations: RestOperations,
-    @Value("\${FAMILIE_BA_SAK_URL}") private val familieBaSakUri: URI
+    @Value("\${FAMILIE_BA_SAK_URL}") private val familieBaSakUri: URI,
 ) : AbstractRestClient(restOperations, "familie.ba.sak") {
 
     fun hentVedtak(fagsystemEksternFagsakId: String): List<FagsystemVedtak> {

@@ -43,7 +43,7 @@ class FamilieEFSakClientMock {
                     "Innvilget",
                     vedtakstidspunkt = LocalDateTime.of(2022, Month.AUGUST, 1, 8, 0),
                     fagsystemType = FagsystemType.ORDNIÆR,
-                    regelverk = Regelverk.NASJONAL
+                    regelverk = Regelverk.NASJONAL,
                 ),
                 FagsystemVedtak(
                     "124",
@@ -51,7 +51,7 @@ class FamilieEFSakClientMock {
                     "Opphørt",
                     vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 0),
                     fagsystemType = FagsystemType.ORDNIÆR,
-                    regelverk = Regelverk.NASJONAL
+                    regelverk = Regelverk.NASJONAL,
                 ),
                 FagsystemVedtak(
                     "tilbake-123",
@@ -59,7 +59,7 @@ class FamilieEFSakClientMock {
                     "Full tilbakekreving",
                     vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 10, 2),
                     fagsystemType = FagsystemType.TILBAKEKREVING,
-                    regelverk = Regelverk.NASJONAL
+                    regelverk = Regelverk.NASJONAL,
                 ),
                 FagsystemVedtak(
                     "sanksjon-123",
@@ -67,8 +67,8 @@ class FamilieEFSakClientMock {
                     "Sanksjon 1 måned",
                     vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 15, 2),
                     fagsystemType = FagsystemType.SANKSJON_1_MND,
-                    regelverk = Regelverk.NASJONAL
-                )
+                    regelverk = Regelverk.NASJONAL,
+                ),
             )
             // mocker annen hver
             var opprettet = true

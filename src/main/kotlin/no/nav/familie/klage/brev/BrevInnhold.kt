@@ -21,7 +21,7 @@ object BrevInnhold {
         navn: String,
         stønadstype: Stønadstype,
         påklagetVedtakDetaljer: PåklagetVedtakDetaljer,
-        klageMottatt: LocalDate
+        klageMottatt: LocalDate,
     ): FritekstBrevRequestDto {
         return FritekstBrevRequestDto(
             overskrift = "Vi har sendt klagen din til NAV Klageinstans Nord",
@@ -35,27 +35,27 @@ object BrevInnhold {
                     "Vi har ${klageMottatt.norskFormat()} fått klagen din på vedtaket om " +
                         "${visningsnavn(stønadstype, påklagetVedtakDetaljer)} som ble gjort " +
                         "${påklagetVedtakDetaljer.vedtakstidspunkt.norskFormat()}, " +
-                        "og kommet frem til at vi ikke endrer vedtaket. NAV Klageinstans skal derfor vurdere saken din på nytt."
+                        "og kommet frem til at vi ikke endrer vedtaket. NAV Klageinstans skal derfor vurdere saken din på nytt.",
                 ),
                 AvsnittDto(
                     deloverskrift = "",
-                    innhold = "Saksbehandlingstidene finner du på nav.no/saksbehandlingstider."
+                    innhold = "Saksbehandlingstidene finner du på nav.no/saksbehandlingstider.",
                 ),
                 AvsnittDto(
                     deloverskrift = "Dette er vurderingen vi har sendt til NAV Klageinstans",
-                    innhold = instillingKlageinstans
+                    innhold = instillingKlageinstans,
                 ),
                 AvsnittDto(
                     deloverskrift = "Har du nye opplysninger?",
                     innhold =
-                    "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via \n${stønadstype.klageUrl()}."
+                    "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via \n${stønadstype.klageUrl()}.",
                 ),
                 AvsnittDto(
                     deloverskrift = "Har du spørsmål?",
                     innhold = "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. " +
-                        "Du kan også kontakte oss på nav.no/kontakt."
-                )
-            )
+                        "Du kan også kontakte oss på nav.no/kontakt.",
+                ),
+            ),
         )
     }
 
@@ -64,7 +64,7 @@ object BrevInnhold {
         navn: String,
         formkrav: Form,
         stønadstype: Stønadstype,
-        påklagetVedtakDetaljer: PåklagetVedtakDetaljer?
+        påklagetVedtakDetaljer: PåklagetVedtakDetaljer?,
     ): FritekstBrevRequestDto {
         val ikkeOppfylteFormkrav = utledIkkeOppfylteFormkrav(formkrav)
         val brevtekstFraSaksbehandler =
@@ -78,34 +78,34 @@ object BrevInnhold {
             listOf(
                 AvsnittDto(
                     deloverskrift = "",
-                    innhold = utledÅrsakTilAvvisningstekst(ikkeOppfylteFormkrav)
+                    innhold = utledÅrsakTilAvvisningstekst(ikkeOppfylteFormkrav),
                 ),
                 AvsnittDto(
                     deloverskrift = "",
-                    innhold = brevtekstFraSaksbehandler
+                    innhold = brevtekstFraSaksbehandler,
                 ),
                 AvsnittDto(
                     deloverskrift = "",
-                    innhold = utledLovtekst(ikkeOppfylteFormkrav)
+                    innhold = utledLovtekst(ikkeOppfylteFormkrav),
                 ),
                 AvsnittDto(
                     deloverskrift = "Du har rett til å klage",
                     innhold =
                     "Hvis du vil klage, må du gjøre dette innen 3 uker fra den datoen du fikk dette brevet. " +
-                        "Du finner skjema og informasjon på ${stønadstype.klageUrl()}."
+                        "Du finner skjema og informasjon på ${stønadstype.klageUrl()}.",
                 ),
                 AvsnittDto(
                     deloverskrift = "Du har rett til innsyn",
                     innhold =
-                    "På nav.no/dittnav kan du se dokumentene i saken din."
+                    "På nav.no/dittnav kan du se dokumentene i saken din.",
                 ),
                 AvsnittDto(
                     deloverskrift = "Har du spørsmål?",
                     innhold =
                     "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. " +
-                        "Du kan også kontakte oss på nav.no/kontakt."
-                )
-            )
+                        "Du kan også kontakte oss på nav.no/kontakt.",
+                ),
+            ),
         )
     }
 
@@ -113,7 +113,7 @@ object BrevInnhold {
         ident: String,
         navn: String,
         formkrav: Form,
-        stønadstype: Stønadstype
+        stønadstype: Stønadstype,
     ): FritekstBrevRequestDto {
         val brevtekstFraSaksbehandler =
             formkrav.brevtekst ?: error("Må ha brevtekst fra saksbehandler for å generere brev ved formkrav ikke oppfylt")
@@ -126,34 +126,34 @@ object BrevInnhold {
             listOf(
                 AvsnittDto(
                     deloverskrift = "",
-                    innhold = "Vi har avvist klagen din fordi du ikke har klaget på et vedtak."
+                    innhold = "Vi har avvist klagen din fordi du ikke har klaget på et vedtak.",
                 ),
                 AvsnittDto(
                     deloverskrift = "",
-                    innhold = brevtekstFraSaksbehandler
+                    innhold = brevtekstFraSaksbehandler,
                 ),
                 AvsnittDto(
                     deloverskrift = "",
-                    innhold = "Vedtaket er gjort etter forvaltningsloven §§ 28 og 33."
+                    innhold = "Vedtaket er gjort etter forvaltningsloven §§ 28 og 33.",
                 ),
                 AvsnittDto(
                     deloverskrift = "Du har rett til å klage",
                     innhold =
                     "Hvis du vil klage, må du gjøre dette innen 3 uker fra den datoen du fikk dette brevet. " +
-                        "Du finner skjema og informasjon på ${stønadstype.klageUrl()}."
+                        "Du finner skjema og informasjon på ${stønadstype.klageUrl()}.",
                 ),
                 AvsnittDto(
                     deloverskrift = "Du har rett til innsyn",
                     innhold =
-                    "På nav.no/dittnav kan du se dokumentene i saken din."
+                    "På nav.no/dittnav kan du se dokumentene i saken din.",
                 ),
                 AvsnittDto(
                     deloverskrift = "Har du spørsmål?",
                     innhold =
                     "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. " +
-                        "Du kan også kontakte oss på nav.no/kontakt."
-                )
-            )
+                        "Du kan også kontakte oss på nav.no/kontakt.",
+                ),
+            ),
         )
     }
 
@@ -169,7 +169,8 @@ object BrevInnhold {
     private fun Stønadstype.lesMerUrl() = when (this) {
         Stønadstype.OVERGANGSSTØNAD,
         Stønadstype.BARNETILSYN,
-        Stønadstype.SKOLEPENGER -> "nav.no/alene-med-barn"
+        Stønadstype.SKOLEPENGER,
+        -> "nav.no/alene-med-barn"
         Stønadstype.BARNETRYGD -> "nav.no/barnetrygd"
         Stønadstype.KONTANTSTØTTE -> "nav.no/kontantstotte"
     }
@@ -177,7 +178,8 @@ object BrevInnhold {
     private fun Stønadstype.klageUrl() = when (this) {
         Stønadstype.OVERGANGSSTØNAD,
         Stønadstype.BARNETILSYN,
-        Stønadstype.SKOLEPENGER -> "klage.nav.no/familie/enslig-mor-eller-far"
+        Stønadstype.SKOLEPENGER,
+        -> "klage.nav.no/familie/enslig-mor-eller-far"
         Stønadstype.BARNETRYGD -> "klage.nav.no/familie/barnetrygd"
         Stønadstype.KONTANTSTØTTE -> "klage.nav.no/familie/kontantstotte"
     }

@@ -16,8 +16,8 @@ import java.util.UUID
 private val ukjentFeilVedOpprettRevurdering = OpprettRevurderingResponse(
     IkkeOpprettet(
         IkkeOpprettetÅrsak.FEIL,
-        "Ukjent feil ved opprettelse av revurdering"
-    )
+        "Ukjent feil ved opprettelse av revurdering",
+    ),
 )
 
 @Service
@@ -25,7 +25,7 @@ class FagsystemVedtakService(
     private val familieEFSakClient: FamilieEFSakClient,
     private val familieKSSakClient: FamilieKSSakClient,
     private val familieBASakClient: FamilieBASakClient,
-    private val fagsakService: FagsakService
+    private val fagsakService: FagsakService,
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -44,7 +44,7 @@ class FagsystemVedtakService(
 
     fun hentFagsystemVedtakForPåklagetBehandlingId(
         behandlingId: UUID,
-        påklagetBehandlingId: String
+        påklagetBehandlingId: String,
     ): FagsystemVedtak =
         hentFagsystemVedtak(behandlingId)
             .singleOrNull { it.eksternBehandlingId == påklagetBehandlingId }

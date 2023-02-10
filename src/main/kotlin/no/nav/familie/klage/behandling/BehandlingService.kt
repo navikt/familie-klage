@@ -47,7 +47,7 @@ class BehandlingService(
     private val behandlinghistorikkService: BehandlingshistorikkService,
     private val oppgaveTaskService: OppgaveTaskService,
     private val taskService: TaskService,
-    private val fagsystemVedtakService: FagsystemVedtakService
+    private val fagsystemVedtakService: FagsystemVedtakService,
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -82,7 +82,7 @@ class BehandlingService(
     fun oppdaterBehandlingMedResultat(
         behandlingId: UUID,
         behandlingsresultat: BehandlingResultat,
-        opprettetRevurdering: FagsystemRevurdering?
+        opprettetRevurdering: FagsystemRevurdering?,
     ) {
         val behandling = hentBehandling(behandlingId)
         if (behandling.resultat != BehandlingResultat.IKKE_SATT) {
@@ -91,7 +91,7 @@ class BehandlingService(
         val oppdatertBehandling = behandling.copy(
             resultat = behandlingsresultat,
             vedtakDato = LocalDateTime.now(),
-            fagsystemRevurdering = opprettetRevurdering
+            fagsystemRevurdering = opprettetRevurdering,
         )
         behandlingRepository.update(oppdatertBehandling)
     }
@@ -115,15 +115,15 @@ class BehandlingService(
         val behandlingMedPåklagetVedtak = behandling.copy(
             påklagetVedtak = PåklagetVedtak(
                 påklagetVedtakstype = påklagetVedtakDto.påklagetVedtakstype,
-                påklagetVedtakDetaljer = påklagetVedtakDetaljer
-            )
+                påklagetVedtakDetaljer = påklagetVedtakDetaljer,
+            ),
         )
         behandlingRepository.update(behandlingMedPåklagetVedtak)
     }
 
     private fun påklagetVedtakDetaljer(
         behandlingId: UUID,
-        påklagetVedtakDto: PåklagetVedtakDto
+        påklagetVedtakDto: PåklagetVedtakDto,
     ): PåklagetVedtakDetaljer? {
         if (påklagetVedtakDto.påklagetVedtakstype.harManuellVedtaksdato()) {
             return tilPåklagetVedtakDetaljerMedManuellDato(påklagetVedtakDto)
@@ -141,7 +141,7 @@ class BehandlingService(
             behandlingstype = "",
             resultat = "",
             vedtakstidspunkt = påklagetVedtakDto.manuellVedtaksdato?.atStartOfDay() ?: error("Mangler vedtaksdato"),
-            regelverk = påklagetVedtakDto.regelverk
+            regelverk = påklagetVedtakDto.regelverk,
         )
 
     private fun utledFagsystemType(påklagetVedtakDto: PåklagetVedtakDto): FagsystemType {
@@ -163,7 +163,7 @@ class BehandlingService(
             henlagtÅrsak = henlagt.årsak,
             resultat = BehandlingResultat.HENLAGT,
             steg = BEHANDLING_FERDIGSTILT,
-            status = FERDIGSTILT
+            status = FERDIGSTILT,
         )
 
         behandlinghistorikkService.opprettBehandlingshistorikk(behandlingId, BEHANDLING_FERDIGSTILT)

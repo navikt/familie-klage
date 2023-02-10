@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController
 class EksternBehandlingController(
     private val tilgangService: TilgangService,
     private val behandlingService: BehandlingService,
-    private val opprettBehandlingService: OpprettBehandlingService
+    private val opprettBehandlingService: OpprettBehandlingService,
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -36,7 +36,7 @@ class EksternBehandlingController(
     @GetMapping("{fagsystem}")
     fun finnKlagebehandlingsresultat(
         @PathVariable fagsystem: Fagsystem,
-        @RequestParam("eksternFagsakId") eksternFagsakIder: Set<String>
+        @RequestParam("eksternFagsakId") eksternFagsakIder: Set<String>,
     ): Ressurs<Map<String, List<KlagebehandlingDto>>> {
         feilHvis(eksternFagsakIder.isEmpty()) {
             "Mangler eksternFagsakId i query param"

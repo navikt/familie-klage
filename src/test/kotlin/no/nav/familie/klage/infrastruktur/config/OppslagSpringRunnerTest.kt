@@ -49,7 +49,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
     "mock-dokument",
     "mock-ef-sak",
     "mock-ereg",
-    "mock-inntekt"
+    "mock-inntekt",
 )
 @EnableMockOAuth2Server
 abstract class OppslagSpringRunnerTest {
@@ -115,7 +115,7 @@ abstract class OppslagSpringRunnerTest {
             FagsakPerson::class,
             PersonIdent::class,
             TaskLogg::class,
-            Task::class
+            Task::class,
 
         ).forEach { jdbcAggregateOperations.deleteAll(it.java) }
     }

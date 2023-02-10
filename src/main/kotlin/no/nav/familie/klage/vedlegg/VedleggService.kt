@@ -12,7 +12,7 @@ import java.util.UUID
 @Service
 class VedleggService(
     private val behandlingService: BehandlingService,
-    private val journalpostService: JournalpostService
+    private val journalpostService: JournalpostService,
 ) {
 
     fun finnVedleggPåBehandling(behandlingId: UUID): List<DokumentinfoDto> {
@@ -25,7 +25,7 @@ class VedleggService(
 
     private fun tilDokumentInfoDto(
         dokumentInfo: DokumentInfo,
-        journalpost: Journalpost
+        journalpost: Journalpost,
     ): DokumentinfoDto {
         return DokumentinfoDto(
             dokumentinfoId = dokumentInfo.dokumentInfoId,
@@ -35,7 +35,7 @@ class VedleggService(
             dato = mestRelevanteDato(journalpost),
             journalstatus = journalpost.journalstatus,
             journalposttype = journalpost.journalposttype,
-            logiskeVedlegg = dokumentInfo.logiskeVedlegg?.map { LogiskVedleggDto(tittel = it.tittel) } ?: emptyList()
+            logiskeVedlegg = dokumentInfo.logiskeVedlegg?.map { LogiskVedleggDto(tittel = it.tittel) } ?: emptyList(),
         )
     }
 

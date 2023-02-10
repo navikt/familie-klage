@@ -12,5 +12,5 @@ data class Behandlingshistorikk(
     val behandlingId: UUID,
     val steg: StegType,
     val opprettetAv: String = SikkerhetContext.hentSaksbehandler(),
-    val endretTid: LocalDateTime? = LocalDateTime.now()
+    val endretTid: LocalDateTime? = LocalDateTime.now(),
 )

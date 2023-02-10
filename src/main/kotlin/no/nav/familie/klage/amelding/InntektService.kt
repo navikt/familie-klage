@@ -8,7 +8,7 @@ import java.util.UUID
 @Service
 class InntektService(
     private val aMeldingInntektClient: AMeldingInntektClient,
-    private val fagsakService: FagsakService
+    private val fagsakService: FagsakService,
 ) {
 
     fun genererAInntektUrlPåFagsak(fagsakId: UUID): String {

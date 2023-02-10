@@ -20,7 +20,7 @@ import java.util.UUID
 @Validated
 class VurderingController(
     private val vurderingService: VurderingService,
-    private val tilgangService: TilgangService
+    private val tilgangService: TilgangService,
 ) {
 
     @GetMapping("{behandlingId}")

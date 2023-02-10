@@ -38,8 +38,8 @@ class ApiExceptionHandler {
             .body(
                 Ressurs.failure(
                     errorMessage = "401 Unauthorized JwtTokenMissingException",
-                    frontendFeilmelding = "En uventet feil oppstod: Kall ikke autorisert"
-                )
+                    frontendFeilmelding = "En uventet feil oppstod: Kall ikke autorisert",
+                ),
             )
     }
 
@@ -51,8 +51,8 @@ class ApiExceptionHandler {
         return ResponseEntity.status(feil.httpStatus).body(
             Ressurs.funksjonellFeil(
                 frontendFeilmelding = feil.feil,
-                melding = feil.feil
-            )
+                melding = feil.feil,
+            ),
         )
     }
 
@@ -81,8 +81,8 @@ class ApiExceptionHandler {
                     status = Ressurs.Status.IKKE_TILGANG,
                     frontendFeilmelding = manglerTilgang.frontendFeilmelding,
                     melding = manglerTilgang.melding,
-                    stacktrace = null
-                )
+                    stacktrace = null,
+                ),
             )
     }
 

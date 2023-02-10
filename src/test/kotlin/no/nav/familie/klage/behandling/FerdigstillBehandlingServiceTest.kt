@@ -8,6 +8,9 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
+import no.nav.familie.klage.behandling.domain.PåklagetVedtak
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.blankett.LagSaksbehandlingsblankettTask
@@ -22,6 +25,7 @@ import no.nav.familie.klage.kabal.KabalService
 import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil
+import no.nav.familie.klage.testutil.DomainUtil.påklagetVedtakDetaljer
 import no.nav.familie.klage.testutil.DomainUtil.tilFagsak
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
 import no.nav.familie.klage.testutil.mockFeatureToggleService
@@ -63,7 +67,7 @@ internal class FerdigstillBehandlingServiceTest {
         oppgaveTaskService = oppgaveTaskService,
         brevService = brevService,
         fagsystemVedtakService = fagsystemVedtakService,
-        mockFeatureToggleService()
+        mockFeatureToggleService(),
     )
     val fagsak = DomainUtil.fagsakDomain().tilFagsak()
     val behandling = DomainUtil.behandling(fagsak = fagsak, steg = StegType.BREV, status = BehandlingStatus.UTREDES)
@@ -115,7 +119,7 @@ internal class FerdigstillBehandlingServiceTest {
             JournalførBrevTask.TYPE,
             LagSaksbehandlingsblankettTask.TYPE,
             BehandlingsstatistikkTask.TYPE,
-            BehandlingsstatistikkTask.TYPE
+            BehandlingsstatistikkTask.TYPE,
         )
         verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id) }
     }
@@ -141,13 +145,13 @@ internal class FerdigstillBehandlingServiceTest {
 
         assertThat(stegSlot.captured).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.MEDHOLD)
-        assertThat(fagsystemRevurderingSlot.single()).isNotNull
+        assertThat(fagsystemRevurderingSlot.single()).isNull()
 
         verify(exactly = 2) { taskService.save(any()) }
-        verify(exactly = 1) { fagsystemVedtakService.opprettRevurdering(behandling.id) }
+        verify(exactly = 0) { fagsystemVedtakService.opprettRevurdering(behandling.id) }
         assertThat(saveTaskSlot.map { it.type }).containsExactly(
             LagSaksbehandlingsblankettTask.TYPE,
-            BehandlingsstatistikkTask.TYPE
+            BehandlingsstatistikkTask.TYPE,
         )
     }
 
@@ -157,7 +161,7 @@ internal class FerdigstillBehandlingServiceTest {
             StegType.BEHANDLING_FERDIGSTILT,
             StegType.FORMKRAV,
             StegType.OVERFØRING_TIL_KABAL,
-            StegType.VURDERING
+            StegType.VURDERING,
         ).forEach { steg ->
             every { behandlingService.hentBehandling(any()) } returns behandling.copy(steg = steg)
             assertThrows<Feil> {
@@ -170,12 +174,24 @@ internal class FerdigstillBehandlingServiceTest {
     internal fun `skal feile dersom behandlingen har feil status`() {
         listOf(
             BehandlingStatus.FERDIGSTILT,
-            BehandlingStatus.VENTER
+            BehandlingStatus.VENTER,
         ).forEach { status ->
             every { behandlingService.hentBehandling(any()) } returns behandling.copy(status = status)
             assertThrows<Feil> {
                 ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
             }
         }
+    }
+
+    @Test
+    internal fun `skal opprette revurdering automatisk påklaget vedtak er vedtak i fagsystemet`() {
+        every { vurderingService.hentVurdering(any()) } returns vurdering.copy(vedtak = Vedtak.OMGJØR_VEDTAK)
+        every { behandlingService.hentBehandling(any()) } returns
+                behandling.copy(påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer()))
+
+        ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
+
+        assertThat(fagsystemRevurderingSlot.single()).isNotNull
+        verify(exactly = 1) { fagsystemVedtakService.opprettRevurdering(behandling.id) }
     }
 }

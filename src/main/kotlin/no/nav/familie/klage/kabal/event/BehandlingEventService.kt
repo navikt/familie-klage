@@ -25,7 +25,7 @@ class BehandlingEventService(
     private val fagsakRepository: FagsakRepository,
     private val taskService: TaskService,
     private val klageresultatRepository: KlageresultatRepository,
-    private val stegService: StegService
+    private val stegService: StegService,
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -57,7 +57,7 @@ class BehandlingEventService(
             mottattEllerAvsluttetTidspunkt = behandlingEvent.mottattEllerAvsluttetTidspunkt(),
             kildereferanse = UUID.fromString(behandlingEvent.kildeReferanse),
             journalpostReferanser = StringListWrapper(behandlingEvent.journalpostReferanser()),
-            behandlingId = behandling.id
+            behandlingId = behandling.id,
         )
 
         klageresultatRepository.insert(klageinstansResultat)

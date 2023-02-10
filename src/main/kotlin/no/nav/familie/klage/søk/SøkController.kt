@@ -28,12 +28,12 @@ import org.springframework.web.bind.annotation.RestController
 class SøkController(
     private val tilgangService: TilgangService,
     private val pdlClient: PdlClient,
-    private val eregService: EregService
+    private val eregService: EregService,
 ) {
 
     @PostMapping("person")
     fun søkPerson(
-        @RequestBody personIdentDto: PersonIdentDto
+        @RequestBody personIdentDto: PersonIdentDto,
     ): Ressurs<PersonTreffDto> {
         val personIdent = personIdentDto.personIdent
         tilgangService.validerTilgangTilPersonMedBarn(personIdent, AuditLoggerEvent.UPDATE)
@@ -44,7 +44,7 @@ class SøkController(
 
     @GetMapping("organisasjon/{organisasjonsnummer}")
     fun søkOrganisasjon(
-        @PathVariable organisasjonsnummer: String
+        @PathVariable organisasjonsnummer: String,
     ): Ressurs<Organisasjon> {
         if (!ORGNR_REGEX.matches(organisasjonsnummer)) {
             throw ApiFeil("Ugyldig organisasjonsnummer", HttpStatus.BAD_REQUEST)

@@ -21,13 +21,13 @@ import java.util.UUID
 @Service
 @TaskStepBeskrivelse(
     taskStepType = JournalførBrevTask.TYPE,
-    beskrivelse = "Journalfør brev etter klagebehandling"
+    beskrivelse = "Journalfør brev etter klagebehandling",
 )
 class JournalførBrevTask(
     private val distribusjonService: DistribusjonService,
     private val taskService: TaskService,
     private val behandlingService: BehandlingService,
-    private val brevService: BrevService
+    private val brevService: BrevService,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
@@ -44,7 +44,7 @@ class JournalførBrevTask(
     private fun journalførBrevmottakere(
         brev: Brev,
         mottakere: Brevmottakere,
-        saksbehandler: String
+        saksbehandler: String,
     ) {
         val behandlingId = brev.behandlingId
         val avsenderMottakere = mapAvsenderMottaker(mottakere)
@@ -57,7 +57,7 @@ class JournalførBrevTask(
                     distribusjonService.journalførBrev(behandlingId, brevPdf, saksbehandler, index, avsenderMottaker)
                 val resultat = BrevmottakereJournalpost(
                     ident = avsenderMottaker.id ?: error("Mangler id for mottaker=$avsenderMottaker"),
-                    journalpostId = journalpostId
+                    journalpostId = journalpostId,
                 )
                 val nyeMottakere = acc + resultat
                 brevService.oppdaterMottakerJournalpost(behandlingId, BrevmottakereJournalposter(nyeMottakere))
@@ -83,7 +83,7 @@ class JournalførBrevTask(
         val sendTilKabalTask = Task(
             type = DistribuerBrevTask.TYPE,
             payload = task.payload,
-            properties = task.metadata
+            properties = task.metadata,
         )
         taskService.save(sendTilKabalTask)
     }
@@ -92,7 +92,7 @@ class JournalførBrevTask(
         val sendTilKabalTask = Task(
             type = SendTilKabalTask.TYPE,
             payload = task.payload,
-            properties = task.metadata
+            properties = task.metadata,
         )
         taskService.save(sendTilKabalTask)
     }

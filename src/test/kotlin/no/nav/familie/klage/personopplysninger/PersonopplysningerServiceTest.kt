@@ -82,7 +82,7 @@ internal class PersonopplysningerServiceTest {
     }
 
     private fun navnBolkResponse() = mapOf(
-        "fullmaktIdent" to PdlNavn(listOf(Navn("fullmakt", null, "etternavn", metadataGjeldende)))
+        "fullmaktIdent" to PdlNavn(listOf(Navn("fullmakt", null, "etternavn", metadataGjeldende))),
     )
 
     private fun lagPdlSøker() = pdlSøker(
@@ -97,8 +97,8 @@ internal class PersonopplysningerServiceTest {
                 "embete",
                 null,
                 "type",
-                VergeEllerFullmektig("vergeIdent", Personnavn("", "", null), "omfang", true)
-            )
-        )
+                VergeEllerFullmektig("vergeIdent", Personnavn("", "", null), "omfang", true),
+            ),
+        ),
     )
 }

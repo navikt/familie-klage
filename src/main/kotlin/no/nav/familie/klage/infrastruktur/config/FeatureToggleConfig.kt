@@ -1,9 +1,9 @@
 package no.nav.familie.klage.infrastruktur.config
 
-import no.finn.unleash.DefaultUnleash
-import no.finn.unleash.UnleashContext
-import no.finn.unleash.UnleashContextProvider
-import no.finn.unleash.util.UnleashConfig
+import io.getunleash.DefaultUnleash
+import io.getunleash.UnleashContext
+import io.getunleash.UnleashContextProvider
+import io.getunleash.util.UnleashConfig
 import no.nav.familie.klage.infrastruktur.featuretoggle.ByEnvironmentStrategy
 import no.nav.familie.klage.infrastruktur.featuretoggle.ByUserIdStrategy
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
@@ -19,14 +19,14 @@ import java.net.URI
 @ConstructorBinding
 class FeatureToggleConfig(
     private val enabled: Boolean,
-    private val unleash: Unleash
+    private val unleash: Unleash,
 ) {
 
     @ConstructorBinding
     data class Unleash(
         val uri: URI,
         val environment: String,
-        val applicationName: String
+        val applicationName: String,
     )
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -38,7 +38,7 @@ class FeatureToggleConfig(
         } else {
             log.warn(
                 "Funksjonsbryter-funksjonalitet er skrudd AV. " +
-                    "Gir standardoppførsel for alle funksjonsbrytere, dvs 'false'"
+                    "Gir standardoppførsel for alle funksjonsbrytere, dvs 'false'",
             )
             lagDummyFeatureToggleService()
         }
@@ -51,7 +51,7 @@ class FeatureToggleConfig(
                 .unleashContextProvider(lagUnleashContextProvider())
                 .build(),
             ByEnvironmentStrategy(),
-            ByUserIdStrategy()
+            ByUserIdStrategy(),
         )
 
         return object : FeatureToggleService {

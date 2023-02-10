@@ -21,7 +21,7 @@ import java.util.UUID
 @Validated
 class BrevController(
     private val brevService: BrevService,
-    private val tilgangService: TilgangService
+    private val tilgangService: TilgangService,
 ) {
 
     @GetMapping("/{behandlingId}/pdf")
@@ -48,7 +48,7 @@ class BrevController(
     @PostMapping("/{behandlingId}/mottakere")
     fun oppdaterBrevmottakere(
         @PathVariable behandlingId: UUID,
-        @RequestBody mottakere: BrevmottakereDto
+        @RequestBody mottakere: BrevmottakereDto,
     ): Ressurs<BrevmottakereDto> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)

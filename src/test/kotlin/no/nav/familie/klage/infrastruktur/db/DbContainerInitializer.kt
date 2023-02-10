@@ -12,7 +12,7 @@ class DbContainerInitializer : ApplicationContextInitializer<ConfigurableApplica
         TestPropertyValues.of(
             "spring.datasource.url=${postgres.jdbcUrl}",
             "spring.datasource.username=${postgres.username}",
-            "spring.datasource.password=${postgres.password}"
+            "spring.datasource.password=${postgres.password}",
         ).applyTo(applicationContext.environment)
     }
 
@@ -20,7 +20,7 @@ class DbContainerInitializer : ApplicationContextInitializer<ConfigurableApplica
 
         // Lazy because we only want it to be initialized when accessed
         private val postgres: KPostgreSQLContainer by lazy {
-            KPostgreSQLContainer("postgres:11.1")
+            KPostgreSQLContainer("postgres:14.6")
                 .withDatabaseName("klage")
                 .withUsername("postgres")
                 .withPassword("test")

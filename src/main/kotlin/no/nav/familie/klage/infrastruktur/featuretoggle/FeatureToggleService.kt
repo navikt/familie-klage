@@ -12,8 +12,8 @@ interface FeatureToggleService : DisposableBean {
 }
 
 enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
-    OPPRETT_REVURDERING("familie.klage.opprett-revurdering"),
-    TILBAKEKREVING_INFOTRYGD_PÅKLAGET_VEDTAK("familie.klage.infotrygd-vedtak");
+    PLACEHOLDER("Ktlint liker ikke tomme enums"),
+    ;
 
     companion object {
         private val toggles: Map<String, Toggle> = values().associateBy { it.name }
