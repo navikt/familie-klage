@@ -186,8 +186,7 @@ management:
     base-path: "/internal"
     path-mapping:
       info: "status/isAlive"
-  metrics.export.prometheus.enabled: true
-  metrics.web.server.auto-time-requests: true
+  prometheus.metrics.export.enabled: true
 
 DEPLOY_ENV: prod
 ON_PREM_URL_ENV: prod
