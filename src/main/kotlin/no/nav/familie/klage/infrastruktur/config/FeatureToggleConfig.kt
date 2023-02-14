@@ -11,18 +11,15 @@ import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.context.annotation.Bean
 import java.net.URI
 
 @ConfigurationProperties("funksjonsbrytere")
-@ConstructorBinding
 class FeatureToggleConfig(
     private val enabled: Boolean,
     private val unleash: Unleash,
 ) {
 
-    @ConstructorBinding
     data class Unleash(
         val uri: URI,
         val environment: String,
