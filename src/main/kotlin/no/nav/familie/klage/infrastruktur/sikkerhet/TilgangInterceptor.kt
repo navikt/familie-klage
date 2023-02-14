@@ -5,8 +5,8 @@ import no.nav.familie.klage.infrastruktur.exception.ManglerTilgang
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.AsyncHandlerInterceptor
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 
 @Component
 class TilgangInterceptor(private val tilgangService: TilgangService) : AsyncHandlerInterceptor {
