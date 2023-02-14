@@ -3,8 +3,8 @@ package no.nav.familie.klage.kabal
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.kabal.event.BehandlingEventService
+import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
-import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
@@ -17,8 +17,8 @@ import java.util.UUID
 @Component
 class KabalKafkaListener(val behandlingEventService: BehandlingEventService) : ConsumerSeekAware {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
+    val STØTTEDE_FAGSYSTEMER = listOf(Fagsystem.BA.name, Fagsystem.EF.name, Fagsystem.KONT.name)
 
     @KafkaListener(
         id = "familie-klage",
@@ -28,7 +28,8 @@ class KabalKafkaListener(val behandlingEventService: BehandlingEventService) : C
     fun listen(behandlingEventJson: String) {
         secureLogger.info("Klage-kabal-event: $behandlingEventJson")
         val behandlingEvent = objectMapper.readValue<BehandlingEvent>(behandlingEventJson)
-        if (behandlingEvent.kilde == Fagsystem.EF.name) { // BA og KS kan legges til her ved behov
+
+        if (STØTTEDE_FAGSYSTEMER.contains(behandlingEvent.kilde)) {
             behandlingEventService.handleEvent(behandlingEvent)
         }
         secureLogger.info("Serialisert behandlingEvent: $behandlingEvent")

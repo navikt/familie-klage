@@ -14,7 +14,7 @@ import java.util.UUID
 /**
  * Aggregering av behandling, fagsak, vedtak for å hente ut relevant informasjon i en spørring
  */
-data class Klagebehandlingsesultat(
+data class Klagebehandlingsresultat(
     val id: UUID,
     val fagsakId: UUID,
     val fagsakPersonId: UUID,
@@ -29,7 +29,7 @@ data class Klagebehandlingsesultat(
     val henlagtÅrsak: HenlagtÅrsak?,
 )
 
-fun Klagebehandlingsesultat.tilEksternKlagebehandlingDto(klageinstansResultat: List<KlageinstansResultatDto>) = KlagebehandlingDto(
+fun Klagebehandlingsresultat.tilEksternKlagebehandlingDto(klageinstansResultat: List<KlageinstansResultatDto>) = KlagebehandlingDto(
     id = this.id,
     fagsakId = this.fagsakId,
     status = this.status,

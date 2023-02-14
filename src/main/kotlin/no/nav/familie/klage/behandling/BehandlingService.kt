@@ -2,7 +2,7 @@ package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
-import no.nav.familie.klage.behandling.domain.Klagebehandlingsesultat
+import no.nav.familie.klage.behandling.domain.Klagebehandlingsresultat
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
@@ -69,7 +69,7 @@ class BehandlingService(
         return klageresultater.tilDto()
     }
 
-    fun finnKlagebehandlingsresultat(eksternFagsakId: String, fagsystem: Fagsystem): List<Klagebehandlingsesultat> {
+    fun finnKlagebehandlingsresultat(eksternFagsakId: String, fagsystem: Fagsystem): List<Klagebehandlingsresultat> {
         return behandlingRepository.finnKlagebehandlingsresultat(eksternFagsakId, fagsystem)
     }
 
