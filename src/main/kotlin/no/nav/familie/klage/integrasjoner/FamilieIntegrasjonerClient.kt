@@ -44,7 +44,7 @@ class FamilieIntegrasjonerClient(
     // lagre brev
     fun arkiverDokument(arkiverDokumentRequest: ArkiverDokumentRequest, saksbehandler: String?): ArkiverDokumentResponse {
         return postForEntity<Ressurs<ArkiverDokumentResponse>>(
-            URI.create("$dokuarkivUri/v4/"),
+            URI.create("$dokuarkivUri/v4"),
             arkiverDokumentRequest,
             headerMedSaksbehandler(saksbehandler),
         ).data
