@@ -30,7 +30,7 @@
 		<changelist>-SNAPSHOT</changelist>
 		<java.version>17</java.version>
 		<kotlin.version>1.8.10</kotlin.version>
-		<springdoc.version>1.6.14</springdoc.version>
+		<springdoc.version>2.0.2</springdoc.version>
 		<mockk-jvm.version>1.13.4</mockk-jvm.version>
 		<felles.version>2.20230210162649_a258d57-SPRING_BOOT_3</felles.version>
 		<prosessering.version>2.20230214102837_4b63c2e-SPRING_BOOT_3</prosessering.version>
@@ -97,12 +97,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-ui</artifactId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>${springdoc.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-kotlin</artifactId>
+			<artifactId>springdoc-openapi-starter-common</artifactId>
 			<version>${springdoc.version}</version>
 		</dependency>
 		<dependency>
