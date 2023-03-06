@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.5</version>
+		<version>3.0.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<repositories>
@@ -30,14 +30,14 @@
 		<changelist>-SNAPSHOT</changelist>
 		<java.version>17</java.version>
 		<kotlin.version>1.8.10</kotlin.version>
-		<springdoc.version>1.6.14</springdoc.version>
+		<springdoc.version>2.0.2</springdoc.version>
 		<mockk-jvm.version>1.13.4</mockk-jvm.version>
-		<felles.version>1.20221202080911_bcf8f33</felles.version>
-		<prosessering.version>1.20230103132509_cebcdeb</prosessering.version>
+		<felles.version>2.20230210162649_a258d57-SPRING_BOOT_3</felles.version>
+		<prosessering.version>2.20230214102837_4b63c2e-SPRING_BOOT_3</prosessering.version>
 		<start-class>no.nav.familie.klage.ApplicationKt</start-class>
-		<kontrakter.version> 2.0_20230111110429_b460008</kontrakter.version>
-		<saksstatistikk-klage.version>2.0_20221122113504_2968071</saksstatistikk-klage.version>
-		<nav.security.version>2.1.6</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
+		<kontrakter.version>3.0_20230306094848_3425b04-JAKARTA</kontrakter.version>
+		<saksstatistikk-klage.version>2.0_20230214104704_706e9c0</saksstatistikk-klage.version>
+		<nav.security.version>3.0.4</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
 		<okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
 		<unleash.version>7.1.0</unleash.version>
 	</properties>
@@ -51,6 +51,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jetty</artifactId>
+		</dependency>
+		<!-- https://github.com/spring-projects/spring-boot/issues/33044#issuecomment-1379812611 -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -92,12 +97,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-ui</artifactId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>${springdoc.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-kotlin</artifactId>
+			<artifactId>springdoc-openapi-starter-common</artifactId>
 			<version>${springdoc.version}</version>
 		</dependency>
 		<dependency>
@@ -166,7 +171,7 @@
 		<!-- test -->
 		<dependency>
 			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock-jre8</artifactId>
+			<artifactId>wiremock-jre8-standalone</artifactId>
 			<version>2.35.0</version>
 			<scope>test</scope>
 		</dependency>
@@ -229,6 +234,7 @@
 			<plugin>
 				<groupId>org.jetbrains.kotlin</groupId>
 				<artifactId>kotlin-maven-plugin</artifactId>
+				<version>${kotlin.version}</version>
 				<configuration>
 					<args>
 						<arg>-Xjsr305=strict</arg>
