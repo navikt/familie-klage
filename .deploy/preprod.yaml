@@ -9,7 +9,7 @@ metadata:
 spec:
   image: {{ image }}
   ingresses:
-    - https://familie-klage-backend.dev.intern.nav.no
+    - https://familie-klage-backend.intern.dev.nav.no
   liveness:
     path: /internal/status/isAlive
     initialDelay: 30

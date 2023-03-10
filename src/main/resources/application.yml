@@ -199,7 +199,7 @@ FAMILIE_DOKUMENT_URL: http://familie-dokument
 FAMILIE_INTEGRASJONER_URL: https://familie-integrasjoner.${ON_PREM_URL_ENV}-fss-pub.nais.io
 PDL_URL: https://pdl-api.${ON_PREM_URL_ENV}-fss-pub.nais.io
 
-KABAL_URL: https://kabal-api.intern.nav.no
+KABAL_URL: http://kabal-api.klage
 
 FAMILIE_EF_SAK_URL: http://familie-ef-sak
 
