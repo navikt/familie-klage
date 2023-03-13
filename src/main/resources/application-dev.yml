@@ -4,7 +4,7 @@ spring:
 DEPLOY_ENV: dev
 ON_PREM_URL_ENV: dev
 
-KABAL_URL: https://kabal-api.dev.intern.nav.no
+KABAL_URL: http://kabal-api.klage
 
 rolle:
   ba:
@@ -22,6 +22,6 @@ rolle:
 
 
 lenker:
-  EF_SAK_FRONTEND_URL: "https://ensligmorellerfar.dev.intern.nav.no/ekstern"
-  BA_SAK_FRONTEND_URL: "https://barnetrygd.dev.intern.nav.no"
-  KS_SAK_FRONTEND_URL: "https://kontantstotte.dev.intern.nav.no"
+  EF_SAK_FRONTEND_URL: "https://ensligmorellerfar.intern.dev.nav.no/ekstern"
+  BA_SAK_FRONTEND_URL: "https://barnetrygd.intern.dev.nav.no"
+  KS_SAK_FRONTEND_URL: "https://kontantstotte.intern.dev.nav.no"
