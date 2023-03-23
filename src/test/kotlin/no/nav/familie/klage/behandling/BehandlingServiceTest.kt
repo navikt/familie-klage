@@ -90,6 +90,7 @@ internal class BehandlingServiceTest {
             assertThat(behandlingSlot.captured.status).isEqualTo(BehandlingStatus.FERDIGSTILT)
             assertThat(behandlingSlot.captured.resultat).isEqualTo(BehandlingResultat.HENLAGT)
             assertThat(behandlingSlot.captured.steg).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
+            assertThat(behandlingSlot.captured.vedtakDato).isNotNull
         }
 
         private fun henleggOgForventApiFeilmelding(behandling: Behandling, henlagtÅrsak: HenlagtÅrsak) {

@@ -1,0 +1,1 @@
+UPDATE Behandling SET vedtak_dato=endret_tid where resultat='HENLAGT' AND vedtak_dato is null
