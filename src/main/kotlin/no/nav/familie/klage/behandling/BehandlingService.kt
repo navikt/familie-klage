@@ -18,6 +18,7 @@ import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
+import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
@@ -164,6 +165,7 @@ class BehandlingService(
             resultat = BehandlingResultat.HENLAGT,
             steg = BEHANDLING_FERDIGSTILT,
             status = FERDIGSTILT,
+            vedtakDato = SporbarUtils.now()
         )
 
         behandlinghistorikkService.opprettBehandlingshistorikk(behandlingId, BEHANDLING_FERDIGSTILT)
