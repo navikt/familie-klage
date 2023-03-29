@@ -9,7 +9,7 @@ import java.util.UUID
 @Service
 class OpprettRevurderingService(
     private val behandlingService: BehandlingService,
-    private val fagsystemVedtakService: FagsystemVedtakService
+    private val fagsystemVedtakService: FagsystemVedtakService,
 ) {
 
     fun kanOppretteRevurdering(behandlingId: UUID): KanOppretteRevurderingResponse {

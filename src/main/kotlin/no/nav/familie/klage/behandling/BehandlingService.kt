@@ -165,7 +165,7 @@ class BehandlingService(
             resultat = BehandlingResultat.HENLAGT,
             steg = BEHANDLING_FERDIGSTILT,
             status = FERDIGSTILT,
-            vedtakDato = SporbarUtils.now()
+            vedtakDato = SporbarUtils.now(),
         )
 
         behandlinghistorikkService.opprettBehandlingshistorikk(behandlingId, BEHANDLING_FERDIGSTILT)

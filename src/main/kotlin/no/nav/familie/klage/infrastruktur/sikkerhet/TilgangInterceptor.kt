@@ -1,12 +1,12 @@
 package no.nav.familie.klage.infrastruktur.sikkerhet
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import no.nav.familie.klage.felles.domain.BehandlerRolle
 import no.nav.familie.klage.infrastruktur.exception.ManglerTilgang
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.AsyncHandlerInterceptor
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
 
 @Component
 class TilgangInterceptor(private val tilgangService: TilgangService) : AsyncHandlerInterceptor {
