@@ -31,13 +31,13 @@ internal class OpprettRevurderingServiceTest {
     @BeforeEach
     internal fun setUp() {
         every { fagsystemVedtakService.kanOppretteRevurdering(behandlingId) } returns
-                KanOppretteRevurderingResponse(true, null)
+            KanOppretteRevurderingResponse(true, null)
     }
 
     @Test
     internal fun `kan opprette revurdering for vedtak i infotrygd`() {
         every { behandlingService.hentBehandling(behandlingId) } returns
-                behandling(fagsak = fagsak, påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK, null))
+            behandling(fagsak = fagsak, påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK, null))
 
         val kanOppretteRevurdering = service.kanOppretteRevurdering(behandlingId)
 
@@ -48,16 +48,16 @@ internal class OpprettRevurderingServiceTest {
     @EnumSource(
         value = FagsystemType::class,
         names = ["TILBAKEKREVING", "UTESTENGELSE"],
-        mode = EnumSource.Mode.EXCLUDE
+        mode = EnumSource.Mode.EXCLUDE,
     )
     @ParameterizedTest
     internal fun `kan opprette revurdering for vedtak i fagsystem`(fagsystemType: FagsystemType) {
         val påklagetVedtak = PåklagetVedtak(
             PåklagetVedtakstype.VEDTAK,
-            påklagetVedtakDetaljer(fagsystemType = fagsystemType)
+            påklagetVedtakDetaljer(fagsystemType = fagsystemType),
         )
         every { behandlingService.hentBehandling(behandlingId) } returns
-                behandling(fagsak = fagsak, påklagetVedtak = påklagetVedtak)
+            behandling(fagsak = fagsak, påklagetVedtak = påklagetVedtak)
 
         val kanOppretteRevurdering = service.kanOppretteRevurdering(behandlingId)
 
@@ -68,16 +68,16 @@ internal class OpprettRevurderingServiceTest {
     @EnumSource(
         value = FagsystemType::class,
         names = ["ORDNIÆR", "SANKSJON_1_MND"],
-        mode = EnumSource.Mode.EXCLUDE
+        mode = EnumSource.Mode.EXCLUDE,
     )
     @ParameterizedTest
     internal fun `skal ikke opprette revurdering for annet vedtak enn ordinær og sanksjon`(fagsystemType: FagsystemType) {
         val påklagetVedtak = PåklagetVedtak(
             PåklagetVedtakstype.VEDTAK,
-            påklagetVedtakDetaljer(fagsystemType = fagsystemType)
+            påklagetVedtakDetaljer(fagsystemType = fagsystemType),
         )
         every { behandlingService.hentBehandling(behandlingId) } returns
-                behandling(fagsak = fagsak, påklagetVedtak = påklagetVedtak)
+            behandling(fagsak = fagsak, påklagetVedtak = påklagetVedtak)
 
         val kanOppretteRevurdering = service.kanOppretteRevurdering(behandlingId)
 
@@ -88,12 +88,12 @@ internal class OpprettRevurderingServiceTest {
     @EnumSource(
         value = PåklagetVedtakstype::class,
         names = ["VEDTAK", "INFOTRYGD_ORDINÆRT_VEDTAK"],
-        mode = EnumSource.Mode.EXCLUDE
+        mode = EnumSource.Mode.EXCLUDE,
     )
     @ParameterizedTest
     internal fun `skal ikke opprette revurdering for andre påklagede vedtakstyper enn vedtak`(påklagetVedtakstype: PåklagetVedtakstype) {
         every { behandlingService.hentBehandling(behandlingId) } returns
-                behandling(fagsak = fagsak, påklagetVedtak = PåklagetVedtak(påklagetVedtakstype))
+            behandling(fagsak = fagsak, påklagetVedtak = PåklagetVedtak(påklagetVedtakstype))
 
         val kanOppretteRevurdering = service.kanOppretteRevurdering(behandlingId)
 

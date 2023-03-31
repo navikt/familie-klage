@@ -1,5 +1,6 @@
 package no.nav.familie.klage.felles.domain
 
+import jakarta.servlet.http.HttpServletRequest
 import no.nav.familie.klage.felles.dto.Tilgang
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.log.mdc.MDCConstants
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
-import jakarta.servlet.http.HttpServletRequest
 
 /**
  * [custom1], [custom2], [custom3] brukes for å logge ekstra felter, eks fagsak, behandling,
