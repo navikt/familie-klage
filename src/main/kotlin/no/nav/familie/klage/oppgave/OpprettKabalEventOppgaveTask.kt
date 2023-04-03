@@ -8,12 +8,10 @@ import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.oppgave.OppgaveUtil.lagFristForOppgave
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.objectMapper
-import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
-import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
-import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
-import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
+import no.nav.familie.kontrakter.felles.oppgave.*
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
@@ -25,13 +23,13 @@ import java.util.UUID
 @Service
 @TaskStepBeskrivelse(
     taskStepType = OpprettKabalEventOppgaveTask.TYPE,
-    beskrivelse = "Opprett oppgave for relevant hendelse fra kabal",
+    beskrivelse = "Opprett oppgave for relevant hendelse fra kabal"
 )
 class OpprettKabalEventOppgaveTask(
     private val fagsakRepository: FagsakRepository,
     private val behandlingRepository: BehandlingRepository,
     private val personRepository: FagsakPersonRepository,
-    private val oppgaveClient: OppgaveClient,
+    private val oppgaveClient: OppgaveClient
 ) : AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -44,6 +42,7 @@ class OpprettKabalEventOppgaveTask(
             ?: throw Feil("Feil ved henting av aktiv ident: Finner ikke fagsak for behandling med klagebehandlingEksternId ${opprettOppgavePayload.klagebehandlingEksternId}")
 
         val aktivIdent = personRepository.hentAktivIdent(personId)
+        val prioritet = utledOppgavePrioritet(opprettOppgavePayload.klageinstansUtfall)
 
         val opprettOppgaveRequest =
             OpprettOppgaveRequest(
@@ -55,6 +54,7 @@ class OpprettKabalEventOppgaveTask(
                 beskrivelse = opprettOppgavePayload.oppgaveTekst,
                 enhetsnummer = behandling.behandlendeEnhet,
                 behandlingstema = finnBehandlingstema(fagsakDomain.stønadstype).value,
+                prioritet = prioritet
             )
 
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
@@ -68,7 +68,7 @@ class OpprettKabalEventOppgaveTask(
         fun opprettTask(opprettOppgavePayload: OpprettOppgavePayload): Task {
             return Task(
                 TYPE,
-                objectMapper.writeValueAsString(opprettOppgavePayload),
+                objectMapper.writeValueAsString(opprettOppgavePayload)
             )
         }
     }
@@ -82,10 +82,20 @@ class OpprettKabalEventOppgaveTask(
             Stønadstype.KONTANTSTØTTE -> Behandlingstema.Kontantstøtte
         }
     }
+
+    private fun utledOppgavePrioritet(klageinstansUtfall: KlageinstansUtfall?): OppgavePrioritet {
+        return when (klageinstansUtfall) {
+            KlageinstansUtfall.OPPHEVET -> OppgavePrioritet.HOY
+            else -> {
+                OppgavePrioritet.NORM
+            }
+        }
+    }
 }
 
 data class OpprettOppgavePayload(
     val klagebehandlingEksternId: UUID,
     val oppgaveTekst: String,
     val fagsystem: Fagsystem,
+    val klageinstansUtfall: KlageinstansUtfall?
 )
