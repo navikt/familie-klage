@@ -11,7 +11,11 @@ import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.objectMapper
-import no.nav.familie.kontrakter.felles.oppgave.*
+import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
+import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
+import no.nav.familie.kontrakter.felles.oppgave.OppgavePrioritet
+import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
+import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
