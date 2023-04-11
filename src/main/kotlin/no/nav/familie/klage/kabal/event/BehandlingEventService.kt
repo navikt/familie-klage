@@ -25,7 +25,7 @@ class BehandlingEventService(
     private val fagsakRepository: FagsakRepository,
     private val taskService: TaskService,
     private val klageresultatRepository: KlageresultatRepository,
-    private val stegService: StegService,
+    private val stegService: StegService
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -57,7 +57,7 @@ class BehandlingEventService(
             mottattEllerAvsluttetTidspunkt = behandlingEvent.mottattEllerAvsluttetTidspunkt(),
             kildereferanse = UUID.fromString(behandlingEvent.kildeReferanse),
             journalpostReferanser = StringListWrapper(behandlingEvent.journalpostReferanser()),
-            behandlingId = behandling.id,
+            behandlingId = behandling.id
         )
 
         klageresultatRepository.insert(klageinstansResultat)
@@ -82,7 +82,7 @@ class BehandlingEventService(
             ?: error("Finner ikke fagsak for behandlingId: ${behandling.id}")
         val oppgaveTekst = "${behandlingEvent.detaljer.oppgaveTekst()} Gjelder: ${fagsakDomain.stønadstype}"
         val klageBehandlingEksternId = UUID.fromString(behandlingEvent.kildeReferanse)
-        val opprettOppgavePayload = OpprettOppgavePayload(klageBehandlingEksternId, oppgaveTekst, fagsakDomain.fagsystem)
+        val opprettOppgavePayload = OpprettOppgavePayload(klageBehandlingEksternId, oppgaveTekst, fagsakDomain.fagsystem, behandlingEvent.utfall())
         val opprettOppgaveTask = OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload)
         taskService.save(opprettOppgaveTask)
     }
