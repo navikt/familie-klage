@@ -5,6 +5,7 @@ import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import no.nav.familie.klage.infrastruktur.config.IntegrasjonerConfig
 import no.nav.familie.klage.infrastruktur.exception.IntegrasjonException
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import org.springframework.beans.factory.annotation.Qualifier
@@ -12,11 +13,12 @@ import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
 import java.net.URI
+import java.util.*
 
 @Component
 class OppgaveClient(
     @Qualifier("azure") restOperations: RestOperations,
-    private val integrasjonerConfig: IntegrasjonerConfig,
+    private val integrasjonerConfig: IntegrasjonerConfig
 ) : AbstractPingableRestClient(restOperations, "oppgave") {
 
     override val pingUri: URI = integrasjonerConfig.pingUri
@@ -35,10 +37,20 @@ class OppgaveClient(
         pakkUtRespons(respons, uri, "ferdigstillOppgave")
     }
 
+    fun oppdaterOppgave(oppgave: Oppgave): Long {
+        val uri = URI.create("$oppgaveUri/${oppgave.id!!}/oppdater")
+        val respons = patchForEntity<Ressurs<OppgaveResponse>>(
+            uri,
+            oppgave,
+            HttpHeaders().medContentTypeJsonUTF8()
+        )
+        return pakkUtRespons(respons, uri, "ferdigstillOppgave").oppgaveId
+    }
+
     private fun <T> pakkUtRespons(
         respons: Ressurs<T>,
         uri: URI?,
-        metode: String,
+        metode: String
     ): T {
         val data = respons.data
         if (respons.status == Ressurs.Status.SUKSESS && data != null) {
@@ -50,7 +62,7 @@ class OppgaveClient(
                 "Respons fra $metode feilet med status=${respons.status} melding=${respons.melding}",
                 null,
                 uri,
-                data,
+                data
             )
         }
     }
