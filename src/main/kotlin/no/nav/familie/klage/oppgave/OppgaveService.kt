@@ -3,7 +3,7 @@ package no.nav.familie.klage.oppgave
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import org.springframework.stereotype.Service
-import java.util.*
+import java.util.UUID
 
 @Service
 class OppgaveService(private val behandleSakOppgaveRepository: BehandleSakOppgaveRepository, private val oppgaveClient: OppgaveClient) {
