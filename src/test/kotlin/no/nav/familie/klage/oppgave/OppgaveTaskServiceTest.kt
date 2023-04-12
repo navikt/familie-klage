@@ -7,6 +7,7 @@ import io.mockk.slot
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.util.TaskMetadata.klageGjelderTilbakekrevingMetadataKey
+import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.kontrakter.felles.Tema
@@ -69,6 +70,9 @@ internal class OppgaveTaskServiceTest {
             val behandleSakOppgaveTask = Task(
                 type = OpprettBehandleSakOppgaveTask.TYPE,
                 payload = behandling.id.toString(),
+                properties = Properties().apply {
+                    this[saksbehandlerMetadataKey] = ""
+                }
             )
 
             opprettBehandleSakOppgaveTask.doTask(behandleSakOppgaveTask)
@@ -90,7 +94,7 @@ internal class OppgaveTaskServiceTest {
                 type = OpprettBehandleSakOppgaveTask.TYPE,
                 payload = behandling.id.toString(),
                 properties = Properties().apply {
-                    this[klageGjelderTilbakekrevingMetadataKey] = true
+                    this[klageGjelderTilbakekrevingMetadataKey] = true.toString()
                 },
             )
 
