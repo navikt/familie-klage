@@ -13,12 +13,11 @@ import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
 import java.net.URI
-import java.util.*
 
 @Component
 class OppgaveClient(
     @Qualifier("azure") restOperations: RestOperations,
-    private val integrasjonerConfig: IntegrasjonerConfig
+    private val integrasjonerConfig: IntegrasjonerConfig,
 ) : AbstractPingableRestClient(restOperations, "oppgave") {
 
     override val pingUri: URI = integrasjonerConfig.pingUri
@@ -42,7 +41,7 @@ class OppgaveClient(
         val respons = patchForEntity<Ressurs<OppgaveResponse>>(
             uri,
             oppgave,
-            HttpHeaders().medContentTypeJsonUTF8()
+            HttpHeaders().medContentTypeJsonUTF8(),
         )
         return pakkUtRespons(respons, uri, "ferdigstillOppgave").oppgaveId
     }
@@ -50,7 +49,7 @@ class OppgaveClient(
     private fun <T> pakkUtRespons(
         respons: Ressurs<T>,
         uri: URI?,
-        metode: String
+        metode: String,
     ): T {
         val data = respons.data
         if (respons.status == Ressurs.Status.SUKSESS && data != null) {
@@ -62,7 +61,7 @@ class OppgaveClient(
                 "Respons fra $metode feilet med status=${respons.status} melding=${respons.melding}",
                 null,
                 uri,
-                data
+                data,
             )
         }
     }

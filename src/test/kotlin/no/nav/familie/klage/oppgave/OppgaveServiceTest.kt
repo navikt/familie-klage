@@ -23,7 +23,7 @@ internal class OppgaveServiceTest {
         val oppgaveSlot = slot<Oppgave>()
         val eksisterendeOppgave = BehandleSakOppgave(
             behandlingId = behandlingId,
-            oppgaveId = oppgaveId
+            oppgaveId = oppgaveId,
         )
 
         every { behandleSakOppgaveRepository.findByBehandlingId(behandlingId) } returns eksisterendeOppgave

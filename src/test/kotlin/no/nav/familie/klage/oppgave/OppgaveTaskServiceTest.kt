@@ -91,7 +91,7 @@ internal class OppgaveTaskServiceTest {
                 payload = behandling.id.toString(),
                 properties = Properties().apply {
                     this[klageGjelderTilbakekrevingMetadataKey] = true
-                }
+                },
             )
 
             opprettBehandleSakOppgaveTask.doTask(behandleSakOppgaveTask)
