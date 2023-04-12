@@ -15,6 +15,7 @@ import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.slf4j.LoggerFactory
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -67,7 +68,7 @@ class EksternBehandlingController(
         opprettBehandlingService.opprettBehandling(opprettKlageBehandlingDto)
     }
 
-    @PostMapping("{behandlingId}/gjelder-tilbakekreving")
+    @PatchMapping("{behandlingId}/gjelder-tilbakekreving")
     fun oppdaterOppgaveTilÅGjeldeTilbakekreving(@PathVariable behandlingId: UUID) {
         oppgaveService.oppdaterOppgaveTilÅGjeldeTilbakekreving(behandlingId)
     }
