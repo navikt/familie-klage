@@ -68,7 +68,7 @@ class EksternBehandlingController(
         opprettBehandlingService.opprettBehandling(opprettKlageBehandlingDto)
     }
 
-    @PatchMapping("/{behandlingId}/gjelder-tilbakekreving")
+    @PatchMapping("{behandlingId}/gjelder-tilbakekreving")
     fun oppdaterOppgaveTilÅGjeldeTilbakekreving(@PathVariable behandlingId: UUID) {
         oppgaveService.oppdaterOppgaveTilÅGjeldeTilbakekreving(behandlingId)
     }
