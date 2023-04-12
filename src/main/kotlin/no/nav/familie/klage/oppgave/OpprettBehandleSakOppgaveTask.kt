@@ -46,7 +46,7 @@ class OpprettBehandleSakOppgaveTask(
             behandlingstype = Behandlingstema.Klage.value,
             behandlesAvApplikasjon = "familie-klage",
             tilordnetRessurs = task.metadata[saksbehandlerMetadataKey].toString(),
-            behandlingstema = if (klageGjelderTilbakekreving) "ab0007" else null,
+            behandlingstema = if (klageGjelderTilbakekreving) Behandlingstema.Tilbakebetaling.value else null,
         )
 
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest = oppgaveRequest)
