@@ -43,7 +43,7 @@ class OppgaveClient(
             oppgave,
             HttpHeaders().medContentTypeJsonUTF8(),
         )
-        return pakkUtRespons(respons, uri, "ferdigstillOppgave").oppgaveId
+        return pakkUtRespons(respons, uri, "oppdaterOppgave").oppgaveId
     }
 
     private fun <T> pakkUtRespons(
