@@ -27,13 +27,13 @@ import java.util.UUID
 @Service
 @TaskStepBeskrivelse(
     taskStepType = OpprettKabalEventOppgaveTask.TYPE,
-    beskrivelse = "Opprett oppgave for relevant hendelse fra kabal"
+    beskrivelse = "Opprett oppgave for relevant hendelse fra kabal",
 )
 class OpprettKabalEventOppgaveTask(
     private val fagsakRepository: FagsakRepository,
     private val behandlingRepository: BehandlingRepository,
     private val personRepository: FagsakPersonRepository,
-    private val oppgaveClient: OppgaveClient
+    private val oppgaveClient: OppgaveClient,
 ) : AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -58,7 +58,7 @@ class OpprettKabalEventOppgaveTask(
                 beskrivelse = opprettOppgavePayload.oppgaveTekst,
                 enhetsnummer = behandling.behandlendeEnhet,
                 behandlingstema = finnBehandlingstema(fagsakDomain.stønadstype).value,
-                prioritet = prioritet
+                prioritet = prioritet,
             )
 
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
@@ -72,7 +72,7 @@ class OpprettKabalEventOppgaveTask(
         fun opprettTask(opprettOppgavePayload: OpprettOppgavePayload): Task {
             return Task(
                 TYPE,
-                objectMapper.writeValueAsString(opprettOppgavePayload)
+                objectMapper.writeValueAsString(opprettOppgavePayload),
             )
         }
     }
@@ -101,5 +101,5 @@ data class OpprettOppgavePayload(
     val klagebehandlingEksternId: UUID,
     val oppgaveTekst: String,
     val fagsystem: Fagsystem,
-    val klageinstansUtfall: KlageinstansUtfall?
+    val klageinstansUtfall: KlageinstansUtfall?,
 )
