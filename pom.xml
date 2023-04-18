@@ -29,9 +29,9 @@
 		<sha1/>
 		<changelist>-SNAPSHOT</changelist>
 		<java.version>17</java.version>
-		<kotlin.version>1.8.10</kotlin.version>
-		<springdoc.version>2.0.4</springdoc.version>
-		<mockk-jvm.version>1.13.4</mockk-jvm.version>
+		<kotlin.version>1.8.20</kotlin.version>
+		<springdoc.version>2.1.0</springdoc.version>
+		<mockk-jvm.version>1.13.5</mockk-jvm.version>
 		<felles.version>2.20230210162649_a258d57-SPRING_BOOT_3</felles.version>
 		<prosessering.version>2.20230214102837_4b63c2e-SPRING_BOOT_3</prosessering.version>
 		<start-class>no.nav.familie.klage.ApplicationKt</start-class>
@@ -39,7 +39,7 @@
 		<saksstatistikk-klage.version>2.0_20230214104704_706e9c0</saksstatistikk-klage.version>
 		<nav.security.version>3.0.8</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
 		<okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
-		<unleash.version>7.1.0</unleash.version>
+		<unleash.version>8.0.0</unleash.version>
 	</properties>
 
 	<dependencies>
@@ -212,7 +212,7 @@
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>1.17.6</version>
+			<version>1.18.0</version>
 			<scope>test</scope>
 		</dependency>
 
