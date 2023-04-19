@@ -5,6 +5,7 @@ import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import no.nav.familie.klage.infrastruktur.config.IntegrasjonerConfig
 import no.nav.familie.klage.infrastruktur.exception.IntegrasjonException
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import org.springframework.beans.factory.annotation.Qualifier
@@ -33,6 +34,16 @@ class OppgaveClient(
         val uri = URI.create("$oppgaveUri/$oppgaveId/ferdigstill")
         val respons = patchForEntity<Ressurs<OppgaveResponse>>(uri, "")
         pakkUtRespons(respons, uri, "ferdigstillOppgave")
+    }
+
+    fun oppdaterOppgave(oppgave: Oppgave): Long {
+        val uri = URI.create("$oppgaveUri/${oppgave.id!!}/oppdater")
+        val respons = patchForEntity<Ressurs<OppgaveResponse>>(
+            uri,
+            oppgave,
+            HttpHeaders().medContentTypeJsonUTF8(),
+        )
+        return pakkUtRespons(respons, uri, "oppdaterOppgave").oppgaveId
     }
 
     private fun <T> pakkUtRespons(

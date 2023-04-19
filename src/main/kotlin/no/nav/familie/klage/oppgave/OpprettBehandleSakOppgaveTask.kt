@@ -2,6 +2,7 @@ package no.nav.familie.klage.oppgave
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.felles.util.TaskMetadata.klageGjelderTilbakekrevingMetadataKey
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.oppgave.OppgaveUtil.lagFristForOppgave
 import no.nav.familie.kontrakter.felles.Behandlingstema
@@ -32,6 +33,7 @@ class OpprettBehandleSakOppgaveTask(
         val behandlingId = UUID.fromString(task.payload)
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         val behandling = behandlingService.hentBehandling(behandlingId)
+        val klageGjelderTilbakekreving: Boolean = task.metadata.getProperty(klageGjelderTilbakekrevingMetadataKey).toBoolean()
 
         val oppgaveRequest = OpprettOppgaveRequest(
             ident = OppgaveIdentV2(ident = fagsak.hentAktivIdent(), gruppe = IdentGruppe.FOLKEREGISTERIDENT),
@@ -43,8 +45,8 @@ class OpprettBehandleSakOppgaveTask(
             enhetsnummer = behandling.behandlendeEnhet,
             behandlingstype = Behandlingstema.Klage.value,
             behandlesAvApplikasjon = "familie-klage",
-            tilordnetRessurs = task.metadata[saksbehandlerMetadataKey].toString(),
-            behandlingstema = null,
+            tilordnetRessurs = task.metadata.getProperty(saksbehandlerMetadataKey),
+            behandlingstema = if (klageGjelderTilbakekreving) Behandlingstema.Tilbakebetaling.value else null,
         )
 
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest = oppgaveRequest)
