@@ -51,7 +51,7 @@ internal class FagsystemVedtakServiceTest {
     }
 
     @Nested
-    inner class hentFagsystemVedtak {
+    inner class HentFagsystemVedtak {
 
         @Test
         internal fun `skal kalle på ef-klient for ef-behandling`() {
@@ -76,7 +76,7 @@ internal class FagsystemVedtakServiceTest {
     }
 
     @Nested
-    inner class hentFagsystemVedtakForPåklagetBehandlingId {
+    inner class HentFagsystemVedtakForPåklagetBehandlingId {
 
         @Test
         internal fun `skal returnere fagsystemVedtak`() {

@@ -69,7 +69,7 @@ internal class FormServiceTest {
     }
 
     @Nested
-    inner class oppdaterForm {
+    inner class OppdaterForm {
 
         @Test
         internal fun `ikke alle vilkår besvart skal gå til steget formKrav`() {

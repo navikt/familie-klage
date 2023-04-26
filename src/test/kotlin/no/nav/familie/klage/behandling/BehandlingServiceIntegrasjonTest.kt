@@ -60,7 +60,7 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
     }
 
     @Nested
-    inner class oppdaterPåklagetVedtak {
+    inner class OppdaterPåklagetVedtak {
 
         @Test
         internal fun `skal oppdatere påklaget vedtak`() {

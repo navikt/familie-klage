@@ -29,7 +29,7 @@ internal class FormUtilTest {
     val ikkeFerdigUtfyltForm = Form(UUID.randomUUID())
 
     @Nested
-    inner class utledFormresultat {
+    inner class UtledFormresultat {
 
         @Test
         internal fun `alle formkrav er ferdigutfylte`() {
@@ -51,7 +51,7 @@ internal class FormUtilTest {
     }
 
     @Nested
-    inner class formkravErOppfylt {
+    inner class FormkravErOppfylt {
 
         @Test
         internal fun `alle formkrav oppfylt skal returnere true`() {
@@ -105,7 +105,7 @@ internal class FormUtilTest {
     }
 
     @Nested
-    inner class ikkePåklagetVedtak {
+    inner class IkkePåklagetVedtak {
 
         @Test
         internal fun `valgt ikkePåklaget vedtak og ikke oppfylte fritekstfelter gir formkravresultat ikke satt`() {
