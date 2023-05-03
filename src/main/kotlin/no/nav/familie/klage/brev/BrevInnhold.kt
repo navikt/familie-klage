@@ -33,9 +33,9 @@ object BrevInnhold {
                     deloverskrift = "",
                     innhold =
                     "Vi har ${klageMottatt.norskFormat()} fått klagen din på vedtaket om " +
-                            "${visningsnavn(stønadstype, påklagetVedtakDetaljer)} som ble gjort " +
-                            "${påklagetVedtakDetaljer.vedtakstidspunkt.norskFormat()}, " +
-                            "og kommet frem til at vi ikke endrer vedtaket. NAV Klageinstans skal derfor vurdere saken din på nytt.",
+                        "${visningsnavn(stønadstype, påklagetVedtakDetaljer)} som ble gjort " +
+                        "${påklagetVedtakDetaljer.vedtakstidspunkt.norskFormat()}, " +
+                        "og kommet frem til at vi ikke endrer vedtaket. NAV Klageinstans skal derfor vurdere saken din på nytt.",
                 ),
                 AvsnittDto(
                     deloverskrift = "",
@@ -88,7 +88,7 @@ object BrevInnhold {
                     deloverskrift = "Du har rett til å klage",
                     innhold =
                     "Hvis du vil klage, må du gjøre dette innen 3 uker fra den datoen du fikk dette brevet. " +
-                            "Du finner skjema og informasjon på ${stønadstype.klageUrl()}.",
+                        "Du finner skjema og informasjon på ${stønadstype.klageUrl()}.",
                 ),
                 AvsnittDto(
                     deloverskrift = "Du har rett til innsyn",
@@ -131,7 +131,7 @@ object BrevInnhold {
                     deloverskrift = "Du har rett til å klage",
                     innhold =
                     "Hvis du vil klage, må du gjøre dette innen 3 uker fra den datoen du fikk dette brevet. " +
-                            "Du finner skjema og informasjon på ${stønadstype.klageUrl()}.",
+                        "Du finner skjema og informasjon på ${stønadstype.klageUrl()}.",
                 ),
                 AvsnittDto(
                     deloverskrift = "Du har rett til innsyn",
@@ -147,8 +147,8 @@ object BrevInnhold {
         deloverskrift = "Har du spørsmål?",
         innhold =
         "Du finner mer informasjon på ${stønadstype.lesMerUrl()}.\n\n" +
-                "På nav.no/kontakt kan du chatte eller skrive til oss.\n\n" +
-                "Hvis du ikke finner svar på nav.no kan du ringe oss på telefon 55 55 33 33, hverdager 09.00-15.00.",
+            "På nav.no/kontakt kan du chatte eller skrive til oss.\n\n" +
+            "Hvis du ikke finner svar på nav.no kan du ringe oss på telefon 55 55 33 33, hverdager 09.00-15.00.",
     )
 
     private fun visningsnavn(stønadstype: Stønadstype, påklagetVedtakDetaljer: PåklagetVedtakDetaljer?): String =
