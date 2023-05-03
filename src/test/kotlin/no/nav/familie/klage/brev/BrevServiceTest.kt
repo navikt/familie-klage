@@ -77,7 +77,7 @@ internal class BrevServiceTest : OppslagSpringRunnerTest() {
     }
 
     @Nested
-    inner class lagEllerOppdaterBrev {
+    inner class LagEllerOppdaterBrev {
 
         @Test
         internal fun `skal ikke kunne lage eller oppdatere når behandlingen er låst`() {
@@ -99,7 +99,7 @@ internal class BrevServiceTest : OppslagSpringRunnerTest() {
     }
 
     @Nested
-    inner class lagBrevSomPdf {
+    inner class LagBrevSomPdf {
 
         @Test
         internal fun `kan ikke lage pdf 2 ganger`() {

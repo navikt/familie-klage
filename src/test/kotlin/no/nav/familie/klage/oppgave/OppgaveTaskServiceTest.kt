@@ -72,7 +72,7 @@ internal class OppgaveTaskServiceTest {
                 payload = behandling.id.toString(),
                 properties = Properties().apply {
                     this[saksbehandlerMetadataKey] = ""
-                }
+                },
             )
 
             opprettBehandleSakOppgaveTask.doTask(behandleSakOppgaveTask)
