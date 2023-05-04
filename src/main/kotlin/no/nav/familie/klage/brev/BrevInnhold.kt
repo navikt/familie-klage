@@ -50,11 +50,7 @@ object BrevInnhold {
                     innhold =
                     "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via \n${stønadstype.klageUrl()}.",
                 ),
-                AvsnittDto(
-                    deloverskrift = "Har du spørsmål?",
-                    innhold = "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. " +
-                        "Du kan også kontakte oss på nav.no/kontakt.",
-                ),
+                harDuSpørsmålAvsnitt(stønadstype),
             ),
         )
     }
@@ -99,12 +95,7 @@ object BrevInnhold {
                     innhold =
                     "På nav.no/dittnav kan du se dokumentene i saken din.",
                 ),
-                AvsnittDto(
-                    deloverskrift = "Har du spørsmål?",
-                    innhold =
-                    "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. " +
-                        "Du kan også kontakte oss på nav.no/kontakt.",
-                ),
+                harDuSpørsmålAvsnitt(stønadstype),
             ),
         )
     }
@@ -147,15 +138,18 @@ object BrevInnhold {
                     innhold =
                     "På nav.no/dittnav kan du se dokumentene i saken din.",
                 ),
-                AvsnittDto(
-                    deloverskrift = "Har du spørsmål?",
-                    innhold =
-                    "Du finner informasjon som kan være nyttig for deg på ${stønadstype.lesMerUrl()}. " +
-                        "Du kan også kontakte oss på nav.no/kontakt.",
-                ),
+                harDuSpørsmålAvsnitt(stønadstype),
             ),
         )
     }
+
+    private fun harDuSpørsmålAvsnitt(stønadstype: Stønadstype) = AvsnittDto(
+        deloverskrift = "Har du spørsmål?",
+        innhold =
+        "Du finner mer informasjon på ${stønadstype.lesMerUrl()}.\n\n" +
+            "På nav.no/kontakt kan du chatte eller skrive til oss.\n\n" +
+            "Hvis du ikke finner svar på nav.no kan du ringe oss på telefon 55 55 33 33, hverdager 09.00-15.00.",
+    )
 
     private fun visningsnavn(stønadstype: Stønadstype, påklagetVedtakDetaljer: PåklagetVedtakDetaljer?): String =
         when (påklagetVedtakDetaljer?.fagsystemType) {

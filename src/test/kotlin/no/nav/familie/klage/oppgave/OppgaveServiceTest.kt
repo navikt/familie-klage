@@ -3,7 +3,11 @@ package no.nav.familie.klage.oppgave
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.verify
+import no.nav.familie.klage.behandling.BehandlingService
+import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.kontrakter.felles.Behandlingstema
+import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -13,7 +17,8 @@ internal class OppgaveServiceTest {
 
     val behandleSakOppgaveRepository = mockk<BehandleSakOppgaveRepository>()
     val oppgaveClient = mockk<OppgaveClient>()
-    val oppgaveService = OppgaveService(behandleSakOppgaveRepository, oppgaveClient)
+    val behandlingService = mockk<BehandlingService>()
+    val oppgaveService = OppgaveService(behandleSakOppgaveRepository, oppgaveClient, behandlingService)
 
     val behandlingId = UUID.randomUUID()
     val oppgaveId = 1L
@@ -25,10 +30,12 @@ internal class OppgaveServiceTest {
             behandlingId = behandlingId,
             oppgaveId = oppgaveId,
         )
+        val behandling = behandling(id = behandlingId, status = BehandlingStatus.UTREDES)
 
+        every { behandlingService.hentBehandling(behandlingId) } returns behandling
         every { behandleSakOppgaveRepository.findByBehandlingId(behandlingId) } returns eksisterendeOppgave
-
         every { oppgaveClient.oppdaterOppgave(capture(oppgaveSlot)) } returns oppgaveId
+
         oppgaveService.oppdaterOppgaveTilÅGjeldeTilbakekreving(behandlingId)
 
         assertThat(oppgaveSlot.captured.id).isEqualTo(oppgaveId)
@@ -62,5 +69,17 @@ internal class OppgaveServiceTest {
         assertThat(oppgaveSlot.captured.tildeltEnhetsnr).isNull()
         assertThat(oppgaveSlot.captured.tilordnetRessurs).isNull()
         assertThat(oppgaveSlot.captured.versjon).isNull()
+    }
+
+    @Test
+    internal fun `skal ikke oppdatere oppgave om behandling ikke har status opprettet eller utredes`() {
+        val behandling = behandling(id = behandlingId, status = BehandlingStatus.FERDIGSTILT)
+
+        every { behandlingService.hentBehandling(behandlingId) } returns behandling
+
+        oppgaveService.oppdaterOppgaveTilÅGjeldeTilbakekreving(behandlingId)
+
+        verify(exactly = 0) { behandleSakOppgaveRepository.findByBehandlingId(behandlingId) }
+        verify(exactly = 0) { oppgaveClient.oppdaterOppgave(any()) }
     }
 }

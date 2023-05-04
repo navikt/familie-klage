@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.5</version>
+		<version>3.0.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<repositories>
@@ -29,11 +29,11 @@
 		<sha1/>
 		<changelist>-SNAPSHOT</changelist>
 		<java.version>17</java.version>
-		<kotlin.version>1.8.20</kotlin.version>
+		<kotlin.version>1.8.21</kotlin.version>
 		<springdoc.version>2.1.0</springdoc.version>
 		<mockk-jvm.version>1.13.5</mockk-jvm.version>
 		<felles.version>2.20230210162649_a258d57-SPRING_BOOT_3</felles.version>
-		<prosessering.version>2.20230214102837_4b63c2e-SPRING_BOOT_3</prosessering.version>
+		<prosessering.version>2.20230322091650_fb0187e-SPRING_BOOT_3</prosessering.version>
 		<start-class>no.nav.familie.klage.ApplicationKt</start-class>
 		<kontrakter.version>3.0_20230404163639_edb8619-JAKARTA</kontrakter.version>
 		<saksstatistikk-klage.version>2.0_20230214104704_706e9c0</saksstatistikk-klage.version>
@@ -206,7 +206,7 @@
 		<dependency>
 			<groupId>dev.akkinoc.spring.boot</groupId>
 			<artifactId>logback-access-spring-boot-starter</artifactId>
-			<version>3.4.5</version>
+			<version>3.4.6</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -306,7 +306,7 @@
 					<dependency>
 						<groupId>com.pinterest</groupId>
 						<artifactId>ktlint</artifactId>
-						<version>0.48.2</version>
+						<version>0.49.0</version>
 					</dependency>
 					<!-- additional 3rd party ruleset(s) can be specified here -->
 				</dependencies>
