@@ -7,30 +7,39 @@ import java.time.LocalDateTime
 data class PdlResponse<T>(
     val data: T,
     val errors: List<PdlError>?,
+    val extensions: PdlExtensions?,
 ) {
 
     fun harFeil(): Boolean {
         return errors != null && errors.isNotEmpty()
     }
-
+    fun harAdvarsel(): Boolean {
+        return !extensions?.warnings.isNullOrEmpty()
+    }
     fun errorMessages(): String {
         return errors?.joinToString { it -> it.message } ?: ""
     }
 }
 
-data class PdlBolkResponse<T>(val data: PersonBolk<T>?, val errors: List<PdlError>?) {
+data class PdlExtensions(val warnings: List<PdlWarning>?)
+data class PdlWarning(val details: Any?, val id: String?, val message: String?, val query: String?)
+
+data class PdlBolkResponse<T>(val data: PersonBolk<T>?, val errors: List<PdlError>?, val extensions: PdlExtensions?) {
 
     fun errorMessages(): String {
         return errors?.joinToString { it -> it.message } ?: ""
+    }
+    fun harAdvarsel(): Boolean {
+        return !extensions?.warnings.isNullOrEmpty()
     }
 }
 
 data class PdlError(
     val message: String,
-    val extensions: PdlExtensions?,
+    val extensions: PdlErrorExtensions?,
 )
 
-data class PdlExtensions(val code: String?) {
+data class PdlErrorExtensions(val code: String?) {
 
     fun notFound() = code == "not_found"
 }

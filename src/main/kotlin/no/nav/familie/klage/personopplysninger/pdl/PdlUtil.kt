@@ -20,6 +20,10 @@ inline fun <reified DATA : Any, reified T : Any> feilsjekkOgReturnerData(
         secureLogger.error("Feil ved henting av ${T::class} fra PDL: ${pdlResponse.errorMessages()}")
         throw PdlRequestException("Feil ved henting av ${T::class} fra PDL. Se secure logg for detaljer.")
     }
+    if (pdlResponse.harAdvarsel()) {
+        logger.warn("Advarsel ved henting av ${T::class} fra PDL. Se securelogs for detaljer.")
+        secureLogger.warn("Advarsel ved henting av ${T::class} fra PDL: ${pdlResponse.extensions?.warnings}")
+    }
 
     val data = dataMapper.invoke(pdlResponse.data)
     if (data == null) {
@@ -38,7 +42,10 @@ inline fun <reified T : Any> feilsjekkOgReturnerData(pdlResponse: PdlBolkRespons
         secureLogger.error("Data fra pdl er null ved bolkoppslag av ${T::class} fra PDL: ${pdlResponse.errorMessages()}")
         throw PdlRequestException("Data er null fra PDL -  ${T::class}. Se secure logg for detaljer.")
     }
-
+    if (pdlResponse.harAdvarsel()) {
+        logger.warn("Advarsel ved henting av ${T::class} fra PDL. Se securelogs for detaljer.")
+        secureLogger.warn("Advarsel ved henting av ${T::class} fra PDL: ${pdlResponse.extensions?.warnings}")
+    }
     val feil = pdlResponse.data.personBolk.filter { it.code != "ok" }.associate { it.ident to it.code }
     if (feil.isNotEmpty()) {
         secureLogger.error("Feil ved henting av ${T::class} fra PDL: $feil")

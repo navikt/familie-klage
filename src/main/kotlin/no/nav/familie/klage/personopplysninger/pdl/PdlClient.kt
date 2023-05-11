@@ -2,6 +2,8 @@ package no.nav.familie.klage.personopplysninger.pdl
 
 import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.klage.infrastruktur.config.PdlConfig
+import no.nav.familie.kontrakter.felles.Tema
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpHeaders
@@ -24,7 +26,7 @@ class PdlClient(
     }
 
     @Cacheable("hentPerson", cacheManager = "shortCache")
-    fun hentPerson(personIdent: String): PdlSøker {
+    fun hentPerson(personIdent: String, stønadstype: Stønadstype): PdlSøker {
         val pdlPersonRequest = PdlPersonRequest(
             variables = PdlPersonRequestVariables(personIdent),
             query = PdlConfig.søkerQuery,
@@ -32,13 +34,13 @@ class PdlClient(
         val pdlResponse: PdlResponse<PdlSøkerData> = postForEntity(
             pdlConfig.pdlUri,
             pdlPersonRequest,
-            httpHeaders(),
+            httpHeaders(mapTilTema(stønadstype)),
         )
         return feilsjekkOgReturnerData(personIdent, pdlResponse) { it.person }
     }
 
     @Cacheable("hentNavnBolk", cacheManager = "shortCache")
-    fun hentNavnBolk(personIdenter: List<String>): Map<String, PdlNavn> {
+    fun hentNavnBolk(personIdenter: List<String>, stønadstype: Stønadstype): Map<String, PdlNavn> {
         require(personIdenter.size <= 100) { "Liste med personidenter må være færre enn 100 st" }
         val pdlPersonRequest = PdlPersonBolkRequest(
             variables = PdlPersonBolkRequestVariables(personIdenter),
@@ -47,7 +49,7 @@ class PdlClient(
         val pdlResponse: PdlBolkResponse<PdlNavn> = postForEntity(
             pdlConfig.pdlUri,
             pdlPersonRequest,
-            httpHeaders(),
+            httpHeaders(mapTilTema(stønadstype)),
         )
         return feilsjekkOgReturnerData(pdlResponse)
     }
@@ -58,7 +60,7 @@ class PdlClient(
      * @return liste med folkeregisteridenter
      */
     @Cacheable("personidenter", cacheManager = "shortCache")
-    fun hentPersonidenter(ident: String, historikk: Boolean = false): PdlIdenter {
+    fun hentPersonidenter(ident: String, tema: Tema, historikk: Boolean = false): PdlIdenter {
         val pdlIdentRequest = PdlIdentRequest(
             variables = PdlIdentRequestVariables(ident, "FOLKEREGISTERIDENT", historikk),
             query = PdlConfig.hentIdentQuery,
@@ -66,14 +68,30 @@ class PdlClient(
         val pdlResponse: PdlResponse<PdlHentIdenter> = postForEntity(
             pdlConfig.pdlUri,
             pdlIdentRequest,
-            httpHeaders(),
+            httpHeaders(tema),
         )
         return feilsjekkOgReturnerData(ident, pdlResponse) { it.hentIdenter }
     }
 
-    private fun httpHeaders(): HttpHeaders {
+    fun hentPersonidenter(ident: String, stønadstype: Stønadstype, historikk: Boolean = false): PdlIdenter {
+        return hentPersonidenter(ident, mapTilTema(stønadstype), historikk)
+    }
+
+    private fun httpHeaders(tema: Tema): HttpHeaders {
         return HttpHeaders().apply {
-            add("Tema", "ENF") // TODO
+            add("Tema", tema.name)
+            add("behandlingsnummer", tema.behandlingsnummer)
+        }
+    }
+
+    private fun mapTilTema(stønadstype: Stønadstype): Tema {
+        return when (stønadstype) {
+            Stønadstype.OVERGANGSSTØNAD -> Tema.ENF
+            Stønadstype.SKOLEPENGER -> Tema.ENF
+            Stønadstype.BARNETILSYN -> Tema.ENF
+            Stønadstype.BARNETRYGD -> Tema.BAR
+            Stønadstype.KONTANTSTØTTE -> Tema.KON
+            else -> error("Kunne ikke finne tema for stønadstype=$stønadstype")
         }
     }
 }
