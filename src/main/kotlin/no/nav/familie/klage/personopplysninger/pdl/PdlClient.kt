@@ -91,7 +91,6 @@ class PdlClient(
             Stønadstype.BARNETILSYN -> Tema.ENF
             Stønadstype.BARNETRYGD -> Tema.BAR
             Stønadstype.KONTANTSTØTTE -> Tema.KON
-            else -> error("Kunne ikke finne tema for stønadstype=$stønadstype")
         }
     }
 }
