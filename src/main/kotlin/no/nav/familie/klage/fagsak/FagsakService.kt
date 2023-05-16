@@ -21,7 +21,7 @@ class FagsakService(
 
     @Transactional
     fun hentEllerOpprettFagsak(ident: String, eksternId: String, fagsystem: Fagsystem, stønadstype: Stønadstype): Fagsak {
-        val personIdenter = pdlClient.hentPersonidenter(ident, true)
+        val personIdenter = pdlClient.hentPersonidenter(ident, stønadstype, true)
         val gjeldendePersonIdent = personIdenter.gjeldende()
         val person = fagsakPersonService.hentEllerOpprettPerson(personIdenter.identer(), gjeldendePersonIdent.ident)
         val oppdatertPerson = fagsakPersonService.oppdaterIdent(person, gjeldendePersonIdent.ident)

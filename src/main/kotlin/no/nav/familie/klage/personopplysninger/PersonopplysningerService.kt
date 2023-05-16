@@ -13,6 +13,7 @@ import no.nav.familie.klage.personopplysninger.pdl.PdlSøker
 import no.nav.familie.klage.personopplysninger.pdl.gjeldende
 import no.nav.familie.klage.personopplysninger.pdl.gjelende
 import no.nav.familie.klage.personopplysninger.pdl.visningsnavn
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -31,8 +32,8 @@ class PersonopplysningerService(
 
         val egenAnsatt = integrasjonerClient.egenAnsatt(fagsak.hentAktivIdent())
 
-        val pdlSøker = pdlClient.hentPerson(fagsak.hentAktivIdent())
-        val andreParterNavn = hentNavnAndreParter(pdlSøker)
+        val pdlSøker = pdlClient.hentPerson(fagsak.hentAktivIdent(), fagsak.stønadstype)
+        val andreParterNavn = hentNavnAndreParter(pdlSøker, fagsak.stønadstype)
         return PersonopplysningerDto(
             personIdent = fagsak.hentAktivIdent(),
             navn = pdlSøker.navn.gjeldende().visningsnavn(),
@@ -50,15 +51,15 @@ class PersonopplysningerService(
     /**
      * Returnerer map med ident og visningsnavn
      */
-    private fun hentNavnAndreParter(pdlSøker: PdlSøker): Map<String, String> {
+    private fun hentNavnAndreParter(pdlSøker: PdlSøker, stønadstype: Stønadstype): Map<String, String> {
         return pdlSøker.fullmakt.map { it.motpartsPersonident }.distinct()
             .takeIf { it.isNotEmpty() }
-            ?.let { hentNavn(it) }
+            ?.let { hentNavn(it, stønadstype) }
             ?: emptyMap()
     }
 
-    private fun hentNavn(it: List<String>): Map<String, String> =
-        pdlClient.hentNavnBolk(it).map { it.key to it.value.navn.gjeldende().visningsnavn() }.toMap()
+    private fun hentNavn(it: List<String>, stønadstype: Stønadstype): Map<String, String> =
+        pdlClient.hentNavnBolk(it, stønadstype).map { it.key to it.value.navn.gjeldende().visningsnavn() }.toMap()
 
     private fun mapFullmakt(pdlSøker: PdlSøker, andreParterNavn: Map<String, String>) = pdlSøker.fullmakt.map {
         FullmaktDto(

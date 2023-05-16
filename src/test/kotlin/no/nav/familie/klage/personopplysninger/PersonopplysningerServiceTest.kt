@@ -50,8 +50,8 @@ internal class PersonopplysningerServiceTest {
     internal fun setUp() {
         every { behandlingService.hentBehandling(behandling.id) } returns behandling
         every { fagsakService.hentFagsak(fagsak.id) } returns fagsak
-        every { pdlClient.hentPerson(any()) } returns lagPdlSøker()
-        every { pdlClient.hentNavnBolk(any()) } returns navnBolkResponse()
+        every { pdlClient.hentPerson(any(), any()) } returns lagPdlSøker()
+        every { pdlClient.hentNavnBolk(any(), any()) } returns navnBolkResponse()
         every { integrasjonerClient.egenAnsatt(any()) } returns true
     }
 
@@ -69,7 +69,7 @@ internal class PersonopplysningerServiceTest {
         assertThat(personopplysninger.egenAnsatt).isTrue
         assertThat(personopplysninger.vergemål).hasSize(1)
 
-        verify(exactly = 1) { pdlClient.hentNavnBolk(eq(listOf("fullmaktIdent"))) }
+        verify(exactly = 1) { pdlClient.hentNavnBolk(eq(listOf("fullmaktIdent")), any()) }
     }
 
     @Test
@@ -78,7 +78,7 @@ internal class PersonopplysningerServiceTest {
 
         assertThat(personopplysninger.fullmakt.single().navn).isEqualTo("fullmakt etternavn")
 
-        verify(exactly = 1) { pdlClient.hentNavnBolk(eq(listOf("fullmaktIdent"))) }
+        verify(exactly = 1) { pdlClient.hentNavnBolk(eq(listOf("fullmaktIdent")), any()) }
     }
 
     private fun navnBolkResponse() = mapOf(
