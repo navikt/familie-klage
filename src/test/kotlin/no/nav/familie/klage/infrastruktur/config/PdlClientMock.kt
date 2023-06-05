@@ -19,6 +19,7 @@ import no.nav.familie.klage.testutil.PdlTestdataHelper.lagNavn
 import no.nav.familie.klage.testutil.PdlTestdataHelper.metadataGjeldende
 import no.nav.familie.klage.testutil.PdlTestdataHelper.pdlNavn
 import no.nav.familie.klage.testutil.PdlTestdataHelper.pdlSøker
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -36,11 +37,11 @@ class PdlClientMock {
 
         every { pdlClient.ping() } just runs
 
-        every { pdlClient.hentNavnBolk(any()) } answers { firstArg<List<String>>().associateWith { pdlNavn(listOf(lagNavn())) } }
+        every { pdlClient.hentNavnBolk(any(), any()) } answers { firstArg<List<String>>().associateWith { pdlNavn(listOf(lagNavn())) } }
 
-        every { pdlClient.hentPerson(any()) } returns opprettPdlSøker()
+        every { pdlClient.hentPerson(any(), any()) } returns opprettPdlSøker()
 
-        every { pdlClient.hentPersonidenter(any(), eq(true)) } answers
+        every { pdlClient.hentPersonidenter(any(), Stønadstype.OVERGANGSSTØNAD, eq(true)) } answers
             { PdlIdenter(listOf(PdlIdent(firstArg(), false), PdlIdent("98765432109", true))) }
 
         return pdlClient

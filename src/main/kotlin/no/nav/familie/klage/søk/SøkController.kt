@@ -1,5 +1,6 @@
 package no.nav.familie.klage.søk
 
+import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
@@ -29,6 +30,7 @@ class SøkController(
     private val tilgangService: TilgangService,
     private val pdlClient: PdlClient,
     private val eregService: EregService,
+    private val fagsakService: FagsakService,
 ) {
 
     @PostMapping("person")
@@ -36,8 +38,10 @@ class SøkController(
         @RequestBody personIdentDto: PersonIdentDto,
     ): Ressurs<PersonTreffDto> {
         val personIdent = personIdentDto.personIdent
+        val behandlingId = personIdentDto.behandlingId
+        val fagsak = fagsakService.hentFagsak(behandlingId)
         tilgangService.validerTilgangTilPersonMedBarn(personIdent, AuditLoggerEvent.UPDATE)
-        val person = pdlClient.hentPerson(personIdent)
+        val person = pdlClient.hentPerson(personIdent, fagsak.stønadstype)
         val result = PersonTreffDto(personIdent, person.navn.gjeldende().visningsnavn())
         return Ressurs.success(result)
     }

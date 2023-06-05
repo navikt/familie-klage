@@ -6,6 +6,7 @@ import no.nav.familie.klage.journalpost.JournalpostService
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.MediaType
@@ -45,7 +46,7 @@ class VedleggController(
         val personIdent = journalpost.bruker?.let {
             when (it.type) {
                 BrukerIdType.FNR -> it.id
-                BrukerIdType.AKTOERID -> pdlClient.hentPersonidenter(it.id).identer.first().ident
+                BrukerIdType.AKTOERID -> pdlClient.hentPersonidenter(it.id, Tema.valueOf(journalpost.tema ?: error("Tema er null for journalpostId=$journalpostId"))).identer.first().ident
                 BrukerIdType.ORGNR -> error("Kan ikke hente journalpost=$journalpostId for orgnr")
             }
         } ?: error("Kan ikke hente journalpost=$journalpostId uten bruker")
