@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.6</version>
+		<version>3.1.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<repositories>
@@ -35,7 +35,7 @@
 		<felles.version>2.20230210162649_a258d57-SPRING_BOOT_3</felles.version>
 		<prosessering.version>2.20230505152326_9265101-SPRING_BOOT_3</prosessering.version>
 		<start-class>no.nav.familie.klage.ApplicationKt</start-class>
-		<kontrakter.version>3.0_20230509152247_36d24db</kontrakter.version>
+		<kontrakter.version>3.0_20230526102731_e1eff1d</kontrakter.version>
 		<saksstatistikk-klage.version>2.0_20230214104704_706e9c0</saksstatistikk-klage.version>
 		<nav.security.version>3.0.8</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
 		<okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
@@ -212,7 +212,7 @@
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>1.18.1</version>
+			<version>1.18.3</version>
 			<scope>test</scope>
 		</dependency>
 
