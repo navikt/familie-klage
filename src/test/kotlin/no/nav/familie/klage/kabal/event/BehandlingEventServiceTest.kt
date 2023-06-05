@@ -65,7 +65,7 @@ internal class BehandlingEventServiceTest {
     }
 
     @Test
-    fun `Skal ikke ferdigstille behandling, bare lage oppgave, når event er av type anke`() {
+    fun `Skal ikke ferdigstille behandling, og ikke lage oppgave, når event er av type anke`() {
         val behandlingEvent = lagBehandlingEvent(
             behandlingEventType = BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
             behandlingDetaljer = BehandlingDetaljer(
@@ -75,7 +75,7 @@ internal class BehandlingEventServiceTest {
 
         behandlingEventService.handleEvent(behandlingEvent)
 
-        verify(exactly = 1) { taskService.save(any()) }
+        verify(exactly = 0) { taskService.save(any()) }
         verify(exactly = 0) { stegService.oppdaterSteg(any(), any(), any()) }
     }
 

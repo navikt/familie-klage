@@ -78,6 +78,9 @@ class BehandlingEventService(
     }
 
     private fun opprettOppgaveTask(behandlingEvent: BehandlingEvent, behandling: Behandling) {
+        if (behandlingEvent.type == BehandlingEventType.ANKEBEHANDLING_OPPRETTET) {
+            return
+        }
         val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
             ?: error("Finner ikke fagsak for behandlingId: ${behandling.id}")
         val oppgaveTekst = "${behandlingEvent.detaljer.oppgaveTekst()} Gjelder: ${fagsakDomain.stønadstype}"
