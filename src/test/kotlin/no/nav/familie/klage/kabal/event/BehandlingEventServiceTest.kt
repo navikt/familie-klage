@@ -113,7 +113,6 @@ internal class BehandlingEventServiceTest {
 
     @Test
     internal fun `Skal feile for behandlingsevent BEHANDLING_FEILREGISTRERT`() {
-
         val feil = assertThrows<Feil> {
             behandlingEventService.handleEvent(lagBehandlingEvent(BehandlingEventType.BEHANDLING_FEILREGISTRERT))
         }
