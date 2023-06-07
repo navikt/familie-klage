@@ -7,6 +7,7 @@ import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakRepository
+import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.kabal.AnkebehandlingOpprettetDetaljer
 import no.nav.familie.klage.kabal.BehandlingDetaljer
 import no.nav.familie.klage.kabal.BehandlingEvent
@@ -17,8 +18,10 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.familie.prosessering.internal.TaskService
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -106,6 +109,14 @@ internal class BehandlingEventServiceTest {
 
         verify(exactly = 1) { behandlingRepository.findByEksternBehandlingId(any()) }
         verify(exactly = 1) { klageresultatRepository.insert(any()) }
+    }
+
+    @Test
+    internal fun `Skal feile for behandlingsevent BEHANDLING_FEILREGISTRERT`() {
+        val feil = assertThrows<Feil> {
+            behandlingEventService.handleEvent(lagBehandlingEvent(BehandlingEventType.BEHANDLING_FEILREGISTRERT))
+        }
+        assertThat(feil.message).contains("Håndterer ikke typen BEHANDLING_FEILREGISTRERT")
     }
 
     private fun lagBehandlingEvent(

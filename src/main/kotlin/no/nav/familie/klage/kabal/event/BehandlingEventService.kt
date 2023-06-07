@@ -6,6 +6,7 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration.StringListWrapper
+import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.kabal.BehandlingEvent
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.KlageinstansResultat
@@ -44,7 +45,10 @@ class BehandlingEventService(
 
             when (behandlingEvent.type) {
                 BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> behandleKlageAvsluttet(behandling, behandlingEvent)
-                else -> behandleAnke(behandling, behandlingEvent)
+                BehandlingEventType.ANKEBEHANDLING_AVSLUTTET,
+                BehandlingEventType.ANKEBEHANDLING_OPPRETTET -> behandleAnke(behandling, behandlingEvent)
+                BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
+                BehandlingEventType.BEHANDLING_FEILREGISTRERT -> throw Feil("Håndterer ikke typen ${behandlingEvent.type}")
             }
         }
     }
