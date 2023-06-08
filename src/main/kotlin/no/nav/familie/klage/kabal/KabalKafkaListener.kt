@@ -67,7 +67,7 @@ data class BehandlingEvent(
             BehandlingEventType.ANKEBEHANDLING_OPPRETTET ->
                 detaljer.ankebehandlingOpprettet?.mottattKlageinstans ?: throw Feil(feilmelding)
             BehandlingEventType.ANKEBEHANDLING_AVSLUTTET -> detaljer.ankebehandlingAvsluttet?.avsluttet ?: throw Feil(feilmelding)
-            BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET -> throw Feil("Håndterer ikke typen $type")
+            BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET, BehandlingEventType.BEHANDLING_FEILREGISTRERT -> throw Feil("Håndterer ikke typen $type")
         }
     }
 
