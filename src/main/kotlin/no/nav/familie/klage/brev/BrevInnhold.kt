@@ -84,12 +84,7 @@ object BrevInnhold {
                     deloverskrift = "",
                     innhold = utledLovtekst(ikkeOppfylteFormkrav),
                 ),
-                AvsnittDto(
-                    deloverskrift = "Du har rett til å klage",
-                    innhold =
-                    "Hvis du vil klage, må du gjøre dette innen 3 uker fra den datoen du fikk dette brevet. " +
-                        "Du finner skjema og informasjon på ${stønadstype.klageUrl()}.",
-                ),
+                duHarRettTilÅKlageAvsnitt(stønadstype),
                 AvsnittDto(
                     deloverskrift = "Du har rett til innsyn",
                     innhold =
@@ -127,12 +122,7 @@ object BrevInnhold {
                     deloverskrift = "",
                     innhold = "Vedtaket er gjort etter forvaltningsloven §§ 28 og 33.",
                 ),
-                AvsnittDto(
-                    deloverskrift = "Du har rett til å klage",
-                    innhold =
-                    "Hvis du vil klage, må du gjøre dette innen 3 uker fra den datoen du fikk dette brevet. " +
-                        "Du finner skjema og informasjon på ${stønadstype.klageUrl()}.",
-                ),
+                duHarRettTilÅKlageAvsnitt(stønadstype),
                 AvsnittDto(
                     deloverskrift = "Du har rett til innsyn",
                     innhold =
@@ -142,6 +132,13 @@ object BrevInnhold {
             ),
         )
     }
+
+    private fun duHarRettTilÅKlageAvsnitt(stønadstype: Stønadstype) = AvsnittDto(
+        deloverskrift = "Du har rett til å klage",
+        innhold =
+        "Hvis du vil klage, må du gjøre dette innen 6 uker fra den datoen du fikk dette brevet. " +
+                "Du finner skjema og informasjon på ${stønadstype.klageUrl()}.",
+    )
 
     private fun harDuSpørsmålAvsnitt(stønadstype: Stønadstype) = AvsnittDto(
         deloverskrift = "Har du spørsmål?",
