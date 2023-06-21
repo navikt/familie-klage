@@ -11,6 +11,7 @@ import java.util.UUID
 @TaskStepBeskrivelse(
     taskStepType = BehandlingFeilregistrertTask.TYPE,
     beskrivelse = "Håndter feilregistret klage fra kabal",
+    maxAntallFeil = 1,
 )
 class BehandlingFeilregistrertTask : AsyncTaskStep {
 
