@@ -46,9 +46,11 @@ class BehandlingEventService(
             when (behandlingEvent.type) {
                 BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> behandleKlageAvsluttet(behandling, behandlingEvent)
                 BehandlingEventType.ANKEBEHANDLING_AVSLUTTET,
-                BehandlingEventType.ANKEBEHANDLING_OPPRETTET -> behandleAnke(behandling, behandlingEvent)
+                BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
+                -> behandleAnke(behandling, behandlingEvent)
                 BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
-                BehandlingEventType.BEHANDLING_FEILREGISTRERT -> throw Feil("Håndterer ikke typen ${behandlingEvent.type}")
+                BehandlingEventType.BEHANDLING_FEILREGISTRERT,
+                -> throw Feil("Håndterer ikke typen ${behandlingEvent.type}")
             }
         }
     }
