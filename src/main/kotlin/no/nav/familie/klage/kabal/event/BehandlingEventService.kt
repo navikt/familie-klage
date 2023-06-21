@@ -8,6 +8,7 @@ import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration.StringListWrapper
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.kabal.BehandlingEvent
+import no.nav.familie.klage.kabal.BehandlingFeilregistrertTask
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.KlageinstansResultat
 import no.nav.familie.klage.oppgave.OpprettKabalEventOppgaveTask
@@ -46,11 +47,16 @@ class BehandlingEventService(
             when (behandlingEvent.type) {
                 BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> behandleKlageAvsluttet(behandling, behandlingEvent)
                 BehandlingEventType.ANKEBEHANDLING_AVSLUTTET,
-                BehandlingEventType.ANKEBEHANDLING_OPPRETTET -> behandleAnke(behandling, behandlingEvent)
-                BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
-                BehandlingEventType.BEHANDLING_FEILREGISTRERT -> throw Feil("Håndterer ikke typen ${behandlingEvent.type}")
+                BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
+                -> behandleAnke(behandling, behandlingEvent)
+                BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET -> throw Feil("Håndterer ikke typen ${behandlingEvent.type}")
+                BehandlingEventType.BEHANDLING_FEILREGISTRERT -> opprettBehandlingFeilregistretTask(behandling.id)
             }
         }
+    }
+
+    private fun opprettBehandlingFeilregistretTask(behandlingId: UUID) {
+        taskService.save(BehandlingFeilregistrertTask.opprettTask(behandlingId))
     }
 
     private fun lagreKlageresultat(behandlingEvent: BehandlingEvent, behandling: Behandling) {
@@ -62,10 +68,19 @@ class BehandlingEventService(
             kildereferanse = UUID.fromString(behandlingEvent.kildeReferanse),
             journalpostReferanser = StringListWrapper(behandlingEvent.journalpostReferanser()),
             behandlingId = behandling.id,
+            årsakFeilregistrert = utledÅrsakFeilregistrert(behandlingEvent),
         )
 
         klageresultatRepository.insert(klageinstansResultat)
     }
+
+    private fun utledÅrsakFeilregistrert(behandlingEvent: BehandlingEvent) =
+        if (behandlingEvent.type == BehandlingEventType.BEHANDLING_FEILREGISTRERT) {
+            behandlingEvent.detaljer.behandlingFeilregistrert?.reason
+                ?: error("Finner ikke årsak til feilregistrering")
+        } else {
+            null
+        }
 
     private fun behandleAnke(behandling: Behandling, behandlingEvent: BehandlingEvent) {
         opprettOppgaveTask(behandlingEvent, behandling)

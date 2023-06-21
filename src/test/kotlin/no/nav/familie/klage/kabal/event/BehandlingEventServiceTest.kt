@@ -2,6 +2,7 @@ package no.nav.familie.klage.kabal.event
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.StegService
@@ -11,12 +12,16 @@ import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.kabal.AnkebehandlingOpprettetDetaljer
 import no.nav.familie.klage.kabal.BehandlingDetaljer
 import no.nav.familie.klage.kabal.BehandlingEvent
+import no.nav.familie.klage.kabal.BehandlingFeilregistrertDetaljer
+import no.nav.familie.klage.kabal.BehandlingFeilregistrertTask
 import no.nav.familie.klage.kabal.KlagebehandlingAvsluttetDetaljer
 import no.nav.familie.klage.kabal.KlageresultatRepository
+import no.nav.familie.klage.kabal.Type
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
+import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -112,11 +117,25 @@ internal class BehandlingEventServiceTest {
     }
 
     @Test
-    internal fun `Skal feile for behandlingsevent BEHANDLING_FEILREGISTRERT`() {
+    internal fun `Skal feile for behandlingsevent ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET`() {
         val feil = assertThrows<Feil> {
-            behandlingEventService.handleEvent(lagBehandlingEvent(BehandlingEventType.BEHANDLING_FEILREGISTRERT))
+            behandlingEventService.handleEvent(lagBehandlingEvent(BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET))
         }
-        assertThat(feil.message).contains("Håndterer ikke typen BEHANDLING_FEILREGISTRERT")
+        assertThat(feil.message).contains("Håndterer ikke typen ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET")
+    }
+
+    @Test
+    internal fun `Skal opprette task for behandlingsevent BEHANDLING_FEILREGISTRERT`() {
+        val taskSlot = slot<Task>()
+
+        val behandlingFeilregistrertDetaljer = BehandlingFeilregistrertDetaljer("Fordi", Type.KLAGE, LocalDateTime.of(2023, 6, 21, 1, 1))
+
+        every { taskService.save(capture(taskSlot)) } returns mockk()
+
+        behandlingEventService.handleEvent(lagBehandlingEvent(BehandlingEventType.BEHANDLING_FEILREGISTRERT, BehandlingDetaljer(behandlingFeilregistrert = behandlingFeilregistrertDetaljer)))
+
+        assertThat(taskSlot.captured.type).isEqualTo(BehandlingFeilregistrertTask.TYPE)
+        assertThat(taskSlot.captured.payload).isEqualTo(behandlingMedStatusVenter.id.toString())
     }
 
     private fun lagBehandlingEvent(
