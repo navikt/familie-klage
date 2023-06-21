@@ -5,6 +5,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
 import java.util.UUID
@@ -19,6 +20,8 @@ class KlageinstansResultat(
     val kildereferanse: UUID,
     val journalpostReferanser: StringListWrapper,
     val behandlingId: UUID,
+    @Column("arsak_feilregistrert")
+    val årsakFeilregistrert: String? = null,
 )
 
 fun List<KlageinstansResultat>.tilDto(): List<KlageinstansResultatDto> {
