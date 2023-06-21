@@ -68,13 +68,13 @@ class BehandlingEventService(
             kildereferanse = UUID.fromString(behandlingEvent.kildeReferanse),
             journalpostReferanser = StringListWrapper(behandlingEvent.journalpostReferanser()),
             behandlingId = behandling.id,
-            årsakFeilregistrert = utledÅrsakRegiregistrert(behandlingEvent),
+            årsakFeilregistrert = utledÅrsakFeilregistrert(behandlingEvent),
         )
 
         klageresultatRepository.insert(klageinstansResultat)
     }
 
-    private fun utledÅrsakRegiregistrert(behandlingEvent: BehandlingEvent) =
+    private fun utledÅrsakFeilregistrert(behandlingEvent: BehandlingEvent) =
         if (behandlingEvent.type == BehandlingEventType.BEHANDLING_FEILREGISTRERT) {
             behandlingEvent.detaljer.behandlingFeilregistrert?.reason
                 ?: error("Finner ikke årsak til feilregistrering")
