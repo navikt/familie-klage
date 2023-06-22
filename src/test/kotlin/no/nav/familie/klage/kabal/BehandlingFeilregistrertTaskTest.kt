@@ -105,7 +105,7 @@ class BehandlingFeilregistrertTaskTest : OppslagSpringRunnerTest() {
 
         val opprettOppgaveTask = taskService.findAll().single { it.type == OpprettKabalEventOppgaveTask.TYPE }
         val opprettOppgavePayload = objectMapper.readValue<OpprettOppgavePayload>(opprettOppgaveTask.payload)
-        assertThat(opprettOppgavePayload.oppgaveTekst).isEqualTo("Klagebehandlingen er sendt tilbake fra kabal med status feilregistrert.\n\nÅrsak fra kabal: \"fordi det var feil\"")
+        assertThat(opprettOppgavePayload.oppgaveTekst).isEqualTo("Klagebehandlingen er sendt tilbake fra KA med status feilregistrert.\n\nBegrunnelse fra KA: \"fordi det var feil\"")
 
         assertThat(opprettOppgavePayload.klagebehandlingEksternId).isEqualTo(behandling.eksternBehandlingId)
         assertThat(opprettOppgavePayload.fagsystem).isEqualTo(fagsak.fagsystem)

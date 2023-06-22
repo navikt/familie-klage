@@ -68,7 +68,7 @@ class BehandlingFeilregistrertTask(
     }
 
     private fun lagOppgavebeskrivelse(årsakFeilregistrert: String) =
-        "Klagebehandlingen er sendt tilbake fra kabal med status feilregistrert.\n\nÅrsak fra kabal: \"$årsakFeilregistrert\""
+        "Klagebehandlingen er sendt tilbake fra KA med status feilregistrert.\n\nBegrunnelse fra KA: \"$årsakFeilregistrert\""
 
     companion object {
 
