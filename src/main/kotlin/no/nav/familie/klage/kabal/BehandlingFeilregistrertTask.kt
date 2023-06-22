@@ -39,7 +39,6 @@ class BehandlingFeilregistrertTask(
         val behandlingId = UUID.fromString(task.payload)
 
         if (featuretoggleService.isEnabled(Toggle.HENLEGG_FEILREGISTRERT_BEHANDLING)) {
-
             taskService.save(lagOpprettOppgaveTask(behandlingId))
 
             stegService.oppdaterSteg(
@@ -47,7 +46,6 @@ class BehandlingFeilregistrertTask(
                 StegType.KABAL_VENTER_SVAR,
                 StegType.BEHANDLING_FERDIGSTILT,
             )
-
         } else {
             throw Feil("Toggle for henlegging av feilregistrerte behandlinger er ikke påskrudd")
         }
@@ -55,7 +53,7 @@ class BehandlingFeilregistrertTask(
 
     private fun lagOpprettOppgaveTask(behandlingId: UUID): Task {
         val behandling = behandlingService.hentBehandling(behandlingId)
-        val fagsak = fagsakService.hentFagsak(behandlingId)
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         val årsakFeilregistrert = behandlingService.hentKlageresultatDto(behandlingId)
             .single().årsakFeilregistrert ?: error("Fant ikke årsak for feilregistrering")
 
@@ -65,12 +63,12 @@ class BehandlingFeilregistrertTask(
                 oppgaveTekst = lagOppgavebeskrivelse(årsakFeilregistrert),
                 fagsystem = fagsak.fagsystem,
                 klageinstansUtfall = null,
-            )
+            ),
         )
     }
 
     private fun lagOppgavebeskrivelse(årsakFeilregistrert: String) =
-        "Klagebehandlingen er sendt tilbake fra kabal med status feilregistrert.\nÅrsak fra kabal:\n\"$årsakFeilregistrert\""
+        "Klagebehandlingen er sendt tilbake fra kabal med status feilregistrert.\n\nÅrsak fra kabal: \"$årsakFeilregistrert\""
 
     companion object {
 
