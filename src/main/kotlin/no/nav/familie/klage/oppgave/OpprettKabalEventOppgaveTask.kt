@@ -47,6 +47,8 @@ class OpprettKabalEventOppgaveTask(
 
         val aktivIdent = personRepository.hentAktivIdent(personId)
         val prioritet = utledOppgavePrioritet(opprettOppgavePayload.klageinstansUtfall)
+        val behandlingstema = opprettOppgavePayload.behandlingstema?.value
+            ?: finnBehandlingstema(fagsakDomain.stønadstype).value
 
         val opprettOppgaveRequest =
             OpprettOppgaveRequest(
@@ -57,7 +59,7 @@ class OpprettKabalEventOppgaveTask(
                 fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
                 beskrivelse = opprettOppgavePayload.oppgaveTekst,
                 enhetsnummer = behandling.behandlendeEnhet,
-                behandlingstema = finnBehandlingstema(fagsakDomain.stønadstype).value,
+                behandlingstema = behandlingstema,
                 prioritet = prioritet,
             )
 
@@ -102,4 +104,5 @@ data class OpprettOppgavePayload(
     val oppgaveTekst: String,
     val fagsystem: Fagsystem,
     val klageinstansUtfall: KlageinstansUtfall?,
+    val behandlingstema: Behandlingstema? = null,
 )

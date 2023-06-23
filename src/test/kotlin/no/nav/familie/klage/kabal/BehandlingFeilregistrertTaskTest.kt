@@ -20,6 +20,7 @@ import no.nav.familie.klage.kabal.domain.KlageinstansResultat
 import no.nav.familie.klage.oppgave.OpprettKabalEventOppgaveTask
 import no.nav.familie.klage.oppgave.OpprettOppgavePayload
 import no.nav.familie.klage.testutil.DomainUtil
+import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
@@ -109,6 +110,7 @@ class BehandlingFeilregistrertTaskTest : OppslagSpringRunnerTest() {
 
         assertThat(opprettOppgavePayload.klagebehandlingEksternId).isEqualTo(behandling.eksternBehandlingId)
         assertThat(opprettOppgavePayload.fagsystem).isEqualTo(fagsak.fagsystem)
+        assertThat(opprettOppgavePayload.behandlingstema).isEqualTo(Behandlingstema.Klage)
     }
 
     @Test
