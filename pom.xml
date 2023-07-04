@@ -33,7 +33,7 @@
 		<springdoc.version>2.1.0</springdoc.version>
 		<mockk-jvm.version>1.13.5</mockk-jvm.version>
 		<felles.version>2.20230210162649_a258d57-SPRING_BOOT_3</felles.version>
-		<prosessering.version>2.20230505152326_9265101-SPRING_BOOT_3</prosessering.version>
+		<prosessering.version>2.20230621155918_9c5de0f</prosessering.version>
 		<start-class>no.nav.familie.klage.ApplicationKt</start-class>
 		<kontrakter.version>3.0_20230704084854_83dd7ef</kontrakter.version>
 		<saksstatistikk-klage.version>2.0_20230214104704_706e9c0</saksstatistikk-klage.version>
