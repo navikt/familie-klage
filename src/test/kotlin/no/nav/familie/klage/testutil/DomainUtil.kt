@@ -223,7 +223,7 @@ object DomainUtil {
 
     fun journalpostDokument(
         status: Dokumentstatus = Dokumentstatus.FERDIGSTILT,
-        dokumentvarianter: List<Dokumentvariant>? = listOf(Dokumentvariant(Dokumentvariantformat.ARKIV)),
+        dokumentvarianter: List<Dokumentvariant>? = listOf(Dokumentvariant(Dokumentvariantformat.ARKIV, saksbehandlerHarTilgang = true)),
     ) = DokumentInfo(
         dokumentInfoId = UUID.randomUUID().toString(),
         tittel = "Tittel",
