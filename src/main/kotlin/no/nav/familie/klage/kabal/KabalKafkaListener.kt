@@ -68,7 +68,7 @@ data class BehandlingEvent(
                 detaljer.ankebehandlingOpprettet?.mottattKlageinstans ?: throw Feil(feilmelding)
             BehandlingEventType.ANKEBEHANDLING_AVSLUTTET -> detaljer.ankebehandlingAvsluttet?.avsluttet ?: throw Feil(feilmelding)
             BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET ->
-                detaljer.ankeITrygderettenbehandlingOpprettetDetaljer?.sendtTilTrygderetten ?: throw Feil(feilmelding)
+                detaljer.ankeITrygderettenbehandlingOpprettet?.sendtTilTrygderetten ?: throw Feil(feilmelding)
             BehandlingEventType.BEHANDLING_FEILREGISTRERT -> detaljer.behandlingFeilregistrert?.feilregistrert ?: throw Feil("Fant ikke tidspunkt for feilregistrering")
         }
     }
@@ -96,7 +96,7 @@ data class BehandlingDetaljer(
     val ankebehandlingOpprettet: AnkebehandlingOpprettetDetaljer? = null,
     val ankebehandlingAvsluttet: AnkebehandlingAvsluttetDetaljer? = null,
     val behandlingFeilregistrert: BehandlingFeilregistrertDetaljer? = null,
-    val ankeITrygderettenbehandlingOpprettetDetaljer: AnkeITrygderettenbehandlingOpprettetDetaljer? = null,
+    val ankeITrygderettenbehandlingOpprettet: AnkeITrygderettenbehandlingOpprettetDetaljer? = null,
 ) {
 
     fun journalpostReferanser(): List<String> {

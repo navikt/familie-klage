@@ -123,7 +123,7 @@ internal class BehandlingEventServiceTest {
         behandlingEventService.handleEvent(
             lagBehandlingEvent(
                 BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
-                BehandlingDetaljer(ankeITrygderettenbehandlingOpprettetDetaljer = AnkeITrygderettenbehandlingOpprettetDetaljer(LocalDateTime.of(2023, 6, 21, 1, 1), null)),
+                BehandlingDetaljer(ankeITrygderettenbehandlingOpprettet = AnkeITrygderettenbehandlingOpprettetDetaljer(LocalDateTime.of(2023, 6, 21, 1, 1), null)),
             ),
         )
 
@@ -140,7 +140,7 @@ internal class BehandlingEventServiceTest {
         behandlingEventService.handleEvent(
             lagBehandlingEvent(
                 BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
-                BehandlingDetaljer(ankeITrygderettenbehandlingOpprettetDetaljer = AnkeITrygderettenbehandlingOpprettetDetaljer(LocalDateTime.of(2023, 6, 21, 1, 1), null)),
+                BehandlingDetaljer(ankeITrygderettenbehandlingOpprettet = AnkeITrygderettenbehandlingOpprettetDetaljer(LocalDateTime.of(2023, 6, 21, 1, 1), null)),
             ),
         )
 
