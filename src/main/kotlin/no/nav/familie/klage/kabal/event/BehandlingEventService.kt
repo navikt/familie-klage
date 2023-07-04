@@ -6,7 +6,6 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration.StringListWrapper
-import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.kabal.BehandlingEvent
 import no.nav.familie.klage.kabal.BehandlingFeilregistrertTask
 import no.nav.familie.klage.kabal.KlageresultatRepository
@@ -47,9 +46,15 @@ class BehandlingEventService(
             when (behandlingEvent.type) {
                 BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> behandleKlageAvsluttet(behandling, behandlingEvent)
                 BehandlingEventType.ANKEBEHANDLING_AVSLUTTET,
+                -> behandleAnkeAvsluttet(behandling, behandlingEvent)
                 BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
-                -> behandleAnke(behandling, behandlingEvent)
-                BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET -> throw Feil("Håndterer ikke typen ${behandlingEvent.type}")
+                BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
+                -> {
+                    /*
+                     * Skal ikke gjøre noe dersom eventtype er ANKEBEHANDLING_OPPRETTET
+                     * eller ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET
+                     * */
+                }
                 BehandlingEventType.BEHANDLING_FEILREGISTRERT -> opprettBehandlingFeilregistretTask(behandling.id)
             }
         }
@@ -82,7 +87,7 @@ class BehandlingEventService(
             null
         }
 
-    private fun behandleAnke(behandling: Behandling, behandlingEvent: BehandlingEvent) {
+    private fun behandleAnkeAvsluttet(behandling: Behandling, behandlingEvent: BehandlingEvent) {
         opprettOppgaveTask(behandlingEvent, behandling)
     }
 
@@ -97,9 +102,6 @@ class BehandlingEventService(
     }
 
     private fun opprettOppgaveTask(behandlingEvent: BehandlingEvent, behandling: Behandling) {
-        if (behandlingEvent.type == BehandlingEventType.ANKEBEHANDLING_OPPRETTET) {
-            return
-        }
         val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
             ?: error("Finner ikke fagsak for behandlingId: ${behandling.id}")
         val oppgaveTekst = "${behandlingEvent.detaljer.oppgaveTekst()} Gjelder: ${fagsakDomain.stønadstype}"

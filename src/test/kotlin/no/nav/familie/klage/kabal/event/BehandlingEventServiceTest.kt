@@ -8,7 +8,7 @@ import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakRepository
-import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.kabal.AnkeITrygderettenbehandlingOpprettetDetaljer
 import no.nav.familie.klage.kabal.AnkebehandlingOpprettetDetaljer
 import no.nav.familie.klage.kabal.BehandlingDetaljer
 import no.nav.familie.klage.kabal.BehandlingEvent
@@ -17,6 +17,7 @@ import no.nav.familie.klage.kabal.BehandlingFeilregistrertTask
 import no.nav.familie.klage.kabal.KlagebehandlingAvsluttetDetaljer
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.Type
+import no.nav.familie.klage.kabal.domain.KlageinstansResultat
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
@@ -26,7 +27,6 @@ import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -117,11 +117,35 @@ internal class BehandlingEventServiceTest {
     }
 
     @Test
-    internal fun `Skal feile for behandlingsevent ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET`() {
-        val feil = assertThrows<Feil> {
-            behandlingEventService.handleEvent(lagBehandlingEvent(BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET))
-        }
-        assertThat(feil.message).contains("Håndterer ikke typen ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET")
+    internal fun `Skal kunne lagre resultat for behandlingsevent ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET`() {
+        val klageinstansResultatSlot = slot<KlageinstansResultat>()
+
+        behandlingEventService.handleEvent(
+            lagBehandlingEvent(
+                BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
+                BehandlingDetaljer(ankeITrygderettenbehandlingOpprettetDetaljer = AnkeITrygderettenbehandlingOpprettetDetaljer(LocalDateTime.of(2023, 6, 21, 1, 1), null)),
+            ),
+        )
+
+        verify(exactly = 1) { behandlingRepository.findByEksternBehandlingId(any()) }
+        verify(exactly = 1) { klageresultatRepository.insert(capture(klageinstansResultatSlot)) }
+
+        assertThat(klageinstansResultatSlot.captured.type).isEqualTo(BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET)
+    }
+
+    @Test
+    internal fun `Skal ikke ferdigstille behandling for behandlingsevent ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET`() {
+        val klageinstansResultatSlot = slot<KlageinstansResultat>()
+
+        behandlingEventService.handleEvent(
+            lagBehandlingEvent(
+                BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
+                BehandlingDetaljer(ankeITrygderettenbehandlingOpprettetDetaljer = AnkeITrygderettenbehandlingOpprettetDetaljer(LocalDateTime.of(2023, 6, 21, 1, 1), null)),
+            ),
+        )
+
+        verify(exactly = 0) { taskService.save(any()) }
+        verify(exactly = 0) { stegService.oppdaterSteg(any(), any(), any()) }
     }
 
     @Test
