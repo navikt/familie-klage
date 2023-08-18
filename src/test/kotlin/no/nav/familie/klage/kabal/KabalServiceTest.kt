@@ -110,6 +110,5 @@ internal class KabalServiceTest {
         assertThrows<IllegalStateException> {
             kabalService.sendTilKabal(fagsak, behandling, vurdering, "UKJENT1234")
         }
-
     }
 }
