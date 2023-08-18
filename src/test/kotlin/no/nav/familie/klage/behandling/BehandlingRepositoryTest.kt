@@ -174,7 +174,5 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
             assertThat(behandlinger).hasSize(2)
             assertThat(behandlinger.map { it.id }).containsExactlyInAnyOrder(behandling.id, behandling2.id)
         }
-
-        // TODO test som sjekker mapping av verdier
     }
 }
