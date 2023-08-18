@@ -14,6 +14,7 @@ import no.nav.familie.kontrakter.felles.getDataOrThrow
 import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariantformat
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.JournalposterForBrukerRequest
+import no.nav.familie.kontrakter.felles.saksbehandler.Saksbehandler
 import no.nav.familie.log.NavHttpHeaders
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -40,6 +41,7 @@ class FamilieIntegrasjonerClient(
 
     private val dokuarkivUri: URI = UriComponentsBuilder.fromUri(integrasjonUri).pathSegment("api/arkiv").build().toUri()
     private val journalpostURI: URI = integrasjonerConfig.journalPostUri
+    private val saksbehandlerUri: URI = integrasjonerConfig.saksbehandlerUri
 
     // lagre brev
     fun arkiverDokument(arkiverDokumentRequest: ArkiverDokumentRequest, saksbehandler: String?): ArkiverDokumentResponse {
@@ -49,6 +51,14 @@ class FamilieIntegrasjonerClient(
             headerMedSaksbehandler(saksbehandler),
         ).data
             ?: error("Kunne ikke arkivere dokument med fagsakid ${arkiverDokumentRequest.fagsakId}")
+    }
+
+    fun hentSaksbehandlerInfo(navIdent: String): Saksbehandler {
+        return getForEntity<Ressurs<Saksbehandler>>(
+            URI.create("$saksbehandlerUri/$navIdent"),
+            HttpHeaders().medContentTypeJsonUTF8(),
+        ).data
+            ?: error("Kunne ikke hente saksbehandlerinfo for saksbehandler med ident=$navIdent")
     }
 
     // sende brev til bruker

@@ -35,7 +35,7 @@
 		<felles.version>2.20230210162649_a258d57-SPRING_BOOT_3</felles.version>
 		<prosessering.version>2.20230713120621_747ed8f</prosessering.version>
 		<start-class>no.nav.familie.klage.ApplicationKt</start-class>
-		<kontrakter.version>3.0_20230731084015_3570802</kontrakter.version>
+		<kontrakter.version>3.0_20230817140529_df3e9ab</kontrakter.version>
 		<saksstatistikk-klage.version>2.0_20230214104704_706e9c0</saksstatistikk-klage.version>
 		<nav.security.version>3.0.8</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
 		<okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
