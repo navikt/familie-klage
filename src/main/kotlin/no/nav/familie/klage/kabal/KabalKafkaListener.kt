@@ -99,14 +99,10 @@ data class BehandlingDetaljer(
     val ankeITrygderettenbehandlingOpprettet: AnkeITrygderettenbehandlingOpprettetDetaljer? = null,
 ) {
 
-    fun journalpostReferanser(): List<String> {
-        return klagebehandlingAvsluttet?.journalpostReferanser ?: ankebehandlingAvsluttet?.journalpostReferanser ?: listOf()
-    }
-
-    fun oppgaveTekst(): String {
-        return klagebehandlingAvsluttet?.oppgaveTekst()
-            ?: ankebehandlingOpprettet?.oppgaveTekst()
-            ?: ankebehandlingAvsluttet?.oppgaveTekst()
+    fun oppgaveTekst(saksbehandlersEnhet: String): String {
+        return klagebehandlingAvsluttet?.oppgaveTekst(saksbehandlersEnhet)
+            ?: ankebehandlingOpprettet?.oppgaveTekst(saksbehandlersEnhet)
+            ?: ankebehandlingAvsluttet?.oppgaveTekst(saksbehandlersEnhet)
             ?: "Ukjent"
     }
 }
@@ -117,9 +113,10 @@ data class KlagebehandlingAvsluttetDetaljer(
     val journalpostReferanser: List<String>,
 ) {
 
-    fun oppgaveTekst(): String {
+    fun oppgaveTekst(saksbehandlersEnhet: String): String {
         return "Hendelse fra klage av type klagebehandling avsluttet med utfall: $utfall mottatt. " +
             "Avsluttet tidspunkt: $avsluttet. " +
+            "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet. " +
             "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
     }
 }
@@ -128,8 +125,9 @@ data class AnkebehandlingOpprettetDetaljer(
     val mottattKlageinstans: LocalDateTime,
 ) {
 
-    fun oppgaveTekst(): String {
-        return "Hendelse fra klage av type ankebehandling opprettet mottatt. Mottatt klageinstans: $mottattKlageinstans."
+    fun oppgaveTekst(saksbehandlersEnhet: String): String {
+        return "Hendelse fra klage av type ankebehandling opprettet mottatt. Mottatt klageinstans: $mottattKlageinstans. " +
+            "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet."
     }
 }
 
@@ -139,9 +137,10 @@ data class AnkebehandlingAvsluttetDetaljer(
     val journalpostReferanser: List<String>,
 ) {
 
-    fun oppgaveTekst(): String {
+    fun oppgaveTekst(saksbehandlersEnhet: String): String {
         return "Hendelse fra klage av type ankebehandling avsluttet med utfall: $utfall mottatt. " +
             "Avsluttet tidspunkt: $avsluttet. " +
+            "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet. " +
             "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
     }
 }
