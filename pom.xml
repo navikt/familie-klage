@@ -39,7 +39,7 @@
 		<saksstatistikk-klage.version>2.0_20230214104704_706e9c0</saksstatistikk-klage.version>
 		<nav.security.version>3.0.8</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
 		<okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
-		<unleash.version>8.3.0</unleash.version>
+		<unleash.version>8.3.1</unleash.version>
 	</properties>
 
 	<dependencies>
