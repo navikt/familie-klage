@@ -17,7 +17,7 @@ jobs:
     name: Build, push and deploy to dev-gcp and prod-gcp
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - name: Set up JDK 17
@@ -49,7 +49,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Deploy til dev-gcp
         uses: nais/deploy/actions/deploy@v1
         env:
