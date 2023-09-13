@@ -98,3 +98,5 @@ spec:
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: dev
+  envFrom:
+    - secret: familie-klage-unleash-api-token
