@@ -53,11 +53,9 @@ rolle:
     saksbehandler: "c7e0b108-7ae6-432c-9ab4-946174c240c0"
 
 
-funksjonsbrytere:
-  enabled: false
-  unleash:
-    uri: http://localhost:4242/api
-    environment: local
-    applicationName: familie-klage
+unleash:
+  enabled: true
 
 NAIS_APP_NAME: familie-klage
+UNLEASH_SERVER_API_URL: http://localhost:4242/api
+UNLEASH_SERVER_API_TOKEN: token
