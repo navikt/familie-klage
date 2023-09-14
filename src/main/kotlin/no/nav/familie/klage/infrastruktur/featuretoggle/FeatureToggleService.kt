@@ -18,7 +18,6 @@ class FeatureToggleService(val defaultUnleashService: DefaultUnleashService) {
 enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
     PLACEHOLDER("Ktlint liker ikke tomme enums"),
     HENLEGG_FEILREGISTRERT_BEHANDLING("familie.klage.henlegg-feilregistrert-behandling"),
-    TEST_ENVIRONMENT("test.environment"),
     ;
 
     companion object {
