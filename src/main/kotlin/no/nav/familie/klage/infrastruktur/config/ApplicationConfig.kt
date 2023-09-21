@@ -30,7 +30,7 @@ import java.time.temporal.ChronoUnit
 
 @SpringBootConfiguration
 @ConfigurationPropertiesScan
-@ComponentScan("no.nav.familie.prosessering", "no.nav.familie.klage", "no.nav.familie.sikkerhet")
+@ComponentScan("no.nav.familie.prosessering", "no.nav.familie.klage", "no.nav.familie.sikkerhet", "no.nav.familie.unleash")
 @EnableJwtTokenValidation(ignore = ["org.springframework", "org.springdoc"])
 @Import(RestTemplateAzure::class)
 @EnableOAuth2Client(cacheEnabled = true)

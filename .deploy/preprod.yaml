@@ -72,7 +72,7 @@ spec:
           namespace: klage
       external:
         - host: api-gw-q1.oera.no
-        - host: unleash.nais.io
+        - host: teamfamilie-unleash-api.nav.cloud.nais.io
         - host: familie-oppdrag.dev-fss-pub.nais.io
         - host: familie-integrasjoner.dev-fss-pub.nais.io
         - host: familie-ef-infotrygd.dev-fss-pub.nais.io
@@ -98,3 +98,5 @@ spec:
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: dev
+  envFrom:
+    - secret: familie-klage-unleash-api-token

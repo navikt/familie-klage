@@ -19,12 +19,8 @@ spring:
       security:
         protocol: PLAINTEXT
 
-funksjonsbrytere:
-  enabled: false
-  unleash:
-    uri: http://localhost:4242/api
-    environment: local
-    applicationName: familie-klage
+unleash:
+  enabled: true
 
 FAMILIE_INTEGRASJONER_URL: http://localhost:8386
 FAMILIE_BREV_API_URL: http://localhost:8002
@@ -33,3 +29,7 @@ AZURE_APP_TENANT_ID: navq.onmicrosoft.com
 
 CREDENTIAL_USERNAME: not-a-real-srvuser
 CREDENTIAL_PASSWORD: not-a-real-pw
+
+NAIS_APP_NAME: familie-klage
+UNLEASH_SERVER_API_URL: http://localhost:4242/api
+UNLEASH_SERVER_API_TOKEN: token

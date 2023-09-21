@@ -72,7 +72,7 @@ spec:
 
       external:
         - host: api-gw.oera.no
-        - host: unleash.nais.io
+        - host: teamfamilie-unleash-api.nav.cloud.nais.io
         - host: familie-oppdrag.prod-fss-pub.nais.io
         - host: familie-integrasjoner.prod-fss-pub.nais.io
         - host: familie-ef-infotrygd.prod-fss-pub.nais.io
@@ -99,3 +99,5 @@ spec:
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod
+  envFrom:
+    - secret: familie-klage-unleash-api-token

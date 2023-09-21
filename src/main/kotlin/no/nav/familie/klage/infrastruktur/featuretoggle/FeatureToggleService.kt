@@ -1,18 +1,21 @@
 package no.nav.familie.klage.infrastruktur.featuretoggle
 
-import org.springframework.beans.factory.DisposableBean
+import no.nav.familie.unleash.DefaultUnleashService
+import org.springframework.stereotype.Service
 
-interface FeatureToggleService : DisposableBean {
+@Service
+class FeatureToggleService(val defaultUnleashService: DefaultUnleashService) {
 
     fun isEnabled(toggle: Toggle): Boolean {
-        return isEnabled(toggle, false)
+        return defaultUnleashService.isEnabled(toggle.toggleId, false)
     }
 
-    fun isEnabled(toggle: Toggle, defaultValue: Boolean): Boolean
+    fun isEnabled(toggle: Toggle, defaultVerdi: Boolean): Boolean {
+        return defaultUnleashService.isEnabled(toggle.toggleId, defaultVerdi)
+    }
 }
 
 enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
-    PLACEHOLDER("Ktlint liker ikke tomme enums"),
     HENLEGG_FEILREGISTRERT_BEHANDLING("familie.klage.henlegg-feilregistrert-behandling"),
     ;
 

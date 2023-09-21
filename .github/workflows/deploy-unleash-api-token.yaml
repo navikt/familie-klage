@@ -1,25 +1,28 @@
-name: Deploy kafka topics
+name: Deploy unleash api-token for dev og prod
 
 on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  deploy-dev:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: deploy behandlingsstatistikk to dev
+      - name: deploy unleash api-token to dev
         uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
-          RESOURCE: kafka/aapen-klage-behandlingsstatistikk/behandlingsstatistikk-topic-dev.yaml
-          PRINT_PAYLOAD: true
-      - name: deploy behandlingsstatistikk to prod
+          RESOURCE: .deploy/unleash-apitoken-preprod.yaml
+  deploy-prod:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: deploy unleash api-token to prod
         uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
-          RESOURCE: kafka/aapen-klage-behandlingsstatistikk/behandlingsstatistikk-topic-prod.yaml
-          PRINT_PAYLOAD: true
+          RESOURCE: .deploy/unleash-apitoken-prod.yaml
