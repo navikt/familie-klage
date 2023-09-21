@@ -36,10 +36,12 @@ import no.nav.familie.kontrakter.felles.navkontor.NavKontorEnhet
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.personopplysning.ADRESSEBESKYTTELSEGRADERING
+import no.nav.familie.kontrakter.felles.saksbehandler.Saksbehandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
+import java.util.UUID
 import kotlin.math.absoluteValue
 import kotlin.random.Random
 
@@ -50,6 +52,8 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
         listOf(
             get(urlEqualTo(integrasjonerConfig.pingUri.path))
                 .willReturn(aResponse().withStatus(200)),
+            get(urlPathMatching("${integrasjonerConfig.saksbehandlerUri.path}/([A-Za-z0-9]*)"))
+                .willReturn(okJson(objectMapper.writeValueAsString(saksbehandler))),
             post(urlEqualTo(integrasjonerConfig.egenAnsattUri.path))
                 .willReturn(okJson(objectMapper.writeValueAsString(egenAnsatt))),
             post(urlEqualTo(integrasjonerConfig.tilgangRelasjonerUri.path))
@@ -276,6 +280,15 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                 navn = "NAV Kristiansand",
                 enhetNr = "1001",
                 status = "Aktiv",
+            ),
+        )
+        private val saksbehandler = Ressurs.success(
+            Saksbehandler(
+                azureId = UUID.randomUUID(),
+                navIdent = "Z999999",
+                fornavn = "Darth",
+                etternavn = "Vader",
+                enhet = "4405",
             ),
         )
     }

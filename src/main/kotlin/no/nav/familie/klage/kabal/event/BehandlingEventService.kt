@@ -6,6 +6,7 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration.StringListWrapper
+import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.kabal.BehandlingEvent
 import no.nav.familie.klage.kabal.BehandlingFeilregistrertTask
 import no.nav.familie.klage.kabal.KlageresultatRepository
@@ -27,6 +28,7 @@ class BehandlingEventService(
     private val taskService: TaskService,
     private val klageresultatRepository: KlageresultatRepository,
     private val stegService: StegService,
+    private val integrasjonerClient: FamilieIntegrasjonerClient,
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -88,23 +90,25 @@ class BehandlingEventService(
         }
 
     private fun behandleAnkeAvsluttet(behandling: Behandling, behandlingEvent: BehandlingEvent) {
-        opprettOppgaveTask(behandlingEvent, behandling)
+        opprettOppgaveTask(behandling, behandlingEvent)
     }
 
     private fun behandleKlageAvsluttet(behandling: Behandling, behandlingEvent: BehandlingEvent) {
         when (behandling.status) {
             BehandlingStatus.FERDIGSTILT -> logger.error("Mottatt event på ferdigstilt behandling $behandlingEvent - event kan være lest fra før")
             else -> {
-                opprettOppgaveTask(behandlingEvent, behandling)
+                opprettOppgaveTask(behandling, behandlingEvent)
                 ferdigstillKlagebehandling(behandling)
             }
         }
     }
 
-    private fun opprettOppgaveTask(behandlingEvent: BehandlingEvent, behandling: Behandling) {
+    private fun opprettOppgaveTask(behandling: Behandling, behandlingEvent: BehandlingEvent) {
         val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
             ?: error("Finner ikke fagsak for behandlingId: ${behandling.id}")
-        val oppgaveTekst = "${behandlingEvent.detaljer.oppgaveTekst()} Gjelder: ${fagsakDomain.stønadstype}"
+        val saksbehandlerIdent = behandling.sporbar.endret.endretAv
+        val saksbehandler = integrasjonerClient.hentSaksbehandlerInfo(saksbehandlerIdent)
+        val oppgaveTekst = "${behandlingEvent.detaljer.oppgaveTekst(saksbehandler.enhet)} Gjelder: ${fagsakDomain.stønadstype}"
         val klageBehandlingEksternId = UUID.fromString(behandlingEvent.kildeReferanse)
         val opprettOppgavePayload = OpprettOppgavePayload(klageBehandlingEksternId, oppgaveTekst, fagsakDomain.fagsystem, behandlingEvent.utfall())
         val opprettOppgaveTask = OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload)

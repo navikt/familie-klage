@@ -8,6 +8,7 @@ import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakRepository
+import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.kabal.AnkeITrygderettenbehandlingOpprettetDetaljer
 import no.nav.familie.klage.kabal.AnkebehandlingOpprettetDetaljer
 import no.nav.familie.klage.kabal.BehandlingDetaljer
@@ -22,6 +23,7 @@ import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
+import no.nav.familie.kontrakter.felles.saksbehandler.Saksbehandler
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
@@ -37,6 +39,7 @@ internal class BehandlingEventServiceTest {
     private val taskService = mockk<TaskService>(relaxed = true)
     private val stegService = mockk<StegService>(relaxed = true)
     private val klageresultatRepository = mockk<KlageresultatRepository>(relaxed = true)
+    private val integrasjonerClient = mockk<FamilieIntegrasjonerClient>(relaxed = true)
 
     val behandlingEventService = BehandlingEventService(
         behandlingRepository = behandlingRepository,
@@ -44,6 +47,7 @@ internal class BehandlingEventServiceTest {
         stegService = stegService,
         taskService = taskService,
         klageresultatRepository = klageresultatRepository,
+        integrasjonerClient = integrasjonerClient,
     )
 
     val behandlingMedStatusVenter = DomainUtil.behandling(status = BehandlingStatus.VENTER)
@@ -54,10 +58,11 @@ internal class BehandlingEventServiceTest {
         every { behandlingRepository.findByEksternBehandlingId(any()) } returns behandlingMedStatusVenter
         every { klageresultatRepository.insert(any()) } answers { firstArg() }
         every { klageresultatRepository.existsById(any()) } returns false
+        every { integrasjonerClient.hentSaksbehandlerInfo(any()) } returns saksbehandler
     }
 
     @Test
-    fun `Skal lage oppgave og ferdigstille behandling for klage som er ikke er ferdigstilt`() {
+    fun `Skal lage oppgave og ferdigstille behandling for klage som ikke er ferdigstilt`() {
         val behandlingEvent = lagBehandlingEvent()
 
         behandlingEventService.handleEvent(behandlingEvent)
@@ -181,4 +186,6 @@ internal class BehandlingEventServiceTest {
             ),
         )
     }
+
+    private val saksbehandler = Saksbehandler(UUID.randomUUID(), "A123456", "Alfa", "Omega", "4415")
 }
