@@ -1,17 +1,17 @@
 package no.nav.familie.klage.infrastruktur.featuretoggle
 
-import no.nav.familie.unleash.DefaultUnleashService
+import no.nav.familie.unleash.UnleashService
 import org.springframework.stereotype.Service
 
 @Service
-class FeatureToggleService(val defaultUnleashService: DefaultUnleashService) {
+class FeatureToggleService(val unleashService: UnleashService) {
 
     fun isEnabled(toggle: Toggle): Boolean {
-        return defaultUnleashService.isEnabled(toggle.toggleId, false)
+        return unleashService.isEnabled(toggle.toggleId, false)
     }
 
     fun isEnabled(toggle: Toggle, defaultVerdi: Boolean): Boolean {
-        return defaultUnleashService.isEnabled(toggle.toggleId, defaultVerdi)
+        return unleashService.isEnabled(toggle.toggleId, defaultVerdi)
     }
 }
 
