@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class FeatureToggleConfig {
+class CustomUnleashStrategies {
 
     @Bean
     fun strategies(): List<Strategy> {
