@@ -54,7 +54,7 @@ rolle:
 
 
 unleash:
-  enabled: true
+  enabled: false
 
 NAIS_APP_NAME: familie-klage
 UNLEASH_SERVER_API_URL: http://localhost:4242/api
