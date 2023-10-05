@@ -25,3 +25,5 @@ lenker:
   EF_SAK_FRONTEND_URL: "https://ensligmorellerfar.intern.dev.nav.no/ekstern"
   BA_SAK_FRONTEND_URL: "https://barnetrygd.intern.dev.nav.no"
   KS_SAK_FRONTEND_URL: "https://kontantstotte.intern.dev.nav.no"
+
+prosessering.rolle: "928636f4-fd0d-4149-978e-a6fb68bb19de" # 0000-GA-STDAPPS 928636f4-fd0d-4149-978e-a6fb68bb19de
