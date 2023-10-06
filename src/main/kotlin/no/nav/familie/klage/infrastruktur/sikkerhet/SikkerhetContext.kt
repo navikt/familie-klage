@@ -54,4 +54,8 @@ object SikkerhetContext {
                 onFailure = { emptyList() },
             )
     }
+
+    fun harRolle(rolle: String): Boolean {
+        return hentGrupperFraToken().contains(rolle)
+    }
 }
