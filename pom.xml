@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.5</version>
+		<version>3.2.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<repositories>
@@ -29,13 +29,13 @@
 		<sha1/>
 		<changelist>-SNAPSHOT</changelist>
 		<java.version>17</java.version>
-		<kotlin.version>1.9.20</kotlin.version>
-		<springdoc.version>2.2.0</springdoc.version>
+		<kotlin.version>1.9.21</kotlin.version>
+		<springdoc.version>2.3.0</springdoc.version>
 		<mockk-jvm.version>1.13.8</mockk-jvm.version>
-		<felles.version>2.20231023162434_fa320ce</felles.version>
+		<felles.version>2.20231201131108_ea25dd3</felles.version>
 		<prosessering.version>2.20231026103714_2f17845</prosessering.version>
 		<start-class>no.nav.familie.klage.ApplicationKt</start-class>
-		<kontrakter.version>3.0_20231114145122_eb1ce78</kontrakter.version>
+		<kontrakter.version>3.0_20231206111937_3c866af</kontrakter.version>
 		<saksstatistikk-klage.version>2.0_20230214104704_706e9c0</saksstatistikk-klage.version>
 		<nav.security.version>3.0.8</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
 		<okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
@@ -205,13 +205,13 @@
 		<dependency>
 			<groupId>dev.akkinoc.spring.boot</groupId>
 			<artifactId>logback-access-spring-boot-starter</artifactId>
-			<version>4.0.0</version>
+			<version>4.1.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>1.19.2</version>
+			<version>1.19.3</version>
 			<scope>test</scope>
 		</dependency>
 
