@@ -20,7 +20,7 @@ class BrevClient(
 ) : AbstractPingableRestClient(restOperations, "familie.brev") {
 
     override val pingUri: URI = URI.create("$familieBrevUri/api/status")
-    private val pdfUri = URI.create("$familieBrevUri/api/klage/pdf")
+    private val pdfUri = URI.create("$familieBrevUri/api/blankett/klage/pdf")
 
     override fun ping() {
         operations.optionsForAllow(pingUri)
