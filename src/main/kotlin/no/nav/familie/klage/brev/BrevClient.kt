@@ -1,6 +1,7 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.http.client.AbstractPingableRestClient
+import no.nav.familie.klage.blankett.BlankettPdfRequest
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import org.springframework.beans.factory.annotation.Qualifier
@@ -19,6 +20,7 @@ class BrevClient(
 ) : AbstractPingableRestClient(restOperations, "familie.brev") {
 
     override val pingUri: URI = URI.create("$familieBrevUri/api/status")
+    private val pdfUri = URI.create("$familieBrevUri/api/blankett/klage/pdf")
 
     override fun ping() {
         operations.optionsForAllow(pingUri)
@@ -37,10 +39,8 @@ class BrevClient(
         )
     }
 
-    companion object {
-
-        const val ef = "ef-brev"
-        const val test = "testdata"
+    fun genererBlankett(blankettPdfRequest: BlankettPdfRequest): ByteArray {
+        return postForEntity(pdfUri, blankettPdfRequest, HttpHeaders().medContentTypeJsonUTF8())
     }
 }
 

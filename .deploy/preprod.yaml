@@ -66,7 +66,6 @@ spec:
           cluster: dev-fss
         - application: familie-tilbake
         - application: familie-brev
-        - application: familie-ef-blankett
         - application: familie-dokument
         - application: kabal-api
           namespace: klage

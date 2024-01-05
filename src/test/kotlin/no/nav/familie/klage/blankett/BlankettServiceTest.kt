@@ -6,6 +6,7 @@ import io.mockk.slot
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
+import no.nav.familie.klage.brev.BrevClient
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.formkrav.FormService
@@ -37,8 +38,8 @@ internal class BlankettServiceTest {
     private val personopplysningerService = mockk<PersonopplysningerService>()
     private val formService = mockk<FormService>()
     private val vurderingService = mockk<VurderingService>()
-    private val blankettClient = mockk<BlankettClient>()
     private val fagsystemVedtakService = mockk<FagsystemVedtakService>()
+    private val brevClient = mockk<BrevClient>()
 
     private val service = BlankettService(
         fagsakService,
@@ -46,7 +47,7 @@ internal class BlankettServiceTest {
         personopplysningerService,
         formService,
         vurderingService,
-        blankettClient,
+        brevClient,
     )
 
     private val eksternFagsystemBehandlingId = "eksternFagsystemBehandlingId"
@@ -81,7 +82,7 @@ internal class BlankettServiceTest {
             interntNotat = "interntNotat",
             innstillingKlageinstans = "innstillingKlageinstans",
         )
-        every { blankettClient.genererBlankett(capture(blankettRequestSpot)) } returns byteArrayOf()
+        every { brevClient.genererBlankett(capture(blankettRequestSpot)) } returns byteArrayOf()
         every { fagsystemVedtakService.hentFagsystemVedtak(behandlingId) } returns listOf(
             fagsystemVedtak(eksternBehandlingId = eksternFagsystemBehandlingId),
         )

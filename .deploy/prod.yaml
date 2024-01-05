@@ -65,7 +65,6 @@ spec:
         - application: familie-ef-proxy
           cluster: prod-fss
         - application: familie-brev
-        - application: familie-ef-blankett
         - application: familie-dokument
         - application: kabal-api
           namespace: klage

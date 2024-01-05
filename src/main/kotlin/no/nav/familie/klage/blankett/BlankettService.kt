@@ -2,6 +2,7 @@ package no.nav.familie.klage.blankett
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.brev.BrevClient
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.formkrav.FormService
@@ -19,7 +20,7 @@ class BlankettService(
     private val personopplysningerService: PersonopplysningerService,
     private val formService: FormService,
     private val vurderingService: VurderingService,
-    private val blankettClient: BlankettClient,
+    private val brevClient: BrevClient,
 ) {
 
     fun lagBlankett(behandlingId: UUID): ByteArray {
@@ -41,7 +42,7 @@ class BlankettService(
             formkrav = mapFormkrav(formkrav),
             vurdering = mapVurdering(vurdering),
         )
-        return blankettClient.genererBlankett(blankettPdfRequest)
+        return brevClient.genererBlankett(blankettPdfRequest)
     }
 
     private fun mapPåklagetVedtak(behandling: Behandling): BlankettPåklagetVedtakDto? {
