@@ -110,7 +110,8 @@ class BehandlingFeilregistrertTaskTest : OppslagSpringRunnerTest() {
 
         assertThat(opprettOppgavePayload.klagebehandlingEksternId).isEqualTo(behandling.eksternBehandlingId)
         assertThat(opprettOppgavePayload.fagsystem).isEqualTo(fagsak.fagsystem)
-        assertThat(opprettOppgavePayload.behandlingstema).isEqualTo(Behandlingstema.Klage)
+        assertThat(opprettOppgavePayload.behandlingstema).isNull()
+        assertThat(opprettOppgavePayload.behandlingstype).isEqualTo(Behandlingstema.Klage.value)
     }
 
     @Test

@@ -13,8 +13,10 @@ import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.KlageinstansResultat
 import no.nav.familie.klage.oppgave.OpprettKabalEventOppgaveTask
 import no.nav.familie.klage.oppgave.OpprettOppgavePayload
+import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -49,6 +51,7 @@ class BehandlingEventService(
                 BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> behandleKlageAvsluttet(behandling, behandlingEvent)
                 BehandlingEventType.ANKEBEHANDLING_AVSLUTTET,
                 -> behandleAnkeAvsluttet(behandling, behandlingEvent)
+
                 BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
                 BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
                 -> {
@@ -57,6 +60,7 @@ class BehandlingEventService(
                      * eller ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET
                      * */
                 }
+
                 BehandlingEventType.BEHANDLING_FEILREGISTRERT -> opprettBehandlingFeilregistretTask(behandling.id)
             }
         }
@@ -110,9 +114,25 @@ class BehandlingEventService(
         val saksbehandler = integrasjonerClient.hentSaksbehandlerInfo(saksbehandlerIdent)
         val oppgaveTekst = "${behandlingEvent.detaljer.oppgaveTekst(saksbehandler.enhet)} Gjelder: ${fagsakDomain.stønadstype}"
         val klageBehandlingEksternId = UUID.fromString(behandlingEvent.kildeReferanse)
-        val opprettOppgavePayload = OpprettOppgavePayload(klageBehandlingEksternId, oppgaveTekst, fagsakDomain.fagsystem, behandlingEvent.utfall())
+        val opprettOppgavePayload = OpprettOppgavePayload(
+            klagebehandlingEksternId = klageBehandlingEksternId,
+            oppgaveTekst = oppgaveTekst,
+            fagsystem = fagsakDomain.fagsystem,
+            klageinstansUtfall = behandlingEvent.utfall(),
+            behandlingstema = finnBehandlingstema(fagsakDomain.stønadstype),
+        )
         val opprettOppgaveTask = OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload)
         taskService.save(opprettOppgaveTask)
+    }
+
+    private fun finnBehandlingstema(stønadstype: Stønadstype): Behandlingstema {
+        return when (stønadstype) {
+            Stønadstype.BARNETRYGD -> Behandlingstema.Barnetrygd
+            Stønadstype.OVERGANGSSTØNAD -> Behandlingstema.Overgangsstønad
+            Stønadstype.BARNETILSYN -> Behandlingstema.Barnetilsyn
+            Stønadstype.SKOLEPENGER -> Behandlingstema.Skolepenger
+            Stønadstype.KONTANTSTØTTE -> Behandlingstema.Kontantstøtte
+        }
     }
 
     private fun ferdigstillKlagebehandling(behandling: Behandling) {
