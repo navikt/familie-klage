@@ -11,6 +11,7 @@ import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.oppgave.Behandlingstype
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
 import no.nav.familie.kontrakter.felles.oppgave.OppgavePrioritet
@@ -47,8 +48,8 @@ class OpprettKabalEventOppgaveTask(
 
         val aktivIdent = personRepository.hentAktivIdent(personId)
         val prioritet = utledOppgavePrioritet(opprettOppgavePayload.klageinstansUtfall)
-        val behandlingstema = opprettOppgavePayload.behandlingstema?.value
-            ?: finnBehandlingstema(fagsakDomain.stønadstype).value
+        val behandlingstype = tilBehandlingstype(opprettOppgavePayload)
+        val behandlingstema = tilBehandlingstema(opprettOppgavePayload, fagsakDomain.stønadstype)
 
         val opprettOppgaveRequest =
             OpprettOppgaveRequest(
@@ -60,11 +61,27 @@ class OpprettKabalEventOppgaveTask(
                 beskrivelse = opprettOppgavePayload.oppgaveTekst,
                 enhetsnummer = behandling.behandlendeEnhet,
                 behandlingstema = behandlingstema,
+                behandlingstype = behandlingstype,
                 prioritet = prioritet,
             )
 
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
         logger.info("Oppgave opprettet med id $oppgaveId")
+    }
+
+    /**
+     * Dersom behandlingstema er satt i oppgavepayload så er dette behandlingstype som ikke kan brukes i
+     * kombinasjon med behandlingstema - jfr. https://github.com/navikt/oppgave/blob/master/src/main/resources/data/gjelder.json
+     */
+    private fun tilBehandlingstema(opprettOppgavePayload: OpprettOppgavePayload, stønadstype: Stønadstype): String? {
+        return when(opprettOppgavePayload.behandlingstema) {
+            null -> finnBehandlingstema(stønadstype).value
+            else -> null
+        }
+    }
+
+    private fun tilBehandlingstype(opprettOppgavePayload: OpprettOppgavePayload): String? {
+        return opprettOppgavePayload.behandlingstema?.value
     }
 
     companion object {
