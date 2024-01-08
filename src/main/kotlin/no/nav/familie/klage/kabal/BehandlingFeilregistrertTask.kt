@@ -64,7 +64,7 @@ class BehandlingFeilregistrertTask(
                 oppgaveTekst = lagOppgavebeskrivelse(årsakFeilregistrert),
                 fagsystem = fagsak.fagsystem,
                 klageinstansUtfall = null,
-                behandlingstema = Behandlingstema.Klage,
+                behandlingstype = Behandlingstema.Klage.value,
             ),
         )
     }

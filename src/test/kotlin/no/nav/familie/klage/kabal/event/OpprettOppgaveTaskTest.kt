@@ -67,7 +67,7 @@ class OpprettOppgaveTaskTest : OppslagSpringRunnerTest() {
     fun `skal lage oppgave med riktige verdier i request`() {
         val fagsakDomain = fagsakRepository.findByIdOrNull(fagsak.id) ?: error("Finner ikke fagsak med id")
 
-        val opprettOppgavePayload = OpprettOppgavePayload(behandling.eksternBehandlingId, "tekst", Fagsystem.EF, null)
+        val opprettOppgavePayload = OpprettOppgavePayload(behandling.eksternBehandlingId, "tekst", Fagsystem.EF, null, behandlingstema = Behandlingstema.Overgangsstønad)
         opprettOppgaveTask.doTask(OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload))
 
         assertThat(opprettOppgaveRequestSlot.captured.tema).isEqualTo(Tema.ENF)
