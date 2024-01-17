@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.5</version>
+		<version>3.2.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<repositories>
@@ -37,7 +37,7 @@
 		<start-class>no.nav.familie.klage.ApplicationKt</start-class>
 		<kontrakter.version>3.0_20240109111848_d97569f</kontrakter.version>
 		<saksstatistikk-klage.version>2.0_20230214104704_706e9c0</saksstatistikk-klage.version>
-		<nav.security.version>3.0.8</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
+		<nav.security.version>3.2.0</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
 		<okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
 	</properties>
 
@@ -166,6 +166,17 @@
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-registry-prometheus</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>no.nav.security</groupId>
+			<artifactId>token-client-core</artifactId>
+			<version>${nav.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.security</groupId>
+			<artifactId>token-client-spring</artifactId>
+			<version>${nav.security.version}</version>
+		</dependency>
+
 
 		<!-- test -->
 		<dependency>
@@ -200,12 +211,6 @@
 			<groupId>no.nav.security</groupId>
 			<artifactId>token-validation-spring-test</artifactId>
 			<version>${nav.security.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>dev.akkinoc.spring.boot</groupId>
-			<artifactId>logback-access-spring-boot-starter</artifactId>
-			<version>4.1.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
