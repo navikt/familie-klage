@@ -23,13 +23,13 @@ spec:
     path: /internal/prometheus
   replicas:
     min: 2
-    max: 4
+    max: 2
   resources:
     limits:
       memory: 1024Mi
     requests:
       memory: 512Mi
-      cpu: 500m
+      cpu: 200m
   secureLogs:
     enabled: true
   kafka:
