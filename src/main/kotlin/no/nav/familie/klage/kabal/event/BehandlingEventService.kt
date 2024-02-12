@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
+import no.nav.familie.http.client.RessursException
+import no.nav.familie.klage.personopplysninger.pdl.secureLogger
 
 @Service
 class BehandlingEventService(
@@ -111,8 +113,8 @@ class BehandlingEventService(
         val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
             ?: error("Finner ikke fagsak for behandlingId: ${behandling.id}")
         val saksbehandlerIdent = behandling.sporbar.endret.endretAv
-        val saksbehandler = integrasjonerClient.hentSaksbehandlerInfo(saksbehandlerIdent)
-        val oppgaveTekst = "${behandlingEvent.detaljer.oppgaveTekst(saksbehandler.enhet)} Gjelder: ${fagsakDomain.stønadstype}"
+        val saksbehandlerEnhet = utledSaksbehandlerEnhet(saksbehandlerIdent)
+        val oppgaveTekst = "${behandlingEvent.detaljer.oppgaveTekst(saksbehandlerEnhet)} Gjelder: ${fagsakDomain.stønadstype}"
         val klageBehandlingEksternId = UUID.fromString(behandlingEvent.kildeReferanse)
         val opprettOppgavePayload = OpprettOppgavePayload(
             klagebehandlingEksternId = klageBehandlingEksternId,
@@ -124,6 +126,15 @@ class BehandlingEventService(
         val opprettOppgaveTask = OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload)
         taskService.save(opprettOppgaveTask)
     }
+
+    private fun utledSaksbehandlerEnhet(saksbehandlerIdent: String) =
+        try {
+            integrasjonerClient.hentSaksbehandlerInfo(saksbehandlerIdent).enhet
+        } catch (e: RessursException) {
+            logger.error("Kunne ikke hente enhet for saksbehandler med ident=$saksbehandlerIdent")
+            secureLogger.error("Kunne ikke hente enhet for saksbehandler med ident=$saksbehandlerIdent", e)
+            "Ukjent"
+        }
 
     private fun finnBehandlingstema(stønadstype: Stønadstype): Behandlingstema {
         return when (stønadstype) {
