@@ -1,5 +1,6 @@
 package no.nav.familie.klage.infrastruktur.sikkerhet
 
+import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException
 import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
 
 object SikkerhetContext {
@@ -10,7 +11,8 @@ object SikkerhetContext {
     val NAVIDENT_REGEX = """^[a-zA-Z]\d{6}$""".toRegex()
 
     fun erMaskinTilMaskinToken(): Boolean {
-        val claims = SpringTokenValidationContextHolder().tokenValidationContext.getClaims("azuread")
+        val claims = SpringTokenValidationContextHolder().getTokenValidationContext().getClaims("azuread")
+            ?: throw JwtTokenValidatorException("Klarte ikke hente token fra issuer azuread")
         return claims.get("oid") != null &&
             claims.get("oid") == claims.get("sub") &&
             claims.getAsList("roles").contains("access_as_application")
@@ -20,7 +22,7 @@ object SikkerhetContext {
      * @param strict hvis true - skal kaste feil hvis token ikke inneholder NAVident
      */
     fun hentSaksbehandler(strict: Boolean = false): String {
-        val result = Result.runCatching { SpringTokenValidationContextHolder().tokenValidationContext }
+        val result = Result.runCatching { SpringTokenValidationContextHolder().getTokenValidationContext() }
             .fold(
                 onSuccess = {
                     it.getClaims("azuread")?.get("NAVident")?.toString() ?: SYSTEM_FORKORTELSE
@@ -34,7 +36,7 @@ object SikkerhetContext {
     }
 
     fun hentSaksbehandlerNavn(strict: Boolean = false): String {
-        return Result.runCatching { SpringTokenValidationContextHolder().tokenValidationContext }
+        return Result.runCatching { SpringTokenValidationContextHolder().getTokenValidationContext() }
             .fold(
                 onSuccess = {
                     it.getClaims("azuread")?.get("name")?.toString()
@@ -45,7 +47,7 @@ object SikkerhetContext {
     }
 
     fun hentGrupperFraToken(): List<String> {
-        return Result.runCatching { SpringTokenValidationContextHolder().tokenValidationContext }
+        return Result.runCatching { SpringTokenValidationContextHolder().getTokenValidationContext() }
             .fold(
                 onSuccess = {
                     @Suppress("UNCHECKED_CAST")

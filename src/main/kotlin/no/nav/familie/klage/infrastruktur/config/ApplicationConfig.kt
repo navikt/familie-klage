@@ -31,6 +31,8 @@ import org.springframework.web.client.RestOperations
 import org.springframework.web.client.RestTemplate
 import java.time.Duration
 import java.time.temporal.ChronoUnit
+import no.nav.familie.http.config.NaisProxyCustomizer
+import org.springframework.web.client.RestClient
 
 @SpringBootConfiguration
 @ConfigurationPropertiesScan
@@ -101,9 +103,12 @@ class ApplicationConfig {
     @Primary
     fun oAuth2HttpClient(): OAuth2HttpClient {
         return RetryOAuth2HttpClient(
-            RestTemplateBuilder()
-                .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
-                .setReadTimeout(Duration.of(2, ChronoUnit.SECONDS)),
+            RestClient.create(
+                RestTemplateBuilder()
+                    .additionalCustomizers(NaisProxyCustomizer(2_000, 2_000, 4_000))
+                    .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
+                    .setReadTimeout(Duration.of(4, ChronoUnit.SECONDS)).build(),
+            )
         )
     }
 
@@ -111,7 +116,7 @@ class ApplicationConfig {
     fun prosesseringInfoProvider(@Value("\${prosessering.rolle}") prosesseringRolle: String) = object : ProsesseringInfoProvider {
 
         override fun hentBrukernavn(): String = try {
-            SpringTokenValidationContextHolder().tokenValidationContext.getClaims("azuread")
+            SpringTokenValidationContextHolder().getTokenValidationContext().getClaims("azuread")
                 .getStringClaim("preferred_username")
         } catch (e: Exception) {
             throw e
