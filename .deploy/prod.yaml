@@ -29,7 +29,7 @@ spec:
       memory: 2048Mi
     requests:
       memory: 512Mi
-      cpu: 500m
+      cpu: 200m
   secureLogs:
     enabled: true
   kafka:
