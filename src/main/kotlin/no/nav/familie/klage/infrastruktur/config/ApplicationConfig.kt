@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.scheduling.annotation.EnableScheduling
+import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestOperations
 import org.springframework.web.client.RestTemplate
 import java.time.Duration
@@ -34,7 +35,12 @@ import java.time.temporal.ChronoUnit
 
 @SpringBootConfiguration
 @ConfigurationPropertiesScan
-@ComponentScan("no.nav.familie.prosessering", "no.nav.familie.klage", "no.nav.familie.sikkerhet", "no.nav.familie.unleash")
+@ComponentScan(
+    "no.nav.familie.prosessering",
+    "no.nav.familie.klage",
+    "no.nav.familie.sikkerhet",
+    "no.nav.familie.unleash",
+)
 @EnableJwtTokenValidation(ignore = ["org.springframework", "org.springdoc"])
 @Import(RestTemplateAzure::class)
 @EnableOAuth2Client(cacheEnabled = true)
@@ -101,24 +107,28 @@ class ApplicationConfig {
     @Primary
     fun oAuth2HttpClient(): OAuth2HttpClient {
         return RetryOAuth2HttpClient(
-            RestTemplateBuilder()
-                .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
-                .setReadTimeout(Duration.of(2, ChronoUnit.SECONDS)),
+            RestClient.create(
+                RestTemplateBuilder()
+                    .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
+                    .setReadTimeout(Duration.of(2, ChronoUnit.SECONDS))
+                    .build(),
+            ),
         )
     }
 
     @Bean
-    fun prosesseringInfoProvider(@Value("\${prosessering.rolle}") prosesseringRolle: String) = object : ProsesseringInfoProvider {
+    fun prosesseringInfoProvider(@Value("\${prosessering.rolle}") prosesseringRolle: String) =
+        object : ProsesseringInfoProvider {
 
-        override fun hentBrukernavn(): String = try {
-            SpringTokenValidationContextHolder().tokenValidationContext.getClaims("azuread")
-                .getStringClaim("preferred_username")
-        } catch (e: Exception) {
-            throw e
-        }
+            override fun hentBrukernavn(): String = try {
+                SpringTokenValidationContextHolder().getTokenValidationContext().getClaims("azuread")
+                    .getStringClaim("preferred_username")
+            } catch (e: Exception) {
+                throw e
+            }
 
-        override fun harTilgang(): Boolean {
-            return SikkerhetContext.harRolle(prosesseringRolle)
+            override fun harTilgang(): Boolean {
+                return SikkerhetContext.harRolle(prosesseringRolle)
+            }
         }
-    }
 }
