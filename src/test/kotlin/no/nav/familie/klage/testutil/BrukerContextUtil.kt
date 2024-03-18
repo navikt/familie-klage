@@ -41,6 +41,7 @@ object BrukerContextUtil {
             RequestAttributes.SCOPE_REQUEST,
         )
         every { tokenValidationContext.getClaims("azuread") } returns jwtTokenClaims
+        every { SpringTokenValidationContextHolder().getTokenValidationContext().getClaims("azuread") } returns jwtTokenClaims
     }
 
     fun <T> testWithBrukerContext(preferredUsername: String = "A", groups: List<String> = emptyList(), fn: () -> T): T {
