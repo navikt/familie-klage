@@ -13,9 +13,7 @@ import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
-import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.kabal.domain.KlageinstansResultat
 import no.nav.familie.klage.oppgave.OpprettKabalEventOppgaveTask
 import no.nav.familie.klage.oppgave.OpprettOppgavePayload
@@ -29,9 +27,7 @@ import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -61,7 +57,7 @@ class BehandlingFeilregistrertTaskTest : OppslagSpringRunnerTest() {
         every { featuretoggleService.isEnabled(any()) } returns true
 
         behandlingFeilregistrertTask =
-            BehandlingFeilregistrertTask(featuretoggleService, stegService, taskService, behandlingService, fagsakService)
+            BehandlingFeilregistrertTask(stegService, taskService, behandlingService, fagsakService)
 
         fagsak = testoppsettService.lagreFagsak(
             DomainUtil.fagsakDomain().tilFagsakMedPerson(
@@ -112,19 +108,5 @@ class BehandlingFeilregistrertTaskTest : OppslagSpringRunnerTest() {
         assertThat(opprettOppgavePayload.fagsystem).isEqualTo(fagsak.fagsystem)
         assertThat(opprettOppgavePayload.behandlingstema).isNull()
         assertThat(opprettOppgavePayload.behandlingstype).isEqualTo(Behandlingstema.Klage.value)
-    }
-
-    @Test
-    internal fun `task skal feile dersom featuretoggle er avskrudd`() {
-        every { featuretoggleService.isEnabled(Toggle.HENLEGG_FEILREGISTRERT_BEHANDLING) } returns false
-
-        val feil = assertThrows<Feil> {
-            behandlingFeilregistrertTask.doTask(BehandlingFeilregistrertTask.opprettTask(behandling.id))
-        }
-
-        assertThat(feil.httpStatus).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
-        assertThat(feil.message).contains("Toggle for henlegging av feilregistrerte behandlinger er ikke påskrudd")
-        assertThat(behandling.status).isEqualTo(BehandlingStatus.VENTER)
-        assertThat(behandling.steg).isEqualTo(StegType.KABAL_VENTER_SVAR)
     }
 }

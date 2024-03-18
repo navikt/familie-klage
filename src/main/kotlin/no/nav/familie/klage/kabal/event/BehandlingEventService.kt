@@ -1,5 +1,6 @@
 package no.nav.familie.klage.kabal.event
 
+import no.nav.familie.http.client.RessursException
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.Behandling
@@ -13,6 +14,7 @@ import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.KlageinstansResultat
 import no.nav.familie.klage.oppgave.OpprettKabalEventOppgaveTask
 import no.nav.familie.klage.oppgave.OpprettOppgavePayload
+import no.nav.familie.klage.personopplysninger.pdl.secureLogger
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
@@ -22,8 +24,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
-import no.nav.familie.http.client.RessursException
-import no.nav.familie.klage.personopplysninger.pdl.secureLogger
 
 @Service
 class BehandlingEventService(
