@@ -16,7 +16,7 @@ class FeatureToggleService(val unleashService: UnleashService) {
 }
 
 enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
-    HENLEGG_FEILREGISTRERT_BEHANDLING("familie.klage.henlegg-feilregistrert-behandling"),
+    PLACEHOLDER("ktlint-liker-ikke-tomme-enums"),
     ;
 
     companion object {

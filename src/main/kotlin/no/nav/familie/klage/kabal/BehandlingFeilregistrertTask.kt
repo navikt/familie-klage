@@ -4,9 +4,6 @@ import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.infrastruktur.exception.Feil
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.oppgave.OpprettKabalEventOppgaveTask
 import no.nav.familie.klage.oppgave.OpprettOppgavePayload
 import no.nav.familie.kontrakter.felles.Behandlingstema
@@ -14,7 +11,6 @@ import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -26,7 +22,6 @@ import java.util.UUID
     settTilManuellOppfølgning = true,
 )
 class BehandlingFeilregistrertTask(
-    private val featuretoggleService: FeatureToggleService,
     private val stegService: StegService,
     private val taskService: TaskService,
     private val behandlingService: BehandlingService,
@@ -34,22 +29,16 @@ class BehandlingFeilregistrertTask(
 ) :
     AsyncTaskStep {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
-
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
 
-        if (featuretoggleService.isEnabled(Toggle.HENLEGG_FEILREGISTRERT_BEHANDLING)) {
-            taskService.save(lagOpprettOppgaveTask(behandlingId))
+        taskService.save(lagOpprettOppgaveTask(behandlingId))
 
-            stegService.oppdaterSteg(
-                behandlingId,
-                StegType.KABAL_VENTER_SVAR,
-                StegType.BEHANDLING_FERDIGSTILT,
-            )
-        } else {
-            throw Feil("Toggle for henlegging av feilregistrerte behandlinger er ikke påskrudd")
-        }
+        stegService.oppdaterSteg(
+            behandlingId,
+            StegType.KABAL_VENTER_SVAR,
+            StegType.BEHANDLING_FERDIGSTILT,
+        )
     }
 
     private fun lagOpprettOppgaveTask(behandlingId: UUID): Task {
