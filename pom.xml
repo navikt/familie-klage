@@ -183,7 +183,6 @@
             <version>${nav.security.version}</version>
         </dependency>
 
-
         <!-- test -->
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
