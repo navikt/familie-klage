@@ -1,6 +1,5 @@
 package no.nav.familie.klage.infrastruktur.sikkerhet
 
-import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException
 import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
 
 object SikkerhetContext {
@@ -12,7 +11,6 @@ object SikkerhetContext {
 
     fun erMaskinTilMaskinToken(): Boolean {
         val claims = SpringTokenValidationContextHolder().getTokenValidationContext().getClaims("azuread")
-            ?: throw JwtTokenValidatorException("Klarte ikke hente token fra issuer azuread")
         return claims.get("oid") != null &&
             claims.get("oid") == claims.get("sub") &&
             claims.getAsList("roles").contains("access_as_application")
