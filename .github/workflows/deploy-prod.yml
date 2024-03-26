@@ -9,9 +9,6 @@ on:
       - .gitignore
       - kafka/**
 
-env:
-  IMAGE: ghcr.io/navikt/familie-klage:${{ github.sha }}
-
 permissions:
   contents: "read"
   id-token: "write"
@@ -36,19 +33,24 @@ jobs:
           GITHUB_USERNAME: x-access-token
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: mvn -B --no-transfer-progress package --settings .m2/maven-settings.xml --file pom.xml
-      - name: Build and publish Docker image
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo ${GITHUB_TOKEN} | docker login ghcr.io --username ${GITHUB_REPOSITORY} --password-stdin
-          docker build --tag ${IMAGE} .
-          docker push ${IMAGE}
+      - name: Bygg og push docker image
+        uses: nais/docker-build-push@v0
+        id: docker-push
+        with:
+          team: teamfamilie
+          tag: latest
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          byosbom: target/bom.json
+
       - name: Post build failures to Slack
         if: failure()
         run: |
           curl -X POST --data "{\"text\": \"Build av $GITHUB_REPOSITORY feilet - $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\"}" $WEBHOOK_URL
         env:
           WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    outputs:
+      image: ${{ steps.docker-push.outputs.image }}
   deploy:
     name: Deploy to GCP
     needs: build
@@ -60,11 +62,13 @@ jobs:
         env:
           CLUSTER: dev-gcp
           RESOURCE: .deploy/preprod.yaml
+          VAR: image=${{ needs.build.outputs.image }}
       - name: Deploy til prod-gcp
         uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: prod-gcp
           RESOURCE: .deploy/prod.yaml
+          VAR: image=${{ needs.build.outputs.image }}
       - name: Post deploy failures to Slack
         if: failure()
         run: |
