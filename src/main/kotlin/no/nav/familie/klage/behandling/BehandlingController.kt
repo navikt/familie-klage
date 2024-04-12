@@ -32,36 +32,36 @@ class BehandlingController(
 
     @GetMapping("{behandlingId}")
     fun hentBehandling(@PathVariable behandlingId: UUID): Ressurs<BehandlingDto> {
-        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
-        tilgangService.validerHarVeilederrolleForBehandling(behandlingId)
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(behandlingService.hentBehandlingDto(behandlingId))
     }
 
     @PostMapping("{behandlingId}/ferdigstill")
     fun ferdigstillBehandling(@PathVariable behandlingId: UUID): Ressurs<Unit> {
-        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.CREATE)
-        tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.CREATE)
+        tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId))
     }
 
     @PostMapping("{behandlingId}/henlegg")
     fun henleggBehandling(@PathVariable behandlingId: UUID, @RequestBody henlegg: HenlagtDto): Ressurs<Unit> {
-        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
-        tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(behandlingService.henleggBehandling(behandlingId, henlegg))
     }
 
     @GetMapping("{behandlingId}/fagsystem-vedtak")
     fun hentFagsystemVedtak(@PathVariable behandlingId: UUID): Ressurs<List<FagsystemVedtak>> {
-        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
-        tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(fagsystemVedtakService.hentFagsystemVedtak(behandlingId))
     }
 
     @GetMapping("{behandlingId}/kan-opprette-revurdering")
     fun kanOppretteRevurdering(@PathVariable behandlingId: UUID): Ressurs<KanOppretteRevurderingResponse> {
-        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
-        tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(opprettRevurderingService.kanOppretteRevurdering(behandlingId))
     }
 }

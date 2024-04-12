@@ -22,7 +22,8 @@ class InntektController(
 ) {
     @GetMapping("fagsak/{fagsakId}/generer-url")
     fun genererAInntektUrl(@PathVariable("fagsakId") fagsakId: UUID): Ressurs<String> {
-        tilgangService.validerTilgangTilFagsak(fagsakId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerTilgangTilPersonMedRelasjonerForFagsak(fagsakId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerHarVeilederrolleTilStønadForFagsak(fagsakId)
         return success(inntektService.genererAInntektUrlPåFagsak(fagsakId))
     }
 }

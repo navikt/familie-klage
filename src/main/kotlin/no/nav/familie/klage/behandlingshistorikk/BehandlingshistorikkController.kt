@@ -23,8 +23,8 @@ class BehandlingshistorikkController(
 
     @GetMapping("{behandlingId}")
     fun hentBehandlingshistorikk(@PathVariable behandlingId: UUID): Ressurs<List<Behandlingshistorikk>> {
-        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
-        tilgangService.validerHarVeilederrolleForBehandling(behandlingId)
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(behandlingshistorikkService.hentBehandlingshistorikk(behandlingId))
     }
 }

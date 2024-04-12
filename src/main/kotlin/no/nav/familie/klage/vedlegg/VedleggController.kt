@@ -30,14 +30,15 @@ class VedleggController(
 
     @GetMapping("/{behandlingId}")
     fun finnVedleggForBehandling(@PathVariable behandlingId: UUID): Ressurs<List<DokumentinfoDto>> {
-        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(vedleggService.finnVedleggPåBehandling(behandlingId))
     }
 
     @GetMapping("/{journalpostId}/dokument-pdf/{dokumentInfoId}", produces = [MediaType.APPLICATION_PDF_VALUE])
     fun hentDokumentSomPdf(@PathVariable journalpostId: String, @PathVariable dokumentInfoId: String): ByteArray {
         val (journalpost, personIdent) = finnJournalpostOgPersonIdent(journalpostId)
-        tilgangService.validerTilgangTilPersonMedBarn(personIdent, AuditLoggerEvent.ACCESS)
+        tilgangService.validerTilgangTilPersonMedRelasjoner(personIdent, AuditLoggerEvent.ACCESS)
         return journalpostService.hentDokument(journalpost, dokumentInfoId)
     }
 
