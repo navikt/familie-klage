@@ -25,15 +25,15 @@ class VurderingController(
 
     @GetMapping("{behandlingId}")
     fun hentVurdering(@PathVariable behandlingId: UUID): Ressurs<VurderingDto?> {
-        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
-        tilgangService.validerHarVeilederrolleForBehandling(behandlingId)
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(vurderingService.hentVurderingDto(behandlingId))
     }
 
     @PostMapping
     fun opprettEllerOppdaterVurdering(@RequestBody vurdering: VurderingDto): Ressurs<VurderingDto> {
-        tilgangService.validerTilgangTilBehandling(vurdering.behandlingId, AuditLoggerEvent.UPDATE)
-        tilgangService.validerHarSaksbehandlerrolleForBehandling(vurdering.behandlingId)
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(vurdering.behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(vurdering.behandlingId)
         return Ressurs.success(vurderingService.opprettEllerOppdaterVurdering(vurdering))
     }
 }

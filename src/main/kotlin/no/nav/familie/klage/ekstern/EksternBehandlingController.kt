@@ -59,7 +59,8 @@ class EksternBehandlingController(
 
     private fun validerTilgang(behandlinger: Map<String, List<KlagebehandlingDto>>) {
         behandlinger.entries.flatMap { it.value }.map { it.fagsakId }.distinct().forEach {
-            tilgangService.validerTilgangTilFagsak(it, AuditLoggerEvent.ACCESS)
+            tilgangService.validerTilgangTilPersonMedRelasjonerForFagsak(it, AuditLoggerEvent.ACCESS)
+            tilgangService.validerHarVeilederrolleTilStønadForFagsak(it)
         }
     }
 

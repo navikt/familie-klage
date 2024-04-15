@@ -26,22 +26,22 @@ class BrevController(
 
     @GetMapping("/{behandlingId}/pdf")
     fun hentBrevPdf(@PathVariable behandlingId: UUID): Ressurs<ByteArray> {
-        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
-        tilgangService.validerHarVeilederrolleForBehandling(behandlingId)
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(brevService.hentBrevPdf(behandlingId))
     }
 
     @PostMapping("/{behandlingId}")
     fun lagEllerOppdaterBrev(@PathVariable behandlingId: UUID): Ressurs<ByteArray> {
-        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
-        tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(brevService.lagBrev(behandlingId))
     }
 
     @GetMapping("/{behandlingId}/mottakere")
     fun hentBrevmottakere(@PathVariable behandlingId: UUID): Ressurs<BrevmottakereDto> {
-        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
-        tilgangService.validerHarVeilederrolleForBehandling(behandlingId)
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(brevService.hentBrevmottakere(behandlingId).tilDto())
     }
 
@@ -50,8 +50,8 @@ class BrevController(
         @PathVariable behandlingId: UUID,
         @RequestBody mottakere: BrevmottakereDto,
     ): Ressurs<BrevmottakereDto> {
-        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
-        tilgangService.validerHarSaksbehandlerrolleForBehandling(behandlingId)
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         brevService.settBrevmottakere(behandlingId, mottakere)
         return Ressurs.success(mottakere)
     }

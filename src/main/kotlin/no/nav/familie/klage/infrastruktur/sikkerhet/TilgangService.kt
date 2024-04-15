@@ -29,7 +29,7 @@ class TilgangService(
     private val fagsakService: FagsakService,
 ) {
 
-    fun validerTilgangTilPersonMedBarn(personIdent: String, event: AuditLoggerEvent) {
+    fun validerTilgangTilPersonMedRelasjoner(personIdent: String, event: AuditLoggerEvent) {
         val tilgang = harTilgangTilPersonMedRelasjoner(personIdent)
         auditLogger.log(Sporingsdata(event, personIdent, tilgang))
         if (!tilgang.harTilgang) {
@@ -41,7 +41,7 @@ class TilgangService(
         }
     }
 
-    fun validerTilgangTilBehandling(behandlingId: UUID, event: AuditLoggerEvent) {
+    fun validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId: UUID, event: AuditLoggerEvent) {
         val personIdent = cacheManager.getValue("behandlingPersonIdent", behandlingId) {
             behandlingService.hentAktivIdent(behandlingId).first
         }
@@ -84,7 +84,7 @@ class TilgangService(
         } ?: error("Finner ikke verdi fra cache=$cacheName")
     }
 
-    fun validerTilgangTilFagsak(fagsakId: UUID, event: AuditLoggerEvent) {
+    fun validerTilgangTilPersonMedRelasjonerForFagsak(fagsakId: UUID, event: AuditLoggerEvent) {
         val personIdent = hentFagsak(fagsakId).hentAktivIdent()
 
         val tilgang = harTilgangTilPersonMedRelasjoner(personIdent)
@@ -104,12 +104,16 @@ class TilgangService(
         }
     }
 
-    fun validerHarSaksbehandlerrolleForBehandling(behandlingId: UUID) {
+    fun validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId: UUID) {
         validerHarRolleForBehandling(behandlingId, BehandlerRolle.SAKSBEHANDLER)
     }
 
-    fun validerHarVeilederrolleForBehandling(behandlingId: UUID) {
+    fun validerHarVeilederrolleTilStønadForBehandling(behandlingId: UUID) {
         validerHarRolleForBehandling(behandlingId, BehandlerRolle.VEILEDER)
+    }
+
+    fun validerHarVeilederrolleTilStønadForFagsak(fagsakId: UUID) {
+        harTilgangTilFagsakGittRolle(fagsakId, BehandlerRolle.VEILEDER)
     }
 
     private fun validerHarRolleForBehandling(behandlingId: UUID, minumumRolle: BehandlerRolle) {
