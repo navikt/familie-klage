@@ -32,7 +32,7 @@
         <kotlin.version>1.9.23</kotlin.version>
         <springdoc.version>2.5.0</springdoc.version>
         <mockk-jvm.version>1.13.10</mockk-jvm.version>
-        <felles.version>3.20240322152837_a01cd9d</felles.version>
+        <felles.version>3.20240422125821_21d82d5</felles.version>
         <prosessering.version>2.20240214140223_83c31de</prosessering.version>
         <start-class>no.nav.familie.klage.ApplicationKt</start-class>
         <kontrakter.version>3.0_20240410195617_6e9f1bf</kontrakter.version>
