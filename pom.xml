@@ -33,9 +33,9 @@
         <springdoc.version>2.5.0</springdoc.version>
         <mockk-jvm.version>1.13.10</mockk-jvm.version>
         <felles.version>3.20240502154951_caf5f1d</felles.version>
-        <prosessering.version>2.20240214140223_83c31de</prosessering.version>
+        <prosessering.version>2.20240426120029_490d299</prosessering.version>
         <start-class>no.nav.familie.klage.ApplicationKt</start-class>
-        <kontrakter.version>3.0_20240430083848_be12d55</kontrakter.version>
+        <kontrakter.version>3.0_20240506120136_2e7f6d9</kontrakter.version>
         <saksstatistikk-klage.version>2.0_20230214104704_706e9c0</saksstatistikk-klage.version>
         <nav.security.version>4.1.3</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1
@@ -221,7 +221,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.19.7</version>
+            <version>1.19.8</version>
             <scope>test</scope>
         </dependency>
 
