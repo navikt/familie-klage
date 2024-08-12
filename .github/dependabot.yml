@@ -18,15 +18,9 @@ updates:
     registries:
       - familie-felles
     groups:
-      kotlin:
+      all-dependencies:
         patterns:
-          - "org.jetbrains.kotlin:*"
-      familie-felles:
-        patterns:
-          - "no.nav.familie.felles:*"
-      familie-kontrakter:
-        patterns:
-          - "no.nav.familie.kontrakter:*"
+          - "*"
     ignore:
       - dependency-name: org.jetbrains.kotlinx:kotlinx-coroutines-core
         versions:
