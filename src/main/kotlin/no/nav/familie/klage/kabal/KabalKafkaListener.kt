@@ -32,7 +32,7 @@ class KabalKafkaListener(val behandlingEventService: BehandlingEventService) : C
         if (STØTTEDE_FAGSYSTEMER.contains(behandlingEvent.kilde)) {
             behandlingEventService.handleEvent(behandlingEvent)
         }
-        secureLogger.info("Serialisert behandlingEvent: $behandlingEvent")
+        secureLogger.info("Deserialisert behandlingEvent: $behandlingEvent")
     }
 
     /* Beholdes for å enkelt kunne lese fra start ved behov
