@@ -21,4 +21,9 @@ class OppgaveService(private val behandleSakOppgaveRepository: BehandleSakOppgav
 
         oppgaveClient.oppdaterOppgave(oppdatertOppgave)
     }
+
+    fun hentAnsvarligSaksbehandlerForBehandlingsId(behandlingId: UUID): String {
+        val oppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId)
+        return oppgaveClient.finnOppgaveMedId(oppgave.oppgaveId).tilordnetRessurs ?: ""
+    }
 }
