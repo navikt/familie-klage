@@ -18,7 +18,8 @@ internal class OppgaveServiceTest {
     val behandleSakOppgaveRepository = mockk<BehandleSakOppgaveRepository>()
     val oppgaveClient = mockk<OppgaveClient>()
     val behandlingService = mockk<BehandlingService>()
-    val oppgaveService = OppgaveService(behandleSakOppgaveRepository, oppgaveClient, behandlingService)
+    val tilordnetRessursService = mockk<TilordnetRessursService>()
+    val oppgaveService = OppgaveService(behandleSakOppgaveRepository, oppgaveClient, behandlingService, tilordnetRessursService)
 
     val behandlingId = UUID.randomUUID()
     val oppgaveId = 1L
