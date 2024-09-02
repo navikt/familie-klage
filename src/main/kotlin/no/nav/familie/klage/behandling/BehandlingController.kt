@@ -1,6 +1,5 @@
-import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.behandling.FerdigstillBehandlingService
-import no.nav.familie.klage.behandling.OpprettRevurderingService
+package no.nav.familie.klage.behandling
+
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
