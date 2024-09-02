@@ -32,7 +32,6 @@ class BehandlingController(
     private val fagsystemVedtakService: FagsystemVedtakService,
     private val opprettRevurderingService: OpprettRevurderingService,
     private val tilordnetRessursService: TilordnetRessursService,
-    private val oppgaveService: OppgaveService,
 ) {
 
     @GetMapping("{behandlingId}")

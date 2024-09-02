@@ -5,6 +5,9 @@ import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.oppgave.dto.SaksbehandlerDto
 import no.nav.familie.klage.oppgave.dto.SaksbehandlerRolle
+import no.nav.familie.kontrakter.felles.Tema
+import no.nav.familie.kontrakter.felles.oppgave.Oppgave
+import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -16,10 +19,11 @@ class TilordnetRessursService(
 ) {
 
     fun hentAnsvarligSaksbehandlerForBehandlingsId(behandlingId: UUID): SaksbehandlerDto {
-        val oppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId)
-        val ident = oppgaveClient.finnOppgaveMedId(oppgave.oppgaveId).tilordnetRessurs ?: ""
+        val behandleSakOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId)
+        val oppgave = oppgaveClient.finnOppgaveMedId(behandleSakOppgave.oppgaveId)
+        val ident = oppgaveClient.finnOppgaveMedId(behandleSakOppgave.oppgaveId).tilordnetRessurs ?: ""
 
-        val rolle = utledSaksbehandlerRolle(ident)
+        val rolle = utledSaksbehandlerRolle(oppgave)
         val tilordnet = hentSaksbehandlerInfo(ident)
         return SaksbehandlerDto(
             etternavn = tilordnet.etternavn,
@@ -30,17 +34,21 @@ class TilordnetRessursService(
 
     fun hentSaksbehandlerInfo(navIdent: String) = oppgaveClient.hentSaksbehandlerInfo(navIdent)
 
-    fun utledSaksbehandlerRolle(ident: String): SaksbehandlerRolle {
+    private fun utledSaksbehandlerRolle(oppgave: Oppgave?): SaksbehandlerRolle {
         if (erUtviklerMedVeilderrolle()) {
             return SaksbehandlerRolle.UTVIKLER_MED_VEILDERROLLE
         }
 
-        if (ident.isNullOrBlank()) {
+        if (oppgave == null) {
             return SaksbehandlerRolle.OPPGAVE_FINNES_IKKE
         }
 
+        if (oppgave.tema != Tema.ENF || oppgave.status == StatusEnum.FEILREGISTRERT) {
+            return SaksbehandlerRolle.OPPGAVE_TILHØRER_IKKE_ENF
+        }
+
         val innloggetSaksbehandler = SikkerhetContext.hentSaksbehandler()
-        return when (ident) {
+        return when (oppgave.tilordnetRessurs) {
             innloggetSaksbehandler -> SaksbehandlerRolle.INNLOGGET_SAKSBEHANDLER
             null -> SaksbehandlerRolle.IKKE_SATT
             else -> SaksbehandlerRolle.ANNEN_SAKSBEHANDLER
