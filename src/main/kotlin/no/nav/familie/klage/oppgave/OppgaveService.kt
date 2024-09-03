@@ -8,7 +8,11 @@ import org.springframework.stereotype.Service
 import java.util.UUID
 
 @Service
-class OppgaveService(private val behandleSakOppgaveRepository: BehandleSakOppgaveRepository, private val oppgaveClient: OppgaveClient, private val behandlingService: BehandlingService) {
+class OppgaveService(
+    private val behandleSakOppgaveRepository: BehandleSakOppgaveRepository,
+    private val oppgaveClient: OppgaveClient,
+    private val behandlingService: BehandlingService,
+) {
 
     fun oppdaterOppgaveTilÅGjeldeTilbakekreving(behandlingId: UUID) {
         val behandling = behandlingService.hentBehandling(behandlingId)

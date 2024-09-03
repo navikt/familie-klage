@@ -5,6 +5,9 @@ import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
+import no.nav.familie.klage.oppgave.OppgaveService
+import no.nav.familie.klage.oppgave.TilordnetRessursService
+import no.nav.familie.klage.oppgave.dto.SaksbehandlerDto
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.KanOppretteRevurderingResponse
@@ -28,6 +31,7 @@ class BehandlingController(
     private val ferdigstillBehandlingService: FerdigstillBehandlingService,
     private val fagsystemVedtakService: FagsystemVedtakService,
     private val opprettRevurderingService: OpprettRevurderingService,
+    private val tilordnetRessursService: TilordnetRessursService,
 ) {
 
     @GetMapping("{behandlingId}")
@@ -63,5 +67,13 @@ class BehandlingController(
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(opprettRevurderingService.kanOppretteRevurdering(behandlingId))
+    }
+
+    @GetMapping("{behandlingId}/ansvarlig-saksbehandler")
+    fun hentAnsvarligSaksbehandlerForBehandling(@PathVariable behandlingId: UUID): Ressurs<SaksbehandlerDto> {
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        return Ressurs.success(
+            tilordnetRessursService.hentAnsvarligSaksbehandlerForBehandlingsId(behandlingId),
+        )
     }
 }

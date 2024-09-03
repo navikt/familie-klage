@@ -17,6 +17,9 @@ class FeatureToggleService(val unleashService: UnleashService) {
 
 enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
     PLACEHOLDER("ktlint-liker-ikke-tomme-enums"),
+
+    // Permission
+    UTVIKLER_MED_VEILEDERRROLLE("familie.ef.sak.utviklere-med-veilederrolle", "Permission"),
     ;
 
     companion object {

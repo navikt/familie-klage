@@ -8,6 +8,7 @@ import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
+import no.nav.familie.kontrakter.felles.saksbehandler.Saksbehandler
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
@@ -22,12 +23,20 @@ class OppgaveClient(
 
     override val pingUri: URI = integrasjonerConfig.pingUri
     private val oppgaveUri: URI = integrasjonerConfig.oppgaveUri
+    private val saksbehandlerUri: URI = integrasjonerConfig.saksbehandlerUri
 
     fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): Long {
         val uri = URI.create("$oppgaveUri/opprett")
 
         val respons = postForEntity<Ressurs<OppgaveResponse>>(uri, opprettOppgaveRequest, HttpHeaders().medContentTypeJsonUTF8())
         return pakkUtRespons(respons, uri, "opprettOppgave").oppgaveId
+    }
+
+    fun finnOppgaveMedId(oppgaveId: Long): Oppgave {
+        val uri = URI.create("$oppgaveUri/$oppgaveId")
+
+        val respons = getForEntity<Ressurs<Oppgave>>(uri)
+        return pakkUtRespons(respons, uri, "finnOppgaveMedId")
     }
 
     fun ferdigstillOppgave(oppgaveId: Long) {
@@ -44,6 +53,13 @@ class OppgaveClient(
             HttpHeaders().medContentTypeJsonUTF8(),
         )
         return pakkUtRespons(respons, uri, "oppdaterOppgave").oppgaveId
+    }
+
+    fun hentSaksbehandlerInfo(navIdent: String): Saksbehandler {
+        val uri = URI.create("$saksbehandlerUri/$navIdent")
+
+        val respons = getForEntity<Ressurs<Saksbehandler>>(uri)
+        return pakkUtRespons(respons, uri, "hentSaksbehandlerInfo")
     }
 
     private fun <T> pakkUtRespons(
