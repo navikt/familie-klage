@@ -34,7 +34,7 @@ class TilordnetRessursService(
     }
 
     private fun utledSaksbehandlerRolle(oppgave: Oppgave?): SaksbehandlerRolle {
-        if (erUtviklerMedVeilderrolle()) {
+        if (erUtviklerMedVeilederrolle()) {
             return SaksbehandlerRolle.UTVIKLER_MED_VEILDERROLLE
         }
 
@@ -54,6 +54,6 @@ class TilordnetRessursService(
         }
     }
 
-    private fun erUtviklerMedVeilderrolle(): Boolean =
+    private fun erUtviklerMedVeilederrolle(): Boolean =
         featureToggleService.isEnabled(Toggle.UTVIKLER_MED_VEILEDERRROLLE)
 }
