@@ -8,6 +8,7 @@ import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.personopplysninger.dto.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.dto.Folkeregisterpersonstatus
 import no.nav.familie.klage.personopplysninger.dto.Kjønn
+import no.nav.familie.klage.personopplysninger.fullmakt.FullmaktService
 import no.nav.familie.klage.personopplysninger.pdl.Dødsfall
 import no.nav.familie.klage.personopplysninger.pdl.Fullmakt
 import no.nav.familie.klage.personopplysninger.pdl.KjønnType
@@ -39,9 +40,10 @@ internal class PersonopplysningerServiceTest {
     private val fagsakService = mockk<FagsakService>()
     private val pdlClient = mockk<PdlClient>()
     private val integrasjonerClient = mockk<PersonopplysningerIntegrasjonerClient>()
+    private val fullmaktService = mockk<FullmaktService>()
 
     private val personopplysningerService =
-        PersonopplysningerService(behandlingService, fagsakService, pdlClient, integrasjonerClient)
+        PersonopplysningerService(behandlingService, fagsakService, pdlClient, integrasjonerClient, fullmaktService)
 
     private val fagsak = fagsak()
     private val behandling = behandling(fagsak)
@@ -53,7 +55,11 @@ internal class PersonopplysningerServiceTest {
         every { pdlClient.hentPerson(any(), any()) } returns lagPdlSøker()
         every { pdlClient.hentNavnBolk(any(), any()) } returns navnBolkResponse()
         every { integrasjonerClient.egenAnsatt(any()) } returns true
+        every { fullmaktService.hentFullmakt(any()) } returns listOf(fullmakt())
     }
+
+    private fun fullmakt() =
+        Fullmakt(LocalDate.now(), null, "01010199999", "fullmakt etternavn", MotpartsRolle.FULLMEKTIG, listOf("område"))
 
     @Test
     internal fun `skal mappe til dto`() {
@@ -69,7 +75,7 @@ internal class PersonopplysningerServiceTest {
         assertThat(personopplysninger.egenAnsatt).isTrue
         assertThat(personopplysninger.vergemål).hasSize(1)
 
-        verify(exactly = 1) { pdlClient.hentNavnBolk(eq(listOf("fullmaktIdent")), any()) }
+        verify(exactly = 1) { fullmaktService.hentFullmakt(personopplysninger.personIdent) }
     }
 
     @Test
@@ -78,7 +84,7 @@ internal class PersonopplysningerServiceTest {
 
         assertThat(personopplysninger.fullmakt.single().navn).isEqualTo("fullmakt etternavn")
 
-        verify(exactly = 1) { pdlClient.hentNavnBolk(eq(listOf("fullmaktIdent")), any()) }
+        verify(exactly = 1) { fullmaktService.hentFullmakt(personopplysninger.personIdent) }
     }
 
     private fun navnBolkResponse() = mapOf(
@@ -89,7 +95,7 @@ internal class PersonopplysningerServiceTest {
         listOf(PdlAdressebeskyttelse(PdlAdressebeskyttelseGradering1.FORTROLIG, metadataGjeldende)),
         listOf(Dødsfall(LocalDate.now())),
         listOf(PdlFolkeregisterpersonstatus1("doed", "d", metadataGjeldende)),
-        listOf(Fullmakt(LocalDate.now(), LocalDate.now(), "fullmaktIdent", MotpartsRolle.FULLMEKTIG, listOf("o"))),
+        listOf(Fullmakt(LocalDate.now(), LocalDate.now(), "fullmaktIdent", "fullmektigsNavn", MotpartsRolle.FULLMEKTIG, listOf("o"))),
         PdlKjønn(KjønnType.KVINNE),
         listOf(lagNavn()),
         listOf(

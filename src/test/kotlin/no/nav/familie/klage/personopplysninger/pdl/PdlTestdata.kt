@@ -42,6 +42,7 @@ object PdlTestdata {
                         LocalDate.now(),
                         LocalDate.now(),
                         "",
+                        "",
                         MotpartsRolle.FULLMAKTSGIVER,
                         listOf(""),
                     ),

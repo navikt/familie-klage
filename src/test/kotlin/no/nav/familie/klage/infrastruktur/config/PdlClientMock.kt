@@ -74,6 +74,7 @@ class PdlClientMock {
                     gyldigTilOgMed = startdato,
                     gyldigFraOgMed = sluttdato,
                     motpartsPersonident = "11111133333",
+                    fullmektigsNavn = "fullmektigsNavn",
                     motpartsRolle = MotpartsRolle.FULLMEKTIG,
                     omraader = listOf(),
                 ),
