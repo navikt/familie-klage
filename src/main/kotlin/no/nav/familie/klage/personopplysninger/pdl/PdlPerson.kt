@@ -68,7 +68,6 @@ data class PdlSøker(
     @JsonProperty("doedsfall") val dødsfall: List<Dødsfall>,
     @JsonProperty("kjoenn") val kjønn: List<Kjønn>,
     val folkeregisterpersonstatus: List<Folkeregisterpersonstatus>,
-    val fullmakt: List<Fullmakt>,
     val navn: List<Navn>,
     val vergemaalEllerFremtidsfullmakt: List<VergemaalEllerFremtidsfullmakt>,
 )

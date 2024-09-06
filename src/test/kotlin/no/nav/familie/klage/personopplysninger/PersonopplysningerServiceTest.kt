@@ -95,7 +95,6 @@ internal class PersonopplysningerServiceTest {
         listOf(PdlAdressebeskyttelse(PdlAdressebeskyttelseGradering1.FORTROLIG, metadataGjeldende)),
         listOf(Dødsfall(LocalDate.now())),
         listOf(PdlFolkeregisterpersonstatus1("doed", "d", metadataGjeldende)),
-        listOf(Fullmakt(LocalDate.now(), LocalDate.now(), "fullmaktIdent", "fullmektigsNavn", MotpartsRolle.FULLMEKTIG, listOf("o"))),
         PdlKjønn(KjønnType.KVINNE),
         listOf(lagNavn()),
         listOf(

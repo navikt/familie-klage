@@ -62,7 +62,6 @@ class PdlClientMock {
                     ),
                 ),
                 dødsfall = listOf(),
-                fullmakt = fullmakter(),
                 kjønn = lagKjønn(KjønnType.KVINNE),
                 navn = listOf(lagNavn()),
                 vergemaalEllerFremtidsfullmakt = vergemaalEllerFremtidsfullmakt(),
