@@ -21,6 +21,7 @@ import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.ef.søknad.Testsøknad
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.OppdaterJournalpostResponse
 import no.nav.familie.kontrakter.felles.journalpost.Bruker
@@ -34,7 +35,9 @@ import no.nav.familie.kontrakter.felles.journalpost.LogiskVedlegg
 import no.nav.familie.kontrakter.felles.journalpost.RelevantDato
 import no.nav.familie.kontrakter.felles.navkontor.NavKontorEnhet
 import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
+import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import no.nav.familie.kontrakter.felles.personopplysning.ADRESSEBESKYTTELSEGRADERING
 import no.nav.familie.kontrakter.felles.saksbehandler.Saksbehandler
 import org.springframework.context.annotation.Bean
@@ -95,6 +98,10 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
             get(urlPathMatching("${integrasjonerConfig.journalPostUri.path}/hentdokument/([0-9]*)/([0-9]*)"))
                 .withQueryParam("variantFormat", equalTo("ARKIV"))
                 .willReturn(okJson(objectMapper.writeValueAsString(Ressurs.success(pdfAsBase64String)))),
+            get(urlPathMatching("${integrasjonerConfig.oppgaveUri.path}/([0-9]*)"))
+                .willReturn(okJson(objectMapper.writeValueAsString(Ressurs.success(Oppgave(Random.nextLong().absoluteValue, tilordnetRessurs = "Z994152", tema = Tema.ENF, status = StatusEnum.UNDER_BEHANDLING),)))),
+            get(urlPathMatching("${integrasjonerConfig.saksbehandlerUri.path}/Z994152"))
+                .willReturn(okJson(objectMapper.writeValueAsString(Ressurs.success(Saksbehandler(UUID.randomUUID(), "Z994152", "Luke", "Skywalker", "4405"))))),
             put(urlMatching("${integrasjonerConfig.dokarkivUri.path}.*"))
                 .willReturn(okJson(objectMapper.writeValueAsString(oppdatertJournalpostResponse))),
             post(urlMatching("${integrasjonerConfig.dokarkivUri.path}.*"))
