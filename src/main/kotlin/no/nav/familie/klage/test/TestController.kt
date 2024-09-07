@@ -3,6 +3,8 @@ package no.nav.familie.klage.test
 import no.nav.familie.klage.behandling.OpprettBehandlingService
 import no.nav.familie.klage.fagsak.FagsakPersonService
 import no.nav.familie.klage.fagsak.FagsakRepository
+import no.nav.familie.klage.oppgave.BehandleSakOppgave
+import no.nav.familie.klage.oppgave.BehandleSakOppgaveRepository
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
@@ -25,6 +27,7 @@ class TestController(
     private val fagsakPersonService: FagsakPersonService,
     private val fagsakRepository: FagsakRepository,
     private val opprettBehandlingService: OpprettBehandlingService,
+    private val behandleSakOppgaveRepository: BehandleSakOppgaveRepository
 ) {
 
     @PostMapping("opprett")
@@ -35,17 +38,26 @@ class TestController(
             .find { it.fagsakPersonId == fagsakPerson.id && it.stønadstype == request.stønadstype }
             ?.eksternId ?: UUID.randomUUID().toString()
 
-        return Ressurs.success(
-            opprettBehandlingService.opprettBehandling(
-                OpprettKlagebehandlingRequest(
-                    request.ident,
-                    request.stønadstype,
-                    eksternFagsakId,
-                    request.fagsystem,
-                    request.klageMottatt,
-                    request.behandlendeEnhet,
-                ),
+        val behandlingId = opprettBehandlingService.opprettBehandling(
+            OpprettKlagebehandlingRequest(
+                request.ident,
+                request.stønadstype,
+                eksternFagsakId,
+                request.fagsystem,
+                request.klageMottatt,
+                request.behandlendeEnhet,
             ),
+        )
+
+        val behandleSakOppgave =  BehandleSakOppgave(
+            behandlingId,
+            123,
+        )
+
+        behandleSakOppgaveRepository.insert(behandleSakOppgave)
+
+        return Ressurs.success(
+            behandlingId
         )
     }
 
