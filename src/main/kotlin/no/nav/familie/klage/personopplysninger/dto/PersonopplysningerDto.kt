@@ -17,7 +17,7 @@ data class PersonopplysningerDto(
 
 data class FullmaktDto(
     val gyldigFraOgMed: LocalDate,
-    val gyldigTilOgMed: LocalDate,
+    val gyldigTilOgMed: LocalDate?,
     val motpartsPersonident: String,
     val navn: String?,
     val områder: List<String>,

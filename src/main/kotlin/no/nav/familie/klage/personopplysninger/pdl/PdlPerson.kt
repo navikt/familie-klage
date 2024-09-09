@@ -68,7 +68,6 @@ data class PdlSøker(
     @JsonProperty("doedsfall") val dødsfall: List<Dødsfall>,
     @JsonProperty("kjoenn") val kjønn: List<Kjønn>,
     val folkeregisterpersonstatus: List<Folkeregisterpersonstatus>,
-    val fullmakt: List<Fullmakt>,
     val navn: List<Navn>,
     val vergemaalEllerFremtidsfullmakt: List<VergemaalEllerFremtidsfullmakt>,
 )
@@ -103,8 +102,9 @@ data class Folkeregisterpersonstatus(
 
 data class Fullmakt(
     val gyldigFraOgMed: LocalDate,
-    val gyldigTilOgMed: LocalDate,
+    val gyldigTilOgMed: LocalDate?,
     val motpartsPersonident: String,
+    val fullmektigsNavn: String?,
     val motpartsRolle: MotpartsRolle,
     val omraader: List<String>,
 )

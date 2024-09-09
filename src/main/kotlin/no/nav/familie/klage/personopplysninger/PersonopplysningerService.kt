@@ -8,12 +8,13 @@ import no.nav.familie.klage.personopplysninger.dto.FullmaktDto
 import no.nav.familie.klage.personopplysninger.dto.Kjønn
 import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerDto
 import no.nav.familie.klage.personopplysninger.dto.VergemålDto
+import no.nav.familie.klage.personopplysninger.fullmakt.FullmaktService
+import no.nav.familie.klage.personopplysninger.pdl.Fullmakt
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.klage.personopplysninger.pdl.PdlSøker
 import no.nav.familie.klage.personopplysninger.pdl.gjeldende
 import no.nav.familie.klage.personopplysninger.pdl.gjelende
 import no.nav.familie.klage.personopplysninger.pdl.visningsnavn
-import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -24,6 +25,7 @@ class PersonopplysningerService(
     private val fagsakService: FagsakService,
     private val pdlClient: PdlClient,
     private val integrasjonerClient: PersonopplysningerIntegrasjonerClient,
+    private val fullmaktService: FullmaktService,
 ) {
     @Cacheable("hentPersonopplysninger", cacheManager = "shortCache")
     fun hentPersonopplysninger(behandlingId: UUID): PersonopplysningerDto {
@@ -33,7 +35,7 @@ class PersonopplysningerService(
         val egenAnsatt = integrasjonerClient.egenAnsatt(fagsak.hentAktivIdent())
 
         val pdlSøker = pdlClient.hentPerson(fagsak.hentAktivIdent(), fagsak.stønadstype)
-        val andreParterNavn = hentNavnAndreParter(pdlSøker, fagsak.stønadstype)
+        val fullmakt = fullmaktService.hentFullmakt(fagsak.hentAktivIdent())
         return PersonopplysningerDto(
             personIdent = fagsak.hentAktivIdent(),
             navn = pdlSøker.navn.gjeldende().visningsnavn(),
@@ -42,31 +44,18 @@ class PersonopplysningerService(
             folkeregisterpersonstatus = pdlSøker.folkeregisterpersonstatus.gjeldende()
                 ?.let { Folkeregisterpersonstatus.fraPdl(it) },
             dødsdato = pdlSøker.dødsfall.gjeldende()?.dødsdato,
-            fullmakt = mapFullmakt(pdlSøker, andreParterNavn),
+            fullmakt = mapFullmakt(fullmakt),
             egenAnsatt = egenAnsatt,
             vergemål = mapVergemål(pdlSøker),
         )
     }
 
-    /**
-     * Returnerer map med ident og visningsnavn
-     */
-    private fun hentNavnAndreParter(pdlSøker: PdlSøker, stønadstype: Stønadstype): Map<String, String> {
-        return pdlSøker.fullmakt.map { it.motpartsPersonident }.distinct()
-            .takeIf { it.isNotEmpty() }
-            ?.let { hentNavn(it, stønadstype) }
-            ?: emptyMap()
-    }
-
-    private fun hentNavn(it: List<String>, stønadstype: Stønadstype): Map<String, String> =
-        pdlClient.hentNavnBolk(it, stønadstype).map { it.key to it.value.navn.gjeldende().visningsnavn() }.toMap()
-
-    private fun mapFullmakt(pdlSøker: PdlSøker, andreParterNavn: Map<String, String>) = pdlSøker.fullmakt.map {
+    private fun mapFullmakt(fullmakt: List<Fullmakt>) = fullmakt.map {
         FullmaktDto(
             gyldigFraOgMed = it.gyldigFraOgMed,
             gyldigTilOgMed = it.gyldigTilOgMed,
             motpartsPersonident = it.motpartsPersonident,
-            navn = andreParterNavn[it.motpartsPersonident] ?: error("Finner ikke navn til ${it.motpartsPersonident}"),
+            navn = it.fullmektigsNavn,
             områder = it.omraader.map { område -> mapOmråde(område) },
         )
     }.sortedByDescending(FullmaktDto::gyldigFraOgMed)

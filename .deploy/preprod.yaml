@@ -70,6 +70,9 @@ spec:
         - application: familie-dokument
         - application: kabal-api
           namespace: klage
+        - application: pdl-fullmakt
+          namespace: pdl
+          cluster: dev-fss
       external:
         - host: api-gw-q1.oera.no
         - host: teamfamilie-unleash-api.nav.cloud.nais.io

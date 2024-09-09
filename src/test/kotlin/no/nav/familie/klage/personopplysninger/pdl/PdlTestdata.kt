@@ -37,15 +37,6 @@ object PdlTestdata {
                 dødsfall,
                 listOf(Kjønn(KjønnType.KVINNE)),
                 listOf(Folkeregisterpersonstatus("", "", metadataGjeldende)),
-                listOf(
-                    Fullmakt(
-                        LocalDate.now(),
-                        LocalDate.now(),
-                        "",
-                        MotpartsRolle.FULLMAKTSGIVER,
-                        listOf(""),
-                    ),
-                ),
                 navn,
                 listOf(
                     VergemaalEllerFremtidsfullmakt(

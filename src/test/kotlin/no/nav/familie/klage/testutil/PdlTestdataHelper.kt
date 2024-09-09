@@ -3,7 +3,6 @@ package no.nav.familie.klage.testutil
 import no.nav.familie.klage.personopplysninger.pdl.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.pdl.Dødsfall
 import no.nav.familie.klage.personopplysninger.pdl.Folkeregisterpersonstatus
-import no.nav.familie.klage.personopplysninger.pdl.Fullmakt
 import no.nav.familie.klage.personopplysninger.pdl.Kjønn
 import no.nav.familie.klage.personopplysninger.pdl.KjønnType
 import no.nav.familie.klage.personopplysninger.pdl.Metadata
@@ -43,7 +42,6 @@ object PdlTestdataHelper {
         adressebeskyttelse: List<Adressebeskyttelse> = emptyList(),
         dødsfall: List<Dødsfall> = emptyList(),
         folkeregisterpersonstatus: List<Folkeregisterpersonstatus> = emptyList(),
-        fullmakt: List<Fullmakt> = emptyList(),
         kjønn: Kjønn? = null,
         navn: List<Navn> = emptyList(),
         vergemaalEllerFremtidsfullmakt: List<VergemaalEllerFremtidsfullmakt> = emptyList(),
@@ -53,7 +51,6 @@ object PdlTestdataHelper {
             dødsfall,
             listOfNotNull(kjønn),
             folkeregisterpersonstatus,
-            fullmakt,
             navn,
             vergemaalEllerFremtidsfullmakt,
         )
