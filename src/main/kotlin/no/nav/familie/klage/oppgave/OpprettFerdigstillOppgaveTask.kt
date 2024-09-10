@@ -18,7 +18,7 @@ class OpprettFerdigstillOppgaveTask(
 
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
-        val behandleSakOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId)
+        val behandleSakOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId) ?: error("Fant ikke oppgave for behandling $behandlingId")
         oppgaveClient.ferdigstillOppgave(behandleSakOppgave.oppgaveId)
     }
 
