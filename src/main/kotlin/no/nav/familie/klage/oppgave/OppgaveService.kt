@@ -20,7 +20,7 @@ class OppgaveService(
         // Skal ikke oppdatere tema for oppgaver som alt er ferdigstilt
         if (!behandling.status.erUnderArbeidAvSaksbehandler()) return
 
-        val eksisterendeOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId)
+        val eksisterendeOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId) ?: error("Fant ikke oppgave for behandling $behandlingId")
         val oppdatertOppgave = Oppgave(id = eksisterendeOppgave.oppgaveId, behandlingstema = Behandlingstema.Tilbakebetaling.value)
 
         oppgaveClient.oppdaterOppgave(oppdatertOppgave)

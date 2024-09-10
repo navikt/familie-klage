@@ -9,5 +9,5 @@ import java.util.UUID
 interface BehandleSakOppgaveRepository :
     RepositoryInterface<BehandleSakOppgave, UUID>,
     InsertUpdateRepository<BehandleSakOppgave> {
-    fun findByBehandlingId(behandlingId: UUID): BehandleSakOppgave
+    fun findByBehandlingId(behandlingId: UUID): BehandleSakOppgave?
 }

@@ -20,15 +20,14 @@ class TilordnetRessursService(
 
     fun hentAnsvarligSaksbehandlerForBehandlingsId(behandlingId: UUID): SaksbehandlerDto {
         val behandleSakOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId)
-        val oppgave = oppgaveClient.finnOppgaveMedId(behandleSakOppgave.oppgaveId)
-        val tilordnetRessurs = oppgave.tilordnetRessurs ?: ""
+        val oppgave = behandleSakOppgave?.let { oppgaveClient.finnOppgaveMedId(it.oppgaveId) }
 
         val rolle = utledSaksbehandlerRolle(oppgave)
-        val saksbehandler = oppgaveClient.hentSaksbehandlerInfo(tilordnetRessurs)
+        val saksbehandler = oppgave?.tilordnetRessurs?.let { oppgaveClient.hentSaksbehandlerInfo(it) }
 
         return SaksbehandlerDto(
-            etternavn = saksbehandler.etternavn,
-            fornavn = saksbehandler.fornavn,
+            etternavn = saksbehandler?.etternavn ?: "",
+            fornavn = saksbehandler?.fornavn ?: "",
             rolle = rolle,
         )
     }
