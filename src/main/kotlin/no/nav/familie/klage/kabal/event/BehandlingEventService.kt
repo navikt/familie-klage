@@ -56,19 +56,19 @@ class BehandlingEventService(
 
                 BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
                 BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
+                BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET,
                 -> {
                     /*
-                     * Skal ikke gjøre noe dersom eventtype er ANKEBEHANDLING_OPPRETTET
-                     * eller ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET
+                     * Skal ikke gjøre noe dersom eventtype er ANKEBEHANDLING_OPPRETTET,
+                     * ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET eller BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET
                      * */
                 }
-
-                BehandlingEventType.BEHANDLING_FEILREGISTRERT -> opprettBehandlingFeilregistretTask(behandling.id)
+                BehandlingEventType.BEHANDLING_FEILREGISTRERT -> opprettBehandlingFeilregistrertTask(behandling.id)
             }
         }
     }
 
-    private fun opprettBehandlingFeilregistretTask(behandlingId: UUID) {
+    private fun opprettBehandlingFeilregistrertTask(behandlingId: UUID) {
         taskService.save(BehandlingFeilregistrertTask.opprettTask(behandlingId))
     }
 

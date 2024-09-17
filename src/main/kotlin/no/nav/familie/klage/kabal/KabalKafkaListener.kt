@@ -70,6 +70,7 @@ data class BehandlingEvent(
             BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET ->
                 detaljer.ankeITrygderettenbehandlingOpprettet?.sendtTilTrygderetten ?: throw Feil(feilmelding)
             BehandlingEventType.BEHANDLING_FEILREGISTRERT -> detaljer.behandlingFeilregistrert?.feilregistrert ?: throw Feil("Fant ikke tidspunkt for feilregistrering")
+            BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET -> detaljer.ankebehandlingAvsluttet?.avsluttet ?: throw Feil(feilmelding)
         }
     }
 
@@ -97,6 +98,7 @@ data class BehandlingDetaljer(
     val ankebehandlingAvsluttet: AnkebehandlingAvsluttetDetaljer? = null,
     val behandlingFeilregistrert: BehandlingFeilregistrertDetaljer? = null,
     val ankeITrygderettenbehandlingOpprettet: AnkeITrygderettenbehandlingOpprettetDetaljer? = null,
+    val behandlingEtterTrygderettenOpphevetAvsluttet: BehandlingEtterTrygderettenOpphevetAvsluttetDetaljer? = null,
 ) {
 
     fun oppgaveTekst(saksbehandlersEnhet: String): String {
@@ -148,3 +150,5 @@ data class AnkebehandlingAvsluttetDetaljer(
 data class BehandlingFeilregistrertDetaljer(val reason: String, val type: Type, val feilregistrert: LocalDateTime)
 
 data class AnkeITrygderettenbehandlingOpprettetDetaljer(val sendtTilTrygderetten: LocalDateTime, val utfall: KlageinstansUtfall?)
+
+data class BehandlingEtterTrygderettenOpphevetAvsluttetDetaljer(val avsluttet: LocalDateTime, val utfall: KlageinstansUtfall, val journalpostReferanser: List<String>)
