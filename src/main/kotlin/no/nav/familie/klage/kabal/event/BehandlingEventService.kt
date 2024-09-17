@@ -51,17 +51,13 @@ class BehandlingEventService(
 
             when (behandlingEvent.type) {
                 BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> behandleKlageAvsluttet(behandling, behandlingEvent)
-                BehandlingEventType.ANKEBEHANDLING_AVSLUTTET,
-                -> behandleAnkeAvsluttet(behandling, behandlingEvent)
+                BehandlingEventType.ANKEBEHANDLING_AVSLUTTET, BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET,
+                -> behandleAnkeAvsluttetEllerBehandlingEtterTrygderettenOpphevetAvsluttet(behandling, behandlingEvent)
 
                 BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
                 BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
-                BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET,
                 -> {
-                    /*
-                     * Skal ikke gjøre noe dersom eventtype er ANKEBEHANDLING_OPPRETTET,
-                     * ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET eller BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET
-                     * */
+                    // Skal ikke gjøre noe dersom eventtype er ANKEBEHANDLING_OPPRETTET eller ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET
                 }
                 BehandlingEventType.BEHANDLING_FEILREGISTRERT -> opprettBehandlingFeilregistrertTask(behandling.id)
             }
@@ -95,7 +91,7 @@ class BehandlingEventService(
             null
         }
 
-    private fun behandleAnkeAvsluttet(behandling: Behandling, behandlingEvent: BehandlingEvent) {
+    private fun behandleAnkeAvsluttetEllerBehandlingEtterTrygderettenOpphevetAvsluttet(behandling: Behandling, behandlingEvent: BehandlingEvent) {
         opprettOppgaveTask(behandling, behandlingEvent)
     }
 

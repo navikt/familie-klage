@@ -20,6 +20,7 @@ import no.nav.familie.klage.kabal.KlagebehandlingAvsluttetDetaljer
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.Type
 import no.nav.familie.klage.kabal.domain.KlageinstansResultat
+import no.nav.familie.klage.oppgave.OpprettKabalEventOppgaveTask
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
@@ -183,6 +184,20 @@ internal class BehandlingEventServiceTest {
 
         assertThat(taskSlot.captured.type).isEqualTo(BehandlingFeilregistrertTask.TYPE)
         assertThat(taskSlot.captured.payload).isEqualTo(behandlingMedStatusVenter.id.toString())
+    }
+
+    @Test
+    internal fun `Skal lage OpprettOppgave-task for behandlingsevent BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET`() {
+        val taskSlot = slot<Task>()
+
+        val behandlingEtterTrygderettenOpphevetAvsluttetDetaljer = BehandlingEtterTrygderettenOpphevetAvsluttetDetaljer(LocalDateTime.now(), KlageinstansUtfall.HEVET, emptyList())
+
+        every { taskService.save(capture(taskSlot)) } returns mockk()
+
+        behandlingEventService.handleEvent(lagBehandlingEvent(BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET, BehandlingDetaljer(behandlingEtterTrygderettenOpphevetAvsluttet = behandlingEtterTrygderettenOpphevetAvsluttetDetaljer)))
+
+        assertThat(taskSlot.captured.type).isEqualTo(OpprettKabalEventOppgaveTask.TYPE)
+        assertThat(taskSlot.captured.payload).contains("Hendelse fra klage av type behandling etter trygderetten opphevet avsluttet med utfall: HEVET mottatt.")
     }
 
     private fun lagBehandlingEvent(

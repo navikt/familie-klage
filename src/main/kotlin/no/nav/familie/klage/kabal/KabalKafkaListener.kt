@@ -105,6 +105,7 @@ data class BehandlingDetaljer(
         return klagebehandlingAvsluttet?.oppgaveTekst(saksbehandlersEnhet)
             ?: ankebehandlingOpprettet?.oppgaveTekst(saksbehandlersEnhet)
             ?: ankebehandlingAvsluttet?.oppgaveTekst(saksbehandlersEnhet)
+            ?: behandlingEtterTrygderettenOpphevetAvsluttet?.oppgaveTekst(saksbehandlersEnhet)
             ?: "Ukjent"
     }
 }
@@ -151,4 +152,15 @@ data class BehandlingFeilregistrertDetaljer(val reason: String, val type: Type, 
 
 data class AnkeITrygderettenbehandlingOpprettetDetaljer(val sendtTilTrygderetten: LocalDateTime, val utfall: KlageinstansUtfall?)
 
-data class BehandlingEtterTrygderettenOpphevetAvsluttetDetaljer(val avsluttet: LocalDateTime, val utfall: KlageinstansUtfall, val journalpostReferanser: List<String>)
+data class BehandlingEtterTrygderettenOpphevetAvsluttetDetaljer(
+    val avsluttet: LocalDateTime,
+    val utfall: KlageinstansUtfall,
+    val journalpostReferanser: List<String>,
+) {
+    fun oppgaveTekst(saksbehandlersEnhet: String): String {
+        return "Hendelse fra klage av type behandling etter trygderetten opphevet avsluttet med utfall: $utfall mottatt. " +
+            "Avsluttet tidspunkt: $avsluttet. " +
+            "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet. " +
+            "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
+    }
+}
