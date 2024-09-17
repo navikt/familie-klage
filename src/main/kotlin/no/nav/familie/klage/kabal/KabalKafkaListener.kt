@@ -70,7 +70,7 @@ data class BehandlingEvent(
             BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET ->
                 detaljer.ankeITrygderettenbehandlingOpprettet?.sendtTilTrygderetten ?: throw Feil(feilmelding)
             BehandlingEventType.BEHANDLING_FEILREGISTRERT -> detaljer.behandlingFeilregistrert?.feilregistrert ?: throw Feil("Fant ikke tidspunkt for feilregistrering")
-            BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET -> detaljer.ankebehandlingAvsluttet?.avsluttet ?: throw Feil(feilmelding)
+            BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET -> detaljer.behandlingEtterTrygderettenOpphevetAvsluttet?.avsluttet ?: throw Feil(feilmelding)
         }
     }
 

@@ -12,6 +12,7 @@ import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.kabal.AnkeITrygderettenbehandlingOpprettetDetaljer
 import no.nav.familie.klage.kabal.AnkebehandlingOpprettetDetaljer
 import no.nav.familie.klage.kabal.BehandlingDetaljer
+import no.nav.familie.klage.kabal.BehandlingEtterTrygderettenOpphevetAvsluttetDetaljer
 import no.nav.familie.klage.kabal.BehandlingEvent
 import no.nav.familie.klage.kabal.BehandlingFeilregistrertDetaljer
 import no.nav.familie.klage.kabal.BehandlingFeilregistrertTask
@@ -136,6 +137,23 @@ internal class BehandlingEventServiceTest {
         verify(exactly = 1) { klageresultatRepository.insert(capture(klageinstansResultatSlot)) }
 
         assertThat(klageinstansResultatSlot.captured.type).isEqualTo(BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET)
+    }
+
+    @Test
+    internal fun `Skal kunne lagre resultat for behandlingsevent BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET`() {
+        val klageinstansResultatSlot = slot<KlageinstansResultat>()
+
+        behandlingEventService.handleEvent(
+            lagBehandlingEvent(
+                BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET,
+                BehandlingDetaljer(behandlingEtterTrygderettenOpphevetAvsluttet = BehandlingEtterTrygderettenOpphevetAvsluttetDetaljer(LocalDateTime.of(2023, 6, 21, 1, 1), KlageinstansUtfall.HEVET, emptyList())),
+            ),
+        )
+
+        verify(exactly = 1) { behandlingRepository.findByEksternBehandlingId(any()) }
+        verify(exactly = 1) { klageresultatRepository.insert(capture(klageinstansResultatSlot)) }
+
+        assertThat(klageinstansResultatSlot.captured.type).isEqualTo(BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET)
     }
 
     @Test
