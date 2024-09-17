@@ -27,7 +27,7 @@ class TestController(
     private val fagsakPersonService: FagsakPersonService,
     private val fagsakRepository: FagsakRepository,
     private val opprettBehandlingService: OpprettBehandlingService,
-    private val behandleSakOppgaveRepository: BehandleSakOppgaveRepository
+    private val behandleSakOppgaveRepository: BehandleSakOppgaveRepository,
 ) {
 
     @PostMapping("opprett")
@@ -49,7 +49,7 @@ class TestController(
             ),
         )
 
-        val behandleSakOppgave =  BehandleSakOppgave(
+        val behandleSakOppgave = BehandleSakOppgave(
             behandlingId,
             123,
         )
@@ -57,7 +57,7 @@ class TestController(
         behandleSakOppgaveRepository.insert(behandleSakOppgave)
 
         return Ressurs.success(
-            behandlingId
+            behandlingId,
         )
     }
 

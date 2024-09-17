@@ -99,7 +99,7 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                 .withQueryParam("variantFormat", equalTo("ARKIV"))
                 .willReturn(okJson(objectMapper.writeValueAsString(Ressurs.success(pdfAsBase64String)))),
             get(urlPathMatching("${integrasjonerConfig.oppgaveUri.path}/([0-9]*)"))
-                .willReturn(okJson(objectMapper.writeValueAsString(Ressurs.success(Oppgave(Random.nextLong().absoluteValue, tilordnetRessurs = "Z994152", tema = Tema.ENF, status = StatusEnum.UNDER_BEHANDLING),)))),
+                .willReturn(okJson(objectMapper.writeValueAsString(Ressurs.success(Oppgave(Random.nextLong().absoluteValue, tilordnetRessurs = "Z994152", tema = Tema.ENF, status = StatusEnum.UNDER_BEHANDLING))))),
             get(urlPathMatching("${integrasjonerConfig.saksbehandlerUri.path}/Z994152"))
                 .willReturn(okJson(objectMapper.writeValueAsString(Ressurs.success(Saksbehandler(UUID.randomUUID(), "Z994152", "Luke", "Skywalker", "4405"))))),
             put(urlMatching("${integrasjonerConfig.dokarkivUri.path}.*"))
