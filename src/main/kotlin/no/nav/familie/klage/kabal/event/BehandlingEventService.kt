@@ -51,24 +51,20 @@ class BehandlingEventService(
 
             when (behandlingEvent.type) {
                 BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> behandleKlageAvsluttet(behandling, behandlingEvent)
-                BehandlingEventType.ANKEBEHANDLING_AVSLUTTET,
-                -> behandleAnkeAvsluttet(behandling, behandlingEvent)
+                BehandlingEventType.ANKEBEHANDLING_AVSLUTTET, BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET,
+                -> opprettOppgaveTask(behandling, behandlingEvent)
 
                 BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
                 BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
                 -> {
-                    /*
-                     * Skal ikke gjøre noe dersom eventtype er ANKEBEHANDLING_OPPRETTET
-                     * eller ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET
-                     * */
+                    // Skal ikke gjøre noe dersom eventtype er ANKEBEHANDLING_OPPRETTET eller ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET
                 }
-
-                BehandlingEventType.BEHANDLING_FEILREGISTRERT -> opprettBehandlingFeilregistretTask(behandling.id)
+                BehandlingEventType.BEHANDLING_FEILREGISTRERT -> opprettBehandlingFeilregistrertTask(behandling.id)
             }
         }
     }
 
-    private fun opprettBehandlingFeilregistretTask(behandlingId: UUID) {
+    private fun opprettBehandlingFeilregistrertTask(behandlingId: UUID) {
         taskService.save(BehandlingFeilregistrertTask.opprettTask(behandlingId))
     }
 
@@ -95,10 +91,6 @@ class BehandlingEventService(
             null
         }
 
-    private fun behandleAnkeAvsluttet(behandling: Behandling, behandlingEvent: BehandlingEvent) {
-        opprettOppgaveTask(behandling, behandlingEvent)
-    }
-
     private fun behandleKlageAvsluttet(behandling: Behandling, behandlingEvent: BehandlingEvent) {
         when (behandling.status) {
             BehandlingStatus.FERDIGSTILT -> logger.error("Mottatt event på ferdigstilt behandling $behandlingEvent - event kan være lest fra før")
@@ -109,7 +101,7 @@ class BehandlingEventService(
         }
     }
 
-    private fun opprettOppgaveTask(behandling: Behandling, behandlingEvent: BehandlingEvent) {
+    fun opprettOppgaveTask(behandling: Behandling, behandlingEvent: BehandlingEvent) {
         val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
             ?: error("Finner ikke fagsak for behandlingId: ${behandling.id}")
         val saksbehandlerIdent = behandling.sporbar.endret.endretAv
