@@ -1,8 +1,11 @@
-# This file was generated based on ".graphqlconfig". Do not edit manually.
+# This file was generated. Do not edit manually.
 
 schema {
     query: Query
 }
+
+"Indicates an Input Object is a OneOf Input Object."
+directive @oneOf on INPUT_OBJECT
 
 type AdresseCompletionResult {
     addressFound: CompletionAdresse
@@ -72,10 +75,11 @@ type Doedsfall {
 
 " Endring som har blitt utført på opplysningen. F.eks: Opprett -> Korriger -> Korriger"
 type Endring {
+    hendelseId: String!
     """
-
+    
     Opphavet til informasjonen. I NAV blir dette satt i forbindelse med registrering (f.eks: Sykehuskassan).
-    Fra Folkeregisteret får vi opphaven til dems opplysning, altså NAV, UDI, Politiet, Skatteetaten o.l.. Fra Folkeregisteret kan det også være tekniske navn som: DSF_MIGRERING, m.m..
+     Fra Folkeregisteret får vi opphaven til dems opplysning, altså NAV, UDI, Politiet, Skatteetaten o.l.. Fra Folkeregisteret kan det også være tekniske navn som: DSF_MIGRERING, m.m..
     """
     kilde: String!
     " Tidspunktet for registrering."
@@ -104,15 +108,29 @@ type FalskIdentitetIdentifiserendeInformasjon {
     statsborgerskap: [String!]!
 }
 
-type Foedselsdato {
-    foedselsaar: Int,
-    foedselsdato: LocalDate,
+type Foedested {
+    foedekommune: String
+    foedeland: String
+    foedested: String
+    folkeregistermetadata: Folkeregistermetadata
+    metadata: Metadata!
 }
 
-type Foedested {
-    foedeland: String?,
-    foedested: String?,
-    foedekommune: String?,
+type Foedsel {
+    foedekommune: String
+    foedeland: String
+    foedested: String
+    foedselsaar: Int
+    foedselsdato: Date
+    folkeregistermetadata: Folkeregistermetadata
+    metadata: Metadata!
+}
+
+type Foedselsdato {
+    foedselsaar: Int
+    foedselsdato: Date
+    folkeregistermetadata: Folkeregistermetadata
+    metadata: Metadata!
 }
 
 type Folkeregisteridentifikator {
@@ -190,6 +208,13 @@ type IdentInformasjon {
     gruppe: IdentGruppe!
     historisk: Boolean!
     ident: String!
+}
+
+type IdentifiserendeInformasjon {
+    foedselsdato: Date
+    kjoenn: String
+    navn: Personnavn
+    statsborgerskap: [String!]
 }
 
 type Identitetsgrunnlag {
@@ -372,26 +397,26 @@ type MatrikkeladresseResult {
 
 type Metadata {
     """
-
+    
     En liste over alle endringer som har blitt utført over tid.
-    Vær obs på at denne kan endre seg og man burde takle at det finnes flere korrigeringer i listen, så dersom man ønsker å kun vise den siste, så må man selv filtrere ut dette.
-    Det kan også ved svært få tilfeller skje at opprett blir fjernet. F.eks ved splitt tilfeller av identer. Dette skal skje i svært få tilfeller. Dersom man ønsker å presentere opprettet tidspunktet, så blir det tidspunktet på den første endringen.
+     Vær obs på at denne kan endre seg og man burde takle at det finnes flere korrigeringer i listen, så dersom man ønsker å kun vise den siste, så må man selv filtrere ut dette.
+     Det kan også ved svært få tilfeller skje at opprett blir fjernet. F.eks ved splitt tilfeller av identer. Dette skal skje i svært få tilfeller. Dersom man ønsker å presentere opprettet tidspunktet, så blir det tidspunktet på den første endringen.
     """
     endringer: [Endring!]!
     """
-
+    
     Feltet betegner hvorvidt dette er en funksjonelt historisk opplysning, for eksempel en tidligere fraflyttet adresse eller et foreldreansvar som er utløpt fordi barnet har fylt 18 år.
-    I de fleste tilfeller kan dette utledes ved å se på de andre feltene i opplysningen. Dette er imidlertid ikke alltid tilfellet, blant annet for foreldreansvar.
-    Feltet bør brukes av konsumenter som henter informasjon fra GraphQL med historikk, men som også trenger å utlede gjeldende informasjon.
+     I de fleste tilfeller kan dette utledes ved å se på de andre feltene i opplysningen. Dette er imidlertid ikke alltid tilfellet, blant annet for foreldreansvar.
+     Feltet bør brukes av konsumenter som henter informasjon fra GraphQL med historikk, men som også trenger å utlede gjeldende informasjon.
     """
     historisk: Boolean!
     " Master refererer til hvem som eier opplysningen, f.eks så har PDL en kopi av Folkeregisteret, da vil master være FREG og eventuelle endringer på dette må gå via Folkeregisteret (API mot dem eller andre rutiner)."
     master: String!
     """
-
+    
     I PDL så får alle forekomster av en opplysning en ID som representerer dens unike forekomst.
-    F.eks, så vil en Opprett ha ID X, korriger ID Y (der hvor den spesifiserer at den korrigerer X).
-    Dersom en opplysning ikke er lagret i PDL, så vil denne verdien ikke være utfylt.
+     F.eks, så vil en Opprett ha ID X, korriger ID Y (der hvor den spesifiserer at den korrigerer X).
+     Dersom en opplysning ikke er lagret i PDL, så vil denne verdien ikke være utfylt.
     """
     opplysningsId: String
 }
@@ -399,12 +424,17 @@ type Metadata {
 type Navn {
     etternavn: String!
     folkeregistermetadata: Folkeregistermetadata
-    forkortetNavn: String
+    forkortetNavn: String @deprecated(reason: "No longer supported")
     fornavn: String!
     gyldigFraOgMed: Date
     mellomnavn: String
     metadata: Metadata!
     originaltNavn: OriginaltNavn
+}
+
+type Navspersonidentifikator {
+    identifikasjonsnummer: String!
+    metadata: Metadata!
 }
 
 type Opphold {
@@ -440,8 +470,9 @@ type Person {
     doedfoedtBarn: [DoedfoedtBarn!]!
     doedsfall: [Doedsfall!]!
     falskIdentitet: FalskIdentitet
-    foedselsdato: [Foedselsdato!]!
     foedested: [Foedested!]!
+    foedsel: [Foedsel!]! @deprecated(reason: "Erstattet av foedselsdato & foedested")
+    foedselsdato: [Foedselsdato!]!
     folkeregisteridentifikator(historikk: Boolean = false): [Folkeregisteridentifikator!]!
     folkeregisterpersonstatus(historikk: Boolean = false): [Folkeregisterpersonstatus!]!
     forelderBarnRelasjon: [ForelderBarnRelasjon!]!
@@ -453,12 +484,14 @@ type Person {
     kontaktadresse(historikk: Boolean = false): [Kontaktadresse!]!
     kontaktinformasjonForDoedsbo(historikk: Boolean = false): [KontaktinformasjonForDoedsbo!]!
     navn(historikk: Boolean = false): [Navn!]!
+    navspersonidentifikator(historikk: Boolean = false): [Navspersonidentifikator!]!
     opphold(historikk: Boolean = false): [Opphold!]!
     oppholdsadresse(historikk: Boolean = false): [Oppholdsadresse!]!
+    rettsligHandleevne(historikk: Boolean = false): [RettsligHandleevne!]!
     sikkerhetstiltak: [Sikkerhetstiltak!]!
     sivilstand(historikk: Boolean = false): [Sivilstand!]!
     statsborgerskap(historikk: Boolean = false): [Statsborgerskap!]!
-    telefonnummer: [Telefonnummer!]!
+    telefonnummer(historikk: Boolean = false): [Telefonnummer!]!
     tilrettelagtKommunikasjon: [TilrettelagtKommunikasjon!]!
     utenlandskIdentifikasjonsnummer(historikk: Boolean = false): [UtenlandskIdentifikasjonsnummer!]!
     utflyttingFraNorge: [UtflyttingFraNorge!]!
@@ -469,21 +502,21 @@ type PersonSearchHighlight {
     " Forteller hvorvidt opplysningen som ga treff er markert som historisk."
     historisk: Boolean
     """
-
+    
     liste med feltene og verdiene som ga treff.
-    Merk at for fritekst søk så vil disse kunne referere til hjelpe felter som ikke er synelig i resultatene.
+     Merk at for fritekst søk så vil disse kunne referere til hjelpe felter som ikke er synelig i resultatene.
     """
     matches: [SearchMatch]
     """
-
+    
     Navn/Sti til opplysningen som ga treff. Merk at dette ikke er feltet som ga treff men opplysningen.
-    F.eks. hvis du søker på person.navn.fornavn så vil opplysingen være person.navn.
+     F.eks. hvis du søker på person.navn.fornavn så vil opplysingen være person.navn.
     """
     opplysning: String
     """
-
+    
     Gitt att opplysningen som ga treff har en opplysningsId så vil den returneres her.
-    alle søk under person skal ha opplysningsId, men søk i identer vil kunne returnere treff uten opplysningsId.
+     alle søk under person skal ha opplysningsId, men søk i identer vil kunne returnere treff uten opplysningsId.
     """
     opplysningsId: String
 }
@@ -549,6 +582,12 @@ type RelatertBiPerson {
     statsborgerskap: String
 }
 
+type RettsligHandleevne {
+    folkeregistermetadata: Folkeregistermetadata
+    metadata: Metadata!
+    rettsligHandleevneomfang: String
+}
+
 type SearchMatch {
     " feltnavn med sti til feltet so ga treff."
     field: String!
@@ -600,6 +639,11 @@ type TilrettelagtKommunikasjon {
     metadata: Metadata!
     talespraaktolk: Tolk
     tegnspraaktolk: Tolk
+}
+
+type Tjenesteomraade {
+    tjenesteoppgave: String
+    tjenestevirksomhet: String
 }
 
 type Tolk {
@@ -676,10 +720,12 @@ type VegadresseResult {
 }
 
 type VergeEllerFullmektig {
+    identifiserendeInformasjon: IdentifiserendeInformasjon
     motpartsPersonident: String
-    navn: Personnavn
+    navn: Personnavn @deprecated(reason: "Erstattes av navn iidentifiserendeInformasjon")
     omfang: String
-    omfangetErInnenPersonligOmraade: Boolean!
+    omfangetErInnenPersonligOmraade: Boolean
+    tjenesteomraade: [Tjenesteomraade!]
 }
 
 type VergemaalEllerFremtidsfullmakt {
@@ -793,7 +839,7 @@ scalar Date
 "Format: YYYY-MM-DDTHH:mm:SS (ISO-8601), example: 2011-12-03T10:15:30"
 scalar DateTime
 
-"Long type"
+"A 64-bit signed integer"
 scalar Long
 
 input CompletionFieldValue {
@@ -808,17 +854,20 @@ input CompletionParameters {
 }
 
 input Criterion {
-    " Feltnavn ikludert sti til ønsket felt (Eksempel: person.navn.fornavn)"
-    fieldName: String!
+    and: [Criterion]
+    " Feltnavn inkludert sti til ønsket felt (Eksempel: person.navn.fornavn)"
+    fieldName: String
+    not: [Criterion]
+    or: [Criterion]
     """
-
+    
     Søk i historiske data
-    true = søker kun i historiske data.
-    false = søker kun i gjeldende data.
-    null = søke i både historiske og gjeldende data.
+     true = søker kun i historiske data.
+     false = søker kun i gjeldende data.
+     null = søke i både historiske og gjeldende data.
     """
     searchHistorical: Boolean
-    searchRule: SearchRule!
+    searchRule: SearchRule
 }
 
 input Paging {
@@ -827,9 +876,9 @@ input Paging {
     " antall treff per side (maks 100)"
     resultsPerPage: Int = 10
     """
-
+    
     Liste over felter man ønsker resultatene sortert etter
-    Standard er "score". Score er poengsummen Elasticsearch tildeler hvert resultat.
+     Standard er "score". Score er poengsummen Elasticsearch tildeler hvert resultat.
     """
     sortBy: [SearchSorting]
 }
@@ -850,17 +899,17 @@ input SearchRule {
     " Begrenser treff til kun de hvor felt har input verdi"
     equals: String
     " Sjekker om feltet finnes / at det ikke har en null verdi."
-    exists: String
+    exists: Boolean
     """
-
+    
     Søk fra og med (se fromExcluding for bare fra men ikke med)
-    kan benyttes på tall og dato
+     kan benyttes på tall og dato
     """
     from: String
     """
-
+    
     Søk fra men ikke med oppgitt verdi
-    kan benyttes på tall og dato
+     kan benyttes på tall og dato
     """
     fromExcluding: String
     " Søk som gir treff også for små variasjoner i skrivemåte"
@@ -872,21 +921,21 @@ input SearchRule {
     " Filtrerer bort treff hvor felt inneholder input verdi"
     notEquals: String
     " Søk som gir tilfeldig poengsum til hvert treff (kun ment til generering av testdata)"
-    random: String
+    random: Float
     " Regex søk for spesielle situasjoner (Dette er en treg opprasjon og bør ikke brukes)"
     regex: String
     " Gir treff når opgitt feltstarter med opgitt verdi."
     startsWith: String
     """
-
+    
     Søk til og med (se toExcluding for bare til men ikke med)
-    kan benyttes på tall og dato
+     kan benyttes på tall og dato
     """
     to: String
     """
-
+    
     Søk til men ikke med oppgitt verdi
-    kan benyttes på tall og dato
+     kan benyttes på tall og dato
     """
     toExcluding: String
     " Bruk \"?\" som wildcard for enkelt tegn, og \"*\" som wildcard for 0 eller flere tegn."
