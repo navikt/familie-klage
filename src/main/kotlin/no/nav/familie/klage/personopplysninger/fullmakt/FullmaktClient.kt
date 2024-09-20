@@ -2,7 +2,6 @@ package no.nav.familie.klage.personopplysninger.fullmakt
 
 import no.nav.familie.http.client.AbstractRestClient
 import org.apache.hc.client5.http.utils.Base64
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
