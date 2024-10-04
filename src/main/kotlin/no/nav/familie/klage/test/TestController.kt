@@ -7,6 +7,7 @@ import no.nav.familie.klage.oppgave.BehandleSakOppgave
 import no.nav.familie.klage.oppgave.BehandleSakOppgaveRepository
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.security.token.support.core.api.ProtectedWithClaims
@@ -40,12 +41,13 @@ class TestController(
 
         val behandlingId = opprettBehandlingService.opprettBehandling(
             OpprettKlagebehandlingRequest(
-                request.ident,
-                request.stønadstype,
-                eksternFagsakId,
-                request.fagsystem,
-                request.klageMottatt,
-                request.behandlendeEnhet,
+                ident = request.ident,
+                stønadstype = request.stønadstype,
+                eksternFagsakId = eksternFagsakId,
+                fagsystem = request.fagsystem,
+                klageMottatt = request.klageMottatt,
+                behandlendeEnhet = request.behandlendeEnhet,
+                behandlingsårsak = request.behandlingsårsak,
             ),
         )
 
@@ -67,5 +69,6 @@ class TestController(
         val fagsystem: Fagsystem = Fagsystem.EF,
         val klageMottatt: LocalDate = LocalDate.now(),
         val behandlendeEnhet: String = "4489",
+        val behandlingsårsak: Klagebehandlingsårsak = Klagebehandlingsårsak.ORDINÆR
     )
 }

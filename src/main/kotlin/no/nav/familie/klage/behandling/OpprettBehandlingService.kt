@@ -32,20 +32,20 @@ class OpprettBehandlingService(
 
     @Transactional
     fun opprettBehandling(
-        opprettKlagebehandlingRequest: OpprettKlagebehandlingRequest,
+        request: OpprettKlagebehandlingRequest,
     ): UUID {
-        val klageMottatt = opprettKlagebehandlingRequest.klageMottatt
-        val stønadstype = opprettKlagebehandlingRequest.stønadstype
-        val eksternFagsakId = opprettKlagebehandlingRequest.eksternFagsakId
+        val klageMottatt = request.klageMottatt
+        val stønadstype = request.stønadstype
+        val eksternFagsakId = request.eksternFagsakId
 
         feilHvis(klageMottatt.isAfter(LocalDate.now())) {
             "Kan ikke opprette klage med krav mottatt frem i tid for eksternFagsakId=$eksternFagsakId"
         }
 
         val fagsak = fagsakService.hentEllerOpprettFagsak(
-            ident = opprettKlagebehandlingRequest.ident,
+            ident = request.ident,
             eksternId = eksternFagsakId,
-            fagsystem = opprettKlagebehandlingRequest.fagsystem,
+            fagsystem = request.fagsystem,
             stønadstype = stønadstype,
         )
 
@@ -56,7 +56,7 @@ class OpprettBehandlingService(
                     påklagetVedtakstype = PåklagetVedtakstype.IKKE_VALGT,
                 ),
                 klageMottatt = klageMottatt,
-                behandlendeEnhet = opprettKlagebehandlingRequest.behandlendeEnhet,
+                behandlendeEnhet = request.behandlendeEnhet,
             ),
         ).id
 
@@ -64,7 +64,7 @@ class OpprettBehandlingService(
 
         formService.opprettInitielleFormkrav(behandlingId)
 
-        oppgaveTaskService.opprettBehandleSakOppgave(behandlingId, opprettKlagebehandlingRequest.klageGjelderTilbakekreving)
+        oppgaveTaskService.opprettBehandleSakOppgave(behandlingId, request.klageGjelderTilbakekreving)
         taskService.save(
             BehandlingsstatistikkTask.opprettMottattTask(behandlingId = behandlingId),
         )
