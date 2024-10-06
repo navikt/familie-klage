@@ -69,6 +69,6 @@ class TestController(
         val fagsystem: Fagsystem = Fagsystem.EF,
         val klageMottatt: LocalDate = LocalDate.now(),
         val behandlendeEnhet: String = "4489",
-        val behandlingsårsak: Klagebehandlingsårsak = Klagebehandlingsårsak.ORDINÆR
+        val behandlingsårsak: Klagebehandlingsårsak = Klagebehandlingsårsak.ORDINÆR,
     )
 }

@@ -57,6 +57,7 @@ class OpprettBehandlingService(
                 ),
                 klageMottatt = klageMottatt,
                 behandlendeEnhet = request.behandlendeEnhet,
+                årsak = request.behandlingsårsak,
             ),
         ).id
 

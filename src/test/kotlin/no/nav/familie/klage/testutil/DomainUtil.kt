@@ -42,6 +42,7 @@ import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
+import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.klage.Årsak
@@ -84,6 +85,7 @@ object DomainUtil {
         henlagtÅrsak: HenlagtÅrsak? = null,
         sporbar: Sporbar = Sporbar(),
         fagsystemRevurdering: FagsystemRevurdering? = null,
+        årsak: Klagebehandlingsårsak = Klagebehandlingsårsak.ORDINÆR,
     ): Behandling =
         Behandling(
             id = id,
@@ -99,6 +101,7 @@ object DomainUtil {
             vedtakDato = vedtakDato,
             sporbar = sporbar,
             fagsystemRevurdering = fagsystemRevurdering,
+            årsak = årsak,
         )
 
     fun vurdering(

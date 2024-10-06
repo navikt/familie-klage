@@ -83,13 +83,7 @@ For å koble til preprod kan du kjøre kommandoene:
 4. For å hente ut alle klager må fagsystemet kalle på `api/ekstern/behandling/{fagsystem}?eksternFagsakIder={eksternFagsakId}`
 
 # Henvendelser
-
-
-Spørsmål knyttet til koden eller prosjektet kan rettes til:
-
-* Viktor Grøndalen Solberg, `viktor.grondalen.solberg@nav.no`
-* Eirik Årseth `eirik.arseth@nav.no`
+Spørsmål knyttet til koden eller prosjektet kan stilles som issues her på GitHub
 
 ## For NAV-ansatte
-
 Interne henvendelser kan sendes via Slack i kanalen #team-familie.
