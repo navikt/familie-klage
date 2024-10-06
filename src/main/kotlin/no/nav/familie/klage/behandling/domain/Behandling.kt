@@ -3,7 +3,11 @@ package no.nav.familie.klage.behandling.domain
 import no.nav.familie.klage.felles.domain.Sporbar
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.kontrakter.felles.Regelverk
-import no.nav.familie.kontrakter.felles.klage.*
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
+import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
+import no.nav.familie.kontrakter.felles.klage.FagsystemType
+import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
+import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Embedded
