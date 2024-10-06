@@ -9,6 +9,7 @@ import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.tilFagsak
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
+import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -86,5 +87,6 @@ internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {
             fagsystem = fagsak.fagsystem,
             klageMottatt = klageMottatt,
             behandlendeEnhet = "4489",
+            behandlingsårsak = Klagebehandlingsårsak.ORDINÆR,
         )
 }

@@ -17,6 +17,7 @@ import no.nav.familie.klage.testutil.DomainUtil.vurderingDto
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.assertj.core.api.Assertions.assertThat
@@ -177,12 +178,13 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
 
     private val opprettKlagebehandlingRequest =
         OpprettKlagebehandlingRequest(
-            "ident",
-            Stønadstype.OVERGANGSSTØNAD,
-            UUID.randomUUID().toString(),
-            Fagsystem.EF,
-            LocalDate.now(),
-            "enhet",
+            ident = "ident",
+            stønadstype = Stønadstype.OVERGANGSSTØNAD,
+            eksternFagsakId = UUID.randomUUID().toString(),
+            fagsystem = Fagsystem.EF,
+            klageMottatt = LocalDate.now(),
+            behandlendeEnhet = "enhet",
+            behandlingsårsak = Klagebehandlingsårsak.ORDINÆR,
         )
 
     private fun oppfyltFormDto(behandlingId: UUID, påklagetVedtakDto: PåklagetVedtakDto = DomainUtil.påklagetVedtakDto()) =
