@@ -35,16 +35,7 @@ import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.kontrakter.felles.journalpost.RelevantDato
-import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
-import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
-import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
-import no.nav.familie.kontrakter.felles.klage.Fagsystem
-import no.nav.familie.kontrakter.felles.klage.FagsystemType
-import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
-import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
-import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
-import no.nav.familie.kontrakter.felles.klage.Stønadstype
-import no.nav.familie.kontrakter.felles.klage.Årsak
+import no.nav.familie.kontrakter.felles.klage.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -84,6 +75,7 @@ object DomainUtil {
         henlagtÅrsak: HenlagtÅrsak? = null,
         sporbar: Sporbar = Sporbar(),
         fagsystemRevurdering: FagsystemRevurdering? = null,
+        årsak: Klagebehandlingsårsak = Klagebehandlingsårsak.ORDINÆR,
     ): Behandling =
         Behandling(
             id = id,
@@ -99,6 +91,7 @@ object DomainUtil {
             vedtakDato = vedtakDato,
             sporbar = sporbar,
             fagsystemRevurdering = fagsystemRevurdering,
+            årsak = årsak,
         )
 
     fun vurdering(
