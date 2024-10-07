@@ -39,7 +39,7 @@ class SøkController(
     ): Ressurs<PersonTreffDto> {
         val personIdent = personIdentDto.personIdent
         val behandlingId = personIdentDto.behandlingId
-        val fagsak = fagsakService.hentFagsak(behandlingId)
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         tilgangService.validerTilgangTilPersonMedRelasjoner(personIdent, AuditLoggerEvent.UPDATE)
         val person = pdlClient.hentPerson(personIdent, fagsak.stønadstype)
         val result = PersonTreffDto(personIdent, person.navn.gjeldende().visningsnavn())
