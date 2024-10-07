@@ -9,12 +9,7 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.harManuellVedtaksdato
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.kontrakter.felles.Regelverk
-import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
-import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
-import no.nav.familie.kontrakter.felles.klage.Fagsystem
-import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
-import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
-import no.nav.familie.kontrakter.felles.klage.Stønadstype
+import no.nav.familie.kontrakter.felles.klage.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -35,6 +30,7 @@ data class BehandlingDto(
     val fagsystem: Fagsystem,
     val klageMottatt: LocalDate,
     val fagsystemRevurdering: FagsystemRevurdering?,
+    val årsak: Klagebehandlingsårsak,
 )
 
 /**
@@ -78,4 +74,5 @@ fun Behandling.tilDto(fagsak: Fagsak, klageinstansResultat: List<KlageinstansRes
         påklagetVedtak = this.påklagetVedtak.tilDto(),
         klageMottatt = this.klageMottatt,
         fagsystemRevurdering = this.fagsystemRevurdering,
+        årsak = this.årsak,
     )
