@@ -35,7 +35,9 @@ data class Behandling(
     val fagsystemRevurdering: FagsystemRevurdering? = null,
     @Column("arsak")
     val årsak: Klagebehandlingsårsak,
-)
+) {
+    val skalSendeBrev = årsak == Klagebehandlingsårsak.ORDINÆR && resultat == BehandlingResultat.IKKE_MEDHOLD
+}
 
 data class PåklagetVedtakDetaljer(
     val fagsystemType: FagsystemType,
