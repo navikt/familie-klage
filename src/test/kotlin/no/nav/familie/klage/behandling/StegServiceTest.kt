@@ -150,4 +150,15 @@ internal class StegServiceTest {
         verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BREV) }
         verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BEHANDLING_FERDIGSTILT) }
     }
+
+    @Test
+    fun `skal ikke lagre behandlingshistorikk om brev dersom behandlingen ferdigstilles og har årsak henvendelse fra KA`() {
+        stegService.oppdaterSteg(behandlingId, StegType.BREV, StegType.KABAL_VENTER_SVAR, BehandlingResultat.IKKE_MEDHOLD)
+
+        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.OPPRETTET) }
+        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.FORMKRAV) }
+        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.VURDERING) }
+        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BREV) }
+        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.OVERFØRING_TIL_KABAL) }
+    }
 }
