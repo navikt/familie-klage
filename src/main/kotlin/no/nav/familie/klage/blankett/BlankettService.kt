@@ -37,6 +37,7 @@ class BlankettService(
                 klageMottatt = behandling.klageMottatt,
                 resultat = behandling.resultat,
                 påklagetVedtak = påklagetVedtak,
+                årsak = behandling.årsak,
             ),
             personopplysninger = lagPersonopplysningerDto(behandling, fagsak),
             formkrav = mapFormkrav(formkrav),
