@@ -27,7 +27,7 @@ class StegService(
         behandlingId: UUID,
         nåværendeSteg: StegType,
         nesteSteg: StegType,
-        behandlingsresultat: BehandlingResultat? = null
+        behandlingsresultat: BehandlingResultat? = null,
     ) {
         val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
         validerHarSaksbehandlerRolle(behandlingId)

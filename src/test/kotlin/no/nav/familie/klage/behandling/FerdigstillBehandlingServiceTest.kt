@@ -31,7 +31,11 @@ import no.nav.familie.klage.testutil.DomainUtil.vurdering
 import no.nav.familie.klage.testutil.mockFeatureToggleService
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.domain.Vedtak
-import no.nav.familie.kontrakter.felles.klage.*
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
+import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
+import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
+import no.nav.familie.kontrakter.felles.klage.OpprettRevurderingResponse
+import no.nav.familie.kontrakter.felles.klage.Opprettet
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
