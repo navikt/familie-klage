@@ -2,6 +2,11 @@ package no.nav.familie.klage.kabal
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
+import no.nav.familie.klage.brev.domain.Brevmottaker
+import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
+import no.nav.familie.klage.brev.domain.BrevmottakerPerson
+import no.nav.familie.klage.brev.domain.Brevmottakere
+import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.tilYtelse
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
@@ -18,13 +23,26 @@ class KabalService(
     private val lenkeConfig: LenkeConfig,
 ) {
 
-    fun sendTilKabal(fagsak: Fagsak, behandling: Behandling, vurdering: Vurdering, saksbehandlerIdent: String) {
+    fun sendTilKabal(
+        fagsak: Fagsak,
+        behandling: Behandling,
+        vurdering: Vurdering,
+        saksbehandlerIdent: String,
+        brevMottakere: Brevmottakere,
+    ) {
         val saksbehandler = integrasjonerClient.hentSaksbehandlerInfo(saksbehandlerIdent)
-        val oversendtKlageAnkeV3 = lagKlageOversendelseV3(fagsak, behandling, vurdering, saksbehandler.enhet)
+        val oversendtKlageAnkeV3 =
+            lagKlageOversendelseV3(fagsak, behandling, vurdering, saksbehandler.enhet, brevMottakere)
         kabalClient.sendTilKabal(oversendtKlageAnkeV3)
     }
 
-    private fun lagKlageOversendelseV3(fagsak: Fagsak, behandling: Behandling, vurdering: Vurdering, saksbehandlersEnhet: String): OversendtKlageAnkeV3 {
+    private fun lagKlageOversendelseV3(
+        fagsak: Fagsak,
+        behandling: Behandling,
+        vurdering: Vurdering,
+        saksbehandlersEnhet: String,
+        brevMottakere: Brevmottakere,
+    ): OversendtKlageAnkeV3 {
         return OversendtKlageAnkeV3(
             type = Type.KLAGE,
             klager = OversendtKlager(
@@ -32,6 +50,7 @@ class KabalService(
                     type = OversendtPartIdType.PERSON,
                     verdi = fagsak.hentAktivIdent(),
                 ),
+                klagersProsessfullmektig = utledFullmektigFraBrevmottakere(brevMottakere),
             ),
             fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem),
             kildeReferanse = behandling.eksternBehandlingId.toString(),
@@ -44,6 +63,34 @@ class KabalService(
             kilde = fagsak.fagsystem,
             ytelse = fagsak.stønadstype.tilYtelse(),
         )
+    }
+
+    private fun utledFullmektigFraBrevmottakere(brevMottakere: Brevmottakere): OversendtProsessfullmektig? {
+        val fullmektigEllerVerge = brevMottakere.personer.firstOrNull { it.mottakerRolle == MottakerRolle.FULLMAKT }
+            ?: brevMottakere.personer.firstOrNull { it.mottakerRolle == MottakerRolle.VERGE }
+            ?: brevMottakere.organisasjoner.firstOrNull()
+
+        return fullmektigEllerVerge?.let {
+            val oversendtPartId: OversendtPartId = utledPartIdFraFullmektigEllerVerge(it)
+            val skalBrukerMottaBrev = brevMottakere.personer.any { brevMottaker -> brevMottaker.mottakerRolle == MottakerRolle.BRUKER }
+            return OversendtProsessfullmektig(id = oversendtPartId, skalKlagerMottaKopi = skalBrukerMottaBrev)
+        }
+    }
+
+    private fun utledPartIdFraFullmektigEllerVerge(it: Brevmottaker) = when (it) {
+        is BrevmottakerPerson -> {
+            OversendtPartId(
+                type = OversendtPartIdType.PERSON,
+                verdi = it.personIdent,
+            )
+        }
+
+        is BrevmottakerOrganisasjon -> {
+            OversendtPartId(
+                type = OversendtPartIdType.VIRKSOMHET,
+                verdi = it.organisasjonsnummer,
+            )
+        }
     }
 
     private fun lagInnsynUrl(fagsak: Fagsak, påklagetVedtak: PåklagetVedtak): String {
