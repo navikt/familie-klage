@@ -10,6 +10,7 @@ import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.blankett.LagSaksbehandlingsblankettTask
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.distribusjon.JournalførBrevTask
+import no.nav.familie.klage.distribusjon.SendTilKabalTask
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
@@ -24,6 +25,8 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_MEDHOLD
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_SATT
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.MEDHOLD
+import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL
+import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak.ORDINÆR
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.stereotype.Service
@@ -53,16 +56,28 @@ class FerdigstillBehandlingService(
         val behandlingsresultat = utledBehandlingResultat(behandlingId)
 
         validerKanFerdigstille(behandling)
-        if (behandlingsresultat != MEDHOLD) {
-            brevService.lagBrevPdf(behandlingId)
-            opprettJournalførBrevTask(behandlingId)
+        if (behandlingsresultat == IKKE_MEDHOLD) {
+            when (behandling.årsak) {
+                ORDINÆR -> {
+                    brevService.lagBrevPdf(behandlingId)
+                    opprettJournalførBrevTask(behandlingId)
+                }
+                HENVENDELSE_FRA_KABAL -> {
+                    opprettSendTilKabalTask(behandlingId)
+                }
+            }
         }
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
 
         val opprettetRevurdering = opprettRevurderingHvisMedhold(behandling, behandlingsresultat)
 
         behandlingService.oppdaterBehandlingMedResultat(behandlingId, behandlingsresultat, opprettetRevurdering)
-        stegService.oppdaterSteg(behandlingId, behandling.steg, stegForResultat(behandlingsresultat), behandlingsresultat)
+        stegService.oppdaterSteg(
+            behandlingId,
+            behandling.steg,
+            stegForResultat(behandlingsresultat),
+            behandlingsresultat,
+        )
         taskService.save(LagSaksbehandlingsblankettTask.opprettTask(behandlingId))
         if (behandlingsresultat == IKKE_MEDHOLD) {
             taskService.save(BehandlingsstatistikkTask.opprettSendtTilKATask(behandlingId = behandlingId))
@@ -98,6 +113,17 @@ class FerdigstillBehandlingService(
         taskService.save(journalførBrevTask)
     }
 
+    private fun opprettSendTilKabalTask(behandlingId: UUID) {
+        val sendTilKabalTask = Task(
+            type = SendTilKabalTask.TYPE,
+            payload = behandlingId.toString(),
+            properties = Properties().apply {
+                this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
+            },
+        )
+        taskService.save(sendTilKabalTask)
+    }
+
     private fun stegForResultat(resultat: BehandlingResultat): StegType = when (resultat) {
         IKKE_MEDHOLD -> StegType.KABAL_VENTER_SVAR
         MEDHOLD, IKKE_MEDHOLD_FORMKRAV_AVVIST, HENLAGT -> StegType.BEHANDLING_FERDIGSTILT
@@ -115,7 +141,8 @@ class FerdigstillBehandlingService(
 
     private fun utledBehandlingResultat(behandlingId: UUID): BehandlingResultat {
         return if (formService.formkravErOppfyltForBehandling(behandlingId)) {
-            vurderingService.hentVurdering(behandlingId)?.vedtak?.tilBehandlingResultat() ?: throw Feil("Burde funnet behandling $behandlingId")
+            vurderingService.hentVurdering(behandlingId)?.vedtak?.tilBehandlingResultat()
+                ?: throw Feil("Burde funnet behandling $behandlingId")
         } else {
             IKKE_MEDHOLD_FORMKRAV_AVVIST
         }

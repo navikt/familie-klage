@@ -18,6 +18,7 @@ import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
+import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -149,5 +150,17 @@ internal class StegServiceTest {
         verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.VURDERING) }
         verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BREV) }
         verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BEHANDLING_FERDIGSTILT) }
+    }
+
+    @Test
+    fun `skal ikke lagre behandlingshistorikk om brev dersom behandlingen ferdigstilles og har årsak henvendelse fra KA`() {
+        every { behandlingRepository.findByIdOrThrow(behandlingId) } returns behandling.copy(årsak = Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL)
+        stegService.oppdaterSteg(behandlingId, StegType.BREV, StegType.KABAL_VENTER_SVAR, BehandlingResultat.IKKE_MEDHOLD)
+
+        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.OPPRETTET) }
+        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.FORMKRAV) }
+        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.VURDERING) }
+        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BREV) }
+        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.OVERFØRING_TIL_KABAL) }
     }
 }

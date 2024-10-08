@@ -5,6 +5,7 @@ import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
+import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.klage.Årsak
 import java.time.LocalDate
@@ -23,6 +24,7 @@ data class BlankettPdfBehandling(
     val klageMottatt: LocalDate,
     val resultat: BehandlingResultat,
     val påklagetVedtak: BlankettPåklagetVedtakDto?,
+    val årsak: Klagebehandlingsårsak,
 )
 
 data class BlankettPåklagetVedtakDto(
