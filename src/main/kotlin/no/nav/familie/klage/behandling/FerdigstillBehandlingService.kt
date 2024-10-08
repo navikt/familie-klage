@@ -25,6 +25,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_MEDHOLD
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_SATT
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.MEDHOLD
+import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak.*
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.stereotype.Service
@@ -54,18 +55,28 @@ class FerdigstillBehandlingService(
         val behandlingsresultat = utledBehandlingResultat(behandlingId)
 
         validerKanFerdigstille(behandling)
-        if (behandling.skalSendeBrev) {
-            brevService.lagBrevPdf(behandlingId)
-            opprettJournalførBrevTask(behandlingId)
-        } else {
-            opprettSendTilKabalTask(behandlingId)
+        if (behandlingsresultat == IKKE_MEDHOLD) {
+            when (behandling.årsak) {
+                ORDINÆR -> {
+                    brevService.lagBrevPdf(behandlingId)
+                    opprettJournalførBrevTask(behandlingId)
+                }
+                HENVENDELSE_FRA_KABAL -> {
+                    opprettSendTilKabalTask(behandlingId)
+                }
+            }
         }
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
 
         val opprettetRevurdering = opprettRevurderingHvisMedhold(behandling, behandlingsresultat)
 
         behandlingService.oppdaterBehandlingMedResultat(behandlingId, behandlingsresultat, opprettetRevurdering)
-        stegService.oppdaterSteg(behandlingId, behandling.steg, stegForResultat(behandlingsresultat), behandlingsresultat)
+        stegService.oppdaterSteg(
+            behandlingId,
+            behandling.steg,
+            stegForResultat(behandlingsresultat),
+            behandlingsresultat
+        )
         taskService.save(LagSaksbehandlingsblankettTask.opprettTask(behandlingId))
         if (behandlingsresultat == IKKE_MEDHOLD) {
             taskService.save(BehandlingsstatistikkTask.opprettSendtTilKATask(behandlingId = behandlingId))
