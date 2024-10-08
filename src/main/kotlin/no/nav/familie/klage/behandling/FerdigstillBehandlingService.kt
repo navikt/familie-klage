@@ -25,7 +25,8 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_MEDHOLD
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_SATT
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.MEDHOLD
-import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak.*
+import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL
+import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak.ORDINÆR
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.stereotype.Service
@@ -75,7 +76,7 @@ class FerdigstillBehandlingService(
             behandlingId,
             behandling.steg,
             stegForResultat(behandlingsresultat),
-            behandlingsresultat
+            behandlingsresultat,
         )
         taskService.save(LagSaksbehandlingsblankettTask.opprettTask(behandlingId))
         if (behandlingsresultat == IKKE_MEDHOLD) {
