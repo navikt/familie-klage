@@ -8,7 +8,8 @@
       "behandlingstype" : "type",
       "resultat" : "resultat",
       "vedtakstidspunkt" : "2022-03-01T08:00:00"
-    }
+    },
+    "årsak" : "ORDINÆR"
   },
   "personopplysninger" : {
     "navn" : "navn",
