@@ -16,6 +16,7 @@ import no.nav.familie.klage.blankett.LagSaksbehandlingsblankettTask
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.distribusjon.DistribusjonService
 import no.nav.familie.klage.distribusjon.JournalførBrevTask
+import no.nav.familie.klage.distribusjon.SendTilKabalTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
@@ -30,10 +31,7 @@ import no.nav.familie.klage.testutil.DomainUtil.vurdering
 import no.nav.familie.klage.testutil.mockFeatureToggleService
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.domain.Vedtak
-import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
-import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
-import no.nav.familie.kontrakter.felles.klage.OpprettRevurderingResponse
-import no.nav.familie.kontrakter.felles.klage.Opprettet
+import no.nav.familie.kontrakter.felles.klage.*
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
@@ -116,6 +114,25 @@ internal class FerdigstillBehandlingServiceTest {
         verify(exactly = 4) { taskService.save(any()) }
         assertThat(saveTaskSlot.map { it.type }).containsExactly(
             JournalførBrevTask.TYPE,
+            LagSaksbehandlingsblankettTask.TYPE,
+            BehandlingsstatistikkTask.TYPE,
+            BehandlingsstatistikkTask.TYPE,
+        )
+        verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id) }
+    }
+
+    @Test
+    internal fun `skal ikke opprette og distribuere brev ved ferdigstillelse av behandling med årsak henvendelse fra kabal`() {
+        every { behandlingService.hentBehandling(any()) } returns behandling.copy(årsak = Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL)
+        ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
+
+        assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD)
+        assertThat(fagsystemRevurderingSlot.single()).isNull()
+        assertThat(stegSlot.captured).isEqualTo(StegType.KABAL_VENTER_SVAR)
+
+        verify(exactly = 4) { taskService.save(any()) }
+        assertThat(saveTaskSlot.map { it.type }).containsExactly(
+            SendTilKabalTask.TYPE,
             LagSaksbehandlingsblankettTask.TYPE,
             BehandlingsstatistikkTask.TYPE,
             BehandlingsstatistikkTask.TYPE,
