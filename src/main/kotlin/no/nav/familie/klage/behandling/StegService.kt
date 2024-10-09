@@ -10,6 +10,7 @@ import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
+import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -22,30 +23,35 @@ class StegService(
 ) {
 
     @Transactional
-    fun oppdaterSteg(behandlingId: UUID, nåværendeSteg: StegType, nesteSteg: StegType, behandlingsresultat: BehandlingResultat? = null) {
-        val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
-        validerHarSaksbehandlerRolle(behandlingId)
-        validerGyldigNesteSteg(behandling)
-        oppdaterBehandlingOgHistorikk(behandling.id, nåværendeSteg, nesteSteg, behandlingsresultat)
-    }
-
-    private fun oppdaterBehandlingOgHistorikk(
+    fun oppdaterSteg(
         behandlingId: UUID,
         nåværendeSteg: StegType,
         nesteSteg: StegType,
         behandlingsresultat: BehandlingResultat? = null,
     ) {
-        behandlingRepository.updateSteg(behandlingId, nesteSteg)
-        behandlingRepository.updateStatus(behandlingId, nesteSteg.gjelderStatus)
+        val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
+        validerHarSaksbehandlerRolle(behandlingId)
+        validerGyldigNesteSteg(behandling)
+        oppdaterBehandlingOgHistorikk(behandling, nåværendeSteg, nesteSteg, behandlingsresultat)
+    }
 
-        if (skalOppretteHistorikkradForNåværendeSteg(nåværendeSteg, nesteSteg, behandlingsresultat)) {
-            behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, nåværendeSteg)
+    private fun oppdaterBehandlingOgHistorikk(
+        behandling: Behandling,
+        nåværendeSteg: StegType,
+        nesteSteg: StegType,
+        behandlingsresultat: BehandlingResultat? = null,
+    ) {
+        behandlingRepository.updateSteg(behandling.id, nesteSteg)
+        behandlingRepository.updateStatus(behandling.id, nesteSteg.gjelderStatus)
+
+        if (skalOppretteHistorikkradForNåværendeSteg(nåværendeSteg, nesteSteg, behandlingsresultat, behandling.årsak)) {
+            behandlingshistorikkService.opprettBehandlingshistorikk(behandling.id, nåværendeSteg)
         }
         if (nesteSteg == StegType.KABAL_VENTER_SVAR) {
-            behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.OVERFØRING_TIL_KABAL)
+            behandlingshistorikkService.opprettBehandlingshistorikk(behandling.id, StegType.OVERFØRING_TIL_KABAL)
         }
         if (nesteSteg == StegType.BEHANDLING_FERDIGSTILT) {
-            behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BEHANDLING_FERDIGSTILT)
+            behandlingshistorikkService.opprettBehandlingshistorikk(behandling.id, StegType.BEHANDLING_FERDIGSTILT)
         }
     }
 
@@ -53,7 +59,18 @@ class StegService(
         nåværendeSteg: StegType,
         nesteSteg: StegType,
         behandlingsresultat: BehandlingResultat? = null,
-    ) = !(nåværendeSteg == StegType.BREV && nesteSteg == StegType.BEHANDLING_FERDIGSTILT && behandlingsresultat == BehandlingResultat.MEDHOLD)
+        behandlingsårsak: Klagebehandlingsårsak,
+    ): Boolean {
+        return if (nåværendeSteg == StegType.BREV) {
+            when (nesteSteg) {
+                StegType.BEHANDLING_FERDIGSTILT -> behandlingsresultat != BehandlingResultat.MEDHOLD
+                StegType.KABAL_VENTER_SVAR -> behandlingsårsak != Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL
+                else -> true
+            }
+        } else {
+            true
+        }
+    }
 
     private fun validerGyldigNesteSteg(behandling: Behandling) =
         feilHvis(behandling.status.erLåstForVidereBehandling()) {

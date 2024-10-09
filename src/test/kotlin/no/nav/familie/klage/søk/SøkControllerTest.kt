@@ -1,6 +1,5 @@
 package no.nav.familie.klage.søk
 
-import java.util.UUID
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
@@ -19,6 +18,7 @@ import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import java.util.UUID
 
 class SøkControllerTest : OppslagSpringRunnerTest() {
 
@@ -60,6 +60,6 @@ class SøkControllerTest : OppslagSpringRunnerTest() {
         restTemplate.exchange<Ressurs<PersonTreffDto>>(
             localhost("/api/sok/person"),
             HttpMethod.POST,
-            HttpEntity(personIdentDto, headers)
+            HttpEntity(personIdentDto, headers),
         )
 }
