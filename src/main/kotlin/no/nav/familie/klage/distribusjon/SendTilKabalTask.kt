@@ -1,6 +1,7 @@
 package no.nav.familie.klage.distribusjon
 
 import no.nav.familie.klage.behandling.BehandlingService
+import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.util.TaskMetadata
 import no.nav.familie.klage.kabal.KabalService
@@ -21,6 +22,7 @@ class SendTilKabalTask(
     private val behandlingService: BehandlingService,
     private val kabalService: KabalService,
     private val vurderingService: VurderingService,
+    private val brevService: BrevService,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
@@ -30,7 +32,8 @@ class SendTilKabalTask(
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         val vurdering =
             vurderingService.hentVurdering(behandlingId) ?: error("Mangler vurdering på klagen - kan ikke oversendes til kabal")
-        kabalService.sendTilKabal(fagsak, behandling, vurdering, saksbehandlerIdent)
+        val brevmottakere = brevService.hentBrevmottakere(behandlingId)
+        kabalService.sendTilKabal(fagsak, behandling, vurdering, saksbehandlerIdent, brevmottakere)
     }
 
     companion object {

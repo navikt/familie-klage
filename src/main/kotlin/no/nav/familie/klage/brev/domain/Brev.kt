@@ -45,10 +45,12 @@ data class BrevmottakerPerson(
     val personIdent: String,
     val navn: String,
     val mottakerRolle: MottakerRolle,
-)
+) : Brevmottaker()
 
 data class BrevmottakerOrganisasjon(
     val organisasjonsnummer: String,
     val organisasjonsnavn: String,
     val navnHosOrganisasjon: String,
-)
+) : Brevmottaker()
+
+sealed class Brevmottaker
