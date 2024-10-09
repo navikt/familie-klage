@@ -122,7 +122,7 @@ internal class KabalServiceTest {
     @Nested
     inner class VergeOgFullmektig {
         @Test
-        fun `skal sende med verge til kabal med kopi til bruker`() {
+        fun `dersom det både er verge og bruker skal motta kopi av brevet skal verge sendes over til kabal og motta svartidsbrevet`() {
             val påklagetVedtakDetaljer = påklagetVedtakDetaljer()
             val behandling =
                 behandling(fagsak, påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer))
@@ -140,7 +140,7 @@ internal class KabalServiceTest {
             val oversendelse = oversendelseSlot.captured
             assertThat(oversendelse.klager.klagersProsessfullmektig?.id?.verdi).isEqualTo(verge.personIdent)
             assertThat(oversendelse.klager.klagersProsessfullmektig?.id?.type).isEqualTo(OversendtPartIdType.PERSON)
-            assertThat(oversendelse.klager.klagersProsessfullmektig?.skalKlagerMottaKopi).isTrue()
+            assertThat(oversendelse.klager.klagersProsessfullmektig?.skalKlagerMottaKopi).isFalse()
         }
 
         @Test

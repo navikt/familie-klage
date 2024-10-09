@@ -22,7 +22,6 @@ class KabalService(
     private val integrasjonerClient: FamilieIntegrasjonerClient,
     private val lenkeConfig: LenkeConfig,
 ) {
-
     fun sendTilKabal(
         fagsak: Fagsak,
         behandling: Behandling,
@@ -45,8 +44,10 @@ class KabalService(
     ): OversendtKlageAnkeV3 {
         return OversendtKlageAnkeV3(
             type = Type.KLAGE,
-            klager = OversendtKlager(
-                id = OversendtPartId(
+            klager =
+            OversendtKlager(
+                id =
+                OversendtPartId(
                     type = OversendtPartIdType.PERSON,
                     verdi = fagsak.hentAktivIdent(),
                 ),
@@ -66,39 +67,44 @@ class KabalService(
     }
 
     private fun utledFullmektigFraBrevmottakere(brevMottakere: Brevmottakere): OversendtProsessfullmektig? {
-        val fullmektigEllerVerge = brevMottakere.personer.firstOrNull { it.mottakerRolle == MottakerRolle.FULLMAKT }
-            ?: brevMottakere.personer.firstOrNull { it.mottakerRolle == MottakerRolle.VERGE }
-            ?: brevMottakere.organisasjoner.firstOrNull()
+        val fullmektigEllerVerge =
+            brevMottakere.personer.firstOrNull { it.mottakerRolle == MottakerRolle.FULLMAKT }
+                ?: brevMottakere.personer.firstOrNull { it.mottakerRolle == MottakerRolle.VERGE }
+                ?: brevMottakere.organisasjoner.firstOrNull()
 
         return fullmektigEllerVerge?.let {
             val oversendtPartId: OversendtPartId = utledPartIdFraFullmektigEllerVerge(it)
-            val skalBrukerMottaBrev = brevMottakere.personer.any { brevMottaker -> brevMottaker.mottakerRolle == MottakerRolle.BRUKER }
-            return OversendtProsessfullmektig(id = oversendtPartId, skalKlagerMottaKopi = skalBrukerMottaBrev)
+            return OversendtProsessfullmektig(id = oversendtPartId, skalKlagerMottaKopi = false)
         }
     }
 
-    private fun utledPartIdFraFullmektigEllerVerge(it: Brevmottaker) = when (it) {
-        is BrevmottakerPerson -> {
-            OversendtPartId(
-                type = OversendtPartIdType.PERSON,
-                verdi = it.personIdent,
-            )
+    private fun utledPartIdFraFullmektigEllerVerge(it: Brevmottaker) =
+        when (it) {
+            is BrevmottakerPerson -> {
+                OversendtPartId(
+                    type = OversendtPartIdType.PERSON,
+                    verdi = it.personIdent,
+                )
+            }
+
+            is BrevmottakerOrganisasjon -> {
+                OversendtPartId(
+                    type = OversendtPartIdType.VIRKSOMHET,
+                    verdi = it.organisasjonsnummer,
+                )
+            }
         }
 
-        is BrevmottakerOrganisasjon -> {
-            OversendtPartId(
-                type = OversendtPartIdType.VIRKSOMHET,
-                verdi = it.organisasjonsnummer,
-            )
-        }
-    }
-
-    private fun lagInnsynUrl(fagsak: Fagsak, påklagetVedtak: PåklagetVedtak): String {
-        val fagsystemUrl = when (fagsak.fagsystem) {
-            Fagsystem.EF -> lenkeConfig.efSakLenke
-            Fagsystem.BA -> lenkeConfig.baSakLenke
-            Fagsystem.KS -> lenkeConfig.ksSakLenke
-        }
+    private fun lagInnsynUrl(
+        fagsak: Fagsak,
+        påklagetVedtak: PåklagetVedtak,
+    ): String {
+        val fagsystemUrl =
+            when (fagsak.fagsystem) {
+                Fagsystem.EF -> lenkeConfig.efSakLenke
+                Fagsystem.BA -> lenkeConfig.baSakLenke
+                Fagsystem.KS -> lenkeConfig.ksSakLenke
+            }
         val påklagetVedtakDetaljer = påklagetVedtak.påklagetVedtakDetaljer
         return if (påklagetVedtakDetaljer != null && påklagetVedtakDetaljer.fagsystemType == FagsystemType.ORDNIÆR && påklagetVedtakDetaljer.eksternFagsystemBehandlingId != null) {
             "$fagsystemUrl/fagsak/${fagsak.eksternId}/${påklagetVedtakDetaljer.eksternFagsystemBehandlingId}"
