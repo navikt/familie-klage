@@ -20,6 +20,7 @@ data class OversendtKlageAnkeV3(
     val kilde: Fagsystem,
     val ytelse: Ytelse,
     val kommentar: String? = null,
+    val hindreAutomatiskSvarbrev: Boolean,
 )
 
 enum class Type(override val id: String, override val navn: String, override val beskrivelse: String) : Kode {
