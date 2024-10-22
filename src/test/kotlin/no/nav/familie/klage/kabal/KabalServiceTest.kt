@@ -21,6 +21,7 @@ import no.nav.familie.klage.testutil.DomainUtil.vurdering
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
+import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
 import no.nav.familie.kontrakter.felles.saksbehandler.Saksbehandler
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -81,6 +82,7 @@ internal class KabalServiceTest {
         assertThat(oversendelse.kommentar).isNull()
         assertThat(oversendelse.dvhReferanse).isNull()
         assertThat(oversendelse.forrigeBehandlendeEnhet).isEqualTo(saksbehandlerA.enhet)
+        assertThat(oversendelse.hindreAutomatiskSvarbrev).isFalse()
     }
 
     @Test
@@ -95,6 +97,18 @@ internal class KabalServiceTest {
         assertThat(oversendelseSlot.captured.innsynUrl)
             .isEqualTo("${lenkeConfig.efSakLenke}/fagsak/${fagsak.eksternId}/saksoversikt")
         assertThat(oversendelseSlot.captured.forrigeBehandlendeEnhet).isEqualTo(saksbehandlerB.enhet)
+    }
+
+    @Test
+    internal fun `skal sette hindreAutomatiskSvarbrev til true dersom årsaken til behandlingen er henvendelse fra kabal`() {
+        val påklagetVedtakDetaljer = påklagetVedtakDetaljer()
+        val behandling =
+            behandling(fagsak, påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer), årsak = Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL)
+        val vurdering = vurdering(behandlingId = behandling.id, hjemmel = hjemmel)
+
+        kabalService.sendTilKabal(fagsak, behandling, vurdering, saksbehandlerB.navIdent, ingenBrevmottaker)
+
+        assertThat(oversendelseSlot.captured.hindreAutomatiskSvarbrev).isTrue()
     }
 
     @Test

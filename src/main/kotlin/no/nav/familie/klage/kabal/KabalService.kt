@@ -14,6 +14,7 @@ import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
+import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
 import org.springframework.stereotype.Service
 
 @Service
@@ -63,6 +64,7 @@ class KabalService(
             innsendtTilNav = behandling.klageMottatt,
             kilde = fagsak.fagsystem,
             ytelse = fagsak.stønadstype.tilYtelse(),
+            hindreAutomatiskSvarbrev = behandling.årsak == Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL,
         )
     }
 
