@@ -56,7 +56,7 @@ class FerdigstillBehandlingService(
         val behandlingsresultat = utledBehandlingResultat(behandlingId)
 
         validerKanFerdigstille(behandling)
-        if (behandlingsresultat == IKKE_MEDHOLD) {
+        if (behandlingsresultat == IKKE_MEDHOLD || behandlingsresultat == IKKE_MEDHOLD_FORMKRAV_AVVIST) {
             when (behandling.årsak) {
                 ORDINÆR -> {
                     brevService.lagBrevPdf(behandlingId)

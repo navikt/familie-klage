@@ -155,6 +155,7 @@ internal class FerdigstillBehandlingServiceTest {
         assertThat(fagsystemRevurderingSlot.single()).isNull()
 
         verify { taskService.save(any()) }
+        verify { brevService.lagBrevPdf(any()) }
     }
 
     @Test
