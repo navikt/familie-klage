@@ -168,10 +168,12 @@ object BrevInnhold {
 
     private fun Stønadstype.klageUrl() = when (this) {
         Stønadstype.OVERGANGSSTØNAD,
+            -> "nav.no/klage#overgangsstonad-til-enslig-mor-eller-far"
         Stønadstype.BARNETILSYN,
+            -> "nav.no/klage#stonad-til-barnetilsyn-for-enslig-mor-eller-far"
         Stønadstype.SKOLEPENGER,
-        -> "nav.no/klage#overgangsstonad-til-enslig-mor-eller-far"
-        Stønadstype.BARNETRYGD -> "klage.nav.no/familie/barnetrygd"
-        Stønadstype.KONTANTSTØTTE -> "klage.nav.no/familie/kontantstotte"
+        -> "nav.no/klage#stonad-til-skolepenger-for-enslig-mor-eller-far"
+        Stønadstype.BARNETRYGD -> "nav.no/klage#barnetrygd"
+        Stønadstype.KONTANTSTØTTE -> "nav.no/klage#kontantstotte"
     }
 }
