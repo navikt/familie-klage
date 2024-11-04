@@ -170,7 +170,7 @@ object BrevInnhold {
         Stønadstype.OVERGANGSSTØNAD,
         Stønadstype.BARNETILSYN,
         Stønadstype.SKOLEPENGER,
-        -> "klage.nav.no/familie/enslig-mor-eller-far"
+        -> "nav.no/klage#overgangsstonad-til-enslig-mor-eller-far"
         Stønadstype.BARNETRYGD -> "klage.nav.no/familie/barnetrygd"
         Stønadstype.KONTANTSTØTTE -> "klage.nav.no/familie/kontantstotte"
     }
