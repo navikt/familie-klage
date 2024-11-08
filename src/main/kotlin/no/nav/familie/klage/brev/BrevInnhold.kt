@@ -24,7 +24,7 @@ object BrevInnhold {
         klageMottatt: LocalDate,
     ): FritekstBrevRequestDto {
         return FritekstBrevRequestDto(
-            overskrift = "Vi har sendt klagen din til NAV Klageinstans Nord",
+            overskrift = "Vi har sendt klagen din til Nav Klageinstans Nord",
             navn = navn,
             personIdent = ident,
             avsnitt =
@@ -35,14 +35,14 @@ object BrevInnhold {
                     "Vi har ${klageMottatt.norskFormat()} fått klagen din på vedtaket om " +
                         "${visningsnavn(stønadstype, påklagetVedtakDetaljer)} som ble gjort " +
                         "${påklagetVedtakDetaljer.vedtakstidspunkt.norskFormat()}, " +
-                        "og kommet frem til at vi ikke endrer vedtaket. NAV Klageinstans skal derfor vurdere saken din på nytt.",
+                        "og kommet frem til at vi ikke endrer vedtaket. Nav Klageinstans skal derfor vurdere saken din på nytt.",
                 ),
                 AvsnittDto(
                     deloverskrift = "",
                     innhold = "Saksbehandlingstidene finner du på nav.no/saksbehandlingstider.",
                 ),
                 AvsnittDto(
-                    deloverskrift = "Dette er vurderingen vi har sendt til NAV Klageinstans",
+                    deloverskrift = "Dette er vurderingen vi har sendt til Nav Klageinstans",
                     innhold = instillingKlageinstans,
                 ),
                 AvsnittDto(
@@ -168,9 +168,9 @@ object BrevInnhold {
 
     private fun Stønadstype.klageUrl() = when (this) {
         Stønadstype.OVERGANGSSTØNAD,
-            -> "nav.no/klage#overgangsstonad-til-enslig-mor-eller-far"
+        -> "nav.no/klage#overgangsstonad-til-enslig-mor-eller-far"
         Stønadstype.BARNETILSYN,
-            -> "nav.no/klage#stonad-til-barnetilsyn-for-enslig-mor-eller-far"
+        -> "nav.no/klage#stonad-til-barnetilsyn-for-enslig-mor-eller-far"
         Stønadstype.SKOLEPENGER,
         -> "nav.no/klage#stonad-til-skolepenger-for-enslig-mor-eller-far"
         Stønadstype.BARNETRYGD -> "nav.no/klage#barnetrygd"

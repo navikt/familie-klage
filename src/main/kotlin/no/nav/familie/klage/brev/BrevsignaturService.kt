@@ -20,8 +20,8 @@ class BrevsignaturService {
 
     companion object {
 
-        val NAV_ANONYM_NAVN = "NAV anonym"
-        val ENHET_VIKAFOSSEN = "NAV Vikafossen"
-        val ENHET_NAY = "NAV Arbeid og ytelser"
+        val NAV_ANONYM_NAVN = "Nav anonym"
+        val ENHET_VIKAFOSSEN = "Nav Vikafossen"
+        val ENHET_NAY = "Nav Arbeid og ytelser"
     }
 }
