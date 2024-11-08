@@ -121,7 +121,7 @@ class DistribusjonService(
         val stønadstype = fagsakService.hentFagsakForBehandling(behandlingId).stønadstype
 
         val tittelPrefix = when (behandling.resultat) {
-            BehandlingResultat.IKKE_MEDHOLD -> "Brev om oversendelse til NAV Klageinstans"
+            BehandlingResultat.IKKE_MEDHOLD -> "Brev om oversendelse til Nav Klageinstans"
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> "Vedtak om avvist klage"
             else -> error("Kan ikke utlede brevtittel for behandlingsresultat ${behandling.resultat}")
         }
