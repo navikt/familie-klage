@@ -17,8 +17,8 @@ import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
-import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
+import no.nav.familie.kontrakter.felles.journalpost.AvsenderMottakerIdType
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
@@ -90,9 +90,9 @@ internal class JournalførBrevTaskTest {
     @Nested
     inner class JournalførMottakere {
 
-        val mottakerPerson = AvsenderMottaker("1", BrukerIdType.FNR, "1navn")
-        val mottakerPerson2 = AvsenderMottaker("2", BrukerIdType.FNR, "2navn")
-        val mottakerOrganisasjon = AvsenderMottaker("org1", BrukerIdType.ORGNR, "mottaker")
+        val mottakerPerson = AvsenderMottaker("1", AvsenderMottakerIdType.FNR, "1navn")
+        val mottakerPerson2 = AvsenderMottaker("2", AvsenderMottakerIdType.FNR, "2navn")
+        val mottakerOrganisasjon = AvsenderMottaker("org1", AvsenderMottakerIdType.ORGNR, "mottaker")
 
         val mottakere = Brevmottakere(
             listOf(
