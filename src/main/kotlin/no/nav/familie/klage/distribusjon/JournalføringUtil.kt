@@ -1,8 +1,8 @@
 package no.nav.familie.klage.distribusjon
 
 import no.nav.familie.klage.brev.domain.Brevmottakere
-import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
+import no.nav.familie.kontrakter.felles.journalpost.AvsenderMottakerIdType
 
 object JournalføringUtil {
 
@@ -12,13 +12,13 @@ object JournalføringUtil {
                 AvsenderMottaker(
                     id = it.personIdent,
                     navn = it.navn,
-                    idType = BrukerIdType.FNR,
+                    idType = AvsenderMottakerIdType.FNR,
                 )
             } + mottakere.organisasjoner.map {
                 AvsenderMottaker(
                     id = it.organisasjonsnummer,
                     navn = it.navnHosOrganisasjon,
-                    idType = BrukerIdType.ORGNR,
+                    idType = AvsenderMottakerIdType.ORGNR,
                 )
             }
         }
