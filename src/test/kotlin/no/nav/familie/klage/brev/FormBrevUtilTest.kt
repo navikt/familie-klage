@@ -1,10 +1,10 @@
 package no.nav.familie.klage.brev
 
-import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkår
-import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkår.KLAGEFRIST_OVERHOLDT
-import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkår.KLAGE_KONKRET
-import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkår.KLAGE_PART
-import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkår.KLAGE_SIGNERT
+import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkårEF
+import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkårEF.KLAGEFRIST_OVERHOLDT
+import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkårEF.KLAGE_KONKRET
+import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkårEF.KLAGE_PART
+import no.nav.familie.klage.brev.FormBrevUtil.FormkravVilkårEF.KLAGE_SIGNERT
 import no.nav.familie.klage.brev.FormBrevUtil.utledIkkeOppfylteFormkrav
 import no.nav.familie.klage.brev.FormBrevUtil.utledLovtekst
 import no.nav.familie.klage.brev.FormBrevUtil.utledÅrsakTilAvvisningstekst
@@ -130,7 +130,7 @@ internal class FormBrevUtilTest {
     val folketrygdLovPrefix = "Vedtaket er gjort etter folketrygdloven"
     val forvaltningslovPrefix = "Vedtaket er gjort etter forvaltningsloven"
 
-    val tomIkkeOppfylteFormkrav = emptySet<FormkravVilkår>()
+    val tomIkkeOppfylteFormkrav = emptySet<FormkravVilkårEF>()
     val klagePart = setOf(KLAGE_PART)
     val klageKonkret = setOf(KLAGE_KONKRET)
     val klageSignert = setOf(KLAGE_SIGNERT)
