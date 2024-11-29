@@ -45,6 +45,7 @@ class BrevService(
     private val formService: FormService,
     private val vurderingService: VurderingService,
     private val personopplysningerService: PersonopplysningerService,
+    private val brevInnholdUtleder: BrevInnholdUtleder,
 ) {
 
     fun hentBrev(behandlingId: UUID): Brev = brevRepository.findByIdOrThrow(behandlingId)
@@ -120,7 +121,7 @@ class BrevService(
                 brukerfeilHvis(påklagetVedtakDetaljer == null) {
                     "Kan ikke opprette brev til klageinstansen når det ikke er valgt et påklaget vedtak"
                 }
-                BrevInnhold.lagOpprettholdelseBrev(
+                brevInnholdUtleder.lagOpprettholdelseBrev(
                     ident = fagsak.hentAktivIdent(),
                     instillingKlageinstans = instillingKlageinstans,
                     navn = navn,
@@ -132,16 +133,16 @@ class BrevService(
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> {
                 val formkrav = formService.hentForm(behandling.id)
                 return when (behandling.påklagetVedtak.påklagetVedtakstype) {
-                    PåklagetVedtakstype.UTEN_VEDTAK -> BrevInnhold.lagFormkravAvvistBrevIkkePåklagetVedtak(
+                    PåklagetVedtakstype.UTEN_VEDTAK -> brevInnholdUtleder.lagFormkravAvvistBrevIkkePåklagetVedtak(
                         ident = fagsak.hentAktivIdent(),
                         navn = navn,
                         formkrav = formkrav,
                         stønadstype = fagsak.stønadstype,
                     )
-                    else -> BrevInnhold.lagFormkravAvvistBrev(
+                    else -> brevInnholdUtleder.lagFormkravAvvistBrev(
                         ident = fagsak.hentAktivIdent(),
                         navn = navn,
-                        formkrav = formkrav,
+                        form = formkrav,
                         stønadstype = fagsak.stønadstype,
                         påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                         fagsystem = fagsak.fagsystem

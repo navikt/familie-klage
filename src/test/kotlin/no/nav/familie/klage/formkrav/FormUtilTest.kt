@@ -14,23 +14,22 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 internal class FormUtilTest {
-
     val påklagetVedtakMedBehandling = PåklagetVedtakDto(eksternFagsystemBehandlingId = "123", PåklagetVedtakstype.VEDTAK)
     val påklagetVedtakUtenBehandling = PåklagetVedtakDto(eksternFagsystemBehandlingId = null, PåklagetVedtakstype.UTEN_VEDTAK)
     val påklagetVedtakIkkeValgt = PåklagetVedtakDto(eksternFagsystemBehandlingId = null, PåklagetVedtakstype.IKKE_VALGT)
 
     val behandlingId = UUID.randomUUID()
     val oppfyltForm = oppfyltForm(behandlingId)
-    val ikkeOppfyltForm = oppfyltForm.copy(
-        saksbehandlerBegrunnelse = "Ok",
-        klagePart = FormVilkår.IKKE_OPPFYLT,
-        brevtekst = "brevtekst",
-    )
+    val ikkeOppfyltForm =
+        oppfyltForm.copy(
+            saksbehandlerBegrunnelse = "Ok",
+            klagePart = FormVilkår.IKKE_OPPFYLT,
+            brevtekst = "brevtekst",
+        )
     val ikkeFerdigUtfyltForm = Form(UUID.randomUUID())
 
     @Nested
     inner class UtledFormresultat {
-
         @Test
         internal fun `alle formkrav er ferdigutfylte`() {
             assertThat(utledFormresultat(oppfyltForm, påklagetVedtakMedBehandling)).isEqualTo(FormVilkår.OPPFYLT)
@@ -52,7 +51,6 @@ internal class FormUtilTest {
 
     @Nested
     inner class FormkravErOppfylt {
-
         @Test
         internal fun `alle formkrav oppfylt skal returnere true`() {
             assertThat(alleVilkårOppfylt(oppfyltForm)).isTrue
@@ -80,12 +78,18 @@ internal class FormUtilTest {
 
             assertThat(alleVilkårOppfylt(ikkeOppfyltFrist)).isFalse
             assertThat(alleVilkårOppfylt(ikkeOppfyltFrist.copy(klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_UNNTAK))).isFalse
-            assertThat(alleVilkårOppfylt(ikkeOppfyltFrist.copy(klagefristOverholdtUnntak = FormkravFristUnntak.UNNTAK_KAN_IKKE_LASTES))).isTrue
+            assertThat(
+                alleVilkårOppfylt(ikkeOppfyltFrist.copy(klagefristOverholdtUnntak = FormkravFristUnntak.UNNTAK_KAN_IKKE_LASTES)),
+            ).isTrue
             assertThat(alleVilkårOppfylt(ikkeOppfyltFrist.copy(klagefristOverholdtUnntak = FormkravFristUnntak.UNNTAK_SÆRLIG_GRUNN))).isTrue
             assertThat(alleVilkårOppfylt(toFormKravIkkeOppfylt)).isFalse
             assertThat(alleVilkårOppfylt(toFormKravIkkeOppfylt.copy(klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_UNNTAK))).isFalse
-            assertThat(alleVilkårOppfylt(toFormKravIkkeOppfylt.copy(klagefristOverholdtUnntak = FormkravFristUnntak.UNNTAK_KAN_IKKE_LASTES))).isFalse
-            assertThat(alleVilkårOppfylt(toFormKravIkkeOppfylt.copy(klagefristOverholdtUnntak = FormkravFristUnntak.UNNTAK_SÆRLIG_GRUNN))).isFalse
+            assertThat(
+                alleVilkårOppfylt(toFormKravIkkeOppfylt.copy(klagefristOverholdtUnntak = FormkravFristUnntak.UNNTAK_KAN_IKKE_LASTES)),
+            ).isFalse
+            assertThat(
+                alleVilkårOppfylt(toFormKravIkkeOppfylt.copy(klagefristOverholdtUnntak = FormkravFristUnntak.UNNTAK_SÆRLIG_GRUNN)),
+            ).isFalse
         }
 
         @Test
@@ -95,18 +99,25 @@ internal class FormUtilTest {
 
             assertThat(alleVilkårOppfylt(ikkeOppfyltFrist)).isFalse
             assertThat(alleVilkårOppfylt(ikkeOppfyltFrist.copy(klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_UNNTAK))).isFalse
-            assertThat(alleVilkårOppfylt(ikkeOppfyltFrist.copy(klagefristOverholdtUnntak = FormkravFristUnntak.UNNTAK_KAN_IKKE_LASTES))).isFalse
-            assertThat(alleVilkårOppfylt(ikkeOppfyltFrist.copy(klagefristOverholdtUnntak = FormkravFristUnntak.UNNTAK_SÆRLIG_GRUNN))).isFalse
+            assertThat(
+                alleVilkårOppfylt(ikkeOppfyltFrist.copy(klagefristOverholdtUnntak = FormkravFristUnntak.UNNTAK_KAN_IKKE_LASTES)),
+            ).isFalse
+            assertThat(
+                alleVilkårOppfylt(ikkeOppfyltFrist.copy(klagefristOverholdtUnntak = FormkravFristUnntak.UNNTAK_SÆRLIG_GRUNN)),
+            ).isFalse
             assertThat(alleVilkårOppfylt(toFormKravIkkeSatt)).isFalse
             assertThat(alleVilkårOppfylt(toFormKravIkkeSatt.copy(klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_UNNTAK))).isFalse
-            assertThat(alleVilkårOppfylt(toFormKravIkkeSatt.copy(klagefristOverholdtUnntak = FormkravFristUnntak.UNNTAK_KAN_IKKE_LASTES))).isFalse
-            assertThat(alleVilkårOppfylt(toFormKravIkkeSatt.copy(klagefristOverholdtUnntak = FormkravFristUnntak.UNNTAK_SÆRLIG_GRUNN))).isFalse
+            assertThat(
+                alleVilkårOppfylt(toFormKravIkkeSatt.copy(klagefristOverholdtUnntak = FormkravFristUnntak.UNNTAK_KAN_IKKE_LASTES)),
+            ).isFalse
+            assertThat(
+                alleVilkårOppfylt(toFormKravIkkeSatt.copy(klagefristOverholdtUnntak = FormkravFristUnntak.UNNTAK_SÆRLIG_GRUNN)),
+            ).isFalse
         }
     }
 
     @Nested
     inner class IkkePåklagetVedtak {
-
         @Test
         internal fun `valgt ikkePåklaget vedtak og ikke oppfylte fritekstfelter gir formkravresultat ikke satt`() {
             assertThat(
