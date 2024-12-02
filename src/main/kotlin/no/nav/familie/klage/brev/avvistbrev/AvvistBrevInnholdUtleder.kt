@@ -27,7 +27,7 @@ interface AvvistBrevInnholdUtleder<T : FormkravVilkår> {
     fun Set<Formkrav>.tilFormkravVilkår(): Set<T>
 
     companion object {
-        const val INNHOLDSTEKST_PREFIX = "Vi har avvist klagen din fordi"
+        private const val INNHOLDSTEKST_PREFIX = "Vi har avvist klagen din fordi"
 
         private fun utledIkkeOppfylteFormkrav(form: Form): Set<Formkrav> =
             setOf(
