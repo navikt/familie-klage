@@ -77,7 +77,7 @@ class BrevService(
 
         val brevRequest = lagBrevRequest(behandling, fagsak, navn, påklagetVedtakDetaljer, behandling.klageMottatt)
 
-        val signaturMedEnhet = brevsignaturService.lagSignatur(personopplysninger)
+        val signaturMedEnhet = brevsignaturService.lagSignatur(personopplysninger, fagsak.fagsystem)
 
         val html = brevClient.genererHtmlFritekstbrev(
             fritekstBrev = brevRequest,
