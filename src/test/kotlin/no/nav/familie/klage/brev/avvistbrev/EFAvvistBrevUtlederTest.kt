@@ -10,7 +10,7 @@ import org.junit.jupiter.api.assertThrows
 import java.util.UUID
 
 class EFAvvistBrevUtlederTest {
-    private val efAvvistBrevUtleder = EFAvvistBrevUtleder()
+    private val efAvvistBrevUtleder = EFAvvistBrevInnholdUtleder()
 
     val folketrygdLovPrefix = "Vedtaket er gjort etter folketrygdloven"
     val forvaltningslovPrefix = "Vedtaket er gjort etter forvaltningsloven"

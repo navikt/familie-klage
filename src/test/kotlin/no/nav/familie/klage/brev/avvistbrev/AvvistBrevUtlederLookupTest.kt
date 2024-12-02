@@ -13,18 +13,18 @@ import java.util.UUID
 
 class AvvistBrevUtlederLookupTest(
     @Autowired
-    private val avvistBrevUtlederLookup: AvvistBrevUtleder.Lookup,
+    private val avvistBrevInnholdUtlederLookup: AvvistBrevInnholdUtleder.Lookup,
     @Autowired
-    private val efAvvistBrevUtleder: EFAvvistBrevUtleder,
+    private val efAvvistBrevUtleder: EFAvvistBrevInnholdUtleder,
 ) : OppslagSpringRunnerTest() {
     @Test
     fun `skal hente EFAvvistBrevUtleder dersom fagsystem er EF`() {
         // Act
-        val avvistBrevUtleder = avvistBrevUtlederLookup.hentAvvistBrevUtlederForFagsystem(Fagsystem.EF)
+        val avvistBrevUtleder = avvistBrevInnholdUtlederLookup.hentAvvistBrevUtlederForFagsystem(Fagsystem.EF)
 
         // Assert
         assertNotNull(avvistBrevUtleder)
-        assertInstanceOf(EFAvvistBrevUtleder::class.java, avvistBrevUtleder)
+        assertInstanceOf(EFAvvistBrevInnholdUtleder::class.java, avvistBrevUtleder)
         assertDoesNotThrow {
             avvistBrevUtleder.utledBrevInnhold(
                 oppfyltForm(behandlingId = UUID.randomUUID()).copy(
@@ -38,11 +38,11 @@ class AvvistBrevUtlederLookupTest(
     @Test
     fun `skal hente BAAvvistBrevUtleder dersom fagsystem er BA`() {
         // Act
-        val avvistBrevUtleder = avvistBrevUtlederLookup.hentAvvistBrevUtlederForFagsystem(Fagsystem.BA)
+        val avvistBrevUtleder = avvistBrevInnholdUtlederLookup.hentAvvistBrevUtlederForFagsystem(Fagsystem.BA)
 
         // Assert
         assertNotNull(avvistBrevUtleder)
-        assertInstanceOf(BAAvvistBrevUtleder::class.java, avvistBrevUtleder)
+        assertInstanceOf(BAAvvistBrevInnholdUtleder::class.java, avvistBrevUtleder)
         assertDoesNotThrow {
             avvistBrevUtleder.utledBrevInnhold(
                 oppfyltForm(behandlingId = UUID.randomUUID()).copy(
@@ -56,11 +56,11 @@ class AvvistBrevUtlederLookupTest(
     @Test
     fun `skal hente KSAvvistBrevUtleder dersom fagsystem er KS`() {
         // Act
-        val avvistBrevUtleder = avvistBrevUtlederLookup.hentAvvistBrevUtlederForFagsystem(Fagsystem.KS)
+        val avvistBrevUtleder = avvistBrevInnholdUtlederLookup.hentAvvistBrevUtlederForFagsystem(Fagsystem.KS)
 
         // Assert
         assertNotNull(avvistBrevUtleder)
-        assertInstanceOf(KSAvvistBrevUtleder::class.java, avvistBrevUtleder)
+        assertInstanceOf(KSAvvistBrevInnholdUtleder::class.java, avvistBrevUtleder)
         assertDoesNotThrow {
             avvistBrevUtleder.utledBrevInnhold(
                 oppfyltForm(behandlingId = UUID.randomUUID()).copy(

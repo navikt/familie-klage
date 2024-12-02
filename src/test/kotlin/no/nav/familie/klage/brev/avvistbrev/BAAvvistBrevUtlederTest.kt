@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 class BAAvvistBrevUtlederTest {
-    private val baAvvistBrevUtleder = BAAvvistBrevUtleder()
+    private val baAvvistBrevUtleder = BAAvvistBrevInnholdUtleder()
 
     val barnetrygdlovenPrefix = "Vedtaket er gjort etter barnetrygdloven"
     val forvaltningslovPrefix = "Vedtaket er gjort etter forvaltningsloven"

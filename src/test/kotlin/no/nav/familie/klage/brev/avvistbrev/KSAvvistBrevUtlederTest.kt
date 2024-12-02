@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 class KSAvvistBrevUtlederTest {
-    private val ksAvvistBrevUtleder = KSAvvistBrevUtleder()
+    private val ksAvvistBrevUtleder = KSAvvistBrevInnholdUtleder()
 
     val kontantstøttelovenPrefix = "Vedtaket er gjort etter kontantstøtteloven"
     val forvaltningslovPrefix = "Vedtaket er gjort etter forvaltningsloven"

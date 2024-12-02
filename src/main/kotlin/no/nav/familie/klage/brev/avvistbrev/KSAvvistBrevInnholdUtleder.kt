@@ -1,11 +1,11 @@
 package no.nav.familie.klage.brev.avvistbrev
 
-import no.nav.familie.klage.brev.avvistbrev.AvvistBrevUtleder.Companion.utledParagrafer
+import no.nav.familie.klage.brev.avvistbrev.AvvistBrevInnholdUtleder.Companion.utledParagrafer
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import org.springframework.stereotype.Component
 
 @Component
-class KSAvvistBrevUtleder : AvvistBrevUtleder<FormkravVilkårKS> {
+class KSAvvistBrevInnholdUtleder : AvvistBrevInnholdUtleder<FormkravVilkårKS> {
     override val fagsystem: Fagsystem = Fagsystem.KS
 
     override fun utledLovtekst(formkravVilkårKS: Set<FormkravVilkårKS>): String {

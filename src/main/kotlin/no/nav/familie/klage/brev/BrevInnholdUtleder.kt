@@ -1,7 +1,7 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
-import no.nav.familie.klage.brev.avvistbrev.AvvistBrevUtleder
+import no.nav.familie.klage.brev.avvistbrev.AvvistBrevInnholdUtleder
 import no.nav.familie.klage.brev.dto.AvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.felles.util.StønadstypeVisningsnavn.visningsnavn
@@ -15,7 +15,7 @@ import java.time.LocalDate
 
 @Component
 class BrevInnholdUtleder(
-    private val avvistBrevUtlederLookup: AvvistBrevUtleder.Lookup,
+    private val avvistBrevInnholdUtlederLookup: AvvistBrevInnholdUtleder.Lookup,
 ) {
     fun lagOpprettholdelseBrev(
         ident: String,
@@ -64,7 +64,7 @@ class BrevInnholdUtleder(
         påklagetVedtakDetaljer: PåklagetVedtakDetaljer?,
         fagsystem: Fagsystem,
     ): FritekstBrevRequestDto {
-        val avvistBrevUtleder = avvistBrevUtlederLookup.hentAvvistBrevUtlederForFagsystem(fagsystem)
+        val avvistBrevUtleder = avvistBrevInnholdUtlederLookup.hentAvvistBrevUtlederForFagsystem(fagsystem)
         val avvistBrevInnhold = avvistBrevUtleder.utledBrevInnhold(form)
 
         return FritekstBrevRequestDto(

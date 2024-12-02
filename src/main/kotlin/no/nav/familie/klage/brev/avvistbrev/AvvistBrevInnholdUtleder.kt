@@ -6,7 +6,7 @@ import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import org.springframework.stereotype.Component
 
-interface AvvistBrevUtleder<T : FormkravVilkår> {
+interface AvvistBrevInnholdUtleder<T : FormkravVilkår> {
     val fagsystem: Fagsystem
 
     fun utledBrevInnhold(form: Form): AvvistBrevInnhold {
@@ -56,9 +56,9 @@ interface AvvistBrevUtleder<T : FormkravVilkår> {
 
     @Component
     class Lookup(
-        private val avvistBrevUtledere: List<AvvistBrevUtleder<*>>,
+        private val avvistBrevInnholdUtledere: List<AvvistBrevInnholdUtleder<*>>,
     ) {
-        fun hentAvvistBrevUtlederForFagsystem(fagsystem: Fagsystem) = avvistBrevUtledere.single { it.fagsystem == fagsystem }
+        fun hentAvvistBrevUtlederForFagsystem(fagsystem: Fagsystem) = avvistBrevInnholdUtledere.single { it.fagsystem == fagsystem }
     }
 }
 

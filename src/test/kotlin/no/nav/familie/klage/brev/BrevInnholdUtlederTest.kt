@@ -2,8 +2,8 @@ package no.nav.familie.klage.brev
 
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.familie.klage.brev.avvistbrev.AvvistBrevUtleder
-import no.nav.familie.klage.brev.avvistbrev.EFAvvistBrevUtleder
+import no.nav.familie.klage.brev.avvistbrev.AvvistBrevInnholdUtleder
+import no.nav.familie.klage.brev.avvistbrev.EFAvvistBrevInnholdUtleder
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
 import no.nav.familie.klage.testutil.DomainUtil.påklagetVedtakDetaljer
@@ -20,8 +20,8 @@ internal class BrevInnholdUtlederTest {
     private val mottattDato = LocalDate.of(2020, 1, 1)
     private val vedtakstidspunkt = LocalDateTime.of(2021, 11, 5, 14, 56, 22)
 
-    private val avvistBrevUtlederLookup = mockk<AvvistBrevUtleder.Lookup>()
-    private val brevInnholdUtleder = BrevInnholdUtleder(avvistBrevUtlederLookup)
+    private val avvistBrevInnholdUtlederLookup = mockk<AvvistBrevInnholdUtleder.Lookup>()
+    private val brevInnholdUtleder = BrevInnholdUtleder(avvistBrevInnholdUtlederLookup)
 
     @Test
     internal fun `brev for opprettholdelse skal inneholde blant annat dato og stønadstype`() {
@@ -81,7 +81,7 @@ internal class BrevInnholdUtlederTest {
 
     @Test
     internal fun `brev for avvist formkrav skal inneholde blant annat dato og stønadstype`() {
-        every { avvistBrevUtlederLookup.hentAvvistBrevUtlederForFagsystem(Fagsystem.EF) } returns EFAvvistBrevUtleder()
+        every { avvistBrevInnholdUtlederLookup.hentAvvistBrevUtlederForFagsystem(Fagsystem.EF) } returns EFAvvistBrevInnholdUtleder()
 
         val brev =
             brevInnholdUtleder.lagFormkravAvvistBrev(
@@ -102,7 +102,7 @@ internal class BrevInnholdUtlederTest {
     internal fun `brev for avvist formkrav skal ha med info om tilbakebetaling`() {
         val påklagetVedtakDetaljer =
             påklagetVedtakDetaljer("123", vedtakstidspunkt = vedtakstidspunkt, fagsystemType = FagsystemType.TILBAKEKREVING)
-        every { avvistBrevUtlederLookup.hentAvvistBrevUtlederForFagsystem(Fagsystem.EF) } returns EFAvvistBrevUtleder()
+        every { avvistBrevInnholdUtlederLookup.hentAvvistBrevUtlederForFagsystem(Fagsystem.EF) } returns EFAvvistBrevInnholdUtleder()
         val brev =
             brevInnholdUtleder.lagFormkravAvvistBrev(
                 ident = "123456789",
@@ -119,7 +119,7 @@ internal class BrevInnholdUtlederTest {
     internal fun `brev for avvist formkrav skal ha med info om sanksjon`() {
         val påklagetVedtakDetaljer =
             påklagetVedtakDetaljer("123", vedtakstidspunkt = vedtakstidspunkt, fagsystemType = FagsystemType.SANKSJON_1_MND)
-        every { avvistBrevUtlederLookup.hentAvvistBrevUtlederForFagsystem(Fagsystem.EF) } returns EFAvvistBrevUtleder()
+        every { avvistBrevInnholdUtlederLookup.hentAvvistBrevUtlederForFagsystem(Fagsystem.EF) } returns EFAvvistBrevInnholdUtleder()
         val brev =
             brevInnholdUtleder.lagFormkravAvvistBrev(
                 ident = "123456789",
