@@ -22,7 +22,7 @@ class BrevsignaturService(
             return SignaturDto(NAV_ANONYM_NAVN, ENHET_VIKAFOSSEN)
         }
 
-        if (!featureToggleService.isEnabled(Toggle.BREV_SIGNATUR_BASERT_PÅ_FAGSAK)) {
+        if (!featureToggleService.isEnabled(Toggle.VELG_SIGNATUR_BASERT_PÅ_FAGSAK)) {
             SignaturDto(SikkerhetContext.hentSaksbehandlerNavn(true), ENHET_NAY)
         }
 
