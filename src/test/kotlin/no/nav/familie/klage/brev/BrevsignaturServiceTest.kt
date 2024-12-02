@@ -9,6 +9,8 @@ import no.nav.familie.klage.testutil.BrukerContextUtil.testWithBrukerContext
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 
 internal class BrevsignaturServiceTest {
     val brevsignaturService = BrevsignaturService(mockk<FeatureToggleService>(relaxed = true))
@@ -37,27 +39,21 @@ internal class BrevsignaturServiceTest {
         assertThat(signaturMedEnhet.navn).isEqualTo("Julenissen")
     }
 
-    @Test
-    fun `skal sette riktig enhet i signatur basert på fagsystem`() {
+    @ParameterizedTest
+    @EnumSource(Fagsystem::class)
+    fun `skal sette riktig enhet i brevsignatur basert på fagsystem`(fagsystem: Fagsystem) {
         val personopplysningerDto = mockk<PersonopplysningerDto>()
         every { personopplysningerDto.adressebeskyttelse } returns null
 
         val signaturForEnsligForsørger =
             testWithBrukerContext {
-                brevsignaturService.lagSignatur(personopplysningerDto, Fagsystem.EF)
+                brevsignaturService.lagSignatur(personopplysningerDto, fagsystem)
             }
-        assertThat(signaturForEnsligForsørger.enhet).isEqualTo(BrevsignaturService.ENHET_NAY)
 
-        val signaturForBarnetrygd =
-            testWithBrukerContext {
-                brevsignaturService.lagSignatur(personopplysningerDto, Fagsystem.BA)
-            }
-        assertThat(signaturForBarnetrygd.enhet).isEqualTo(BrevsignaturService.ENHET_NFP)
-
-        val signaturForKontantstøtte =
-            testWithBrukerContext {
-                brevsignaturService.lagSignatur(personopplysningerDto, Fagsystem.KS)
-            }
-        assertThat(signaturForKontantstøtte.enhet).isEqualTo(BrevsignaturService.ENHET_NFP)
+        if (fagsystem == Fagsystem.EF) {
+            assertThat(signaturForEnsligForsørger.enhet).isEqualTo(BrevsignaturService.ENHET_NAY)
+        } else {
+            assertThat(signaturForEnsligForsørger.enhet).isEqualTo(BrevsignaturService.ENHET_NFP)
+        }
     }
 }
