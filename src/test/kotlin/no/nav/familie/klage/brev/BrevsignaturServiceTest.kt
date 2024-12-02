@@ -2,6 +2,7 @@ package no.nav.familie.klage.brev
 
 import io.mockk.every
 import io.mockk.mockk
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.personopplysninger.dto.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerDto
 import no.nav.familie.klage.testutil.BrukerContextUtil.testWithBrukerContext
@@ -10,7 +11,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 internal class BrevsignaturServiceTest {
-    val brevsignaturService = BrevsignaturService()
+    val brevsignaturService = BrevsignaturService(mockk<FeatureToggleService>(relaxed = true))
 
     @Test
     fun `skal anonymisere signatur hvis strengt fortrolig`() {

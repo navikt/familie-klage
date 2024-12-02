@@ -20,6 +20,8 @@ enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
 
     // Permission
     UTVIKLER_MED_VEILEDERRROLLE("familie.ef.sak.utviklere-med-veilederrolle", "Permission"),
+
+    BREV_SIGNATUR_BASERT_PÅ_FAGSAK("familie-klage.velg-signatur-basert-paa-fagsak", "Permission"),
     ;
 
     companion object {
