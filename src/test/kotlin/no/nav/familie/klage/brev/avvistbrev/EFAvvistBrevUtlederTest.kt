@@ -18,7 +18,7 @@ class EFAvvistBrevUtlederTest {
     @Nested
     inner class UtledBrevInnhold {
         @Test
-        internal fun `skal ikke kaste feil dersom alle formkrav er oppfylt`() {
+        internal fun `skal kaste feil dersom alle formkrav er oppfylt`() {
             // Arrange
             val oppfyltForm = oppfyltForm(UUID.randomUUID())
 
