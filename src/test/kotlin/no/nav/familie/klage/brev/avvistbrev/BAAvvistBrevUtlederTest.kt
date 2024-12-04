@@ -45,7 +45,7 @@ class BAAvvistBrevUtlederTest {
 
             // Assert
             assertThat(brevInnhold.årsakTilAvvisning).contains(Formkrav.KLAGE_PART.tekst)
-            assertThat(brevInnhold.lovtekst).contains("31")
+            assertThat(brevInnhold.lovtekst).contains("28")
             assertThat(brevInnhold.lovtekst).contains("33")
             assertThat(brevInnhold.lovtekst).doesNotContain("15")
             assertThat(brevInnhold.brevtekstFraSaksbehandler).isEqualTo(saksbehandlerBrevtekst)
@@ -66,7 +66,7 @@ class BAAvvistBrevUtlederTest {
             // Assert
             assertThat(brevInnhold.årsakTilAvvisning).contains(Formkrav.KLAGE_KONKRET.tekst)
             assertThat(brevInnhold.lovtekst).contains(forvaltningslovPrefix)
-            assertThat(brevInnhold.lovtekst).contains("31")
+            assertThat(brevInnhold.lovtekst).contains("32")
             assertThat(brevInnhold.lovtekst).contains("33")
             assertThat(brevInnhold.lovtekst).doesNotContain("15")
             assertThat(brevInnhold.brevtekstFraSaksbehandler).isEqualTo(saksbehandlerBrevtekst)
@@ -87,7 +87,7 @@ class BAAvvistBrevUtlederTest {
             // Assert
             assertThat(brevInnhold.årsakTilAvvisning).contains(Formkrav.KLAGE_SIGNERT.tekst)
             assertThat(brevInnhold.lovtekst).contains(forvaltningslovPrefix)
-            assertThat(brevInnhold.lovtekst).contains("31")
+            assertThat(brevInnhold.lovtekst).contains("32")
             assertThat(brevInnhold.lovtekst).contains("33")
             assertThat(brevInnhold.lovtekst).doesNotContain("15")
             assertThat(brevInnhold.brevtekstFraSaksbehandler).isEqualTo(saksbehandlerBrevtekst)
