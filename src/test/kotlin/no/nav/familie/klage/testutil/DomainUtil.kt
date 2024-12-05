@@ -52,7 +52,6 @@ import java.util.UUID
 import kotlin.random.Random
 
 object DomainUtil {
-
     fun fagsakDomain(
         id: UUID = UUID.randomUUID(),
         stønadstype: Stønadstype = Stønadstype.OVERGANGSSTØNAD,
@@ -68,8 +67,7 @@ object DomainUtil {
             fagsystem = fagsystem,
         )
 
-    fun FagsakDomain.tilFagsak(personIdent: String = "11223344551") =
-        this.tilFagsakMedPerson(setOf(PersonIdent(ident = personIdent)))
+    fun FagsakDomain.tilFagsak(personIdent: String = "11223344551") = this.tilFagsakMedPerson(setOf(PersonIdent(ident = personIdent)))
 
     fun behandling(
         fagsak: Fagsak = fagsak(),
@@ -111,16 +109,15 @@ object DomainUtil {
         årsak: Årsak? = null,
         begrunnelseOmgjøring: String? = null,
         interntNotat: String? = null,
-    ) =
-        Vurdering(
-            behandlingId = behandlingId,
-            vedtak = vedtak,
-            hjemmel = hjemmel,
-            innstillingKlageinstans = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
-            årsak = årsak,
-            begrunnelseOmgjøring = begrunnelseOmgjøring,
-            interntNotat = interntNotat,
-        )
+    ) = Vurdering(
+        behandlingId = behandlingId,
+        vedtak = vedtak,
+        hjemmel = hjemmel,
+        innstillingKlageinstans = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
+        årsak = årsak,
+        begrunnelseOmgjøring = begrunnelseOmgjøring,
+        interntNotat = interntNotat,
+    )
 
     fun vurderingDto(
         behandlingId: UUID = UUID.randomUUID(),
@@ -152,39 +149,38 @@ object DomainUtil {
 
     val defaultIdent = "01010199999"
     val defaultIdenter = setOf(PersonIdent(defaultIdent))
+
     fun fagsak(
         identer: Set<PersonIdent> = defaultIdenter,
         stønadstype: Stønadstype = Stønadstype.OVERGANGSSTØNAD,
         id: UUID = UUID.randomUUID(),
         sporbar: Sporbar = Sporbar(),
         fagsakPersonId: UUID = UUID.randomUUID(),
-    ): Fagsak {
-        return fagsak(stønadstype, id, FagsakPerson(id = fagsakPersonId, identer = identer), sporbar)
-    }
+    ): Fagsak = fagsak(stønadstype, id, FagsakPerson(id = fagsakPersonId, identer = identer), sporbar)
 
     fun fagsak(
         stønadstype: Stønadstype = Stønadstype.OVERGANGSSTØNAD,
         id: UUID = UUID.randomUUID(),
         person: FagsakPerson,
         sporbar: Sporbar = Sporbar(),
-    ): Fagsak {
-        return Fagsak(
+    ): Fagsak =
+        Fagsak(
             id = id,
             fagsakPersonId = person.id,
             personIdenter = person.identer,
             stønadstype = stønadstype,
             sporbar = sporbar,
             eksternId = "1",
-            fagsystem = when (stønadstype) {
-                Stønadstype.OVERGANGSSTØNAD,
-                Stønadstype.BARNETILSYN,
-                Stønadstype.SKOLEPENGER,
-                -> Fagsystem.EF
-                Stønadstype.BARNETRYGD -> Fagsystem.BA
-                Stønadstype.KONTANTSTØTTE -> Fagsystem.KS
-            },
+            fagsystem =
+                when (stønadstype) {
+                    Stønadstype.OVERGANGSSTØNAD,
+                    Stønadstype.BARNETILSYN,
+                    Stønadstype.SKOLEPENGER,
+                    -> Fagsystem.EF
+                    Stønadstype.BARNETRYGD -> Fagsystem.BA
+                    Stønadstype.KONTANTSTØTTE -> Fagsystem.KS
+                },
         )
-    }
 
     fun klageresultat(
         eventId: UUID = UUID.randomUUID(),
@@ -194,8 +190,8 @@ object DomainUtil {
         kildereferanse: UUID = UUID.randomUUID(),
         journalpostReferanser: List<String> = listOf("1", "2"),
         behandlingId: UUID = UUID.randomUUID(),
-    ): KlageinstansResultat {
-        return KlageinstansResultat(
+    ): KlageinstansResultat =
+        KlageinstansResultat(
             eventId = eventId,
             type = type,
             utfall = utfall,
@@ -204,25 +200,26 @@ object DomainUtil {
             journalpostReferanser = DatabaseConfiguration.StringListWrapper(verdier = journalpostReferanser),
             behandlingId = behandlingId,
         )
-    }
 
-    fun journalpost(dokumenter: List<DokumentInfo> = emptyList(), relevanteDatoer: List<RelevantDato> = emptyList()) =
-        Journalpost(
-            journalpostId = UUID.randomUUID().toString(),
-            journalposttype = Journalposttype.I,
-            journalstatus = Journalstatus.MOTTATT,
-            tema = "ENF",
-            behandlingstema = null,
-            tittel = "Tut og kjør",
-            sak = null,
-            bruker = null,
-            avsenderMottaker = null,
-            journalforendeEnhet = null,
-            kanal = null,
-            dokumenter = dokumenter,
-            relevanteDatoer = relevanteDatoer,
-            eksternReferanseId = null,
-        )
+    fun journalpost(
+        dokumenter: List<DokumentInfo> = emptyList(),
+        relevanteDatoer: List<RelevantDato> = emptyList(),
+    ) = Journalpost(
+        journalpostId = UUID.randomUUID().toString(),
+        journalposttype = Journalposttype.I,
+        journalstatus = Journalstatus.MOTTATT,
+        tema = "ENF",
+        behandlingstema = null,
+        tittel = "Tut og kjør",
+        sak = null,
+        bruker = null,
+        avsenderMottaker = null,
+        journalforendeEnhet = null,
+        kanal = null,
+        dokumenter = dokumenter,
+        relevanteDatoer = relevanteDatoer,
+        eksternReferanseId = null,
+    )
 
     fun journalpostDokument(
         status: Dokumentstatus = Dokumentstatus.FERDIGSTILT,
@@ -234,7 +231,6 @@ object DomainUtil {
         dokumentstatus = status,
         dokumentvarianter = dokumentvarianter,
         logiskeVedlegg = listOf(),
-
     )
 
     fun påklagetVedtakDetaljer(
