@@ -22,12 +22,15 @@ import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
+import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.tilDto
 import no.nav.familie.klage.oppgave.OppgaveTaskService
+import no.nav.familie.klage.personopplysninger.pdl.secureLogger
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
+import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus.FERDIGSTILT
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
@@ -178,5 +181,17 @@ class BehandlingService(
         brukerfeilHvis(behandling.status.erLåstForVidereBehandling()) {
             "Kan ikke henlegge behandling med status ${behandling.status}"
         }
+    }
+
+    fun oppdaterStatusPåBehandling(
+        behandlingId: UUID,
+        status: BehandlingStatus,
+    ): Behandling {
+        val behandling = hentBehandling(behandlingId)
+        secureLogger.info(
+            "${SikkerhetContext.hentSaksbehandler()} endrer status på behandling $behandlingId " +
+                "fra ${behandling.status} til $status",
+        )
+        return behandlingRepository.update(behandling.copy(status = status))
     }
 }
