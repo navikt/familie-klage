@@ -1,7 +1,9 @@
 package no.nav.familie.klage.infrastruktur.config
 
 import no.nav.familie.kafka.KafkaErrorHandler
+import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
+import org.springframework.boot.ssl.SslBundles
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
@@ -20,18 +22,18 @@ import org.springframework.kafka.support.LoggingProducerListener
 class KafkaConfig {
 
     @Bean
-    fun klageEventListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler): ConcurrentKafkaListenerContainerFactory<String, String> {
+    fun klageEventListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler, sslBundles: ObjectProvider<SslBundles>): ConcurrentKafkaListenerContainerFactory<String, String> {
         val factory = ConcurrentKafkaListenerContainerFactory<String, String>()
-        factory.consumerFactory = DefaultKafkaConsumerFactory(properties.buildConsumerProperties())
+        factory.consumerFactory = DefaultKafkaConsumerFactory(properties.buildConsumerProperties(sslBundles.getIfAvailable()))
         factory.setCommonErrorHandler(kafkaErrorHandler)
         return factory
     }
 
     @Bean
-    fun kafkaTemplate(properties: KafkaProperties): KafkaTemplate<String, String> {
+    fun kafkaTemplate(properties: KafkaProperties, sslBundles: ObjectProvider<SslBundles>): KafkaTemplate<String, String> {
         val producerListener = LoggingProducerListener<String, String>()
         producerListener.setIncludeContents(false)
-        val producerFactory = DefaultKafkaProducerFactory<String, String>(properties.buildProducerProperties())
+        val producerFactory = DefaultKafkaProducerFactory<String, String>(properties.buildProducerProperties(sslBundles.getIfAvailable()))
 
         return KafkaTemplate(producerFactory).apply<KafkaTemplate<String, String>> {
             setProducerListener(producerListener)
