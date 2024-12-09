@@ -8,7 +8,6 @@ import no.nav.familie.klage.oppgave.dto.SaksbehandlerDto
 import no.nav.familie.klage.oppgave.dto.SaksbehandlerRolle
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
-import no.nav.familie.kontrakter.felles.oppgave.OppgavePrioritet
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -43,9 +42,9 @@ class TilordnetRessursService(
         return if (oppgave != null) {
             OppgaveDto(
                 tilordnetRessurs = saksbehandler?.navIdent ?: "",
-                prioritet = oppgave.prioritet ?: OppgavePrioritet.NORM,
+                prioritet = oppgave.prioritet ?: null,
                 fristFerdigstillelse = oppgave.fristFerdigstillelse ?: "",
-                mappeId = oppgave.mappeId ?: 0,
+                mappeId = oppgave.mappeId ?: null,
             )
         } else {
             null
