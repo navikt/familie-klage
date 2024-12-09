@@ -37,7 +37,7 @@ class TilordnetRessursService(
     fun hentOppgave(behandlingId: UUID): OppgaveDto? {
         val behandleSakOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId)
         val oppgave = behandleSakOppgave?.let { oppgaveClient.finnOppgaveMedId(it.oppgaveId) }
-        val saksbehandler = oppgave.tilordnetRessurs?.let { oppgaveClient.hentSaksbehandlerInfo(it) }
+        val saksbehandler = oppgave?.tilordnetRessurs?.let { oppgaveClient.hentSaksbehandlerInfo(it) }
 
         // TODO: Fix nullable??
         return if (oppgave != null) {
