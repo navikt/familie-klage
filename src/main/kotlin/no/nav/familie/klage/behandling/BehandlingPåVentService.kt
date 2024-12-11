@@ -41,8 +41,6 @@ class BehandlingPåVentService(
     }
 
     private fun oppdaterVerdierPåOppgave(settPåVentRequest: SettPåVentRequest) {
-        val oppgave = oppgaveService.hentOppgave(gsakOppgaveId = settPåVentRequest.oppgaveId)
-
         // TODO: Legg til beskrivelse felt, se EF-SAK
 
         oppgaveService.oppdaterOppgave(
