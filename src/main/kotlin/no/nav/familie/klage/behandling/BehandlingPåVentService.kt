@@ -29,11 +29,25 @@ class BehandlingPåVentService(
         )
     }
 
+    @Transactional
+    fun taAvVent(behandlingId: UUID) {
+        kanTaAvVent(behandlingId = behandlingId)
+        behandlingService.oppdaterStatusPåBehandling(behandlingId = behandlingId, status = BehandlingStatus.UTREDES)
+    }
+
     private fun validerKanSettePåVent(
         behandling: Behandling,
     ) {
         brukerfeilHvis(behandling.status.erLåstForVidereBehandling()) {
             "Kan ikke sette behandling med status ${behandling.status} på vent"
+        }
+    }
+
+    private fun kanTaAvVent(behandlingId: UUID) {
+        val behandling = behandlingService.hentBehandling(behandlingId = behandlingId)
+
+        brukerfeilHvis(boolean = behandling.status != BehandlingStatus.SATT_PÅ_VENT && behandling.status != BehandlingStatus.FERDIGSTILT) {
+            "Kan ikke ta behandling med status ${behandling.status} av vent"
         }
     }
 }

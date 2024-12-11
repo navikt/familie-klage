@@ -94,8 +94,22 @@ class BehandlingController(
     ): Ressurs<UUID> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
-        behandlingPåVentService.settPåVent(behandlingId, settPåVentRequest)
+        behandlingPåVentService.settPåVent(behandlingId = behandlingId, settPåVentRequest = settPåVentRequest)
 
         return Ressurs.success(behandlingId)
+    }
+
+    @PostMapping("{behandlingId}/ta-av-vent")
+    fun taAvVent(
+        @PathVariable behandlingId: UUID,
+    ): Ressurs<UUID> {
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
+            behandlingId = behandlingId,
+            event = AuditLoggerEvent.UPDATE,
+        )
+        tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId = behandlingId)
+        behandlingPåVentService.taAvVent(behandlingId = behandlingId)
+
+        return Ressurs.success(data = behandlingId)
     }
 }
