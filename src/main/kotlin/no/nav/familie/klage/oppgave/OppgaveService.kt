@@ -14,14 +14,20 @@ class OppgaveService(
     private val behandlingService: BehandlingService,
 ) {
 
+    fun hentOppgave(gsakOppgaveId: Long): Oppgave = oppgaveClient.finnOppgaveMedId(gsakOppgaveId)
+
+    fun oppdaterOppgave(oppgave: Oppgave) = oppgaveClient.oppdaterOppgave(oppgave)
+
     fun oppdaterOppgaveTilÅGjeldeTilbakekreving(behandlingId: UUID) {
         val behandling = behandlingService.hentBehandling(behandlingId)
 
         // Skal ikke oppdatere tema for oppgaver som alt er ferdigstilt
         if (!behandling.status.erUnderArbeidAvSaksbehandler()) return
 
-        val eksisterendeOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId) ?: error("Fant ikke oppgave for behandling $behandlingId")
-        val oppdatertOppgave = Oppgave(id = eksisterendeOppgave.oppgaveId, behandlingstema = Behandlingstema.Tilbakebetaling.value)
+        val eksisterendeOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId)
+            ?: error("Fant ikke oppgave for behandling $behandlingId")
+        val oppdatertOppgave =
+            Oppgave(id = eksisterendeOppgave.oppgaveId, behandlingstema = Behandlingstema.Tilbakebetaling.value)
 
         oppgaveClient.oppdaterOppgave(oppdatertOppgave)
     }

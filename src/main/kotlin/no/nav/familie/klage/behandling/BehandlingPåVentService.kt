@@ -4,7 +4,9 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandling.dto.SettPåVentRequest
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
+import no.nav.familie.klage.oppgave.OppgaveService
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
+import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -12,6 +14,7 @@ import java.util.UUID
 @Service
 class BehandlingPåVentService(
     private val behandlingService: BehandlingService,
+    private val oppgaveService: OppgaveService,
 ) {
 
     @Transactional
@@ -23,6 +26,8 @@ class BehandlingPåVentService(
 
         validerKanSettePåVent(behandling)
 
+        oppdaterVerdierPåOppgave(settPåVentRequest)
+
         behandlingService.oppdaterStatusPåBehandling(
             behandlingId = behandlingId,
             status = BehandlingStatus.SATT_PÅ_VENT,
@@ -33,6 +38,24 @@ class BehandlingPåVentService(
     fun taAvVent(behandlingId: UUID) {
         kanTaAvVent(behandlingId = behandlingId)
         behandlingService.oppdaterStatusPåBehandling(behandlingId = behandlingId, status = BehandlingStatus.UTREDES)
+    }
+
+    private fun oppdaterVerdierPåOppgave(settPåVentRequest: SettPåVentRequest) {
+        val oppgave = oppgaveService.hentOppgave(gsakOppgaveId = settPåVentRequest.oppgaveId)
+
+        // TODO: Legg til beskrivelse felt, se EF-SAK
+
+        oppgaveService.oppdaterOppgave(
+            Oppgave(
+                id = settPåVentRequest.oppgaveId,
+                tilordnetRessurs = settPåVentRequest.saksbehandler,
+                prioritet = settPåVentRequest.prioritet,
+                fristFerdigstillelse = settPåVentRequest.frist,
+                mappeId = settPåVentRequest.mappe,
+                beskrivelse = "TODO: Jeg kommer snart, ikke i bruk!",
+                versjon = settPåVentRequest.oppgaveVersjon,
+            )
+        )
     }
 
     private fun validerKanSettePåVent(
