@@ -42,7 +42,6 @@ class TilordnetRessursService(
         return if (oppgave != null) {
             OppgaveDto(
                 oppgaveId = oppgave.id,
-                beskrivelse = oppgave.beskrivelse,
                 tilordnetRessurs = saksbehandler?.navIdent ?: "",
                 prioritet = oppgave.prioritet,
                 fristFerdigstillelse = oppgave.fristFerdigstillelse ?: "",
