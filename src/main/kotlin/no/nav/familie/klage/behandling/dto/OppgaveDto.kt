@@ -4,6 +4,7 @@ import no.nav.familie.kontrakter.felles.oppgave.OppgavePrioritet
 
 data class OppgaveDto(
     val oppgaveId: Long? = null,
+    val beskrivelse: String? = null,
     val tilordnetRessurs: String,
     val prioritet: OppgavePrioritet? = null,
     val fristFerdigstillelse: String,
