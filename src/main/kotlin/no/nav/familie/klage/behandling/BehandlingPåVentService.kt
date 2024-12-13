@@ -49,7 +49,7 @@ class BehandlingPåVentService(
                 tilordnetRessurs = settPåVentRequest.saksbehandler,
                 prioritet = settPåVentRequest.prioritet,
                 fristFerdigstillelse = settPåVentRequest.frist,
-                beskrivelse = "TODO: Jeg kommer snart, ikke i bruk!",
+                beskrivelse = settPåVentRequest.beskrivelse,
             ),
         )
     }
