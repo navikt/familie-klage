@@ -1,7 +1,14 @@
 package no.nav.familie.klage.behandling
 
-import no.nav.familie.klage.behandling.domain.*
+import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
+import no.nav.familie.klage.behandling.domain.Klagebehandlingsresultat
+import no.nav.familie.klage.behandling.domain.PåklagetVedtak
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
+import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType.BEHANDLING_FERDIGSTILT
+import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
+import no.nav.familie.klage.behandling.domain.harManuellVedtaksdato
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
@@ -22,7 +29,12 @@ import no.nav.familie.klage.kabal.domain.tilDto
 import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.klage.personopplysninger.pdl.secureLogger
 import no.nav.familie.klage.repository.findByIdOrThrow
-import no.nav.familie.kontrakter.felles.klage.*
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
+import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
+import no.nav.familie.kontrakter.felles.klage.BehandlingStatus.FERDIGSTILT
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.FagsystemType
+import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
 import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -155,15 +167,11 @@ class BehandlingService(
             henlagtÅrsak = henlagt.årsak,
             resultat = BehandlingResultat.HENLAGT,
             steg = BEHANDLING_FERDIGSTILT,
-            status = BehandlingStatus.FERDIGSTILT,
+            status = FERDIGSTILT,
             vedtakDato = SporbarUtils.now(),
         )
 
-        behandlinghistorikkService.opprettBehandlingshistorikk(
-            behandlingId = behandlingId,
-            steg = BEHANDLING_FERDIGSTILT,
-            behandlingStatus = BehandlingStatus.FERDIGSTILT, // TODO: Er dette riktig?
-        )
+        behandlinghistorikkService.opprettBehandlingshistorikk(behandlingId, BEHANDLING_FERDIGSTILT)
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
         behandlingRepository.update(henlagtBehandling)
         taskService.save(taskService.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId)))
