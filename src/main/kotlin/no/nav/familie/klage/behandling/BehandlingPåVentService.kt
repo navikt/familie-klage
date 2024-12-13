@@ -50,7 +50,7 @@ class BehandlingPåVentService(
                 prioritet = settPåVentRequest.prioritet,
                 fristFerdigstillelse = settPåVentRequest.frist,
                 beskrivelse = "TODO: Jeg kommer snart, ikke i bruk!",
-            )
+            ),
         )
     }
 

@@ -41,10 +41,11 @@ class TilordnetRessursService(
         // TODO: Fix nullable??
         return if (oppgave != null) {
             OppgaveDto(
+                oppgaveId = oppgave.id,
                 tilordnetRessurs = saksbehandler?.navIdent ?: "",
-                prioritet = oppgave.prioritet ?: null,
+                prioritet = oppgave.prioritet,
                 fristFerdigstillelse = oppgave.fristFerdigstillelse ?: "",
-                mappeId = oppgave.mappeId ?: null,
+                mappeId = oppgave.mappeId,
             )
         } else {
             null
