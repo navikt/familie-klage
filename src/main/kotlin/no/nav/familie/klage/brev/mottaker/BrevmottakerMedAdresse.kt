@@ -8,6 +8,7 @@ import java.util.UUID
 
 data class BrevmottakerMedAdresse(
     @Id
+    val id: UUID = UUID.randomUUID(),
     val behandlingId: UUID,
     val mottakerRolle: MottakerRolle,
     val navn: String,

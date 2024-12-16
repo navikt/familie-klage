@@ -33,10 +33,11 @@ class BrevmottakerMedAdresseController(
     @PostMapping("/{behandlingId}/mottakere")
     fun oppdaterBrevmottakere(
         @PathVariable behandlingId: UUID,
-        @RequestBody mottakere: List<BrevmottakerMedAdresse>,
+        @RequestBody mottaker: BrevmottakerMedAdresse,
     ): Ressurs<List<BrevmottakerMedAdresse>> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        return Ressurs.success(brevmottakerMedAdresseService.oppdaterBrevmottakere(behandlingId, mottakere))
+        BrevmottakerMedAdresseValidator.validerMottakere(mottaker)
+        return Ressurs.success(brevmottakerMedAdresseService.oppdaterBrevmottakere(behandlingId, mottaker))
     }
 }

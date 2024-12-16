@@ -12,10 +12,10 @@ class BrevmottakerMedAdresseService(
 
     fun oppdaterBrevmottakere(
         behandlingId: UUID,
-        brevmottakere: List<BrevmottakerMedAdresse>,
+        brevmottakere: BrevmottakerMedAdresse,
     ): List<BrevmottakerMedAdresse> {
-        brevmottakerMedAdresseRepository.deleteByBehandlingId(behandlingId)
-        brevmottakerMedAdresseRepository.insertAll(brevmottakere)
+        //brevmottakerMedAdresseRepository.deleteByBehandlingId(behandlingId)
+        brevmottakerMedAdresseRepository.insert(brevmottakere)
         return hentBrevmottakere(behandlingId)
     }
 }
