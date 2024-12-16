@@ -47,7 +47,7 @@ class BrevmottakerController(
     }
 
     @DeleteMapping("/{behandlingId}/{brevmottakerId}")
-    fun opprettBrevmottakere(
+    fun slettBrevmottakere(
         @PathVariable behandlingId: UUID,
         @PathVariable brevmottakerId: UUID,
     ): Ressurs<List<BrevmottakerDto>> {
