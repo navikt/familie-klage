@@ -10,18 +10,18 @@ object BrevmottakerValidator {
     ) {
         val eksistererMottakertypeAllerede =
             eksisterendeBrevmottakere
-                .map { it.mottakerType }
-                .any { it == brevmottaker.mottakerType }
+                .map { it.mottakertype }
+                .any { it == brevmottaker.mottakertype }
         if (eksistererMottakertypeAllerede) {
             throw Feil("Mottakertype finnes allerede.")
         }
-        if (brevmottaker.mottakerType == Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE && brevmottaker.navn != brukerensNavn) {
+        if (brevmottaker.mottakertype == Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE && brevmottaker.navn != brukerensNavn) {
             throw Feil("Ved bruker med utenlandsk adresse skal brevmottakerens navn være brukerens navn.")
         }
-        if (brevmottaker.mottakerType == Mottakertype.DØDSBO && brevmottaker.navn != brukerensNavn) {
+        if (brevmottaker.mottakertype == Mottakertype.DØDSBO && brevmottaker.navn != brukerensNavn) {
             throw Feil("Ved dødsbo skal brevmottakerens navn være brukerens navn.")
         }
-        if (brevmottaker.mottakerType == Mottakertype.DØDSBO && eksisterendeBrevmottakere.isNotEmpty()) {
+        if (brevmottaker.mottakertype == Mottakertype.DØDSBO && eksisterendeBrevmottakere.isNotEmpty()) {
             throw Feil("Ved dødsbo kan det ikke være flere brevmottakere.")
         }
     }
