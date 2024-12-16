@@ -21,8 +21,8 @@ data class Brevmottaker(
     val sporbar: Sporbar = Sporbar(),
 )
 
-fun Brevmottaker.mapTilBrevMottakerDto(): OpprettBrevmottakerDto =
-    OpprettBrevmottakerDto(
+fun Brevmottaker.mapTilBrevmottakerDto(): BrevmottakerDto =
+    BrevmottakerDto(
         id = this.id,
         behandlingId = this.behandlingId,
         mottakertype = this.mottakerType,

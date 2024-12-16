@@ -4,7 +4,7 @@ import no.nav.familie.klage.brev.domain.Mottakertype
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import java.util.UUID
 
-data class OpprettBrevmottakerDto(
+data class BrevmottakerDto(
     val id: UUID,
     val behandlingId: UUID,
     val mottakertype: Mottakertype,
@@ -40,7 +40,7 @@ data class OpprettBrevmottakerDto(
     }
 }
 
-fun OpprettBrevmottakerDto.mapTilBrevmottaker(): Brevmottaker =
+fun BrevmottakerDto.mapTilBrevmottaker(): Brevmottaker =
     Brevmottaker(
         id = this.id,
         behandlingId = this.behandlingId,
