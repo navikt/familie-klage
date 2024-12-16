@@ -1,6 +1,5 @@
 package no.nav.familie.klage.brev.mottaker
 
-import no.nav.familie.klage.brev.domain.Mottakertype
 import no.nav.familie.klage.felles.domain.Sporbar
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Embedded

@@ -1,6 +1,5 @@
 package no.nav.familie.klage.brev.mottaker
 
-import no.nav.familie.klage.brev.domain.Mottakertype
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import java.util.UUID
 

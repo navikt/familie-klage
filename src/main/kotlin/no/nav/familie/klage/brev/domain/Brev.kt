@@ -35,18 +35,16 @@ data class Brevmottakere(
     val organisasjoner: List<BrevmottakerOrganisasjon> = emptyList(),
 )
 
-enum class Mottakertype {
+enum class MottakerRolle {
     BRUKER,
     VERGE,
     FULLMAKT,
-    BRUKER_MED_UTENLANDSK_ADRESSE,
-    DØDSBO,
 }
 
 data class BrevmottakerPerson(
     val personIdent: String,
     val navn: String,
-    val mottakerType: Mottakertype,
+    val mottakerRolle: MottakerRolle,
 ) : Brevmottaker()
 
 data class BrevmottakerOrganisasjon(
