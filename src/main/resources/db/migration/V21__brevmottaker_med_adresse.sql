@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS brevmottaker
 (
     id             UUID                                NOT NULL PRIMARY KEY,
     behandling_id  UUID                                NOT NULL REFERENCES behandling (id),
-    type           VARCHAR(50)                         NOT NULL,
+    mottakertype   VARCHAR(50)                         NOT NULL,
     navn           VARCHAR                             NOT NULL,
     adresselinje_1 VARCHAR                             NOT NULL,
     adresselinje_2 VARCHAR,
