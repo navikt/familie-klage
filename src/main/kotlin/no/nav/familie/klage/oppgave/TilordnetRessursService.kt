@@ -10,7 +10,9 @@ import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import org.springframework.stereotype.Service
-import java.util.UUID
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Service
 class TilordnetRessursService(
@@ -38,6 +40,9 @@ class TilordnetRessursService(
         val oppgave = behandleSakOppgave?.let { oppgaveClient.finnOppgaveMedId(it.oppgaveId) }
         val saksbehandler = oppgave?.tilordnetRessurs?.let { oppgaveClient.hentSaksbehandlerInfo(it) }
 
+        // TODO: Litt usikker på om datoen fra settPåVent frist burde ligge here i metoden, men vi tester.
+        val fraFristDato: String = LocalDate.now().format(DateTimeFormatter.ISO_DATE_TIME)
+
         // TODO: Fix nullable??
         return if (oppgave != null) {
             OppgaveDto(
@@ -45,6 +50,7 @@ class TilordnetRessursService(
                 beskrivelse = oppgave.beskrivelse,
                 tilordnetRessurs = saksbehandler?.navIdent ?: "",
                 prioritet = oppgave.prioritet,
+                fraFristDato = fraFristDato,
                 fristFerdigstillelse = oppgave.fristFerdigstillelse ?: "",
                 mappeId = oppgave.mappeId,
             )
