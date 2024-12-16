@@ -21,7 +21,7 @@ class BrevmottakerController(
     private val brevmottakerService: BrevmottakerService,
     private val tilgangService: TilgangService,
 ) {
-    @GetMapping("/{behandlingId}/mottakere")
+    @GetMapping("/{behandlingId}")
     fun hentBrevmottakere(
         @PathVariable behandlingId: UUID,
     ): Ressurs<List<Brevmottaker>> {
@@ -30,7 +30,7 @@ class BrevmottakerController(
         return Ressurs.success(brevmottakerService.hentBrevmottakere(behandlingId))
     }
 
-    @PostMapping("/{behandlingId}/mottakere")
+    @PostMapping("/{behandlingId}")
     fun oppdaterBrevmottakere(
         @PathVariable behandlingId: UUID,
         @RequestBody brevmottakerDto: BrevmottakerDto,

@@ -10,6 +10,4 @@ interface BrevmottakerRepository :
     RepositoryInterface<Brevmottaker, UUID>,
     InsertUpdateRepository<Brevmottaker> {
     fun findByBehandlingId(behandlingId: UUID): List<Brevmottaker>
-
-    fun deleteByBehandlingId(behandlingId: UUID)
 }
