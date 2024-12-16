@@ -39,10 +39,9 @@ class BrevmottakerController(
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         brevmottakerDto.valider()
         val brevmottaker = brevmottakerDto.mapTilBrevmottaker()
-        val oppdaterteBrevmottakereDto = brevmottakerService.oppdaterBrevmottakere(
-            behandlingId,
-            brevmottaker,
-        ).map { it.mapTilBrevMottakerDto() }
+        val oppdaterteBrevmottakereDto = brevmottakerService
+            .oppdaterBrevmottakere(behandlingId, brevmottaker)
+            .map { it.mapTilBrevMottakerDto() }
         return Ressurs.success(oppdaterteBrevmottakereDto)
     }
 }
