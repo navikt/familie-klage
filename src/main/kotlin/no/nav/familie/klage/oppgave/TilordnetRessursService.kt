@@ -40,9 +40,6 @@ class TilordnetRessursService(
         val oppgave = behandleSakOppgave?.let { oppgaveClient.finnOppgaveMedId(it.oppgaveId) }
         val saksbehandler = oppgave?.tilordnetRessurs?.let { oppgaveClient.hentSaksbehandlerInfo(it) }
 
-        // TODO: Litt usikker på om datoen fra settPåVent frist burde ligge here i metoden, men vi tester.
-        val fraFristDato: String = LocalDate.now().format(DateTimeFormatter.ISO_DATE_TIME)
-
         // TODO: Fix nullable??
         return if (oppgave != null) {
             OppgaveDto(
@@ -50,7 +47,6 @@ class TilordnetRessursService(
                 beskrivelse = oppgave.beskrivelse,
                 tilordnetRessurs = saksbehandler?.navIdent ?: "",
                 prioritet = oppgave.prioritet,
-                fraFristDato = fraFristDato,
                 fristFerdigstillelse = oppgave.fristFerdigstillelse ?: "",
                 mappeId = oppgave.mappeId,
             )
