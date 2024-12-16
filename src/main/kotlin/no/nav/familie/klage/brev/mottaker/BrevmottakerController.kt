@@ -14,30 +14,30 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping(path = ["/api/brevmottaker-med-adresse"])
+@RequestMapping(path = ["/api/brevmottaker"])
 @ProtectedWithClaims(issuer = "azuread")
 @Validated
-class BrevmottakerMedAdresseController(
-    private val brevmottakerMedAdresseService: BrevmottakerMedAdresseService,
+class BrevmottakerController(
+    private val brevmottakerService: BrevmottakerService,
     private val tilgangService: TilgangService,
 ) {
     @GetMapping("/{behandlingId}/mottakere")
     fun hentBrevmottakere(
         @PathVariable behandlingId: UUID,
-    ): Ressurs<List<BrevmottakerMedAdresse>> {
+    ): Ressurs<List<Brevmottaker>> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
-        return Ressurs.success(brevmottakerMedAdresseService.hentBrevmottakere(behandlingId))
+        return Ressurs.success(brevmottakerService.hentBrevmottakere(behandlingId))
     }
 
     @PostMapping("/{behandlingId}/mottakere")
     fun oppdaterBrevmottakere(
         @PathVariable behandlingId: UUID,
-        @RequestBody mottaker: BrevmottakerMedAdresse,
-    ): Ressurs<List<BrevmottakerMedAdresse>> {
+        @RequestBody mottaker: Brevmottaker,
+    ): Ressurs<List<Brevmottaker>> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        BrevmottakerMedAdresseValidator.validerMottakere(mottaker)
-        return Ressurs.success(brevmottakerMedAdresseService.oppdaterBrevmottakere(behandlingId, mottaker))
+        BrevmottakerValidator.validerMottakere(mottaker)
+        return Ressurs.success(brevmottakerService.oppdaterBrevmottakere(behandlingId, mottaker))
     }
 }

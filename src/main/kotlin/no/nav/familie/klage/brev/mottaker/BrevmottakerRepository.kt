@@ -6,10 +6,10 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface BrevmottakerMedAdresseRepository :
-    RepositoryInterface<BrevmottakerMedAdresse, UUID>,
-    InsertUpdateRepository<BrevmottakerMedAdresse> {
-    fun findByBehandlingId(behandlingId: UUID): List<BrevmottakerMedAdresse>
+interface BrevmottakerRepository :
+    RepositoryInterface<Brevmottaker, UUID>,
+    InsertUpdateRepository<Brevmottaker> {
+    fun findByBehandlingId(behandlingId: UUID): List<Brevmottaker>
 
     fun deleteByBehandlingId(behandlingId: UUID)
 }

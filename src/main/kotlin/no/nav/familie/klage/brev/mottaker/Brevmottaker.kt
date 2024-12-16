@@ -6,7 +6,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Embedded
 import java.util.UUID
 
-data class BrevmottakerMedAdresse(
+data class Brevmottaker(
     @Id
     val id: UUID = UUID.randomUUID(),
     val behandlingId: UUID,
