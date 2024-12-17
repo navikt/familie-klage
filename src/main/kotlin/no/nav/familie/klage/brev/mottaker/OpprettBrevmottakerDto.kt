@@ -1,7 +1,9 @@
 package no.nav.familie.klage.brev.mottaker
 
-import no.nav.familie.klage.infrastruktur.exception.Feil
-import java.util.UUID
+import no.nav.familie.klage.brev.mottaker.Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE
+import no.nav.familie.klage.infrastruktur.exception.feilHvis
+import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
+import java.util.*
 
 data class OpprettBrevmottakerDto(
     val mottakertype: Mottakertype,
@@ -13,26 +15,24 @@ data class OpprettBrevmottakerDto(
     val landkode: String,
 ) {
     fun valider() {
-        if (landkode.length != 2) {
-            throw Feil("Ugyldig landkode: $landkode")
-        }
-        if (navn.isBlank()) {
-            throw Feil("Navn kan ikke være tomt")
-        }
-        if (adresselinje1.isBlank()) {
-            throw Feil("Adresselinje1 kan ikke være tomt")
-        }
-        if (landkode == "NO" && (postnummer.isNullOrBlank() || poststed.isNullOrBlank())) {
-            throw Feil("Når landkode er NO (Norge) må postnummer og poststed være satt")
-        }
-        if (landkode != "NO" && (!postnummer.isNullOrBlank() || !poststed.isNullOrBlank())) {
-            throw Feil("Ved utenlandsk landkode må postnummer og poststed via adresselinje1")
-        }
-        if (postnummer != null && (postnummer.length != 4 || postnummer.any { !it.isDigit() })) {
-            throw Feil("Postnummer må være 4 siffer")
-        }
-        if (landkode == "NO" && mottakertype == Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE) {
-            throw Feil("Bruker med utenlandsk adresse kan ikke ha landkode NO")
+        feilHvisIkke(landkode.length == 2) { "Ugyldig landkode: $landkode" }
+        feilHvis(navn.isBlank()) { "Navn kan ikke være tomt" }
+        feilHvis(adresselinje1.isBlank()) { "Adresselinje1 kan ikke være tomt" }
+
+        if (landkode == "NO") {
+            feilHvis(postnummer.isNullOrBlank() || poststed.isNullOrBlank()) {
+                "Når landkode er NO (Norge) må postnummer og poststed være satt"
+            }
+            feilHvisIkke(postnummer.length == 4 && postnummer.all { it.isDigit() }) {
+                "Postnummer må være 4 siffer"
+            }
+            feilHvis(mottakertype == BRUKER_MED_UTENLANDSK_ADRESSE) {
+                "Bruker med utenlandsk adresse kan ikke ha landkode NO"
+            }
+        } else {
+            feilHvisIkke(postnummer.isNullOrBlank() && poststed.isNullOrBlank()) {
+                "Ved utenlandsk landkode må postnummer og poststed settes i adresselinje1"
+            }
         }
     }
 }
