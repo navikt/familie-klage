@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
-import no.nav.familie.klage.personopplysninger.dto.Kjønn
-import no.nav.familie.klage.personopplysninger.dto.VergemålDto
 
 @RestController
 @RequestMapping(path = ["/api/personopplysninger"])
