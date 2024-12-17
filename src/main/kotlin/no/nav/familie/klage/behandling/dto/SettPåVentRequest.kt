@@ -10,6 +10,5 @@ data class SettPåVentRequest(
     val mappe: Long?,
     val beskrivelse: String,
     val oppgaveVersjon: Int,
-//    val oppfølgingsoppgaverMotLokalKontor: List<OppgaveSubtype>,
     val innstillingsoppgaveBeskjed: String?,
 )

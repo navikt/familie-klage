@@ -24,11 +24,11 @@ class BehandlingPåVentService(
         behandlingId: UUID,
         settPåVentRequest: SettPåVentRequest,
     ) {
-        val behandling = behandlingService.hentBehandling(behandlingId)
+        val behandling = behandlingService.hentBehandling(behandlingId = behandlingId)
 
-        validerKanSettePåVent(behandling)
+        validerKanSettePåVent(behandling = behandling)
 
-        oppdaterVerdierPåOppgave(settPåVentRequest)
+        oppdaterVerdierPåOppgave(settPåVentRequest = settPåVentRequest)
 
         behandlingService.oppdaterStatusPåBehandling(
             behandlingId = behandlingId,
@@ -60,7 +60,7 @@ class BehandlingPåVentService(
     private fun validerKanSettePåVent(
         behandling: Behandling,
     ) {
-        brukerfeilHvis(behandling.status.erLåstForVidereBehandling()) {
+        brukerfeilHvis(boolean = behandling.status.erLåstForVidereBehandling()) {
             "Kan ikke sette behandling med status ${behandling.status} på vent"
         }
     }
@@ -73,17 +73,19 @@ class BehandlingPåVentService(
         }
     }
 
-    // TODO: Gå gjennom beskrivelse metoder, kan kanskje bo et annet sted?
     private fun utledOppgavebeskrivelse(
         oppgave: Oppgave,
         settPåVentRequest: SettPåVentRequest
     ): String {
-        val tilordnetSaksbehandler = utledTilordnetSaksbehandlerBeskrivelse(oppgave, settPåVentRequest)
-        val prioritet = utledPrioritetBeskrivelse(oppgave, settPåVentRequest)
-        val frist = utledFristBeskrivelse(oppgave, settPåVentRequest)
+        val tilordnetSaksbehandler = utledTilordnetSaksbehandlerBeskrivelse(
+            oppgave = oppgave,
+            settPåVentRequest = settPåVentRequest
+        )
+        val prioritet = utledPrioritetBeskrivelse(oppgave = oppgave, settPåVentRequest = settPåVentRequest)
+        val frist = utledFristBeskrivelse(oppgave = oppgave, settPåVentRequest = settPåVentRequest)
 
         val harEndringer = listOf(tilordnetSaksbehandler, prioritet, frist).any { it.isNotBlank() }
-        val beskrivelse = utledNyBeskrivelse(settPåVentRequest)
+        val beskrivelse = utledNyBeskrivelse(settPåVentRequest = settPåVentRequest)
         val skalOppdatereBeskrivelse = harEndringer || beskrivelse.isNotBlank()
 
         val tidligereBeskrivelse = if (skalOppdatereBeskrivelse && oppgave.beskrivelse?.isNotBlank() == true) {
@@ -123,7 +125,8 @@ class BehandlingPåVentService(
     }
 
     private fun utledPrioritetBeskrivelse(
-        oppgave: Oppgave, settPåVentRequest: SettPåVentRequest
+        oppgave: Oppgave,
+        settPåVentRequest: SettPåVentRequest
     ): String {
         return if (oppgave.prioritet != settPåVentRequest.prioritet) {
             "Oppgave endret fra prioritet ${oppgave.prioritet?.name} til ${settPåVentRequest.prioritet}\n"
@@ -132,7 +135,10 @@ class BehandlingPåVentService(
         }
     }
 
-    private fun utledFristBeskrivelse(oppgave: Oppgave, settPåVentRequest: SettPåVentRequest): String {
+    private fun utledFristBeskrivelse(
+        oppgave: Oppgave,
+        settPåVentRequest: SettPåVentRequest
+    ): String {
         val eksisterendeFrist = oppgave.fristFerdigstillelse
         val nyFrist = settPåVentRequest.frist
         return if (eksisterendeFrist != nyFrist) {

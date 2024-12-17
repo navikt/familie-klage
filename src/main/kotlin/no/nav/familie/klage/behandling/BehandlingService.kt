@@ -187,11 +187,11 @@ class BehandlingService(
         behandlingId: UUID,
         status: BehandlingStatus,
     ): Behandling {
-        val behandling = hentBehandling(behandlingId)
+        val behandling = hentBehandling(behandlingId = behandlingId)
         secureLogger.info(
             "${SikkerhetContext.hentSaksbehandler()} endrer status på behandling $behandlingId " +
-                "fra ${behandling.status} til $status",
+                    "fra ${behandling.status} til $status",
         )
-        return behandlingRepository.update(behandling.copy(status = status))
+        return behandlingRepository.update(t = behandling.copy(status = status))
     }
 }

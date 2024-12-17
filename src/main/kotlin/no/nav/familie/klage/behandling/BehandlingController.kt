@@ -81,9 +81,12 @@ class BehandlingController(
 
     @GetMapping("{behandlingId}/oppgave")
     fun hentOppgave(@PathVariable behandlingId: UUID): Ressurs<OppgaveDto?> { // TODO: Fix nullable??
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
+            behandlingId = behandlingId,
+            event = AuditLoggerEvent.ACCESS
+        )
         return Ressurs.success(
-            tilordnetRessursService.hentOppgave(behandlingId),
+            data = tilordnetRessursService.hentOppgave(behandlingId),
         )
     }
 
@@ -92,8 +95,11 @@ class BehandlingController(
         @PathVariable behandlingId: UUID,
         @RequestBody settPåVentRequest: SettPåVentRequest,
     ): Ressurs<UUID> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
-        tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
+            behandlingId = behandlingId,
+            event = AuditLoggerEvent.UPDATE
+        )
+        tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId = behandlingId)
         behandlingPåVentService.settPåVent(behandlingId = behandlingId, settPåVentRequest = settPåVentRequest)
 
         return Ressurs.success(behandlingId)

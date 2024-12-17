@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class BrevsignaturService(
-    private val featureToggleService: FeatureToggleService,
+    private val featureToggleService: FeatureToggleService
 ) {
     fun lagSignatur(
         personopplysningerDto: PersonopplysningerDto,
