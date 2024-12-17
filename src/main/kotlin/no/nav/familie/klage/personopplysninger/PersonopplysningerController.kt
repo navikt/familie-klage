@@ -27,18 +27,6 @@ class PersonopplysningerController(
     fun hentPersonopplysninger(@PathVariable behandlingId: UUID): Ressurs<PersonopplysningerDto> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
-        // TODO : Fix me !!
-        val dto = PersonopplysningerDto(
-            "01492350318",
-            "Navn Navnesen",
-            kjønn = Kjønn.UKJENT,
-            adressebeskyttelse = null,
-            folkeregisterpersonstatus = null,
-            dødsdato = null,
-            fullmakt = emptyList(),
-            egenAnsatt = false,
-            vergemål = emptyList()
-        )
-        return Ressurs.success(dto)
+        return Ressurs.success(personopplysningerService.hentPersonopplysninger(behandlingId))
     }
 }
