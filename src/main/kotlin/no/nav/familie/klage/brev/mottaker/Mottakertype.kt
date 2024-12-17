@@ -2,7 +2,7 @@ package no.nav.familie.klage.brev.mottaker
 
 enum class Mottakertype {
     VERGE,
-    FULLMAKT,
+    FULLMEKTIG,
     BRUKER_MED_UTENLANDSK_ADRESSE,
     DØDSBO,
 }
