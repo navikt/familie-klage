@@ -64,8 +64,8 @@ enum class PåklagetVedtakstype {
 
 fun PåklagetVedtakstype.harManuellVedtaksdato(): Boolean =
     this == PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING ||
-            this == PåklagetVedtakstype.UTESTENGELSE ||
-            this == PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK
+        this == PåklagetVedtakstype.UTESTENGELSE ||
+        this == PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK
 
 fun BehandlingStatus.erLåstForVidereBehandling() =
     when (SikkerhetContext.hentSaksbehandler()) {
@@ -73,8 +73,7 @@ fun BehandlingStatus.erLåstForVidereBehandling() =
         else -> setOf(BehandlingStatus.VENTER, BehandlingStatus.FERDIGSTILT).contains(this)
     }
 
-fun BehandlingStatus.erUnderArbeidAvSaksbehandler() =
-    setOf(BehandlingStatus.OPPRETTET, BehandlingStatus.UTREDES).contains(this)
+fun BehandlingStatus.erUnderArbeidAvSaksbehandler() = setOf(BehandlingStatus.OPPRETTET, BehandlingStatus.UTREDES).contains(this)
 
 enum class StegType(
     val rekkefølge: Int,
