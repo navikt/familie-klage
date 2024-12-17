@@ -34,12 +34,12 @@ class BrevmottakerController(
     @PostMapping("/{behandlingId}")
     fun opprettBrevmottakere(
         @PathVariable behandlingId: UUID,
-        @RequestBody brevmottakerDto: BrevmottakerDto,
+        @RequestBody opprettBrevmottakerDto: OpprettBrevmottakerDto,
     ): Ressurs<List<BrevmottakerDto>> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.CREATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        brevmottakerDto.valider()
-        val brevmottaker = brevmottakerDto.mapTilBrevmottaker()
+        opprettBrevmottakerDto.valider()
+        val brevmottaker = opprettBrevmottakerDto.mapTilBrevmottaker(behandlingId)
         val oppdaterteBrevmottakereDto = brevmottakerService
             .oppdaterBrevmottakere(behandlingId, brevmottaker)
             .map { it.mapTilBrevmottakerDto() }

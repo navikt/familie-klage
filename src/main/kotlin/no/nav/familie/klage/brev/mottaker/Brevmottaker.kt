@@ -26,7 +26,6 @@ data class Brevmottaker(
 fun Brevmottaker.mapTilBrevmottakerDto(): BrevmottakerDto =
     BrevmottakerDto(
         id = this.id,
-        behandlingId = this.behandlingId,
         mottakertype = this.mottakertype,
         navn = this.navn,
         adresselinje1 = this.adresselinje1,
