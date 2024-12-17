@@ -11,8 +11,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 @Service
 class BehandlingPåVentService(
@@ -110,14 +109,17 @@ class BehandlingPåVentService(
 
     private fun utledTilordnetSaksbehandlerBeskrivelse(
         oppgave: Oppgave,
-        settPåVentRequest: SettPåVentRequest
+        settPåVentRequest: SettPåVentRequest,
     ): String {
-        val eksisterendeSaksbehandler = oppgave.tilordnetRessurs
+        val eksisterendeSaksbehandler = oppgave.tilordnetRessurs ?: "ingen"
         val nySaksbehandler =
-            settPåVentRequest.saksbehandler.takeIf { it.isNotBlank() && it != eksisterendeSaksbehandler }
-        return nySaksbehandler?.let {
-            "Oppgave flyttet fra saksbehandler $eksisterendeSaksbehandler til $it\n"
-        } ?: ""
+            if (settPåVentRequest.saksbehandler == "") "ingen" else settPåVentRequest.saksbehandler
+
+        return if (eksisterendeSaksbehandler == nySaksbehandler) {
+            ""
+        } else {
+            "Oppgave flyttet fra saksbehandler $eksisterendeSaksbehandler til ${nySaksbehandler}\n"
+        }
     }
 
     private fun utledPrioritetBeskrivelse(
