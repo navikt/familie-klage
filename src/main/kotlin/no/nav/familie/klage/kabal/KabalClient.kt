@@ -24,7 +24,7 @@ class KabalClient(
             .toUri()
 
     fun sendTilKabal(oversendtKlage: OversendtKlageAnkeV3) {
-        secureLogger.debug("Sender klage til kabal: ${objectMapper.writeValueAsString(oversendtKlage)}")
+        secureLogger.info("Sender klage til kabal: ${objectMapper.writeValueAsString(oversendtKlage)}")
         return postForEntity(oversendelseUrl, oversendtKlage)
     }
 }
