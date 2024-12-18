@@ -1,8 +1,7 @@
 package no.nav.familie.klage.kabal
 
 import no.nav.familie.http.client.AbstractRestClient
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import no.nav.familie.kontrakter.felles.objectMapper
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -17,13 +16,15 @@ class KabalClient(
     @Qualifier("azure")
     private val restOperations: RestOperations,
 ) : AbstractRestClient(restOperations, "familie.kabal") {
-
-    val logger: Logger = LoggerFactory.getLogger(this::class.java)
-
     private val oversendelseUrl: URI =
-        UriComponentsBuilder.fromUri(kabalUrl).pathSegment("api/oversendelse/v3/sak").build().toUri()
+        UriComponentsBuilder
+            .fromUri(kabalUrl)
+            .pathSegment("api/oversendelse/v3/sak")
+            .build()
+            .toUri()
 
     fun sendTilKabal(oversendtKlage: OversendtKlageAnkeV3) {
+        secureLogger.debug("Sender klage til kabal: ${objectMapper.writeValueAsString(oversendtKlage)}")
         return postForEntity(oversendelseUrl, oversendtKlage)
     }
 }
