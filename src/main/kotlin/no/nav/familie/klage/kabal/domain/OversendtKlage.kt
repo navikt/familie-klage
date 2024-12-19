@@ -102,4 +102,5 @@ enum class LovKilde(
     BARNETRYGDLOVEN("29", "Barnetrygdloven", "Btrl"),
     EØS_AVTALEN("30", "EØS-avtalen", "EØS-avtalen"),
     KONTANTSTØTTELOVEN("31", "Kontantstøtteloven", "Kontsl"),
+    FORVALTNINGSLOVEN("8", "Forvaltningsloven", "Fvl"),
 }
