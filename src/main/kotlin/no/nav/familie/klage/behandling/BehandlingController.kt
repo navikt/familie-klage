@@ -102,7 +102,7 @@ class BehandlingController(
             behandlingId = behandlingId,
             event = AuditLoggerEvent.UPDATE,
         )
-        tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId = behandlingId)
+        tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId = behandlingId)
         behandlingPåVentService.settPåVent(behandlingId = behandlingId, settPåVentRequest = settPåVentRequest)
 
         return Ressurs.success(data = behandlingId)
