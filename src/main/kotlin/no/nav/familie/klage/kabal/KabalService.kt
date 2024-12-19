@@ -42,19 +42,19 @@ class KabalService(
         vurdering: Vurdering,
         saksbehandlersEnhet: String,
         brevMottakere: Brevmottakere,
-    ): OversendtKlageAnkeV3 {
-        return OversendtKlageAnkeV3(
+    ): OversendtKlageAnkeV3 =
+        OversendtKlageAnkeV3(
             type = Type.KLAGE,
             klager =
-            OversendtKlager(
-                id =
-                OversendtPartId(
-                    type = OversendtPartIdType.PERSON,
-                    verdi = fagsak.hentAktivIdent(),
+                OversendtKlager(
+                    id =
+                        OversendtPartId(
+                            type = OversendtPartIdType.PERSON,
+                            verdi = fagsak.hentAktivIdent(),
+                        ),
+                    klagersProsessfullmektig = utledFullmektigFraBrevmottakere(brevMottakere),
                 ),
-                klagersProsessfullmektig = utledFullmektigFraBrevmottakere(brevMottakere),
-            ),
-            fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem),
+            fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem.tilFellesFagsystem()),
             kildeReferanse = behandling.eksternBehandlingId.toString(),
             innsynUrl = lagInnsynUrl(fagsak, behandling.påklagetVedtak),
             hjemler = vurdering.hjemmel?.let { listOf(it.kabalHjemmel) } ?: emptyList(),
@@ -62,11 +62,10 @@ class KabalService(
             tilknyttedeJournalposter = listOf(),
             brukersHenvendelseMottattNavDato = behandling.klageMottatt,
             innsendtTilNav = behandling.klageMottatt,
-            kilde = fagsak.fagsystem,
+            kilde = fagsak.fagsystem.tilFellesFagsystem(),
             ytelse = fagsak.stønadstype.tilYtelse(),
             hindreAutomatiskSvarbrev = behandling.årsak == Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL,
         )
-    }
 
     private fun utledFullmektigFraBrevmottakere(brevMottakere: Brevmottakere): OversendtProsessfullmektig? {
         val fullmektigEllerVerge =
@@ -108,7 +107,10 @@ class KabalService(
                 Fagsystem.KS -> lenkeConfig.ksSakLenke
             }
         val påklagetVedtakDetaljer = påklagetVedtak.påklagetVedtakDetaljer
-        return if (påklagetVedtakDetaljer != null && påklagetVedtakDetaljer.fagsystemType == FagsystemType.ORDNIÆR && påklagetVedtakDetaljer.eksternFagsystemBehandlingId != null) {
+        return if (påklagetVedtakDetaljer != null &&
+            påklagetVedtakDetaljer.fagsystemType == FagsystemType.ORDNIÆR &&
+            påklagetVedtakDetaljer.eksternFagsystemBehandlingId != null
+        ) {
             "$fagsystemUrl/fagsak/${fagsak.eksternId}/${påklagetVedtakDetaljer.eksternFagsystemBehandlingId}"
         } else {
             "$fagsystemUrl/fagsak/${fagsak.eksternId}/saksoversikt"
