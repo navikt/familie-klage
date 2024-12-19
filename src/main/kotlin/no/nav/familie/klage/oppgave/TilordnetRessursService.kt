@@ -38,7 +38,6 @@ class TilordnetRessursService(
         val oppgave = behandleSakOppgave?.let { oppgaveClient.finnOppgaveMedId(it.oppgaveId) }
         val saksbehandler = oppgave?.tilordnetRessurs?.let { oppgaveClient.hentSaksbehandlerInfo(it) }
 
-        // TODO: Fix nullable??
         return if (oppgave != null) {
             OppgaveDto(
                 oppgaveId = oppgave.id,
