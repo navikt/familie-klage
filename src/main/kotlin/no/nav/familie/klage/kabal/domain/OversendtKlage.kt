@@ -23,7 +23,11 @@ data class OversendtKlageAnkeV3(
     val hindreAutomatiskSvarbrev: Boolean,
 )
 
-enum class Type(override val id: String, override val navn: String, override val beskrivelse: String) : Kode {
+enum class Type(
+    override val id: String,
+    override val navn: String,
+    override val beskrivelse: String,
+) : Kode {
     KLAGE("1", "Klage", "Klage"),
     ANKE("2", "Anke", "Anke"),
     ANKE_I_TRYGDERETTEN("3", "Anke i trygderetten", "Anke i trygderetten"),
@@ -87,11 +91,16 @@ interface Kode {
     val beskrivelse: String
 }
 
-enum class LovKilde(override val id: String, override val navn: String, override val beskrivelse: String) : Kode {
+enum class LovKilde(
+    override val id: String,
+    override val navn: String,
+    override val beskrivelse: String,
+) : Kode {
     FOLKETRYGDLOVEN("1", "Folketrygdloven", "Ftrl"),
     NORDISK_KONVENSJON("15", "Nordisk konvensjon", "Nordisk konvensjon"),
     ANDRE_TRYGDEAVTALER("21", "Andre trygdeavtaler", "Andre trygdeavtaler"),
     BARNETRYGDLOVEN("29", "Barnetrygdloven", "Btrl"),
     EØS_AVTALEN("30", "EØS-avtalen", "EØS-avtalen"),
     KONTANTSTØTTELOVEN("31", "Kontantstøtteloven", "Kontsl"),
+    FORVALTNINGSLOVEN("8", "Forvaltningsloven", "Fvl"),
 }

@@ -29,15 +29,16 @@ enum class Vedtak {
     OPPRETTHOLD_VEDTAK,
     ;
 
-    fun tilBehandlingResultat(): BehandlingResultat {
-        return when (this) {
+    fun tilBehandlingResultat(): BehandlingResultat =
+        when (this) {
             OMGJØR_VEDTAK -> BehandlingResultat.MEDHOLD
             OPPRETTHOLD_VEDTAK -> BehandlingResultat.IKKE_MEDHOLD
         }
-    }
 }
 
-enum class Hjemmel(val kabalHjemmel: KabalHjemmel) {
+enum class Hjemmel(
+    val kabalHjemmel: KabalHjemmel,
+) {
     FT_FEMTEN_TO(KabalHjemmel.FTRL_15_2),
     FT_FEMTEN_TRE(KabalHjemmel.FTRL_15_3),
     FT_FEMTEN_FIRE(KabalHjemmel.FTRL_15_4),
@@ -60,10 +61,15 @@ enum class Hjemmel(val kabalHjemmel: KabalHjemmel) {
     BT_ELLEVE(KabalHjemmel.BTRL_11),
     BT_TOLV(KabalHjemmel.BTRL_12),
     BT_TRETTEN(KabalHjemmel.BTRL_13),
+    BT_FJORTEN(KabalHjemmel.BTRL_14),
+    BT_FEMTEN(KabalHjemmel.BTRL_15),
     BT_SYTTEN(KabalHjemmel.BTRL_17),
     BT_ATTEN(KabalHjemmel.BTRL_18),
+    KS_EN_A(KabalHjemmel.KONTSL_1A),
     KS_TO(KabalHjemmel.KONTSL_2),
     KS_TRE(KabalHjemmel.KONTSL_3),
+    KS_TRE_A(KabalHjemmel.KONTSL_3A),
+    KS_FIRE(KabalHjemmel.KONTSL_4),
     KS_SEKS(KabalHjemmel.KONTSL_6),
     KS_SYV(KabalHjemmel.KONTSL_7),
     KS_ÅTTE(KabalHjemmel.KONTSL_8),
@@ -73,6 +79,19 @@ enum class Hjemmel(val kabalHjemmel: KabalHjemmel) {
     KS_TOLV(KabalHjemmel.KONTSL_12),
     KS_TRETTEN(KabalHjemmel.KONTSL_13),
     KS_SEKSTEN(KabalHjemmel.KONTSL_16),
+    KS_FJORTEN(KabalHjemmel.KONTSL_14),
+    KS_SYTTEN(KabalHjemmel.KONTSL_17),
+    KS_NITTEN(KabalHjemmel.KONTSL_19),
+    KS_TJUETO(KabalHjemmel.KONTSL_22),
+    FV_TJUEÅTTE(KabalHjemmel.FVL_28),
+    FV_TJUENI(KabalHjemmel.FVL_29),
+    FV_TRETTI(KabalHjemmel.FVL_30),
+    FV_TRETTIEN(KabalHjemmel.FVL_31),
+    FV_TRETTITO(KabalHjemmel.FVL_32),
+    FV_TRETTITRE(KabalHjemmel.FVL_33),
+    FV_TRETTIFIRE(KabalHjemmel.FVL_34),
+    FV_TRETTIFEM(KabalHjemmel.FVL_35),
+    FV_TRETTISEKS(KabalHjemmel.FVL_36),
     UTLAND_EØS(KabalHjemmel.EOES_AVTALEN),
     UTLAND_NORDISK(KabalHjemmel.NORDISK_KONVENSJON),
     UTLAND_TRYGDEAVTALER(KabalHjemmel.ANDRE_TRYGDEAVTALER),
