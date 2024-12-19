@@ -190,7 +190,7 @@ class BehandlingService(
         val behandling = hentBehandling(behandlingId = behandlingId)
         secureLogger.info(
             "${SikkerhetContext.hentSaksbehandler()} endrer status på behandling $behandlingId " +
-                    "fra ${behandling.status} til $status",
+                "fra ${behandling.status} til $status",
         )
         return behandlingRepository.update(t = behandling.copy(status = status))
     }

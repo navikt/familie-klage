@@ -73,20 +73,23 @@ class BehandlingController(
 
     @GetMapping("{behandlingId}/ansvarlig-saksbehandler")
     fun hentAnsvarligSaksbehandlerForBehandling(@PathVariable behandlingId: UUID): Ressurs<SaksbehandlerDto> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
+            behandlingId = behandlingId,
+            event = AuditLoggerEvent.ACCESS,
+        )
         return Ressurs.success(
-            tilordnetRessursService.hentAnsvarligSaksbehandlerForBehandlingsId(behandlingId),
+            tilordnetRessursService.hentAnsvarligSaksbehandlerForBehandlingsId(behandlingId = behandlingId),
         )
     }
 
     @GetMapping("{behandlingId}/oppgave")
-    fun hentOppgave(@PathVariable behandlingId: UUID): Ressurs<OppgaveDto?> { // TODO: Fix nullable??
+    fun hentOppgave(@PathVariable behandlingId: UUID): Ressurs<OppgaveDto?> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
             behandlingId = behandlingId,
-            event = AuditLoggerEvent.ACCESS
+            event = AuditLoggerEvent.ACCESS,
         )
         return Ressurs.success(
-            data = tilordnetRessursService.hentOppgave(behandlingId),
+            data = tilordnetRessursService.hentOppgave(behandlingId = behandlingId),
         )
     }
 
@@ -97,12 +100,12 @@ class BehandlingController(
     ): Ressurs<UUID> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
             behandlingId = behandlingId,
-            event = AuditLoggerEvent.UPDATE
+            event = AuditLoggerEvent.UPDATE,
         )
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId = behandlingId)
         behandlingPåVentService.settPåVent(behandlingId = behandlingId, settPåVentRequest = settPåVentRequest)
 
-        return Ressurs.success(behandlingId)
+        return Ressurs.success(data = behandlingId)
     }
 
     @PostMapping("{behandlingId}/ta-av-vent")

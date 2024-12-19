@@ -75,11 +75,11 @@ class BehandlingPåVentService(
 
     private fun utledOppgavebeskrivelse(
         oppgave: Oppgave,
-        settPåVentRequest: SettPåVentRequest
+        settPåVentRequest: SettPåVentRequest,
     ): String {
         val tilordnetSaksbehandler = utledTilordnetSaksbehandlerBeskrivelse(
             oppgave = oppgave,
-            settPåVentRequest = settPåVentRequest
+            settPåVentRequest = settPåVentRequest,
         )
         val prioritet = utledPrioritetBeskrivelse(oppgave = oppgave, settPåVentRequest = settPåVentRequest)
         val frist = utledFristBeskrivelse(oppgave = oppgave, settPåVentRequest = settPåVentRequest)
@@ -126,7 +126,7 @@ class BehandlingPåVentService(
 
     private fun utledPrioritetBeskrivelse(
         oppgave: Oppgave,
-        settPåVentRequest: SettPåVentRequest
+        settPåVentRequest: SettPåVentRequest,
     ): String {
         return if (oppgave.prioritet != settPåVentRequest.prioritet) {
             "Oppgave endret fra prioritet ${oppgave.prioritet?.name} til ${settPåVentRequest.prioritet}\n"
@@ -137,7 +137,7 @@ class BehandlingPåVentService(
 
     private fun utledFristBeskrivelse(
         oppgave: Oppgave,
-        settPåVentRequest: SettPåVentRequest
+        settPåVentRequest: SettPåVentRequest,
     ): String {
         val eksisterendeFrist = oppgave.fristFerdigstillelse
         val nyFrist = settPåVentRequest.frist
@@ -149,7 +149,7 @@ class BehandlingPåVentService(
     }
 
     private fun utledNyBeskrivelse(
-        settPåVentRequest: SettPåVentRequest
+        settPåVentRequest: SettPåVentRequest,
     ): String {
         return if (settPåVentRequest.beskrivelse.isNotBlank()) {
             "${settPåVentRequest.beskrivelse}\n"
