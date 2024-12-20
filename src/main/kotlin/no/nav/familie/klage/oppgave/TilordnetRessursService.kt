@@ -36,13 +36,12 @@ class TilordnetRessursService(
     fun hentOppgave(behandlingId: UUID): OppgaveDto? {
         val behandleSakOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId)
         val oppgave = behandleSakOppgave?.let { oppgaveClient.finnOppgaveMedId(it.oppgaveId) }
-        val saksbehandler = oppgave?.tilordnetRessurs?.let { oppgaveClient.hentSaksbehandlerInfo(it) }
 
         return if (oppgave != null) {
             OppgaveDto(
                 oppgaveId = oppgave.id,
                 beskrivelse = oppgave.beskrivelse,
-                tilordnetRessurs = saksbehandler?.navIdent ?: "",
+                tilordnetRessurs = oppgave.tilordnetRessurs ?: "",
                 prioritet = oppgave.prioritet,
                 fristFerdigstillelse = oppgave.fristFerdigstillelse ?: "",
                 mappeId = oppgave.mappeId,

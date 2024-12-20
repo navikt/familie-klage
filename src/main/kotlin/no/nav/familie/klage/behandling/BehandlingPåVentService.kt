@@ -68,7 +68,7 @@ class BehandlingPåVentService(
     private fun kanTaAvVent(behandlingId: UUID) {
         val behandling = behandlingService.hentBehandling(behandlingId = behandlingId)
 
-        brukerfeilHvis(behandling.status != BehandlingStatus.SATT_PÅ_VENT && behandling.status != BehandlingStatus.FERDIGSTILT) {
+        brukerfeilHvis(behandling.status != BehandlingStatus.SATT_PÅ_VENT) {
             "Kan ikke ta behandling med status ${behandling.status} av vent"
         }
     }
