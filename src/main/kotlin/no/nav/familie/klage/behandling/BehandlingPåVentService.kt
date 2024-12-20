@@ -60,7 +60,7 @@ class BehandlingPåVentService(
     private fun validerKanSettePåVent(
         behandling: Behandling,
     ) {
-        brukerfeilHvis(boolean = behandling.status.erLåstForVidereBehandling()) {
+        brukerfeilHvis(behandling.status.erLåstForVidereBehandling()) {
             "Kan ikke sette behandling med status ${behandling.status} på vent"
         }
     }
@@ -68,7 +68,7 @@ class BehandlingPåVentService(
     private fun kanTaAvVent(behandlingId: UUID) {
         val behandling = behandlingService.hentBehandling(behandlingId = behandlingId)
 
-        brukerfeilHvis(boolean = behandling.status != BehandlingStatus.SATT_PÅ_VENT && behandling.status != BehandlingStatus.FERDIGSTILT) {
+        brukerfeilHvis(behandling.status != BehandlingStatus.SATT_PÅ_VENT && behandling.status != BehandlingStatus.FERDIGSTILT) {
             "Kan ikke ta behandling med status ${behandling.status} av vent"
         }
     }
