@@ -147,7 +147,7 @@ internal class BehandlingEventServiceTest {
 
         behandlingEventService.handleEvent(
             lagBehandlingEvent(
-                BehandlingEventType.OMGJOERINGSKRAV_AVSLUTTET,
+                BehandlingEventType.OMGJOERINGSKRAVBEHANDLING_AVSLUTTET,
                 BehandlingDetaljer(omgjoeringskravbehandlingAvsluttet = OmgjoeringskravbehandlingAvsluttetDetaljer(LocalDateTime.of(2023, 6, 21, 1, 1), KlageinstansUtfall.MEDHOLD_ETTER_FVL_35, emptyList())),
             ),
         )
@@ -155,7 +155,7 @@ internal class BehandlingEventServiceTest {
         verify(exactly = 1) { behandlingRepository.findByEksternBehandlingId(any()) }
         verify(exactly = 1) { klageresultatRepository.insert(capture(klageinstansResultatSlot)) }
 
-        assertThat(klageinstansResultatSlot.captured.type).isEqualTo(BehandlingEventType.OMGJOERINGSKRAV_AVSLUTTET)
+        assertThat(klageinstansResultatSlot.captured.type).isEqualTo(BehandlingEventType.OMGJOERINGSKRAVBEHANDLING_AVSLUTTET)
     }
 
     @Test
