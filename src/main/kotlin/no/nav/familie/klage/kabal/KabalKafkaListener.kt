@@ -71,7 +71,7 @@ data class BehandlingEvent(
                 detaljer.ankeITrygderettenbehandlingOpprettet?.sendtTilTrygderetten ?: throw Feil(feilmelding)
             BehandlingEventType.BEHANDLING_FEILREGISTRERT -> detaljer.behandlingFeilregistrert?.feilregistrert ?: throw Feil("Fant ikke tidspunkt for feilregistrering")
             BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET -> detaljer.behandlingEtterTrygderettenOpphevetAvsluttet?.avsluttet ?: throw Feil(feilmelding)
-            BehandlingEventType.OMGJOERINGSKRAV_AVSLUTTET -> detaljer.omgjoeringskravbehandlingAvsluttet?.avsluttet ?: throw Feil("Ikke implementert for OMGJOERINGSKRAV_AVSLUTTET")
+            BehandlingEventType.OMGJOERINGSKRAVBEHANDLING_AVSLUTTET -> detaljer.omgjoeringskravbehandlingAvsluttet?.avsluttet ?: throw Feil("Ikke implementert for OMGJOERINGSKRAV_AVSLUTTET")
         }
     }
 
