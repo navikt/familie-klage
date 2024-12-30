@@ -1,12 +1,14 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
-import no.nav.familie.klage.behandling.domain.BehandlingRepository
-import no.nav.familie.klage.behandling.domain.BehandlingResultat
+import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
+import no.nav.familie.klage.behandling.domain.Klagebehandlingsresultat
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
+import no.nav.familie.klage.behandling.domain.harManuellVedtaksdato
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
@@ -27,8 +29,8 @@ import no.nav.familie.klage.kabal.domain.tilDto
 import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.klage.personopplysninger.pdl.secureLogger
 import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
-import no.nav.familie.kontrakter.felles.klage.BehandlingStatus.FERDIGSTILT
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
@@ -165,7 +167,7 @@ class BehandlingService(
             henlagtÅrsak = henlagt.årsak,
             resultat = BehandlingResultat.HENLAGT,
             steg = StegType.BEHANDLING_FERDIGSTILT,
-            status = FERDIGSTILT,
+            status = BehandlingStatus.FERDIGSTILT,
             vedtakDato = SporbarUtils.now(),
         )
 
