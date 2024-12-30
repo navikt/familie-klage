@@ -6,6 +6,7 @@ import no.nav.familie.klage.infrastruktur.config.getValue
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.oppgave.MappeDto
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
+import org.slf4j.LoggerFactory
 import org.springframework.cache.CacheManager
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -17,6 +18,7 @@ class OppgaveService(
     private val behandlingService: BehandlingService,
     private val cacheManager: CacheManager,
 ) {
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     fun hentOppgave(gsakOppgaveId: Long): Oppgave = oppgaveClient.finnOppgaveMedId(gsakOppgaveId)
 
@@ -36,12 +38,15 @@ class OppgaveService(
         oppgaveClient.oppdaterOppgave(oppdatertOppgave)
     }
 
-    fun finnMapper(enheter: List<String>): List<MappeDto> =
-        enheter.flatMap { enhet -> finnMapperFraCache(enhet = enhet) }
+    fun finnMapper(enheter: List<String>): List<MappeDto> {
+        val mapper = enheter.flatMap { enhet -> finnMapperFraCache(enhet = enhet) }
+        // TODO: Kanskje sortering ikke burde skje her, men i front-end.
+        return mapper.sortedBy { mappe -> mappe.navn }
+    }
 
-    fun finnMapperFraCache(enhet: String): List<MappeDto> =
+    private fun finnMapperFraCache(enhet: String): List<MappeDto> =
         cacheManager.getValue(cache = "oppgave-mappe", key = enhet) {
-            // TODO: Legg til logger greier med håndtering for sukksess og feil.
+            logger.info("Henter mapper på nytt")
 
             val mappeRespons = oppgaveClient.finnMapper(
                 enhetnummer = enhet,
@@ -49,8 +54,13 @@ class OppgaveService(
             )
 
             if (mappeRespons.antallTreffTotalt > mappeRespons.mapper.size) {
-                // TODO: Legg til logger greier med håndtering for sukksess og feil.
+                logger.error(
+                    "Det finnes flere mapper (${mappeRespons.antallTreffTotalt}) " +
+                            "enn vi har hentet ut (${mappeRespons.mapper.size}). Sjekk limit. ",
+                )
             }
+
+            // TODO: Charlie nevnte noe om kontantstøtte mapper. Ta dette med.
             mappeRespons.mapper
         }
 }

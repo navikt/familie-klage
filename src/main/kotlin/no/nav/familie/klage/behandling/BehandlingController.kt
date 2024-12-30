@@ -99,7 +99,7 @@ class BehandlingController(
     // TODO: Litt usikker på om denne skal bo her, tanker?
     @GetMapping("/mapper")
     fun hentMapper(): Ressurs<List<MappeDto>> {
-        // TODO: Denne variabelen har jeg ikke peiling på hva gjør (domene-messig).
+        // TODO: Denne variabelen har jeg ikke peiling på hva gjør (domene-messig). Må få gjennomgang.
         val enheter = mutableListOf("4489")
 
         // TODO: Gjør noe tilgang service greier. Dette er også domene-tungt.
