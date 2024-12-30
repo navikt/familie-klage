@@ -40,6 +40,7 @@ class TilordnetRessursService(
         return if (oppgave != null) {
             OppgaveDto(
                 oppgaveId = oppgave.id,
+                tildeltEnhetsnr = oppgave.tildeltEnhetsnr,
                 beskrivelse = oppgave.beskrivelse,
                 tilordnetRessurs = oppgave.tilordnetRessurs ?: "",
                 prioritet = oppgave.prioritet,
