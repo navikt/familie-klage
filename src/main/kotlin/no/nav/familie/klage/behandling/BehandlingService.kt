@@ -197,7 +197,6 @@ class BehandlingService(
         behandlingshistorikkService.opprettBehandlingshistorikk(
             behandlingId = behandlingId,
             steg = steg,
-            behandlingStatus = behandlingStatus,
         )
 
         return behandlingRepository.update(t = behandling.copy(status = behandlingStatus))
