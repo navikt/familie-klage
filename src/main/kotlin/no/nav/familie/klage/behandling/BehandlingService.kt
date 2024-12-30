@@ -186,16 +186,20 @@ class BehandlingService(
     fun oppdaterStatusPåBehandling(
         behandlingId: UUID,
         steg: StegType,
-        status: BehandlingStatus,
+        behandlingStatus: BehandlingStatus,
     ): Behandling {
         val behandling = hentBehandling(behandlingId = behandlingId)
         secureLogger.info(
             "${SikkerhetContext.hentSaksbehandler()} endrer status på behandling $behandlingId " +
-                "fra ${behandling.status} til $status",
+                "fra ${behandling.status} til $behandlingStatus",
         )
 
-        behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId = behandlingId, steg = steg)
+        behandlingshistorikkService.opprettBehandlingshistorikk(
+            behandlingId = behandlingId,
+            steg = steg,
+            behandlingStatus = behandlingStatus,
+        )
 
-        return behandlingRepository.update(t = behandling.copy(status = status))
+        return behandlingRepository.update(t = behandling.copy(status = behandlingStatus))
     }
 }
