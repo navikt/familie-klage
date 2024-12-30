@@ -58,7 +58,7 @@ internal class BehandlingServiceTest {
         oppgaveTaskService,
         taskService,
         fagsystemVedtakService,
-        behandlingshistorikkService
+        behandlingshistorikkService,
     )
     val behandlingSlot = slot<Behandling>()
 
@@ -167,31 +167,31 @@ internal class BehandlingServiceTest {
             assertThrows<Feil> {
                 behandlingService.oppdaterPåklagetVedtak(
                     behandling.id,
-                    ugyldigUtenVedtakMedBehandlingId
+                    ugyldigUtenVedtakMedBehandlingId,
                 )
             }
             assertThrows<Feil> {
                 behandlingService.oppdaterPåklagetVedtak(
                     behandling.id,
-                    ugyldigIkkeValgtMedBehandlingId
+                    ugyldigIkkeValgtMedBehandlingId,
                 )
             }
             assertThrows<Feil> {
                 behandlingService.oppdaterPåklagetVedtak(
                     behandling.id,
-                    ugyldigManglerVedtaksdatoInfotrygd
+                    ugyldigManglerVedtaksdatoInfotrygd,
                 )
             }
             assertThrows<Feil> {
                 behandlingService.oppdaterPåklagetVedtak(
                     behandling.id,
-                    ugyldigManglerVedtaksdatoUtestengelse
+                    ugyldigManglerVedtaksdatoUtestengelse,
                 )
             }
             assertThrows<Feil> {
                 behandlingService.oppdaterPåklagetVedtak(
                     behandling.id,
-                    ugyldigManglerVedtaksdatoInfotrygdOrdinærtVedtak
+                    ugyldigManglerVedtaksdatoInfotrygdOrdinærtVedtak,
                 )
             }
         }
@@ -208,7 +208,7 @@ internal class BehandlingServiceTest {
             val gjelderInfotrygd = PåklagetVedtakDto(
                 null,
                 PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING,
-                manuellVedtaksdato = LocalDate.now()
+                manuellVedtaksdato = LocalDate.now(),
             )
             val utestengelse =
                 PåklagetVedtakDto(null, PåklagetVedtakstype.UTESTENGELSE, manuellVedtaksdato = LocalDate.now())

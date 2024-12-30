@@ -60,7 +60,7 @@ class OppgaveClient(
 
     fun finnMapper(
         enhetnummer: String,
-        limit: Int
+        limit: Int,
     ): FinnMappeResponseDto {
         val uri =
             UriComponentsBuilder

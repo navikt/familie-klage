@@ -1,7 +1,6 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.*
-import no.nav.familie.klage.behandling.domain.StegType.BEHANDLING_FERDIGSTILT
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
@@ -160,12 +159,12 @@ class BehandlingService(
         val henlagtBehandling = behandling.copy(
             henlagtÅrsak = henlagt.årsak,
             resultat = BehandlingResultat.HENLAGT,
-            steg = BEHANDLING_FERDIGSTILT,
+            steg = StegType.BEHANDLING_FERDIGSTILT,
             status = FERDIGSTILT,
             vedtakDato = SporbarUtils.now(),
         )
 
-        behandlinghistorikkService.opprettBehandlingshistorikk(behandlingId, BEHANDLING_FERDIGSTILT)
+        behandlinghistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BEHANDLING_FERDIGSTILT)
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
         behandlingRepository.update(henlagtBehandling)
         taskService.save(taskService.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId)))
@@ -185,7 +184,7 @@ class BehandlingService(
         val behandling = hentBehandling(behandlingId = behandlingId)
         secureLogger.info(
             "${SikkerhetContext.hentSaksbehandler()} endrer status på behandling $behandlingId " +
-                "fra ${behandling.status} til $status",
+                    "fra ${behandling.status} til $status",
         )
 
         behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId = behandlingId, steg = steg)
