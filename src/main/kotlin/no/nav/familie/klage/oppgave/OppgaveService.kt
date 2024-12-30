@@ -45,7 +45,7 @@ class OppgaveService(
     }
 
     private fun finnMapperFraCache(enhet: String): List<MappeDto> =
-        cacheManager.getValue(cache = "oppgave-mappe", key = enhet) {
+        cacheManager.getValue(cache = MAPPE_CACHE_NAVN, key = enhet) {
             logger.info("Henter mapper på nytt")
 
             val mappeRespons = oppgaveClient.finnMapper(
@@ -63,4 +63,8 @@ class OppgaveService(
             // TODO: Charlie nevnte noe om kontantstøtte mapper. Ta dette med.
             mappeRespons.mapper
         }
+
+    companion object {
+        const val MAPPE_CACHE_NAVN = "oppgave-mappe"
+    }
 }
