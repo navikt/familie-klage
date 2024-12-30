@@ -7,11 +7,13 @@ import no.nav.familie.klage.behandling.dto.SettPåVentRequest
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
+import no.nav.familie.klage.oppgave.OppgaveService
 import no.nav.familie.klage.oppgave.TilordnetRessursService
 import no.nav.familie.klage.oppgave.dto.SaksbehandlerDto
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.KanOppretteRevurderingResponse
+import no.nav.familie.kontrakter.felles.oppgave.MappeDto
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -34,6 +36,7 @@ class BehandlingController(
     private val opprettRevurderingService: OpprettRevurderingService,
     private val tilordnetRessursService: TilordnetRessursService,
     private val behandlingPåVentService: BehandlingPåVentService,
+    private val oppgaveService: OppgaveService,
 ) {
 
     @GetMapping("{behandlingId}")
@@ -91,6 +94,16 @@ class BehandlingController(
         return Ressurs.success(
             data = tilordnetRessursService.hentOppgave(behandlingId = behandlingId),
         )
+    }
+
+    // TODO: Litt usikker på om denne skal bo her, tanker?
+    @GetMapping("/mapper")
+    fun hentMapper(): Ressurs<List<MappeDto>> {
+        // TODO: Denne variabelen har jeg ikke peiling på hva gjør (domene-messig).
+        val enheter = mutableListOf("4489")
+
+        // TODO: Gjør noe tilgang service greier. Dette er også domene-tungt.
+        return Ressurs.success(oppgaveService.finnMapper(enheter = enheter))
     }
 
     @PostMapping("{behandlingId}/vent")
