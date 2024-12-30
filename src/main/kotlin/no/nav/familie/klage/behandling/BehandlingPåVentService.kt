@@ -33,7 +33,7 @@ class BehandlingPåVentService(
         behandlingService.oppdaterStatusPåBehandling(
             behandlingId = behandling.id,
             steg = behandling.steg,
-            status = BehandlingStatus.SATT_PÅ_VENT,
+            behandlingStatus = BehandlingStatus.SATT_PÅ_VENT,
         )
     }
 
@@ -46,7 +46,7 @@ class BehandlingPåVentService(
         behandlingService.oppdaterStatusPåBehandling(
             behandlingId = behandlingId,
             steg = behandling.steg,
-            status = BehandlingStatus.UTREDES,
+            behandlingStatus = BehandlingStatus.UTREDES,
         )
     }
 
