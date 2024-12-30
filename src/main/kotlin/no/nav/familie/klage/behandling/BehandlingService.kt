@@ -1,14 +1,7 @@
 package no.nav.familie.klage.behandling
 
-import no.nav.familie.klage.behandling.domain.Behandling
-import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
-import no.nav.familie.klage.behandling.domain.Klagebehandlingsresultat
-import no.nav.familie.klage.behandling.domain.PåklagetVedtak
-import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
-import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
+import no.nav.familie.klage.behandling.domain.*
 import no.nav.familie.klage.behandling.domain.StegType.BEHANDLING_FERDIGSTILT
-import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
-import no.nav.familie.klage.behandling.domain.harManuellVedtaksdato
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
@@ -52,6 +45,7 @@ class BehandlingService(
     private val oppgaveTaskService: OppgaveTaskService,
     private val taskService: TaskService,
     private val fagsystemVedtakService: FagsystemVedtakService,
+    private val behandlingshistorikkService: BehandlingshistorikkService,
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -185,6 +179,7 @@ class BehandlingService(
 
     fun oppdaterStatusPåBehandling(
         behandlingId: UUID,
+        steg: StegType,
         status: BehandlingStatus,
     ): Behandling {
         val behandling = hentBehandling(behandlingId = behandlingId)
@@ -192,6 +187,9 @@ class BehandlingService(
             "${SikkerhetContext.hentSaksbehandler()} endrer status på behandling $behandlingId " +
                 "fra ${behandling.status} til $status",
         )
+
+        behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId = behandlingId, steg = steg)
+
         return behandlingRepository.update(t = behandling.copy(status = status))
     }
 }
