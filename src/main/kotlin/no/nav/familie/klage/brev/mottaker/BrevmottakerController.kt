@@ -40,10 +40,9 @@ class BrevmottakerController(
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         opprettBrevmottakerDto.valider()
         val brevmottaker = opprettBrevmottakerDto.mapTilBrevmottaker(behandlingId)
-        val oppdaterteBrevmottakereDto = brevmottakerService
-            .oppdaterBrevmottakere(behandlingId, brevmottaker)
-            .map { it.mapTilBrevmottakerDto() }
-        return Ressurs.success(oppdaterteBrevmottakereDto)
+        brevmottakerService.opprettBrevmottaker(behandlingId, brevmottaker)
+        val brevmottakerDtos = brevmottakerService.hentBrevmottakere(behandlingId).map { it.mapTilBrevmottakerDto() }
+        return Ressurs.success(brevmottakerDtos)
     }
 
     @DeleteMapping("/{behandlingId}/{brevmottakerId}")
@@ -53,9 +52,8 @@ class BrevmottakerController(
     ): Ressurs<List<BrevmottakerDto>> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.DELETE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        val oppdaterteBrevmottakereDto = brevmottakerService
-            .slettBrevmottaker(behandlingId, brevmottakerId)
-            .map { it.mapTilBrevmottakerDto() }
-        return Ressurs.success(oppdaterteBrevmottakereDto)
+        brevmottakerService.slettBrevmottaker(behandlingId, brevmottakerId)
+        val brevmottakerDtos = brevmottakerService.hentBrevmottakere(behandlingId).map { it.mapTilBrevmottakerDto() }
+        return Ressurs.success(brevmottakerDtos)
     }
 }

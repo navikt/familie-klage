@@ -1,5 +1,6 @@
 package no.nav.familie.klage.brev.mottaker
 
+import jakarta.transaction.Transactional
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import org.springframework.stereotype.Service
@@ -13,22 +14,20 @@ class BrevmottakerService(
     fun hentBrevmottakere(behandlingId: UUID): List<Brevmottaker> =
         brevmottakerRepository.findByBehandlingId(behandlingId)
 
-    fun oppdaterBrevmottakere(behandlingId: UUID, brevmottaker: Brevmottaker): List<Brevmottaker> {
+    @Transactional
+    fun opprettBrevmottaker(behandlingId: UUID, brevmottaker: Brevmottaker): Brevmottaker {
         val eksisterendeBrevmottakere = hentBrevmottakere(behandlingId)
         val brukerensNavn = personopplysningerService.hentPersonopplysninger(behandlingId).navn
         BrevmottakerValidator.valider(brevmottaker, eksisterendeBrevmottakere, brukerensNavn)
-
-        brevmottakerRepository.insert(brevmottaker)
-
-        return hentBrevmottakere(behandlingId)
+        return brevmottakerRepository.insert(brevmottaker)
     }
 
-    fun slettBrevmottaker(behandlingId: UUID, brevmottakerId: UUID): List<Brevmottaker> {
+    @Transactional
+    fun slettBrevmottaker(behandlingId: UUID, brevmottakerId: UUID) {
         val eksisterendeBrevmottakere = hentBrevmottakere(behandlingId)
         if (brevmottakerId !in eksisterendeBrevmottakere.map { it.id }) {
             throw Feil("Fant ikke brevmottaker med id $brevmottakerId")
         }
         brevmottakerRepository.deleteById(brevmottakerId)
-        return eksisterendeBrevmottakere.filter { it.id != brevmottakerId }
     }
 }
