@@ -8,21 +8,11 @@ object BrevmottakerValidator {
         eksisterendeBrevmottakere: List<Brevmottaker>,
         brukerensNavn: String,
     ) {
-        val eksisterendeMottakertyper =
-            eksisterendeBrevmottakere
-                .map { it.mottakertype }
+        val eksisterendeMottakertyper = eksisterendeBrevmottakere.map { it.mottakertype }
 
         when {
-            eksisterendeMottakertyper.isNotEmpty() &&
-                (
-                    brevmottaker.mottakertype !== Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE ||
-                        !eksisterendeMottakertyper.contains(Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE)
-                ) -> {
-                throw Feil("Kan ikke legge til to brevmottakere med mindre en av de er en bruker med utenlandsk adresse.")
-            }
-
             eksisterendeMottakertyper.any { it == brevmottaker.mottakertype } -> {
-                throw Feil("Mottakertype finnes allerede.")
+                throw Feil("Kan ikke ha duplikate mottakertyper. ${brevmottaker.mottakertype} finnes allerede.")
             }
 
             brevmottaker.mottakertype == Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE && brevmottaker.navn != brukerensNavn -> {
@@ -33,10 +23,26 @@ object BrevmottakerValidator {
                 throw Feil("Ved dødsbo skal brevmottakerens navn inneholde brukerens navn.")
             }
 
-            brevmottaker.mottakertype == Mottakertype.DØDSBO &&
-                eksisterendeBrevmottakere.isNotEmpty() ||
-                eksisterendeMottakertyper.any { it == Mottakertype.DØDSBO } -> {
-                throw Feil("Ved dødsbo kan det ikke være flere brevmottakere.")
+            brevmottaker.mottakertype == Mottakertype.DØDSBO && eksisterendeBrevmottakere.isNotEmpty() -> {
+                throw Feil("Kan ikke legge til dødsbo når det allerede finnes brevmottakere.")
+            }
+
+            eksisterendeMottakertyper.any { it == Mottakertype.DØDSBO } -> {
+                throw Feil("Kan ikke legge til flere brevmottakere når det allerede finnes et dødsbo")
+            }
+
+            Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE in eksisterendeMottakertyper &&
+                brevmottaker.mottakertype !== Mottakertype.VERGE &&
+                brevmottaker.mottakertype !== Mottakertype.FULLMEKTIG
+            -> {
+                throw Feil("Bruker med utenlandsk adresse kan kun kombineres med verge eller fullmektig.")
+            }
+
+            eksisterendeMottakertyper.isNotEmpty() &&
+                Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE !in eksisterendeMottakertyper &&
+                brevmottaker.mottakertype !== Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE
+            -> {
+                throw Feil("Kan kun legge til bruker med utenlandsk adresse om det finnes en brevmottaker allerede.")
             }
         }
     }
