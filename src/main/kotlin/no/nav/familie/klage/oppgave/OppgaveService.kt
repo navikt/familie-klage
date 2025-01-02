@@ -2,8 +2,10 @@ package no.nav.familie.klage.oppgave
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.erUnderArbeidAvSaksbehandler
+import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.infrastruktur.config.getValue
 import no.nav.familie.kontrakter.felles.Behandlingstema
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.oppgave.MappeDto
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import org.slf4j.LoggerFactory
@@ -16,6 +18,7 @@ class OppgaveService(
     private val behandleSakOppgaveRepository: BehandleSakOppgaveRepository,
     private val oppgaveClient: OppgaveClient,
     private val behandlingService: BehandlingService,
+    private val fagsakService: FagsakService,
     private val cacheManager: CacheManager,
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -38,10 +41,17 @@ class OppgaveService(
         oppgaveClient.oppdaterOppgave(oppdatertOppgave)
     }
 
-    fun finnMapper(enheter: List<String>): List<MappeDto> {
-        val mapper = enheter.flatMap { enhet -> finnMapperFraCache(enhet = enhet) }
-        // TODO: Kanskje sortering ikke burde skje her, men i front-end.
-        return mapper.sortedBy { mappe -> mappe.navn }
+    fun finnMapperBasertPåFagsystem(enheter: List<String>, fagsakId: UUID): List<MappeDto> {
+        val fagsak = fagsakService.hentFagsak(fagsakId)
+
+        when (fagsak.fagsystem) {
+            Fagsystem.EF -> {
+                val mapper = enheter.flatMap { enhet -> finnMapperFraCache(enhet = enhet) }
+                return mapper.sortedBy { mappe -> mappe.navn }
+            }
+
+            else -> return emptyList()
+        }
     }
 
     private fun finnMapperFraCache(enhet: String): List<MappeDto> =
