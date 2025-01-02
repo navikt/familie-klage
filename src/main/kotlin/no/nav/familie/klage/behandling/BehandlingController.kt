@@ -97,15 +97,15 @@ class BehandlingController(
     }
 
     // TODO: Litt usikker på om denne skal bo her, tanker?
-    @GetMapping("{fagsakId}/mapper")
-    fun hentMapper(@PathVariable fagsakId: UUID): Ressurs<List<MappeDto>> {
+    @GetMapping("{oppgaveId}/mapper")
+    fun hentMapper(@PathVariable oppgaveId: Long): Ressurs<List<MappeDto>> {
         // TODO: Denne variabelen har jeg ikke peiling på hva gjør (domene-messig). Må få gjennomgang.
         val enheter = mutableListOf("4489")
 
         return Ressurs.success(
             oppgaveService.finnMapperBasertPåFagsystem(
                 enheter = enheter,
-                fagsakId = fagsakId,
+                oppgaveId = oppgaveId,
             ),
         )
     }
