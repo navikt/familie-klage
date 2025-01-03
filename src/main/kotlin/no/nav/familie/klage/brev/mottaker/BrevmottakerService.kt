@@ -18,7 +18,7 @@ class BrevmottakerService(
     fun opprettBrevmottaker(behandlingId: UUID, brevmottaker: Brevmottaker): Brevmottaker {
         val eksisterendeBrevmottakere = hentBrevmottakere(behandlingId)
         val brukerensNavn = personopplysningerService.hentPersonopplysninger(behandlingId).navn
-        BrevmottakerValidator.valider(brevmottaker, eksisterendeBrevmottakere, brukerensNavn)
+        BrevmottakerValidator.validerNyBrevmottaker(brevmottaker, eksisterendeBrevmottakere, brukerensNavn)
         return brevmottakerRepository.insert(brevmottaker)
     }
 
