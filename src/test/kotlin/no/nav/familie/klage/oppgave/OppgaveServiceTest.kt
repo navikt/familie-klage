@@ -5,6 +5,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import no.nav.familie.klage.behandling.BehandlingService
+import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
@@ -20,8 +21,9 @@ internal class OppgaveServiceTest {
     val oppgaveClient = mockk<OppgaveClient>()
     val behandlingService = mockk<BehandlingService>()
     val cacheManager = mockk<CacheManager>()
+    val fagsakService = mockk<FagsakService>()
     val oppgaveService =
-        OppgaveService(behandleSakOppgaveRepository, oppgaveClient, behandlingService, cacheManager)
+        OppgaveService(behandleSakOppgaveRepository, oppgaveClient, behandlingService, fagsakService, cacheManager)
 
     val behandlingId = UUID.randomUUID()
     val oppgaveId = 1L
