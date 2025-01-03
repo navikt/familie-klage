@@ -38,7 +38,6 @@ class BrevmottakerController(
     ): Ressurs<List<BrevmottakerDto>> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.CREATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        opprettBrevmottakerDto.valider()
         val brevmottaker = opprettBrevmottakerDto.mapTilBrevmottaker(behandlingId)
         brevmottakerService.opprettBrevmottaker(behandlingId, brevmottaker)
         val brevmottakerDtos = brevmottakerService.hentBrevmottakere(behandlingId).map { it.mapTilBrevmottakerDto() }

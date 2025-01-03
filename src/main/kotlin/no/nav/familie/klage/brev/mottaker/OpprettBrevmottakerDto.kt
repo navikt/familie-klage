@@ -14,7 +14,7 @@ data class OpprettBrevmottakerDto(
     val poststed: String?,
     val landkode: String,
 ) {
-    fun valider() {
+    init {
         brukerfeilHvisIkke(landkode.length == 2) { "Ugyldig landkode: $landkode" }
         brukerfeilHvis(navn.isBlank()) { "Navn kan ikke være tomt" }
         brukerfeilHvis(adresselinje1.isBlank()) { "Adresselinje1 kan ikke være tomt" }
