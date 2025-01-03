@@ -42,7 +42,7 @@ class OppgaveService(
     }
 
     fun finnMapperBasertPåFagsystem(enheter: List<String>, behandlingId: UUID): List<MappeDto> {
-        val fagsak = fagsakService.hentFagsak(id = behandlingId)
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
 
         return when (fagsak.fagsystem) {
             Fagsystem.EF -> {
