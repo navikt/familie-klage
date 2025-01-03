@@ -14,6 +14,8 @@ data class OpprettBrevmottakerDto(
     val poststed: String?,
     val landkode: String,
 ) {
+    // TODO : Her burde man kanskje ikke bruke HTTP spesifikke exceptions?
+    //  Kanskje en mer generisk exception er bedre, som så blir håndtert via f.eks. ApiExceptionHandler.
     init {
         brukerfeilHvisIkke(landkode.length == 2) { "Ugyldig landkode: $landkode" }
         brukerfeilHvis(navn.isBlank()) { "Navn kan ikke være tomt" }

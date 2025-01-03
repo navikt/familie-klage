@@ -6,6 +6,8 @@ import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Embedded
 import java.util.UUID
 
+// TODO : Burde man sørge for at entiteten ikke opprettes i en ugyldig tilstand via init metoden?
+
 data class Brevmottaker(
     @Id
     val id: UUID = UUID.randomUUID(),

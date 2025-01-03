@@ -2,6 +2,8 @@ package no.nav.familie.klage.brev.mottaker
 
 import java.util.UUID
 
+// TODO : Her burde man kanskje sørge for at Dto'en ikke opprettes i en ugyldig tilstand via init metoden?
+
 data class BrevmottakerDto(
     val id: UUID,
     val mottakertype: Mottakertype,
