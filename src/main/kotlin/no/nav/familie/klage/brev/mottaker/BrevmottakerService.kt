@@ -24,9 +24,9 @@ class BrevmottakerService(
 
     @Transactional
     fun slettBrevmottaker(behandlingId: UUID, brevmottakerId: UUID) {
-        val eksisterendeBrevmottakere = hentBrevmottakere(behandlingId)
-        if (brevmottakerId !in eksisterendeBrevmottakere.map { it.id }) {
-            throw Feil("Fant ikke brevmottaker med id $brevmottakerId")
+        val eksisterer = brevmottakerRepository.existsById(brevmottakerId)
+        if (!eksisterer) {
+            throw Feil("Brevmottaker med id $brevmottakerId finnes ikke.")
         }
         brevmottakerRepository.deleteById(brevmottakerId)
     }
