@@ -24,10 +24,6 @@ class OppgaveService(
 
     fun oppdaterOppgave(oppgave: Oppgave) = oppgaveClient.oppdaterOppgave(oppgave)
 
-    fun hentOppgave(gsakOppgaveId: Long): Oppgave = oppgaveClient.finnOppgaveMedId(gsakOppgaveId)
-
-    fun oppdaterOppgave(oppgave: Oppgave) = oppgaveClient.oppdaterOppgave(oppgave)
-
     fun oppdaterOppgaveTilÅGjeldeTilbakekreving(behandlingId: UUID) {
         val behandling = behandlingService.hentBehandling(behandlingId)
 
@@ -44,7 +40,6 @@ class OppgaveService(
 
     fun finnMapper(enheter: List<String>): List<MappeDto> {
         val mapper = enheter.flatMap { enhet -> finnMapperFraCache(enhet = enhet) }
-        // TODO: Kanskje sortering ikke burde skje her, men i front-end.
         return mapper.sortedBy { mappe -> mappe.navn }
     }
 
@@ -64,7 +59,6 @@ class OppgaveService(
                 )
             }
 
-            // TODO: Charlie nevnte noe om kontantstøtte mapper. Ta dette med.
             mappeRespons.mapper
         }
 
