@@ -8,6 +8,7 @@ import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.oppgave.OppgaveService
+import no.nav.familie.klage.oppgave.OppgaveUtil.ENHET_NR_NAY
 import no.nav.familie.klage.oppgave.TilordnetRessursService
 import no.nav.familie.klage.oppgave.dto.SaksbehandlerDto
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -96,13 +97,12 @@ class BehandlingController(
         )
     }
 
-    // TODO: Litt usikker på om denne skal bo her, tanker?
     @GetMapping("/mapper")
     fun hentMapper(): Ressurs<List<MappeDto>> {
-        // TODO: Denne variabelen har jeg ikke peiling på hva gjør (domene-messig). Må få gjennomgang.
-        val enheter = mutableListOf("4489")
+        val enheter = mutableListOf(ENHET_NR_NAY)
 
-        // TODO: Gjør noe tilgang service greier. Dette er også domene-tungt.
+        // TODO: Her trengs det en klage-behandling egen-ansatt sjekk, muligens.
+
         return Ressurs.success(oppgaveService.finnMapper(enheter = enheter))
     }
 
