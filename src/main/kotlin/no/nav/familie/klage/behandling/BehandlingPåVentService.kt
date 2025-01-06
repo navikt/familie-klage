@@ -87,7 +87,7 @@ class BehandlingPåVentService(
         val frist = utledFristBeskrivelse(oppgave = oppgave, settPåVentRequest = settPåVentRequest)
         val mappe = utledMappeBeskrivelse(oppgave = oppgave, settPåVentRequest = settPåVentRequest)
 
-        val harEndringer = listOf(tilordnetSaksbehandler, prioritet, frist).any { it.isNotBlank() }
+        val harEndringer = listOf(tilordnetSaksbehandler, prioritet, frist, mappe).any { it.isNotBlank() }
         val beskrivelse = utledNyBeskrivelse(settPåVentRequest = settPåVentRequest)
         val skalOppdatereBeskrivelse = harEndringer || beskrivelse.isNotBlank()
 
