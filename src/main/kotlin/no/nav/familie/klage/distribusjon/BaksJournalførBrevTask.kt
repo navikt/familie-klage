@@ -4,18 +4,15 @@ import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.baks.BaksBrevService
 import no.nav.familie.klage.brev.baks.mottaker.BrevmottakerService
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
-import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.personopplysninger.pdl.logger
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
 import no.nav.familie.kontrakter.felles.journalpost.AvsenderMottakerIdType
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
-import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.stereotype.Service
-import java.util.Properties
 import java.util.UUID
 
 @Service
@@ -34,6 +31,7 @@ class BaksJournalførBrevTask(
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
 
+        // TODO : Pluss på bruker i tillegg til manuelt registrerte mottakere?
         val avsenderMottakere = brevmottakerService.hentBrevmottakere(behandlingId).map {
             AvsenderMottaker(
                 id = it.id.toString(),
@@ -42,8 +40,8 @@ class BaksJournalførBrevTask(
             )
         }
 
-        feilHvis(avsenderMottakere.isEmpty()) {
-            "Må hax minimum en mottaker"
+        if (avsenderMottakere.isEmpty()) {
+            throw IllegalStateException("Må ha minimum en mottaker")
         }
 
         avsenderMottakere.forEachIndexed { index, avsenderMottaker ->
@@ -54,36 +52,22 @@ class BaksJournalførBrevTask(
                 index,
                 avsenderMottaker,
             )
-            opprettDistribuerBrevTask(BaksDistribuerBrevDto(behandlingId, journalpostId), task.metadata)
+            val distribuerBrevTask = BaksDistribuerBrevTask.opprett(
+                BaksDistribuerBrevTask.Payload(behandlingId, journalpostId),
+                task.metadata,
+            )
+            taskService.save(distribuerBrevTask)
         }
     }
 
     override fun onCompletion(task: Task) {
-        val behandlingId = UUID.fromString(task.payload)
-        val behandling = behandlingService.hentBehandling(behandlingId)
+        val behandling = behandlingService.hentBehandling(UUID.fromString(task.payload))
         if (behandling.resultat == BehandlingResultat.IKKE_MEDHOLD) {
-            opprettSendTilKabalTask(task)
+            val sendTilKabalTask = SendTilKabalTask.opprett(task.payload, task.metadata)
+            taskService.save(sendTilKabalTask)
         } else {
             logger.info("Skal ikke sende til kabal siden formkrav ikke er oppfylt eller saksbehandler har gitt medhold")
         }
-    }
-
-    private fun opprettDistribuerBrevTask(payload: BaksDistribuerBrevDto, metadata: Properties) {
-        val sendTilKabalTask = Task(
-            type = BaksDistribuerBrevTask.TYPE,
-            payload = objectMapper.writeValueAsString(payload),
-            properties = metadata,
-        )
-        taskService.save(sendTilKabalTask)
-    }
-
-    private fun opprettSendTilKabalTask(task: Task) {
-        val sendTilKabalTask = Task(
-            type = SendTilKabalTask.TYPE,
-            payload = task.payload,
-            properties = task.metadata,
-        )
-        taskService.save(sendTilKabalTask)
     }
 
     companion object {

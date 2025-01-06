@@ -12,6 +12,7 @@ import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import org.springframework.stereotype.Service
+import java.util.Properties
 import java.util.UUID
 
 @Service
@@ -45,6 +46,14 @@ class SendTilKabalTask(
     }
 
     companion object {
+        fun opprett(payload: String, metadata: Properties): Task {
+            return Task(
+                type = SendTilKabalTask.TYPE,
+                payload = payload,
+                properties = metadata,
+            )
+        }
+
         const val TYPE = "sendTilKabalTask"
     }
 }
