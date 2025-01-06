@@ -24,6 +24,10 @@ class OppgaveService(
 
     fun oppdaterOppgave(oppgave: Oppgave) = oppgaveClient.oppdaterOppgave(oppgave)
 
+    fun hentOppgave(gsakOppgaveId: Long): Oppgave = oppgaveClient.finnOppgaveMedId(gsakOppgaveId)
+
+    fun oppdaterOppgave(oppgave: Oppgave) = oppgaveClient.oppdaterOppgave(oppgave)
+
     fun oppdaterOppgaveTilÅGjeldeTilbakekreving(behandlingId: UUID) {
         val behandling = behandlingService.hentBehandling(behandlingId)
 
