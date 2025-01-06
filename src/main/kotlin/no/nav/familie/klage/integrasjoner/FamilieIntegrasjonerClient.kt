@@ -65,6 +65,7 @@ class FamilieIntegrasjonerClient(
     fun distribuerBrev(journalpostId: String, distribusjonstype: Distribusjonstype): String {
         val journalpostRequest = DistribuerJournalpostRequest(
             journalpostId = journalpostId,
+            // TODO : Dette må endres
             bestillendeFagsystem = no.nav.familie.kontrakter.felles.Fagsystem.EF,
             dokumentProdApp = "FAMILIE_KLAGE",
             distribusjonstype = distribusjonstype,
