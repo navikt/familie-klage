@@ -92,6 +92,7 @@ class BehandlingController(
             behandlingId = behandlingId,
             event = AuditLoggerEvent.ACCESS,
         )
+
         return Ressurs.success(
             data = tilordnetRessursService.hentOppgave(behandlingId = behandlingId),
         )

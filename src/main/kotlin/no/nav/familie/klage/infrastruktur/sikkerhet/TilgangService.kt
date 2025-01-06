@@ -140,6 +140,8 @@ class TilgangService(
         return harTilgangTilGittRolle(stønadstype, minimumsrolle)
     }
 
+    fun harEgenAnsattRolle(): Boolean = SikkerhetContext.harRolle(rolleConfig.egenAnsatt)
+
     private fun harTilgangTilGittRolle(stønadstype: Stønadstype, minimumsrolle: BehandlerRolle): Boolean {
         val rolleForFagsystem = when (stønadstype) {
             Stønadstype.BARNETRYGD -> rolleConfig.ba
