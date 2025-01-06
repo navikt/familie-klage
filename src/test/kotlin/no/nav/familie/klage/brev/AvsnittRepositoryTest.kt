@@ -1,6 +1,7 @@
 package no.nav.familie.klage.brev
 
-import no.nav.familie.klage.brev.domain.Avsnitt
+import no.nav.familie.klage.brev.ef.AvsnittRepository
+import no.nav.familie.klage.brev.ef.domain.Avsnitt
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.DomainUtil.behandling

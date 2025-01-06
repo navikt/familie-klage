@@ -1,5 +1,9 @@
 package no.nav.familie.klage.brev.avvistbrev
 
+import no.nav.familie.klage.brev.AvvistBrevInnholdUtleder
+import no.nav.familie.klage.brev.baks.avvistbrev.BAAvvistBrevInnholdUtleder
+import no.nav.familie.klage.brev.baks.avvistbrev.KSAvvistBrevInnholdUtleder
+import no.nav.familie.klage.brev.ef.avvistbrev.EFAvvistBrevInnholdUtleder
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm

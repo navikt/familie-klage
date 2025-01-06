@@ -2,7 +2,6 @@ package no.nav.familie.klage.brev
 
 import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.klage.blankett.BlankettPdfRequest
-import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value

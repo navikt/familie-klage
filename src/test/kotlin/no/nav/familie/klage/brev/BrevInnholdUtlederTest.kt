@@ -2,8 +2,7 @@ package no.nav.familie.klage.brev
 
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.familie.klage.brev.avvistbrev.AvvistBrevInnholdUtleder
-import no.nav.familie.klage.brev.avvistbrev.EFAvvistBrevInnholdUtleder
+import no.nav.familie.klage.brev.ef.avvistbrev.EFAvvistBrevInnholdUtleder
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
 import no.nav.familie.klage.testutil.DomainUtil.påklagetVedtakDetaljer

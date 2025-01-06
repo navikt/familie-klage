@@ -13,7 +13,7 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.blankett.LagSaksbehandlingsblankettTask
-import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brev.ef.BrevService
 import no.nav.familie.klage.distribusjon.DistribusjonService
 import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.distribusjon.SendTilKabalTask
@@ -95,7 +95,13 @@ internal class FerdigstillBehandlingServiceTest {
         justRun { stegService.oppdaterSteg(any(), any(), capture(stegSlot), any()) }
         every { formService.formkravErOppfyltForBehandling(any()) } returns true
         justRun { behandlingService.oppdaterBehandlingMedResultat(any(), capture(behandlingsresultatSlot), null) }
-        justRun { behandlingService.oppdaterBehandlingMedResultat(any(), capture(behandlingsresultatSlot), captureNullable(fagsystemRevurderingSlot)) }
+        justRun {
+            behandlingService.oppdaterBehandlingMedResultat(
+                any(),
+                capture(behandlingsresultatSlot),
+                captureNullable(fagsystemRevurderingSlot),
+            )
+        }
         every { taskService.save(capture(saveTaskSlot)) } answers { firstArg() }
         every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id) } just Runs
         justRun { brevService.lagBrevPdf(any()) }

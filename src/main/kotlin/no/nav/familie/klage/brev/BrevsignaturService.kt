@@ -1,6 +1,5 @@
 package no.nav.familie.klage.brev
 
-import no.nav.familie.klage.brev.dto.SignaturDto
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class BrevsignaturService(
-    private val featureToggleService: FeatureToggleService
+    private val featureToggleService: FeatureToggleService,
 ) {
     fun lagSignatur(
         personopplysningerDto: PersonopplysningerDto,

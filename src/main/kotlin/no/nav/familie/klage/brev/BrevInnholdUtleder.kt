@@ -1,9 +1,6 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
-import no.nav.familie.klage.brev.avvistbrev.AvvistBrevInnholdUtleder
-import no.nav.familie.klage.brev.dto.AvsnittDto
-import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.felles.util.StønadstypeVisningsnavn.visningsnavn
 import no.nav.familie.klage.felles.util.TekstUtil.norskFormat
 import no.nav.familie.klage.formkrav.domain.Form

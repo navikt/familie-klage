@@ -5,10 +5,10 @@ import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.verifyOrder
-import no.nav.familie.klage.brev.BrevService
-import no.nav.familie.klage.brev.domain.Brev
-import no.nav.familie.klage.brev.domain.BrevmottakereJournalpost
-import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
+import no.nav.familie.klage.brev.ef.BrevService
+import no.nav.familie.klage.brev.ef.domain.Brev
+import no.nav.familie.klage.brev.ef.domain.BrevmottakereJournalpost
+import no.nav.familie.klage.brev.ef.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.prosessering.domene.Task
 import org.assertj.core.api.Assertions.assertThatThrownBy
