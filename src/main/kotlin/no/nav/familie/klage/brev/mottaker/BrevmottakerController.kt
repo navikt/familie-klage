@@ -28,6 +28,7 @@ class BrevmottakerController(
     ): Ressurs<List<Brevmottaker>> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
+        // TODO : Sjekk om behandling er redigerbar?
         return Ressurs.success(brevmottakerService.hentBrevmottakere(behandlingId))
     }
 
@@ -38,6 +39,7 @@ class BrevmottakerController(
     ): Ressurs<List<BrevmottakerDto>> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.CREATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
+        // TODO : Sjekk om behandling er redigerbar?
         val brevmottaker = opprettBrevmottakerDto.mapTilBrevmottaker(behandlingId)
         brevmottakerService.opprettBrevmottaker(behandlingId, brevmottaker)
         val brevmottakerDtos = brevmottakerService.hentBrevmottakere(behandlingId).map { it.mapTilBrevmottakerDto() }
@@ -51,6 +53,7 @@ class BrevmottakerController(
     ): Ressurs<List<BrevmottakerDto>> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.DELETE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
+        // TODO : Sjekk om behandling er redigerbar?
         brevmottakerService.slettBrevmottaker(behandlingId, brevmottakerId)
         val brevmottakerDtos = brevmottakerService.hentBrevmottakere(behandlingId).map { it.mapTilBrevmottakerDto() }
         return Ressurs.success(brevmottakerDtos)
