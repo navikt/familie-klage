@@ -71,8 +71,8 @@ class OppgaveClient(
                 .build()
                 .toUri()
 
-        val repons = getForEntity<Ressurs<FinnMappeResponseDto>>(uri = uri)
-        return pakkUtRespons(respons = repons, uri = uri, metode = "finnMappe")
+        val respons = getForEntity<Ressurs<FinnMappeResponseDto>>(uri = uri)
+        return pakkUtRespons(respons = respons, uri = uri, metode = "finnMappe")
     }
 
     fun hentSaksbehandlerInfo(navIdent: String): Saksbehandler {

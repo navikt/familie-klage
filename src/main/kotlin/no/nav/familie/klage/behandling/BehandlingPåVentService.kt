@@ -4,6 +4,7 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandling.dto.SettPåVentRequest
 import no.nav.familie.klage.felles.util.dagensDatoMedNorskFormat
+import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.oppgave.OppgaveService
@@ -84,6 +85,7 @@ class BehandlingPåVentService(
         )
         val prioritet = utledPrioritetBeskrivelse(oppgave = oppgave, settPåVentRequest = settPåVentRequest)
         val frist = utledFristBeskrivelse(oppgave = oppgave, settPåVentRequest = settPåVentRequest)
+        val mappe = utledMappeBeskrivelse(oppgave = oppgave, settPåVentRequest = settPåVentRequest)
 
         val harEndringer = listOf(tilordnetSaksbehandler, prioritet, frist).any { it.isNotBlank() }
         val beskrivelse = utledNyBeskrivelse(settPåVentRequest = settPåVentRequest)
@@ -98,7 +100,7 @@ class BehandlingPåVentService(
         val prefix = utledBeskrivelsePrefix()
 
         return if (skalOppdatereBeskrivelse) {
-            (prefix + beskrivelse + tilordnetSaksbehandler + prioritet + frist + tidligereBeskrivelse).trimEnd()
+            (prefix + beskrivelse + tilordnetSaksbehandler + prioritet + frist + mappe + tidligereBeskrivelse).trimEnd()
         } else {
             tidligereBeskrivelse.trimEnd()
         }
@@ -114,9 +116,9 @@ class BehandlingPåVentService(
         oppgave: Oppgave,
         settPåVentRequest: SettPåVentRequest,
     ): String {
-        val eksisterendeSaksbehandler = oppgave.tilordnetRessurs ?: "ingen"
+        val eksisterendeSaksbehandler = oppgave.tilordnetRessurs ?: INGEN_PLACEHOLDER
         val nySaksbehandler =
-            if (settPåVentRequest.saksbehandler == "") "ingen" else settPåVentRequest.saksbehandler
+            if (settPåVentRequest.saksbehandler == "") INGEN_PLACEHOLDER else settPåVentRequest.saksbehandler
 
         return if (eksisterendeSaksbehandler == nySaksbehandler) {
             ""
@@ -149,6 +151,22 @@ class BehandlingPåVentService(
         }
     }
 
+    private fun utledMappeBeskrivelse(
+        oppgave: Oppgave,
+        settPåVentRequest: SettPåVentRequest,
+    ): String {
+        val mapper = oppgaveService.finnMapper(
+            listOf(
+                oppgave.tildeltEnhetsnr ?: throw Feil("Kan ikke finne mapper når oppgave mangler enhet"),
+            ),
+        )
+
+        val eksisterendeMappe = mapper.find { it.id.toLong() == oppgave.mappeId }?.navn ?: INGEN_PLACEHOLDER
+        val nyMappe = mapper.find { it.id.toLong() == settPåVentRequest.mappe }?.navn ?: INGEN_PLACEHOLDER
+
+        return if (eksisterendeMappe == nyMappe) "" else "Oppgave flyttet fra mappe $eksisterendeMappe til $nyMappe\n"
+    }
+
     private fun utledNyBeskrivelse(
         settPåVentRequest: SettPåVentRequest,
     ): String {
@@ -157,5 +175,9 @@ class BehandlingPåVentService(
         } else {
             ""
         }
+    }
+
+    companion object {
+        const val INGEN_PLACEHOLDER = "<ingen>"
     }
 }
