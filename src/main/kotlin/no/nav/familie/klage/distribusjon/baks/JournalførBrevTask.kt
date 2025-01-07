@@ -2,13 +2,10 @@ package no.nav.familie.klage.distribusjon.baks
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.baks.BaksBrevService
-import no.nav.familie.klage.brev.baks.mottaker.BrevmottakerService
-import no.nav.familie.klage.brev.baks.mottaker.Mottakertype
 import no.nav.familie.klage.distribusjon.DistribusjonService
 import no.nav.familie.klage.distribusjon.SendTilKabalTask
 import no.nav.familie.klage.distribusjon.ef.JournalførBrevTask
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
-import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.personopplysninger.pdl.logger
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.prosessering.AsyncTaskStep
@@ -28,18 +25,16 @@ class JournalførBrevTask(
     private val taskService: TaskService,
     private val behandlingService: BehandlingService,
     private val baksBrevService: BaksBrevService,
-    private val brevmottakerService: BrevmottakerService,
-    private val personopplysningerService: PersonopplysningerService,
+    private val journalpostBrevmottakereUtleder: JournalpostBrevmottakereUtleder,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
         val brev = baksBrevService.hentBrev(behandlingId)
-
-        val journalpostBrevmottakere = utledJournalpostBrevmottaker(behandlingId)
+        val journalpostBrevmottakere = journalpostBrevmottakereUtleder.utled(behandlingId)
 
         if (journalpostBrevmottakere.isEmpty()) {
-            throw IllegalStateException("Må ha minimum en mottaker")
+            throw IllegalStateException("Må ha minimum en mottaker for task ${task.id}")
         }
 
         journalpostBrevmottakere.forEachIndexed { index, journalpostBrevmottaker ->
@@ -62,38 +57,9 @@ class JournalførBrevTask(
         }
     }
 
-    private fun utledJournalpostBrevmottaker(behandlingId: UUID): List<JournalpostBrevmottaker> {
-        val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
-        val manuelleBrevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
-
-        if (manuelleBrevmottakere.isEmpty()) {
-            return listOf(JournalpostBrevmottaker.opprett(personopplysninger.navn, Mottakertype.BRUKER))
-        }
-
-        if (manuelleBrevmottakere.any { it.mottakertype == Mottakertype.DØDSBO }) {
-            val dødsbo = manuelleBrevmottakere.first { it.mottakertype == Mottakertype.DØDSBO }
-            return listOf(JournalpostBrevmottaker.opprett(dødsbo))
-        }
-
-        val brukerMedUtenlandskAdresse = manuelleBrevmottakere.find {
-            it.mottakertype == Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE
-        }
-
-        val bruker = if (brukerMedUtenlandskAdresse != null) {
-            JournalpostBrevmottaker.opprett(brukerMedUtenlandskAdresse)
-        } else {
-            JournalpostBrevmottaker.opprett(personopplysninger.navn, Mottakertype.BRUKER)
-        }
-
-        val fullmektigEllerVerge = manuelleBrevmottakere
-            .find { it.mottakertype == Mottakertype.FULLMEKTIG || it.mottakertype == Mottakertype.VERGE }
-            ?.let { JournalpostBrevmottaker.opprett(it) }
-
-        return listOfNotNull(bruker, fullmektigEllerVerge)
-    }
-
     override fun onCompletion(task: Task) {
-        val behandling = behandlingService.hentBehandling(UUID.fromString(task.payload))
+        val behandlingId = UUID.fromString(task.payload)
+        val behandling = behandlingService.hentBehandling(behandlingId)
         if (behandling.resultat == BehandlingResultat.IKKE_MEDHOLD) {
             val sendTilKabalTask = SendTilKabalTask.opprett(task.payload, task.metadata)
             taskService.save(sendTilKabalTask)
