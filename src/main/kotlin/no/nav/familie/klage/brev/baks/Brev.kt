@@ -14,6 +14,5 @@ data class Brev(
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),
 ) {
-
-    fun brevPdf() = this.pdf?.bytes ?: error("Mangler brev-pdf for behandling=$behandlingId")
+    fun pdfSomBytes() = this.pdf?.bytes ?: error("Mangler brev-pdf for behandling=$behandlingId")
 }

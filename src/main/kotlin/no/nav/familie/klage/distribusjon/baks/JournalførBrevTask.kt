@@ -40,7 +40,7 @@ class JournalførBrevTask(
         journalpostBrevmottakere.forEachIndexed { index, journalpostBrevmottaker ->
             val journalpostId = distribusjonService.journalførBrev(
                 behandlingId,
-                brev.brevPdf(),
+                brev.pdfSomBytes(),
                 task.metadata[saksbehandlerMetadataKey].toString(),
                 index,
                 journalpostBrevmottaker.mapTilAvsenderMottaker(),

@@ -20,14 +20,13 @@ class BrevController(
     private val brevService: BrevService,
     private val tilgangService: TilgangService,
 ) {
-
     @GetMapping("/{behandlingId}/pdf")
     fun hentBrevPdf(
         @PathVariable behandlingId: UUID,
     ): Ressurs<ByteArray> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
-        return Ressurs.success(brevService.hentBrevPdf(behandlingId))
+        return Ressurs.success(brevService.hentBrev(behandlingId).pdfSomBytes())
     }
 
     @PostMapping("/{behandlingId}")

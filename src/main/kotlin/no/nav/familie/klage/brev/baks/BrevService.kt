@@ -40,12 +40,6 @@ class BrevService(
     private val personopplysningerService: PersonopplysningerService,
     private val brevInnholdUtleder: BrevInnholdUtleder,
 ) {
-
-    fun hentBrevPdf(behandlingId: UUID): ByteArray {
-        return brevRepository.findByIdOrThrow(behandlingId).pdf?.bytes
-            ?: error("Finner ikke brev-pdf for behandling=$behandlingId")
-    }
-
     fun hentBrev(behandlingId: UUID): Brev = brevRepository.findByIdOrThrow(behandlingId)
 
     fun lagBrev(behandlingId: UUID): ByteArray {
