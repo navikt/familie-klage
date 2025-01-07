@@ -18,6 +18,7 @@ class BaksDistribuerBrevTask(
 
     override fun doTask(task: Task) {
         val payload = objectMapper.readValue(task.payload, Payload::class.java)
+        // TODO : Burde vi validere at journalpost finnes før vi distribuerer brev?
         distribusjonService.distribuerBrev(payload.journalpostId)
     }
 
