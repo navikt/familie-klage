@@ -48,7 +48,11 @@ class BaksJournalførBrevTask(
                 journalpostBrevmottaker.mapTilAvsenderMottaker(),
             )
             val distribuerBrevTask = BaksDistribuerBrevTask.opprett(
-                BaksDistribuerBrevTask.Payload(behandlingId, journalpostId),
+                BaksDistribuerBrevTask.Payload(
+                    behandlingId,
+                    journalpostId,
+                    journalpostBrevmottaker,
+                ),
                 task.metadata,
             )
             taskService.save(distribuerBrevTask)

@@ -5,6 +5,7 @@ import no.nav.familie.klage.brev.ef.domain.Brev
 import no.nav.familie.klage.brev.ef.domain.BrevmottakereJournalpost
 import no.nav.familie.klage.brev.ef.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
+import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
@@ -43,7 +44,7 @@ class DistribuerBrevTask(
         journalpost: BrevmottakereJournalpost,
     ): List<BrevmottakereJournalpost> {
         return if (journalpost.distribusjonId == null) {
-            val distribusjonId = distribusjonService.distribuerBrev(journalpost.journalpostId)
+            val distribusjonId = distribusjonService.distribuerBrev(journalpost.journalpostId, Fagsystem.EF)
             val nyeJournalposter = acc.map {
                 if (it.journalpostId == journalpost.journalpostId) {
                     it.copy(distribusjonId = distribusjonId)

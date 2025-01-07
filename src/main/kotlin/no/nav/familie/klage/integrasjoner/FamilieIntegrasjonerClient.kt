@@ -5,11 +5,13 @@ import no.nav.familie.http.client.RessursException
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import no.nav.familie.klage.infrastruktur.config.IntegrasjonerConfig
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
+import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokdist.DistribuerJournalpostRequest
 import no.nav.familie.kontrakter.felles.dokdist.Distribusjonstype
+import no.nav.familie.kontrakter.felles.dokdist.ManuellAdresse
 import no.nav.familie.kontrakter.felles.getDataOrThrow
 import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariantformat
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
@@ -39,12 +41,16 @@ class FamilieIntegrasjonerClient(
 
     override val pingUri: URI = URI.create("/api/ping")
 
-    private val dokuarkivUri: URI = UriComponentsBuilder.fromUri(integrasjonUri).pathSegment("api/arkiv").build().toUri()
+    private val dokuarkivUri: URI =
+        UriComponentsBuilder.fromUri(integrasjonUri).pathSegment("api/arkiv").build().toUri()
     private val journalpostURI: URI = integrasjonerConfig.journalPostUri
     private val saksbehandlerUri: URI = integrasjonerConfig.saksbehandlerUri
 
     // lagre brev
-    fun arkiverDokument(arkiverDokumentRequest: ArkiverDokumentRequest, saksbehandler: String?): ArkiverDokumentResponse {
+    fun arkiverDokument(
+        arkiverDokumentRequest: ArkiverDokumentRequest,
+        saksbehandler: String?,
+    ): ArkiverDokumentResponse {
         return postForEntity<Ressurs<ArkiverDokumentResponse>>(
             URI.create("$dokuarkivUri/v4"),
             arkiverDokumentRequest,
@@ -62,15 +68,19 @@ class FamilieIntegrasjonerClient(
     }
 
     // sende brev til bruker
-    fun distribuerBrev(journalpostId: String, distribusjonstype: Distribusjonstype): String {
+    fun distribuerBrev(
+        journalpostId: String,
+        bestillendeFagsystem: Fagsystem,
+        distribusjonstype: Distribusjonstype,
+        manuellAdresse: ManuellAdresse? = null,
+    ): String {
         val journalpostRequest = DistribuerJournalpostRequest(
             journalpostId = journalpostId,
-            // TODO : Dette må endres
-            bestillendeFagsystem = no.nav.familie.kontrakter.felles.Fagsystem.EF,
+            bestillendeFagsystem = bestillendeFagsystem,
             dokumentProdApp = "FAMILIE_KLAGE",
             distribusjonstype = distribusjonstype,
+            adresse = manuellAdresse,
         )
-
         return postForEntity<Ressurs<String>>(
             integrasjonerConfig.distribuerDokumentUri,
             journalpostRequest,
