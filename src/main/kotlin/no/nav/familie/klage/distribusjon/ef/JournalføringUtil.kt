@@ -1,4 +1,4 @@
-package no.nav.familie.klage.distribusjon
+package no.nav.familie.klage.distribusjon.ef
 
 import no.nav.familie.klage.brev.ef.domain.Brevmottakere
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker

@@ -1,9 +1,12 @@
-package no.nav.familie.klage.distribusjon
+package no.nav.familie.klage.distribusjon.baks
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.baks.BaksBrevService
 import no.nav.familie.klage.brev.baks.mottaker.BrevmottakerService
 import no.nav.familie.klage.brev.baks.mottaker.Mottakertype
+import no.nav.familie.klage.distribusjon.DistribusjonService
+import no.nav.familie.klage.distribusjon.SendTilKabalTask
+import no.nav.familie.klage.distribusjon.ef.JournalførBrevTask
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.personopplysninger.pdl.logger
@@ -20,7 +23,7 @@ import java.util.UUID
     taskStepType = JournalførBrevTask.TYPE,
     beskrivelse = "Journalfør brev etter klagebehandling",
 )
-class BaksJournalførBrevTask(
+class JournalførBrevTask(
     private val distribusjonService: DistribusjonService,
     private val taskService: TaskService,
     private val behandlingService: BehandlingService,
@@ -47,8 +50,8 @@ class BaksJournalførBrevTask(
                 index,
                 journalpostBrevmottaker.mapTilAvsenderMottaker(),
             )
-            val distribuerBrevTask = BaksDistribuerBrevTask.opprett(
-                BaksDistribuerBrevTask.Payload(
+            val distribuerBrevTask = DistribuerBrevTask.opprett(
+                DistribuerBrevTask.Payload(
                     behandlingId,
                     journalpostId,
                     journalpostBrevmottaker,

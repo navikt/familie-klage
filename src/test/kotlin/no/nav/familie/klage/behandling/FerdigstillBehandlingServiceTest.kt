@@ -15,8 +15,8 @@ import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.blankett.LagSaksbehandlingsblankettTask
 import no.nav.familie.klage.brev.ef.BrevService
 import no.nav.familie.klage.distribusjon.DistribusjonService
-import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.distribusjon.SendTilKabalTask
+import no.nav.familie.klage.distribusjon.ef.JournalførBrevTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil

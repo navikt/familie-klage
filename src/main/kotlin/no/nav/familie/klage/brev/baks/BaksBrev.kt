@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev.baks.domain
+package no.nav.familie.klage.brev.baks
 
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.felles.domain.Sporbar

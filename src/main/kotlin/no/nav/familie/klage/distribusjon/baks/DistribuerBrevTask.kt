@@ -1,5 +1,6 @@
+package no.nav.familie.klage.distribusjon.baks
+
 import no.nav.familie.klage.distribusjon.DistribusjonService
-import no.nav.familie.klage.distribusjon.JournalpostBrevmottaker
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.dokdist.AdresseType
@@ -14,10 +15,10 @@ import java.util.UUID
 
 @Service
 @TaskStepBeskrivelse(
-    taskStepType = BaksDistribuerBrevTask.TYPE,
+    taskStepType = DistribuerBrevTask.TYPE,
     beskrivelse = "Distribuer brev etter klagebehandling",
 )
-class BaksDistribuerBrevTask(
+class DistribuerBrevTask(
     private val fagsakService: FagsakService,
     private val distribusjonService: DistribusjonService,
 ) : AsyncTaskStep {

@@ -1,4 +1,4 @@
-package no.nav.familie.klage.distribusjon
+package no.nav.familie.klage.distribusjon.baks
 
 import no.nav.familie.klage.brev.baks.mottaker.Brevmottaker
 import no.nav.familie.klage.brev.baks.mottaker.Mottakertype

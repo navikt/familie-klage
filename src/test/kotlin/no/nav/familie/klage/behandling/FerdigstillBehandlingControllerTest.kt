@@ -3,8 +3,8 @@ package no.nav.familie.klage.behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.brev.ef.BrevService
-import no.nav.familie.klage.distribusjon.DistribuerBrevTask
-import no.nav.familie.klage.distribusjon.JournalførBrevTask
+import no.nav.familie.klage.distribusjon.ef.DistribuerBrevTask
+import no.nav.familie.klage.distribusjon.ef.JournalførBrevTask
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.formkrav.dto.tilDto
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest

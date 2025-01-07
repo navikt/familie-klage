@@ -11,7 +11,6 @@ import no.nav.familie.klage.brev.BrevInnholdUtleder
 import no.nav.familie.klage.brev.BrevsignaturService
 import no.nav.familie.klage.brev.FamilieDokumentClient
 import no.nav.familie.klage.brev.FritekstBrevRequestDto
-import no.nav.familie.klage.brev.baks.domain.BaksBrev
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.felles.domain.Fil

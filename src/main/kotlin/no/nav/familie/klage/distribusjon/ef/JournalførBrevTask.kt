@@ -1,4 +1,4 @@
-package no.nav.familie.klage.distribusjon
+package no.nav.familie.klage.distribusjon.ef
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.ef.BrevService
@@ -7,7 +7,9 @@ import no.nav.familie.klage.brev.ef.domain.Brev
 import no.nav.familie.klage.brev.ef.domain.Brevmottakere
 import no.nav.familie.klage.brev.ef.domain.BrevmottakereJournalpost
 import no.nav.familie.klage.brev.ef.domain.BrevmottakereJournalposter
-import no.nav.familie.klage.distribusjon.JournalføringUtil.mapAvsenderMottaker
+import no.nav.familie.klage.distribusjon.DistribusjonService
+import no.nav.familie.klage.distribusjon.SendTilKabalTask
+import no.nav.familie.klage.distribusjon.ef.JournalføringUtil.mapAvsenderMottaker
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.personopplysninger.pdl.logger
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat

@@ -9,6 +9,7 @@ import no.nav.familie.klage.brev.ef.BrevService
 import no.nav.familie.klage.brev.ef.domain.Brev
 import no.nav.familie.klage.brev.ef.domain.BrevmottakereJournalpost
 import no.nav.familie.klage.brev.ef.domain.BrevmottakereJournalposter
+import no.nav.familie.klage.distribusjon.ef.DistribuerBrevTask
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.prosessering.domene.Task
 import org.assertj.core.api.Assertions.assertThatThrownBy
