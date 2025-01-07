@@ -8,6 +8,7 @@ import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.oppgave.OppgaveService
+import no.nav.familie.klage.oppgave.OppgaveUtil.ENHET_NR_EGEN_ANSATT
 import no.nav.familie.klage.oppgave.OppgaveUtil.ENHET_NR_NAY
 import no.nav.familie.klage.oppgave.TilordnetRessursService
 import no.nav.familie.klage.oppgave.dto.SaksbehandlerDto
@@ -92,6 +93,7 @@ class BehandlingController(
             behandlingId = behandlingId,
             event = AuditLoggerEvent.ACCESS,
         )
+
         return Ressurs.success(
             data = tilordnetRessursService.hentOppgave(behandlingId = behandlingId),
         )
@@ -100,9 +102,9 @@ class BehandlingController(
     @GetMapping("/mapper")
     fun hentMapper(): Ressurs<List<MappeDto>> {
         val enheter = mutableListOf(ENHET_NR_NAY)
-
-        // TODO: Her trengs det en klage-behandling egen-ansatt sjekk, muligens.
-
+        if (tilgangService.harEgenAnsattRolle()) {
+            enheter += ENHET_NR_EGEN_ANSATT
+        }
         return Ressurs.success(oppgaveService.finnMapper(enheter = enheter))
     }
 
