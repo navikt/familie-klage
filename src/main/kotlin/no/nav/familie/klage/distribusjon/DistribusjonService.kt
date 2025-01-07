@@ -30,7 +30,7 @@ class DistribusjonService(
         brev: ByteArray,
         saksbehandler: String,
         index: Int = 0,
-        mottaker: AvsenderMottaker,
+        mottaker: AvsenderMottaker?,
     ): String {
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
 

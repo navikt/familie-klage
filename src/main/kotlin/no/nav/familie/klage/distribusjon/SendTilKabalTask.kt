@@ -48,7 +48,7 @@ class SendTilKabalTask(
     companion object {
         fun opprett(payload: String, metadata: Properties): Task {
             return Task(
-                type = SendTilKabalTask.TYPE,
+                type = TYPE,
                 payload = payload,
                 properties = metadata,
             )

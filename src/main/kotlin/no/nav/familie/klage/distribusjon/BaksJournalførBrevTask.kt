@@ -3,10 +3,10 @@ package no.nav.familie.klage.distribusjon
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.baks.BaksBrevService
 import no.nav.familie.klage.brev.baks.mottaker.BrevmottakerService
+import no.nav.familie.klage.brev.baks.mottaker.Mottakertype
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
+import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.personopplysninger.pdl.logger
-import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
-import no.nav.familie.kontrakter.felles.journalpost.AvsenderMottakerIdType
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
@@ -26,31 +26,26 @@ class BaksJournalførBrevTask(
     private val behandlingService: BehandlingService,
     private val baksBrevService: BaksBrevService,
     private val brevmottakerService: BrevmottakerService,
+    private val personopplysningerService: PersonopplysningerService,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
+        val brev = baksBrevService.hentBrev(behandlingId)
 
-        // TODO : Pluss på bruker i tillegg til manuelt registrerte mottakere?
-        val avsenderMottakere = brevmottakerService.hentBrevmottakere(behandlingId).map {
-            AvsenderMottaker(
-                id = it.id.toString(),
-                navn = it.navn,
-                idType = AvsenderMottakerIdType.FNR,
-            )
-        }
+        val journalpostBrevmottakere = utledJournalpostBrevmottaker(behandlingId)
 
-        if (avsenderMottakere.isEmpty()) {
+        if (journalpostBrevmottakere.isEmpty()) {
             throw IllegalStateException("Må ha minimum en mottaker")
         }
 
-        avsenderMottakere.forEachIndexed { index, avsenderMottaker ->
+        journalpostBrevmottakere.forEachIndexed { index, journalpostBrevmottaker ->
             val journalpostId = distribusjonService.journalførBrev(
                 behandlingId,
-                baksBrevService.hentBrev(behandlingId).brevPdf(),
+                brev.brevPdf(),
                 task.metadata[saksbehandlerMetadataKey].toString(),
                 index,
-                avsenderMottaker,
+                journalpostBrevmottaker.mapTilAvsenderMottaker(),
             )
             val distribuerBrevTask = BaksDistribuerBrevTask.opprett(
                 BaksDistribuerBrevTask.Payload(behandlingId, journalpostId),
@@ -58,6 +53,36 @@ class BaksJournalførBrevTask(
             )
             taskService.save(distribuerBrevTask)
         }
+    }
+
+    private fun utledJournalpostBrevmottaker(behandlingId: UUID): List<JournalpostBrevmottaker> {
+        val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
+        val manuelleBrevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
+
+        if (manuelleBrevmottakere.isEmpty()) {
+            return listOf(JournalpostBrevmottaker.opprett(personopplysninger.navn, Mottakertype.BRUKER))
+        }
+
+        if (manuelleBrevmottakere.any { it.mottakertype == Mottakertype.DØDSBO }) {
+            val dødsbo = manuelleBrevmottakere.first { it.mottakertype == Mottakertype.DØDSBO }
+            return listOf(JournalpostBrevmottaker.opprett(dødsbo))
+        }
+
+        val brukerMedUtenlandskAdresse = manuelleBrevmottakere.find {
+            it.mottakertype == Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE
+        }
+
+        val bruker = if (brukerMedUtenlandskAdresse != null) {
+            JournalpostBrevmottaker.opprett(brukerMedUtenlandskAdresse)
+        } else {
+            JournalpostBrevmottaker.opprett(personopplysninger.navn, Mottakertype.BRUKER)
+        }
+
+        val fullmektigEllerVerge = manuelleBrevmottakere
+            .find { it.mottakertype == Mottakertype.FULLMEKTIG || it.mottakertype == Mottakertype.VERGE }
+            ?.let { JournalpostBrevmottaker.opprett(it) }
+
+        return listOfNotNull(bruker, fullmektigEllerVerge)
     }
 
     override fun onCompletion(task: Task) {
