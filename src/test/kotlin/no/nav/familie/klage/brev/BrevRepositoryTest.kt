@@ -18,7 +18,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-internal class BaksBrevRepositoryTest : OppslagSpringRunnerTest() {
+internal class BrevRepositoryTest : OppslagSpringRunnerTest() {
 
     @Autowired
     lateinit var brevRepository: BrevRepository

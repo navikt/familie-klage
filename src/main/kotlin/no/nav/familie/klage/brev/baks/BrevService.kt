@@ -28,9 +28,9 @@ import java.time.LocalDate
 import java.util.UUID
 
 @Service
-class BaksBrevService(
+class BrevService(
     private val brevClient: BrevClient,
-    private val baksBrevRepository: BaksBrevRepository,
+    private val brevRepository: BrevRepository,
     private val behandlingService: BehandlingService,
     private val familieDokumentClient: FamilieDokumentClient,
     private val brevsignaturService: BrevsignaturService,
@@ -42,11 +42,11 @@ class BaksBrevService(
 ) {
 
     fun hentBrevPdf(behandlingId: UUID): ByteArray {
-        return baksBrevRepository.findByIdOrThrow(behandlingId).pdf?.bytes
+        return brevRepository.findByIdOrThrow(behandlingId).pdf?.bytes
             ?: error("Finner ikke brev-pdf for behandling=$behandlingId")
     }
 
-    fun hentBrev(behandlingId: UUID): BaksBrev = baksBrevRepository.findByIdOrThrow(behandlingId)
+    fun hentBrev(behandlingId: UUID): Brev = brevRepository.findByIdOrThrow(behandlingId)
 
     fun lagBrev(behandlingId: UUID): ByteArray {
         val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
@@ -141,13 +141,13 @@ class BaksBrevService(
     private fun lagreEllerOppdaterBrev(
         behandlingId: UUID,
         saksbehandlerHtml: String,
-    ): BaksBrev {
-        val brev = baksBrevRepository.findByIdOrNull(behandlingId)
+    ): Brev {
+        val brev = brevRepository.findByIdOrNull(behandlingId)
         return if (brev != null) {
-            baksBrevRepository.update(brev.copy(saksbehandlerHtml = saksbehandlerHtml))
+            brevRepository.update(brev.copy(saksbehandlerHtml = saksbehandlerHtml))
         } else {
-            baksBrevRepository.insert(
-                BaksBrev(
+            brevRepository.insert(
+                Brev(
                     behandlingId = behandlingId,
                     saksbehandlerHtml = saksbehandlerHtml,
                 ),
@@ -156,13 +156,13 @@ class BaksBrevService(
     }
 
     fun lagBrevPdf(behandlingId: UUID) {
-        val brev = baksBrevRepository.findByIdOrThrow(behandlingId)
+        val brev = brevRepository.findByIdOrThrow(behandlingId)
         feilHvis(brev.pdf != null) {
             "Det finnes allerede en lagret pdf"
         }
 
         val generertBrev = familieDokumentClient.genererPdfFraHtml(brev.saksbehandlerHtml)
-        baksBrevRepository.update(brev.copy(pdf = Fil(generertBrev)))
+        brevRepository.update(brev.copy(pdf = Fil(generertBrev)))
     }
 
     private fun utledBehandlingResultat(behandlingId: UUID): BehandlingResultat {

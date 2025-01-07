@@ -1,7 +1,7 @@
 package no.nav.familie.klage.distribusjon.baks
 
 import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.brev.baks.BaksBrevService
+import no.nav.familie.klage.brev.baks.BrevService
 import no.nav.familie.klage.distribusjon.DistribusjonService
 import no.nav.familie.klage.distribusjon.SendTilKabalTask
 import no.nav.familie.klage.distribusjon.ef.JournalførBrevTask
@@ -24,13 +24,13 @@ class JournalførBrevTask(
     private val distribusjonService: DistribusjonService,
     private val taskService: TaskService,
     private val behandlingService: BehandlingService,
-    private val baksBrevService: BaksBrevService,
+    private val brevService: BrevService,
     private val journalpostBrevmottakereUtleder: JournalpostBrevmottakereUtleder,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
-        val brev = baksBrevService.hentBrev(behandlingId)
+        val brev = brevService.hentBrev(behandlingId)
         val journalpostBrevmottakere = journalpostBrevmottakereUtleder.utled(behandlingId)
 
         if (journalpostBrevmottakere.isEmpty()) {

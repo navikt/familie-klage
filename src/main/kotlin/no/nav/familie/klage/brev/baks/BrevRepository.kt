@@ -6,4 +6,4 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface BaksBrevRepository : RepositoryInterface<BaksBrev, UUID>, InsertUpdateRepository<BaksBrev>
+interface BrevRepository : RepositoryInterface<Brev, UUID>, InsertUpdateRepository<Brev>

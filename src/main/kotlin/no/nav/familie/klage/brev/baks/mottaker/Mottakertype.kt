@@ -4,6 +4,6 @@ enum class Mottakertype {
     VERGE,
     FULLMEKTIG,
     BRUKER_MED_UTENLANDSK_ADRESSE,
-    BRUKER, // TODO ? Skal vi ha den?
+    BRUKER,
     DØDSBO,
 }

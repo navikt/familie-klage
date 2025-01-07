@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-internal class BaksBrevServiceTest : OppslagSpringRunnerTest() {
+internal class BrevServiceTest : OppslagSpringRunnerTest() {
 
     @Autowired
     lateinit var brevService: BrevService
