@@ -49,13 +49,18 @@ data class JournalpostBrevmottaker(
 }
 
 fun JournalpostBrevmottaker.mapTilAvsenderMottaker(): AvsenderMottaker? {
-    // TODO : Må man håndtere Institusjon?
-    if (mottakertype == Mottakertype.BRUKER || mottakertype == Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE) {
-        return null
+    return when (mottakertype) {
+        Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE,
+        Mottakertype.BRUKER,
+        -> null
+
+        Mottakertype.VERGE,
+        Mottakertype.FULLMEKTIG,
+        Mottakertype.DØDSBO,
+        -> AvsenderMottaker(
+            id = null,
+            idType = null,
+            navn = this.navn,
+        )
     }
-    return AvsenderMottaker(
-        id = null,
-        idType = null,
-        navn = this.navn,
-    )
 }
