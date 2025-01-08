@@ -37,15 +37,3 @@ data class NyBrevmottakerDto(
         }
     }
 }
-
-fun NyBrevmottakerDto.mapTilNyBrevmottaker(): NyBrevmottaker {
-    return NyBrevmottaker(
-        mottakertype = this.mottakertype,
-        navn = this.navn,
-        adresselinje1 = this.adresselinje1,
-        adresselinje2 = this.adresselinje2,
-        postnummer = this.postnummer,
-        poststed = this.poststed,
-        landkode = this.landkode,
-    )
-}

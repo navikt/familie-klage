@@ -20,7 +20,6 @@ class BrevmottakerOppretter(
     @Transactional
     fun opprettBrevmottaker(behandlingId: UUID, nyBrevmottaker: NyBrevmottaker): Brevmottaker {
         logger.debug("Oppretter brevmottaker for behandling {}", behandlingId)
-        Thread.sleep(500)
         validerRedigerbarBehandling(behandlingId)
         validerNyBrevmottaker(behandlingId, nyBrevmottaker)
         val brevmottaker = Brevmottaker.opprett(behandlingId, nyBrevmottaker)

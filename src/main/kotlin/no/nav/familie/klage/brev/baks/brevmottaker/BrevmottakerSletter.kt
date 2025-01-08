@@ -18,7 +18,6 @@ class BrevmottakerSletter(
     @Transactional
     fun slettBrevmottaker(behandlingId: UUID, brevmottakerId: UUID) {
         logger.debug("Sletter brevmottaker for behandling {}", behandlingId)
-        Thread.sleep(500)
         validerRedigerbarBehandling(behandlingId)
         validerBrevmottakerEksiterer(brevmottakerId)
         brevmottakerRepository.deleteById(brevmottakerId)

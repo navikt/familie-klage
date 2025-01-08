@@ -12,7 +12,6 @@ class BrevmottakerHenter(
 
     fun hentBrevmottakere(behandlingId: UUID): List<Brevmottaker> {
         logger.debug("Henter brevmottaker for behandling {}", behandlingId)
-        Thread.sleep(500)
         return brevmottakerRepository.findByBehandlingId(behandlingId)
     }
 }

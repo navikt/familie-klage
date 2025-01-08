@@ -4,7 +4,7 @@ import no.nav.familie.klage.testutil.DomainUtil.klageresultat
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class KlageinstansResultatDtoMapperTest {
+class KlageinstansResultatNyBrevmottakerDtoMapperTest {
 
     @Test
     fun `map klageresultater til dto`() {

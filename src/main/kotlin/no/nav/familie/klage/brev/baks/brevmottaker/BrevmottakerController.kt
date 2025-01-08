@@ -28,7 +28,9 @@ class BrevmottakerController(
     ): Ressurs<List<BrevmottakerDto>> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
-        val brevmottakerDtos = brevmottakerService.hentBrevmottakere(behandlingId).map { it.mapTilBrevmottakerDto() }
+        val brevmottakerDtos = brevmottakerService
+            .hentBrevmottakere(behandlingId)
+            .map { BrevmottakerDtoMapper.tilDto(it) }
         return Ressurs.success(brevmottakerDtos)
     }
 
@@ -40,8 +42,10 @@ class BrevmottakerController(
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.CREATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         nyBrevmottakerDto.valider()
-        brevmottakerService.opprettBrevmottaker(behandlingId, nyBrevmottakerDto.mapTilNyBrevmottaker())
-        val brevmottakerDtos = brevmottakerService.hentBrevmottakere(behandlingId).map { it.mapTilBrevmottakerDto() }
+        brevmottakerService.opprettBrevmottaker(behandlingId, NyBrevmottakerDtoMapper.tilDomene(nyBrevmottakerDto))
+        val brevmottakerDtos = brevmottakerService
+            .hentBrevmottakere(behandlingId)
+            .map { BrevmottakerDtoMapper.tilDto(it) }
         return Ressurs.success(brevmottakerDtos)
     }
 
@@ -53,7 +57,9 @@ class BrevmottakerController(
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.DELETE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         brevmottakerService.slettBrevmottaker(behandlingId, brevmottakerId)
-        val brevmottakerDtos = brevmottakerService.hentBrevmottakere(behandlingId).map { it.mapTilBrevmottakerDto() }
+        val brevmottakerDtos = brevmottakerService
+            .hentBrevmottakere(behandlingId)
+            .map { BrevmottakerDtoMapper.tilDto(it) }
         return Ressurs.success(brevmottakerDtos)
     }
 }
