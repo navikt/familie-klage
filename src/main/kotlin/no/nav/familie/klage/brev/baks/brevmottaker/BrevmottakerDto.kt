@@ -11,19 +11,4 @@ data class BrevmottakerDto(
     val postnummer: String?,
     val poststed: String?,
     val landkode: String,
-) {
-    companion object Fabrikk {
-        fun opprett(brevmottaker: Brevmottaker): BrevmottakerDto {
-            return BrevmottakerDto(
-                id = brevmottaker.id,
-                mottakertype = brevmottaker.mottakertype,
-                navn = brevmottaker.navn,
-                adresselinje1 = brevmottaker.adresselinje1,
-                adresselinje2 = brevmottaker.adresselinje2,
-                postnummer = brevmottaker.postnummer,
-                poststed = brevmottaker.poststed,
-                landkode = brevmottaker.landkode,
-            )
-        }
-    }
-}
+)
