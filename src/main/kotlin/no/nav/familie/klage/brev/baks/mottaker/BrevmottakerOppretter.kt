@@ -18,12 +18,13 @@ class BrevmottakerOppretter(
     private val logger = LoggerFactory.getLogger(BrevmottakerOppretter::class.java)
 
     @Transactional
-    fun opprettBrevmottaker(behandlingId: UUID, nyBrevmottaker: Brevmottaker): Brevmottaker {
+    fun opprettBrevmottaker(behandlingId: UUID, nyBrevmottaker: NyBrevmottaker): Brevmottaker {
         logger.debug("Oppretter brevmottaker for behandling {}", behandlingId)
         Thread.sleep(500)
         validerRedigerbarBehandling(behandlingId)
-        validerBrevmottakerFørOpprettelse(behandlingId, nyBrevmottaker)
-        return brevmottakerRepository.insert(nyBrevmottaker)
+        validerNyBrevmottaker(behandlingId, nyBrevmottaker)
+        val brevmottaker = Brevmottaker.opprett(behandlingId, nyBrevmottaker)
+        return brevmottakerRepository.insert(brevmottaker)
     }
 
     private fun validerRedigerbarBehandling(behandlingId: UUID) {
@@ -33,24 +34,24 @@ class BrevmottakerOppretter(
         }
     }
 
-    private fun validerBrevmottakerFørOpprettelse(behandlingId: UUID, brevmottaker: Brevmottaker) {
+    private fun validerNyBrevmottaker(behandlingId: UUID, nyBrevmottaker: NyBrevmottaker) {
         val eksisterendeBrevmottakere = brevmottakerRepository.findByBehandlingId(behandlingId)
         val brukerensNavn = personopplysningerService.hentPersonopplysninger(behandlingId).navn
         val eksisterendeMottakertyper = eksisterendeBrevmottakere.map { it.mottakertype }
         when {
-            eksisterendeMottakertyper.any { it == brevmottaker.mottakertype } -> {
-                throw Feil("Kan ikke ha duplikate mottakertyper. ${brevmottaker.mottakertype} finnes allerede.")
+            eksisterendeMottakertyper.any { it == nyBrevmottaker.mottakertype } -> {
+                throw Feil("Kan ikke ha duplikate mottakertyper. ${nyBrevmottaker.mottakertype} finnes allerede.")
             }
 
-            brevmottaker.mottakertype == Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE && brevmottaker.navn != brukerensNavn -> {
+            nyBrevmottaker.mottakertype == Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE && nyBrevmottaker.navn != brukerensNavn -> {
                 throw Feil("Ved bruker med utenlandsk adresse skal brevmottakerens navn være brukerens navn.")
             }
 
-            brevmottaker.mottakertype == Mottakertype.DØDSBO && !brevmottaker.navn.contains(brukerensNavn) -> {
+            nyBrevmottaker.mottakertype == Mottakertype.DØDSBO && !nyBrevmottaker.navn.contains(brukerensNavn) -> {
                 throw Feil("Ved dødsbo skal brevmottakerens navn inneholde brukerens navn.")
             }
 
-            brevmottaker.mottakertype == Mottakertype.DØDSBO && eksisterendeBrevmottakere.isNotEmpty() -> {
+            nyBrevmottaker.mottakertype == Mottakertype.DØDSBO && eksisterendeBrevmottakere.isNotEmpty() -> {
                 throw Feil("Kan ikke legge til dødsbo når det allerede finnes brevmottakere.")
             }
 
@@ -59,15 +60,15 @@ class BrevmottakerOppretter(
             }
 
             Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE in eksisterendeMottakertyper &&
-                brevmottaker.mottakertype !== Mottakertype.VERGE &&
-                brevmottaker.mottakertype !== Mottakertype.FULLMEKTIG
+                nyBrevmottaker.mottakertype !== Mottakertype.VERGE &&
+                nyBrevmottaker.mottakertype !== Mottakertype.FULLMEKTIG
             -> {
                 throw Feil("Bruker med utenlandsk adresse kan kun kombineres med verge eller fullmektig.")
             }
 
             eksisterendeMottakertyper.isNotEmpty() &&
                 Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE !in eksisterendeMottakertyper &&
-                brevmottaker.mottakertype !== Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE
+                nyBrevmottaker.mottakertype !== Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE
             -> {
                 throw Feil("Kan kun legge til bruker med utenlandsk adresse om det finnes en brevmottaker allerede.")
             }

@@ -25,21 +25,22 @@ class BrevmottakerController(
     @GetMapping("/{behandlingId}")
     fun hentBrevmottakere(
         @PathVariable behandlingId: UUID,
-    ): Ressurs<List<Brevmottaker>> {
+    ): Ressurs<List<BrevmottakerDto>> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
-        return Ressurs.success(brevmottakerService.hentBrevmottakere(behandlingId))
+        val brevmottakerDtos = brevmottakerService.hentBrevmottakere(behandlingId).map { it.mapTilBrevmottakerDto() }
+        return Ressurs.success(brevmottakerDtos)
     }
 
     @PostMapping("/{behandlingId}")
     fun opprettBrevmottakere(
         @PathVariable behandlingId: UUID,
-        @RequestBody opprettBrevmottakerDto: OpprettBrevmottakerDto,
+        @RequestBody nyBrevmottakerDto: NyBrevmottakerDto,
     ): Ressurs<List<BrevmottakerDto>> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.CREATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        val brevmottaker = opprettBrevmottakerDto.mapTilBrevmottaker(behandlingId)
-        brevmottakerService.opprettBrevmottaker(behandlingId, brevmottaker)
+        nyBrevmottakerDto.valider()
+        brevmottakerService.opprettBrevmottaker(behandlingId, nyBrevmottakerDto.mapTilNyBrevmottaker())
         val brevmottakerDtos = brevmottakerService.hentBrevmottakere(behandlingId).map { it.mapTilBrevmottakerDto() }
         return Ressurs.success(brevmottakerDtos)
     }

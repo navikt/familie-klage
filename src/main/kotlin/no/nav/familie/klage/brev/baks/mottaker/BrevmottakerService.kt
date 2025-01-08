@@ -15,8 +15,8 @@ class BrevmottakerService(
     }
 
     @Transactional
-    fun opprettBrevmottaker(behandlingId: UUID, brevmottaker: Brevmottaker): Brevmottaker {
-        return brevmottakerOppretter.opprettBrevmottaker(behandlingId, brevmottaker)
+    fun opprettBrevmottaker(behandlingId: UUID, nyBrevmottaker: NyBrevmottaker): Brevmottaker {
+        return brevmottakerOppretter.opprettBrevmottaker(behandlingId, nyBrevmottaker)
     }
 
     @Transactional

@@ -3,9 +3,8 @@ package no.nav.familie.klage.brev.baks.mottaker
 import no.nav.familie.klage.brev.baks.mottaker.Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvisIkke
-import java.util.UUID
 
-data class OpprettBrevmottakerDto(
+data class NyBrevmottakerDto(
     val mottakertype: Mottakertype,
     val navn: String,
     val adresselinje1: String,
@@ -14,9 +13,7 @@ data class OpprettBrevmottakerDto(
     val poststed: String?,
     val landkode: String,
 ) {
-    // TODO : Her burde man kanskje ikke bruke HTTP spesifikke exceptions?
-    //  Kanskje en mer generisk exception er bedre, som så blir håndtert via f.eks. ApiExceptionHandler.
-    init {
+    fun valider() {
         brukerfeilHvisIkke(landkode.length == 2) { "Ugyldig landkode: $landkode" }
         brukerfeilHvis(navn.isBlank()) { "Navn kan ikke være tomt" }
         brukerfeilHvis(adresselinje1.isBlank()) { "Adresselinje1 kan ikke være tomt" }
@@ -41,10 +38,8 @@ data class OpprettBrevmottakerDto(
     }
 }
 
-fun OpprettBrevmottakerDto.mapTilBrevmottaker(behandlingId: UUID): Brevmottaker =
-    Brevmottaker(
-        id = UUID.randomUUID(),
-        behandlingId = behandlingId,
+fun NyBrevmottakerDto.mapTilNyBrevmottaker(): NyBrevmottaker {
+    return NyBrevmottaker(
         mottakertype = this.mottakertype,
         navn = this.navn,
         adresselinje1 = this.adresselinje1,
@@ -53,3 +48,4 @@ fun OpprettBrevmottakerDto.mapTilBrevmottaker(behandlingId: UUID): Brevmottaker 
         poststed = this.poststed,
         landkode = this.landkode,
     )
+}

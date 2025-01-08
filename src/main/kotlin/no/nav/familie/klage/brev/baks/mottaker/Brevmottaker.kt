@@ -21,7 +21,23 @@ data class Brevmottaker(
     val landkode: String,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),
-)
+) {
+    companion object Fabrikk {
+        fun opprett(behandlingId: UUID, nyBrevmottaker: NyBrevmottaker): Brevmottaker {
+            return Brevmottaker(
+                id = UUID.randomUUID(),
+                behandlingId = behandlingId,
+                mottakertype = nyBrevmottaker.mottakertype,
+                navn = nyBrevmottaker.navn,
+                adresselinje1 = nyBrevmottaker.adresselinje1,
+                adresselinje2 = nyBrevmottaker.adresselinje2,
+                postnummer = nyBrevmottaker.postnummer,
+                poststed = nyBrevmottaker.poststed,
+                landkode = nyBrevmottaker.landkode,
+            )
+        }
+    }
+}
 
 fun Brevmottaker.mapTilBrevmottakerDto(): BrevmottakerDto =
     BrevmottakerDto(
