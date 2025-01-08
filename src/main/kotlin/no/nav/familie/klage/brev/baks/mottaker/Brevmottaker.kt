@@ -38,15 +38,3 @@ data class Brevmottaker(
         }
     }
 }
-
-fun Brevmottaker.mapTilBrevmottakerDto(): BrevmottakerDto =
-    BrevmottakerDto(
-        id = this.id,
-        mottakertype = this.mottakertype,
-        navn = this.navn,
-        adresselinje1 = this.adresselinje1,
-        adresselinje2 = this.adresselinje2,
-        postnummer = this.postnummer,
-        poststed = this.poststed,
-        landkode = this.landkode,
-    )
