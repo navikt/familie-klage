@@ -1,7 +1,7 @@
 package no.nav.familie.klage.distribusjon
 
 import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.brev.baks.mottaker.BrevmottakerService
+import no.nav.familie.klage.brev.baks.brevmottaker.BrevmottakerService
 import no.nav.familie.klage.brev.ef.BrevService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.util.TaskMetadata

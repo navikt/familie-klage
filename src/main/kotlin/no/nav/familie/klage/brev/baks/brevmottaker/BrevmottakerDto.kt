@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev.baks.mottaker
+package no.nav.familie.klage.brev.baks.brevmottaker
 
 import java.util.UUID
 

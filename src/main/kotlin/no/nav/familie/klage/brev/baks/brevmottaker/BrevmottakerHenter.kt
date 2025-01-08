@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev.baks.mottaker
+package no.nav.familie.klage.brev.baks.brevmottaker
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component

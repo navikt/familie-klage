@@ -1,6 +1,6 @@
-package no.nav.familie.klage.brev.baks.mottaker
+package no.nav.familie.klage.brev.baks.brevmottaker
 
-import no.nav.familie.klage.brev.baks.mottaker.Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE
+import no.nav.familie.klage.brev.baks.brevmottaker.Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvisIkke
 

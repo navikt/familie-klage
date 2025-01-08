@@ -1,7 +1,7 @@
 package no.nav.familie.klage.distribusjon.baks
 
-import no.nav.familie.klage.brev.baks.mottaker.Brevmottaker
-import no.nav.familie.klage.brev.baks.mottaker.Mottakertype
+import no.nav.familie.klage.brev.baks.brevmottaker.Brevmottaker
+import no.nav.familie.klage.brev.baks.brevmottaker.Mottakertype
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
 
 data class JournalpostBrevmottaker(

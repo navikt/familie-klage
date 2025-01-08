@@ -1,7 +1,7 @@
 package no.nav.familie.klage.distribusjon.baks
 
-import no.nav.familie.klage.brev.baks.mottaker.BrevmottakerService
-import no.nav.familie.klage.brev.baks.mottaker.Mottakertype
+import no.nav.familie.klage.brev.baks.brevmottaker.BrevmottakerService
+import no.nav.familie.klage.brev.baks.brevmottaker.Mottakertype
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import org.springframework.stereotype.Component
 import java.util.UUID

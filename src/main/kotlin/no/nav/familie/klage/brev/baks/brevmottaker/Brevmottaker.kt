@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev.baks.mottaker
+package no.nav.familie.klage.brev.baks.brevmottaker
 
 import no.nav.familie.klage.felles.domain.Sporbar
 import org.springframework.data.annotation.Id
