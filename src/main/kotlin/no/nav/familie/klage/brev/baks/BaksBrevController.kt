@@ -16,8 +16,8 @@ import java.util.UUID
 @RequestMapping(path = ["/api/baks/brev"])
 @ProtectedWithClaims(issuer = "azuread")
 @Validated
-class BrevController(
-    private val brevService: BrevService,
+class BaksBrevController(
+    private val baksBrevService: BaksBrevService,
     private val tilgangService: TilgangService,
 ) {
     @GetMapping("/{behandlingId}/pdf")
@@ -26,7 +26,7 @@ class BrevController(
     ): Ressurs<ByteArray> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
-        return Ressurs.success(brevService.hentBrev(behandlingId).pdfSomBytes())
+        return Ressurs.success(baksBrevService.hentBrev(behandlingId).pdfSomBytes())
     }
 
     @PostMapping("/{behandlingId}")
@@ -35,6 +35,6 @@ class BrevController(
     ): Ressurs<ByteArray> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        return Ressurs.success(brevService.lagBrev(behandlingId))
+        return Ressurs.success(baksBrevService.lagBrev(behandlingId))
     }
 }

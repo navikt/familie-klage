@@ -6,7 +6,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Embedded
 import java.util.UUID
 
-data class Brev(
+data class BaksBrev(
     @Id
     val behandlingId: UUID,
     val saksbehandlerHtml: String,

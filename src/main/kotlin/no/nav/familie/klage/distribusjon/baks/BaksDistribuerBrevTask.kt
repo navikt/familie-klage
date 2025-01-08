@@ -15,10 +15,10 @@ import java.util.UUID
 
 @Service
 @TaskStepBeskrivelse(
-    taskStepType = DistribuerBrevTask.TYPE,
+    taskStepType = BaksDistribuerBrevTask.TYPE,
     beskrivelse = "Distribuer brev etter klagebehandling",
 )
-class DistribuerBrevTask(
+class BaksDistribuerBrevTask(
     private val fagsakService: FagsakService,
     private val distribusjonService: DistribusjonService,
 ) : AsyncTaskStep {

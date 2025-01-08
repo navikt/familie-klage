@@ -1,10 +1,9 @@
 package no.nav.familie.klage.distribusjon.baks
 
 import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.brev.baks.BrevService
+import no.nav.familie.klage.brev.baks.BaksBrevService
 import no.nav.familie.klage.distribusjon.DistribusjonService
 import no.nav.familie.klage.distribusjon.SendTilKabalTask
-import no.nav.familie.klage.distribusjon.ef.JournalførBrevTask
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.personopplysninger.pdl.logger
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
@@ -17,20 +16,20 @@ import java.util.UUID
 
 @Service
 @TaskStepBeskrivelse(
-    taskStepType = JournalførBrevTask.TYPE,
+    taskStepType = BaksJournalførBrevTask.TYPE,
     beskrivelse = "Journalfør brev etter klagebehandling",
 )
-class JournalførBrevTask(
+class BaksJournalførBrevTask(
     private val distribusjonService: DistribusjonService,
     private val taskService: TaskService,
     private val behandlingService: BehandlingService,
-    private val brevService: BrevService,
+    private val baksBrevService: BaksBrevService,
     private val journalpostBrevmottakereUtleder: JournalpostBrevmottakereUtleder,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
-        val brev = brevService.hentBrev(behandlingId)
+        val brev = baksBrevService.hentBrev(behandlingId)
         val journalpostBrevmottakere = journalpostBrevmottakereUtleder.utled(behandlingId)
 
         if (journalpostBrevmottakere.isEmpty()) {
@@ -45,15 +44,15 @@ class JournalførBrevTask(
                 index,
                 journalpostBrevmottaker.mapTilAvsenderMottaker(),
             )
-            val distribuerBrevTask = DistribuerBrevTask.opprett(
-                DistribuerBrevTask.Payload(
+            val baksDistribuerBrevTask = BaksDistribuerBrevTask.opprett(
+                BaksDistribuerBrevTask.Payload(
                     behandlingId,
                     journalpostId,
                     journalpostBrevmottaker,
                 ),
                 task.metadata,
             )
-            taskService.save(distribuerBrevTask)
+            taskService.save(baksDistribuerBrevTask)
         }
     }
 

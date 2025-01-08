@@ -11,6 +11,7 @@ import no.nav.familie.klage.brev.ef.domain.BrevmottakereJournalpost
 import no.nav.familie.klage.brev.ef.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.distribusjon.ef.DistribuerBrevTask
 import no.nav.familie.klage.felles.domain.Fil
+import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.prosessering.domene.Task
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
@@ -30,7 +31,7 @@ internal class DistribuerBrevTaskTest {
 
     @BeforeEach
     internal fun setUp() {
-        every { distribusjonService.distribuerBrev(any()) } answers { "distId-${firstArg<String>()}" }
+        every { distribusjonService.distribuerBrev(any(), Fagsystem.EF) } answers { "distId-${firstArg<String>()}" }
         justRun { brevService.oppdaterMottakerJournalpost(behandlingId, capture(slotJournalposter)) }
     }
 
@@ -64,7 +65,7 @@ internal class DistribuerBrevTaskTest {
         doTask()
         verifyAntallKall(2)
         verifyOrder {
-            distribusjonService.distribuerBrev("1")
+            distribusjonService.distribuerBrev("1", Fagsystem.EF)
             brevService.oppdaterMottakerJournalpost(
                 behandlingId,
                 BrevmottakereJournalposter(
@@ -74,7 +75,7 @@ internal class DistribuerBrevTaskTest {
                     ),
                 ),
             )
-            distribusjonService.distribuerBrev("2")
+            distribusjonService.distribuerBrev("2", Fagsystem.EF)
             brevService.oppdaterMottakerJournalpost(
                 behandlingId,
                 BrevmottakereJournalposter(
@@ -94,7 +95,7 @@ internal class DistribuerBrevTaskTest {
         verifyAntallKall(1)
 
         verifyOrder {
-            distribusjonService.distribuerBrev("2")
+            distribusjonService.distribuerBrev("2", Fagsystem.EF)
             brevService.oppdaterMottakerJournalpost(
                 behandlingId,
                 BrevmottakereJournalposter(
@@ -108,7 +109,7 @@ internal class DistribuerBrevTaskTest {
     }
 
     private fun verifyAntallKall(antall: Int) {
-        verify(exactly = antall) { distribusjonService.distribuerBrev(any()) }
+        verify(exactly = antall) { distribusjonService.distribuerBrev(any(), any()) }
         verify(exactly = antall) { brevService.oppdaterMottakerJournalpost(any(), any()) }
     }
 

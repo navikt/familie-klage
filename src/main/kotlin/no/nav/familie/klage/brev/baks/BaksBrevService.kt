@@ -28,9 +28,9 @@ import java.time.LocalDate
 import java.util.UUID
 
 @Service
-class BrevService(
+class BaksBrevService(
     private val brevClient: BrevClient,
-    private val brevRepository: BrevRepository,
+    private val baksBrevRepository: BaksBrevRepository,
     private val behandlingService: BehandlingService,
     private val familieDokumentClient: FamilieDokumentClient,
     private val brevsignaturService: BrevsignaturService,
@@ -40,7 +40,7 @@ class BrevService(
     private val personopplysningerService: PersonopplysningerService,
     private val brevInnholdUtleder: BrevInnholdUtleder,
 ) {
-    fun hentBrev(behandlingId: UUID): Brev = brevRepository.findByIdOrThrow(behandlingId)
+    fun hentBrev(behandlingId: UUID): BaksBrev = baksBrevRepository.findByIdOrThrow(behandlingId)
 
     fun lagBrev(behandlingId: UUID): ByteArray {
         val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
@@ -135,13 +135,13 @@ class BrevService(
     private fun lagreEllerOppdaterBrev(
         behandlingId: UUID,
         saksbehandlerHtml: String,
-    ): Brev {
-        val brev = brevRepository.findByIdOrNull(behandlingId)
+    ): BaksBrev {
+        val brev = baksBrevRepository.findByIdOrNull(behandlingId)
         return if (brev != null) {
-            brevRepository.update(brev.copy(saksbehandlerHtml = saksbehandlerHtml))
+            baksBrevRepository.update(brev.copy(saksbehandlerHtml = saksbehandlerHtml))
         } else {
-            brevRepository.insert(
-                Brev(
+            baksBrevRepository.insert(
+                BaksBrev(
                     behandlingId = behandlingId,
                     saksbehandlerHtml = saksbehandlerHtml,
                 ),
@@ -150,13 +150,13 @@ class BrevService(
     }
 
     fun lagBrevPdf(behandlingId: UUID) {
-        val brev = brevRepository.findByIdOrThrow(behandlingId)
+        val brev = baksBrevRepository.findByIdOrThrow(behandlingId)
         feilHvis(brev.pdf != null) {
             "Det finnes allerede en lagret pdf"
         }
 
         val generertBrev = familieDokumentClient.genererPdfFraHtml(brev.saksbehandlerHtml)
-        brevRepository.update(brev.copy(pdf = Fil(generertBrev)))
+        baksBrevRepository.update(brev.copy(pdf = Fil(generertBrev)))
     }
 
     private fun utledBehandlingResultat(behandlingId: UUID): BehandlingResultat {
