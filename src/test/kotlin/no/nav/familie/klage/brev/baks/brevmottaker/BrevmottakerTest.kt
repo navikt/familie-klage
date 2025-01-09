@@ -1,5 +1,6 @@
 package no.nav.familie.klage.brev.baks.brevmottaker
 
+import no.nav.familie.klage.testutil.DomainUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -13,7 +14,7 @@ class BrevmottakerTest {
             // Arrange
             val behandlingId = UUID.randomUUID()
 
-            val nyBrevmottaker = NyBrevmottaker(
+            val nyBrevmottaker = DomainUtil.lagNyBrevmottaker(
                 mottakertype = Mottakertype.BRUKER,
                 navn = "Navn",
                 adresselinje1 = "Adresseline1",

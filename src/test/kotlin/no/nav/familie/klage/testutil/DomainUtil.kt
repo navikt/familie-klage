@@ -7,6 +7,9 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
+import no.nav.familie.klage.brev.baks.brevmottaker.Brevmottaker
+import no.nav.familie.klage.brev.baks.brevmottaker.Mottakertype
+import no.nav.familie.klage.brev.baks.brevmottaker.NyBrevmottaker
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
@@ -67,7 +70,8 @@ object DomainUtil {
             fagsystem = fagsystem,
         )
 
-    fun FagsakDomain.tilFagsak(personIdent: String = "11223344551") = this.tilFagsakMedPerson(setOf(PersonIdent(ident = personIdent)))
+    fun FagsakDomain.tilFagsak(personIdent: String = "11223344551") =
+        this.tilFagsakMedPerson(setOf(PersonIdent(ident = personIdent)))
 
     fun behandling(
         fagsak: Fagsak = fagsak(),
@@ -177,6 +181,7 @@ object DomainUtil {
                     Stønadstype.BARNETILSYN,
                     Stønadstype.SKOLEPENGER,
                     -> Fagsystem.EF
+
                     Stønadstype.BARNETRYGD -> Fagsystem.BA
                     Stønadstype.KONTANTSTØTTE -> Fagsystem.KS
                 },
@@ -223,7 +228,12 @@ object DomainUtil {
 
     fun journalpostDokument(
         status: Dokumentstatus = Dokumentstatus.FERDIGSTILT,
-        dokumentvarianter: List<Dokumentvariant>? = listOf(Dokumentvariant(Dokumentvariantformat.ARKIV, saksbehandlerHarTilgang = true)),
+        dokumentvarianter: List<Dokumentvariant>? = listOf(
+            Dokumentvariant(
+                Dokumentvariantformat.ARKIV,
+                saksbehandlerHarTilgang = true,
+            ),
+        ),
     ) = DokumentInfo(
         dokumentInfoId = UUID.randomUUID().toString(),
         tittel = "Tittel",
@@ -280,4 +290,48 @@ object DomainUtil {
         fagsystemType = fagsystemType,
         regelverk = regelverk,
     )
+
+    fun lagBrevmottaker(
+        id: UUID = UUID.randomUUID(),
+        behandlingId: UUID = UUID.randomUUID(),
+        mottakertype: Mottakertype = Mottakertype.BRUKER,
+        navn: String = "Navn Navnesen",
+        adresselinje1: String = "Onkel Pølsemakers vei 10",
+        adresselinje2: String? = null,
+        postnummer: String? = "0010",
+        poststed: String? = "Oslo",
+        landkode: String = "NO",
+    ): Brevmottaker {
+        return Brevmottaker(
+            id = id,
+            behandlingId = behandlingId,
+            mottakertype = mottakertype,
+            navn = navn,
+            adresselinje1 = adresselinje1,
+            adresselinje2 = adresselinje2,
+            postnummer = postnummer,
+            poststed = poststed,
+            landkode = landkode,
+        )
+    }
+
+    fun lagNyBrevmottaker(
+        mottakertype: Mottakertype = Mottakertype.BRUKER,
+        navn: String = "Navn Navnesen",
+        adresselinje1: String = "Onkel Pølsemakers vei 10",
+        adresselinje2: String? = null,
+        postnummer: String? = "0010",
+        poststed: String? = "Oslo",
+        landkode: String = "NO",
+    ): NyBrevmottaker {
+        return NyBrevmottaker(
+            mottakertype = mottakertype,
+            navn = navn,
+            adresselinje1 = adresselinje1,
+            adresselinje2 = adresselinje2,
+            postnummer = postnummer,
+            poststed = poststed,
+            landkode = landkode,
+        )
+    }
 }
