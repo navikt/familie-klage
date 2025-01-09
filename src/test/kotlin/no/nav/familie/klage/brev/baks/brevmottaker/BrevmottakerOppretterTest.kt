@@ -432,5 +432,111 @@ class BrevmottakerOppretterTest {
             assertThat(brevmottaker.poststed).isEqualTo(brevmottaker.poststed)
             assertThat(brevmottaker.landkode).isEqualTo(brevmottaker.landkode)
         }
+
+        @EnumSource(
+            value = Mottakertype::class,
+            names = ["VERGE", "FULLMEKTIG"],
+            mode = EnumSource.Mode.INCLUDE,
+        )
+        @ParameterizedTest
+        fun `skal opprette brevmottaker som kan kombineres med en allerede eksisterende brevmottaker av mottakertype bruker med utenlandsk adresse`(
+            mottakertype: Mottakertype,
+        ) {
+            // Arrange
+            val behandlingId: UUID = UUID.randomUUID()
+
+            val nyBrevmottaker = DomainUtil.lagNyBrevmottaker(
+                mottakertype = mottakertype,
+                navn = "navn",
+                adresselinje1 = "adresse1",
+                adresselinje2 = "adresse2",
+                postnummer = "0010",
+                poststed = "Oslo",
+                landkode = "NO",
+            )
+
+            every {
+                behandlingService.hentBehandling(behandlingId)
+            } returns DomainUtil.behandling()
+
+            every {
+                personopplysningerService.hentPersonopplysninger(behandlingId)
+            } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottaker.navn)
+
+            every {
+                brevmottakerRepository.insert(any())
+            } returnsArgument 0
+
+            every {
+                brevmottakerRepository.findByBehandlingId(behandlingId)
+            } returns listOf(DomainUtil.lagBrevmottaker(mottakertype = Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE))
+
+            // Act
+            val brevmottaker = brevmottakerOppretter.opprettBrevmottaker(behandlingId, nyBrevmottaker)
+
+            // Assert
+            assertThat(brevmottaker.id).isNotNull()
+            assertThat(brevmottaker.behandlingId).isEqualTo(behandlingId)
+            assertThat(brevmottaker.mottakertype).isEqualTo(brevmottaker.mottakertype)
+            assertThat(brevmottaker.navn).isEqualTo(brevmottaker.navn)
+            assertThat(brevmottaker.adresselinje1).isEqualTo(brevmottaker.adresselinje1)
+            assertThat(brevmottaker.adresselinje2).isEqualTo(brevmottaker.adresselinje2)
+            assertThat(brevmottaker.postnummer).isEqualTo(brevmottaker.postnummer)
+            assertThat(brevmottaker.poststed).isEqualTo(brevmottaker.poststed)
+            assertThat(brevmottaker.landkode).isEqualTo(brevmottaker.landkode)
+        }
+
+        @EnumSource(
+            value = Mottakertype::class,
+            names = ["VERGE", "FULLMEKTIG"],
+            mode = EnumSource.Mode.INCLUDE,
+        )
+        @ParameterizedTest
+        fun `skal opprette brevmottaker med mottakertype bruker med utenlandsk adresse samtidig som det allerede eksisterede brevmottakere som lar seg kombinere med brukere med utenlandsk adresse`(
+            mottakertype: Mottakertype,
+        ) {
+            // Arrange
+            val behandlingId: UUID = UUID.randomUUID()
+
+            val nyBrevmottaker = DomainUtil.lagNyBrevmottaker(
+                mottakertype = Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE,
+                navn = "navn",
+                adresselinje1 = "adresse1",
+                adresselinje2 = "adresse2",
+                postnummer = null,
+                poststed = null,
+                landkode = "DK",
+            )
+
+            every {
+                behandlingService.hentBehandling(behandlingId)
+            } returns DomainUtil.behandling()
+
+            every {
+                personopplysningerService.hentPersonopplysninger(behandlingId)
+            } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottaker.navn)
+
+            every {
+                brevmottakerRepository.insert(any())
+            } returnsArgument 0
+
+            every {
+                brevmottakerRepository.findByBehandlingId(behandlingId)
+            } returns listOf(DomainUtil.lagBrevmottaker(mottakertype = mottakertype))
+
+            // Act
+            val brevmottaker = brevmottakerOppretter.opprettBrevmottaker(behandlingId, nyBrevmottaker)
+
+            // Assert
+            assertThat(brevmottaker.id).isNotNull()
+            assertThat(brevmottaker.behandlingId).isEqualTo(behandlingId)
+            assertThat(brevmottaker.mottakertype).isEqualTo(brevmottaker.mottakertype)
+            assertThat(brevmottaker.navn).isEqualTo(brevmottaker.navn)
+            assertThat(brevmottaker.adresselinje1).isEqualTo(brevmottaker.adresselinje1)
+            assertThat(brevmottaker.adresselinje2).isEqualTo(brevmottaker.adresselinje2)
+            assertThat(brevmottaker.postnummer).isEqualTo(brevmottaker.postnummer)
+            assertThat(brevmottaker.poststed).isEqualTo(brevmottaker.poststed)
+            assertThat(brevmottaker.landkode).isEqualTo(brevmottaker.landkode)
+        }
     }
 }
