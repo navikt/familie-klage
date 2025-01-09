@@ -57,7 +57,13 @@ internal class StegServiceTest {
         every { behandlingRepository.findByIdOrThrow(behandlingId) } returns behandling
         every { behandlingRepository.updateSteg(behandlingId, capture(stegSlot)) } just Runs
         every { behandlingRepository.updateStatus(behandlingId, capture(statusSlot)) } just Runs
-        every { behandlingshistorikkService.opprettBehandlingshistorikk(any(), capture(historikkSlot)) } returns mockk()
+        every {
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                any(),
+                capture(historikkSlot),
+                any(),
+            )
+        } returns mockk()
     }
 
     @AfterEach
@@ -75,7 +81,7 @@ internal class StegServiceTest {
         assertThat(stegSlot.captured).isEqualTo(nesteSteg)
         assertThat(statusSlot.captured).isEqualTo(nesteSteg.gjelderStatus)
         assertThat(historikkSlot.single()).isEqualTo(behandling.steg)
-        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(any(), any()) }
+        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(any(), any(), any()) }
     }
 
     @Test
@@ -83,8 +89,16 @@ internal class StegServiceTest {
         stegService.oppdaterSteg(behandlingId, behandling.steg, StegType.KABAL_VENTER_SVAR)
 
         verifyOrder {
-            behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, behandling.steg)
-            behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.OVERFØRING_TIL_KABAL)
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                behandlingId = behandlingId,
+                steg = behandling.steg,
+                behandlingStatus = behandling.status,
+            )
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                behandlingId = behandlingId,
+                steg = StegType.OVERFØRING_TIL_KABAL,
+                behandlingStatus = BehandlingStatus.VENTER,
+            )
         }
     }
 
@@ -93,8 +107,16 @@ internal class StegServiceTest {
         stegService.oppdaterSteg(behandlingId, behandling.steg, StegType.BEHANDLING_FERDIGSTILT)
 
         verifyOrder {
-            behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, behandling.steg)
-            behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BEHANDLING_FERDIGSTILT)
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                behandlingId = behandlingId,
+                steg = behandling.steg,
+                behandlingStatus = behandling.status,
+            )
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                behandlingId = behandlingId,
+                steg = StegType.BEHANDLING_FERDIGSTILT,
+                behandlingStatus = BehandlingStatus.FERDIGSTILT,
+            )
         }
     }
 
@@ -104,7 +126,7 @@ internal class StegServiceTest {
 
         verify(exactly = 1) { behandlingRepository.updateSteg(any(), any()) }
         verify(exactly = 1) { behandlingRepository.updateStatus(any(), any()) }
-        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(any(), any()) }
+        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(any(), any(), any()) }
     }
 
     @Test
@@ -136,31 +158,112 @@ internal class StegServiceTest {
 
     @Test
     fun `skal ikke lagre behandlingshistorikk dersom en vurdering ferdigstilles ved omgjøring`() {
-        stegService.oppdaterSteg(behandlingId, StegType.BREV, StegType.BEHANDLING_FERDIGSTILT, BehandlingResultat.MEDHOLD)
+        stegService.oppdaterSteg(
+            behandlingId,
+            StegType.BREV,
+            StegType.BEHANDLING_FERDIGSTILT,
+            BehandlingResultat.MEDHOLD,
+        )
 
-        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.VURDERING) }
-        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BREV) }
-        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BEHANDLING_FERDIGSTILT) }
+        verify(exactly = 0) {
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                behandlingId = behandlingId,
+                steg = StegType.VURDERING,
+                behandlingStatus = BehandlingStatus.OPPRETTET,
+            )
+        }
+        verify(exactly = 0) {
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                behandlingId = behandlingId,
+                steg = StegType.BREV,
+                behandlingStatus = BehandlingStatus.OPPRETTET,
+            )
+        }
+        verify(exactly = 1) {
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                behandlingId = behandlingId,
+                steg = StegType.BEHANDLING_FERDIGSTILT,
+                behandlingStatus = BehandlingStatus.FERDIGSTILT,
+            )
+        }
     }
 
     @Test
     fun `skal lagre behandlingshistorikk dersom en vurdering ferdigstilles ved opprettholdelse`() {
-        stegService.oppdaterSteg(behandlingId, StegType.BREV, StegType.BEHANDLING_FERDIGSTILT, BehandlingResultat.IKKE_MEDHOLD)
+        stegService.oppdaterSteg(
+            behandlingId,
+            StegType.BREV,
+            StegType.BEHANDLING_FERDIGSTILT,
+            BehandlingResultat.IKKE_MEDHOLD,
+        )
 
-        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.VURDERING) }
-        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BREV) }
-        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BEHANDLING_FERDIGSTILT) }
+        verify(exactly = 0) {
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                behandlingId = behandlingId,
+                steg = StegType.VURDERING,
+                behandlingStatus = BehandlingStatus.OPPRETTET,
+            )
+        }
+        verify(exactly = 1) {
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                behandlingId = behandlingId,
+                steg = StegType.BREV,
+                behandlingStatus = BehandlingStatus.OPPRETTET,
+            )
+        }
+        verify(exactly = 1) {
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                behandlingId = behandlingId,
+                steg = StegType.BEHANDLING_FERDIGSTILT,
+                behandlingStatus = BehandlingStatus.FERDIGSTILT,
+            )
+        }
     }
 
     @Test
     fun `skal ikke lagre behandlingshistorikk om brev dersom behandlingen ferdigstilles og har årsak henvendelse fra KA`() {
         every { behandlingRepository.findByIdOrThrow(behandlingId) } returns behandling.copy(årsak = Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL)
-        stegService.oppdaterSteg(behandlingId, StegType.BREV, StegType.KABAL_VENTER_SVAR, BehandlingResultat.IKKE_MEDHOLD)
+        stegService.oppdaterSteg(
+            behandlingId,
+            StegType.BREV,
+            StegType.KABAL_VENTER_SVAR,
+            BehandlingResultat.IKKE_MEDHOLD,
+        )
 
-        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.OPPRETTET) }
-        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.FORMKRAV) }
-        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.VURDERING) }
-        verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.BREV) }
-        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.OVERFØRING_TIL_KABAL) }
+        verify(exactly = 0) {
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                behandlingId = behandlingId,
+                steg = StegType.OPPRETTET,
+                behandlingStatus = BehandlingStatus.OPPRETTET,
+            )
+        }
+        verify(exactly = 0) {
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                behandlingId = behandlingId,
+                steg = StegType.FORMKRAV,
+                behandlingStatus = BehandlingStatus.OPPRETTET,
+            )
+        }
+        verify(exactly = 0) {
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                behandlingId = behandlingId,
+                steg = StegType.VURDERING,
+                behandlingStatus = BehandlingStatus.UTREDES,
+            )
+        }
+        verify(exactly = 0) {
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                behandlingId = behandlingId,
+                steg = StegType.BREV,
+                behandlingStatus = BehandlingStatus.OPPRETTET,
+            )
+        }
+        verify(exactly = 1) {
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                behandlingId = behandlingId,
+                steg = StegType.OVERFØRING_TIL_KABAL,
+                behandlingStatus = BehandlingStatus.VENTER,
+            )
+        }
     }
 }
