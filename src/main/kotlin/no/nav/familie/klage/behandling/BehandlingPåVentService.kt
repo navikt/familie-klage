@@ -1,6 +1,5 @@
 package no.nav.familie.klage.behandling
 
-import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandling.dto.SettPåVentRequest
 import no.nav.familie.klage.felles.util.dagensDatoMedNorskFormat
@@ -27,7 +26,7 @@ class BehandlingPåVentService(
     ) {
         val behandling = behandlingService.hentBehandling(behandlingId = behandlingId)
 
-        validerKanSettePåVent(behandling = behandling)
+        validerKanSettePåVent(behandlingStatus = behandling.status)
 
         oppdaterVerdierPåOppgave(settPåVentRequest = settPåVentRequest)
 
@@ -39,7 +38,10 @@ class BehandlingPåVentService(
 
     @Transactional
     fun taAvVent(behandlingId: UUID) {
-        kanTaAvVent(behandlingId = behandlingId)
+        val behandling = behandlingService.hentBehandling(behandlingId = behandlingId)
+
+        validerKanTaAvVent(behandlingStatus = behandling.status)
+
         behandlingService.oppdaterStatusPåBehandling(behandlingId = behandlingId, status = BehandlingStatus.UTREDES)
     }
 
@@ -59,19 +61,15 @@ class BehandlingPåVentService(
         )
     }
 
-    private fun validerKanSettePåVent(
-        behandling: Behandling,
-    ) {
-        brukerfeilHvis(behandling.status.erLåstForVidereBehandling()) {
-            "Kan ikke sette behandling med status ${behandling.status} på vent"
+    private fun validerKanSettePåVent(behandlingStatus: BehandlingStatus) {
+        brukerfeilHvis(behandlingStatus.erLåstForVidereBehandling()) {
+            "Kan ikke sette behandling med status $behandlingStatus på vent"
         }
     }
 
-    private fun kanTaAvVent(behandlingId: UUID) {
-        val behandling = behandlingService.hentBehandling(behandlingId = behandlingId)
-
-        brukerfeilHvis(behandling.status != BehandlingStatus.SATT_PÅ_VENT) {
-            "Kan ikke ta behandling med status ${behandling.status} av vent"
+    private fun validerKanTaAvVent(behandlingStatus: BehandlingStatus) {
+        brukerfeilHvis(behandlingStatus != BehandlingStatus.SATT_PÅ_VENT) {
+            "Kan ikke ta behandling med status $behandlingStatus av vent"
         }
     }
 
