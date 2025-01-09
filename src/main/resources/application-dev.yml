@@ -19,6 +19,7 @@ rolle:
     veileder: "71f503a2-c28f-4394-a05a-8da263ceca4a"
     beslutter: "52fe1bef-224f-49df-a40a-29f92d4520f8"
     saksbehandler: "c7e0b108-7ae6-432c-9ab4-946174c240c0"
+  egenAnsatt: "dbe4ad45-320b-4e9a-aaa1-73cca4ee124d" # 0000-GA-Egne_ansatte
 
 
 lenker:

@@ -6,6 +6,9 @@ import java.time.LocalDateTime
 
 object OppgaveUtil {
 
+    val ENHET_NR_NAY = "4489"
+    val ENHET_NR_EGEN_ANSATT = "4483"
+
     fun lagFristForOppgave(gjeldendeTid: LocalDateTime): LocalDate {
         val fristTilNesteVirkedag = nesteVirkedag(gjeldendeTid.toLocalDate())
         return if (gjeldendeTid.hour >= 12) {

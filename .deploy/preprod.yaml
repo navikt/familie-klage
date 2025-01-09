@@ -99,6 +99,7 @@ spec:
           - id: 52fe1bef-224f-49df-a40a-29f92d4520f8 # 0000-GA-Kontantstotte-Beslutter
           - id: 71f503a2-c28f-4394-a05a-8da263ceca4a # 0000-GA-Kontantstotte-Veileder
           - id: 928636f4-fd0d-4149-978e-a6fb68bb19de # 0000-GA-STDAPPS - tilgang til prosessering
+          - id: dbe4ad45-320b-4e9a-aaa1-73cca4ee124d # 0000-GA-Egne_ansatte
         extra:
           - "NAVident"
   env:

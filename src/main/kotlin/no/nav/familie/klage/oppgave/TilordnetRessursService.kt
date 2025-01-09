@@ -1,6 +1,7 @@
 package no.nav.familie.klage.oppgave
 
 import no.nav.familie.klage.behandling.dto.OppgaveDto
+import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
@@ -9,6 +10,7 @@ import no.nav.familie.klage.oppgave.dto.SaksbehandlerRolle
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -40,6 +42,7 @@ class TilordnetRessursService(
         return if (oppgave != null) {
             OppgaveDto(
                 oppgaveId = oppgave.id,
+                tildeltEnhetsnr = oppgave.tildeltEnhetsnr,
                 beskrivelse = oppgave.beskrivelse,
                 tilordnetRessurs = oppgave.tilordnetRessurs ?: "",
                 prioritet = oppgave.prioritet,
@@ -47,7 +50,10 @@ class TilordnetRessursService(
                 mappeId = oppgave.mappeId,
             )
         } else {
-            null
+            throw ApiFeil(
+                feil = "Finnes ikke oppgave for behandlingen",
+                httpStatus = HttpStatus.BAD_REQUEST,
+            )
         }
     }
 

@@ -6,5 +6,6 @@ object RolleConfigTestUtil {
         ba = FagsystemRolleConfig("baSaksbehandler", "baBeslutter", "baVeileder"),
         ef = FagsystemRolleConfig("efSaksbehandler", "efBeslutter", "efVeileder"),
         ks = FagsystemRolleConfig("ksSaksbehandler", "ksBeslutter", "ksVeileder"),
+        egenAnsatt = "egenAnsatt",
     )
 }
