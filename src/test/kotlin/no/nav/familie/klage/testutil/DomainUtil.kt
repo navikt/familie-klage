@@ -23,8 +23,10 @@ import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration
 import no.nav.familie.klage.kabal.domain.KlageinstansResultat
 import no.nav.familie.klage.personopplysninger.dto.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.dto.Folkeregisterpersonstatus
+import no.nav.familie.klage.personopplysninger.dto.FullmaktDto
 import no.nav.familie.klage.personopplysninger.dto.Kjønn
 import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerDto
+import no.nav.familie.klage.personopplysninger.dto.VergemålDto
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
@@ -334,4 +336,26 @@ object DomainUtil {
             landkode = landkode,
         )
     }
+
+    fun lagPersonopplysningerDto(
+        personIdent: String = "123",
+        navn: String = "Navn Navnesen",
+        kjønn: Kjønn = Kjønn.MANN,
+        adressebeskyttelse: Adressebeskyttelse? = null,
+        folkeregisterpersonstatus: Folkeregisterpersonstatus = Folkeregisterpersonstatus.BOSATT,
+        dødsdato: LocalDate? = null,
+        fullmakt: List<FullmaktDto> = emptyList(),
+        egenAnsatt: Boolean = false,
+        vergemål: List<VergemålDto> = emptyList(),
+    ) = PersonopplysningerDto(
+        personIdent = personIdent,
+        navn = navn,
+        kjønn = kjønn,
+        adressebeskyttelse = adressebeskyttelse,
+        folkeregisterpersonstatus = folkeregisterpersonstatus,
+        dødsdato = dødsdato,
+        fullmakt = fullmakt,
+        egenAnsatt = egenAnsatt,
+        vergemål = vergemål,
+    )
 }

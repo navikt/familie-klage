@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 class BrevmottakerHenterTest {
-    private val mockedBrevmottakerRepository: BrevmottakerRepository = mockk()
+    private val brevmottakerRepository: BrevmottakerRepository = mockk()
     private val brevmottakerHenter: BrevmottakerHenter = BrevmottakerHenter(
-        brevmottakerRepository = mockedBrevmottakerRepository,
+        brevmottakerRepository = brevmottakerRepository,
     )
 
     @Nested
@@ -26,7 +26,7 @@ class BrevmottakerHenterTest {
             val brevmottaker3 = DomainUtil.lagBrevmottaker(behandlingId = behandlingId)
 
             every {
-                mockedBrevmottakerRepository.findByBehandlingId(behandlingId)
+                brevmottakerRepository.findByBehandlingId(behandlingId)
             } returns listOf(brevmottaker1, brevmottaker2, brevmottaker3)
 
             // Act
@@ -41,7 +41,7 @@ class BrevmottakerHenterTest {
             // Arrange
             val behandlingId = UUID.randomUUID()
             every {
-                mockedBrevmottakerRepository.findByBehandlingId(behandlingId)
+                brevmottakerRepository.findByBehandlingId(behandlingId)
             } returns emptyList()
 
             // Act
