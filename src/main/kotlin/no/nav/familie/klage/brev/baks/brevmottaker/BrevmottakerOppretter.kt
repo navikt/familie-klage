@@ -55,7 +55,7 @@ class BrevmottakerOppretter(
             }
 
             eksisterendeMottakertyper.any { it == Mottakertype.DØDSBO } -> {
-                throw Feil("Kan ikke legge til flere brevmottakere når det allerede finnes et dødsbo")
+                throw Feil("Kan ikke legge til flere brevmottakere når det allerede finnes et dødsbo.")
             }
 
             Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE in eksisterendeMottakertyper &&
