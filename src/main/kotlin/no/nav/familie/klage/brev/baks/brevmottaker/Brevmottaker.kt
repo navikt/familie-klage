@@ -25,7 +25,6 @@ data class Brevmottaker(
     companion object Fabrikk {
         fun opprett(behandlingId: UUID, nyBrevmottaker: NyBrevmottaker): Brevmottaker {
             return Brevmottaker(
-                id = UUID.randomUUID(),
                 behandlingId = behandlingId,
                 mottakertype = nyBrevmottaker.mottakertype,
                 navn = nyBrevmottaker.navn,

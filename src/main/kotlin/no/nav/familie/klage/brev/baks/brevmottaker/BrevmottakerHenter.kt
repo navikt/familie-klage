@@ -11,7 +11,7 @@ class BrevmottakerHenter(
     private val logger = LoggerFactory.getLogger(BrevmottakerHenter::class.java)
 
     fun hentBrevmottakere(behandlingId: UUID): List<Brevmottaker> {
-        logger.debug("Henter brevmottaker for behandling {}", behandlingId)
+        logger.debug("Henter brevmottakere for behandling {}", behandlingId)
         return brevmottakerRepository.findByBehandlingId(behandlingId)
     }
 }

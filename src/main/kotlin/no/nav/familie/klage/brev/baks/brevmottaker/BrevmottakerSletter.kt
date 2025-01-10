@@ -17,7 +17,7 @@ class BrevmottakerSletter(
 
     @Transactional
     fun slettBrevmottaker(behandlingId: UUID, brevmottakerId: UUID) {
-        logger.debug("Sletter brevmottaker for behandling {}", behandlingId)
+        logger.debug("Sletter brevmottaker {} for behandling {}", brevmottakerId, behandlingId)
         validerRedigerbarBehandling(behandlingId)
         validerBrevmottakerEksiterer(brevmottakerId)
         brevmottakerRepository.deleteById(brevmottakerId)
@@ -33,7 +33,7 @@ class BrevmottakerSletter(
     private fun validerBrevmottakerEksiterer(brevmottakerId: UUID) {
         val eksisterer = brevmottakerRepository.existsById(brevmottakerId)
         if (!eksisterer) {
-            throw Feil("Brevmottaker med id $brevmottakerId finnes ikke.")
+            throw Feil("Brevmottaker $brevmottakerId kan ikke slettes da den ikke finnes.")
         }
     }
 }
