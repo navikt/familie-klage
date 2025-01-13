@@ -2,11 +2,11 @@ package no.nav.familie.klage.kabal
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
-import no.nav.familie.klage.brev.domain.Brevmottaker
-import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
-import no.nav.familie.klage.brev.domain.BrevmottakerPerson
-import no.nav.familie.klage.brev.domain.Brevmottakere
-import no.nav.familie.klage.brev.domain.MottakerRolle
+import no.nav.familie.klage.brev.ef.domain.Brevmottaker
+import no.nav.familie.klage.brev.ef.domain.BrevmottakerOrganisasjon
+import no.nav.familie.klage.brev.ef.domain.BrevmottakerPerson
+import no.nav.familie.klage.brev.ef.domain.Brevmottakere
+import no.nav.familie.klage.brev.ef.domain.MottakerRolle
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.tilYtelse
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
@@ -46,14 +46,14 @@ class KabalService(
         OversendtKlageAnkeV3(
             type = Type.KLAGE,
             klager =
-            OversendtKlager(
-                id =
-                OversendtPartId(
-                    type = OversendtPartIdType.PERSON,
-                    verdi = fagsak.hentAktivIdent(),
+                OversendtKlager(
+                    id =
+                        OversendtPartId(
+                            type = OversendtPartIdType.PERSON,
+                            verdi = fagsak.hentAktivIdent(),
+                        ),
+                    klagersProsessfullmektig = utledFullmektigFraBrevmottakere(brevMottakere),
                 ),
-                klagersProsessfullmektig = utledFullmektigFraBrevmottakere(brevMottakere),
-            ),
             fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem.tilFellesFagsystem()),
             kildeReferanse = behandling.eksternBehandlingId.toString(),
             innsynUrl = lagInnsynUrl(fagsak, behandling.påklagetVedtak),

@@ -10,10 +10,10 @@ import java.util.UUID
 
 @Service
 class BaksBrevService(
-    private val baksBrevRepository: BaksBrevRepository,
-    private val familieDokumentClient: FamilieDokumentClient,
     private val baksBrevHenter: BaksBrevHenter,
     private val baksBrevOppretter: BaksBrevOppretter,
+    private val baksBrevRepository: BaksBrevRepository,
+    private val familieDokumentClient: FamilieDokumentClient,
 ) {
     fun hentBrev(behandlingId: UUID): BaksBrev {
         return baksBrevHenter.hentBrev(behandlingId)
