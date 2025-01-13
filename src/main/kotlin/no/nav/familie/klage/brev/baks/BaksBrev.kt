@@ -9,7 +9,7 @@ import java.util.UUID
 data class BaksBrev(
     @Id
     val behandlingId: UUID,
-    val saksbehandlerHtml: String,
+    val html: String,
     val pdf: Fil? = null,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),

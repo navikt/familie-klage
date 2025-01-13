@@ -30,11 +30,11 @@ class BaksBrevController(
     }
 
     @PostMapping("/{behandlingId}")
-    fun lagEllerOppdaterBrev(
+    fun opprettBrev(
         @PathVariable behandlingId: UUID,
     ): Ressurs<ByteArray> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        return Ressurs.success(baksBrevService.lagBrev(behandlingId))
+        return Ressurs.success(baksBrevService.opprettBrev(behandlingId))
     }
 }
