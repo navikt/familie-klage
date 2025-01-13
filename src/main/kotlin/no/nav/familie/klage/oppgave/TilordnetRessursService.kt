@@ -51,7 +51,7 @@ class TilordnetRessursService(
             )
         } else {
             throw ApiFeil(
-                feil = "Finnes ikke oppgave for behandlingen",
+                feilmelding = "Finnes ikke oppgave for behandlingen",
                 httpStatus = HttpStatus.BAD_REQUEST,
             )
         }
