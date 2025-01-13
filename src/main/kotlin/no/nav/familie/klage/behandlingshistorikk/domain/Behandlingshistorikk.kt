@@ -11,7 +11,7 @@ data class Behandlingshistorikk(
     @Id
     val id: UUID = UUID.randomUUID(),
     val behandlingId: UUID,
-    val behandlingStatus: BehandlingStatus,
+    val behandlingStatus: BehandlingStatus? = null,
     val steg: StegType,
     val opprettetAv: String = SikkerhetContext.hentSaksbehandler(),
     val endretTid: LocalDateTime? = LocalDateTime.now(),
