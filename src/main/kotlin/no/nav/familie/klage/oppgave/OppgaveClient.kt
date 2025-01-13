@@ -5,6 +5,7 @@ import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import no.nav.familie.klage.infrastruktur.config.IntegrasjonerConfig
 import no.nav.familie.klage.infrastruktur.exception.IntegrasjonException
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
+import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 @Component
@@ -28,7 +30,8 @@ class OppgaveClient(
     fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): Long {
         val uri = URI.create("$oppgaveUri/opprett")
 
-        val respons = postForEntity<Ressurs<OppgaveResponse>>(uri, opprettOppgaveRequest, HttpHeaders().medContentTypeJsonUTF8())
+        val respons =
+            postForEntity<Ressurs<OppgaveResponse>>(uri, opprettOppgaveRequest, HttpHeaders().medContentTypeJsonUTF8())
         return pakkUtRespons(respons, uri, "opprettOppgave").oppgaveId
     }
 
@@ -53,6 +56,23 @@ class OppgaveClient(
             HttpHeaders().medContentTypeJsonUTF8(),
         )
         return pakkUtRespons(respons, uri, "oppdaterOppgave").oppgaveId
+    }
+
+    fun finnMapper(
+        enhetnummer: String,
+        limit: Int,
+    ): FinnMappeResponseDto {
+        val uri =
+            UriComponentsBuilder
+                .fromUri(oppgaveUri)
+                .pathSegment("mappe", "sok")
+                .queryParam("enhetsnr", enhetnummer)
+                .queryParam("limit", limit)
+                .build()
+                .toUri()
+
+        val respons = getForEntity<Ressurs<FinnMappeResponseDto>>(uri = uri)
+        return pakkUtRespons(respons = respons, uri = uri, metode = "finnMappe")
     }
 
     fun hentSaksbehandlerInfo(navIdent: String): Saksbehandler {

@@ -1,5 +1,7 @@
 package no.nav.familie.klage.oppgave
 
+import no.nav.familie.klage.behandling.dto.OppgaveDto
+import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
@@ -8,8 +10,9 @@ import no.nav.familie.klage.oppgave.dto.SaksbehandlerRolle
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
-import java.util.UUID
+import java.util.*
 
 @Service
 class TilordnetRessursService(
@@ -30,6 +33,28 @@ class TilordnetRessursService(
             fornavn = saksbehandler?.fornavn ?: "",
             rolle = rolle,
         )
+    }
+
+    fun hentOppgave(behandlingId: UUID): OppgaveDto? {
+        val behandleSakOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId)
+        val oppgave = behandleSakOppgave?.let { oppgaveClient.finnOppgaveMedId(it.oppgaveId) }
+
+        return if (oppgave != null) {
+            OppgaveDto(
+                oppgaveId = oppgave.id,
+                tildeltEnhetsnr = oppgave.tildeltEnhetsnr,
+                beskrivelse = oppgave.beskrivelse,
+                tilordnetRessurs = oppgave.tilordnetRessurs ?: "",
+                prioritet = oppgave.prioritet,
+                fristFerdigstillelse = oppgave.fristFerdigstillelse ?: "",
+                mappeId = oppgave.mappeId,
+            )
+        } else {
+            throw ApiFeil(
+                feilmelding = "Finnes ikke oppgave for behandlingen",
+                httpStatus = HttpStatus.BAD_REQUEST,
+            )
+        }
     }
 
     private fun utledSaksbehandlerRolle(oppgave: Oppgave?): SaksbehandlerRolle {

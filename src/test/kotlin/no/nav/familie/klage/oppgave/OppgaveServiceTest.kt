@@ -11,6 +11,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.cache.CacheManager
 import java.util.UUID
 
 internal class OppgaveServiceTest {
@@ -18,7 +19,8 @@ internal class OppgaveServiceTest {
     val behandleSakOppgaveRepository = mockk<BehandleSakOppgaveRepository>()
     val oppgaveClient = mockk<OppgaveClient>()
     val behandlingService = mockk<BehandlingService>()
-    val oppgaveService = OppgaveService(behandleSakOppgaveRepository, oppgaveClient, behandlingService)
+    val cacheManager = mockk<CacheManager>()
+    val oppgaveService = OppgaveService(behandleSakOppgaveRepository, oppgaveClient, behandlingService, cacheManager)
 
     val behandlingId = UUID.randomUUID()
     val oppgaveId = 1L

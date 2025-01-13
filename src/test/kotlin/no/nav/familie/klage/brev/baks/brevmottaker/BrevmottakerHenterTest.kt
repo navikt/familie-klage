@@ -21,19 +21,33 @@ class BrevmottakerHenterTest {
             // Arrange
             val behandlingId = UUID.randomUUID()
 
-            val brevmottaker1 = DomainUtil.lagBrevmottaker(behandlingId = behandlingId)
-            val brevmottaker2 = DomainUtil.lagBrevmottaker(behandlingId = behandlingId)
-            val brevmottaker3 = DomainUtil.lagBrevmottaker(behandlingId = behandlingId)
+            val brevmottaker1 = DomainUtil.lagBrevmottaker(
+                behandlingId = behandlingId,
+                mottakertype = Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE,
+                adresselinje1 = "Marsveien 1, 0000, Mars",
+                postnummer = null,
+                poststed = null,
+                landkode = "DK",
+            )
+
+            val brevmottaker2 = DomainUtil.lagBrevmottaker(
+                behandlingId = behandlingId,
+                mottakertype = Mottakertype.FULLMEKTIG,
+                adresselinje1 = "Osloveien 1",
+                postnummer = "0010",
+                poststed = "Oslo",
+                landkode = "NO",
+            )
 
             every {
                 brevmottakerRepository.findByBehandlingId(behandlingId)
-            } returns listOf(brevmottaker1, brevmottaker2, brevmottaker3)
+            } returns listOf(brevmottaker1, brevmottaker2)
 
             // Act
             val brevmottakere = brevmottakerHenter.hentBrevmottakere(behandlingId)
 
             // Assert
-            assertThat(brevmottakere).containsExactly(brevmottaker1, brevmottaker2, brevmottaker3)
+            assertThat(brevmottakere).containsExactly(brevmottaker1, brevmottaker2)
         }
 
         @Test

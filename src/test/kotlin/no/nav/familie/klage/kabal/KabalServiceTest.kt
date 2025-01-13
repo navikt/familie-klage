@@ -19,7 +19,7 @@ import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
 import no.nav.familie.klage.testutil.DomainUtil.påklagetVedtakDetaljer
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
 import no.nav.familie.klage.vurdering.domain.Hjemmel
-import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
 import no.nav.familie.kontrakter.felles.saksbehandler.Saksbehandler
@@ -156,8 +156,16 @@ internal class KabalServiceTest {
             )
 
             val oversendelse = oversendelseSlot.captured
-            assertThat(oversendelse.klager.klagersProsessfullmektig?.id?.verdi).isEqualTo(verge.personIdent)
-            assertThat(oversendelse.klager.klagersProsessfullmektig?.id?.type).isEqualTo(OversendtPartIdType.PERSON)
+            assertThat(
+                oversendelse.klager.klagersProsessfullmektig
+                    ?.id
+                    ?.verdi,
+            ).isEqualTo(verge.personIdent)
+            assertThat(
+                oversendelse.klager.klagersProsessfullmektig
+                    ?.id
+                    ?.type,
+            ).isEqualTo(OversendtPartIdType.PERSON)
             assertThat(oversendelse.klager.klagersProsessfullmektig?.skalKlagerMottaKopi).isFalse()
         }
 
@@ -177,8 +185,16 @@ internal class KabalServiceTest {
             )
 
             val oversendelse = oversendelseSlot.captured
-            assertThat(oversendelse.klager.klagersProsessfullmektig?.id?.verdi).isEqualTo(verge.personIdent)
-            assertThat(oversendelse.klager.klagersProsessfullmektig?.id?.type).isEqualTo(OversendtPartIdType.PERSON)
+            assertThat(
+                oversendelse.klager.klagersProsessfullmektig
+                    ?.id
+                    ?.verdi,
+            ).isEqualTo(verge.personIdent)
+            assertThat(
+                oversendelse.klager.klagersProsessfullmektig
+                    ?.id
+                    ?.type,
+            ).isEqualTo(OversendtPartIdType.PERSON)
             assertThat(oversendelse.klager.klagersProsessfullmektig?.skalKlagerMottaKopi).isFalse()
         }
 
@@ -198,8 +214,16 @@ internal class KabalServiceTest {
             )
 
             val oversendelse = oversendelseSlot.captured
-            assertThat(oversendelse.klager.klagersProsessfullmektig?.id?.verdi).isEqualTo(fullmektig.personIdent)
-            assertThat(oversendelse.klager.klagersProsessfullmektig?.id?.type).isEqualTo(OversendtPartIdType.PERSON)
+            assertThat(
+                oversendelse.klager.klagersProsessfullmektig
+                    ?.id
+                    ?.verdi,
+            ).isEqualTo(fullmektig.personIdent)
+            assertThat(
+                oversendelse.klager.klagersProsessfullmektig
+                    ?.id
+                    ?.type,
+            ).isEqualTo(OversendtPartIdType.PERSON)
             assertThat(oversendelse.klager.klagersProsessfullmektig?.skalKlagerMottaKopi).isFalse()
         }
 
@@ -219,8 +243,16 @@ internal class KabalServiceTest {
             )
 
             val oversendelse = oversendelseSlot.captured
-            assertThat(oversendelse.klager.klagersProsessfullmektig?.id?.verdi).isEqualTo(fullmektig.organisasjonsnummer)
-            assertThat(oversendelse.klager.klagersProsessfullmektig?.id?.type).isEqualTo(OversendtPartIdType.VIRKSOMHET)
+            assertThat(
+                oversendelse.klager.klagersProsessfullmektig
+                    ?.id
+                    ?.verdi,
+            ).isEqualTo(fullmektig.organisasjonsnummer)
+            assertThat(
+                oversendelse.klager.klagersProsessfullmektig
+                    ?.id
+                    ?.type,
+            ).isEqualTo(OversendtPartIdType.VIRKSOMHET)
             assertThat(oversendelse.klager.klagersProsessfullmektig?.skalKlagerMottaKopi).isFalse()
         }
 
@@ -242,8 +274,16 @@ internal class KabalServiceTest {
             )
 
             val oversendelse = oversendelseSlot.captured
-            assertThat(oversendelse.klager.klagersProsessfullmektig?.id?.verdi).isEqualTo(fullmektig.personIdent)
-            assertThat(oversendelse.klager.klagersProsessfullmektig?.id?.type).isEqualTo(OversendtPartIdType.PERSON)
+            assertThat(
+                oversendelse.klager.klagersProsessfullmektig
+                    ?.id
+                    ?.verdi,
+            ).isEqualTo(fullmektig.personIdent)
+            assertThat(
+                oversendelse.klager.klagersProsessfullmektig
+                    ?.id
+                    ?.type,
+            ).isEqualTo(OversendtPartIdType.PERSON)
             assertThat(oversendelse.klager.klagersProsessfullmektig?.skalKlagerMottaKopi).isFalse()
         }
     }
