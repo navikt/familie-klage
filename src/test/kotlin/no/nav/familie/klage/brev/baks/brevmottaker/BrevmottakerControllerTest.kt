@@ -60,6 +60,12 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
             assertThat(exchange.body?.status).isEqualTo(Ressurs.Status.IKKE_TILGANG)
+            assertThat(exchange.body?.melding).isEqualTo(
+                "Saksbehandler julenissen har ikke tilgang til behandling=${behandling.id}",
+            )
+            assertThat(exchange.body?.frontendFeilmelding).isEqualTo(
+                "Mangler tilgang til opplysningene. Årsak: Mock sier: Du har ikke tilgang til person ikkeTilgang",
+            )
             assertThat(exchange.body?.data).isNull()
         }
 
@@ -85,6 +91,8 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
             assertThat(exchange.body?.status).isEqualTo(Ressurs.Status.IKKE_TILGANG)
+            assertThat(exchange.body?.melding).isEqualTo("Bruker har ikke tilgang til saksbehandlingsløsningen")
+            assertThat(exchange.body?.frontendFeilmelding).isEqualTo("Du mangler tilgang til denne saksbehandlingsløsningen")
             assertThat(exchange.body?.data).isNull()
         }
 
@@ -110,6 +118,8 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.OK)
             assertThat(exchange.body?.status).isEqualTo(Ressurs.Status.SUKSESS)
+            assertThat(exchange.body?.melding).isEqualTo("Innhenting av data var vellykket")
+            assertThat(exchange.body?.frontendFeilmelding).isNull()
             assertThat(exchange.body?.data).hasSize(2)
             assertThat(exchange.body?.data).anySatisfy {
                 assertThat(it.id).isEqualTo(brevmottaker1.id)
@@ -171,6 +181,10 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
             assertThat(exchange.body?.status).isEqualTo(Ressurs.Status.IKKE_TILGANG)
+            assertThat(exchange.body?.melding).isEqualTo("Saksbehandler julenissen har ikke tilgang til behandling=${behandling.id}")
+            assertThat(exchange.body?.frontendFeilmelding).isEqualTo(
+                "Mangler tilgang til opplysningene. Årsak: Mock sier: Du har ikke tilgang til person ikkeTilgang",
+            )
             assertThat(exchange.body?.data).isNull()
         }
 
@@ -200,6 +214,10 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
             assertThat(exchange.body?.status).isEqualTo(Ressurs.Status.IKKE_TILGANG)
+            assertThat(exchange.body?.melding).isEqualTo(
+                "Saksbehandler julenissen har ikke tilgang til å utføre denne operasjonen som krever minimumsrolle SAKSBEHANDLER",
+            )
+            assertThat(exchange.body?.frontendFeilmelding).isEqualTo("Mangler nødvendig saksbehandlerrolle for å utføre handlingen")
             assertThat(exchange.body?.data).isNull()
         }
 
@@ -236,6 +254,8 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exchange.body?.status).isEqualTo(Ressurs.Status.FUNKSJONELL_FEIL)
+            assertThat(exchange.body?.melding).isEqualTo("Postnummer må være 4 siffer.")
+            assertThat(exchange.body?.frontendFeilmelding).isEqualTo("Postnummer må være 4 siffer.")
             assertThat(exchange.body?.data).isNull()
         }
 
@@ -271,6 +291,8 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
 
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.OK)
+            assertThat(exchange.body?.melding).isEqualTo("Innhenting av data var vellykket")
+            assertThat(exchange.body?.frontendFeilmelding).isNull()
             assertThat(exchange.body?.status).isEqualTo(Ressurs.Status.SUKSESS)
             assertThat(exchange.body?.data).hasSize(2)
             assertThat(exchange.body?.data).anySatisfy {
