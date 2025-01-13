@@ -107,7 +107,8 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                         objectMapper.writeValueAsString(
                             Ressurs.success(
                                 Oppgave(
-                                    Random.nextLong().absoluteValue,
+                                    id = Random.nextLong().absoluteValue,
+                                    tildeltEnhetsnr = "4489",
                                     tilordnetRessurs = "Z994152",
                                     tema = Tema.ENF,
                                     status = StatusEnum.UNDER_BEHANDLING
@@ -184,7 +185,15 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                         )
                     )
                 )
-            )
+            ),
+            patch(urlPathMatching("${integrasjonerConfig.oppgaveUri.path}/([0-9]*)/oppdater"))
+                .willReturn(
+                    okJson(
+                        objectMapper.writeValueAsString(
+                            Ressurs.success(OppgaveResponse(Random.nextLong().absoluteValue))
+                        )
+                    )
+                )
         )
 
     private fun lagIkkeTilgangResponse() = Tilgang(
