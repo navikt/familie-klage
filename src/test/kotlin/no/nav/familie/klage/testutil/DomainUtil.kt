@@ -7,6 +7,9 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
+import no.nav.familie.klage.brev.baks.brevmottaker.Brevmottaker
+import no.nav.familie.klage.brev.baks.brevmottaker.Mottakertype
+import no.nav.familie.klage.brev.baks.brevmottaker.NyBrevmottaker
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
@@ -20,8 +23,10 @@ import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration
 import no.nav.familie.klage.kabal.domain.KlageinstansResultat
 import no.nav.familie.klage.personopplysninger.dto.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.dto.Folkeregisterpersonstatus
+import no.nav.familie.klage.personopplysninger.dto.FullmaktDto
 import no.nav.familie.klage.personopplysninger.dto.Kjønn
 import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerDto
+import no.nav.familie.klage.personopplysninger.dto.VergemålDto
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
@@ -172,14 +177,14 @@ object DomainUtil {
             sporbar = sporbar,
             eksternId = "1",
             fagsystem =
-            when (stønadstype) {
-                Stønadstype.OVERGANGSSTØNAD,
-                Stønadstype.BARNETILSYN,
-                Stønadstype.SKOLEPENGER,
-                -> Fagsystem.EF
-                Stønadstype.BARNETRYGD -> Fagsystem.BA
-                Stønadstype.KONTANTSTØTTE -> Fagsystem.KS
-            },
+                when (stønadstype) {
+                    Stønadstype.OVERGANGSSTØNAD,
+                    Stønadstype.BARNETILSYN,
+                    Stønadstype.SKOLEPENGER,
+                    -> Fagsystem.EF
+                    Stønadstype.BARNETRYGD -> Fagsystem.BA
+                    Stønadstype.KONTANTSTØTTE -> Fagsystem.KS
+                },
         )
 
     fun klageresultat(
@@ -279,5 +284,71 @@ object DomainUtil {
         vedtakstidspunkt = vedtakstidspunkt,
         fagsystemType = fagsystemType,
         regelverk = regelverk,
+    )
+
+    fun lagBrevmottaker(
+        id: UUID = UUID.randomUUID(),
+        behandlingId: UUID = UUID.randomUUID(),
+        mottakertype: Mottakertype = Mottakertype.BRUKER,
+        navn: String = "Navn Navnesen",
+        adresselinje1: String = "Onkel Pølsemakers vei 10",
+        adresselinje2: String? = null,
+        postnummer: String? = "0010",
+        poststed: String? = "Oslo",
+        landkode: String = "NO",
+    ): Brevmottaker {
+        return Brevmottaker(
+            id = id,
+            behandlingId = behandlingId,
+            mottakertype = mottakertype,
+            navn = navn,
+            adresselinje1 = adresselinje1,
+            adresselinje2 = adresselinje2,
+            postnummer = postnummer,
+            poststed = poststed,
+            landkode = landkode,
+        )
+    }
+
+    fun lagNyBrevmottaker(
+        mottakertype: Mottakertype = Mottakertype.BRUKER,
+        navn: String = "Navn Navnesen",
+        adresselinje1: String = "Onkel Pølsemakers vei 10",
+        adresselinje2: String? = null,
+        postnummer: String? = "0010",
+        poststed: String? = "Oslo",
+        landkode: String = "NO",
+    ): NyBrevmottaker {
+        return NyBrevmottaker(
+            mottakertype = mottakertype,
+            navn = navn,
+            adresselinje1 = adresselinje1,
+            adresselinje2 = adresselinje2,
+            postnummer = postnummer,
+            poststed = poststed,
+            landkode = landkode,
+        )
+    }
+
+    fun lagPersonopplysningerDto(
+        personIdent: String = "123",
+        navn: String = "Navn Navnesen",
+        kjønn: Kjønn = Kjønn.MANN,
+        adressebeskyttelse: Adressebeskyttelse? = null,
+        folkeregisterpersonstatus: Folkeregisterpersonstatus = Folkeregisterpersonstatus.BOSATT,
+        dødsdato: LocalDate? = null,
+        fullmakt: List<FullmaktDto> = emptyList(),
+        egenAnsatt: Boolean = false,
+        vergemål: List<VergemålDto> = emptyList(),
+    ) = PersonopplysningerDto(
+        personIdent = personIdent,
+        navn = navn,
+        kjønn = kjønn,
+        adressebeskyttelse = adressebeskyttelse,
+        folkeregisterpersonstatus = folkeregisterpersonstatus,
+        dødsdato = dødsdato,
+        fullmakt = fullmakt,
+        egenAnsatt = egenAnsatt,
+        vergemål = vergemål,
     )
 }
