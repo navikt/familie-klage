@@ -248,20 +248,12 @@ class BrevmottakerOppretterTest {
             assertThat(exception.message).isEqualTo("Kan ikke legge til flere brevmottakere når det allerede finnes et dødsbo.")
         }
 
-        @EnumSource(
-            value = Mottakertype::class,
-            names = ["VERGE", "FULLMEKTIG", "BRUKER_MED_UTENLANDSK_ADRESSE", "DØDSBO"],
-            mode = EnumSource.Mode.EXCLUDE,
-        )
-        @ParameterizedTest
-        fun `skal kaste exception om man prøver å legge til en brevmottaker som ikke er VERGE eller FULLMEKTIG når det allerede finnes en brevmottaker med utenlandsk adresse`(
-            mottakertype: Mottakertype,
-        ) {
+        fun `skal kaste exception om man prøver å legge til en brevmottaker som ikke er VERGE eller FULLMEKTIG når det allerede finnes en brevmottaker med utenlandsk adresse`() {
             // Arrange
             val behandlingId: UUID = UUID.randomUUID()
 
             val nyBrevmottaker = DomainUtil.lagNyBrevmottaker(
-                mottakertype = mottakertype,
+                mottakertype = Mottakertype.BRUKER,
                 navn = "navn",
                 adresselinje1 = "adresse1",
                 postnummer = null,
