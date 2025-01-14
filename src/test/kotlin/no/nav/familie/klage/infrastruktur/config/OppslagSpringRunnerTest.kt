@@ -8,6 +8,7 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
 import no.nav.familie.klage.brev.domain.Avsnitt
 import no.nav.familie.klage.brev.domain.Brev
+import no.nav.familie.klage.brev.domain.Brevmottaker
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.fagsak.domain.PersonIdent
@@ -104,6 +105,7 @@ abstract class OppslagSpringRunnerTest {
 
     private fun resetDatabase() {
         listOf(
+            Brevmottaker::class,
             BehandleSakOppgave::class,
             Behandlingshistorikk::class,
             Avsnitt::class,

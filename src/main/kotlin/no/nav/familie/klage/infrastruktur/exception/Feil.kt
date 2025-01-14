@@ -4,8 +4,6 @@ import org.springframework.http.HttpStatus
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-open class ApiFeil(val feil: String, val httpStatus: HttpStatus) : RuntimeException(feil)
-
 class Feil(
     message: String,
     val frontendFeilmelding: String? = null,
@@ -33,7 +31,7 @@ inline fun brukerfeilHvis(boolean: Boolean, httpStatus: HttpStatus = HttpStatus.
         returns() implies !boolean
     }
     if (boolean) {
-        throw ApiFeil(feil = lazyMessage(), httpStatus = httpStatus)
+        throw ApiFeil(feilmelding = lazyMessage(), httpStatus = httpStatus)
     }
 }
 
