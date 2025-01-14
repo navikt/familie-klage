@@ -37,7 +37,6 @@ import no.nav.familie.kontrakter.felles.journalpost.RelevantDato
 import no.nav.familie.kontrakter.felles.navkontor.NavKontorEnhet
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
-import no.nav.familie.kontrakter.felles.oppgave.MappeDto
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
@@ -111,11 +110,11 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                                     tildeltEnhetsnr = "4489",
                                     tilordnetRessurs = "Z994152",
                                     tema = Tema.ENF,
-                                    status = StatusEnum.UNDER_BEHANDLING
-                                )
-                            )
-                        )
-                    )
+                                    status = StatusEnum.UNDER_BEHANDLING,
+                                ),
+                            ),
+                        ),
+                    ),
                 ),
             get(urlPathMatching("${integrasjonerConfig.saksbehandlerUri.path}/Z994152"))
                 .willReturn(
@@ -127,11 +126,11 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                                     "Z994152",
                                     "Luke",
                                     "Skywalker",
-                                    "4405"
-                                )
-                            )
-                        )
-                    )
+                                    "4405",
+                                ),
+                            ),
+                        ),
+                    ),
                 ),
             put(urlMatching("${integrasjonerConfig.dokarkivUri.path}.*"))
                 .willReturn(okJson(objectMapper.writeValueAsString(oppdatertJournalpostResponse))),
@@ -180,27 +179,27 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                         Ressurs.success(
                             data = FinnMappeResponseDto(
                                 antallTreffTotalt = 1,
-                                mapper = statiskDummyMapper
-                            )
-                        )
-                    )
-                )
+                                mapper = statiskDummyMapper,
+                            ),
+                        ),
+                    ),
+                ),
             ),
             patch(urlPathMatching("${integrasjonerConfig.oppgaveUri.path}/([0-9]*)/oppdater"))
                 .willReturn(
                     okJson(
                         objectMapper.writeValueAsString(
-                            Ressurs.success(OppgaveResponse(Random.nextLong().absoluteValue))
-                        )
-                    )
-                )
+                            Ressurs.success(OppgaveResponse(Random.nextLong().absoluteValue)),
+                        ),
+                    ),
+                ),
         )
 
     private fun lagIkkeTilgangResponse() = Tilgang(
         false,
         "Mock sier: Du har " +
-                "ikke tilgang " +
-                "til person ikkeTilgang",
+            "ikke tilgang " +
+            "til person ikkeTilgang",
     )
 
     @Bean("mock-integrasjoner")
@@ -240,106 +239,106 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                 kanal = "SKAN_IM",
                 relevanteDatoer = listOf(RelevantDato(LocalDateTime.now(), "DATO_REGISTRERT")),
                 dokumenter =
-                    listOf(
-                        DokumentInfo(
-                            dokumentInfoId = "12345",
-                            tittel = "Søknad om overgangsstønad - dokument 1",
-                            brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
-                            dokumentvarianter =
-                                listOf(
-                                    Dokumentvariant(
-                                        variantformat = Dokumentvariantformat.ARKIV,
-                                        saksbehandlerHarTilgang = true
-                                    ),
-                                    Dokumentvariant(
-                                        variantformat = Dokumentvariantformat.ORIGINAL,
-                                        saksbehandlerHarTilgang = true
-                                    ),
-                                ),
-                        ),
-                        DokumentInfo(
-                            dokumentInfoId = "12345",
-                            tittel = "Søknad om barnetilsyn - dokument 1",
-                            brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
-                            dokumentvarianter =
-                                listOf(
-                                    Dokumentvariant(
-                                        variantformat = Dokumentvariantformat.ARKIV,
-                                        saksbehandlerHarTilgang = true
-                                    )
-                                ),
-                        ),
-                        DokumentInfo(
-                            dokumentInfoId = "12345",
-                            tittel = "Samboeravtale",
-                            brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
-                            dokumentvarianter =
-                                listOf(
-                                    Dokumentvariant(
-                                        variantformat = Dokumentvariantformat.ARKIV,
-                                        saksbehandlerHarTilgang = true
-                                    )
-                                ),
-                        ),
-                        DokumentInfo(
-                            dokumentInfoId = "12345",
-                            tittel = "Manuelt skannet dokument",
-                            brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
-                            dokumentvarianter =
-                                listOf(
-                                    Dokumentvariant(
-                                        variantformat = Dokumentvariantformat.ARKIV,
-                                        saksbehandlerHarTilgang = true
-                                    )
-                                ),
-                            logiskeVedlegg = listOf(
-                                LogiskVedlegg(
-                                    logiskVedleggId = "1",
-                                    tittel = "Manuelt skannet samværsavtale",
-                                ),
-                                LogiskVedlegg(
-                                    logiskVedleggId = "2",
-                                    tittel = "Annen fritekst fra gosys",
-                                ),
+                listOf(
+                    DokumentInfo(
+                        dokumentInfoId = "12345",
+                        tittel = "Søknad om overgangsstønad - dokument 1",
+                        brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
+                        dokumentvarianter =
+                        listOf(
+                            Dokumentvariant(
+                                variantformat = Dokumentvariantformat.ARKIV,
+                                saksbehandlerHarTilgang = true,
+                            ),
+                            Dokumentvariant(
+                                variantformat = Dokumentvariantformat.ORIGINAL,
+                                saksbehandlerHarTilgang = true,
                             ),
                         ),
-                        DokumentInfo(
-                            dokumentInfoId = "12345",
-                            tittel = "EtFrykteligLangtDokumentNavnSomTroligIkkeBrekkerOgØdeleggerGUI",
-                            brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
-                            dokumentvarianter =
-                                listOf(
-                                    Dokumentvariant(
-                                        variantformat = Dokumentvariantformat.ARKIV,
-                                        saksbehandlerHarTilgang = true
-                                    )
-                                ),
-                        ),
-                        DokumentInfo(
-                            dokumentInfoId = "12345",
-                            tittel = "Søknad om overgangsstønad - dokument 2",
-                            brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
-                            dokumentvarianter =
-                                listOf(
-                                    Dokumentvariant(
-                                        variantformat = Dokumentvariantformat.ARKIV,
-                                        saksbehandlerHarTilgang = true
-                                    )
-                                ),
-                        ),
-                        DokumentInfo(
-                            dokumentInfoId = "12345",
-                            tittel = "Søknad om overgangsstønad - dokument 3",
-                            brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
-                            dokumentvarianter =
-                                listOf(
-                                    Dokumentvariant(
-                                        variantformat = Dokumentvariantformat.ARKIV,
-                                        saksbehandlerHarTilgang = true
-                                    )
-                                ),
+                    ),
+                    DokumentInfo(
+                        dokumentInfoId = "12345",
+                        tittel = "Søknad om barnetilsyn - dokument 1",
+                        brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
+                        dokumentvarianter =
+                        listOf(
+                            Dokumentvariant(
+                                variantformat = Dokumentvariantformat.ARKIV,
+                                saksbehandlerHarTilgang = true,
+                            ),
                         ),
                     ),
+                    DokumentInfo(
+                        dokumentInfoId = "12345",
+                        tittel = "Samboeravtale",
+                        brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
+                        dokumentvarianter =
+                        listOf(
+                            Dokumentvariant(
+                                variantformat = Dokumentvariantformat.ARKIV,
+                                saksbehandlerHarTilgang = true,
+                            ),
+                        ),
+                    ),
+                    DokumentInfo(
+                        dokumentInfoId = "12345",
+                        tittel = "Manuelt skannet dokument",
+                        brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
+                        dokumentvarianter =
+                        listOf(
+                            Dokumentvariant(
+                                variantformat = Dokumentvariantformat.ARKIV,
+                                saksbehandlerHarTilgang = true,
+                            ),
+                        ),
+                        logiskeVedlegg = listOf(
+                            LogiskVedlegg(
+                                logiskVedleggId = "1",
+                                tittel = "Manuelt skannet samværsavtale",
+                            ),
+                            LogiskVedlegg(
+                                logiskVedleggId = "2",
+                                tittel = "Annen fritekst fra gosys",
+                            ),
+                        ),
+                    ),
+                    DokumentInfo(
+                        dokumentInfoId = "12345",
+                        tittel = "EtFrykteligLangtDokumentNavnSomTroligIkkeBrekkerOgØdeleggerGUI",
+                        brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
+                        dokumentvarianter =
+                        listOf(
+                            Dokumentvariant(
+                                variantformat = Dokumentvariantformat.ARKIV,
+                                saksbehandlerHarTilgang = true,
+                            ),
+                        ),
+                    ),
+                    DokumentInfo(
+                        dokumentInfoId = "12345",
+                        tittel = "Søknad om overgangsstønad - dokument 2",
+                        brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
+                        dokumentvarianter =
+                        listOf(
+                            Dokumentvariant(
+                                variantformat = Dokumentvariantformat.ARKIV,
+                                saksbehandlerHarTilgang = true,
+                            ),
+                        ),
+                    ),
+                    DokumentInfo(
+                        dokumentInfoId = "12345",
+                        tittel = "Søknad om overgangsstønad - dokument 3",
+                        brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
+                        dokumentvarianter =
+                        listOf(
+                            Dokumentvariant(
+                                variantformat = Dokumentvariantformat.ARKIV,
+                                saksbehandlerHarTilgang = true,
+                            ),
+                        ),
+                    ),
+                ),
             )
         private val journalpostPapirsøknadFraIntegrasjoner =
             Journalpost(
@@ -354,20 +353,20 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                 kanal = "SKAN_IM",
                 relevanteDatoer = listOf(RelevantDato(LocalDateTime.now(), "DATO_REGISTRERT")),
                 dokumenter =
-                    listOf(
-                        DokumentInfo(
-                            dokumentInfoId = "12345",
-                            tittel = "Søknad om overgangsstønad - dokument 1",
-                            brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
-                            dokumentvarianter =
-                                listOf(
-                                    Dokumentvariant(
-                                        variantformat = Dokumentvariantformat.ARKIV,
-                                        saksbehandlerHarTilgang = true
-                                    )
-                                ),
+                listOf(
+                    DokumentInfo(
+                        dokumentInfoId = "12345",
+                        tittel = "Søknad om overgangsstønad - dokument 1",
+                        brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
+                        dokumentvarianter =
+                        listOf(
+                            Dokumentvariant(
+                                variantformat = Dokumentvariantformat.ARKIV,
+                                saksbehandlerHarTilgang = true,
+                            ),
                         ),
                     ),
+                ),
             )
 
         private val journalpost = Ressurs.success(journalpostFraIntegrasjoner)

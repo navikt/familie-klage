@@ -1,6 +1,5 @@
 package no.nav.familie.klage.behandling
 
-import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandling.dto.SettPåVentRequest
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
@@ -19,7 +18,7 @@ import java.util.*
 class BehandlingPåVentService(
     private val behandlingService: BehandlingService,
     private val oppgaveService: OppgaveService,
-    private val behandlinghistorikkService: BehandlingshistorikkService
+    private val behandlinghistorikkService: BehandlingshistorikkService,
 ) {
 
     @Transactional
@@ -41,7 +40,7 @@ class BehandlingPåVentService(
         behandlinghistorikkService.opprettBehandlingshistorikk(
             behandlingId = behandling.id,
             steg = behandling.steg,
-            behandlingStatus = BehandlingStatus.SATT_PÅ_VENT
+            behandlingStatus = BehandlingStatus.SATT_PÅ_VENT,
         )
     }
 
