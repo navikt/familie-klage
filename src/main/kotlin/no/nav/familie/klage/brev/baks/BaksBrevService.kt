@@ -12,6 +12,7 @@ import java.util.UUID
 class BaksBrevService(
     private val baksBrevHenter: BaksBrevHenter,
     private val baksBrevOppretter: BaksBrevOppretter,
+    private val baksBrevOppdaterer: BaksBrevOppdaterer,
     private val baksBrevRepository: BaksBrevRepository,
     private val familieDokumentClient: FamilieDokumentClient,
 ) {
@@ -20,7 +21,11 @@ class BaksBrevService(
     }
 
     @Transactional
-    fun opprettBrev(behandlingId: UUID): BaksBrev {
+    fun opprettEllerOppdaterBrev(behandlingId: UUID): BaksBrev {
+        val baksBrev = baksBrevHenter.hentBrevEllerNull(behandlingId)
+        if (baksBrev != null) {
+            return baksBrevOppdaterer.oppdaterBrev(baksBrev)
+        }
         return baksBrevOppretter.opprettBrev(behandlingId)
     }
 

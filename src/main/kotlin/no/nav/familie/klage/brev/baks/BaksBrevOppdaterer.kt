@@ -10,27 +10,26 @@ import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import java.util.UUID
 
 @Component
-class BaksBrevOppretter(
+class BaksBrevOppdaterer(
     private val baksBrevRepository: BaksBrevRepository,
     private val behandlingService: BehandlingService,
     private val familieDokumentClient: FamilieDokumentClient,
     private val fritekstbrevHtmlUtleder: FritekstbrevHtmlUtleder,
 ) {
-    private val logger = LoggerFactory.getLogger(BaksBrevOppretter::class.java)
+    private val logger = LoggerFactory.getLogger(BaksBrevOppdaterer::class.java)
 
     @Transactional
-    fun opprettBrev(behandlingId: UUID): BaksBrev {
-        logger.debug("Oppretter brev for behandling {}", behandlingId)
-        val behandling = behandlingService.hentBehandling(behandlingId)
+    fun oppdaterBrev(baksBrev: BaksBrev): BaksBrev {
+        logger.debug("Oppdaterer brev for behandling {}", baksBrev.behandlingId)
+        val behandling = behandlingService.hentBehandling(baksBrev.behandlingId)
         validerRedigerbarBehandling(behandling)
         validerKorrektBehandlingssteg(behandling)
         val fritekstbrevHtml = fritekstbrevHtmlUtleder.utledFritekstbrevHtml(behandling)
         val pdfFraHtml = familieDokumentClient.genererPdfFraHtml(fritekstbrevHtml)
-        val nyttBaksBrev = BaksBrev(behandlingId = behandlingId, html = fritekstbrevHtml, pdf = Fil(pdfFraHtml))
-        return baksBrevRepository.insert(nyttBaksBrev)
+        val oppdatertBaksBrev = baksBrev.copy(html = fritekstbrevHtml, pdf = Fil(pdfFraHtml))
+        return baksBrevRepository.update(oppdatertBaksBrev)
     }
 
     private fun validerRedigerbarBehandling(behandling: Behandling) {
