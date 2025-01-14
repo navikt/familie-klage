@@ -52,12 +52,6 @@ class BehandlingPåVentService(
         validerKanTaAvVent(behandlingStatus = behandling.status)
 
         behandlingService.oppdaterStatusPåBehandling(behandlingId = behandlingId, status = BehandlingStatus.UTREDES)
-
-        behandlinghistorikkService.opprettBehandlingshistorikk(
-            behandlingId = behandling.id,
-            steg = behandling.steg,
-            behandlingStatus = BehandlingStatus.UTREDES
-        )
     }
 
     private fun oppdaterVerdierPåOppgave(settPåVentRequest: SettPåVentRequest) {
