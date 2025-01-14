@@ -20,7 +20,7 @@ class BaksBrevService(
     }
 
     @Transactional
-    fun opprettBrev(behandlingId: UUID): ByteArray {
+    fun opprettBrev(behandlingId: UUID): BaksBrev {
         return baksBrevOppretter.opprettBrev(behandlingId)
     }
 

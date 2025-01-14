@@ -35,6 +35,6 @@ class BaksBrevController(
     ): Ressurs<ByteArray> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        return Ressurs.success(baksBrevService.opprettBrev(behandlingId))
+        return Ressurs.success(baksBrevService.opprettBrev(behandlingId).pdfSomBytes())
     }
 }
