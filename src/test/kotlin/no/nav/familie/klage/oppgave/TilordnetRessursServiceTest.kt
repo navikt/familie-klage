@@ -10,11 +10,11 @@ import no.nav.familie.klage.oppgave.OppgaveClient
 import no.nav.familie.klage.oppgave.TilordnetRessursService
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgavePrioritet
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.http.HttpStatus
 import java.util.*
+import org.junit.jupiter.api.Assertions.assertEquals
 
 internal class TilordnetRessursServiceTest {
 
@@ -25,7 +25,7 @@ internal class TilordnetRessursServiceTest {
     private val tilordnetRessursService = TilordnetRessursService(
         oppgaveClient = oppgaveClient,
         featureToggleService = featureToggleService,
-        behandleSakOppgaveRepository = behandleSakOppgaveRepository,
+        behandleSakOppgaveRepository = behandleSakOppgaveRepository
     )
 
     @Test
@@ -34,7 +34,7 @@ internal class TilordnetRessursServiceTest {
         val oppgaveId = 12345L
         val behandleSakOppgave = BehandleSakOppgave(
             behandlingId = behandlingId,
-            oppgaveId = oppgaveId,
+            oppgaveId = oppgaveId
         )
         val oppgave = Oppgave(
             id = oppgaveId,
@@ -43,7 +43,7 @@ internal class TilordnetRessursServiceTest {
             tilordnetRessurs = "Test ressurs",
             prioritet = OppgavePrioritet.NORM,
             fristFerdigstillelse = "2025-01-01",
-            mappeId = 1L,
+            mappeId = 1L
         )
 
         every { behandleSakOppgaveRepository.findByBehandlingId(behandlingId) } returns behandleSakOppgave
@@ -58,7 +58,7 @@ internal class TilordnetRessursServiceTest {
             tilordnetRessurs = oppgave.tilordnetRessurs ?: "",
             prioritet = oppgave.prioritet,
             fristFerdigstillelse = oppgave.fristFerdigstillelse ?: "",
-            mappeId = oppgave.mappeId,
+            mappeId = oppgave.mappeId
         )
 
         assertEquals(forventetOppgaveDto, resultat)
