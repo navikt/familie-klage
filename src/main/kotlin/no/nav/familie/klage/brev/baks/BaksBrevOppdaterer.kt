@@ -26,6 +26,7 @@ class BaksBrevOppdaterer(
         val behandling = behandlingService.hentBehandling(baksBrev.behandlingId)
         validerRedigerbarBehandling(behandling)
         validerKorrektBehandlingssteg(behandling)
+        validerEksiterendeBrev(behandling)
         val fritekstbrevHtml = fritekstbrevHtmlUtleder.utledFritekstbrevHtml(behandling)
         val pdfFraHtml = familieDokumentClient.genererPdfFraHtml(fritekstbrevHtml)
         val oppdatertBaksBrev = baksBrev.copy(html = fritekstbrevHtml, pdf = Fil(pdfFraHtml))
@@ -41,6 +42,13 @@ class BaksBrevOppdaterer(
     private fun validerKorrektBehandlingssteg(behandling: Behandling) {
         if (behandling.steg != StegType.BREV) {
             throw Feil("Behandlingen er i steg ${behandling.steg}, forventet steg ${StegType.BREV}")
+        }
+    }
+
+    private fun validerEksiterendeBrev(behandling: Behandling) {
+        val brevFinnes = baksBrevRepository.existsByBehandlingId(behandling.id)
+        if (!brevFinnes) {
+            throw Feil("Brev finnes ikke for behandling ${behandling.id}. Opprett brevet først.")
         }
     }
 }

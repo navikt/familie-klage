@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface BaksBrevRepository : RepositoryInterface<BaksBrev, UUID>, InsertUpdateRepository<BaksBrev>
+interface BaksBrevRepository : RepositoryInterface<BaksBrev, UUID>, InsertUpdateRepository<BaksBrev> {
+    fun existsByBehandlingId(behandlingId: UUID): Boolean
+}
