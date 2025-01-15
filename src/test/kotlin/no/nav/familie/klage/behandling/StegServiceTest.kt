@@ -61,7 +61,6 @@ internal class StegServiceTest {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 any(),
                 capture(historikkSlot),
-                any(),
             )
         } returns mockk()
     }
@@ -81,7 +80,7 @@ internal class StegServiceTest {
         assertThat(stegSlot.captured).isEqualTo(nesteSteg)
         assertThat(statusSlot.captured).isEqualTo(nesteSteg.gjelderStatus)
         assertThat(historikkSlot.single()).isEqualTo(behandling.steg)
-        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(any(), any(), any()) }
+        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(any(), any()) }
     }
 
     @Test
@@ -92,12 +91,10 @@ internal class StegServiceTest {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = behandling.steg,
-                behandlingStatus = behandling.status,
             )
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.OVERFØRING_TIL_KABAL,
-                behandlingStatus = BehandlingStatus.VENTER,
             )
         }
     }
@@ -110,12 +107,10 @@ internal class StegServiceTest {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = behandling.steg,
-                behandlingStatus = behandling.status,
             )
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.BEHANDLING_FERDIGSTILT,
-                behandlingStatus = BehandlingStatus.FERDIGSTILT,
             )
         }
     }
@@ -126,7 +121,7 @@ internal class StegServiceTest {
 
         verify(exactly = 1) { behandlingRepository.updateSteg(any(), any()) }
         verify(exactly = 1) { behandlingRepository.updateStatus(any(), any()) }
-        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(any(), any(), any()) }
+        verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(any(), any()) }
     }
 
     @Test
@@ -169,21 +164,18 @@ internal class StegServiceTest {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.VURDERING,
-                behandlingStatus = BehandlingStatus.OPPRETTET,
             )
         }
         verify(exactly = 0) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.BREV,
-                behandlingStatus = BehandlingStatus.OPPRETTET,
             )
         }
         verify(exactly = 1) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.BEHANDLING_FERDIGSTILT,
-                behandlingStatus = BehandlingStatus.FERDIGSTILT,
             )
         }
     }
@@ -201,21 +193,18 @@ internal class StegServiceTest {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.VURDERING,
-                behandlingStatus = BehandlingStatus.OPPRETTET,
             )
         }
         verify(exactly = 1) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.BREV,
-                behandlingStatus = BehandlingStatus.OPPRETTET,
             )
         }
         verify(exactly = 1) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.BEHANDLING_FERDIGSTILT,
-                behandlingStatus = BehandlingStatus.FERDIGSTILT,
             )
         }
     }
@@ -234,35 +223,30 @@ internal class StegServiceTest {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.OPPRETTET,
-                behandlingStatus = BehandlingStatus.OPPRETTET,
             )
         }
         verify(exactly = 0) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.FORMKRAV,
-                behandlingStatus = BehandlingStatus.OPPRETTET,
             )
         }
         verify(exactly = 0) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.VURDERING,
-                behandlingStatus = BehandlingStatus.UTREDES,
             )
         }
         verify(exactly = 0) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.BREV,
-                behandlingStatus = BehandlingStatus.OPPRETTET,
             )
         }
         verify(exactly = 1) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.OVERFØRING_TIL_KABAL,
-                behandlingStatus = BehandlingStatus.VENTER,
             )
         }
     }

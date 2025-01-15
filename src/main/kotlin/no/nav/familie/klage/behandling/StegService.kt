@@ -49,21 +49,18 @@ class StegService(
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandling.id,
                 steg = nåværendeSteg,
-                behandlingStatus = behandling.status,
             )
         }
         if (nesteSteg == StegType.KABAL_VENTER_SVAR) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandling.id,
                 steg = StegType.OVERFØRING_TIL_KABAL,
-                behandlingStatus = BehandlingStatus.VENTER,
             )
         }
         if (nesteSteg == StegType.BEHANDLING_FERDIGSTILT) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandling.id,
                 steg = StegType.BEHANDLING_FERDIGSTILT,
-                behandlingStatus = BehandlingStatus.FERDIGSTILT,
             )
         }
     }

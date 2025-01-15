@@ -37,10 +37,11 @@ class BehandlingPåVentService(
             status = BehandlingStatus.SATT_PÅ_VENT,
         )
 
+        behandling.steg.gjelderStatus
+
         behandlinghistorikkService.opprettBehandlingshistorikk(
             behandlingId = behandling.id,
             steg = behandling.steg,
-            behandlingStatus = BehandlingStatus.SATT_PÅ_VENT,
         )
     }
 
