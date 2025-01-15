@@ -21,6 +21,7 @@ import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
+import no.nav.familie.klage.integrasjoner.FeatureToggleMock
 import no.nav.familie.klage.kabal.KabalService
 import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.klage.testutil.BrukerContextUtil
@@ -28,7 +29,6 @@ import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.påklagetVedtakDetaljer
 import no.nav.familie.klage.testutil.DomainUtil.tilFagsak
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
-import no.nav.familie.klage.testutil.mockFeatureToggleService
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
@@ -58,6 +58,7 @@ internal class FerdigstillBehandlingServiceTest {
     val oppgaveTaskService = mockk<OppgaveTaskService>()
     val brevService = mockk<BrevService>()
     val fagsystemVedtakService = mockk<FagsystemVedtakService>()
+    val featureToggleService = FeatureToggleMock().featureToggleService()
 
     val ferdigstillBehandlingService = FerdigstillBehandlingService(
         behandlingService = behandlingService,
@@ -68,7 +69,7 @@ internal class FerdigstillBehandlingServiceTest {
         oppgaveTaskService = oppgaveTaskService,
         brevService = brevService,
         fagsystemVedtakService = fagsystemVedtakService,
-        mockFeatureToggleService(),
+        featureToggleService = featureToggleService,
     )
     val fagsak = DomainUtil.fagsakDomain().tilFagsak()
     val behandling = DomainUtil.behandling(fagsak = fagsak, steg = StegType.BREV, status = BehandlingStatus.UTREDES)
@@ -95,7 +96,13 @@ internal class FerdigstillBehandlingServiceTest {
         justRun { stegService.oppdaterSteg(any(), any(), capture(stegSlot), any()) }
         every { formService.formkravErOppfyltForBehandling(any()) } returns true
         justRun { behandlingService.oppdaterBehandlingMedResultat(any(), capture(behandlingsresultatSlot), null) }
-        justRun { behandlingService.oppdaterBehandlingMedResultat(any(), capture(behandlingsresultatSlot), captureNullable(fagsystemRevurderingSlot)) }
+        justRun {
+            behandlingService.oppdaterBehandlingMedResultat(
+                any(),
+                capture(behandlingsresultatSlot),
+                captureNullable(fagsystemRevurderingSlot)
+            )
+        }
         every { taskService.save(capture(saveTaskSlot)) } answers { firstArg() }
         every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id) } just Runs
         justRun { brevService.lagBrevPdf(any()) }
@@ -208,7 +215,7 @@ internal class FerdigstillBehandlingServiceTest {
     internal fun `skal opprette revurdering automatisk påklaget vedtak er vedtak i fagsystemet`() {
         every { vurderingService.hentVurdering(any()) } returns vurdering.copy(vedtak = Vedtak.OMGJØR_VEDTAK)
         every { behandlingService.hentBehandling(any()) } returns
-            behandling.copy(påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer()))
+                behandling.copy(påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer()))
 
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
 
