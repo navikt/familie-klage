@@ -132,7 +132,7 @@ internal class BehandlingServiceTest {
                 behandlinghistorikkService.opprettBehandlingshistorikk(
                     behandlingId = any(),
                     steg = StegType.BEHANDLING_FERDIGSTILT,
-                    behandlingStatus = BehandlingStatus.FERDIGSTILT,
+                    behandlingStatus = behandling.steg.gjelderStatus,
                 )
             }
             verify(exactly = 1) { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any()) }
