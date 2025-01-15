@@ -11,7 +11,7 @@ import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
-import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
+import no.nav.familie.klage.behandlingshistorikk.domain.BehandlingshistorikkDto
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.formkrav.dto.tilDto
@@ -20,7 +20,6 @@ import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
 import no.nav.familie.klage.vurdering.VurderingService
-import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.junit.jupiter.api.AfterEach
@@ -28,7 +27,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.data.repository.findByIdOrNull
-import java.util.UUID
+import java.util.*
 
 internal class FormServiceTest {
 
@@ -52,8 +51,8 @@ internal class FormServiceTest {
     @BeforeEach
     internal fun setUp() {
         mockkObject(SikkerhetContext)
-        val behandlingshistorikk = mockk<Behandlingshistorikk>()
-        every { behandlingshistorikk.steg } returns StegType.FORMKRAV
+        val behandlingshistorikkDto = mockk<BehandlingshistorikkDto>()
+        every { behandlingshistorikkDto.steg } returns StegType.FORMKRAV
         every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler1"
         justRun { stegService.oppdaterSteg(any(), any(), any(), any()) }
         justRun { behandlingService.oppdaterPåklagetVedtak(any(), any()) }
@@ -61,7 +60,7 @@ internal class FormServiceTest {
         every { behandlingService.hentBehandling(any()) } returns behandling(id = behandlingId)
         every { formRepository.findByIdOrNull(any()) } returns Form(behandlingId)
         every { formRepository.update(any()) } answers { firstArg() }
-        every { behandlingshistorikkService.hentBehandlingshistorikk(any()) } returns listOf(behandlingshistorikk)
+        every { behandlingshistorikkService.hentBehandlingshistorikk(any()) } returns listOf(behandlingshistorikkDto)
     }
 
     @AfterEach
@@ -129,10 +128,11 @@ internal class FormServiceTest {
 
         @Test
         internal fun `ingen behandlingshistorikk av StegType FORMKRAV, skal opprette task for statistikk`() {
-            val behandlingshistorikk = Behandlingshistorikk(
+            val behandlingshistorikk = BehandlingshistorikkDto(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
                 StegType.OPPRETTET,
+                StegType.OPPRETTET.gjelderStatus,
             )
             every { behandlingshistorikkService.hentBehandlingshistorikk(any()) } returns listOf(
                 behandlingshistorikk,
@@ -144,14 +144,15 @@ internal class FormServiceTest {
 
         @Test
         internal fun `finnes behandlingshistorikk av StegType FORMKRAV, skal ikke opprette task for statistikk`() {
-            val behandlingshistorikk = Behandlingshistorikk(
+            val behandlingshistorikkDto = BehandlingshistorikkDto(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
                 StegType.FORMKRAV,
+                StegType.FORMKRAV.gjelderStatus,
             )
             every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler"
             every { behandlingshistorikkService.hentBehandlingshistorikk(any()) } returns listOf(
-                behandlingshistorikk,
+                behandlingshistorikkDto,
             )
             every { taskService.save(any()) } returns mockk<Task>()
             service.oppdaterFormkrav(oppfyltFormDto())
