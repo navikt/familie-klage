@@ -100,7 +100,7 @@ internal class FerdigstillBehandlingServiceTest {
             behandlingService.oppdaterBehandlingMedResultat(
                 any(),
                 capture(behandlingsresultatSlot),
-                captureNullable(fagsystemRevurderingSlot)
+                captureNullable(fagsystemRevurderingSlot),
             )
         }
         every { taskService.save(capture(saveTaskSlot)) } answers { firstArg() }
@@ -215,7 +215,7 @@ internal class FerdigstillBehandlingServiceTest {
     internal fun `skal opprette revurdering automatisk påklaget vedtak er vedtak i fagsystemet`() {
         every { vurderingService.hentVurdering(any()) } returns vurdering.copy(vedtak = Vedtak.OMGJØR_VEDTAK)
         every { behandlingService.hentBehandling(any()) } returns
-                behandling.copy(påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer()))
+            behandling.copy(påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer()))
 
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
 
