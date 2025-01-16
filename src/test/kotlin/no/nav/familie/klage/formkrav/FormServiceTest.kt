@@ -20,7 +20,6 @@ import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
 import no.nav.familie.klage.vurdering.VurderingService
-import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.junit.jupiter.api.AfterEach
@@ -132,7 +131,7 @@ internal class FormServiceTest {
             val behandlingshistorikk = Behandlingshistorikk(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
-                BehandlingStatus.OPPRETTET,
+                null,
                 StegType.OPPRETTET,
             )
             every { behandlingshistorikkService.hentBehandlingshistorikk(any()) } returns listOf(
@@ -148,7 +147,7 @@ internal class FormServiceTest {
             val behandlingshistorikk = Behandlingshistorikk(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
-                BehandlingStatus.OPPRETTET,
+                null,
                 StegType.FORMKRAV,
             )
             every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler"

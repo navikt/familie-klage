@@ -2,9 +2,9 @@ package no.nav.familie.klage.behandlingshistorikk
 
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
-import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
+import no.nav.familie.klage.behandlingshistorikk.domain.HistorikkHendelse
 import org.springframework.stereotype.Service
-import java.util.UUID
+import java.util.*
 
 @Service
 class BehandlingshistorikkService(private val behandlingshistorikkRepository: BehandlingshistorikkRepository) {
@@ -15,13 +15,13 @@ class BehandlingshistorikkService(private val behandlingshistorikkRepository: Be
     fun opprettBehandlingshistorikk(
         behandlingId: UUID,
         steg: StegType,
-        behandlingStatus: BehandlingStatus,
+        historikkHendelse: HistorikkHendelse?,
     ): Behandlingshistorikk {
         return behandlingshistorikkRepository.insert(
             Behandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = steg,
-                behandlingStatus = behandlingStatus,
+                historikkHendelse = historikkHendelse,
             ),
         )
     }

@@ -10,7 +10,6 @@ import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
-import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -49,21 +48,21 @@ class StegService(
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandling.id,
                 steg = nåværendeSteg,
-                behandlingStatus = behandling.status,
+                historikkHendelse = null,
             )
         }
         if (nesteSteg == StegType.KABAL_VENTER_SVAR) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandling.id,
                 steg = StegType.OVERFØRING_TIL_KABAL,
-                behandlingStatus = BehandlingStatus.VENTER,
+                historikkHendelse = null,
             )
         }
         if (nesteSteg == StegType.BEHANDLING_FERDIGSTILT) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandling.id,
                 steg = StegType.BEHANDLING_FERDIGSTILT,
-                behandlingStatus = BehandlingStatus.FERDIGSTILT,
+                historikkHendelse = null,
             )
         }
     }

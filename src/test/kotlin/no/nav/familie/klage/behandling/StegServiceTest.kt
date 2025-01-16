@@ -92,12 +92,12 @@ internal class StegServiceTest {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = behandling.steg,
-                behandlingStatus = behandling.status,
+                historikkHendelse = null,
             )
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.OVERFØRING_TIL_KABAL,
-                behandlingStatus = BehandlingStatus.VENTER,
+                historikkHendelse = null,
             )
         }
     }
@@ -110,12 +110,12 @@ internal class StegServiceTest {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = behandling.steg,
-                behandlingStatus = behandling.status,
+                historikkHendelse = null,
             )
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.BEHANDLING_FERDIGSTILT,
-                behandlingStatus = BehandlingStatus.FERDIGSTILT,
+                historikkHendelse = null,
             )
         }
     }
@@ -169,21 +169,21 @@ internal class StegServiceTest {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.VURDERING,
-                behandlingStatus = BehandlingStatus.OPPRETTET,
+                historikkHendelse = null,
             )
         }
         verify(exactly = 0) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.BREV,
-                behandlingStatus = BehandlingStatus.OPPRETTET,
+                historikkHendelse = null,
             )
         }
         verify(exactly = 1) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.BEHANDLING_FERDIGSTILT,
-                behandlingStatus = BehandlingStatus.FERDIGSTILT,
+                historikkHendelse = null,
             )
         }
     }
@@ -201,21 +201,21 @@ internal class StegServiceTest {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.VURDERING,
-                behandlingStatus = BehandlingStatus.OPPRETTET,
+                historikkHendelse = null,
             )
         }
         verify(exactly = 1) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.BREV,
-                behandlingStatus = BehandlingStatus.OPPRETTET,
+                historikkHendelse = null,
             )
         }
         verify(exactly = 1) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.BEHANDLING_FERDIGSTILT,
-                behandlingStatus = BehandlingStatus.FERDIGSTILT,
+                historikkHendelse = null,
             )
         }
     }
@@ -234,35 +234,35 @@ internal class StegServiceTest {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.OPPRETTET,
-                behandlingStatus = BehandlingStatus.OPPRETTET,
+                historikkHendelse = null,
             )
         }
         verify(exactly = 0) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.FORMKRAV,
-                behandlingStatus = BehandlingStatus.OPPRETTET,
+                historikkHendelse = null,
             )
         }
         verify(exactly = 0) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.VURDERING,
-                behandlingStatus = BehandlingStatus.UTREDES,
+                historikkHendelse = null,
             )
         }
         verify(exactly = 0) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.BREV,
-                behandlingStatus = BehandlingStatus.OPPRETTET,
+                historikkHendelse = null,
             )
         }
         verify(exactly = 1) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.OVERFØRING_TIL_KABAL,
-                behandlingStatus = BehandlingStatus.VENTER,
+                historikkHendelse = null,
             )
         }
     }

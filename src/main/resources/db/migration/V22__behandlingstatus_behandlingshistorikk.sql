@@ -1,1 +1,1 @@
-ALTER TABLE behandlingshistorikk ADD COLUMN behandling_status VARCHAR;
+ALTER TABLE behandlingshistorikk ADD COLUMN historikk_hendelse VARCHAR;

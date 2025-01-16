@@ -10,7 +10,6 @@ import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.oppgave.OppgaveTaskService
-import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.LoggerFactory
@@ -65,7 +64,7 @@ class OpprettBehandlingService(
         behandlingshistorikkService.opprettBehandlingshistorikk(
             behandlingId = behandlingId,
             steg = StegType.OPPRETTET,
-            behandlingStatus = BehandlingStatus.OPPRETTET,
+            historikkHendelse = null,
         )
 
         formService.opprettInitielleFormkrav(behandlingId)

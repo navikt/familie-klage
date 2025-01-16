@@ -3,6 +3,7 @@ package no.nav.familie.klage.behandling
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandling.dto.SettPåVentRequest
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
+import no.nav.familie.klage.behandlingshistorikk.domain.HistorikkHendelse
 import no.nav.familie.klage.felles.util.dagensDatoMedNorskFormat
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
@@ -40,7 +41,7 @@ class BehandlingPåVentService(
         behandlinghistorikkService.opprettBehandlingshistorikk(
             behandlingId = behandling.id,
             steg = behandling.steg,
-            behandlingStatus = BehandlingStatus.SATT_PÅ_VENT,
+            historikkHendelse = HistorikkHendelse.SATT_PÅ_VENT,
         )
     }
 
@@ -51,6 +52,12 @@ class BehandlingPåVentService(
         validerKanTaAvVent(behandlingStatus = behandling.status)
 
         behandlingService.oppdaterStatusPåBehandling(behandlingId = behandlingId, status = BehandlingStatus.UTREDES)
+
+        behandlinghistorikkService.opprettBehandlingshistorikk(
+            behandlingId = behandling.id,
+            steg = behandling.steg,
+            historikkHendelse = HistorikkHendelse.TATT_AV_VENT,
+        )
     }
 
     private fun oppdaterVerdierPåOppgave(settPåVentRequest: SettPåVentRequest) {
