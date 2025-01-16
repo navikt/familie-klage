@@ -18,7 +18,7 @@ class BaksBrevHenter(
     }
 
     fun hentBrevEllerNull(behandlingId: UUID): BaksBrev? {
-        logger.debug("Finner brev for behandling {}", behandlingId)
+        logger.debug("Henter brev eller null for behandling {}", behandlingId)
         return baksBrevRepository.findByIdOrNull(behandlingId)
     }
 }

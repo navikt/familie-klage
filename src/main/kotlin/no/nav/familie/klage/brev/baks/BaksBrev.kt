@@ -10,9 +10,9 @@ data class BaksBrev(
     @Id
     val behandlingId: UUID,
     val html: String,
-    val pdf: Fil? = null,
+    val pdf: Fil,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),
 ) {
-    fun pdfSomBytes() = this.pdf?.bytes ?: error("Mangler brev-pdf for behandling=$behandlingId")
+    fun pdfSomBytes(): ByteArray = pdf.bytes
 }
