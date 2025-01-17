@@ -27,7 +27,7 @@ class FritekstBrevRequestDtoUtleder(
         val behandlingResultat = utledBehandlingResultat(behandling.id)
         return when (behandlingResultat) {
             BehandlingResultat.IKKE_MEDHOLD,
-            -> vedIkkeMedhold(behandlingResultat, fagsak, behandling, navn)
+            -> vedIkkeMedhold(fagsak, behandling, navn)
 
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST,
             -> vedIkkeMedholdFormkravAvvist(fagsak, behandling, navn)
@@ -43,18 +43,16 @@ class FritekstBrevRequestDtoUtleder(
         val erFormkravErOppfyltForBehandling = formService.formkravErOppfyltForBehandling(behandlingId)
         return if (erFormkravErOppfyltForBehandling) {
             val vurdering = vurderingService.hentVurdering(behandlingId)
-            val behandlingResultat = vurdering?.vedtak?.tilBehandlingResultat()
-            if (behandlingResultat == null) {
-                throw Feil("BehandlingResultat er null for behandling $behandlingId")
+            if (vurdering == null) {
+                throw Feil("Vurdering er null for behandling $behandlingId")
             }
-            behandlingResultat
+            vurdering.vedtak.tilBehandlingResultat()
         } else {
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST
         }
     }
 
     private fun vedIkkeMedhold(
-        behandlingResultat: BehandlingResultat,
         fagsak: Fagsak,
         behandling: Behandling,
         navn: String,
@@ -65,7 +63,7 @@ class FritekstBrevRequestDtoUtleder(
         }
         val instillingKlageinstans = vurderingService.hentVurdering(behandling.id)?.innstillingKlageinstans
         if (instillingKlageinstans == null) {
-            throw Feil("Behandling med resultat $behandlingResultat mangler instillingKlageinstans for generering av brev")
+            throw Feil("Behandling med resultat ${BehandlingResultat.IKKE_MEDHOLD} mangler instillingKlageinstans for generering av brev")
         }
         return brevInnholdUtleder.lagOpprettholdelseBrev(
             ident = fagsak.hentAktivIdent(),
