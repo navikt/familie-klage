@@ -1,8 +1,9 @@
 package no.nav.familie.klage.behandling
 
-import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandling.dto.SettPåVentRequest
+import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
+import no.nav.familie.klage.behandlingshistorikk.domain.HistorikkHendelse
 import no.nav.familie.klage.felles.util.dagensDatoMedNorskFormat
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
@@ -12,12 +13,13 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.*
+import java.util.UUID
 
 @Service
 class BehandlingPåVentService(
     private val behandlingService: BehandlingService,
     private val oppgaveService: OppgaveService,
+    private val behandlinghistorikkService: BehandlingshistorikkService,
 ) {
 
     @Transactional
@@ -27,7 +29,7 @@ class BehandlingPåVentService(
     ) {
         val behandling = behandlingService.hentBehandling(behandlingId = behandlingId)
 
-        validerKanSettePåVent(behandling = behandling)
+        validerKanSettePåVent(behandlingStatus = behandling.status)
 
         oppdaterVerdierPåOppgave(settPåVentRequest = settPåVentRequest)
 
@@ -35,12 +37,27 @@ class BehandlingPåVentService(
             behandlingId = behandlingId,
             status = BehandlingStatus.SATT_PÅ_VENT,
         )
+
+        behandlinghistorikkService.opprettBehandlingshistorikk(
+            behandlingId = behandling.id,
+            steg = behandling.steg,
+            historikkHendelse = HistorikkHendelse.SATT_PÅ_VENT,
+        )
     }
 
     @Transactional
     fun taAvVent(behandlingId: UUID) {
-        kanTaAvVent(behandlingId = behandlingId)
+        val behandling = behandlingService.hentBehandling(behandlingId = behandlingId)
+
+        validerKanTaAvVent(behandlingStatus = behandling.status)
+
         behandlingService.oppdaterStatusPåBehandling(behandlingId = behandlingId, status = BehandlingStatus.UTREDES)
+
+        behandlinghistorikkService.opprettBehandlingshistorikk(
+            behandlingId = behandling.id,
+            steg = behandling.steg,
+            historikkHendelse = HistorikkHendelse.TATT_AV_VENT,
+        )
     }
 
     private fun oppdaterVerdierPåOppgave(settPåVentRequest: SettPåVentRequest) {
@@ -59,19 +76,15 @@ class BehandlingPåVentService(
         )
     }
 
-    private fun validerKanSettePåVent(
-        behandling: Behandling,
-    ) {
-        brukerfeilHvis(behandling.status.erLåstForVidereBehandling()) {
-            "Kan ikke sette behandling med status ${behandling.status} på vent"
+    private fun validerKanSettePåVent(behandlingStatus: BehandlingStatus) {
+        brukerfeilHvis(behandlingStatus.erLåstForVidereBehandling()) {
+            "Kan ikke sette behandling med status $behandlingStatus på vent"
         }
     }
 
-    private fun kanTaAvVent(behandlingId: UUID) {
-        val behandling = behandlingService.hentBehandling(behandlingId = behandlingId)
-
-        brukerfeilHvis(behandling.status != BehandlingStatus.SATT_PÅ_VENT) {
-            "Kan ikke ta behandling med status ${behandling.status} av vent"
+    private fun validerKanTaAvVent(behandlingStatus: BehandlingStatus) {
+        brukerfeilHvis(behandlingStatus != BehandlingStatus.SATT_PÅ_VENT) {
+            "Kan ikke ta behandling med status $behandlingStatus av vent"
         }
     }
 

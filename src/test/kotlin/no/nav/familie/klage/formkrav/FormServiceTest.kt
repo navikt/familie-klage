@@ -131,6 +131,7 @@ internal class FormServiceTest {
             val behandlingshistorikk = Behandlingshistorikk(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
+                null,
                 StegType.OPPRETTET,
             )
             every { behandlingshistorikkService.hentBehandlingshistorikk(any()) } returns listOf(
@@ -146,6 +147,7 @@ internal class FormServiceTest {
             val behandlingshistorikk = Behandlingshistorikk(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
+                null,
                 StegType.FORMKRAV,
             )
             every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler"

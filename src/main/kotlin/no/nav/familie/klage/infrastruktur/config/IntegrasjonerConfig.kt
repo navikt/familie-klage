@@ -38,7 +38,6 @@ class IntegrasjonerConfig(@Value("\${FAMILIE_INTEGRASJONER_URL}") private val in
 
     val sendTilKabalUri: URI =
         UriComponentsBuilder.fromUri(integrasjonUri).pathSegment(PATH_KABAL).build().toUri()
-
     companion object {
 
         private const val PATH_PING = "api/ping"

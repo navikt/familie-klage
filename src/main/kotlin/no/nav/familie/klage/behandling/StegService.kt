@@ -45,13 +45,22 @@ class StegService(
         behandlingRepository.updateStatus(behandling.id, nesteSteg.gjelderStatus)
 
         if (skalOppretteHistorikkradForNåværendeSteg(nåværendeSteg, nesteSteg, behandlingsresultat, behandling.årsak)) {
-            behandlingshistorikkService.opprettBehandlingshistorikk(behandling.id, nåværendeSteg)
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                behandlingId = behandling.id,
+                steg = nåværendeSteg,
+            )
         }
         if (nesteSteg == StegType.KABAL_VENTER_SVAR) {
-            behandlingshistorikkService.opprettBehandlingshistorikk(behandling.id, StegType.OVERFØRING_TIL_KABAL)
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                behandlingId = behandling.id,
+                steg = StegType.OVERFØRING_TIL_KABAL,
+            )
         }
         if (nesteSteg == StegType.BEHANDLING_FERDIGSTILT) {
-            behandlingshistorikkService.opprettBehandlingshistorikk(behandling.id, StegType.BEHANDLING_FERDIGSTILT)
+            behandlingshistorikkService.opprettBehandlingshistorikk(
+                behandlingId = behandling.id,
+                steg = StegType.BEHANDLING_FERDIGSTILT,
+            )
         }
     }
 

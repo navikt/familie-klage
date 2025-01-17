@@ -21,7 +21,7 @@ class BaksBrevController(
     private val tilgangService: TilgangService,
 ) {
     @GetMapping("/{behandlingId}/pdf")
-    fun hentBrev(
+    fun hentBrevPdf(
         @PathVariable behandlingId: UUID,
     ): Ressurs<ByteArray> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)

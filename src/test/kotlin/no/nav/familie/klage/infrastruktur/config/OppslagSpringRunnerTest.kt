@@ -6,7 +6,6 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import no.nav.familie.klage.ApplicationLocal
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
-import no.nav.familie.klage.brev.baks.BaksBrev
 import no.nav.familie.klage.brev.baks.brevmottaker.Brevmottaker
 import no.nav.familie.klage.brev.ef.domain.Avsnitt
 import no.nav.familie.klage.brev.ef.domain.Brev
@@ -121,6 +120,7 @@ abstract class OppslagSpringRunnerTest {
             PersonIdent::class,
             TaskLogg::class,
             Task::class,
+
         ).forEach { jdbcAggregateOperations.deleteAll(it.java) }
     }
 

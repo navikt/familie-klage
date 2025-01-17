@@ -171,7 +171,10 @@ class BehandlingService(
             vedtakDato = SporbarUtils.now(),
         )
 
-        behandlinghistorikkService.opprettBehandlingshistorikk(behandlingId, BEHANDLING_FERDIGSTILT)
+        behandlinghistorikkService.opprettBehandlingshistorikk(
+            behandlingId = behandlingId,
+            steg = BEHANDLING_FERDIGSTILT,
+        )
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
         behandlingRepository.update(henlagtBehandling)
         taskService.save(taskService.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId)))
