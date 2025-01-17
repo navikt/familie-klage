@@ -1,7 +1,7 @@
 package no.nav.familie.klage.infrastruktur.health
 
 import no.nav.familie.http.health.AbstractHealthIndicator
-import no.nav.familie.klage.brev.BrevClient
+import no.nav.familie.klage.brev.felles.BrevClient
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 

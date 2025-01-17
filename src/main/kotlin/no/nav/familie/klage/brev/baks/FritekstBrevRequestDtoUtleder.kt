@@ -2,8 +2,8 @@ package no.nav.familie.klage.brev.baks
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
-import no.nav.familie.klage.brev.BrevInnholdUtleder
-import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
+import no.nav.familie.klage.brev.felles.BrevInnholdUtleder
+import no.nav.familie.klage.brev.felles.FritekstBrevRequestDto
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil

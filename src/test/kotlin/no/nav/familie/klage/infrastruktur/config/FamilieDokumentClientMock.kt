@@ -2,7 +2,7 @@ package no.nav.familie.klage.infrastruktur.config
 
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.familie.klage.brev.FamilieDokumentClient
+import no.nav.familie.klage.brev.felles.FamilieDokumentClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary

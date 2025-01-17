@@ -1,6 +1,6 @@
 package no.nav.familie.klage.distribusjon
 
-import no.nav.familie.klage.brev.domain.Brevmottakere
+import no.nav.familie.klage.brev.ef.Brevmottakere
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
 import no.nav.familie.kontrakter.felles.journalpost.AvsenderMottakerIdType
 

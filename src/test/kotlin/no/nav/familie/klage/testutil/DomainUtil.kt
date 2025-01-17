@@ -11,8 +11,8 @@ import no.nav.familie.klage.brev.baks.BaksBrev
 import no.nav.familie.klage.brev.baks.brevmottaker.Brevmottaker
 import no.nav.familie.klage.brev.baks.brevmottaker.Mottakertype
 import no.nav.familie.klage.brev.baks.brevmottaker.NyBrevmottaker
-import no.nav.familie.klage.brev.dto.AvsnittDto
-import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
+import no.nav.familie.klage.brev.felles.AvsnittDto
+import no.nav.familie.klage.brev.felles.FritekstBrevRequestDto
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson

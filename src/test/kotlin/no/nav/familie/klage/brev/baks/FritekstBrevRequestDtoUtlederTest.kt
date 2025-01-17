@@ -3,7 +3,7 @@ package no.nav.familie.klage.brev.baks
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
-import no.nav.familie.klage.brev.BrevInnholdUtleder
+import no.nav.familie.klage.brev.felles.BrevInnholdUtleder
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.exception.Feil
