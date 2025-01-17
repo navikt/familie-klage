@@ -4,7 +4,7 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import org.springframework.data.annotation.Id
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 data class Behandlingshistorikk(
     @Id

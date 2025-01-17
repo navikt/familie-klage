@@ -92,12 +92,10 @@ internal class StegServiceTest {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = behandling.steg,
-                historikkHendelse = null,
             )
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.OVERFØRING_TIL_KABAL,
-                historikkHendelse = null,
             )
         }
     }
@@ -110,12 +108,10 @@ internal class StegServiceTest {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = behandling.steg,
-                historikkHendelse = null,
             )
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.BEHANDLING_FERDIGSTILT,
-                historikkHendelse = null,
             )
         }
     }
@@ -169,21 +165,18 @@ internal class StegServiceTest {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.VURDERING,
-                historikkHendelse = null,
             )
         }
         verify(exactly = 0) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.BREV,
-                historikkHendelse = null,
             )
         }
         verify(exactly = 1) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.BEHANDLING_FERDIGSTILT,
-                historikkHendelse = null,
             )
         }
     }
@@ -201,21 +194,18 @@ internal class StegServiceTest {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.VURDERING,
-                historikkHendelse = null,
             )
         }
         verify(exactly = 1) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.BREV,
-                historikkHendelse = null,
             )
         }
         verify(exactly = 1) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.BEHANDLING_FERDIGSTILT,
-                historikkHendelse = null,
             )
         }
     }
@@ -234,35 +224,30 @@ internal class StegServiceTest {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.OPPRETTET,
-                historikkHendelse = null,
             )
         }
         verify(exactly = 0) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.FORMKRAV,
-                historikkHendelse = null,
             )
         }
         verify(exactly = 0) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.VURDERING,
-                historikkHendelse = null,
             )
         }
         verify(exactly = 0) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.BREV,
-                historikkHendelse = null,
             )
         }
         verify(exactly = 1) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = StegType.OVERFØRING_TIL_KABAL,
-                historikkHendelse = null,
             )
         }
     }

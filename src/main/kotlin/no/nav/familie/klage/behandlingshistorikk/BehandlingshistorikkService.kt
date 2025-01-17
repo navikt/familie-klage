@@ -15,7 +15,7 @@ class BehandlingshistorikkService(private val behandlingshistorikkRepository: Be
     fun opprettBehandlingshistorikk(
         behandlingId: UUID,
         steg: StegType,
-        historikkHendelse: HistorikkHendelse?,
+        historikkHendelse: HistorikkHendelse? = null,
     ): Behandlingshistorikk {
         return behandlingshistorikkRepository.insert(
             Behandlingshistorikk(

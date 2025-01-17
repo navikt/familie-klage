@@ -174,7 +174,6 @@ class BehandlingService(
         behandlinghistorikkService.opprettBehandlingshistorikk(
             behandlingId = behandlingId,
             steg = BEHANDLING_FERDIGSTILT,
-            historikkHendelse = null,
         )
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
         behandlingRepository.update(henlagtBehandling)

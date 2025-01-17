@@ -48,21 +48,18 @@ class StegService(
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandling.id,
                 steg = nåværendeSteg,
-                historikkHendelse = null,
             )
         }
         if (nesteSteg == StegType.KABAL_VENTER_SVAR) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandling.id,
                 steg = StegType.OVERFØRING_TIL_KABAL,
-                historikkHendelse = null,
             )
         }
         if (nesteSteg == StegType.BEHANDLING_FERDIGSTILT) {
             behandlingshistorikkService.opprettBehandlingshistorikk(
                 behandlingId = behandling.id,
                 steg = StegType.BEHANDLING_FERDIGSTILT,
-                historikkHendelse = null,
             )
         }
     }
