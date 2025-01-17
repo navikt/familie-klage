@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import no.nav.familie.klage.ApplicationLocal
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
+import no.nav.familie.klage.brev.baks.BaksBrev
 import no.nav.familie.klage.brev.domain.Avsnitt
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.Brevmottaker
@@ -110,6 +111,7 @@ abstract class OppslagSpringRunnerTest {
             Behandlingshistorikk::class,
             Avsnitt::class,
             Brev::class,
+            BaksBrev::class,
             Vurdering::class,
             Form::class,
             KlageinstansResultat::class,

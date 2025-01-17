@@ -7,13 +7,17 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
+import no.nav.familie.klage.brev.baks.BaksBrev
 import no.nav.familie.klage.brev.baks.brevmottaker.Brevmottaker
 import no.nav.familie.klage.brev.baks.brevmottaker.Mottakertype
 import no.nav.familie.klage.brev.baks.brevmottaker.NyBrevmottaker
+import no.nav.familie.klage.brev.dto.AvsnittDto
+import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.fagsak.domain.PersonIdent
+import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.felles.domain.Sporbar
 import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.formkrav.domain.Form
@@ -72,7 +76,8 @@ object DomainUtil {
             fagsystem = fagsystem,
         )
 
-    fun FagsakDomain.tilFagsak(personIdent: String = "11223344551") = this.tilFagsakMedPerson(setOf(PersonIdent(ident = personIdent)))
+    fun FagsakDomain.tilFagsak(personIdent: String = "11223344551") =
+        this.tilFagsakMedPerson(setOf(PersonIdent(ident = personIdent)))
 
     fun behandling(
         fagsak: Fagsak = fagsak(),
@@ -111,6 +116,7 @@ object DomainUtil {
         behandlingId: UUID,
         vedtak: Vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
         hjemmel: Hjemmel? = Hjemmel.FT_FEMTEN_FEM,
+        innstillingKlageinstans: String? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
         årsak: Årsak? = null,
         begrunnelseOmgjøring: String? = null,
         interntNotat: String? = null,
@@ -118,7 +124,7 @@ object DomainUtil {
         behandlingId = behandlingId,
         vedtak = vedtak,
         hjemmel = hjemmel,
-        innstillingKlageinstans = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
+        innstillingKlageinstans = innstillingKlageinstans,
         årsak = årsak,
         begrunnelseOmgjøring = begrunnelseOmgjøring,
         interntNotat = interntNotat,
@@ -177,14 +183,15 @@ object DomainUtil {
             sporbar = sporbar,
             eksternId = "1",
             fagsystem =
-            when (stønadstype) {
-                Stønadstype.OVERGANGSSTØNAD,
-                Stønadstype.BARNETILSYN,
-                Stønadstype.SKOLEPENGER,
-                -> Fagsystem.EF
-                Stønadstype.BARNETRYGD -> Fagsystem.BA
-                Stønadstype.KONTANTSTØTTE -> Fagsystem.KS
-            },
+                when (stønadstype) {
+                    Stønadstype.OVERGANGSSTØNAD,
+                    Stønadstype.BARNETILSYN,
+                    Stønadstype.SKOLEPENGER,
+                    -> Fagsystem.EF
+
+                    Stønadstype.BARNETRYGD -> Fagsystem.BA
+                    Stønadstype.KONTANTSTØTTE -> Fagsystem.KS
+                },
         )
 
     fun klageresultat(
@@ -228,7 +235,12 @@ object DomainUtil {
 
     fun journalpostDokument(
         status: Dokumentstatus = Dokumentstatus.FERDIGSTILT,
-        dokumentvarianter: List<Dokumentvariant>? = listOf(Dokumentvariant(Dokumentvariantformat.ARKIV, saksbehandlerHarTilgang = true)),
+        dokumentvarianter: List<Dokumentvariant>? = listOf(
+            Dokumentvariant(
+                Dokumentvariantformat.ARKIV,
+                saksbehandlerHarTilgang = true,
+            ),
+        ),
     ) = DokumentInfo(
         dokumentInfoId = UUID.randomUUID().toString(),
         tittel = "Tittel",
@@ -351,4 +363,66 @@ object DomainUtil {
         egenAnsatt = egenAnsatt,
         vergemål = vergemål,
     )
+
+    fun lagBaksBrev(
+        behandlingId: UUID = UUID.randomUUID(),
+        html: String = "<html />",
+        pdf: Fil = Fil("data".toByteArray()),
+        sporbar: Sporbar = Sporbar(),
+    ): BaksBrev {
+        return BaksBrev(
+            behandlingId = behandlingId,
+            html = html,
+            pdf = pdf,
+            sporbar = sporbar,
+        )
+    }
+
+    fun lagPåklagetVedtakDetaljer(
+        fagsystemType: FagsystemType = FagsystemType.ORDNIÆR,
+        eksternFagsystemBehandlingId: String = "1234",
+        behandlingstype: String = "type",
+        resultat: String = "resultat",
+        vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
+        regelverk: Regelverk = Regelverk.NASJONAL,
+    ): PåklagetVedtakDetaljer {
+        return PåklagetVedtakDetaljer(
+            fagsystemType = fagsystemType,
+            eksternFagsystemBehandlingId = eksternFagsystemBehandlingId,
+            behandlingstype = behandlingstype,
+            resultat = resultat,
+            vedtakstidspunkt = vedtakstidspunkt,
+            regelverk = regelverk,
+        )
+    }
+
+    fun lagFritekstBrevRequestDto(
+        overskrift: String = "overskrift",
+        avsnitt: List<AvsnittDto> = listOf(
+            AvsnittDto(
+                deloverskrift = "deloverskrift",
+                innhold = "innhold",
+                skalSkjulesIBrevbygger = false,
+            ),
+        ),
+        personIdent: String = "123",
+        navn: String = "navn",
+    ): FritekstBrevRequestDto {
+        return FritekstBrevRequestDto(
+            overskrift,
+            avsnitt = avsnitt,
+            personIdent,
+            navn,
+        )
+    }
+
+    fun lagPåklagetVedtak(
+        påklagetVedtakstype: PåklagetVedtakstype = PåklagetVedtakstype.VEDTAK,
+        påklagetVedtakDetaljer: PåklagetVedtakDetaljer? = lagPåklagetVedtakDetaljer(),
+    ): PåklagetVedtak {
+        return PåklagetVedtak(
+            påklagetVedtakstype = påklagetVedtakstype,
+            påklagetVedtakDetaljer = påklagetVedtakDetaljer,
+        )
+    }
 }
