@@ -26,7 +26,7 @@ class BaksBrevOppdaterer(
         val behandling = behandlingService.hentBehandling(baksBrev.behandlingId)
         validerRedigerbarBehandling(behandling)
         validerKorrektBehandlingssteg(behandling)
-        validerEksiterendeBrev(behandling)
+        validerEksisterendeBrev(behandling)
         val fritekstbrevHtml = fritekstbrevHtmlUtleder.utledFritekstbrevHtml(behandling)
         val pdfFraHtml = familieDokumentClient.genererPdfFraHtml(fritekstbrevHtml)
         val oppdatertBaksBrev = baksBrev.copy(html = fritekstbrevHtml, pdf = Fil(pdfFraHtml))
@@ -45,7 +45,7 @@ class BaksBrevOppdaterer(
         }
     }
 
-    private fun validerEksiterendeBrev(behandling: Behandling) {
+    private fun validerEksisterendeBrev(behandling: Behandling) {
         val brevFinnes = baksBrevRepository.existsByBehandlingId(behandling.id)
         if (!brevFinnes) {
             throw Feil("Brev finnes ikke for behandling ${behandling.id}. Opprett brevet først.")

@@ -27,7 +27,7 @@ class BaksBrevOppretter(
         val behandling = behandlingService.hentBehandling(behandlingId)
         validerRedigerbarBehandling(behandling)
         validerKorrektBehandlingssteg(behandling)
-        validerIngenEksiterendeBrev(behandling)
+        validerIngenEksisterendeBrev(behandling)
         val fritekstbrevHtml = fritekstbrevHtmlUtleder.utledFritekstbrevHtml(behandling)
         val pdfFraHtml = familieDokumentClient.genererPdfFraHtml(fritekstbrevHtml)
         val nyttBaksBrev = BaksBrev(behandlingId = behandlingId, html = fritekstbrevHtml, pdf = Fil(pdfFraHtml))
@@ -46,7 +46,7 @@ class BaksBrevOppretter(
         }
     }
 
-    private fun validerIngenEksiterendeBrev(behandling: Behandling) {
+    private fun validerIngenEksisterendeBrev(behandling: Behandling) {
         val brevFinnes = baksBrevRepository.existsByBehandlingId(behandling.id)
         if (brevFinnes) {
             throw Feil("Brev finnes allerede for behandling ${behandling.id}. Oppdater heller brevet.")
