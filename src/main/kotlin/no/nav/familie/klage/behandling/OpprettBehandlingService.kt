@@ -61,7 +61,10 @@ class OpprettBehandlingService(
             ),
         ).id
 
-        behandlingshistorikkService.opprettBehandlingshistorikk(behandlingId, StegType.OPPRETTET)
+        behandlingshistorikkService.opprettBehandlingshistorikk(
+            behandlingId = behandlingId,
+            steg = StegType.OPPRETTET,
+        )
 
         formService.opprettInitielleFormkrav(behandlingId)
 

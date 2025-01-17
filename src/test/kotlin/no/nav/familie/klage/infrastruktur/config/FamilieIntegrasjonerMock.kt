@@ -17,6 +17,7 @@ import no.nav.familie.klage.arbeidsfordeling.Arbeidsfordelingsenhet
 import no.nav.familie.klage.felles.dto.EgenAnsattResponse
 import no.nav.familie.klage.felles.dto.Tilgang
 import no.nav.familie.klage.infrastruktur.config.PdfMock.pdfAsBase64String
+import no.nav.familie.klage.mappe.statiskDummyMapper
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.ef.søknad.Testsøknad
 import no.nav.familie.kontrakter.felles.BrukerIdType
@@ -35,6 +36,7 @@ import no.nav.familie.kontrakter.felles.journalpost.LogiskVedlegg
 import no.nav.familie.kontrakter.felles.journalpost.RelevantDato
 import no.nav.familie.kontrakter.felles.navkontor.NavKontorEnhet
 import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
@@ -99,9 +101,37 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                 .withQueryParam("variantFormat", equalTo("ARKIV"))
                 .willReturn(okJson(objectMapper.writeValueAsString(Ressurs.success(pdfAsBase64String)))),
             get(urlPathMatching("${integrasjonerConfig.oppgaveUri.path}/([0-9]*)"))
-                .willReturn(okJson(objectMapper.writeValueAsString(Ressurs.success(Oppgave(Random.nextLong().absoluteValue, tilordnetRessurs = "Z994152", tema = Tema.ENF, status = StatusEnum.UNDER_BEHANDLING))))),
+                .willReturn(
+                    okJson(
+                        objectMapper.writeValueAsString(
+                            Ressurs.success(
+                                Oppgave(
+                                    id = Random.nextLong().absoluteValue,
+                                    tildeltEnhetsnr = "4489",
+                                    tilordnetRessurs = "Z994152",
+                                    tema = Tema.ENF,
+                                    status = StatusEnum.UNDER_BEHANDLING,
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
             get(urlPathMatching("${integrasjonerConfig.saksbehandlerUri.path}/Z994152"))
-                .willReturn(okJson(objectMapper.writeValueAsString(Ressurs.success(Saksbehandler(UUID.randomUUID(), "Z994152", "Luke", "Skywalker", "4405"))))),
+                .willReturn(
+                    okJson(
+                        objectMapper.writeValueAsString(
+                            Ressurs.success(
+                                Saksbehandler(
+                                    UUID.randomUUID(),
+                                    "Z994152",
+                                    "Luke",
+                                    "Skywalker",
+                                    "4405",
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
             put(urlMatching("${integrasjonerConfig.dokarkivUri.path}.*"))
                 .willReturn(okJson(objectMapper.writeValueAsString(oppdatertJournalpostResponse))),
             post(urlMatching("${integrasjonerConfig.dokarkivUri.path}.*"))
@@ -143,7 +173,26 @@ class FamilieIntegrasjonerMock(integrasjonerConfig: IntegrasjonerConfig) {
                 .willReturn(okJson(objectMapper.writeValueAsString(Ressurs.success(OppgaveResponse(Random.nextLong().absoluteValue))))),
             patch(urlPathMatching("${integrasjonerConfig.oppgaveUri.path}/([0-9]*)/ferdigstill"))
                 .willReturn(okJson(objectMapper.writeValueAsString(Ressurs.success(OppgaveResponse(Random.nextLong().absoluteValue))))),
-
+            get(urlEqualTo("${integrasjonerConfig.oppgaveUri.path}/mappe/sok?enhetsnr=4489&limit=1000")).willReturn(
+                okJson(
+                    objectMapper.writeValueAsString(
+                        Ressurs.success(
+                            data = FinnMappeResponseDto(
+                                antallTreffTotalt = 1,
+                                mapper = statiskDummyMapper,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            patch(urlPathMatching("${integrasjonerConfig.oppgaveUri.path}/([0-9]*)/oppdater"))
+                .willReturn(
+                    okJson(
+                        objectMapper.writeValueAsString(
+                            Ressurs.success(OppgaveResponse(Random.nextLong().absoluteValue)),
+                        ),
+                    ),
+                ),
         )
 
     private fun lagIkkeTilgangResponse() = Tilgang(

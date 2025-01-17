@@ -10,7 +10,12 @@ data class Behandlingshistorikk(
     @Id
     val id: UUID = UUID.randomUUID(),
     val behandlingId: UUID,
+    val historikkHendelse: HistorikkHendelse?,
     val steg: StegType,
     val opprettetAv: String = SikkerhetContext.hentSaksbehandler(),
     val endretTid: LocalDateTime? = LocalDateTime.now(),
 )
+
+enum class HistorikkHendelse {
+    SATT_PÅ_VENT, TATT_AV_VENT
+}
