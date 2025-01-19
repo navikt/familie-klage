@@ -3,6 +3,10 @@ package no.nav.familie.klage.distribusjon.baks
 import no.nav.familie.klage.brev.baks.brevmottaker.Brevmottaker
 import no.nav.familie.klage.brev.baks.brevmottaker.Mottakertype
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
+import no.nav.familie.kontrakter.felles.dokdist.AdresseType
+import no.nav.familie.kontrakter.felles.dokdist.ManuellAdresse
+
+private const val LANDKODE_NO = "NO"
 
 data class DistribuerbarBrevmottaker(
     val navn: String,
@@ -63,4 +67,16 @@ fun DistribuerbarBrevmottaker.mapTilAvsenderMottaker(): AvsenderMottaker? {
             navn = this.navn,
         )
     }
+}
+
+fun DistribuerbarBrevmottaker.Adresse.mapTilManuellAdresse(): ManuellAdresse {
+    return ManuellAdresse(
+        adresseType = if (this.landkode == LANDKODE_NO) AdresseType.norskPostadresse else AdresseType.utenlandskPostadresse,
+        adresselinje1 = this.adresselinje1,
+        adresselinje2 = this.adresselinje2,
+        adresselinje3 = null,
+        postnummer = this.postnummer,
+        poststed = this.poststed,
+        land = this.landkode,
+    )
 }

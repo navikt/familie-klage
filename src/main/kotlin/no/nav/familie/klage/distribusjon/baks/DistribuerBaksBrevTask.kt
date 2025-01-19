@@ -3,8 +3,6 @@ package no.nav.familie.klage.distribusjon.baks
 import no.nav.familie.klage.distribusjon.DistribusjonService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.kontrakter.felles.Fagsystem
-import no.nav.familie.kontrakter.felles.dokdist.AdresseType
-import no.nav.familie.kontrakter.felles.dokdist.ManuellAdresse
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
@@ -12,8 +10,6 @@ import no.nav.familie.prosessering.domene.Task
 import org.springframework.stereotype.Service
 import java.util.Properties
 import java.util.UUID
-
-private const val LANDKODE_NO = "NO"
 
 @Service
 @TaskStepBeskrivelse(
@@ -40,18 +36,6 @@ class DistribuerBaksBrevTask(
         )
     }
 
-    private fun DistribuerbarBrevmottaker.Adresse.mapTilManuellAdresse(): ManuellAdresse {
-        return ManuellAdresse(
-            adresseType = if (this.landkode == LANDKODE_NO) AdresseType.norskPostadresse else AdresseType.utenlandskPostadresse,
-            adresselinje1 = this.adresselinje1,
-            adresselinje2 = this.adresselinje2,
-            adresselinje3 = null,
-            postnummer = this.postnummer,
-            poststed = this.poststed,
-            land = this.landkode,
-        )
-    }
-
     data class Payload(
         val behandlingId: UUID,
         val journalpostId: String,
@@ -59,6 +43,8 @@ class DistribuerBaksBrevTask(
     )
 
     companion object {
+        const val TYPE = "distribuerBaksBrevTask"
+
         fun opprett(payload: Payload, metadata: Properties): Task {
             return Task(
                 type = TYPE,
@@ -66,7 +52,5 @@ class DistribuerBaksBrevTask(
                 properties = metadata,
             )
         }
-
-        const val TYPE = "distribuerBaksBrevTask"
     }
 }
