@@ -22,6 +22,10 @@ data class Brevmottaker(
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),
 ) {
+    fun erFullmektigEllerVerge(): Boolean {
+        return mottakertype == Mottakertype.FULLMEKTIG || mottakertype == Mottakertype.VERGE
+    }
+
     companion object Fabrikk {
         fun opprett(behandlingId: UUID, nyBrevmottaker: NyBrevmottaker): Brevmottaker {
             return Brevmottaker(

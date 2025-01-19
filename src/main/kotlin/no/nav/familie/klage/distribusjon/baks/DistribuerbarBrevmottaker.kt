@@ -4,24 +4,24 @@ import no.nav.familie.klage.brev.baks.brevmottaker.Brevmottaker
 import no.nav.familie.klage.brev.baks.brevmottaker.Mottakertype
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
 
-data class JournalpostBrevmottaker(
+data class DistribuerbarBrevmottaker(
     val navn: String,
     val adresse: Adresse?,
     val mottakertype: Mottakertype,
 ) {
     companion object {
-        fun opprett(navn: String, mottakertype: Mottakertype): JournalpostBrevmottaker {
-            return JournalpostBrevmottaker(
+        fun opprettForBruker(navn: String): DistribuerbarBrevmottaker {
+            return DistribuerbarBrevmottaker(
                 navn,
                 null,
-                mottakertype,
+                Mottakertype.BRUKER,
             )
         }
 
-        fun opprett(brevmottaker: Brevmottaker): JournalpostBrevmottaker {
-            return JournalpostBrevmottaker(
+        fun opprettForBrevmottaker(brevmottaker: Brevmottaker): DistribuerbarBrevmottaker {
+            return DistribuerbarBrevmottaker(
                 brevmottaker.navn,
-                Adresse.opprett(brevmottaker),
+                Adresse.opprettForBrevmottaker(brevmottaker),
                 brevmottaker.mottakertype,
             )
         }
@@ -35,7 +35,7 @@ data class JournalpostBrevmottaker(
         val landkode: String,
     ) {
         companion object {
-            fun opprett(brevmottaker: Brevmottaker): Adresse {
+            fun opprettForBrevmottaker(brevmottaker: Brevmottaker): Adresse {
                 return Adresse(
                     adresselinje1 = brevmottaker.adresselinje1,
                     adresselinje2 = brevmottaker.adresselinje2,
@@ -48,7 +48,7 @@ data class JournalpostBrevmottaker(
     }
 }
 
-fun JournalpostBrevmottaker.mapTilAvsenderMottaker(): AvsenderMottaker? {
+fun DistribuerbarBrevmottaker.mapTilAvsenderMottaker(): AvsenderMottaker? {
     return when (mottakertype) {
         Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE,
         Mottakertype.BRUKER,

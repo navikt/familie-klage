@@ -16,43 +16,44 @@ import java.util.UUID
 
 @Service
 @TaskStepBeskrivelse(
-    taskStepType = BaksJournalførBrevTask.TYPE,
-    beskrivelse = "Journalfør brev etter klagebehandling",
+    taskStepType = JournalførBaksBrevTask.TYPE,
+    beskrivelse = "Journalfør baks brev etter klagebehandling",
 )
-class BaksJournalførBrevTask(
+class JournalførBaksBrevTask(
     private val distribusjonService: DistribusjonService,
     private val taskService: TaskService,
     private val behandlingService: BehandlingService,
     private val baksBrevService: BaksBrevService,
-    private val journalpostBrevmottakereUtleder: JournalpostBrevmottakereUtleder,
+    private val distribuerbarBrevmottakerUtleder: DistribuerbarBrevmottakerUtleder,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
         val brev = baksBrevService.hentBrev(behandlingId)
-        val journalpostBrevmottakere = journalpostBrevmottakereUtleder.utled(behandlingId)
+        val distribuerbarBrevmottakere =
+            distribuerbarBrevmottakerUtleder.utledDistribuerbareBrevmottakereForBehandling(behandlingId)
 
-        if (journalpostBrevmottakere.isEmpty()) {
-            throw IllegalStateException("Må ha minimum en mottaker for task ${task.id}")
+        if (distribuerbarBrevmottakere.isEmpty()) {
+            throw IllegalStateException("Må ha minimum en brevmottaker i task ${task.id}")
         }
 
-        journalpostBrevmottakere.forEachIndexed { index, journalpostBrevmottaker ->
+        distribuerbarBrevmottakere.forEachIndexed { index, distribuerbarBrevmottaker ->
             val journalpostId = distribusjonService.journalførBrev(
                 behandlingId,
                 brev.pdfSomBytes(),
                 task.metadata[saksbehandlerMetadataKey].toString(),
                 index,
-                journalpostBrevmottaker.mapTilAvsenderMottaker(),
+                distribuerbarBrevmottaker.mapTilAvsenderMottaker(),
             )
-            val baksDistribuerBrevTask = BaksDistribuerBrevTask.opprett(
-                BaksDistribuerBrevTask.Payload(
+            val distribuerBaksBrevTask = DistribuerBaksBrevTask.opprett(
+                DistribuerBaksBrevTask.Payload(
                     behandlingId,
                     journalpostId,
-                    journalpostBrevmottaker,
+                    distribuerbarBrevmottaker,
                 ),
                 task.metadata,
             )
-            taskService.save(baksDistribuerBrevTask)
+            taskService.save(distribuerBaksBrevTask)
         }
     }
 
@@ -68,6 +69,6 @@ class BaksJournalførBrevTask(
     }
 
     companion object {
-        const val TYPE = "baksJournalførBrevTask"
+        const val TYPE = "journalførBaksBrevTask"
     }
 }

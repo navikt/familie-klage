@@ -13,12 +13,14 @@ import org.springframework.stereotype.Service
 import java.util.Properties
 import java.util.UUID
 
+private const val LANDKODE_NO = "NO"
+
 @Service
 @TaskStepBeskrivelse(
-    taskStepType = BaksDistribuerBrevTask.TYPE,
-    beskrivelse = "Distribuer brev etter klagebehandling",
+    taskStepType = DistribuerBaksBrevTask.TYPE,
+    beskrivelse = "Distribuer baks brev etter klagebehandling",
 )
-class BaksDistribuerBrevTask(
+class DistribuerBaksBrevTask(
     private val fagsakService: FagsakService,
     private val distribusjonService: DistribusjonService,
 ) : AsyncTaskStep {
@@ -34,13 +36,13 @@ class BaksDistribuerBrevTask(
         distribusjonService.distribuerBrev(
             journalpostId = payload.journalpostId,
             bestillendeFagsystem = fagsystem,
-            manuellAdresse = payload.journalpostBrevmottaker.adresse?.mapTilManuellAdresse(),
+            manuellAdresse = payload.distribuerbarBrevmottaker.adresse?.mapTilManuellAdresse(),
         )
     }
 
-    private fun JournalpostBrevmottaker.Adresse.mapTilManuellAdresse(): ManuellAdresse {
+    private fun DistribuerbarBrevmottaker.Adresse.mapTilManuellAdresse(): ManuellAdresse {
         return ManuellAdresse(
-            adresseType = if (this.landkode == "NO") AdresseType.norskPostadresse else AdresseType.utenlandskPostadresse,
+            adresseType = if (this.landkode == LANDKODE_NO) AdresseType.norskPostadresse else AdresseType.utenlandskPostadresse,
             adresselinje1 = this.adresselinje1,
             adresselinje2 = this.adresselinje2,
             adresselinje3 = null,
@@ -53,7 +55,7 @@ class BaksDistribuerBrevTask(
     data class Payload(
         val behandlingId: UUID,
         val journalpostId: String,
-        val journalpostBrevmottaker: JournalpostBrevmottaker,
+        val distribuerbarBrevmottaker: DistribuerbarBrevmottaker,
     )
 
     companion object {
@@ -65,6 +67,6 @@ class BaksDistribuerBrevTask(
             )
         }
 
-        const val TYPE = "baksDistribuerBrevTask"
+        const val TYPE = "distribuerBaksBrevTask"
     }
 }
