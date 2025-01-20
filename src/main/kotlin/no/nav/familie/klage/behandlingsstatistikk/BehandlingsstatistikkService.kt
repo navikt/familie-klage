@@ -21,6 +21,7 @@ enum class BehandlingsstatistikkHendelse {
     PÅBEGYNT,
     FERDIG,
     SENDT_TIL_KA,
+    VENTER,
 }
 
 @Service
