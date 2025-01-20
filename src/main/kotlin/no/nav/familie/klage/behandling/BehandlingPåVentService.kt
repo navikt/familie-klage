@@ -4,6 +4,7 @@ import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandling.dto.SettPåVentRequest
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingshistorikk.domain.HistorikkHendelse
+import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.felles.util.dagensDatoMedNorskFormat
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
@@ -11,6 +12,7 @@ import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.oppgave.OppgaveService
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
+import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -20,6 +22,7 @@ class BehandlingPåVentService(
     private val behandlingService: BehandlingService,
     private val oppgaveService: OppgaveService,
     private val behandlinghistorikkService: BehandlingshistorikkService,
+    private val taskService: TaskService,
 ) {
 
     @Transactional
@@ -43,6 +46,8 @@ class BehandlingPåVentService(
             steg = behandling.steg,
             historikkHendelse = HistorikkHendelse.SATT_PÅ_VENT,
         )
+
+        taskService.save(taskService.save(BehandlingsstatistikkTask.opprettVenterTask(behandlingId)))
     }
 
     @Transactional
@@ -58,6 +63,8 @@ class BehandlingPåVentService(
             steg = behandling.steg,
             historikkHendelse = HistorikkHendelse.TATT_AV_VENT,
         )
+
+        taskService.save(BehandlingsstatistikkTask.opprettPåbegyntTask(behandlingId))
     }
 
     private fun oppdaterVerdierPåOppgave(settPåVentRequest: SettPåVentRequest) {
