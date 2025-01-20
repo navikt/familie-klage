@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import no.nav.familie.klage.ApplicationLocal
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
+import no.nav.familie.klage.brev.baks.BaksBrev
 import no.nav.familie.klage.brev.baks.brevmottaker.Brevmottaker
 import no.nav.familie.klage.brev.ef.Brev
 import no.nav.familie.klage.brev.felles.Avsnitt
