@@ -29,6 +29,7 @@ class DistribuerBaksBrevTask(
             no.nav.familie.kontrakter.felles.klage.Fagsystem.KS -> Fagsystem.KONT
             no.nav.familie.kontrakter.felles.klage.Fagsystem.EF -> throw IllegalStateException("EF er ikke støttet i denne tasken")
         }
+        // TODO : Burde man forhindre å distribuere brev til de som allerede har fått brev? Ser ut som det er gjort noe slikt i EF koden
         distribusjonService.distribuerBrev(
             journalpostId = payload.journalpostId,
             bestillendeFagsystem = fagsystem,
