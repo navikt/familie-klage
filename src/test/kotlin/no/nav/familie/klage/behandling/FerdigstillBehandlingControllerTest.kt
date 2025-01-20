@@ -2,7 +2,7 @@ package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
-import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brev.ef.BrevService
 import no.nav.familie.klage.distribusjon.DistribuerBrevTask
 import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.formkrav.FormService

@@ -2,7 +2,7 @@ package no.nav.familie.klage.blankett
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.Behandling
-import no.nav.familie.klage.brev.BrevClient
+import no.nav.familie.klage.brev.felles.BrevClient
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.formkrav.FormService
