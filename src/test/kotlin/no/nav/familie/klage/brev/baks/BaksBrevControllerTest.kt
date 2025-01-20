@@ -31,7 +31,7 @@ class BaksBrevControllerTest : OppslagSpringRunnerTest() {
     @Autowired
     private lateinit var rolleConfig: RolleConfig
 
-    private val baseUrl = "/api/baks/brev"
+    private val baseUrl = "/api/brev/baks"
 
     @Nested
     inner class HentBrevTest {
