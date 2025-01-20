@@ -1,8 +1,8 @@
 package no.nav.familie.klage.brev.ef.avvistbrev
 
-import no.nav.familie.klage.brev.AvvistBrevInnholdUtleder
-import no.nav.familie.klage.brev.AvvistBrevInnholdUtleder.Companion.utledParagrafer
-import no.nav.familie.klage.brev.Formkrav
+import no.nav.familie.klage.brev.felles.AvvistBrevInnholdUtleder
+import no.nav.familie.klage.brev.felles.AvvistBrevInnholdUtleder.Companion.utledParagrafer
+import no.nav.familie.klage.brev.felles.Formkrav
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import org.springframework.stereotype.Component
 

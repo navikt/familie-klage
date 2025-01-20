@@ -1,6 +1,6 @@
 package no.nav.familie.klage.brev.baks.avvistbrev
 
-import no.nav.familie.klage.brev.FormkravVilkår
+import no.nav.familie.klage.brev.felles.FormkravVilkår
 
 enum class FormkravVilkårKS(
     val kontantstøtteloven: Set<String>,

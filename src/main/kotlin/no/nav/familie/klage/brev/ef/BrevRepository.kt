@@ -1,7 +1,5 @@
 package no.nav.familie.klage.brev.ef
 
-import no.nav.familie.klage.brev.ef.domain.Brev
-import no.nav.familie.klage.brev.ef.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.repository.InsertUpdateRepository
 import no.nav.familie.klage.repository.RepositoryInterface
 import org.springframework.data.jdbc.repository.query.Modifying

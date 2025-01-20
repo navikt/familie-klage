@@ -1,11 +1,10 @@
-package no.nav.familie.klage.brev
+package no.nav.familie.klage.brev.ef
 
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.UTEN_VEDTAK
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.klage.brev.ef.BrevService
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.formkrav.FormRepository
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest

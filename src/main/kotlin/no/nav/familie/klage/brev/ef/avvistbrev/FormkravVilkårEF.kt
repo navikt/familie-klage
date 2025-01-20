@@ -1,6 +1,6 @@
 package no.nav.familie.klage.brev.ef.avvistbrev
 
-import no.nav.familie.klage.brev.FormkravVilkår
+import no.nav.familie.klage.brev.felles.FormkravVilkår
 
 enum class FormkravVilkårEF(
     val folketrygdLoven: Set<String>,

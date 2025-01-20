@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev
+package no.nav.familie.klage.brev.felles
 
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle

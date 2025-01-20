@@ -5,7 +5,7 @@ import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
-import no.nav.familie.klage.brev.FamilieDokumentClient
+import no.nav.familie.klage.brev.felles.FamilieDokumentClient
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import org.slf4j.LoggerFactory

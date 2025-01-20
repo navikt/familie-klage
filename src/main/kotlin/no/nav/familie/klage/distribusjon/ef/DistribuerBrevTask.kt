@@ -1,9 +1,9 @@
 package no.nav.familie.klage.distribusjon.ef
 
+import no.nav.familie.klage.brev.ef.Brev
 import no.nav.familie.klage.brev.ef.BrevService
-import no.nav.familie.klage.brev.ef.domain.Brev
-import no.nav.familie.klage.brev.ef.domain.BrevmottakereJournalpost
-import no.nav.familie.klage.brev.ef.domain.BrevmottakereJournalposter
+import no.nav.familie.klage.brev.ef.BrevmottakereJournalpost
+import no.nav.familie.klage.brev.ef.BrevmottakereJournalposter
 import no.nav.familie.klage.distribusjon.DistribusjonService
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.kontrakter.felles.Fagsystem

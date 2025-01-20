@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev
+package no.nav.familie.klage.brev.felles
 
 import no.nav.familie.http.client.AbstractRestClient
 import org.springframework.beans.factory.annotation.Qualifier

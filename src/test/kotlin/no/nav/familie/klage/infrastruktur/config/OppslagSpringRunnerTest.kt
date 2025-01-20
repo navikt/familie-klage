@@ -7,8 +7,8 @@ import no.nav.familie.klage.ApplicationLocal
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
 import no.nav.familie.klage.brev.baks.brevmottaker.Brevmottaker
-import no.nav.familie.klage.brev.ef.domain.Avsnitt
-import no.nav.familie.klage.brev.ef.domain.Brev
+import no.nav.familie.klage.brev.ef.Brev
+import no.nav.familie.klage.brev.felles.Avsnitt
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.fagsak.domain.PersonIdent

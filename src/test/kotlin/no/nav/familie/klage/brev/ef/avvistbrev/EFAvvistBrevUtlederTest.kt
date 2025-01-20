@@ -1,7 +1,6 @@
-package no.nav.familie.klage.brev.avvistbrev
+package no.nav.familie.klage.brev.ef.avvistbrev
 
-import no.nav.familie.klage.brev.Formkrav
-import no.nav.familie.klage.brev.ef.avvistbrev.EFAvvistBrevInnholdUtleder
+import no.nav.familie.klage.brev.felles.Formkrav
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm

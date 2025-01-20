@@ -8,11 +8,11 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.brev.baks.BaksBrev
-import no.nav.familie.klage.brev.AvsnittDto
-import no.nav.familie.klage.brev.FritekstBrevRequestDto
 import no.nav.familie.klage.brev.baks.brevmottaker.Brevmottaker
 import no.nav.familie.klage.brev.baks.brevmottaker.Mottakertype
 import no.nav.familie.klage.brev.baks.brevmottaker.NyBrevmottaker
+import no.nav.familie.klage.brev.felles.AvsnittDto
+import no.nav.familie.klage.brev.felles.FritekstBrevRequestDto
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson

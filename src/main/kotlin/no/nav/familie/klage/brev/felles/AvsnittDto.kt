@@ -1,6 +1,4 @@
-package no.nav.familie.klage.brev
-
-import no.nav.familie.klage.brev.ef.domain.Avsnitt
+package no.nav.familie.klage.brev.felles
 
 data class AvsnittDto(
     val deloverskrift: String,

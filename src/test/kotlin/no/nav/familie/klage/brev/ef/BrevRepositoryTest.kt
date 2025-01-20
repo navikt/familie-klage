@@ -1,13 +1,5 @@
-package no.nav.familie.klage.brev
+package no.nav.familie.klage.brev.ef
 
-import no.nav.familie.klage.brev.ef.BrevRepository
-import no.nav.familie.klage.brev.ef.domain.Brev
-import no.nav.familie.klage.brev.ef.domain.BrevmottakerOrganisasjon
-import no.nav.familie.klage.brev.ef.domain.BrevmottakerPerson
-import no.nav.familie.klage.brev.ef.domain.Brevmottakere
-import no.nav.familie.klage.brev.ef.domain.BrevmottakereJournalpost
-import no.nav.familie.klage.brev.ef.domain.BrevmottakereJournalposter
-import no.nav.familie.klage.brev.ef.domain.MottakerRolle
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.repository.findByIdOrThrow

@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev
+package no.nav.familie.klage.brev.felles
 
 enum class Formkrav(val tekst: String) {
     KLAGE_KONKRET("du ikke har sagt hva du klager på"),

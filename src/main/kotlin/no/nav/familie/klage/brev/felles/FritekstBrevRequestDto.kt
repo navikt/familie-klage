@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev
+package no.nav.familie.klage.brev.felles
 
 data class FritekstBrevRequestDto(
     val overskrift: String,

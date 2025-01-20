@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev
+package no.nav.familie.klage.brev.felles
 
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår.IKKE_OPPFYLT
@@ -17,7 +17,7 @@ interface AvvistBrevInnholdUtleder<T : FormkravVilkår> {
         return AvvistBrevInnhold(
             årsakTilAvvisning = utledÅrsakTilAvvisningstekst(ikkeOppfylteFormkrav),
             brevtekstFraSaksbehandler =
-            form.brevtekst ?: error("Må ha brevtekst fra saksbehandler for å generere brev ved formkrav ikke oppfylt"),
+                form.brevtekst ?: error("Må ha brevtekst fra saksbehandler for å generere brev ved formkrav ikke oppfylt"),
             lovtekst = utledLovtekst(ikkeOppfylteFormkrav.tilFormkravVilkår()),
         )
     }

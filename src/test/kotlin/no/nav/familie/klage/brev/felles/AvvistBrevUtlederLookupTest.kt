@@ -1,6 +1,5 @@
-package no.nav.familie.klage.brev.avvistbrev
+package no.nav.familie.klage.brev.felles
 
-import no.nav.familie.klage.brev.AvvistBrevInnholdUtleder
 import no.nav.familie.klage.brev.baks.avvistbrev.BAAvvistBrevInnholdUtleder
 import no.nav.familie.klage.brev.baks.avvistbrev.KSAvvistBrevInnholdUtleder
 import no.nav.familie.klage.brev.ef.avvistbrev.EFAvvistBrevInnholdUtleder

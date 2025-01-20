@@ -1,6 +1,5 @@
-package no.nav.familie.klage.brev.ef
+package no.nav.familie.klage.brev.felles
 
-import no.nav.familie.klage.brev.ef.domain.Avsnitt
 import no.nav.familie.klage.repository.InsertUpdateRepository
 import no.nav.familie.klage.repository.RepositoryInterface
 import org.springframework.data.jdbc.repository.query.Modifying

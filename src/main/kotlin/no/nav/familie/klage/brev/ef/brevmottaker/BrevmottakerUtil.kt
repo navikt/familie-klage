@@ -1,6 +1,6 @@
-package no.nav.familie.klage.brev.ef
+package no.nav.familie.klage.brev.ef.brevmottaker
 
-import no.nav.familie.klage.brev.ef.domain.Brevmottakere
+import no.nav.familie.klage.brev.ef.Brevmottakere
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvisIkke
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 

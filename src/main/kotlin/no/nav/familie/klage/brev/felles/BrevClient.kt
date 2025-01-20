@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev
+package no.nav.familie.klage.brev.felles
 
 import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.klage.blankett.BlankettPdfRequest

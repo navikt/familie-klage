@@ -5,10 +5,10 @@ import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.verifyOrder
+import no.nav.familie.klage.brev.ef.Brev
 import no.nav.familie.klage.brev.ef.BrevService
-import no.nav.familie.klage.brev.ef.domain.Brev
-import no.nav.familie.klage.brev.ef.domain.BrevmottakereJournalpost
-import no.nav.familie.klage.brev.ef.domain.BrevmottakereJournalposter
+import no.nav.familie.klage.brev.ef.BrevmottakereJournalpost
+import no.nav.familie.klage.brev.ef.BrevmottakereJournalposter
 import no.nav.familie.klage.distribusjon.ef.DistribuerBrevTask
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.kontrakter.felles.Fagsystem
