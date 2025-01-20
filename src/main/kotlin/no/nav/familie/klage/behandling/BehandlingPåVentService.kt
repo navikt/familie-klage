@@ -10,9 +10,12 @@ import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.oppgave.OppgaveService
+import no.nav.familie.klage.oppgave.TilordnetRessursService
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.prosessering.internal.TaskService
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -23,7 +26,9 @@ class BehandlingPåVentService(
     private val oppgaveService: OppgaveService,
     private val behandlinghistorikkService: BehandlingshistorikkService,
     private val taskService: TaskService,
+    private val tilordnetRessursService: TilordnetRessursService
 ) {
+    val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     @Transactional
     fun settPåVent(
@@ -64,6 +69,8 @@ class BehandlingPåVentService(
             historikkHendelse = HistorikkHendelse.TATT_AV_VENT,
         )
 
+        fordelOppgaveTilSaksbehandler(behandlingId = behandling.id)
+
         taskService.save(BehandlingsstatistikkTask.opprettPåbegyntTask(behandlingId))
     }
 
@@ -79,6 +86,7 @@ class BehandlingPåVentService(
                 fristFerdigstillelse = settPåVentRequest.frist,
                 mappeId = settPåVentRequest.mappe,
                 beskrivelse = beskrivelse,
+                versjon = settPåVentRequest.oppgaveVersjon,
             ),
         )
     }
@@ -92,6 +100,21 @@ class BehandlingPåVentService(
     private fun validerKanTaAvVent(behandlingStatus: BehandlingStatus) {
         brukerfeilHvis(behandlingStatus != BehandlingStatus.SATT_PÅ_VENT) {
             "Kan ikke ta behandling med status $behandlingStatus av vent"
+        }
+    }
+
+    private fun fordelOppgaveTilSaksbehandler(behandlingId: UUID) {
+        val oppgave = tilordnetRessursService.hentOppgave(behandlingId)
+        val oppgaveId = oppgave?.oppgaveId
+
+        if (oppgaveId != null) {
+            oppgaveService.fordelOppgave(
+                gsakOppgaveId = oppgaveId,
+                saksbehandler = SikkerhetContext.hentSaksbehandler(),
+                versjon = oppgave.versjon
+            )
+        } else {
+            logger.warn("Fant ikke oppgave med id $behandlingId")
         }
     }
 

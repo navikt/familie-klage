@@ -10,4 +10,5 @@ data class OppgaveDto(
     val prioritet: OppgavePrioritet? = null,
     val fristFerdigstillelse: String,
     val mappeId: Long? = null,
+    val versjon: Int? = null,
 )

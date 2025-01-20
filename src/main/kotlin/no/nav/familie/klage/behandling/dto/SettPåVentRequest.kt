@@ -10,5 +10,5 @@ data class SettPåVentRequest(
     val mappe: Long?,
     val beskrivelse: String,
     val oppgaveVersjon: Int,
-    val innstillingsoppgaveBeskjed: String?,
+    val innstillingsoppgaveBeskjed: String?
 )
