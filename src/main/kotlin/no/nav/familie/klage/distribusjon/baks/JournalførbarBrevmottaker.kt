@@ -9,24 +9,23 @@ import no.nav.familie.kontrakter.felles.dokdist.ManuellAdresse
 private const val LANDKODE_NO = "NO"
 
 data class JournalførbarBrevmottaker(
-    val navn: String,
-    val adresse: Adresse?,
     val mottakertype: Mottakertype,
+    val navn: String,
+    val adresse: Adresse? = null,
 ) {
     companion object {
         fun opprettForBruker(navn: String): JournalførbarBrevmottaker {
             return JournalførbarBrevmottaker(
-                navn,
-                null,
                 Mottakertype.BRUKER,
+                navn,
             )
         }
 
         fun opprettForBrevmottaker(brevmottaker: Brevmottaker): JournalførbarBrevmottaker {
             return JournalførbarBrevmottaker(
+                brevmottaker.mottakertype,
                 brevmottaker.navn,
                 Adresse.opprettForBrevmottaker(brevmottaker),
-                brevmottaker.mottakertype,
             )
         }
     }

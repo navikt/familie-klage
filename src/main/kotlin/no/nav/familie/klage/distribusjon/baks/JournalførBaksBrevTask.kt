@@ -2,9 +2,11 @@ package no.nav.familie.klage.distribusjon.baks
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.baks.BaksBrevService
+import no.nav.familie.klage.brev.baks.brevmottaker.BrevmottakerService
 import no.nav.familie.klage.distribusjon.DistribusjonService
 import no.nav.familie.klage.distribusjon.SendTilKabalTask
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
+import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.personopplysninger.pdl.logger
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.prosessering.AsyncTaskStep
@@ -24,14 +26,20 @@ class JournalførBaksBrevTask(
     private val taskService: TaskService,
     private val behandlingService: BehandlingService,
     private val baksBrevService: BaksBrevService,
-    private val journalførbarBrevmottakerUtleder: JournalførbarBrevmottakerUtleder,
+    private val personopplysningerService: PersonopplysningerService,
+    private val brevmottakerService: BrevmottakerService,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
+        val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
+        val brevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
         val brev = baksBrevService.hentBrev(behandlingId)
-        val journalførbareBrevmottakere =
-            journalførbarBrevmottakerUtleder.utledJournalførbareBrevmottakere(behandlingId)
+
+        val journalførbareBrevmottakere = utledJournalførbareBrevmottakere(
+            personopplysninger.navn,
+            brevmottakere,
+        )
 
         if (journalførbareBrevmottakere.isEmpty()) {
             throw IllegalStateException("Må ha minimum en journalførbar brevmottaker i task ${task.id}")
