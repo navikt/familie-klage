@@ -2,7 +2,7 @@ package no.nav.familie.klage.infrastruktur.config
 
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.familie.klage.brev.BrevClient
+import no.nav.familie.klage.brev.felles.BrevClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary

@@ -44,6 +44,9 @@ class PdlClientMock {
         every { pdlClient.hentPersonidenter(any(), Stønadstype.OVERGANGSSTØNAD, eq(true)) } answers
             { PdlIdenter(listOf(PdlIdent(firstArg(), false), PdlIdent("98765432109", true))) }
 
+        every { pdlClient.hentPersonidenter(any(), Stønadstype.BARNETRYGD, eq(true)) } answers
+            { PdlIdenter(listOf(PdlIdent(firstArg(), false), PdlIdent("98765432109", true))) }
+
         return pdlClient
     }
 

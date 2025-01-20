@@ -13,10 +13,10 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.blankett.LagSaksbehandlingsblankettTask
-import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brev.ef.BrevService
 import no.nav.familie.klage.distribusjon.DistribusjonService
-import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.distribusjon.SendTilKabalTask
+import no.nav.familie.klage.distribusjon.ef.JournalførBrevTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
@@ -90,7 +90,7 @@ internal class FerdigstillBehandlingServiceTest {
         every { behandlingService.hentBehandling(any()) } returns behandling
         every { fagsakService.hentFagsakForBehandling(any()) } returns fagsak
         every { distribusjonService.journalførBrev(any(), any(), any(), any(), any()) } returns journalpostId
-        every { distribusjonService.distribuerBrev(any()) } returns brevDistribusjonId
+        every { distribusjonService.distribuerBrev(any(), any()) } returns brevDistribusjonId
         every { vurderingService.hentVurdering(any()) } returns vurdering
         every { kabalService.sendTilKabal(any(), any(), any(), any(), any()) } just Runs
         justRun { stegService.oppdaterSteg(any(), any(), capture(stegSlot), any()) }

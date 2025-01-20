@@ -1,7 +1,7 @@
 package no.nav.familie.klage.distribusjon
 
 import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brev.ef.BrevService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.util.TaskMetadata
 import no.nav.familie.klage.kabal.KabalService
@@ -10,6 +10,7 @@ import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import org.springframework.stereotype.Service
+import java.util.Properties
 import java.util.UUID
 
 @Service
@@ -31,12 +32,21 @@ class SendTilKabalTask(
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         val vurdering =
-            vurderingService.hentVurdering(behandlingId) ?: error("Mangler vurdering på klagen - kan ikke oversendes til kabal")
+            vurderingService.hentVurdering(behandlingId)
+                ?: error("Mangler vurdering på klagen - kan ikke oversendes til kabal")
         val brevmottakere = brevService.hentBrevmottakere(behandlingId)
         kabalService.sendTilKabal(fagsak, behandling, vurdering, saksbehandlerIdent, brevmottakere)
     }
 
     companion object {
+        fun opprett(payload: String, metadata: Properties): Task {
+            return Task(
+                type = TYPE,
+                payload = payload,
+                properties = metadata,
+            )
+        }
+
         const val TYPE = "sendTilKabalTask"
     }
 }
