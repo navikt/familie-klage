@@ -3,6 +3,7 @@ package no.nav.familie.klage.distribusjon.baks
 import no.nav.familie.klage.distribusjon.DistribusjonService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.kontrakter.felles.Fagsystem
+import no.nav.familie.kontrakter.felles.dokdist.ManuellAdresse
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
@@ -33,14 +34,14 @@ class DistribuerBaksBrevTask(
         distribusjonService.distribuerBrev(
             journalpostId = payload.journalpostId,
             bestillendeFagsystem = fagsystem,
-            manuellAdresse = payload.distribuerbarBrevmottaker.adresse?.mapTilManuellAdresse(),
+            manuellAdresse = payload.manuellAdresse,
         )
     }
 
     data class Payload(
         val behandlingId: UUID,
         val journalpostId: String,
-        val distribuerbarBrevmottaker: DistribuerbarBrevmottaker,
+        val manuellAdresse: ManuellAdresse? = null,
     )
 
     companion object {

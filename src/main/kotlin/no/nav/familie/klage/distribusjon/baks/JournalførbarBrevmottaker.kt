@@ -8,22 +8,22 @@ import no.nav.familie.kontrakter.felles.dokdist.ManuellAdresse
 
 private const val LANDKODE_NO = "NO"
 
-data class DistribuerbarBrevmottaker(
+data class JournalførbarBrevmottaker(
     val navn: String,
     val adresse: Adresse?,
     val mottakertype: Mottakertype,
 ) {
     companion object {
-        fun opprettForBruker(navn: String): DistribuerbarBrevmottaker {
-            return DistribuerbarBrevmottaker(
+        fun opprettForBruker(navn: String): JournalførbarBrevmottaker {
+            return JournalførbarBrevmottaker(
                 navn,
                 null,
                 Mottakertype.BRUKER,
             )
         }
 
-        fun opprettForBrevmottaker(brevmottaker: Brevmottaker): DistribuerbarBrevmottaker {
-            return DistribuerbarBrevmottaker(
+        fun opprettForBrevmottaker(brevmottaker: Brevmottaker): JournalførbarBrevmottaker {
+            return JournalførbarBrevmottaker(
                 brevmottaker.navn,
                 Adresse.opprettForBrevmottaker(brevmottaker),
                 brevmottaker.mottakertype,
@@ -52,7 +52,7 @@ data class DistribuerbarBrevmottaker(
     }
 }
 
-fun DistribuerbarBrevmottaker.mapTilAvsenderMottaker(): AvsenderMottaker? {
+fun JournalførbarBrevmottaker.mapTilAvsenderMottaker(): AvsenderMottaker? {
     return when (mottakertype) {
         Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE,
         Mottakertype.BRUKER,
@@ -69,7 +69,7 @@ fun DistribuerbarBrevmottaker.mapTilAvsenderMottaker(): AvsenderMottaker? {
     }
 }
 
-fun DistribuerbarBrevmottaker.Adresse.mapTilManuellAdresse(): ManuellAdresse {
+fun JournalførbarBrevmottaker.Adresse.mapTilManuellAdresse(): ManuellAdresse {
     return ManuellAdresse(
         adresseType = if (this.landkode == LANDKODE_NO) AdresseType.norskPostadresse else AdresseType.utenlandskPostadresse,
         adresselinje1 = this.adresselinje1,

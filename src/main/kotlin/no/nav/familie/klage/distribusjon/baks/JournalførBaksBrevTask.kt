@@ -24,32 +24,32 @@ class JournalførBaksBrevTask(
     private val taskService: TaskService,
     private val behandlingService: BehandlingService,
     private val baksBrevService: BaksBrevService,
-    private val distribuerbarBrevmottakerUtleder: DistribuerbarBrevmottakerUtleder,
+    private val journalførbarBrevmottakerUtleder: JournalførbarBrevmottakerUtleder,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
         val brev = baksBrevService.hentBrev(behandlingId)
-        val distribuerbarBrevmottakere =
-            distribuerbarBrevmottakerUtleder.utledDistribuerbareBrevmottakereForBehandling(behandlingId)
+        val journalførbareBrevmottakere =
+            journalførbarBrevmottakerUtleder.utledJournalførbareBrevmottakere(behandlingId)
 
-        if (distribuerbarBrevmottakere.isEmpty()) {
-            throw IllegalStateException("Må ha minimum en brevmottaker i task ${task.id}")
+        if (journalførbareBrevmottakere.isEmpty()) {
+            throw IllegalStateException("Må ha minimum en journalførbar brevmottaker i task ${task.id}")
         }
 
-        distribuerbarBrevmottakere.forEachIndexed { index, distribuerbarBrevmottaker ->
+        journalførbareBrevmottakere.forEachIndexed { index, journalførbarBrevmottaker ->
             val journalpostId = distribusjonService.journalførBrev(
                 behandlingId,
                 brev.pdfSomBytes(),
                 task.metadata[saksbehandlerMetadataKey].toString(),
                 index,
-                distribuerbarBrevmottaker.mapTilAvsenderMottaker(),
+                journalførbarBrevmottaker.mapTilAvsenderMottaker(),
             )
             val distribuerBaksBrevTask = DistribuerBaksBrevTask.opprett(
                 DistribuerBaksBrevTask.Payload(
                     behandlingId,
                     journalpostId,
-                    distribuerbarBrevmottaker,
+                    journalførbarBrevmottaker.adresse?.mapTilManuellAdresse(),
                 ),
                 task.metadata,
             )

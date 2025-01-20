@@ -8,22 +8,22 @@ import java.util.UUID
 
 // TODO : Rename me
 @Component
-class DistribuerbarBrevmottakerUtleder(
+class JournalførbarBrevmottakerUtleder(
     private val personopplysningerService: PersonopplysningerService,
     private val brevmottakerService: BrevmottakerService,
 ) {
     // TODO : Rename me
-    fun utledDistribuerbareBrevmottakereForBehandling(behandlingId: UUID): List<DistribuerbarBrevmottaker> {
+    fun utledJournalførbareBrevmottakere(behandlingId: UUID): List<JournalførbarBrevmottaker> {
         val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
         val brevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
 
         if (brevmottakere.isEmpty()) {
-            return listOf(DistribuerbarBrevmottaker.opprettForBruker(personopplysninger.navn))
+            return listOf(JournalførbarBrevmottaker.opprettForBruker(personopplysninger.navn))
         }
 
         if (brevmottakere.any { it.mottakertype == Mottakertype.DØDSBO }) {
             val dødsbo = brevmottakere.first { it.mottakertype == Mottakertype.DØDSBO }
-            return listOf(DistribuerbarBrevmottaker.opprettForBrevmottaker(dødsbo))
+            return listOf(JournalførbarBrevmottaker.opprettForBrevmottaker(dødsbo))
         }
 
         val brukerMedUtenlandskAdresse = brevmottakere.find {
@@ -31,14 +31,14 @@ class DistribuerbarBrevmottakerUtleder(
         }
 
         val bruker = if (brukerMedUtenlandskAdresse != null) {
-            DistribuerbarBrevmottaker.opprettForBrevmottaker(brukerMedUtenlandskAdresse)
+            JournalførbarBrevmottaker.opprettForBrevmottaker(brukerMedUtenlandskAdresse)
         } else {
-            DistribuerbarBrevmottaker.opprettForBruker(personopplysninger.navn)
+            JournalførbarBrevmottaker.opprettForBruker(personopplysninger.navn)
         }
 
         val fullmektigEllerVerge = brevmottakere
             .find { it.erFullmektigEllerVerge() }
-            ?.let { DistribuerbarBrevmottaker.opprettForBrevmottaker(it) }
+            ?.let { JournalførbarBrevmottaker.opprettForBrevmottaker(it) }
 
         return listOfNotNull(bruker, fullmektigEllerVerge)
     }
