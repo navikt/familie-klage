@@ -2,7 +2,7 @@ package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
-import no.nav.familie.klage.brev.domain.BrevmottakerPerson
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalpost
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
@@ -60,7 +60,7 @@ internal class BrevRepositoryTest : OppslagSpringRunnerTest() {
         pdf = Fil("123".toByteArray()),
         mottakere = Brevmottakere(
             personer = listOf(
-                BrevmottakerPerson("ident", "navn", MottakerRolle.BRUKER),
+                BrevmottakerPersonMedIdent("ident", MottakerRolle.BRUKER, "navn"),
             ),
             organisasjoner = listOf(BrevmottakerOrganisasjon("orgnr", "navn", "mottaker")),
         ),

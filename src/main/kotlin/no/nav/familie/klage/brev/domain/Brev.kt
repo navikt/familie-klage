@@ -24,11 +24,22 @@ data class BrevmottakereJournalposter(
     val journalposter: List<BrevmottakereJournalpost>,
 )
 
-data class BrevmottakereJournalpost(
-    val ident: String,
-    val journalpostId: String,
-    val distribusjonId: String? = null,
-)
+data class BrevmottakereJournalpostMedIdent(
+    val ident: String?, // Enten personnummer eller orgnummer
+    override val journalpostId: String,
+    override val distribusjonId: String? = null,
+) : BrevmottakereJournalpost
+
+data class BrevmottakereJournalpostUtenIdent(
+    val idForBrevmottakereUtenIdent: UUID?,
+    override val journalpostId: String,
+    override val distribusjonId: String? = null,
+) : BrevmottakereJournalpost
+
+sealed interface BrevmottakereJournalpost {
+    val journalpostId: String
+    val distribusjonId: String?
+}
 
 data class Brevmottakere(
     val personer: List<BrevmottakerPerson> = emptyList(),
@@ -39,18 +50,37 @@ enum class MottakerRolle {
     BRUKER,
     VERGE,
     FULLMAKT,
+    BRUKER_MED_UTENLANDSK_ADRESSE,
+    DØDSBO,
 }
 
-data class BrevmottakerPerson(
+// TODO : Kan man endre navnet på disse klassene?
+data class BrevmottakerPersonMedIdent(
     val personIdent: String,
-    val navn: String,
-    val mottakerRolle: MottakerRolle,
-) : Brevmottaker()
+    override val mottakerRolle: MottakerRolle,
+    override val navn: String,
+) : BrevmottakerPerson
+
+data class BrevmottakerPersonUtenIdent(
+    val id: UUID = UUID.randomUUID(),
+    override val mottakerRolle: MottakerRolle,
+    override val navn: String,
+    val adresselinje1: String,
+    val adresselinje2: String?,
+    val postnummer: String?,
+    val poststed: String?,
+    val landkode: String,
+) : BrevmottakerPerson
+
+sealed interface BrevmottakerPerson : Brevmottaker {
+    val navn: String
+    val mottakerRolle: MottakerRolle
+}
 
 data class BrevmottakerOrganisasjon(
     val organisasjonsnummer: String,
     val organisasjonsnavn: String,
     val navnHosOrganisasjon: String,
-) : Brevmottaker()
+) : Brevmottaker
 
-sealed class Brevmottaker
+sealed interface Brevmottaker

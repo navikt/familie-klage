@@ -9,7 +9,7 @@ import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
-import no.nav.familie.klage.brev.domain.BrevmottakerPerson
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalpost
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
@@ -68,7 +68,13 @@ internal class JournalførBrevTaskTest {
         every { taskService.save(capture(taskSlots)) } answers { firstArg() }
         every { behandlingService.hentBehandling(any()) } returns DomainUtil.behandling(resultat = BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST)
 
-        journalførBrevTask.onCompletion(Task(JournalførBrevTask.TYPE, behandlingId.toString(), propertiesMedJournalpostId))
+        journalførBrevTask.onCompletion(
+            Task(
+                JournalførBrevTask.TYPE,
+                behandlingId.toString(),
+                propertiesMedJournalpostId,
+            ),
+        )
 
         assertThat(taskSlots).hasSize(1)
         assertThat(taskSlots.first().type).isEqualTo(DistribuerBrevTask.TYPE)
@@ -80,7 +86,13 @@ internal class JournalførBrevTaskTest {
         every { taskService.save(capture(taskSlots)) } answers { firstArg() }
         every { behandlingService.hentBehandling(any()) } returns DomainUtil.behandling(resultat = BehandlingResultat.IKKE_MEDHOLD)
 
-        journalførBrevTask.onCompletion(Task(JournalførBrevTask.TYPE, behandlingId.toString(), propertiesMedJournalpostId))
+        journalførBrevTask.onCompletion(
+            Task(
+                JournalførBrevTask.TYPE,
+                behandlingId.toString(),
+                propertiesMedJournalpostId,
+            ),
+        )
 
         assertThat(taskSlots).hasSize(2)
         assertThat(taskSlots.first().type).isEqualTo(SendTilKabalTask.TYPE)
@@ -96,8 +108,8 @@ internal class JournalførBrevTaskTest {
 
         val mottakere = Brevmottakere(
             listOf(
-                BrevmottakerPerson("1", "1navn", MottakerRolle.BRUKER),
-                BrevmottakerPerson("2", "2navn", MottakerRolle.FULLMAKT),
+                BrevmottakerPersonMedIdent("1", MottakerRolle.BRUKER, "1navn"),
+                BrevmottakerPersonMedIdent("2", MottakerRolle.FULLMAKT, "2navn"),
             ),
             listOf(BrevmottakerOrganisasjon("org1", "orgnavn", "mottaker")),
         )
@@ -160,7 +172,10 @@ internal class JournalførBrevTaskTest {
         return task
     }
 
-    private fun mockHentBrev(mottakere: Brevmottakere? = null, mottakereJournalpost: BrevmottakereJournalposter? = null) {
+    private fun mockHentBrev(
+        mottakere: Brevmottakere? = null,
+        mottakereJournalpost: BrevmottakereJournalposter? = null,
+    ) {
         every { brevService.hentBrev(behandlingId) } returns
             Brev(
                 behandlingId = behandlingId,

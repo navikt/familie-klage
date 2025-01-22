@@ -5,6 +5,8 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.brev.domain.Brevmottaker
 import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
 import no.nav.familie.klage.brev.domain.BrevmottakerPerson
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.fagsak.domain.Fagsak
@@ -46,14 +48,14 @@ class KabalService(
         OversendtKlageAnkeV3(
             type = Type.KLAGE,
             klager =
-            OversendtKlager(
-                id =
-                OversendtPartId(
-                    type = OversendtPartIdType.PERSON,
-                    verdi = fagsak.hentAktivIdent(),
+                OversendtKlager(
+                    id =
+                        OversendtPartId(
+                            type = OversendtPartIdType.PERSON,
+                            verdi = fagsak.hentAktivIdent(),
+                        ),
+                    klagersProsessfullmektig = utledFullmektigFraBrevmottakere(brevMottakere),
                 ),
-                klagersProsessfullmektig = utledFullmektigFraBrevmottakere(brevMottakere),
-            ),
             fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem.tilFellesFagsystem()),
             kildeReferanse = behandling.eksternBehandlingId.toString(),
             innsynUrl = lagInnsynUrl(fagsak, behandling.påklagetVedtak),
@@ -82,10 +84,17 @@ class KabalService(
     private fun utledPartIdFraFullmektigEllerVerge(it: Brevmottaker) =
         when (it) {
             is BrevmottakerPerson -> {
-                OversendtPartId(
-                    type = OversendtPartIdType.PERSON,
-                    verdi = it.personIdent,
-                )
+                when (it) {
+                    is BrevmottakerPersonMedIdent -> OversendtPartId(
+                        type = OversendtPartIdType.PERSON,
+                        verdi = it.personIdent,
+                    )
+
+                    is BrevmottakerPersonUtenIdent -> OversendtPartId(
+                        type = OversendtPartIdType.PERSON,
+                        verdi = it.id.toString(), // TODO : Denne er mest sannsynlig feil
+                    )
+                }
             }
 
             is BrevmottakerOrganisasjon -> {

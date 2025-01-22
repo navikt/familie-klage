@@ -4,12 +4,20 @@ import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.BrevmottakerUtil.validerMinimumEnMottaker
 import no.nav.familie.klage.brev.domain.Brev
+import no.nav.familie.klage.brev.domain.Brevmottaker
+import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalpost
+import no.nav.familie.klage.brev.domain.BrevmottakereJournalpostMedIdent
+import no.nav.familie.klage.brev.domain.BrevmottakereJournalpostUtenIdent
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.distribusjon.JournalføringUtil.mapAvsenderMottaker
+import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.personopplysninger.pdl.logger
+import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
@@ -28,11 +36,14 @@ class JournalførBrevTask(
     private val taskService: TaskService,
     private val behandlingService: BehandlingService,
     private val brevService: BrevService,
+    private val fagsakService: FagsakService,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
         val saksbehandler = task.metadata[saksbehandlerMetadataKey].toString()
+        fagsakService.hentFagsakForBehandling(behandlingId).stønadstype
+        behandlingService.hentBehandling(behandlingId).årsak
 
         val brev = brevService.hentBrev(behandlingId)
 
@@ -47,25 +58,76 @@ class JournalførBrevTask(
         saksbehandler: String,
     ) {
         val behandlingId = brev.behandlingId
-        val avsenderMottakere = mapAvsenderMottaker(mottakere)
         val journalposter = brev.mottakereJournalposter?.journalposter ?: emptyList()
         val brevPdf = brev.brevPdf()
+        mottakere.personer.foldIndexed(journalposter) { index, eksisterendeBrevmottakereJournalpost, brevmottakerPerson ->
+            brevmottakereJournalposts(
+                brevmottakerPerson,
+                eksisterendeBrevmottakereJournalpost,
+                behandlingId,
+                brevPdf,
+                saksbehandler,
+                index,
+            )
+        }
+        // TODO : Denne kan overskrive den over, burde ikke være sånn (?)
+        mottakere.organisasjoner.foldIndexed(journalposter) { index, eksisterendeBrevmottakereJournalpost, brevmottakerOrganisasjon ->
+            brevmottakereJournalposts(
+                brevmottakerOrganisasjon,
+                eksisterendeBrevmottakereJournalpost,
+                behandlingId,
+                brevPdf,
+                saksbehandler,
+                index,
+            )
+        }
+    }
 
-        avsenderMottakere.foldIndexed(journalposter) { index, acc, avsenderMottaker ->
-            if (acc.none { it.ident == avsenderMottaker.id }) {
-                val journalpostId =
-                    distribusjonService.journalførBrev(behandlingId, brevPdf, saksbehandler, index, avsenderMottaker)
-                val resultat = BrevmottakereJournalpost(
+    private fun brevmottakereJournalposts(
+        brevmottaker: Brevmottaker,
+        eksisterendeBrevmottakereJournalpost: List<BrevmottakereJournalpost>,
+        behandlingId: UUID,
+        brevPdf: ByteArray,
+        saksbehandler: String,
+        index: Int,
+    ): List<BrevmottakereJournalpost> {
+        val avsenderMottaker = mapAvsenderMottaker(brevmottaker)
+        return if (eksisterendeBrevmottakereJournalpost.none { harLikId(it, avsenderMottaker) }) {
+            val journalpostId = distribusjonService.journalførBrev(
+                behandlingId,
+                brevPdf,
+                saksbehandler,
+                index,
+                avsenderMottaker,
+            )
+            val nyBrevmottakereJournalpost = when (brevmottaker) {
+                is BrevmottakerPersonMedIdent,
+                is BrevmottakerOrganisasjon,
+                -> BrevmottakereJournalpostMedIdent(
                     ident = avsenderMottaker.id ?: error("Mangler id for mottaker=$avsenderMottaker"),
                     journalpostId = journalpostId,
                 )
-                val nyeMottakere = acc + resultat
-                brevService.oppdaterMottakerJournalpost(behandlingId, BrevmottakereJournalposter(nyeMottakere))
-                nyeMottakere
-            } else {
-                acc
+
+                is BrevmottakerPersonUtenIdent,
+                -> BrevmottakereJournalpostUtenIdent(
+                    idForBrevmottakereUtenIdent = brevmottaker.id,
+                    journalpostId = journalpostId,
+                )
             }
+            val nyeMottakere = eksisterendeBrevmottakereJournalpost + nyBrevmottakereJournalpost
+            brevService.oppdaterMottakerJournalpost(behandlingId, BrevmottakereJournalposter(nyeMottakere))
+            nyeMottakere
+        } else {
+            eksisterendeBrevmottakereJournalpost
         }
+    }
+
+    private fun harLikId(
+        it: BrevmottakereJournalpost,
+        avsenderMottaker: AvsenderMottaker,
+    ) = when (it) {
+        is BrevmottakereJournalpostMedIdent -> it.ident === avsenderMottaker.id
+        is BrevmottakereJournalpostUtenIdent -> it.idForBrevmottakereUtenIdent.toString() === avsenderMottaker.id
     }
 
     override fun onCompletion(task: Task) {

@@ -3,37 +3,93 @@ package no.nav.familie.klage.brev.baks.brevmottaker
 import jakarta.transaction.Transactional
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
+import no.nav.familie.klage.brev.BrevRepository
+import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
+import no.nav.familie.klage.brev.domain.Brevmottakere
+import no.nav.familie.klage.brev.domain.MottakerRolle
+import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.util.UUID
 
+private val MOTTAKER_ROLLER_HVOR_BRUKER_SKAL_LEGGES_TIL_VED_SLETTING = setOf(
+    MottakerRolle.DØDSBO,
+    MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+)
+
 @Component
 class BrevmottakerSletter(
-    private val brevmottakerRepository: BrevmottakerRepository,
     private val behandlingService: BehandlingService,
+    private val brevService: BrevService,
+    private val brevRepository: BrevRepository,
+    private val fagsakService: FagsakService,
+    private val personopplysningerService: PersonopplysningerService,
 ) {
     private val logger = LoggerFactory.getLogger(BrevmottakerSletter::class.java)
 
     @Transactional
     fun slettBrevmottaker(behandlingId: UUID, brevmottakerId: UUID) {
         logger.debug("Sletter brevmottaker {} for behandling {}", brevmottakerId, behandlingId)
+
         validerRedigerbarBehandling(behandlingId)
-        validerBrevmottakerEksisterer(brevmottakerId)
-        brevmottakerRepository.deleteById(brevmottakerId)
+
+        val fagsakPersonIdent = fagsakService.hentFagsakForBehandling(behandlingId).hentAktivIdent()
+        val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
+        val brev = brevService.hentBrev(behandlingId)
+
+        val brevmottakerPersoner = (brev.mottakere?.personer ?: emptyList())
+
+        val harBrevmottakerPersonBruker = brevmottakerPersoner
+            .filterIsInstance<BrevmottakerPersonMedIdent>()
+            .filter { it.mottakerRolle == MottakerRolle.BRUKER }
+            .any { it.personIdent == fagsakPersonIdent }
+
+        val brevmottakerPersonSomSkalSlettes = brevmottakerPersoner
+            .filterIsInstance<BrevmottakerPersonUtenIdent>()
+            .find { it.id == brevmottakerId }
+
+        if (brevmottakerPersonSomSkalSlettes == null) {
+            throw IllegalStateException("Brevmottaker $brevmottakerId kan ikke slettes da den ikke finnes.")
+        }
+
+        val nyeBrevmottakerPersoner = brevmottakerPersoner.filter {
+            when (it) {
+                is BrevmottakerPersonMedIdent -> true
+                is BrevmottakerPersonUtenIdent -> it.id !== brevmottakerId
+            }
+        }
+
+        val skalLeggeTilBrevmottakerPersonBrukerVedSletting = !harBrevmottakerPersonBruker &&
+            MOTTAKER_ROLLER_HVOR_BRUKER_SKAL_LEGGES_TIL_VED_SLETTING.contains(brevmottakerPersonSomSkalSlettes.mottakerRolle)
+
+        val nyeBrevmottakere = Brevmottakere(
+            personer = if (skalLeggeTilBrevmottakerPersonBrukerVedSletting) {
+                val brevmottakerPersonBruker = BrevmottakerPersonMedIdent(
+                    personIdent = fagsakPersonIdent,
+                    navn = personopplysninger.navn,
+                    mottakerRolle = MottakerRolle.BRUKER,
+                )
+                nyeBrevmottakerPersoner + brevmottakerPersonBruker
+            } else {
+                nyeBrevmottakerPersoner
+            },
+        )
+
+        brevRepository.update(
+            brev.copy(
+                mottakere = nyeBrevmottakere,
+            ),
+        )
     }
 
     private fun validerRedigerbarBehandling(behandlingId: UUID) {
         val behandling = behandlingService.hentBehandling(behandlingId)
         if (behandling.status.erLåstForVidereBehandling()) {
             throw Feil("Behandling $behandlingId er låst for videre behandling.")
-        }
-    }
-
-    private fun validerBrevmottakerEksisterer(brevmottakerId: UUID) {
-        val eksisterer = brevmottakerRepository.existsById(brevmottakerId)
-        if (!eksisterer) {
-            throw Feil("Brevmottaker $brevmottakerId kan ikke slettes da den ikke finnes.")
         }
     }
 }
