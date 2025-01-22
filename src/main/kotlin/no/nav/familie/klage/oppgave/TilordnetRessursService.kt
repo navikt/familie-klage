@@ -48,6 +48,7 @@ class TilordnetRessursService(
                 prioritet = oppgave.prioritet,
                 fristFerdigstillelse = oppgave.fristFerdigstillelse ?: "",
                 mappeId = oppgave.mappeId,
+                versjon = oppgave.versjon,
             )
         } else {
             throw ApiFeil(

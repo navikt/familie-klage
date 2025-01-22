@@ -38,6 +38,24 @@ class OppgaveService(
         oppgaveClient.oppdaterOppgave(oppdatertOppgave)
     }
 
+    fun fordelOppgave(
+        gsakOppgaveId: Long,
+        saksbehandler: String,
+        versjon: Int? = null,
+    ): Long {
+        val oppgave = hentOppgave(gsakOppgaveId)
+
+        return if (oppgave.tilordnetRessurs == saksbehandler) {
+            gsakOppgaveId
+        } else {
+            oppgaveClient.fordelOppgave(
+                oppgaveId = gsakOppgaveId,
+                saksbehandler = saksbehandler,
+                versjon = versjon,
+            )
+        }
+    }
+
     fun finnMapper(enheter: List<String>): List<MappeDto> {
         val mapper = enheter.flatMap { enhet -> finnMapperFraCache(enhet = enhet) }
         return mapper.sortedBy { mappe -> mappe.navn }
