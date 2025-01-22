@@ -1,12 +1,16 @@
 package no.nav.familie.klage.behandling
 
 import io.mockk.every
+import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.slot
 import io.mockk.unmockkObject
 import io.mockk.verify
 import no.nav.familie.klage.behandling.dto.OppgaveDto
+import no.nav.familie.klage.behandling.dto.SettPåVentRequest
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
+import no.nav.familie.klage.behandlingshistorikk.domain.HistorikkHendelse
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.oppgave.OppgaveService
 import no.nav.familie.klage.oppgave.TilordnetRessursService
@@ -16,6 +20,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgavePrioritet
 import no.nav.familie.prosessering.internal.TaskService
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -54,6 +59,51 @@ class BehandlingPåVentServiceTest {
     }
 
     @Nested
+    inner class SettPåVent {
+        @Test
+        fun `skal oppdatere oppgavebeskrivelse, prioritet, frist og mappe ved sett på vent`() {
+            mockHentBehandling(BehandlingStatus.UTREDES)
+
+            val oppgaveSlot = slot<Oppgave>()
+            val oppgaveId = 1234567L
+            val eksisterendeOppgave = oppgave(oppgaveId)
+
+            every { oppgaveService.hentOppgave(oppgaveId) } returns eksisterendeOppgave
+
+            every { oppgaveService.oppdaterOppgave(capture(oppgaveSlot)) } returns oppgaveId
+
+            val settPåVentRequest = settPåVentRequest(oppgaveId)
+
+            behandlingPåVentService.settPåVent(
+                behandlingId = behandlingId,
+                settPåVentRequest = settPåVentRequest
+            )
+
+            verify {
+                behandlingService.oppdaterStatusPåBehandling(
+                    behandlingId = behandlingId,
+                    status = BehandlingStatus.SATT_PÅ_VENT
+                )
+            }
+
+            verify {
+                behandlinghistorikkService.opprettBehandlingshistorikk(
+                    behandlingId = behandlingId,
+                    steg = any(),
+                    historikkHendelse = HistorikkHendelse.SATT_PÅ_VENT
+                )
+            }
+
+            assertThat(oppgaveSlot.captured.beskrivelse).isNotEqualTo(eksisterendeOppgave.beskrivelse)
+            assertThat(oppgaveSlot.captured.mappeId).isEqualTo(settPåVentRequest.mappe)
+            assertThat(oppgaveSlot.captured.tilordnetRessurs).isEqualTo(settPåVentRequest.saksbehandler)
+            assertThat(oppgaveSlot.captured.prioritet).isEqualTo(settPåVentRequest.prioritet)
+            assertThat(oppgaveSlot.captured.fristFerdigstillelse).isEqualTo(settPåVentRequest.frist)
+            assertThat(oppgaveSlot.captured.id).isEqualTo(settPåVentRequest.oppgaveId)
+        }
+    }
+
+    @Nested
     inner class TaAvVent {
         @BeforeEach
         internal fun setUp() {
@@ -61,7 +111,7 @@ class BehandlingPåVentServiceTest {
         }
 
         @Test
-        internal fun `sett ny saksbehandler oppgave når behandling tas av vent`() {
+        internal fun `sett ny saksbehandler på oppgave når behandling tas av vent`() {
             val oppgaveId = 1234567L
             mockSettSaksbehandlerPåOppgave(oppgaveId)
 
@@ -114,4 +164,15 @@ class BehandlingPåVentServiceTest {
             fristFerdigstillelse = LocalDate.of(2025, Month.JANUARY, 1).toString(),
             prioritet = OppgavePrioritet.NORM,
         )
+
+    private fun settPåVentRequest(oppgaveId: Long): SettPåVentRequest = SettPåVentRequest(
+        oppgaveId = oppgaveId,
+        saksbehandler = "Ny saksbehandler",
+        prioritet = OppgavePrioritet.NORM,
+        frist = LocalDate.now().toString(),
+        mappe = 102,
+        beskrivelse = "Ny beskrivelse, heyo!",
+        oppgaveVersjon = 1,
+        innstillingsoppgaveBeskjed = null
+    )
 }
