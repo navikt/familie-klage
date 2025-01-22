@@ -63,7 +63,7 @@ class BehandlingPåVentServiceTest {
     @Nested
     inner class SettPåVent {
         @Test
-        fun `skal feile når behandling settes på vent og oppgave er ferdigstilt`() {
+        fun `skal feile når behandling settes på vent og klagebehandling er ferdigstilt`() {
             mockHentBehandling(BehandlingStatus.FERDIGSTILT)
 
             val feil: ApiFeil = assertThrows { behandlingPåVentService.validerKanSettePåVent(BehandlingStatus.FERDIGSTILT) }
@@ -122,7 +122,7 @@ class BehandlingPåVentServiceTest {
         }
 
         @Test
-        fun `skal feile når man tar behandling av vent og status ikke er SATT_PÅ_VENT`() {
+        fun `skal feile når man tar klagebehandling av vent og status ikke er SATT_PÅ_VENT`() {
             mockHentBehandling(BehandlingStatus.FERDIGSTILT)
 
             val feil: ApiFeil = assertThrows { behandlingPåVentService.validerKanTaAvVent(BehandlingStatus.FERDIGSTILT) }
