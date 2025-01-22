@@ -143,6 +143,7 @@ class BehandlingPåVentServiceTest {
                     status = BehandlingStatus.UTREDES,
                 )
             }
+
             verify {
                 oppgaveService.fordelOppgave(
                     gsakOppgaveId = oppgaveId,
@@ -161,6 +162,7 @@ class BehandlingPåVentServiceTest {
 
     private fun mockSettSaksbehandlerPåOppgave(oppgaveId: Long) {
         val oppgave = oppgave(oppgaveId)
+
         every { tilordnetRessursService.hentOppgave(behandlingId) } returns OppgaveDto(
             oppgaveId = oppgave.id,
             tildeltEnhetsnr = oppgave.tildeltEnhetsnr,
@@ -171,6 +173,7 @@ class BehandlingPåVentServiceTest {
             mappeId = oppgave.mappeId,
             versjon = oppgave.versjon,
         )
+
         every { oppgaveService.fordelOppgave(any(), any(), any()) } returns oppgaveId
     }
 
