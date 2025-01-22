@@ -8,6 +8,7 @@ import io.mockk.verifyOrder
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalpost
+import no.nav.familie.klage.brev.domain.BrevmottakereJournalpostMedIdent
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.prosessering.domene.Task
@@ -112,7 +113,7 @@ internal class DistribuerBrevTaskTest {
     }
 
     private fun journalpost(journalpostId: String, distribusjonId: String? = null) =
-        BrevmottakereJournalpost("ident", journalpostId, distribusjonId = distribusjonId)
+        BrevmottakereJournalpostMedIdent("ident", journalpostId, distribusjonId = distribusjonId)
 
     private fun doTask() {
         distribuerBrevTask.doTask(Task(DistribuerBrevTask.TYPE, behandlingId.toString()))

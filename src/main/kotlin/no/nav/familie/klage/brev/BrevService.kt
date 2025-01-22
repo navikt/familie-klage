@@ -6,16 +6,12 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
-import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerMinimumEnMottaker
-import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerUnikeBrevmottakere
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
-import no.nav.familie.klage.brevmottaker.dto.BrevmottakereDto
-import no.nav.familie.klage.brevmottaker.dto.tilDomene
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.felles.domain.Fil
@@ -49,24 +45,6 @@ class BrevService(
 ) {
 
     fun hentBrev(behandlingId: UUID): Brev = brevRepository.findByIdOrThrow(behandlingId)
-
-    fun hentBrevmottakere(behandlingId: UUID): Brevmottakere {
-        val brev = brevRepository.findByIdOrThrow(behandlingId)
-        return brev.mottakere ?: Brevmottakere()
-    }
-
-    fun settBrevmottakere(behandlingId: UUID, brevmottakere: BrevmottakereDto) {
-        val behandling = behandlingService.hentBehandling(behandlingId)
-        validerKanLageBrev(behandling)
-
-        val mottakere = brevmottakere.tilDomene()
-
-        validerUnikeBrevmottakere(mottakere)
-        validerMinimumEnMottaker(mottakere)
-
-        val brev = brevRepository.findByIdOrThrow(behandlingId)
-        brevRepository.update(brev.copy(mottakere = mottakere))
-    }
 
     fun lagBrev(behandlingId: UUID): ByteArray {
         val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
@@ -130,6 +108,7 @@ class BrevService(
                     klageMottatt = klageMottatt,
                 )
             }
+
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> {
                 val formkrav = formService.hentForm(behandling.id)
                 return when (behandling.påklagetVedtak.påklagetVedtakstype) {
@@ -139,6 +118,7 @@ class BrevService(
                         formkrav = formkrav,
                         stønadstype = fagsak.stønadstype,
                     )
+
                     else -> brevInnholdUtleder.lagFormkravAvvistBrev(
                         ident = fagsak.hentAktivIdent(),
                         navn = navn,
@@ -149,6 +129,7 @@ class BrevService(
                     )
                 }
             }
+
             BehandlingResultat.MEDHOLD,
             BehandlingResultat.IKKE_SATT,
             BehandlingResultat.HENLAGT,

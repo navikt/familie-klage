@@ -3,6 +3,8 @@ package no.nav.familie.klage.distribusjon
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalpost
+import no.nav.familie.klage.brev.domain.BrevmottakereJournalpostMedIdent
+import no.nav.familie.klage.brev.domain.BrevmottakereJournalpostUtenIdent
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.prosessering.AsyncTaskStep
@@ -46,7 +48,10 @@ class DistribuerBrevTask(
             val distribusjonId = distribusjonService.distribuerBrev(journalpost.journalpostId)
             val nyeJournalposter = acc.map {
                 if (it.journalpostId == journalpost.journalpostId) {
-                    it.copy(distribusjonId = distribusjonId)
+                    when (it) {
+                        is BrevmottakereJournalpostMedIdent -> it.copy(distribusjonId = distribusjonId)
+                        is BrevmottakereJournalpostUtenIdent -> it.copy(distribusjonId = distribusjonId)
+                    }
                 } else {
                     it
                 }
