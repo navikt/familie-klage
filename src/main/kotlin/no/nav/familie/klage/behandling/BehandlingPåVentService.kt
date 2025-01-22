@@ -26,7 +26,7 @@ class BehandlingPåVentService(
     private val oppgaveService: OppgaveService,
     private val behandlinghistorikkService: BehandlingshistorikkService,
     private val taskService: TaskService,
-    private val tilordnetRessursService: TilordnetRessursService
+    private val tilordnetRessursService: TilordnetRessursService,
 ) {
     val logger: Logger = LoggerFactory.getLogger(javaClass)
 
@@ -91,13 +91,13 @@ class BehandlingPåVentService(
         )
     }
 
-    private fun validerKanSettePåVent(behandlingStatus: BehandlingStatus) {
+    fun validerKanSettePåVent(behandlingStatus: BehandlingStatus) {
         brukerfeilHvis(behandlingStatus.erLåstForVidereBehandling()) {
             "Kan ikke sette behandling med status $behandlingStatus på vent"
         }
     }
 
-    private fun validerKanTaAvVent(behandlingStatus: BehandlingStatus) {
+    fun validerKanTaAvVent(behandlingStatus: BehandlingStatus) {
         brukerfeilHvis(behandlingStatus != BehandlingStatus.SATT_PÅ_VENT) {
             "Kan ikke ta behandling med status $behandlingStatus av vent"
         }
@@ -111,7 +111,7 @@ class BehandlingPåVentService(
             oppgaveService.fordelOppgave(
                 gsakOppgaveId = oppgaveId,
                 saksbehandler = SikkerhetContext.hentSaksbehandler(),
-                versjon = oppgave.versjon
+                versjon = oppgave.versjon,
             )
         } else {
             logger.warn("Fant ikke oppgave med id $behandlingId")
