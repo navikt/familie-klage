@@ -36,6 +36,7 @@ class BehandlingPåVentServiceTest {
     private val behandlinghistorikkService = mockk<BehandlingshistorikkService>(relaxed = true)
     private val taskService = mockk<TaskService>(relaxed = true)
     private val tilordnetRessursService = mockk<TilordnetRessursService>(relaxed = true)
+    private val oppgaveBeskrivelseService = mockk<OppgaveBeskrivelseService>(relaxed = true)
 
     private val fagsakEf = fagsak()
     private val behandling = behandling(fagsakEf)
@@ -47,6 +48,7 @@ class BehandlingPåVentServiceTest {
         behandlinghistorikkService = behandlinghistorikkService,
         taskService = taskService,
         tilordnetRessursService = tilordnetRessursService,
+        oppgaveBeskrivelseService = oppgaveBeskrivelseService,
     )
 
     @BeforeEach
@@ -66,7 +68,8 @@ class BehandlingPåVentServiceTest {
         fun `skal feile når behandling settes på vent og klagebehandling er ferdigstilt`() {
             mockHentBehandling(BehandlingStatus.FERDIGSTILT)
 
-            val feil: ApiFeil = assertThrows { behandlingPåVentService.validerKanSettePåVent(BehandlingStatus.FERDIGSTILT) }
+            val feil: ApiFeil =
+                assertThrows { behandlingPåVentService.validerKanSettePåVent(BehandlingStatus.FERDIGSTILT) }
 
             assertThat(feil.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
         }
@@ -125,7 +128,8 @@ class BehandlingPåVentServiceTest {
         fun `skal feile når man tar klagebehandling av vent og status ikke er SATT_PÅ_VENT`() {
             mockHentBehandling(BehandlingStatus.FERDIGSTILT)
 
-            val feil: ApiFeil = assertThrows { behandlingPåVentService.validerKanTaAvVent(BehandlingStatus.FERDIGSTILT) }
+            val feil: ApiFeil =
+                assertThrows { behandlingPåVentService.validerKanTaAvVent(BehandlingStatus.FERDIGSTILT) }
 
             assertThat(feil.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
         }
