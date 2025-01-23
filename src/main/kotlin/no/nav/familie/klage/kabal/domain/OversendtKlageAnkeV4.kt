@@ -1,9 +1,6 @@
-package no.nav.familie.klage.kabal
+package no.nav.familie.klage.kabal.domain
 
-import no.nav.familie.klage.kabal.domain.OversendtDokumentReferanse
-import no.nav.familie.klage.kabal.domain.OversendtPartId
-import no.nav.familie.klage.kabal.domain.OversendtSak
-import no.nav.familie.klage.kabal.domain.Ytelse
+import no.nav.familie.klage.kabal.KabalHjemmel
 import java.time.LocalDate
 import java.time.LocalDateTime
 

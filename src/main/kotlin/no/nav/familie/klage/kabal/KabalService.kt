@@ -13,9 +13,13 @@ import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.tilYtelse
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
+import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV3
+import no.nav.familie.klage.kabal.domain.OversendtKlager
 import no.nav.familie.klage.kabal.domain.OversendtPartId
 import no.nav.familie.klage.kabal.domain.OversendtPartIdType
+import no.nav.familie.klage.kabal.domain.OversendtProsessfullmektig
 import no.nav.familie.klage.kabal.domain.OversendtSak
+import no.nav.familie.klage.kabal.domain.Type
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemType

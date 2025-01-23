@@ -19,8 +19,8 @@ import no.nav.familie.klage.kabal.BehandlingFeilregistrertTask
 import no.nav.familie.klage.kabal.KlagebehandlingAvsluttetDetaljer
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.OmgjoeringskravbehandlingAvsluttetDetaljer
-import no.nav.familie.klage.kabal.Type
 import no.nav.familie.klage.kabal.domain.KlageinstansResultat
+import no.nav.familie.klage.kabal.domain.Type
 import no.nav.familie.klage.oppgave.OpprettKabalEventOppgaveTask
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
@@ -131,7 +131,12 @@ internal class BehandlingEventServiceTest {
         behandlingEventService.handleEvent(
             lagBehandlingEvent(
                 BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
-                BehandlingDetaljer(ankeITrygderettenbehandlingOpprettet = AnkeITrygderettenbehandlingOpprettetDetaljer(LocalDateTime.of(2023, 6, 21, 1, 1), null)),
+                BehandlingDetaljer(
+                    ankeITrygderettenbehandlingOpprettet = AnkeITrygderettenbehandlingOpprettetDetaljer(
+                        LocalDateTime.of(2023, 6, 21, 1, 1),
+                        null,
+                    ),
+                ),
             ),
         )
 
@@ -148,7 +153,13 @@ internal class BehandlingEventServiceTest {
         behandlingEventService.handleEvent(
             lagBehandlingEvent(
                 BehandlingEventType.OMGJOERINGSKRAVBEHANDLING_AVSLUTTET,
-                BehandlingDetaljer(omgjoeringskravbehandlingAvsluttet = OmgjoeringskravbehandlingAvsluttetDetaljer(LocalDateTime.of(2023, 6, 21, 1, 1), KlageinstansUtfall.MEDHOLD_ETTER_FVL_35, emptyList())),
+                BehandlingDetaljer(
+                    omgjoeringskravbehandlingAvsluttet = OmgjoeringskravbehandlingAvsluttetDetaljer(
+                        LocalDateTime.of(2023, 6, 21, 1, 1),
+                        KlageinstansUtfall.MEDHOLD_ETTER_FVL_35,
+                        emptyList(),
+                    ),
+                ),
             ),
         )
 
@@ -165,7 +176,13 @@ internal class BehandlingEventServiceTest {
         behandlingEventService.handleEvent(
             lagBehandlingEvent(
                 BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET,
-                BehandlingDetaljer(behandlingEtterTrygderettenOpphevetAvsluttet = BehandlingEtterTrygderettenOpphevetAvsluttetDetaljer(LocalDateTime.of(2023, 6, 21, 1, 1), KlageinstansUtfall.HEVET, emptyList())),
+                BehandlingDetaljer(
+                    behandlingEtterTrygderettenOpphevetAvsluttet = BehandlingEtterTrygderettenOpphevetAvsluttetDetaljer(
+                        LocalDateTime.of(2023, 6, 21, 1, 1),
+                        KlageinstansUtfall.HEVET,
+                        emptyList(),
+                    ),
+                ),
             ),
         )
 
@@ -182,7 +199,12 @@ internal class BehandlingEventServiceTest {
         behandlingEventService.handleEvent(
             lagBehandlingEvent(
                 BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
-                BehandlingDetaljer(ankeITrygderettenbehandlingOpprettet = AnkeITrygderettenbehandlingOpprettetDetaljer(LocalDateTime.of(2023, 6, 21, 1, 1), null)),
+                BehandlingDetaljer(
+                    ankeITrygderettenbehandlingOpprettet = AnkeITrygderettenbehandlingOpprettetDetaljer(
+                        LocalDateTime.of(2023, 6, 21, 1, 1),
+                        null,
+                    ),
+                ),
             ),
         )
 
@@ -198,7 +220,12 @@ internal class BehandlingEventServiceTest {
 
         every { taskService.save(capture(taskSlot)) } returns mockk()
 
-        behandlingEventService.handleEvent(lagBehandlingEvent(BehandlingEventType.BEHANDLING_FEILREGISTRERT, BehandlingDetaljer(behandlingFeilregistrert = behandlingFeilregistrertDetaljer)))
+        behandlingEventService.handleEvent(
+            lagBehandlingEvent(
+                BehandlingEventType.BEHANDLING_FEILREGISTRERT,
+                BehandlingDetaljer(behandlingFeilregistrert = behandlingFeilregistrertDetaljer),
+            ),
+        )
 
         assertThat(taskSlot.captured.type).isEqualTo(BehandlingFeilregistrertTask.TYPE)
         assertThat(taskSlot.captured.payload).isEqualTo(behandlingMedStatusVenter.id.toString())
@@ -208,14 +235,22 @@ internal class BehandlingEventServiceTest {
     internal fun `Skal lage OpprettOppgave-task for behandlingsevent BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET`() {
         val taskSlot = slot<Task>()
 
-        val behandlingEtterTrygderettenOpphevetAvsluttetDetaljer = BehandlingEtterTrygderettenOpphevetAvsluttetDetaljer(LocalDateTime.now(), KlageinstansUtfall.HEVET, emptyList())
+        val behandlingEtterTrygderettenOpphevetAvsluttetDetaljer =
+            BehandlingEtterTrygderettenOpphevetAvsluttetDetaljer(LocalDateTime.now(), KlageinstansUtfall.HEVET, emptyList())
 
         every { taskService.save(capture(taskSlot)) } returns mockk()
 
-        behandlingEventService.handleEvent(lagBehandlingEvent(BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET, BehandlingDetaljer(behandlingEtterTrygderettenOpphevetAvsluttet = behandlingEtterTrygderettenOpphevetAvsluttetDetaljer)))
+        behandlingEventService.handleEvent(
+            lagBehandlingEvent(
+                BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET,
+                BehandlingDetaljer(behandlingEtterTrygderettenOpphevetAvsluttet = behandlingEtterTrygderettenOpphevetAvsluttetDetaljer),
+            ),
+        )
 
         assertThat(taskSlot.captured.type).isEqualTo(OpprettKabalEventOppgaveTask.TYPE)
-        assertThat(taskSlot.captured.payload).contains("Hendelse fra klage av type behandling etter trygderetten opphevet avsluttet med utfall: HEVET mottatt.")
+        assertThat(
+            taskSlot.captured.payload,
+        ).contains("Hendelse fra klage av type behandling etter trygderetten opphevet avsluttet med utfall: HEVET mottatt.")
     }
 
     private fun lagBehandlingEvent(
