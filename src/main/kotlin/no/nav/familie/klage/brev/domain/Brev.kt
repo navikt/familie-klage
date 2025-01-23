@@ -1,5 +1,10 @@
 package no.nav.familie.klage.brev.domain
 
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.felles.domain.Sporbar
 import org.springframework.data.annotation.Id
@@ -72,6 +77,7 @@ data class BrevmottakerPersonUtenIdent(
     val landkode: String,
 ) : BrevmottakerPerson
 
+@JsonDeserialize(using = BrevmottakerPersonDeserializer::class)
 sealed interface BrevmottakerPerson : Brevmottaker {
     val navn: String
     val mottakerRolle: MottakerRolle
@@ -84,3 +90,33 @@ data class BrevmottakerOrganisasjon(
 ) : Brevmottaker
 
 sealed interface Brevmottaker
+
+// TODO : Dette må gjøres bedre
+internal class BrevmottakerPersonDeserializer : JsonDeserializer<BrevmottakerPerson>() {
+    override fun deserialize(jsonParser: JsonParser, context: DeserializationContext): BrevmottakerPerson {
+        val node = jsonParser.codec.readTree<JsonNode>(jsonParser)
+        return if (node.get("personIdent") != null) {
+            // val test1 = objectMapper.readValue(jsonParser, BrevmottakerPersonMedIdent::class.java)
+            BrevmottakerPersonMedIdent(
+                personIdent = node.get("personIdent").asText(),
+                mottakerRolle = MottakerRolle.valueOf(node.get("mottakerRolle").asText()),
+                navn = node.get("navn").asText(),
+            )
+        } else {
+            // val test2 = objectMapper.readValue(jsonParser, BrevmottakerPersonUtenIdent::class.java)
+            val adresselinje2 = node.get("adresselinje2").asText()
+            val postnummer = node.get("postnummer").asText()
+            val poststed = node.get("poststed").asText()
+            BrevmottakerPersonUtenIdent(
+                id = UUID.fromString(node.get("id").asText()),
+                mottakerRolle = MottakerRolle.valueOf(node.get("mottakerRolle").asText()),
+                navn = node.get("navn").asText(),
+                adresselinje1 = node.get("adresselinje1").asText(),
+                adresselinje2 = if (adresselinje2 != "null") adresselinje2 else null,
+                postnummer = if (postnummer != "null") postnummer else null,
+                poststed = if (poststed != "null") poststed else null,
+                landkode = node.get("landkode").asText(),
+            )
+        }
+    }
+}

@@ -1,11 +1,12 @@
 package no.nav.familie.klage.brev.baks.brevmottaker
 
+import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 
 private const val LANDKODE_NO = "NO"
 
-data class NyBrevmottakerDto(
-    val mottakertype: Mottakertype,
+data class NyBrevmottakerPersonUtenIdentDto(
+    val mottakerRolle: MottakerRolle,
     val navn: String,
     val adresselinje1: String,
     val adresselinje2: String?,
@@ -14,8 +15,8 @@ data class NyBrevmottakerDto(
     val landkode: String,
 ) {
     fun valider() {
-        if (mottakertype == Mottakertype.BRUKER) {
-            throw ApiFeil.badRequest("Det er ikke mulig å sette ${Mottakertype.BRUKER} for saksbehandler.")
+        if (mottakerRolle == MottakerRolle.BRUKER) {
+            throw ApiFeil.badRequest("Det er ikke mulig å sette ${MottakerRolle.BRUKER} for saksbehandler.")
         }
         if (landkode.length != 2) {
             throw ApiFeil.badRequest("Ugyldig landkode: $landkode.")
@@ -36,7 +37,7 @@ data class NyBrevmottakerDto(
             if (postnummer.length != 4 || !postnummer.all { it.isDigit() }) {
                 throw ApiFeil.badRequest("Postnummer må være 4 siffer.")
             }
-            if (mottakertype == Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE) {
+            if (mottakerRolle == MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE) {
                 throw ApiFeil.badRequest("Bruker med utenlandsk adresse kan ikke ha landkode $LANDKODE_NO.")
             }
         } else {

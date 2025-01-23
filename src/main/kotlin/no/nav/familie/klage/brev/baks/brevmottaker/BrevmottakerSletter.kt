@@ -59,7 +59,7 @@ class BrevmottakerSletter(
         val nyeBrevmottakerPersoner = brevmottakerPersoner.filter {
             when (it) {
                 is BrevmottakerPersonMedIdent -> true
-                is BrevmottakerPersonUtenIdent -> it.id !== brevmottakerId
+                is BrevmottakerPersonUtenIdent -> it.id != brevmottakerId
             }
         }
 

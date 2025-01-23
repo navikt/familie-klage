@@ -1,5 +1,6 @@
 package no.nav.familie.klage.brev.baks.brevmottaker
 
+import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -25,41 +26,38 @@ class BrevmottakerController(
     @GetMapping("/{behandlingId}")
     fun hentBrevmottakere(
         @PathVariable behandlingId: UUID,
-    ): Ressurs<List<BrevmottakerDto>> {
+    ): Ressurs<Brevmottakere> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
-        val brevmottakerDtos = brevmottakerService
-            .hentBrevmottakere(behandlingId)
-            .map { BrevmottakerDtoMapper.tilDto(it) }
-        return Ressurs.success(brevmottakerDtos)
+        val brevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
+        return Ressurs.success(brevmottakere)
     }
 
     @PostMapping("/{behandlingId}")
     fun opprettBrevmottakere(
         @PathVariable behandlingId: UUID,
-        @RequestBody nyBrevmottakerDto: NyBrevmottakerDto,
-    ): Ressurs<List<BrevmottakerDto>> {
+        @RequestBody nyBrevmottakerPersonUtenIdentDto: NyBrevmottakerPersonUtenIdentDto,
+    ): Ressurs<Brevmottakere> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.CREATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        nyBrevmottakerDto.valider()
-        brevmottakerService.opprettBrevmottaker(behandlingId, NyBrevmottakerDtoMapper.tilDomene(nyBrevmottakerDto))
-        val brevmottakerDtos = brevmottakerService
-            .hentBrevmottakere(behandlingId)
-            .map { BrevmottakerDtoMapper.tilDto(it) }
-        return Ressurs.success(brevmottakerDtos)
+        nyBrevmottakerPersonUtenIdentDto.valider()
+        brevmottakerService.opprettBrevmottaker(
+            behandlingId,
+            NyBrevmottakerPersonUtenIdentMapper.tilDomene(nyBrevmottakerPersonUtenIdentDto),
+        )
+        val brevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
+        return Ressurs.success(brevmottakere)
     }
 
     @DeleteMapping("/{behandlingId}/{brevmottakerId}")
     fun slettBrevmottakere(
         @PathVariable behandlingId: UUID,
         @PathVariable brevmottakerId: UUID,
-    ): Ressurs<List<BrevmottakerDto>> {
+    ): Ressurs<Brevmottakere> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.DELETE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         brevmottakerService.slettBrevmottaker(behandlingId, brevmottakerId)
-        val brevmottakerDtos = brevmottakerService
-            .hentBrevmottakere(behandlingId)
-            .map { BrevmottakerDtoMapper.tilDto(it) }
-        return Ressurs.success(brevmottakerDtos)
+        val brevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
+        return Ressurs.success(brevmottakere)
     }
 }

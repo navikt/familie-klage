@@ -1,9 +1,11 @@
 package no.nav.familie.klage.brev.baks.brevmottaker
 
+import no.nav.familie.klage.brev.domain.MottakerRolle
+
 private const val LANDKODE_NO = "NO"
 
-data class NyBrevmottaker(
-    val mottakertype: Mottakertype,
+data class NyBrevmottakerPersonUtenIdent(
+    val mottakerRolle: MottakerRolle,
     val navn: String,
     val adresselinje1: String,
     val adresselinje2: String? = null,
@@ -31,7 +33,7 @@ data class NyBrevmottaker(
             if (postnummer.length != 4 || !postnummer.all { it.isDigit() }) {
                 throw IllegalStateException("Postnummer må være 4 siffer.")
             }
-            if (mottakertype == Mottakertype.BRUKER_MED_UTENLANDSK_ADRESSE) {
+            if (mottakerRolle == MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE) {
                 throw IllegalStateException("Bruker med utenlandsk adresse kan ikke ha landkode $LANDKODE_NO.")
             }
         } else {
