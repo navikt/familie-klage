@@ -20,14 +20,17 @@ class OppgaveBeskrivelseService(
         mappeEndring: Long?,
         beskrivelse: String,
     ): String {
-        val tilordnetSaksbehandler = utledTilordnetSaksbehandlerBeskrivelse(oppgave, saksbehandler)
-        val prioritet = utledPrioritetBeskrivelse(oppgave, prioritetEndring)
-        val frist = utledFristBeskrivelse(oppgave, fristEndring)
-        val mappe = utledMappeBeskrivelse(oppgave, mappeEndring)
+        val tilordnetSaksbehandler = utledTilordnetSaksbehandlerBeskrivelse(
+            oppgave = oppgave,
+            saksbehandler = saksbehandler,
+        )
+        val prioritet = utledPrioritetBeskrivelse(oppgave = oppgave, prioritetEndring = prioritetEndring)
+        val frist = utledFristBeskrivelse(oppgave = oppgave, fristEndring = fristEndring)
+        val mappe = utledMappeBeskrivelse(oppgave = oppgave, mappeEndring = mappeEndring)
 
         val endringer = listOf(tilordnetSaksbehandler, prioritet, frist, mappe)
         val harEndringer = endringer.any { it.isNotBlank() }
-        val nyBeskrivelse = utledNyBeskrivelse(beskrivelse)
+        val nyBeskrivelse = utledNyBeskrivelse(beskrivelse = beskrivelse)
         val skalOppdatereBeskrivelse = harEndringer || nyBeskrivelse.isNotBlank()
 
         val tidligereBeskrivelse = oppgave.beskrivelse.takeIf { skalOppdatereBeskrivelse && it?.isNotBlank() == true }
