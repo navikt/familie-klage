@@ -1,5 +1,7 @@
 package no.nav.familie.klage.kabal.domain
 
+import no.nav.familie.klage.brev.domain.Brevmottakere
+import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.kontrakter.felles.Fagsystem
 
 sealed interface OversendtKlageAnke
@@ -39,3 +41,8 @@ enum class Ytelse {
     BAR_BAR,
     KON_KON,
 }
+
+fun utledFullmektigEllerVerge(brevMottakere: Brevmottakere) =
+    brevMottakere.personer.firstOrNull { it.mottakerRolle == MottakerRolle.FULLMAKT }
+        ?: brevMottakere.personer.firstOrNull { it.mottakerRolle == MottakerRolle.VERGE }
+        ?: brevMottakere.organisasjoner.firstOrNull()
