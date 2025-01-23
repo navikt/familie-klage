@@ -11,6 +11,7 @@ import no.nav.familie.klage.testutil.BrukerContextUtil.clearBrukerContext
 import no.nav.familie.klage.testutil.BrukerContextUtil.mockBrukerContext
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
+import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
@@ -91,11 +92,12 @@ internal class DistribusjonServiceTest {
         every {
             familieIntegrasjonerClient.distribuerBrev(
                 capture(journalpostSlot),
+                Fagsystem.EF,
                 capture(distribusjonstypeSlot),
             )
         } returns "distribusjonsnummer"
 
-        distribusjonService.distribuerBrev(journalpostId)
+        distribusjonService.distribuerBrev(journalpostId, Fagsystem.EF)
 
         assertThat(journalpostSlot.captured).isEqualTo(journalpostId)
         assertThat(distribusjonstypeSlot.captured).isEqualTo(Distribusjonstype.ANNET)

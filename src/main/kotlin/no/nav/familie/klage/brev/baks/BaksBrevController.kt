@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping(path = ["/api/baks/brev"])
+@RequestMapping(path = ["/api/brev/baks"])
 @ProtectedWithClaims(issuer = "azuread")
 @Validated
 class BaksBrevController(
