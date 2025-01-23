@@ -11,6 +11,9 @@ import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.tilYtelse
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
+import no.nav.familie.klage.kabal.domain.OversendtPartId
+import no.nav.familie.klage.kabal.domain.OversendtPartIdType
+import no.nav.familie.klage.kabal.domain.OversendtSak
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
@@ -46,14 +49,14 @@ class KabalService(
         OversendtKlageAnkeV3(
             type = Type.KLAGE,
             klager =
-            OversendtKlager(
-                id =
-                OversendtPartId(
-                    type = OversendtPartIdType.PERSON,
-                    verdi = fagsak.hentAktivIdent(),
+                OversendtKlager(
+                    id =
+                        OversendtPartId(
+                            type = OversendtPartIdType.PERSON,
+                            verdi = fagsak.hentAktivIdent(),
+                        ),
+                    klagersProsessfullmektig = utledFullmektigFraBrevmottakere(brevMottakere),
                 ),
-                klagersProsessfullmektig = utledFullmektigFraBrevmottakere(brevMottakere),
-            ),
             fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem.tilFellesFagsystem()),
             kildeReferanse = behandling.eksternBehandlingId.toString(),
             innsynUrl = lagInnsynUrl(fagsak, behandling.påklagetVedtak),

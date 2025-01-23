@@ -69,3 +69,17 @@ enum class KabalHjemmel(
     NORDISK_KONVENSJON("NORDISK_KONVENSJON", LovKilde.NORDISK_KONVENSJON, "Nordisk konvensjon"),
     ANDRE_TRYGDEAVTALER("ANDRE_TRYGDEAVTALER", LovKilde.ANDRE_TRYGDEAVTALER, "Andre trygdeavtaler"),
 }
+
+enum class LovKilde(
+    val id: String,
+    val navn: String,
+    val beskrivelse: String,
+) {
+    FOLKETRYGDLOVEN("1", "Folketrygdloven", "Ftrl"),
+    NORDISK_KONVENSJON("15", "Nordisk konvensjon", "Nordisk konvensjon"),
+    ANDRE_TRYGDEAVTALER("21", "Andre trygdeavtaler", "Andre trygdeavtaler"),
+    BARNETRYGDLOVEN("29", "Barnetrygdloven", "Btrl"),
+    EØS_AVTALEN("30", "EØS-avtalen", "EØS-avtalen"),
+    KONTANTSTØTTELOVEN("31", "Kontantstøtteloven", "Kontsl"),
+    FORVALTNINGSLOVEN("8", "Forvaltningsloven", "Fvl"),
+}

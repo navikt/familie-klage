@@ -14,6 +14,8 @@ import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
+import no.nav.familie.klage.kabal.domain.OversendtPartIdType
+import no.nav.familie.klage.kabal.domain.Ytelse
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
 import no.nav.familie.klage.testutil.DomainUtil.påklagetVedtakDetaljer
