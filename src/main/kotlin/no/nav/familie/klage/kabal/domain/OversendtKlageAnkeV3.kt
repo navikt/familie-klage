@@ -37,10 +37,10 @@ enum class Type(
 
 data class OversendtKlager(
     val id: OversendtPartId,
-    val klagersProsessfullmektig: OversendtProsessfullmektig? = null,
+    val klagersProsessfullmektig: OversendtProsessfullmektigV3? = null,
 )
 
-data class OversendtProsessfullmektig(
+data class OversendtProsessfullmektigV3(
     val id: OversendtPartId,
     @Deprecated("Denne er deprecated i Kabal og brukes ikke")
     val skalKlagerMottaKopi: Boolean,

@@ -17,7 +17,7 @@ import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV3
 import no.nav.familie.klage.kabal.domain.OversendtKlager
 import no.nav.familie.klage.kabal.domain.OversendtPartId
 import no.nav.familie.klage.kabal.domain.OversendtPartIdType
-import no.nav.familie.klage.kabal.domain.OversendtProsessfullmektig
+import no.nav.familie.klage.kabal.domain.OversendtProsessfullmektigV3
 import no.nav.familie.klage.kabal.domain.OversendtSak
 import no.nav.familie.klage.kabal.domain.Type
 import no.nav.familie.klage.vurdering.domain.Vurdering
@@ -76,7 +76,7 @@ class KabalService(
             hindreAutomatiskSvarbrev = behandling.årsak == Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL,
         )
 
-    private fun utledFullmektigFraBrevmottakere(brevMottakere: Brevmottakere): OversendtProsessfullmektig? {
+    private fun utledFullmektigFraBrevmottakere(brevMottakere: Brevmottakere): OversendtProsessfullmektigV3? {
         val fullmektigEllerVerge =
             brevMottakere.personer.firstOrNull { it.mottakerRolle == MottakerRolle.FULLMAKT }
                 ?: brevMottakere.personer.firstOrNull { it.mottakerRolle == MottakerRolle.VERGE }
@@ -84,7 +84,7 @@ class KabalService(
 
         return fullmektigEllerVerge?.let {
             val oversendtPartId: OversendtPartId = utledPartIdFraFullmektigEllerVerge(it)
-            return OversendtProsessfullmektig(id = oversendtPartId, skalKlagerMottaKopi = false)
+            return OversendtProsessfullmektigV3(id = oversendtPartId, skalKlagerMottaKopi = false)
         }
     }
 
