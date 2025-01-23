@@ -2,12 +2,10 @@ package no.nav.familie.klage.kabal.domain
 
 import no.nav.familie.klage.kabal.KabalHjemmel
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 data class OversendtKlageAnkeV4(
     val type: OversendtType,
     val sakenGjelder: OversendtPartV4,
-    val klager: OversendtPartV4?,
     val prosessfullmektig: OversendtProsessfullmektigV4?,
     val fagsak: OversendtSak,
     val kildeReferanse: String,
@@ -16,12 +14,9 @@ data class OversendtKlageAnkeV4(
     val forrigeBehandlendeEnhet: String,
     val tilknyttedeJournalposter: List<OversendtDokumentReferanse>,
     val brukersKlageMottattVedtaksinstans: LocalDate?,
-    val frist: LocalDate?,
-    val sakMottattKaTidspunkt: LocalDateTime?,
     val ytelse: Ytelse,
     val kommentar: String? = null,
     val hindreAutomatiskSvarbrev: Boolean?,
-    val saksbehandlerIdentForTildeling: String?,
 )
 
 enum class OversendtType {
@@ -38,7 +33,6 @@ data class OversendtProsessfullmektigV4(
 data class OversendtAdresseV4(
     val adresselinje1: String?,
     val adresselinje2: String?,
-    val adresselinje3: String?,
     val postnummer: String?,
     val poststed: String?,
     val land: String,
