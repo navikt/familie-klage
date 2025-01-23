@@ -22,7 +22,7 @@ data class OversendtKlageAnkeV3(
     val ytelse: Ytelse,
     val kommentar: String? = null,
     val hindreAutomatiskSvarbrev: Boolean,
-)
+) : OversendtKlageAnke
 
 enum class Type(
     val id: String,

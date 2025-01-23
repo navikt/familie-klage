@@ -2,6 +2,8 @@ package no.nav.familie.klage.kabal.domain
 
 import no.nav.familie.kontrakter.felles.Fagsystem
 
+sealed interface OversendtKlageAnke
+
 enum class OversendtPartIdType {
     PERSON,
     VIRKSOMHET,
