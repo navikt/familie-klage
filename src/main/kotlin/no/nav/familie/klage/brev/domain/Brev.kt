@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.felles.domain.Sporbar
+import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Embedded
 import java.util.UUID
@@ -59,13 +60,14 @@ enum class MottakerRolle {
     DØDSBO,
 }
 
-// TODO : Kan man endre navnet på disse klassene?
+@JsonDeserialize(`as` = BrevmottakerPersonMedIdent::class)
 data class BrevmottakerPersonMedIdent(
     val personIdent: String,
     override val mottakerRolle: MottakerRolle,
     override val navn: String,
 ) : BrevmottakerPerson
 
+@JsonDeserialize(`as` = BrevmottakerPersonUtenIdent::class)
 data class BrevmottakerPersonUtenIdent(
     val id: UUID = UUID.randomUUID(),
     override val mottakerRolle: MottakerRolle,
@@ -91,32 +93,13 @@ data class BrevmottakerOrganisasjon(
 
 sealed interface Brevmottaker
 
-// TODO : Dette må gjøres bedre
-internal class BrevmottakerPersonDeserializer : JsonDeserializer<BrevmottakerPerson>() {
+class BrevmottakerPersonDeserializer : JsonDeserializer<BrevmottakerPerson>() {
     override fun deserialize(jsonParser: JsonParser, context: DeserializationContext): BrevmottakerPerson {
         val node = jsonParser.codec.readTree<JsonNode>(jsonParser)
-        return if (node.get("personIdent") != null) {
-            // val test1 = objectMapper.readValue(jsonParser, BrevmottakerPersonMedIdent::class.java)
-            BrevmottakerPersonMedIdent(
-                personIdent = node.get("personIdent").asText(),
-                mottakerRolle = MottakerRolle.valueOf(node.get("mottakerRolle").asText()),
-                navn = node.get("navn").asText(),
-            )
+        return if (node.has("personIdent")) {
+            objectMapper.treeToValue(node, BrevmottakerPersonMedIdent::class.java)
         } else {
-            // val test2 = objectMapper.readValue(jsonParser, BrevmottakerPersonUtenIdent::class.java)
-            val adresselinje2 = node.get("adresselinje2").asText()
-            val postnummer = node.get("postnummer").asText()
-            val poststed = node.get("poststed").asText()
-            BrevmottakerPersonUtenIdent(
-                id = UUID.fromString(node.get("id").asText()),
-                mottakerRolle = MottakerRolle.valueOf(node.get("mottakerRolle").asText()),
-                navn = node.get("navn").asText(),
-                adresselinje1 = node.get("adresselinje1").asText(),
-                adresselinje2 = if (adresselinje2 != "null") adresselinje2 else null,
-                postnummer = if (postnummer != "null") postnummer else null,
-                poststed = if (poststed != "null") poststed else null,
-                landkode = node.get("landkode").asText(),
-            )
+            objectMapper.treeToValue(node, BrevmottakerPersonUtenIdent::class.java)
         }
     }
 }
