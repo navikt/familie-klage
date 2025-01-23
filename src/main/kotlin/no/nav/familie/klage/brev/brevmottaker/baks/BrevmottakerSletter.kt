@@ -37,16 +37,8 @@ class BrevmottakerSletter(
 
         validerRedigerbarBehandling(behandlingId)
 
-        val fagsakPersonIdent = fagsakService.hentFagsakForBehandling(behandlingId).hentAktivIdent()
-        val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
         val brev = brevService.hentBrev(behandlingId)
-
         val brevmottakerPersoner = (brev.mottakere?.personer ?: emptyList())
-
-        val harBrevmottakerPersonBruker = brevmottakerPersoner
-            .filterIsInstance<BrevmottakerPersonMedIdent>()
-            .filter { it.mottakerRolle == MottakerRolle.BRUKER }
-            .any { it.personIdent == fagsakPersonIdent }
 
         val brevmottakerPersonSomSkalSlettes = brevmottakerPersoner
             .filterIsInstance<BrevmottakerPersonUtenIdent>()
@@ -63,14 +55,21 @@ class BrevmottakerSletter(
             }
         }
 
+        val fagsakAktivIdent = fagsakService.hentFagsakForBehandling(behandlingId).hentAktivIdent()
+
+        val harBrevmottakerPersonBruker = brevmottakerPersoner
+            .filterIsInstance<BrevmottakerPersonMedIdent>()
+            .filter { it.mottakerRolle == MottakerRolle.BRUKER }
+            .any { it.personIdent == fagsakAktivIdent }
+
         val skalLeggeTilBrevmottakerPersonBrukerVedSletting = !harBrevmottakerPersonBruker &&
             MOTTAKER_ROLLER_HVOR_BRUKER_SKAL_LEGGES_TIL_VED_SLETTING.contains(brevmottakerPersonSomSkalSlettes.mottakerRolle)
 
         val nyeBrevmottakere = Brevmottakere(
             personer = if (skalLeggeTilBrevmottakerPersonBrukerVedSletting) {
                 val brevmottakerPersonBruker = BrevmottakerPersonMedIdent(
-                    personIdent = fagsakPersonIdent,
-                    navn = personopplysninger.navn,
+                    personIdent = fagsakAktivIdent,
+                    navn = personopplysningerService.hentPersonopplysninger(behandlingId).navn,
                     mottakerRolle = MottakerRolle.BRUKER,
                 )
                 nyeBrevmottakerPersoner + brevmottakerPersonBruker

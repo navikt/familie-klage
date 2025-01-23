@@ -42,17 +42,12 @@ class BrevmottakerOppretter(
         val behandling = behandlingService.hentBehandling(behandlingId)
         validerRedigerbarBehandling(behandling)
 
-        val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
         val brev = brevService.hentBrev(behandlingId)
-
         val brevmottakerPersoner = brev.mottakere?.personer ?: emptyList()
-
-        val aktivIdentForFagsak = fagsak.hentAktivIdent()
-
-        val brevmottakerePersonerUtenIdent = brevmottakerPersoner
-            .filterIsInstance<BrevmottakerPersonUtenIdent>()
-
+        val brevmottakerePersonerUtenIdent = brevmottakerPersoner.filterIsInstance<BrevmottakerPersonUtenIdent>()
         validerNyBrevmottaker(behandlingId, nyBrevmottaker, brevmottakerePersonerUtenIdent)
+
+        val aktivIdentForFagsak = fagsakService.hentFagsak(behandling.fagsakId).hentAktivIdent()
 
         val harBrevmottakerPersonBruker = brevmottakerPersoner
             .filterIsInstance<BrevmottakerPersonMedIdent>()
