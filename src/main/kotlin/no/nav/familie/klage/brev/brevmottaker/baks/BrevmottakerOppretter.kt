@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.util.UUID
 
-val MOTTAKER_ROLLER_HVOR_BRUKER_SKAL_SLETTES_VED_OPPRETTELSE = setOf(
+private val MOTTAKER_ROLLER_HVOR_BRUKER_SKAL_SLETTES_VED_OPPRETTELSE = setOf(
     MottakerRolle.DØDSBO,
     MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
 )
