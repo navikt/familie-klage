@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev.baks.brevmottaker
+package no.nav.familie.klage.brev.brevmottaker.baks
 
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.domain.Brevmottakere

@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev.baks.brevmottaker
+package no.nav.familie.klage.brev.brevmottaker.baks
 
 import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping(path = ["/api/brevmottaker"])
+@RequestMapping(path = ["/api/brevmottaker/baks"])
 @ProtectedWithClaims(issuer = "azuread")
 @Validated
 class BrevmottakerController(

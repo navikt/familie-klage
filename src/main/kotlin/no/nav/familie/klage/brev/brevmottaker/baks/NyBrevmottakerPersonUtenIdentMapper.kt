@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev.baks.brevmottaker
+package no.nav.familie.klage.brev.brevmottaker.baks
 
 object NyBrevmottakerPersonUtenIdentMapper {
     fun tilDomene(nyBrevmottakerPersonUtenIdentDto: NyBrevmottakerPersonUtenIdentDto): NyBrevmottakerPersonUtenIdent {

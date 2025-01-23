@@ -14,7 +14,6 @@ import no.nav.familie.klage.brev.domain.BrevmottakereJournalpostMedIdent
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalpostUtenIdent
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.distribusjon.JournalføringUtil.mapAvsenderMottaker
-import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.personopplysninger.pdl.logger
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
@@ -36,13 +35,11 @@ class JournalførBrevTask(
     private val taskService: TaskService,
     private val behandlingService: BehandlingService,
     private val brevService: BrevService,
-    private val fagsakService: FagsakService,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
         val saksbehandler = task.metadata[saksbehandlerMetadataKey].toString()
-        fagsakService.hentFagsakForBehandling(behandlingId).stønadstype
         behandlingService.hentBehandling(behandlingId).årsak
 
         val brev = brevService.hentBrev(behandlingId)

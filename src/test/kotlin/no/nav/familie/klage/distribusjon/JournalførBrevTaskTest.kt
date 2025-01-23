@@ -12,6 +12,7 @@ import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
 import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalpost
+import no.nav.familie.klage.brev.domain.BrevmottakereJournalpostMedIdent
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.felles.domain.Fil
@@ -133,8 +134,8 @@ internal class JournalførBrevTaskTest {
         @Test
         internal fun `skal fortsette fra forrige state`() {
             val journalposter = listOf(
-                BrevmottakereJournalpost(mottakerPerson.id!!, "journalpostId-0"),
-                BrevmottakereJournalpost(mottakerPerson2.id!!, "journalpostId-1"),
+                BrevmottakereJournalpostMedIdent(mottakerPerson.id!!, "journalpostId-0"),
+                BrevmottakereJournalpostMedIdent(mottakerPerson2.id!!, "journalpostId-1"),
             )
             mockHentBrev(mottakere = mottakere, BrevmottakereJournalposter(journalposter))
 
@@ -160,8 +161,10 @@ internal class JournalførBrevTaskTest {
         ) {
             assertThat(journalposter).hasSize(3)
             mottakere.forEachIndexed { index, avsenderMottaker ->
-                assertThat(journalposter[index].ident).isEqualTo(avsenderMottaker.id)
-                assertThat(journalposter[index].journalpostId).isEqualTo("journalpostId-$index")
+                assertThat(journalposter[index]).isInstanceOfSatisfying(BrevmottakereJournalpostMedIdent::class.java) {
+                    assertThat(it.ident).isEqualTo(avsenderMottaker.id)
+                    assertThat(it.journalpostId).isEqualTo("journalpostId-$index")
+                }
             }
         }
     }

@@ -44,6 +44,9 @@ class PdlClientMock {
         every { pdlClient.hentPersonidenter(any(), Stønadstype.OVERGANGSSTØNAD, eq(true)) } answers
             { PdlIdenter(listOf(PdlIdent(firstArg(), false), PdlIdent("98765432109", true))) }
 
+        every { pdlClient.hentPersonidenter(any(), Stønadstype.BARNETRYGD, eq(true)) } answers
+            { PdlIdenter(listOf(PdlIdent(firstArg(), false), PdlIdent("98765432109", true))) }
+
         return pdlClient
     }
 
@@ -86,24 +89,24 @@ class PdlClientMock {
                     folkeregistermetadata = null,
                     type = "voksen",
                     vergeEllerFullmektig =
-                    VergeEllerFullmektig(
-                        motpartsPersonident = annenForelderFnr,
-                        navn = null,
-                        omfang = "personligeOgOekonomiskeInteresser",
-                        omfangetErInnenPersonligOmraade = false,
-                    ),
+                        VergeEllerFullmektig(
+                            motpartsPersonident = annenForelderFnr,
+                            navn = null,
+                            omfang = "personligeOgOekonomiskeInteresser",
+                            omfangetErInnenPersonligOmraade = false,
+                        ),
                 ),
                 VergemaalEllerFremtidsfullmakt(
                     embete = null,
                     folkeregistermetadata = null,
                     type = "stadfestetFremtidsfullmakt",
                     vergeEllerFullmektig =
-                    VergeEllerFullmektig(
-                        motpartsPersonident = annenForelderFnr,
-                        navn = null,
-                        omfang = "personligeOgOekonomiskeInteresser",
-                        omfangetErInnenPersonligOmraade = false,
-                    ),
+                        VergeEllerFullmektig(
+                            motpartsPersonident = annenForelderFnr,
+                            navn = null,
+                            omfang = "personligeOgOekonomiskeInteresser",
+                            omfangetErInnenPersonligOmraade = false,
+                        ),
                 ),
             )
         }
