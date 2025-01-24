@@ -75,7 +75,7 @@ class BaksBrevmottakerOppretter(
                     personer = if (skalSletteBrevmottakerPersonBruker) {
                         val filtrerteBrevmottakerPersoner = brevmottakerPersoner.filter {
                             when (it) {
-                                is BrevmottakerPersonMedIdent -> it.personIdent !== aktivIdentForFagsak
+                                is BrevmottakerPersonMedIdent -> it.personIdent != aktivIdentForFagsak
                                 is BrevmottakerPersonUtenIdent -> true
                             }
                         }
