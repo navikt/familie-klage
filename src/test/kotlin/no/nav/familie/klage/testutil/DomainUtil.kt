@@ -7,6 +7,7 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
+import no.nav.familie.klage.brev.brevmottaker.baks.NyBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
 import no.nav.familie.klage.brev.domain.BrevmottakerPerson
@@ -31,8 +32,10 @@ import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration
 import no.nav.familie.klage.kabal.domain.KlageinstansResultat
 import no.nav.familie.klage.personopplysninger.dto.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.dto.Folkeregisterpersonstatus
+import no.nav.familie.klage.personopplysninger.dto.FullmaktDto
 import no.nav.familie.klage.personopplysninger.dto.Kjønn
 import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerDto
+import no.nav.familie.klage.personopplysninger.dto.VergemålDto
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
@@ -407,6 +410,48 @@ object DomainUtil {
             mottakere = mottakere,
             mottakereJournalposter = mottakereJournalposter,
             sporbar = sporbar,
+        )
+    }
+
+    fun lagPersonopplysningerDto(
+        personIdent: String = "123",
+        navn: String = "Navn Navnesen",
+        kjønn: Kjønn = Kjønn.MANN,
+        adressebeskyttelse: Adressebeskyttelse? = null,
+        folkeregisterpersonstatus: Folkeregisterpersonstatus = Folkeregisterpersonstatus.BOSATT,
+        dødsdato: LocalDate? = null,
+        fullmakt: List<FullmaktDto> = emptyList(),
+        egenAnsatt: Boolean = false,
+        vergemål: List<VergemålDto> = emptyList(),
+    ) = PersonopplysningerDto(
+        personIdent = personIdent,
+        navn = navn,
+        kjønn = kjønn,
+        adressebeskyttelse = adressebeskyttelse,
+        folkeregisterpersonstatus = folkeregisterpersonstatus,
+        dødsdato = dødsdato,
+        fullmakt = fullmakt,
+        egenAnsatt = egenAnsatt,
+        vergemål = vergemål,
+    )
+
+    fun lagNyBrevmottakerPersonUtenIdent(
+        mottakerRolle: MottakerRolle = MottakerRolle.FULLMAKT,
+        navn: String = "Navn Navnesen",
+        adresselinje1: String = "Adresselinje 1",
+        adresselinje2: String? = null,
+        postnummer: String? = "0010",
+        poststed: String? = "Oslo",
+        landkode: String = "NO",
+    ): NyBrevmottakerPersonUtenIdent {
+        return NyBrevmottakerPersonUtenIdent(
+            mottakerRolle = mottakerRolle,
+            navn = navn,
+            adresselinje1 = adresselinje1,
+            adresselinje2 = adresselinje2,
+            postnummer = postnummer,
+            poststed = poststed,
+            landkode = landkode,
         )
     }
 }

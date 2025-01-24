@@ -43,13 +43,22 @@ class BaksBrevmottakerOppretter(
         validerRedigerbarBehandling(behandling)
 
         val brev = brevService.hentBrev(behandlingId)
-        val brevmottakerPersoner = brev.mottakere?.personer ?: emptyList()
-        val brevmottakerePersonerUtenIdent = brevmottakerPersoner.filterIsInstance<BrevmottakerPersonUtenIdent>()
+
+        val brevmottakere = brev.mottakere
+        if (brevmottakere == null) {
+            throw IllegalStateException("Fant ikke mottakere for ")
+        }
+
+        val brevmottakerePersonerUtenIdent = brevmottakere
+            .personer
+            .filterIsInstance<BrevmottakerPersonUtenIdent>()
+
         validerNyBrevmottaker(behandlingId, nyBrevmottaker, brevmottakerePersonerUtenIdent)
 
         val aktivIdentForFagsak = fagsakService.hentFagsak(behandling.fagsakId).hentAktivIdent()
 
-        val harBrevmottakerPersonBruker = brevmottakerPersoner
+        val harBrevmottakerPersonBruker = brevmottakere
+            .personer
             .filterIsInstance<BrevmottakerPersonMedIdent>()
             .filter { it.mottakerRolle == MottakerRolle.BRUKER }
             .any { it.personIdent == aktivIdentForFagsak }
@@ -72,7 +81,7 @@ class BaksBrevmottakerOppretter(
             brev.copy(
                 mottakere = Brevmottakere(
                     personer = if (skalSletteBrevmottakerPersonBruker) {
-                        val filtrerteBrevmottakerPersoner = brevmottakerPersoner.filter {
+                        val filtrerteBrevmottakerPersoner = brevmottakere.personer.filter {
                             when (it) {
                                 is BrevmottakerPersonMedIdent -> it.personIdent === aktivIdentForFagsak
                                 is BrevmottakerPersonUtenIdent -> true
@@ -80,7 +89,7 @@ class BaksBrevmottakerOppretter(
                         }
                         filtrerteBrevmottakerPersoner + nyBrevmottakerPersonUtenIdent
                     } else {
-                        brevmottakerPersoner + nyBrevmottakerPersonUtenIdent
+                        brevmottakere.personer + nyBrevmottakerPersonUtenIdent
                     },
                 ),
             ),
