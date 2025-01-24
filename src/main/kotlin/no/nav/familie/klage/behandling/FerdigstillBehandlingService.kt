@@ -8,7 +8,7 @@ import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandling.domain.tilFagsystemRevurdering
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.blankett.LagSaksbehandlingsblankettTask
-import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brev.ef.BrevService
 import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.distribusjon.SendTilKabalTask
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey

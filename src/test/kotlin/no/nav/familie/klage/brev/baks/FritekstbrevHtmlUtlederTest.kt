@@ -2,10 +2,10 @@ package no.nav.familie.klage.brev.baks
 
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.familie.klage.brev.BrevClient
-import no.nav.familie.klage.brev.BrevsignaturService
-import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
-import no.nav.familie.klage.brev.dto.SignaturDto
+import no.nav.familie.klage.brev.felles.BrevClient
+import no.nav.familie.klage.brev.felles.BrevsignaturService
+import no.nav.familie.klage.brev.felles.FritekstBrevRequestDto
+import no.nav.familie.klage.brev.felles.SignaturDto
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.testutil.DomainUtil

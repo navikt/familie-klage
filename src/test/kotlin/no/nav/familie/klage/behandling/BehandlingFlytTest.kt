@@ -4,7 +4,7 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
-import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brev.ef.BrevService
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.formkrav.dto.tilDto

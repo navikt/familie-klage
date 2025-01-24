@@ -7,10 +7,10 @@ import io.mockk.mockk
 import io.mockk.slot
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
-import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
-import no.nav.familie.klage.brev.domain.BrevmottakerPerson
-import no.nav.familie.klage.brev.domain.Brevmottakere
-import no.nav.familie.klage.brev.domain.MottakerRolle
+import no.nav.familie.klage.brev.ef.BrevmottakerOrganisasjon
+import no.nav.familie.klage.brev.ef.BrevmottakerPerson
+import no.nav.familie.klage.brev.ef.Brevmottakere
+import no.nav.familie.klage.brev.ef.MottakerRolle
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
