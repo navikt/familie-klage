@@ -114,7 +114,7 @@ class BaksBrevmottakerOppretterTest {
             val exception = assertThrows<Feil> {
                 baksBrevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
             }
-            assertThat(exception.message).isEqualTo("Kan ikke ha duplikate mottakertyper. FULLMAKT finnes allerede.")
+            assertThat(exception.message).isEqualTo("Kan ikke ha duplikate MottakerRolle. FULLMAKT finnes allerede.")
         }
 
         @Test

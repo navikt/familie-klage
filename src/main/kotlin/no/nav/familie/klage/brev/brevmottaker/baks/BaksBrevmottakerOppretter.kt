@@ -105,7 +105,7 @@ class BaksBrevmottakerOppretter(
         val eksisterendeMottakerRoller = eksisterendeBrevmottakerePersonerUtenIdent.map { it.mottakerRolle }
         when {
             eksisterendeMottakerRoller.any { it == nyBrevmottakerPersonUtenIdent.mottakerRolle } -> {
-                throw Feil("Kan ikke ha duplikate mottakertyper. ${nyBrevmottakerPersonUtenIdent.mottakerRolle} finnes allerede.")
+                throw Feil("Kan ikke ha duplikate MottakerRolle. ${nyBrevmottakerPersonUtenIdent.mottakerRolle} finnes allerede.")
             }
 
             nyBrevmottakerPersonUtenIdent.mottakerRolle == MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE &&
