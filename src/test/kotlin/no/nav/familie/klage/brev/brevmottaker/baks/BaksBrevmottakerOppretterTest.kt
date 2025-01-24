@@ -363,7 +363,7 @@ class BaksBrevmottakerOppretterTest {
 
         @EnumSource(value = MottakerRolle::class)
         @ParameterizedTest
-        fun `skal opprette brevmottaker`(
+        fun `skal opprette brevmottaker når det allerede finnes brevmottakere`(
             mottakerRolle: MottakerRolle,
         ) {
             // Arrange
@@ -382,6 +382,120 @@ class BaksBrevmottakerOppretterTest {
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
             val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonMedIdent))
             val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                personopplysningerService.hentPersonopplysninger(behandling.id)
+            } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
+
+            every {
+                brevService.hentBrev(behandling.id)
+            } returns brev
+
+            every {
+                fagsakService.hentFagsak(behandling.fagsakId)
+            } returns DomainUtil.fagsak(identer = setOf(PersonIdent("01010199999")))
+
+            every {
+                brevRepository.update(any())
+            } returnsArgument 0
+
+            // Act
+            val brevmottakerPersonUtenIdent = baksBrevmottakerOppretter.opprettBrevmottaker(
+                behandling.id,
+                nyBrevmottakerPersonUtenIdent,
+            )
+
+            // Act & assert
+            assertThat(brevmottakerPersonUtenIdent.id).isNotNull()
+            assertThat(brevmottakerPersonUtenIdent.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
+            assertThat(brevmottakerPersonUtenIdent.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
+            assertThat(brevmottakerPersonUtenIdent.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
+            assertThat(brevmottakerPersonUtenIdent.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
+            assertThat(brevmottakerPersonUtenIdent.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
+            assertThat(brevmottakerPersonUtenIdent.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
+            assertThat(brevmottakerPersonUtenIdent.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+        }
+
+        @EnumSource(value = MottakerRolle::class)
+        @ParameterizedTest
+        fun `skal opprette brevmottaker når brevmottakere i brev er null`(
+            mottakerRolle: MottakerRolle,
+        ) {
+            // Arrange
+            val behandling = DomainUtil.behandling()
+
+            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                mottakerRolle = mottakerRolle,
+                navn = "navn",
+                adresselinje1 = "Adresse 1, Mars, 1337",
+                adresselinje2 = null,
+                postnummer = null,
+                poststed = null,
+                landkode = "DK",
+            )
+
+            val brev = DomainUtil.lagBrev(mottakere = null)
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                personopplysningerService.hentPersonopplysninger(behandling.id)
+            } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
+
+            every {
+                brevService.hentBrev(behandling.id)
+            } returns brev
+
+            every {
+                fagsakService.hentFagsak(behandling.fagsakId)
+            } returns DomainUtil.fagsak(identer = setOf(PersonIdent("01010199999")))
+
+            every {
+                brevRepository.update(any())
+            } returnsArgument 0
+
+            // Act
+            val brevmottakerPersonUtenIdent = baksBrevmottakerOppretter.opprettBrevmottaker(
+                behandling.id,
+                nyBrevmottakerPersonUtenIdent,
+            )
+
+            // Act & assert
+            assertThat(brevmottakerPersonUtenIdent.id).isNotNull()
+            assertThat(brevmottakerPersonUtenIdent.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
+            assertThat(brevmottakerPersonUtenIdent.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
+            assertThat(brevmottakerPersonUtenIdent.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
+            assertThat(brevmottakerPersonUtenIdent.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
+            assertThat(brevmottakerPersonUtenIdent.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
+            assertThat(brevmottakerPersonUtenIdent.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
+            assertThat(brevmottakerPersonUtenIdent.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+        }
+
+        @EnumSource(value = MottakerRolle::class)
+        @ParameterizedTest
+        fun `skal opprette brevmottaker når brevmottakere i brev er tom`(
+            mottakerRolle: MottakerRolle,
+        ) {
+            // Arrange
+            val behandling = DomainUtil.behandling()
+
+            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                mottakerRolle = mottakerRolle,
+                navn = "navn",
+                adresselinje1 = "Adresse 1, Mars, 1337",
+                adresselinje2 = null,
+                postnummer = null,
+                poststed = null,
+                landkode = "DK",
+            )
+
+            val brev = DomainUtil.lagBrev(mottakere = DomainUtil.lagBrevmottakere(personer = emptyList()))
 
             every {
                 behandlingService.hentBehandling(behandling.id)
