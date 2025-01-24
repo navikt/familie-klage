@@ -30,9 +30,8 @@ class SendTilKabalTask(
         val saksbehandlerIdent = task.metadata[TaskMetadata.saksbehandlerMetadataKey].toString()
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
-        val vurdering =
-            vurderingService.hentVurdering(behandlingId) ?: error("Mangler vurdering på klagen - kan ikke oversendes til kabal")
-        val brevmottakere = brevService.hentBrevmottakere(behandlingId)
+        val vurdering = vurderingService.hentVurdering(behandlingId) ?: error("Mangler vurdering på klagen - kan ikke oversendes til kabal")
+        val brevmottakere = brevService.hentBrev(behandlingId).mottakere ?: throw IllegalStateException("Mangler brevmottakere for behandling ${behandling.id}")
         kabalService.sendTilKabal(fagsak, behandling, vurdering, saksbehandlerIdent, brevmottakere)
     }
 

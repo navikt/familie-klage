@@ -6,16 +6,12 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
-import no.nav.familie.klage.brev.BrevmottakerUtil.validerMinimumEnMottaker
-import no.nav.familie.klage.brev.BrevmottakerUtil.validerUnikeBrevmottakere
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.brev.domain.MottakerRolle
-import no.nav.familie.klage.brev.dto.BrevmottakereDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
-import no.nav.familie.klage.brev.dto.tilDomene
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.felles.domain.Fil
@@ -50,24 +46,6 @@ class BrevService(
 
     fun hentBrev(behandlingId: UUID): Brev = brevRepository.findByIdOrThrow(behandlingId)
 
-    fun hentBrevmottakere(behandlingId: UUID): Brevmottakere {
-        val brev = brevRepository.findByIdOrThrow(behandlingId)
-        return brev.mottakere ?: Brevmottakere()
-    }
-
-    fun settBrevmottakere(behandlingId: UUID, brevmottakere: BrevmottakereDto) {
-        val behandling = behandlingService.hentBehandling(behandlingId)
-        validerKanLageBrev(behandling)
-
-        val mottakere = brevmottakere.tilDomene()
-
-        validerUnikeBrevmottakere(mottakere)
-        validerMinimumEnMottaker(mottakere)
-
-        val brev = brevRepository.findByIdOrThrow(behandlingId)
-        brevRepository.update(brev.copy(mottakere = mottakere))
-    }
-
     fun lagBrev(behandlingId: UUID): ByteArray {
         val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
         val navn = personopplysninger.navn
@@ -95,7 +73,7 @@ class BrevService(
         return familieDokumentClient.genererPdfFraHtml(html)
     }
 
-    private fun validerKanLageBrev(behandling: Behandling) {
+    fun validerKanLageBrev(behandling: Behandling) {
         feilHvis(behandling.status.erLåstForVidereBehandling()) {
             "Kan ikke oppdatere brev når behandlingen er låst"
         }
