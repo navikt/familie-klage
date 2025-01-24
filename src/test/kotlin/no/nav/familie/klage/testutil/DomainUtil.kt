@@ -7,12 +7,21 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
+import no.nav.familie.klage.brev.domain.Brev
+import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
+import no.nav.familie.klage.brev.domain.BrevmottakerPerson
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
+import no.nav.familie.klage.brev.domain.Brevmottakere
+import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
+import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.brev.dto.AvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.fagsak.domain.PersonIdent
+import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.felles.domain.Sporbar
 import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.formkrav.domain.Form
@@ -336,6 +345,68 @@ object DomainUtil {
         return PåklagetVedtak(
             påklagetVedtakstype = påklagetVedtakstype,
             påklagetVedtakDetaljer = påklagetVedtakDetaljer,
+        )
+    }
+
+    fun lagBrevmottakerPersonUtenIdent(
+        id: UUID = UUID.randomUUID(),
+        mottakerRolle: MottakerRolle = MottakerRolle.FULLMAKT,
+        navn: String = "Navn Navnesen",
+        adresselinje1: String = "Onkel Pølsemakers vei 10",
+        adresselinje2: String? = null,
+        postnummer: String? = "0010",
+        poststed: String? = "Oslo",
+        landkode: String = "NO",
+    ): BrevmottakerPersonUtenIdent {
+        return BrevmottakerPersonUtenIdent(
+            id,
+            mottakerRolle,
+            navn,
+            adresselinje1,
+            adresselinje2,
+            postnummer,
+            poststed,
+            landkode,
+        )
+    }
+
+    fun lagBrevmottakerPersonMedIdent(
+        personIdent: String = "23097825289",
+        mottakerRolle: MottakerRolle = MottakerRolle.FULLMAKT,
+        navn: String = "Navn Navnesen",
+    ): BrevmottakerPersonMedIdent {
+        return BrevmottakerPersonMedIdent(
+            personIdent,
+            mottakerRolle,
+            navn,
+        )
+    }
+
+    fun lagBrevmottakere(
+        personer: List<BrevmottakerPerson> = emptyList(),
+        organisasjoner: List<BrevmottakerOrganisasjon> = emptyList(),
+    ): Brevmottakere {
+        return Brevmottakere(
+            personer = personer,
+            organisasjoner = organisasjoner,
+        )
+    }
+
+    fun lagBrev(
+        behandlingId: UUID = UUID.randomUUID(),
+        saksbehandlerHtml: String = "<html />",
+        pdf: Fil? = null,
+        mottakere: Brevmottakere? = null,
+        mottakereJournalposter: BrevmottakereJournalposter? = null,
+        sporbar: Sporbar = Sporbar(),
+    ): Brev {
+        return Brev(
+            behandlingId = behandlingId,
+            saksbehandlerHtml = saksbehandlerHtml,
+            pdf = pdf,
+            mottakere = mottakere,
+            mottakereJournalposter = mottakereJournalposter,
+            sporbar = sporbar,
         )
     }
 }
