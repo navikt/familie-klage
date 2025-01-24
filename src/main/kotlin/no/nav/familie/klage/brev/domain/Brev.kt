@@ -29,28 +29,3 @@ data class BrevmottakereJournalpost(
     val journalpostId: String,
     val distribusjonId: String? = null,
 )
-
-data class Brevmottakere(
-    val personer: List<BrevmottakerPerson> = emptyList(),
-    val organisasjoner: List<BrevmottakerOrganisasjon> = emptyList(),
-)
-
-enum class MottakerRolle {
-    BRUKER,
-    VERGE,
-    FULLMAKT,
-}
-
-data class BrevmottakerPerson(
-    val personIdent: String,
-    val navn: String,
-    val mottakerRolle: MottakerRolle,
-) : Brevmottaker()
-
-data class BrevmottakerOrganisasjon(
-    val organisasjonsnummer: String,
-    val organisasjonsnavn: String,
-    val navnHosOrganisasjon: String,
-) : Brevmottaker()
-
-sealed class Brevmottaker
