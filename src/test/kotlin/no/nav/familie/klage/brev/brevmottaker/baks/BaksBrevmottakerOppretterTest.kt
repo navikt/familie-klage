@@ -3,10 +3,14 @@ package no.nav.familie.klage.brev.brevmottaker.baks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.slot
 import io.mockk.unmockkObject
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brev.domain.Brev
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.PersonIdent
@@ -731,6 +735,161 @@ class BaksBrevmottakerOppretterTest {
             assertThat(opprettetBrevmottakerPersonUtenIdent.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
             assertThat(opprettetBrevmottakerPersonUtenIdent.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
             assertThat(opprettetBrevmottakerPersonUtenIdent.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+        }
+
+        @EnumSource(
+            value = MottakerRolle::class,
+            names = ["BRUKER_MED_UTENLANDSK_ADRESSE", "DØDSBO"],
+            mode = EnumSource.Mode.INCLUDE,
+        )
+        @ParameterizedTest
+        fun `skal slette bruker ved enkelte MottakerRoller`(
+            mottakerRolle: MottakerRolle,
+        ) {
+            // Arrange
+            val personIdent = PersonIdent("01010199999")
+            val behandling = DomainUtil.behandling()
+
+            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                mottakerRolle = mottakerRolle,
+                navn = "navn",
+                adresselinje1 = "Adresse 1, Mars, 1337",
+                adresselinje2 = null,
+                postnummer = null,
+                poststed = null,
+                landkode = "DK",
+            )
+
+            val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent(
+                mottakerRolle = MottakerRolle.BRUKER,
+                personIdent = personIdent.ident,
+            )
+            val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonMedIdent))
+            val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
+
+            val brevSlot = slot<Brev>()
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                personopplysningerService.hentPersonopplysninger(behandling.id)
+            } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
+
+            every {
+                brevService.hentBrev(behandling.id)
+            } returns brev
+
+            every {
+                fagsakService.hentFagsak(behandling.fagsakId)
+            } returns DomainUtil.fagsak(identer = setOf(personIdent))
+
+            every {
+                brevRepository.update(capture(brevSlot))
+            } returnsArgument 0
+
+            // Act
+            val opprettetBrevmottakerPersonUtenIdent = baksBrevmottakerOppretter.opprettBrevmottaker(
+                behandling.id,
+                nyBrevmottakerPersonUtenIdent,
+            )
+
+            // Act & assert
+            assertThat(opprettetBrevmottakerPersonUtenIdent.id).isNotNull()
+            assertThat(opprettetBrevmottakerPersonUtenIdent.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
+            assertThat(opprettetBrevmottakerPersonUtenIdent.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
+            assertThat(opprettetBrevmottakerPersonUtenIdent.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
+            assertThat(opprettetBrevmottakerPersonUtenIdent.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
+            assertThat(opprettetBrevmottakerPersonUtenIdent.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
+            assertThat(opprettetBrevmottakerPersonUtenIdent.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
+            assertThat(opprettetBrevmottakerPersonUtenIdent.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+
+            val capturedBrev = brevSlot.captured
+            assertThat(capturedBrev.mottakere?.organisasjoner).isEmpty()
+            assertThat(capturedBrev.mottakere?.personer).hasSize(1)
+            assertThat(capturedBrev.mottakere?.personer?.filterIsInstance(BrevmottakerPersonUtenIdent::class.java)).anySatisfy {
+                assertThat(it).isEqualTo(opprettetBrevmottakerPersonUtenIdent)
+            }
+        }
+
+        @EnumSource(
+            value = MottakerRolle::class,
+            names = ["BRUKER_MED_UTENLANDSK_ADRESSE", "DØDSBO"],
+            mode = EnumSource.Mode.INCLUDE,
+        )
+        @ParameterizedTest
+        fun `skal ikke slette bruker ved enkelte MottakerRoller når PersonIdent ikke stemmer overens med den aktive identen i fagsaken`(
+            mottakerRolle: MottakerRolle,
+        ) {
+            // Arrange
+            val personIdent = PersonIdent("01010199999")
+            val behandling = DomainUtil.behandling()
+
+            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                mottakerRolle = mottakerRolle,
+                navn = "navn",
+                adresselinje1 = "Adresse 1, Mars, 1337",
+                adresselinje2 = null,
+                postnummer = null,
+                poststed = null,
+                landkode = "DK",
+            )
+
+            val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent(
+                mottakerRolle = MottakerRolle.BRUKER,
+                personIdent = "11010199999",
+            )
+            val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonMedIdent))
+            val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
+
+            val brevSlot = slot<Brev>()
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                personopplysningerService.hentPersonopplysninger(behandling.id)
+            } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
+
+            every {
+                brevService.hentBrev(behandling.id)
+            } returns brev
+
+            every {
+                fagsakService.hentFagsak(behandling.fagsakId)
+            } returns DomainUtil.fagsak(identer = setOf(personIdent))
+
+            every {
+                brevRepository.update(capture(brevSlot))
+            } returnsArgument 0
+
+            // Act
+            val opprettetBrevmottakerPersonUtenIdent = baksBrevmottakerOppretter.opprettBrevmottaker(
+                behandling.id,
+                nyBrevmottakerPersonUtenIdent,
+            )
+
+            // Act & assert
+            assertThat(opprettetBrevmottakerPersonUtenIdent.id).isNotNull()
+            assertThat(opprettetBrevmottakerPersonUtenIdent.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
+            assertThat(opprettetBrevmottakerPersonUtenIdent.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
+            assertThat(opprettetBrevmottakerPersonUtenIdent.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
+            assertThat(opprettetBrevmottakerPersonUtenIdent.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
+            assertThat(opprettetBrevmottakerPersonUtenIdent.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
+            assertThat(opprettetBrevmottakerPersonUtenIdent.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
+            assertThat(opprettetBrevmottakerPersonUtenIdent.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+
+            val capturedBrev = brevSlot.captured
+            assertThat(capturedBrev.mottakere?.organisasjoner).isEmpty()
+            assertThat(capturedBrev.mottakere?.personer).hasSize(2)
+            assertThat(capturedBrev.mottakere?.personer?.filterIsInstance(BrevmottakerPersonUtenIdent::class.java)).anySatisfy {
+                assertThat(it).isEqualTo(opprettetBrevmottakerPersonUtenIdent)
+            }
+            assertThat(capturedBrev.mottakere?.personer?.filterIsInstance(BrevmottakerPersonMedIdent::class.java)).anySatisfy {
+                assertThat(it).isEqualTo(brevmottakerPersonMedIdent)
+            }
         }
     }
 }
