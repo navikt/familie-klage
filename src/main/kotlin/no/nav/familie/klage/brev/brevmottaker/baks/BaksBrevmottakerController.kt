@@ -20,8 +20,8 @@ import java.util.UUID
 @RequestMapping(path = ["/api/brevmottaker/baks"])
 @ProtectedWithClaims(issuer = "azuread")
 @Validated
-class BrevmottakerController(
-    private val brevmottakerService: BrevmottakerService,
+class BaksBrevmottakerController(
+    private val baksBrevmottakerService: BaksBrevmottakerService,
     private val tilgangService: TilgangService,
 ) {
     @GetMapping("/{behandlingId}")
@@ -30,7 +30,7 @@ class BrevmottakerController(
     ): Ressurs<BrevmottakereDto> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
-        val brevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
+        val brevmottakere = baksBrevmottakerService.hentBrevmottakere(behandlingId)
         return Ressurs.success(brevmottakere.tilDto())
     }
 
@@ -42,11 +42,11 @@ class BrevmottakerController(
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.CREATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         nyBrevmottakerPersonUtenIdentDto.valider()
-        brevmottakerService.opprettBrevmottaker(
+        baksBrevmottakerService.opprettBrevmottaker(
             behandlingId,
             NyBrevmottakerPersonUtenIdentMapper.tilDomene(nyBrevmottakerPersonUtenIdentDto),
         )
-        val brevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
+        val brevmottakere = baksBrevmottakerService.hentBrevmottakere(behandlingId)
         return Ressurs.success(brevmottakere.tilDto())
     }
 
@@ -57,8 +57,8 @@ class BrevmottakerController(
     ): Ressurs<BrevmottakereDto> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.DELETE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        brevmottakerService.slettBrevmottaker(behandlingId, brevmottakerId)
-        val brevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
+        baksBrevmottakerService.slettBrevmottaker(behandlingId, brevmottakerId)
+        val brevmottakere = baksBrevmottakerService.hentBrevmottakere(behandlingId)
         return Ressurs.success(brevmottakere.tilDto())
     }
 }

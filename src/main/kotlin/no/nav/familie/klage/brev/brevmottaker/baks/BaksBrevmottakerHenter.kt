@@ -7,10 +7,10 @@ import org.springframework.stereotype.Component
 import java.util.UUID
 
 @Component
-class BrevmottakerHenter(
+class BaksBrevmottakerHenter(
     private val brevService: BrevService,
 ) {
-    private val logger = LoggerFactory.getLogger(BrevmottakerHenter::class.java)
+    private val logger = LoggerFactory.getLogger(BaksBrevmottakerHenter::class.java)
 
     fun hentBrevmottakere(behandlingId: UUID): Brevmottakere {
         logger.debug("Henter brevmottakere for behandling {}", behandlingId)

@@ -23,14 +23,14 @@ private val MOTTAKER_ROLLER_HVOR_BRUKER_SKAL_SLETTES_VED_OPPRETTELSE = setOf(
 )
 
 @Component
-class BrevmottakerOppretter(
+class BaksBrevmottakerOppretter(
     private val behandlingService: BehandlingService,
     private val fagsakService: FagsakService,
     private val brevService: BrevService,
     private val brevRepository: BrevRepository,
     private val personopplysningerService: PersonopplysningerService,
 ) {
-    private val logger = LoggerFactory.getLogger(BrevmottakerOppretter::class.java)
+    private val logger = LoggerFactory.getLogger(BaksBrevmottakerOppretter::class.java)
 
     @Transactional
     fun opprettBrevmottaker(

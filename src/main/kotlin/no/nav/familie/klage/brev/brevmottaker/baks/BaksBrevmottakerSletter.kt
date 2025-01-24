@@ -22,14 +22,14 @@ private val MOTTAKER_ROLLER_HVOR_BRUKER_SKAL_LEGGES_TIL_VED_SLETTING = setOf(
 )
 
 @Component
-class BrevmottakerSletter(
+class BaksBrevmottakerSletter(
     private val behandlingService: BehandlingService,
     private val brevService: BrevService,
     private val brevRepository: BrevRepository,
     private val fagsakService: FagsakService,
     private val personopplysningerService: PersonopplysningerService,
 ) {
-    private val logger = LoggerFactory.getLogger(BrevmottakerSletter::class.java)
+    private val logger = LoggerFactory.getLogger(BaksBrevmottakerSletter::class.java)
 
     @Transactional
     fun slettBrevmottaker(behandlingId: UUID, brevmottakerId: UUID) {
