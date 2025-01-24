@@ -45,7 +45,7 @@ class BaksBrevmottakerSletter(
             .find { it.id == brevmottakerId }
 
         if (brevmottakerPersonSomSkalSlettes == null) {
-            throw IllegalStateException("Brevmottaker $brevmottakerId kan ikke slettes da den ikke finnes.")
+            throw Feil("Brevmottaker $brevmottakerId kan ikke slettes da den ikke finnes.")
         }
 
         val nyeBrevmottakerPersoner = brevmottakerPersoner.filter {
