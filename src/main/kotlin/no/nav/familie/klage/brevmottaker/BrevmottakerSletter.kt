@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev.brevmottaker
+package no.nav.familie.klage.brevmottaker
 
 import jakarta.transaction.Transactional
 import no.nav.familie.klage.behandling.BehandlingService

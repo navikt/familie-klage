@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev.brevmottaker
+package no.nav.familie.klage.brevmottaker
 
 import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.testutil.DomainUtil

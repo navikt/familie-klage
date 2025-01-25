@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev.brevmottaker
+package no.nav.familie.klage.brevmottaker
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext

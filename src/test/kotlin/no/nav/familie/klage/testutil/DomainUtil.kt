@@ -7,9 +7,6 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
-import no.nav.familie.klage.brev.brevmottaker.NyBrevmottakerOrganisasjon
-import no.nav.familie.klage.brev.brevmottaker.NyBrevmottakerPersonMedIdent
-import no.nav.familie.klage.brev.brevmottaker.NyBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
 import no.nav.familie.klage.brev.domain.BrevmottakerPerson
@@ -20,6 +17,9 @@ import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.brev.dto.AvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
+import no.nav.familie.klage.brevmottaker.NyBrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.NyBrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.NyBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson

@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev.brevmottaker
+package no.nav.familie.klage.brevmottaker
 
 import io.mockk.every
 import io.mockk.mockk

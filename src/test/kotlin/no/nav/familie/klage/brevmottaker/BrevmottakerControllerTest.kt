@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev.brevmottaker
+package no.nav.familie.klage.brevmottaker
 
 import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
