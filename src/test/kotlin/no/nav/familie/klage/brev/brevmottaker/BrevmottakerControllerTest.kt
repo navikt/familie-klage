@@ -239,7 +239,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
         }
 
         @Test
-        fun `skal opprette brevmottaker`() {
+        fun `skal erstatte brevmottaker`() {
             // Arrange
             val fagsak = testoppsettService.lagreFagsak(DomainUtil.fagsak(stønadstype = Stønadstype.BARNETRYGD))
             val behandling = testoppsettService.lagreBehandling(behandling(fagsak))

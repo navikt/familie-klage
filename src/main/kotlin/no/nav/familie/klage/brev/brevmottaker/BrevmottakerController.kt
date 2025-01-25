@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping(path = ["/api/brevmottaker/baks"])
+@RequestMapping(path = ["/api/brevmottaker"])
 @ProtectedWithClaims(issuer = "azuread")
 @Validated
 class BrevmottakerController(
