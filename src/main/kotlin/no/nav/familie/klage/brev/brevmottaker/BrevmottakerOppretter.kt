@@ -38,7 +38,7 @@ class BrevmottakerOppretter(
         behandlingId: UUID,
         nyBrevmottaker: NyBrevmottakerPersonUtenIdent,
     ): BrevmottakerPersonUtenIdent {
-        logger.debug("Oppretter brevmottaker for behandling {}", behandlingId)
+        logger.debug("Oppretter brevmottaker for behandling {}.", behandlingId)
 
         val behandling = behandlingService.hentBehandling(behandlingId)
         validerRedigerbarBehandling(behandling)
@@ -100,7 +100,7 @@ class BrevmottakerOppretter(
 
     private fun validerKorrektBehandlingssteg(behandling: Behandling) {
         if (behandling.steg != StegType.BREV) {
-            throw Feil("Behandlingen er i steg ${behandling.steg}, forventet steg ${StegType.BREV}")
+            throw Feil("Behandlingen er i steg ${behandling.steg}, forventet steg ${StegType.BREV}.")
         }
     }
 

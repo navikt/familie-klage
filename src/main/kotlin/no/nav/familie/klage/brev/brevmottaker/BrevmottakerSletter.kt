@@ -35,7 +35,7 @@ class BrevmottakerSletter(
 
     @Transactional
     fun slettBrevmottaker(behandlingId: UUID, brevmottakerId: UUID) {
-        logger.debug("Sletter brevmottaker {} for behandling {}", brevmottakerId, behandlingId)
+        logger.debug("Sletter brevmottaker {} for behandling {}.", brevmottakerId, behandlingId)
 
         val behandling = behandlingService.hentBehandling(behandlingId)
         validerRedigerbarBehandling(behandling)
@@ -97,7 +97,7 @@ class BrevmottakerSletter(
 
     private fun validerKorrektBehandlingssteg(behandling: Behandling) {
         if (behandling.steg != StegType.BREV) {
-            throw Feil("Behandlingen er i steg ${behandling.steg}, forventet steg ${StegType.BREV}")
+            throw Feil("Behandlingen er i steg ${behandling.steg}, forventet steg ${StegType.BREV}.")
         }
     }
 }
