@@ -1,6 +1,7 @@
 package no.nav.familie.klage.brev.brevmottaker.baks
 
 import no.nav.familie.klage.brev.BrevRepository
+import no.nav.familie.klage.brev.brevmottaker.NyBrevmottakerPersonUtenIdentDto
 import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brev.domain.MottakerRolle
@@ -24,7 +25,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import java.util.UUID
 
-class BaksBrevmottakerControllerTest : OppslagSpringRunnerTest() {
+class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
     @Autowired
     private lateinit var brevRepository: BrevRepository
 

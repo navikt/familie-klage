@@ -1,6 +1,6 @@
 package no.nav.familie.klage.testutil
 
-import no.nav.familie.klage.brev.brevmottaker.baks.NyBrevmottakerPersonUtenIdentDto
+import no.nav.familie.klage.brev.brevmottaker.NyBrevmottakerPersonUtenIdentDto
 import no.nav.familie.klage.brev.domain.MottakerRolle
 
 object DtoTestUtil {

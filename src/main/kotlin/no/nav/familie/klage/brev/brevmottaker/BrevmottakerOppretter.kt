@@ -1,8 +1,9 @@
-package no.nav.familie.klage.brev.brevmottaker.baks
+package no.nav.familie.klage.brev.brevmottaker
 
 import jakarta.transaction.Transactional
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.brev.BrevService
@@ -23,14 +24,14 @@ private val MOTTAKER_ROLLER_HVOR_BRUKER_SKAL_SLETTES_VED_OPPRETTELSE = setOf(
 )
 
 @Component
-class BaksBrevmottakerOppretter(
+class BrevmottakerOppretter(
     private val behandlingService: BehandlingService,
     private val fagsakService: FagsakService,
     private val brevService: BrevService,
     private val brevRepository: BrevRepository,
     private val personopplysningerService: PersonopplysningerService,
 ) {
-    private val logger = LoggerFactory.getLogger(BaksBrevmottakerOppretter::class.java)
+    private val logger = LoggerFactory.getLogger(BrevmottakerOppretter::class.java)
 
     @Transactional
     fun opprettBrevmottaker(
@@ -41,6 +42,7 @@ class BaksBrevmottakerOppretter(
 
         val behandling = behandlingService.hentBehandling(behandlingId)
         validerRedigerbarBehandling(behandling)
+        validerKorrektBehandlingssteg(behandling)
 
         val brev = brevService.hentBrev(behandlingId)
         val brevmottakerPersoner = brev.mottakere?.personer ?: emptyList()
@@ -93,6 +95,12 @@ class BaksBrevmottakerOppretter(
     private fun validerRedigerbarBehandling(behandling: Behandling) {
         if (behandling.status.erLåstForVidereBehandling()) {
             throw Feil("Behandling ${behandling.id} er låst for videre behandling.")
+        }
+    }
+
+    private fun validerKorrektBehandlingssteg(behandling: Behandling) {
+        if (behandling.steg != StegType.BREV) {
+            throw Feil("Behandlingen er i steg ${behandling.steg}, forventet steg ${StegType.BREV}")
         }
     }
 

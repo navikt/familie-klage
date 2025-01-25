@@ -1,7 +1,9 @@
-package no.nav.familie.klage.brev.brevmottaker.baks
+package no.nav.familie.klage.brev.brevmottaker
 
 import jakarta.transaction.Transactional
 import no.nav.familie.klage.behandling.BehandlingService
+import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.brev.BrevService
@@ -22,20 +24,22 @@ private val MOTTAKER_ROLLER_HVOR_BRUKER_SKAL_LEGGES_TIL_VED_SLETTING = setOf(
 )
 
 @Component
-class BaksBrevmottakerSletter(
+class BrevmottakerSletter(
     private val behandlingService: BehandlingService,
     private val brevService: BrevService,
     private val brevRepository: BrevRepository,
     private val fagsakService: FagsakService,
     private val personopplysningerService: PersonopplysningerService,
 ) {
-    private val logger = LoggerFactory.getLogger(BaksBrevmottakerSletter::class.java)
+    private val logger = LoggerFactory.getLogger(BrevmottakerSletter::class.java)
 
     @Transactional
     fun slettBrevmottaker(behandlingId: UUID, brevmottakerId: UUID) {
         logger.debug("Sletter brevmottaker {} for behandling {}", brevmottakerId, behandlingId)
 
-        validerRedigerbarBehandling(behandlingId)
+        val behandling = behandlingService.hentBehandling(behandlingId)
+        validerRedigerbarBehandling(behandling)
+        validerKorrektBehandlingssteg(behandling)
 
         val brev = brevService.hentBrev(behandlingId)
         val brevmottakerPersoner = (brev.mottakere?.personer ?: emptyList())
@@ -85,10 +89,15 @@ class BaksBrevmottakerSletter(
         )
     }
 
-    private fun validerRedigerbarBehandling(behandlingId: UUID) {
-        val behandling = behandlingService.hentBehandling(behandlingId)
+    private fun validerRedigerbarBehandling(behandling: Behandling) {
         if (behandling.status.erLåstForVidereBehandling()) {
-            throw Feil("Behandling $behandlingId er låst for videre behandling.")
+            throw Feil("Behandling ${behandling.id} er låst for videre behandling.")
+        }
+    }
+
+    private fun validerKorrektBehandlingssteg(behandling: Behandling) {
+        if (behandling.steg != StegType.BREV) {
+            throw Feil("Behandlingen er i steg ${behandling.steg}, forventet steg ${StegType.BREV}")
         }
     }
 }

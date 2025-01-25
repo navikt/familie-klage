@@ -3,34 +3,35 @@ package no.nav.familie.klage.brev.brevmottaker.baks
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brev.brevmottaker.BrevmottakerHenter
 import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.testutil.DomainUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.util.UUID
 
-class BaksBrevmottakerHenterTest {
+class BrevmottakerHenterTest {
     private val brevService: BrevService = mockk()
-    private val baksBrevmottakerHenter: BaksBrevmottakerHenter = BaksBrevmottakerHenter(brevService)
+    private val brevmottakerHenter: BrevmottakerHenter = BrevmottakerHenter(brevService)
 
     @Nested
     inner class HentBrevmottakereTest {
         @Test
-        fun `skal kaste exception om brevmottakere er null`() {
+        fun `skal håndtere at brevmottakere på brev er null`() {
             // Arrange
             val behandlingId = UUID.randomUUID()
             val brev = DomainUtil.lagBrev(behandlingId = behandlingId, mottakere = null)
 
             every { brevService.hentBrev(behandlingId) } returns brev
 
-            // Act & assert
-            val exception = assertThrows<IllegalStateException> {
-                baksBrevmottakerHenter.hentBrevmottakere(behandlingId)
-            }
-            assertThat(exception.message).isEqualTo("Fant ikke mottakere i brev for behandling $behandlingId")
+            // Act
+            val brevmottakere = brevmottakerHenter.hentBrevmottakere(behandlingId)
+
+            // Assert
+            assertThat(brevmottakere.organisasjoner).isEmpty()
+            assertThat(brevmottakere.personer).isEmpty()
         }
 
         @Test
@@ -51,7 +52,7 @@ class BaksBrevmottakerHenterTest {
             every { brevService.hentBrev(behandlingId) } returns brev
 
             // Act
-            val hentetBrevmottakere = baksBrevmottakerHenter.hentBrevmottakere(behandlingId)
+            val hentetBrevmottakere = brevmottakerHenter.hentBrevmottakere(behandlingId)
 
             // Assert
             assertThat(hentetBrevmottakere.organisasjoner).isEmpty()

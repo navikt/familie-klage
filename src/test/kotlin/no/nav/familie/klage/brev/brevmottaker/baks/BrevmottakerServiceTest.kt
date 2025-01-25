@@ -5,6 +5,11 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
+import no.nav.familie.klage.brev.brevmottaker.BrevmottakerErstatter
+import no.nav.familie.klage.brev.brevmottaker.BrevmottakerHenter
+import no.nav.familie.klage.brev.brevmottaker.BrevmottakerOppretter
+import no.nav.familie.klage.brev.brevmottaker.BrevmottakerService
+import no.nav.familie.klage.brev.brevmottaker.BrevmottakerSletter
 import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.testutil.DomainUtil
 import org.assertj.core.api.Assertions.assertThat
@@ -12,15 +17,17 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-class BaksBrevmottakerServiceTest {
-    private val baksBrevmottakerHenter: BaksBrevmottakerHenter = mockk()
-    private val baksBrevmottakerOppretter: BaksBrevmottakerOppretter = mockk()
-    private val baksBrevmottakerSletter: BaksBrevmottakerSletter = mockk()
+class BrevmottakerServiceTest {
+    private val brevmottakerHenter: BrevmottakerHenter = mockk()
+    private val brevmottakerErstatter: BrevmottakerErstatter = mockk()
+    private val brevmottakerOppretter: BrevmottakerOppretter = mockk()
+    private val brevmottakerSletter: BrevmottakerSletter = mockk()
 
-    private val baksBrevmottakerService: BaksBrevmottakerService = BaksBrevmottakerService(
-        baksBrevmottakerHenter = baksBrevmottakerHenter,
-        baksBrevmottakerOppretter = baksBrevmottakerOppretter,
-        baksBrevmottakerSletter = baksBrevmottakerSletter,
+    private val brevmottakerService: BrevmottakerService = BrevmottakerService(
+        brevmottakerHenter = brevmottakerHenter,
+        brevmottakerErstatter = brevmottakerErstatter,
+        brevmottakerOppretter = brevmottakerOppretter,
+        brevmottakerSletter = brevmottakerSletter,
     )
 
     @Nested
@@ -40,11 +47,43 @@ class BaksBrevmottakerServiceTest {
             )
 
             every {
-                baksBrevmottakerService.hentBrevmottakere(behandlingId)
+                brevmottakerService.hentBrevmottakere(behandlingId)
             } returns brevmottakere
 
             // Act
-            val hentetBrevmottakere = baksBrevmottakerService.hentBrevmottakere(behandlingId)
+            val hentetBrevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
+
+            // Assert
+            assertThat(hentetBrevmottakere.organisasjoner).isEmpty()
+            assertThat(hentetBrevmottakere.personer).containsExactly(
+                brevmottakerPersonMedIdent,
+                brevmottakerPersonUtenIdent,
+            )
+        }
+    }
+
+    @Nested
+    inner class ErstattBrevmottakereTest {
+        @Test
+        fun `skal erstatte brevmottakere`() {
+            // Arrange
+            val behandlingId = UUID.randomUUID()
+
+            val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
+            val brevmottakerPersonUtenIdent = DomainUtil.lagBrevmottakerPersonUtenIdent()
+            val brevmottakere = DomainUtil.lagBrevmottakere(
+                personer = listOf(
+                    brevmottakerPersonMedIdent,
+                    brevmottakerPersonUtenIdent,
+                ),
+            )
+
+            every {
+                brevmottakerService.erstattBrevmottakere(behandlingId, brevmottakere)
+            } returns brevmottakere
+
+            // Act
+            val hentetBrevmottakere = brevmottakerService.erstattBrevmottakere(behandlingId, brevmottakere)
 
             // Assert
             assertThat(hentetBrevmottakere.organisasjoner).isEmpty()
@@ -73,7 +112,7 @@ class BaksBrevmottakerServiceTest {
             )
 
             every {
-                baksBrevmottakerOppretter.opprettBrevmottaker(behandlingId, nyBrevmottaker)
+                brevmottakerOppretter.opprettBrevmottaker(behandlingId, nyBrevmottaker)
             } returns DomainUtil.lagBrevmottakerPersonUtenIdent(
                 id = UUID.randomUUID(),
                 mottakerRolle = nyBrevmottaker.mottakerRolle,
@@ -86,7 +125,7 @@ class BaksBrevmottakerServiceTest {
             )
 
             // Act
-            val brevmottaker = baksBrevmottakerService.opprettBrevmottaker(behandlingId, nyBrevmottaker)
+            val brevmottaker = brevmottakerService.opprettBrevmottaker(behandlingId, nyBrevmottaker)
 
             // Assert
             assertThat(brevmottaker.id).isNotNull()
@@ -109,14 +148,14 @@ class BaksBrevmottakerServiceTest {
             val brevmottakerId = UUID.randomUUID()
 
             every {
-                baksBrevmottakerSletter.slettBrevmottaker(behandlingId, brevmottakerId)
+                brevmottakerSletter.slettBrevmottaker(behandlingId, brevmottakerId)
             } just runs
 
             // Act
-            baksBrevmottakerService.slettBrevmottaker(behandlingId, brevmottakerId)
+            brevmottakerService.slettBrevmottaker(behandlingId, brevmottakerId)
 
             // Assert
-            verify(exactly = 1) { baksBrevmottakerSletter.slettBrevmottaker(behandlingId, brevmottakerId) }
+            verify(exactly = 1) { brevmottakerSletter.slettBrevmottaker(behandlingId, brevmottakerId) }
         }
     }
 }

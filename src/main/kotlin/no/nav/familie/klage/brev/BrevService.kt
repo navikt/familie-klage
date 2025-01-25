@@ -73,7 +73,7 @@ class BrevService(
         return familieDokumentClient.genererPdfFraHtml(html)
     }
 
-    fun validerKanLageBrev(behandling: Behandling) {
+    private fun validerKanLageBrev(behandling: Behandling) {
         feilHvis(behandling.status.erLåstForVidereBehandling()) {
             "Kan ikke oppdatere brev når behandlingen er låst"
         }

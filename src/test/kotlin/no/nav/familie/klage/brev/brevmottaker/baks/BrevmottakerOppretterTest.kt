@@ -6,8 +6,10 @@ import io.mockk.mockkObject
 import io.mockk.slot
 import io.mockk.unmockkObject
 import no.nav.familie.klage.behandling.BehandlingService
+import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brev.brevmottaker.BrevmottakerOppretter
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
@@ -28,14 +30,14 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 
-class BaksBrevmottakerOppretterTest {
+class BrevmottakerOppretterTest {
     private val behandlingService: BehandlingService = mockk()
     private val fagsakService: FagsakService = mockk()
     private val brevService: BrevService = mockk()
     private val brevRepository: BrevRepository = mockk()
     private val personopplysningerService: PersonopplysningerService = mockk()
 
-    private val baksBrevmottakerOppretter: BaksBrevmottakerOppretter = BaksBrevmottakerOppretter(
+    private val brevmottakerOppretter: BrevmottakerOppretter = BrevmottakerOppretter(
         behandlingService = behandlingService,
         fagsakService = fagsakService,
         brevService = brevService,
@@ -69,15 +71,33 @@ class BaksBrevmottakerOppretterTest {
 
             // Act & assert
             val exception = assertThrows<Feil> {
-                baksBrevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
+                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
             }
             assertThat(exception.message).isEqualTo("Behandling ${behandling.id} er låst for videre behandling.")
         }
 
         @Test
+        fun `skal kaste exception om behandling ikke er i brev steg`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.OPPRETTET)
+
+            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent()
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            // Act & assert
+            val exception = assertThrows<Feil> {
+                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
+            }
+            assertThat(exception.message).isEqualTo("Behandlingen er i steg ${StegType.OPPRETTET}, forventet steg ${StegType.BREV}")
+        }
+
+        @Test
         fun `skal kaste exception om det allerede finnes en brevmottaker med samme MottakerRolle`() {
             // Arrange
-            val behandling = DomainUtil.behandling()
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
                 mottakerRolle = MottakerRolle.FULLMAKT,
@@ -112,7 +132,7 @@ class BaksBrevmottakerOppretterTest {
 
             // Act & assert
             val exception = assertThrows<Feil> {
-                baksBrevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
+                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
             }
             assertThat(exception.message).isEqualTo("Kan ikke ha duplikate MottakerRolle. FULLMAKT finnes allerede.")
         }
@@ -120,7 +140,7 @@ class BaksBrevmottakerOppretterTest {
         @Test
         fun `skal kaste exception om bruker med utenlandsk adresse ikke har samme navn som i personopplysningene`() {
             // Arrange
-            val behandling = DomainUtil.behandling()
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
                 mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
@@ -150,7 +170,7 @@ class BaksBrevmottakerOppretterTest {
 
             // Act & assert
             val exception = assertThrows<Feil> {
-                baksBrevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
+                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
             }
             assertThat(exception.message).isEqualTo("Ved bruker med utenlandsk adresse skal brevmottakerens navn være brukerens navn.")
         }
@@ -158,7 +178,7 @@ class BaksBrevmottakerOppretterTest {
         @Test
         fun `skal kaste exception om dødsbo ikke har samme navn som i personopplysningene`() {
             // Arrange
-            val behandling = DomainUtil.behandling()
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
                 mottakerRolle = MottakerRolle.DØDSBO,
@@ -188,7 +208,7 @@ class BaksBrevmottakerOppretterTest {
 
             // Act & assert
             val exception = assertThrows<Feil> {
-                baksBrevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
+                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
             }
             assertThat(exception.message).isEqualTo("Ved dødsbo skal brevmottakerens navn inneholde brukerens navn.")
         }
@@ -196,7 +216,7 @@ class BaksBrevmottakerOppretterTest {
         @Test
         fun `skal kaste exception om man prøver å legge til dødsbo når det allerede finnes en brevmottaker`() {
             // Arrange
-            val behandling = DomainUtil.behandling()
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
                 mottakerRolle = MottakerRolle.DØDSBO,
@@ -229,7 +249,7 @@ class BaksBrevmottakerOppretterTest {
 
             // Act & assert
             val exception = assertThrows<Feil> {
-                baksBrevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
+                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
             }
             assertThat(exception.message).isEqualTo("Kan ikke legge til dødsbo når det allerede finnes brevmottakere.")
         }
@@ -237,7 +257,7 @@ class BaksBrevmottakerOppretterTest {
         @Test
         fun `skal kaste exception om man prøver å legge til en brevmottaker når det allerede finnes en dødsbo brevmottaker`() {
             // Arrange
-            val behandling = DomainUtil.behandling()
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
                 mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
@@ -272,7 +292,7 @@ class BaksBrevmottakerOppretterTest {
 
             // Act & assert
             val exception = assertThrows<Feil> {
-                baksBrevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
+                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
             }
             assertThat(exception.message).isEqualTo("Kan ikke legge til flere brevmottakere når det allerede finnes et dødsbo.")
         }
@@ -280,7 +300,7 @@ class BaksBrevmottakerOppretterTest {
         @Test
         fun `skal kaste exception om man prøver å legge til en brevmottaker som ikke er VERGE eller FULLMEKTIG når det allerede finnes en brevmottaker med utenlandsk adresse`() {
             // Arrange
-            val behandling = DomainUtil.behandling()
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
                 mottakerRolle = MottakerRolle.BRUKER,
@@ -315,7 +335,7 @@ class BaksBrevmottakerOppretterTest {
 
             // Act & assert
             val exception = assertThrows<Feil> {
-                baksBrevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
+                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
             }
             assertThat(exception.message).isEqualTo("Bruker med utenlandsk adresse kan kun kombineres med verge eller fullmektig.")
         }
@@ -323,7 +343,7 @@ class BaksBrevmottakerOppretterTest {
         @Test
         fun `skal kaste exception om man prøver å legge til en brevmottaker som ikke har mottakertype bruker med utenlandsk adresse om det allerede finnes en brevmottaker`() {
             // Arrange
-            val behandling = DomainUtil.behandling()
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
                 mottakerRolle = MottakerRolle.BRUKER,
@@ -358,7 +378,7 @@ class BaksBrevmottakerOppretterTest {
 
             // Act & assert
             val exception = assertThrows<Feil> {
-                baksBrevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
+                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
             }
             assertThat(exception.message).isEqualTo(
                 "Kan kun legge til bruker med utenlandsk adresse om det finnes en brevmottaker allerede.",
@@ -371,7 +391,7 @@ class BaksBrevmottakerOppretterTest {
             mottakerRolle: MottakerRolle,
         ) {
             // Arrange
-            val behandling = DomainUtil.behandling()
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
                 mottakerRolle = mottakerRolle,
@@ -408,7 +428,7 @@ class BaksBrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val brevmottakerPersonUtenIdent = baksBrevmottakerOppretter.opprettBrevmottaker(
+            val brevmottakerPersonUtenIdent = brevmottakerOppretter.opprettBrevmottaker(
                 behandling.id,
                 nyBrevmottakerPersonUtenIdent,
             )
@@ -430,7 +450,7 @@ class BaksBrevmottakerOppretterTest {
             mottakerRolle: MottakerRolle,
         ) {
             // Arrange
-            val behandling = DomainUtil.behandling()
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
                 mottakerRolle = mottakerRolle,
@@ -465,7 +485,7 @@ class BaksBrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val brevmottakerPersonUtenIdent = baksBrevmottakerOppretter.opprettBrevmottaker(
+            val brevmottakerPersonUtenIdent = brevmottakerOppretter.opprettBrevmottaker(
                 behandling.id,
                 nyBrevmottakerPersonUtenIdent,
             )
@@ -487,7 +507,7 @@ class BaksBrevmottakerOppretterTest {
             mottakerRolle: MottakerRolle,
         ) {
             // Arrange
-            val behandling = DomainUtil.behandling()
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
                 mottakerRolle = mottakerRolle,
@@ -522,7 +542,7 @@ class BaksBrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val brevmottakerPersonUtenIdent = baksBrevmottakerOppretter.opprettBrevmottaker(
+            val brevmottakerPersonUtenIdent = brevmottakerOppretter.opprettBrevmottaker(
                 behandling.id,
                 nyBrevmottakerPersonUtenIdent,
             )
@@ -548,7 +568,7 @@ class BaksBrevmottakerOppretterTest {
             mottakerRolle: MottakerRolle,
         ) {
             // Arrange
-            val behandling = DomainUtil.behandling()
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
                 mottakerRolle = mottakerRolle,
@@ -585,7 +605,7 @@ class BaksBrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val brevmottakerPersonUtenIdent = baksBrevmottakerOppretter.opprettBrevmottaker(
+            val brevmottakerPersonUtenIdent = brevmottakerOppretter.opprettBrevmottaker(
                 behandling.id,
                 nyBrevmottakerPersonUtenIdent,
             )
@@ -611,7 +631,7 @@ class BaksBrevmottakerOppretterTest {
             mottakerRolle: MottakerRolle,
         ) {
             // Arrange
-            val behandling = DomainUtil.behandling()
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
                 mottakerRolle = mottakerRolle,
@@ -653,7 +673,7 @@ class BaksBrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val opprettetBrevmottakerPersonUtenIdent = baksBrevmottakerOppretter.opprettBrevmottaker(
+            val opprettetBrevmottakerPersonUtenIdent = brevmottakerOppretter.opprettBrevmottaker(
                 behandling.id,
                 nyBrevmottakerPersonUtenIdent,
             )
@@ -679,7 +699,7 @@ class BaksBrevmottakerOppretterTest {
             mottakerRolle: MottakerRolle,
         ) {
             // Arrange
-            val behandling = DomainUtil.behandling()
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
                 mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
@@ -721,7 +741,7 @@ class BaksBrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val opprettetBrevmottakerPersonUtenIdent = baksBrevmottakerOppretter.opprettBrevmottaker(
+            val opprettetBrevmottakerPersonUtenIdent = brevmottakerOppretter.opprettBrevmottaker(
                 behandling.id,
                 nyBrevmottakerPersonUtenIdent,
             )
@@ -748,7 +768,7 @@ class BaksBrevmottakerOppretterTest {
         ) {
             // Arrange
             val personIdent = PersonIdent("01010199999")
-            val behandling = DomainUtil.behandling()
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
                 mottakerRolle = mottakerRolle,
@@ -790,7 +810,7 @@ class BaksBrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val opprettetBrevmottakerPersonUtenIdent = baksBrevmottakerOppretter.opprettBrevmottaker(
+            val opprettetBrevmottakerPersonUtenIdent = brevmottakerOppretter.opprettBrevmottaker(
                 behandling.id,
                 nyBrevmottakerPersonUtenIdent,
             )
@@ -824,7 +844,7 @@ class BaksBrevmottakerOppretterTest {
         ) {
             // Arrange
             val personIdent = PersonIdent("01010199999")
-            val behandling = DomainUtil.behandling()
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
                 mottakerRolle = mottakerRolle,
@@ -866,7 +886,7 @@ class BaksBrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val opprettetBrevmottakerPersonUtenIdent = baksBrevmottakerOppretter.opprettBrevmottaker(
+            val opprettetBrevmottakerPersonUtenIdent = brevmottakerOppretter.opprettBrevmottaker(
                 behandling.id,
                 nyBrevmottakerPersonUtenIdent,
             )

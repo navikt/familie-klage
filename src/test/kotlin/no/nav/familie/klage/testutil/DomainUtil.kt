@@ -7,7 +7,7 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
-import no.nav.familie.klage.brev.brevmottaker.baks.NyBrevmottakerPersonUtenIdent
+import no.nav.familie.klage.brev.brevmottaker.NyBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
 import no.nav.familie.klage.brev.domain.BrevmottakerPerson
