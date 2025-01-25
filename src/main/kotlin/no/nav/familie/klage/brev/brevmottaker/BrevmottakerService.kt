@@ -1,7 +1,7 @@
 package no.nav.familie.klage.brev.brevmottaker
 
 import jakarta.transaction.Transactional
-import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
+import no.nav.familie.klage.brev.domain.Brevmottaker
 import no.nav.familie.klage.brev.domain.Brevmottakere
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -23,8 +23,8 @@ class BrevmottakerService(
     }
 
     @Transactional
-    fun opprettBrevmottaker(behandlingId: UUID, nyBrevmottakerPersonUtenIdent: NyBrevmottakerPersonUtenIdent): BrevmottakerPersonUtenIdent {
-        return brevmottakerOppretter.opprettBrevmottaker(behandlingId, nyBrevmottakerPersonUtenIdent)
+    fun opprettBrevmottaker(behandlingId: UUID, nyBrevmottaker: NyBrevmottaker): Brevmottaker {
+        return brevmottakerOppretter.opprettBrevmottaker(behandlingId, nyBrevmottaker)
     }
 
     @Transactional

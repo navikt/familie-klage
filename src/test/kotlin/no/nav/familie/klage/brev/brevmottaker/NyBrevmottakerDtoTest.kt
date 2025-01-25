@@ -1,6 +1,7 @@
 package no.nav.familie.klage.brev.brevmottaker
 
 import no.nav.familie.klage.brev.domain.MottakerRolle
+import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.testutil.DtoTestUtil
 import org.assertj.core.api.Assertions.assertThat
@@ -9,9 +10,80 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.http.HttpStatus
 
-class NyBrevmottakerPersonUtenIdentDtoTest {
+class NyBrevmottakerDtoTest {
     @Nested
-    inner class ValiderTest {
+    inner class NyBrevmottakerDtoTest {
+        @Test
+        fun `skal mappe til domene for NyBrevmottakerPersonUtenIdentDto`() {
+            // Arrange
+            val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(
+                mottakerRolle = MottakerRolle.FULLMAKT,
+                navn = "Navn Navnesen",
+                adresselinje1 = "Adresselinje 1",
+                adresselinje2 = "Adresselinje 2",
+                postnummer = "0010",
+                poststed = "Oslo",
+                landkode = "NO",
+            )
+
+            // Act
+            val nyBrevmottaker = nyBrevmottakerDto.tilDomene()
+
+            // Assert
+            assertThat(nyBrevmottaker).isInstanceOfSatisfying(NyBrevmottakerPersonUtenIdent::class.java) {
+                assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerDto.mottakerRolle)
+                assertThat(it.navn).isEqualTo(nyBrevmottakerDto.navn)
+                assertThat(it.adresselinje1).isEqualTo(nyBrevmottakerDto.adresselinje1)
+                assertThat(it.adresselinje2).isEqualTo(nyBrevmottakerDto.adresselinje2)
+                assertThat(it.postnummer).isEqualTo(nyBrevmottakerDto.postnummer)
+                assertThat(it.poststed).isEqualTo(nyBrevmottakerDto.poststed)
+                assertThat(it.landkode).isEqualTo(nyBrevmottakerDto.landkode)
+            }
+        }
+
+        @Test
+        fun `skal mappe til domene for NyBrevmottakerPersonMedIdentDto`() {
+            // Arrange
+            val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto(
+                personIdent = "123",
+                mottakerRolle = MottakerRolle.FULLMAKT,
+                navn = "Navn Navnesen",
+            )
+
+            // Act
+            val nyBrevmottaker = nyBrevmottakerDto.tilDomene()
+
+            // Assert
+            assertThat(nyBrevmottaker).isInstanceOfSatisfying(NyBrevmottakerPersonMedIdent::class.java) {
+                assertThat(it.personIdent).isEqualTo(nyBrevmottakerDto.personIdent)
+                assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerDto.mottakerRolle)
+                assertThat(it.navn).isEqualTo(nyBrevmottakerDto.navn)
+            }
+        }
+
+        @Test
+        fun `skal mappe til domene for NyBrevmottakerOrganisasjonDto`() {
+            // Arrange
+            val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerOrganisasjonDto(
+                organisasjonsnummer = "123",
+                organisasjonsnavn = "organisasjonsnavn",
+                navnHosOrganisasjon = "navnHosOrganisasjon",
+            )
+
+            // Act
+            val nyBrevmottaker = nyBrevmottakerDto.tilDomene()
+
+            // Assert
+            assertThat(nyBrevmottaker).isInstanceOfSatisfying(NyBrevmottakerOrganisasjon::class.java) {
+                assertThat(it.organisasjonsnummer).isEqualTo(nyBrevmottakerDto.organisasjonsnummer)
+                assertThat(it.organisasjonsnavn).isEqualTo(nyBrevmottakerDto.organisasjonsnavn)
+                assertThat(it.navnHosOrganisasjon).isEqualTo(nyBrevmottakerDto.navnHosOrganisasjon)
+            }
+        }
+    }
+
+    @Nested
+    inner class NyBrevmottakerPersonUtenIdentDtoTest {
         @Test
         fun `skal kaste exception om mottakertype er bruker`() {
             // Arrange
@@ -135,7 +207,8 @@ class NyBrevmottakerPersonUtenIdentDtoTest {
         @Test
         fun `skal kaste exception om postnummer ikke inneholder kun tall og landkode er NO`() {
             // Arrange
-            val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(landkode = "NO", postnummer = "123T")
+            val nyBrevmottakerDto =
+                DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(landkode = "NO", postnummer = "123T")
 
             // Act & assert
             val exception = assertThrows<ApiFeil> {
@@ -161,7 +234,8 @@ class NyBrevmottakerPersonUtenIdentDtoTest {
         @Test
         fun `skal kaste exception om postnummer er mer enn 4 tegn og landkode er NO`() {
             // Arrange
-            val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(landkode = "NO", postnummer = "12345")
+            val nyBrevmottakerDto =
+                DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(landkode = "NO", postnummer = "12345")
 
             // Act & assert
             val exception = assertThrows<ApiFeil> {
@@ -265,6 +339,116 @@ class NyBrevmottakerPersonUtenIdentDtoTest {
             assertThat(nyBrevmottakerDto.postnummer).isEqualTo("0010")
             assertThat(nyBrevmottakerDto.poststed).isEqualTo("Oslo")
             assertThat(nyBrevmottakerDto.landkode).isEqualTo("NO")
+        }
+    }
+
+    @Nested
+    inner class NyBrevmottakerDtoDeserializerTest {
+        private val nyBrevmottakerDtoDeserializer: NyBrevmottakerDtoDeserializer = NyBrevmottakerDtoDeserializer()
+
+        @Test
+        fun `skal deserialisere NyBrevmottakerOrganisasjon`() {
+            // Arrange
+            val json = "{" +
+                "\"type\":\"ORGANISASJON\"," +
+                "\"organisasjonsnummer\":\"123\"," +
+                "\"organisasjonsnavn\":\"Orgnavn\"," +
+                "\"navnHosOrganisasjon\":\"OG\"" +
+                "}"
+
+            val parser = objectMapper.factory.createParser(json)
+
+            // Act
+            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, objectMapper.deserializationContext)
+
+            // Assert
+            assertThat(deserialize).isInstanceOfSatisfying(NyBrevmottakerOrganisasjonDto::class.java) {
+                assertThat(it.organisasjonsnummer).isEqualTo("123")
+                assertThat(it.organisasjonsnavn).isEqualTo("Orgnavn")
+                assertThat(it.navnHosOrganisasjon).isEqualTo("OG")
+            }
+        }
+
+        @Test
+        fun `skal deserialisere NyBrevmottakerPersonMedIdentDto`() {
+            // Arrange
+            val json = "{" +
+                "\"type\":\"PERSON_MED_IDENT\"," +
+                "\"personIdent\":\"01492350318\"," +
+                "\"mottakerRolle\":\"BRUKER\"," +
+                "\"navn\":\"Fornavn mellomnavn Etternavn\"" +
+                "}"
+
+            val parser = objectMapper.factory.createParser(json)
+
+            // Act
+            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, objectMapper.deserializationContext)
+
+            // Assert
+            assertThat(deserialize).isInstanceOfSatisfying(NyBrevmottakerPersonMedIdentDto::class.java) {
+                assertThat(it.personIdent).isEqualTo("01492350318")
+                assertThat(it.mottakerRolle).isEqualTo(MottakerRolle.BRUKER)
+                assertThat(it.navn).isEqualTo("Fornavn mellomnavn Etternavn")
+            }
+        }
+
+        @Test
+        fun `skal deserialisere norsk NyBrevmottakerPersonUtenIdentDto`() {
+            // Arrange
+            val json = "{" +
+                "\"type\":\"PERSON_UTEN_IDENT\"," +
+                "\"mottakerRolle\":\"FULLMAKT\"," +
+                "\"navn\":\"Fornavn mellomnavn Etternavn\"," +
+                "\"adresselinje1\":\"Adresse 1\"," +
+                "\"adresselinje2\":\"Adresse 2\"," +
+                "\"postnummer\":\"0010\"," +
+                "\"poststed\":\"Oslo\"," +
+                "\"landkode\":\"NO\"" +
+                "}"
+
+            val parser = objectMapper.factory.createParser(json)
+
+            // Act
+            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, objectMapper.deserializationContext)
+
+            // Assert
+            assertThat(deserialize).isInstanceOfSatisfying(NyBrevmottakerPersonUtenIdentDto::class.java) {
+                assertThat(it.mottakerRolle).isEqualTo(MottakerRolle.FULLMAKT)
+                assertThat(it.navn).isEqualTo("Fornavn mellomnavn Etternavn")
+                assertThat(it.adresselinje1).isEqualTo("Adresse 1")
+                assertThat(it.adresselinje2).isEqualTo("Adresse 2")
+                assertThat(it.postnummer).isEqualTo("0010")
+                assertThat(it.poststed).isEqualTo("Oslo")
+                assertThat(it.landkode).isEqualTo("NO")
+            }
+        }
+
+        @Test
+        fun `skal deserialisere utenlandsk NyBrevmottakerPersonUtenIdentDto`() {
+            // Arrange
+            val json = "{" +
+                "\"type\":\"PERSON_UTEN_IDENT\"," +
+                "\"mottakerRolle\":\"BRUKER_MED_UTENLANDSK_ADRESSE\"," +
+                "\"navn\":\"Fornavn mellomnavn Etternavn\"," +
+                "\"adresselinje1\":\"Adresse 1, Mars, 1337\"," +
+                "\"landkode\":\"DK\"" +
+                "}"
+
+            val parser = objectMapper.factory.createParser(json)
+
+            // Act
+            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, objectMapper.deserializationContext)
+
+            // Assert
+            assertThat(deserialize).isInstanceOfSatisfying(NyBrevmottakerPersonUtenIdentDto::class.java) {
+                assertThat(it.mottakerRolle).isEqualTo(MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE)
+                assertThat(it.navn).isEqualTo("Fornavn mellomnavn Etternavn")
+                assertThat(it.adresselinje1).isEqualTo("Adresse 1, Mars, 1337")
+                assertThat(it.adresselinje2).isNull()
+                assertThat(it.postnummer).isNull()
+                assertThat(it.poststed).isNull()
+                assertThat(it.landkode).isEqualTo("DK")
+            }
         }
     }
 }

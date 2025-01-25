@@ -58,6 +58,34 @@ class BrevmottakerOppretterTest {
     @Nested
     inner class OpprettBrevmottakerTest {
         @Test
+        fun `skal kaste exception om man prøver å opprette for NyBrevmottakerOrganisasjon`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(status = BehandlingStatus.FERDIGSTILT)
+
+            val nyBrevmottakerOrganisasjon = DomainUtil.lagNyBrevmottakerOrganisasjon()
+
+            // Act & assert
+            val exception = assertThrows<UnsupportedOperationException> {
+                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerOrganisasjon)
+            }
+            assertThat(exception.message).isEqualTo("NyBrevmottakerOrganisasjon er ikke støttet.")
+        }
+
+        @Test
+        fun `skal kaste exception om man prøver å opprette for NyBrevmottakerPersonMedIdent`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(status = BehandlingStatus.FERDIGSTILT)
+
+            val nyBrevmottakerPersonMedIdent = DomainUtil.lagNyBrevmottakerPersonMedIdent()
+
+            // Act & assert
+            val exception = assertThrows<UnsupportedOperationException> {
+                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonMedIdent)
+            }
+            assertThat(exception.message).isEqualTo("NyBrevmottakerPersonMedIdent er ikke støttet.")
+        }
+
+        @Test
         fun `skal kaste exception om behandling ikke er redigerbar`() {
             // Arrange
             val behandling = DomainUtil.behandling(status = BehandlingStatus.FERDIGSTILT)
@@ -427,20 +455,22 @@ class BrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val brevmottakerPersonUtenIdent = brevmottakerOppretter.opprettBrevmottaker(
+            val brevmottaker = brevmottakerOppretter.opprettBrevmottaker(
                 behandling.id,
                 nyBrevmottakerPersonUtenIdent,
             )
 
             // Act & assert
-            assertThat(brevmottakerPersonUtenIdent.id).isNotNull()
-            assertThat(brevmottakerPersonUtenIdent.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
-            assertThat(brevmottakerPersonUtenIdent.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
-            assertThat(brevmottakerPersonUtenIdent.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
-            assertThat(brevmottakerPersonUtenIdent.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
-            assertThat(brevmottakerPersonUtenIdent.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
-            assertThat(brevmottakerPersonUtenIdent.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
-            assertThat(brevmottakerPersonUtenIdent.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+            assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
+                assertThat(it.id).isNotNull()
+                assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
+                assertThat(it.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
+                assertThat(it.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
+                assertThat(it.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
+                assertThat(it.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
+                assertThat(it.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
+                assertThat(it.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+            }
         }
 
         @EnumSource(value = MottakerRolle::class)
@@ -484,20 +514,22 @@ class BrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val brevmottakerPersonUtenIdent = brevmottakerOppretter.opprettBrevmottaker(
+            val brevmottaker = brevmottakerOppretter.opprettBrevmottaker(
                 behandling.id,
                 nyBrevmottakerPersonUtenIdent,
             )
 
             // Act & assert
-            assertThat(brevmottakerPersonUtenIdent.id).isNotNull()
-            assertThat(brevmottakerPersonUtenIdent.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
-            assertThat(brevmottakerPersonUtenIdent.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
-            assertThat(brevmottakerPersonUtenIdent.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
-            assertThat(brevmottakerPersonUtenIdent.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
-            assertThat(brevmottakerPersonUtenIdent.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
-            assertThat(brevmottakerPersonUtenIdent.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
-            assertThat(brevmottakerPersonUtenIdent.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+            assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
+                assertThat(it.id).isNotNull()
+                assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
+                assertThat(it.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
+                assertThat(it.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
+                assertThat(it.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
+                assertThat(it.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
+                assertThat(it.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
+                assertThat(it.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+            }
         }
 
         @EnumSource(value = MottakerRolle::class)
@@ -541,20 +573,22 @@ class BrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val brevmottakerPersonUtenIdent = brevmottakerOppretter.opprettBrevmottaker(
+            val brevmottaker = brevmottakerOppretter.opprettBrevmottaker(
                 behandling.id,
                 nyBrevmottakerPersonUtenIdent,
             )
 
             // Act & assert
-            assertThat(brevmottakerPersonUtenIdent.id).isNotNull()
-            assertThat(brevmottakerPersonUtenIdent.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
-            assertThat(brevmottakerPersonUtenIdent.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
-            assertThat(brevmottakerPersonUtenIdent.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
-            assertThat(brevmottakerPersonUtenIdent.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
-            assertThat(brevmottakerPersonUtenIdent.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
-            assertThat(brevmottakerPersonUtenIdent.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
-            assertThat(brevmottakerPersonUtenIdent.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+            assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
+                assertThat(it.id).isNotNull()
+                assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
+                assertThat(it.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
+                assertThat(it.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
+                assertThat(it.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
+                assertThat(it.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
+                assertThat(it.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
+                assertThat(it.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+            }
         }
 
         @EnumSource(
@@ -604,20 +638,22 @@ class BrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val brevmottakerPersonUtenIdent = brevmottakerOppretter.opprettBrevmottaker(
+            val brevmottaker = brevmottakerOppretter.opprettBrevmottaker(
                 behandling.id,
                 nyBrevmottakerPersonUtenIdent,
             )
 
             // Act & assert
-            assertThat(brevmottakerPersonUtenIdent.id).isNotNull()
-            assertThat(brevmottakerPersonUtenIdent.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
-            assertThat(brevmottakerPersonUtenIdent.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
-            assertThat(brevmottakerPersonUtenIdent.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
-            assertThat(brevmottakerPersonUtenIdent.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
-            assertThat(brevmottakerPersonUtenIdent.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
-            assertThat(brevmottakerPersonUtenIdent.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
-            assertThat(brevmottakerPersonUtenIdent.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+            assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
+                assertThat(it.id).isNotNull()
+                assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
+                assertThat(it.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
+                assertThat(it.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
+                assertThat(it.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
+                assertThat(it.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
+                assertThat(it.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
+                assertThat(it.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+            }
         }
 
         @EnumSource(
@@ -672,20 +708,22 @@ class BrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val opprettetBrevmottakerPersonUtenIdent = brevmottakerOppretter.opprettBrevmottaker(
+            val brevmottaker = brevmottakerOppretter.opprettBrevmottaker(
                 behandling.id,
                 nyBrevmottakerPersonUtenIdent,
             )
 
             // Act & assert
-            assertThat(opprettetBrevmottakerPersonUtenIdent.id).isNotNull()
-            assertThat(opprettetBrevmottakerPersonUtenIdent.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+            assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
+                assertThat(it.id).isNotNull()
+                assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
+                assertThat(it.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
+                assertThat(it.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
+                assertThat(it.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
+                assertThat(it.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
+                assertThat(it.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
+                assertThat(it.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+            }
         }
 
         @EnumSource(
@@ -740,20 +778,22 @@ class BrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val opprettetBrevmottakerPersonUtenIdent = brevmottakerOppretter.opprettBrevmottaker(
+            val brevmottaker = brevmottakerOppretter.opprettBrevmottaker(
                 behandling.id,
                 nyBrevmottakerPersonUtenIdent,
             )
 
             // Act & assert
-            assertThat(opprettetBrevmottakerPersonUtenIdent.id).isNotNull()
-            assertThat(opprettetBrevmottakerPersonUtenIdent.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+            assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
+                assertThat(it.id).isNotNull()
+                assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
+                assertThat(it.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
+                assertThat(it.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
+                assertThat(it.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
+                assertThat(it.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
+                assertThat(it.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
+                assertThat(it.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+            }
         }
 
         @EnumSource(
@@ -809,26 +849,28 @@ class BrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val opprettetBrevmottakerPersonUtenIdent = brevmottakerOppretter.opprettBrevmottaker(
+            val brevmottaker = brevmottakerOppretter.opprettBrevmottaker(
                 behandling.id,
                 nyBrevmottakerPersonUtenIdent,
             )
 
             // Act & assert
-            assertThat(opprettetBrevmottakerPersonUtenIdent.id).isNotNull()
-            assertThat(opprettetBrevmottakerPersonUtenIdent.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+            assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
+                assertThat(it.id).isNotNull()
+                assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
+                assertThat(it.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
+                assertThat(it.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
+                assertThat(it.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
+                assertThat(it.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
+                assertThat(it.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
+                assertThat(it.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+            }
 
             val capturedBrev = brevSlot.captured
             assertThat(capturedBrev.mottakere?.organisasjoner).isEmpty()
             assertThat(capturedBrev.mottakere?.personer).hasSize(1)
             assertThat(capturedBrev.mottakere?.personer?.filterIsInstance(BrevmottakerPersonUtenIdent::class.java)).anySatisfy {
-                assertThat(it).isEqualTo(opprettetBrevmottakerPersonUtenIdent)
+                assertThat(it).isEqualTo(brevmottaker)
             }
         }
 
@@ -885,26 +927,28 @@ class BrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val opprettetBrevmottakerPersonUtenIdent = brevmottakerOppretter.opprettBrevmottaker(
+            val brevmottaker = brevmottakerOppretter.opprettBrevmottaker(
                 behandling.id,
                 nyBrevmottakerPersonUtenIdent,
             )
 
             // Act & assert
-            assertThat(opprettetBrevmottakerPersonUtenIdent.id).isNotNull()
-            assertThat(opprettetBrevmottakerPersonUtenIdent.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
-            assertThat(opprettetBrevmottakerPersonUtenIdent.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+            assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
+                assertThat(it.id).isNotNull()
+                assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
+                assertThat(it.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
+                assertThat(it.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
+                assertThat(it.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
+                assertThat(it.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
+                assertThat(it.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
+                assertThat(it.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+            }
 
             val capturedBrev = brevSlot.captured
             assertThat(capturedBrev.mottakere?.organisasjoner).isEmpty()
             assertThat(capturedBrev.mottakere?.personer).hasSize(2)
             assertThat(capturedBrev.mottakere?.personer?.filterIsInstance(BrevmottakerPersonUtenIdent::class.java)).anySatisfy {
-                assertThat(it).isEqualTo(opprettetBrevmottakerPersonUtenIdent)
+                assertThat(it).isEqualTo(brevmottaker)
             }
             assertThat(capturedBrev.mottakere?.personer?.filterIsInstance(BrevmottakerPersonMedIdent::class.java)).anySatisfy {
                 assertThat(it).isEqualTo(brevmottakerPersonMedIdent)

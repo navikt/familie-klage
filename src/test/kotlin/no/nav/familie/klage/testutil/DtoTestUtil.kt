@@ -1,5 +1,7 @@
 package no.nav.familie.klage.testutil
 
+import no.nav.familie.klage.brev.brevmottaker.NyBrevmottakerOrganisasjonDto
+import no.nav.familie.klage.brev.brevmottaker.NyBrevmottakerPersonMedIdentDto
 import no.nav.familie.klage.brev.brevmottaker.NyBrevmottakerPersonUtenIdentDto
 import no.nav.familie.klage.brev.domain.MottakerRolle
 
@@ -21,6 +23,30 @@ object DtoTestUtil {
             postnummer = postnummer,
             poststed = poststed,
             landkode = landkode,
+        )
+    }
+
+    fun lagNyBrevmottakerPersonMedIdentDto(
+        personIdent: String = "23097825289",
+        mottakerRolle: MottakerRolle = MottakerRolle.FULLMAKT,
+        navn: String = "Navn Navnesen",
+    ): NyBrevmottakerPersonMedIdentDto {
+        return NyBrevmottakerPersonMedIdentDto(
+            personIdent = personIdent,
+            mottakerRolle = mottakerRolle,
+            navn = navn,
+        )
+    }
+
+    fun lagNyBrevmottakerOrganisasjonDto(
+        organisasjonsnummer: String = "123",
+        organisasjonsnavn: String = "Orgnavn",
+        navnHosOrganisasjon: String = "navnHosOrganisasjon",
+    ): NyBrevmottakerOrganisasjonDto {
+        return NyBrevmottakerOrganisasjonDto(
+            organisasjonsnummer = organisasjonsnummer,
+            organisasjonsnavn = organisasjonsnavn,
+            navnHosOrganisasjon = navnHosOrganisasjon,
         )
     }
 }

@@ -316,7 +316,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             val exchange = restTemplate.exchange<Ressurs<BrevmottakereDto>>(
                 localhost("$baseUrl/${behandling.id}"),
                 HttpMethod.POST,
-                HttpEntity<NyBrevmottakerPersonUtenIdentDto>(nyBrevmottakerDto, headers),
+                HttpEntity<NyBrevmottakerDto>(nyBrevmottakerDto, headers),
             )
 
             // Assert
@@ -342,7 +342,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             val exchange = restTemplate.exchange<Ressurs<BrevmottakereDto>>(
                 localhost("$baseUrl/${behandling.id}"),
                 HttpMethod.POST,
-                HttpEntity<NyBrevmottakerPersonUtenIdentDto>(nyBrevmottakerDto, headers),
+                HttpEntity<NyBrevmottakerDto>(nyBrevmottakerDto, headers),
             )
 
             // Assert
@@ -375,7 +375,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             val exchange = restTemplate.exchange<Ressurs<BrevmottakereDto>>(
                 localhost("$baseUrl/${behandling.id}"),
                 HttpMethod.POST,
-                HttpEntity<NyBrevmottakerPersonUtenIdentDto>(nyBrevmottakerDto, headers),
+                HttpEntity<NyBrevmottakerDto>(nyBrevmottakerDto, headers),
             )
 
             // Assert
@@ -411,7 +411,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             val exchange = restTemplate.exchange<Ressurs<BrevmottakereDto>>(
                 localhost("$baseUrl/${behandling.id}"),
                 HttpMethod.POST,
-                HttpEntity<NyBrevmottakerPersonUtenIdentDto>(nyBrevmottakerDto, headers),
+                HttpEntity<NyBrevmottakerDto>(nyBrevmottakerDto, headers),
             )
 
             // Assert

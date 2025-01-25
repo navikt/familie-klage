@@ -51,15 +51,12 @@ class BrevmottakerController(
     @PostMapping("/{behandlingId}")
     fun opprettBrevmottaker(
         @PathVariable behandlingId: UUID,
-        @RequestBody nyBrevmottakerPersonUtenIdentDto: NyBrevmottakerPersonUtenIdentDto,
+        @RequestBody nyBrevmottakerDto: NyBrevmottakerDto,
     ): Ressurs<BrevmottakereDto> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.CREATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        nyBrevmottakerPersonUtenIdentDto.valider()
-        brevmottakerService.opprettBrevmottaker(
-            behandlingId,
-            NyBrevmottakerPersonUtenIdentMapper.tilDomene(nyBrevmottakerPersonUtenIdentDto),
-        )
+        nyBrevmottakerDto.valider()
+        brevmottakerService.opprettBrevmottaker(behandlingId, nyBrevmottakerDto.tilDomene())
         val brevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
         return Ressurs.success(brevmottakere.tilDto())
     }

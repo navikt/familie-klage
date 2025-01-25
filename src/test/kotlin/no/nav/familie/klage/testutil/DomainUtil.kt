@@ -7,6 +7,8 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
+import no.nav.familie.klage.brev.brevmottaker.NyBrevmottakerOrganisasjon
+import no.nav.familie.klage.brev.brevmottaker.NyBrevmottakerPersonMedIdent
 import no.nav.familie.klage.brev.brevmottaker.NyBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
@@ -452,6 +454,30 @@ object DomainUtil {
             postnummer = postnummer,
             poststed = poststed,
             landkode = landkode,
+        )
+    }
+
+    fun lagNyBrevmottakerPersonMedIdent(
+        personIdent: String = "23097825289",
+        mottakerRolle: MottakerRolle = MottakerRolle.FULLMAKT,
+        navn: String = "Navn Navnesen",
+    ): NyBrevmottakerPersonMedIdent {
+        return NyBrevmottakerPersonMedIdent(
+            personIdent,
+            mottakerRolle,
+            navn,
+        )
+    }
+
+    fun lagNyBrevmottakerOrganisasjon(
+        organisasjonsnummer: String = "123",
+        organisasjonsnavn: String = "Orgnavn",
+        navnHosOrganisasjon: String = "navnHosOrganisasjon",
+    ): NyBrevmottakerOrganisasjon {
+        return NyBrevmottakerOrganisasjon(
+            organisasjonsnummer = organisasjonsnummer,
+            organisasjonsnavn = organisasjonsnavn,
+            navnHosOrganisasjon = navnHosOrganisasjon,
         )
     }
 

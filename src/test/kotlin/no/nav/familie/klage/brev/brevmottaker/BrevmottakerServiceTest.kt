@@ -5,6 +5,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.testutil.DomainUtil
 import org.assertj.core.api.Assertions.assertThat
@@ -123,14 +124,16 @@ class BrevmottakerServiceTest {
             val brevmottaker = brevmottakerService.opprettBrevmottaker(behandlingId, nyBrevmottaker)
 
             // Assert
-            assertThat(brevmottaker.id).isNotNull()
-            assertThat(brevmottaker.mottakerRolle).isEqualTo(nyBrevmottaker.mottakerRolle)
-            assertThat(brevmottaker.navn).isEqualTo(nyBrevmottaker.navn)
-            assertThat(brevmottaker.adresselinje1).isEqualTo(nyBrevmottaker.adresselinje1)
-            assertThat(brevmottaker.adresselinje2).isEqualTo(nyBrevmottaker.adresselinje2)
-            assertThat(brevmottaker.postnummer).isEqualTo(nyBrevmottaker.postnummer)
-            assertThat(brevmottaker.poststed).isEqualTo(nyBrevmottaker.poststed)
-            assertThat(brevmottaker.landkode).isEqualTo(nyBrevmottaker.landkode)
+            assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
+                assertThat(it.id).isNotNull()
+                assertThat(it.mottakerRolle).isEqualTo(nyBrevmottaker.mottakerRolle)
+                assertThat(it.navn).isEqualTo(nyBrevmottaker.navn)
+                assertThat(it.adresselinje1).isEqualTo(nyBrevmottaker.adresselinje1)
+                assertThat(it.adresselinje2).isEqualTo(nyBrevmottaker.adresselinje2)
+                assertThat(it.postnummer).isEqualTo(nyBrevmottaker.postnummer)
+                assertThat(it.poststed).isEqualTo(nyBrevmottaker.poststed)
+                assertThat(it.landkode).isEqualTo(nyBrevmottaker.landkode)
+            }
         }
     }
 

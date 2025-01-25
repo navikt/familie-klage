@@ -4,6 +4,8 @@ import no.nav.familie.klage.brev.domain.MottakerRolle
 
 private const val LANDKODE_NO = "NO"
 
+sealed interface NyBrevmottaker
+
 data class NyBrevmottakerPersonUtenIdent(
     val mottakerRolle: MottakerRolle,
     val navn: String,
@@ -12,7 +14,7 @@ data class NyBrevmottakerPersonUtenIdent(
     val postnummer: String?,
     val poststed: String?,
     val landkode: String,
-) {
+) : NyBrevmottaker {
     init {
         if (landkode.length != 2) {
             throw IllegalStateException("Ugyldig landkode: $landkode.")
@@ -46,3 +48,15 @@ data class NyBrevmottakerPersonUtenIdent(
         }
     }
 }
+
+data class NyBrevmottakerPersonMedIdent(
+    val personIdent: String,
+    val mottakerRolle: MottakerRolle,
+    val navn: String,
+) : NyBrevmottaker
+
+data class NyBrevmottakerOrganisasjon(
+    val organisasjonsnummer: String,
+    val organisasjonsnavn: String,
+    val navnHosOrganisasjon: String,
+) : NyBrevmottaker

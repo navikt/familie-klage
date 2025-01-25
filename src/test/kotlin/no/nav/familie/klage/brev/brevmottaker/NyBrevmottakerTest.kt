@@ -7,9 +7,9 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-class NyBrevmottakerPersonUtenIdentTest {
+class NyBrevmottakerTest {
     @Nested
-    inner class InitTest {
+    inner class NyBrevmottakerPersonUtenIdentTest {
         @Test
         fun `skal kaste exception om landkode er mindre enn 2 tegn`() {
             // Act & assert

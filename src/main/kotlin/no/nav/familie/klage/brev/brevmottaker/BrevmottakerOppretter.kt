@@ -7,6 +7,7 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brev.domain.Brevmottaker
 import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brev.domain.Brevmottakere
@@ -36,8 +37,19 @@ class BrevmottakerOppretter(
     @Transactional
     fun opprettBrevmottaker(
         behandlingId: UUID,
+        nyBrevmottaker: NyBrevmottaker,
+    ): Brevmottaker {
+        return when (nyBrevmottaker) {
+            is NyBrevmottakerOrganisasjon -> throw UnsupportedOperationException("${nyBrevmottaker::class.simpleName} er ikke støttet.")
+            is NyBrevmottakerPersonMedIdent -> throw UnsupportedOperationException("${nyBrevmottaker::class.simpleName} er ikke støttet.")
+            is NyBrevmottakerPersonUtenIdent -> opprettBrevmottakerPersonUtenIdent(behandlingId, nyBrevmottaker)
+        }
+    }
+
+    private fun opprettBrevmottakerPersonUtenIdent(
+        behandlingId: UUID,
         nyBrevmottaker: NyBrevmottakerPersonUtenIdent,
-    ): BrevmottakerPersonUtenIdent {
+    ): Brevmottaker {
         logger.debug("Oppretter brevmottaker for behandling {}.", behandlingId)
 
         val behandling = behandlingService.hentBehandling(behandlingId)
