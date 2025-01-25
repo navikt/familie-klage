@@ -43,8 +43,9 @@ class BrevmottakerController(
     ): Ressurs<BrevmottakereDto> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        brevmottakerService.erstattBrevmottakere(behandlingId, brevmottakereDto.tilDomene())
-        return Ressurs.success(brevmottakereDto)
+        brevmottakereDto.valider()
+        val nyeBrevmottakere = brevmottakerService.erstattBrevmottakere(behandlingId, brevmottakereDto.tilDomene())
+        return Ressurs.success(nyeBrevmottakere.tilDto())
     }
 
     @PostMapping("/{behandlingId}")

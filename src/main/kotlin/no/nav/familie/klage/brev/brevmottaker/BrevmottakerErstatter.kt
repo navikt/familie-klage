@@ -6,8 +6,8 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.brev.BrevRepository
-import no.nav.familie.klage.brev.BrevmottakerUtil.validerMinimumEnMottaker
-import no.nav.familie.klage.brev.BrevmottakerUtil.validerUnikeBrevmottakere
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.repository.findByIdOrThrow
@@ -29,7 +29,6 @@ class BrevmottakerErstatter(
         validerRedigerbarBehandling(behandling)
         validerKorrektBehandlingssteg(behandling)
         validerUnikeBrevmottakere(brevmottakere)
-        validerMinimumEnMottaker(brevmottakere)
         val eksisterendeBrev = brevRepository.findByIdOrThrow(behandlingId)
         val oppdatertBrev = brevRepository.update(eksisterendeBrev.copy(mottakere = brevmottakere))
         return oppdatertBrev.mottakere ?: error("Fant ikke brevmottakere for behandling $behandlingId")
@@ -44,6 +43,24 @@ class BrevmottakerErstatter(
     private fun validerKorrektBehandlingssteg(behandling: Behandling) {
         if (behandling.steg != StegType.BREV) {
             throw Feil("Behandlingen er i steg ${behandling.steg}, forventet steg ${StegType.BREV}")
+        }
+    }
+
+    // TODO : Dette burde egentlig leve i init-metoden til domeneobjektet
+    private fun validerUnikeBrevmottakere(brevmottakere: Brevmottakere) {
+        val personmottakerIdentifikatorer = brevmottakere.personer.map {
+            when (it) {
+                is BrevmottakerPersonMedIdent -> it.personIdent
+                is BrevmottakerPersonUtenIdent -> it.id.toString()
+            }
+        }
+        if (personmottakerIdentifikatorer.distinct().size == personmottakerIdentifikatorer.size) {
+            throw Feil("En person kan bare legges til en gang som brevmottaker")
+        }
+
+        val organisasjonsmottakerIdenter = brevmottakere.organisasjoner.map { it.organisasjonsnummer }
+        if (organisasjonsmottakerIdenter.distinct().size == organisasjonsmottakerIdenter.size) {
+            throw Feil("En organisasjon kan bare legges til en gang som brevmottaker")
         }
     }
 }
