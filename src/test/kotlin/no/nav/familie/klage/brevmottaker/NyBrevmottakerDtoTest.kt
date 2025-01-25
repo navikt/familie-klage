@@ -1,6 +1,5 @@
 package no.nav.familie.klage.brevmottaker
 
-import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.testutil.DtoTestUtil

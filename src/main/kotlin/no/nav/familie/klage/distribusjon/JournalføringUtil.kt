@@ -1,9 +1,9 @@
 package no.nav.familie.klage.distribusjon
 
-import no.nav.familie.klage.brev.domain.Brevmottaker
-import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
-import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
-import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
+import no.nav.familie.klage.brevmottaker.Brevmottaker
+import no.nav.familie.klage.brevmottaker.BrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.BrevmottakerPersonUtenIdent
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
 import no.nav.familie.kontrakter.felles.journalpost.AvsenderMottakerIdType
 

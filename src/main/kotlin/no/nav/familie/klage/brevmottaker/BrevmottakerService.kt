@@ -1,8 +1,6 @@
 package no.nav.familie.klage.brevmottaker
 
 import jakarta.transaction.Transactional
-import no.nav.familie.klage.brev.domain.Brevmottaker
-import no.nav.familie.klage.brev.domain.Brevmottakere
 import org.springframework.stereotype.Service
 import java.util.UUID
 

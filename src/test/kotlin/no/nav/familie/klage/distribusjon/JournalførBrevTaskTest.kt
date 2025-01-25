@@ -8,13 +8,13 @@ import io.mockk.verifyOrder
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.domain.Brev
-import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
-import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
-import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalpost
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalpostMedIdent
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
-import no.nav.familie.klage.brev.domain.MottakerRolle
+import no.nav.familie.klage.brevmottaker.BrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.Brevmottakere
+import no.nav.familie.klage.brevmottaker.MottakerRolle
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.fagsak

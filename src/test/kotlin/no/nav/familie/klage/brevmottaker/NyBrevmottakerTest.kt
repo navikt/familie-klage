@@ -1,6 +1,5 @@
 package no.nav.familie.klage.brevmottaker
 
-import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.testutil.DomainUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested

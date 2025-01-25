@@ -10,9 +10,6 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.domain.Brev
-import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
-import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
-import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.exception.Feil

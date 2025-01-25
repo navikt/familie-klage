@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 
@@ -22,36 +21,36 @@ sealed interface NyBrevmottakerDto {
         PERSON_UTEN_IDENT,
         ORGANISASJON,
     }
+}
 
-    fun tilDomene(): NyBrevmottaker {
-        return when (this) {
-            is NyBrevmottakerOrganisasjonDto -> {
-                NyBrevmottakerOrganisasjon(
-                    organisasjonsnummer = this.organisasjonsnummer,
-                    organisasjonsnavn = this.organisasjonsnavn,
-                    navnHosOrganisasjon = this.navnHosOrganisasjon,
-                )
-            }
+fun NyBrevmottakerDto.tilDomene(): NyBrevmottaker {
+    return when (this) {
+        is NyBrevmottakerOrganisasjonDto -> {
+            NyBrevmottakerOrganisasjon(
+                organisasjonsnummer = organisasjonsnummer,
+                organisasjonsnavn = organisasjonsnavn,
+                navnHosOrganisasjon = navnHosOrganisasjon,
+            )
+        }
 
-            is NyBrevmottakerPersonMedIdentDto -> {
-                NyBrevmottakerPersonMedIdent(
-                    personIdent = this.personIdent,
-                    mottakerRolle = this.mottakerRolle,
-                    navn = this.navn,
-                )
-            }
+        is NyBrevmottakerPersonMedIdentDto -> {
+            NyBrevmottakerPersonMedIdent(
+                personIdent = personIdent,
+                mottakerRolle = mottakerRolle,
+                navn = navn,
+            )
+        }
 
-            is NyBrevmottakerPersonUtenIdentDto -> {
-                NyBrevmottakerPersonUtenIdent(
-                    mottakerRolle = this.mottakerRolle,
-                    navn = this.navn,
-                    adresselinje1 = this.adresselinje1,
-                    adresselinje2 = this.adresselinje2,
-                    postnummer = this.postnummer,
-                    poststed = this.poststed,
-                    landkode = this.landkode,
-                )
-            }
+        is NyBrevmottakerPersonUtenIdentDto -> {
+            NyBrevmottakerPersonUtenIdent(
+                mottakerRolle = mottakerRolle,
+                navn = navn,
+                adresselinje1 = adresselinje1,
+                adresselinje2 = adresselinje2,
+                postnummer = postnummer,
+                poststed = poststed,
+                landkode = landkode,
+            )
         }
     }
 }

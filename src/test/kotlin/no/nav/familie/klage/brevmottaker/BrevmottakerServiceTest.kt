@@ -5,8 +5,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
-import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.testutil.DomainUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested

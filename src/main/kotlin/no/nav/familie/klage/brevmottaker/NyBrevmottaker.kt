@@ -1,7 +1,5 @@
 package no.nav.familie.klage.brevmottaker
 
-import no.nav.familie.klage.brev.domain.MottakerRolle
-
 private const val LANDKODE_NO = "NO"
 
 sealed interface NyBrevmottaker

@@ -2,17 +2,17 @@ package no.nav.familie.klage.distribusjon
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevService
-import no.nav.familie.klage.brev.BrevmottakerUtil.validerMinimumEnMottaker
 import no.nav.familie.klage.brev.domain.Brev
-import no.nav.familie.klage.brev.domain.Brevmottaker
-import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
-import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
-import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
-import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalpost
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalpostMedIdent
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalpostUtenIdent
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
+import no.nav.familie.klage.brevmottaker.Brevmottaker
+import no.nav.familie.klage.brevmottaker.BrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.BrevmottakerPersonUtenIdent
+import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerMinimumEnMottaker
+import no.nav.familie.klage.brevmottaker.Brevmottakere
 import no.nav.familie.klage.distribusjon.JournalføringUtil.mapAvsenderMottaker
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.personopplysninger.pdl.logger
