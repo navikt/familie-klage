@@ -454,4 +454,16 @@ object DomainUtil {
             landkode = landkode,
         )
     }
+
+    fun lagBrevmottakerOrganisasjon(
+        organisasjonsnummer: String = "123",
+        organisasjonsnavn: String = "Orgnavn",
+        navnHosOrganisasjon: String = "navnHosOrganisasjon",
+    ): BrevmottakerOrganisasjon {
+        return BrevmottakerOrganisasjon(
+            organisasjonsnummer = organisasjonsnummer,
+            organisasjonsnavn = organisasjonsnavn,
+            navnHosOrganisasjon = navnHosOrganisasjon,
+        )
+    }
 }

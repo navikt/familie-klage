@@ -13,7 +13,7 @@ data class BrevmottakereDto(
 ) {
     fun valider() {
         if (personer.isEmpty() && organisasjoner.isEmpty()) {
-            throw ApiFeil.badRequest("Må ha minimum en mottaker")
+            throw ApiFeil.badRequest("Må ha minimum en brevmottaker.")
         }
 
         val personmottakerIdentifikatorer = personer.map {
@@ -22,13 +22,13 @@ data class BrevmottakereDto(
                 is BrevmottakerPersonUtenIdent -> it.id.toString()
             }
         }
-        if (personmottakerIdentifikatorer.distinct().size == personmottakerIdentifikatorer.size) {
-            throw ApiFeil.badRequest("En person kan bare legges til en gang som brevmottaker")
+        if (personmottakerIdentifikatorer.distinct().size != personmottakerIdentifikatorer.size) {
+            throw ApiFeil.badRequest("En person kan bare legges til en gang som brevmottaker.")
         }
 
         val organisasjonsmottakerIdenter = organisasjoner.map { it.organisasjonsnummer }
-        if (organisasjonsmottakerIdenter.distinct().size == organisasjonsmottakerIdenter.size) {
-            throw ApiFeil.badRequest("En organisasjon kan bare legges til en gang som brevmottaker")
+        if (organisasjonsmottakerIdenter.distinct().size != organisasjonsmottakerIdenter.size) {
+            throw ApiFeil.badRequest("En organisasjon kan bare legges til en gang som brevmottaker.")
         }
     }
 }
