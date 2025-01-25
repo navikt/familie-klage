@@ -1,7 +1,6 @@
-package no.nav.familie.klage.brev.brevmottaker.baks
+package no.nav.familie.klage.brev.brevmottaker
 
 import no.nav.familie.klage.brev.BrevRepository
-import no.nav.familie.klage.brev.brevmottaker.NyBrevmottakerPersonUtenIdentDto
 import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brev.domain.MottakerRolle

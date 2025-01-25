@@ -1,6 +1,5 @@
-package no.nav.familie.klage.brev.brevmottaker.baks
+package no.nav.familie.klage.brev.brevmottaker
 
-import no.nav.familie.klage.brev.brevmottaker.NyBrevmottakerPersonUtenIdentMapper
 import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.testutil.DtoTestUtil
 import org.assertj.core.api.Assertions.assertThat

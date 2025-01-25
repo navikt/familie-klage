@@ -1,15 +1,10 @@
-package no.nav.familie.klage.brev.brevmottaker.baks
+package no.nav.familie.klage.brev.brevmottaker
 
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import no.nav.familie.klage.brev.brevmottaker.BrevmottakerErstatter
-import no.nav.familie.klage.brev.brevmottaker.BrevmottakerHenter
-import no.nav.familie.klage.brev.brevmottaker.BrevmottakerOppretter
-import no.nav.familie.klage.brev.brevmottaker.BrevmottakerService
-import no.nav.familie.klage.brev.brevmottaker.BrevmottakerSletter
 import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.testutil.DomainUtil
 import org.assertj.core.api.Assertions.assertThat
