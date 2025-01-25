@@ -24,14 +24,14 @@ class BrevmottakerErstatter(
 
     @Transactional
     fun erstattBrevmottakere(behandlingId: UUID, brevmottakere: Brevmottakere): Brevmottakere {
-        logger.debug("Erstatter brevmottakere for behandling {}", behandlingId)
+        logger.debug("Erstatter brevmottakere for behandling {}.", behandlingId)
         val behandling = behandlingService.hentBehandling(behandlingId)
         validerRedigerbarBehandling(behandling)
         validerKorrektBehandlingssteg(behandling)
         validerUnikeBrevmottakere(brevmottakere)
         val eksisterendeBrev = brevRepository.findByIdOrThrow(behandlingId)
         val oppdatertBrev = brevRepository.update(eksisterendeBrev.copy(mottakere = brevmottakere))
-        return oppdatertBrev.mottakere ?: error("Fant ikke brevmottakere for behandling $behandlingId")
+        return oppdatertBrev.mottakere ?: error("Fant ikke brevmottakere for behandling $behandlingId.")
     }
 
     private fun validerRedigerbarBehandling(behandling: Behandling) {
@@ -42,7 +42,7 @@ class BrevmottakerErstatter(
 
     private fun validerKorrektBehandlingssteg(behandling: Behandling) {
         if (behandling.steg != StegType.BREV) {
-            throw Feil("Behandlingen er i steg ${behandling.steg}, forventet steg ${StegType.BREV}")
+            throw Feil("Behandlingen er i steg ${behandling.steg}, forventet steg ${StegType.BREV}.")
         }
     }
 
@@ -54,13 +54,13 @@ class BrevmottakerErstatter(
                 is BrevmottakerPersonUtenIdent -> it.id.toString()
             }
         }
-        if (personmottakerIdentifikatorer.distinct().size == personmottakerIdentifikatorer.size) {
-            throw Feil("En person kan bare legges til en gang som brevmottaker")
+        if (personmottakerIdentifikatorer.distinct().size != personmottakerIdentifikatorer.size) {
+            throw Feil("En person kan bare legges til en gang som brevmottaker.")
         }
 
         val organisasjonsmottakerIdenter = brevmottakere.organisasjoner.map { it.organisasjonsnummer }
-        if (organisasjonsmottakerIdenter.distinct().size == organisasjonsmottakerIdenter.size) {
-            throw Feil("En organisasjon kan bare legges til en gang som brevmottaker")
+        if (organisasjonsmottakerIdenter.distinct().size != organisasjonsmottakerIdenter.size) {
+            throw Feil("En organisasjon kan bare legges til en gang som brevmottaker.")
         }
     }
 }
