@@ -3,6 +3,8 @@ package no.nav.familie.klage.brevmottaker
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.testutil.DomainUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested

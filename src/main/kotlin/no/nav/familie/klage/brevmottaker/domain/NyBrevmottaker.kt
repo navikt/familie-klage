@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brevmottaker
+package no.nav.familie.klage.brevmottaker.domain
 
 private const val LANDKODE_NO = "NO"
 

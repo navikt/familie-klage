@@ -1,10 +1,14 @@
-package no.nav.familie.klage.brevmottaker
+package no.nav.familie.klage.brevmottaker.dto
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottaker
+import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
 import java.util.UUID
 

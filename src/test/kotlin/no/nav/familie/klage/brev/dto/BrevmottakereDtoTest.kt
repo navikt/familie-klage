@@ -1,6 +1,6 @@
 package no.nav.familie.klage.brev.dto
 
-import no.nav.familie.klage.brevmottaker.BrevmottakereDto
+import no.nav.familie.klage.brevmottaker.dto.BrevmottakereDto
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.testutil.DomainUtil
 import org.assertj.core.api.Assertions.assertThat

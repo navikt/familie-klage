@@ -1,10 +1,15 @@
-package no.nav.familie.klage.brevmottaker
+package no.nav.familie.klage.brevmottaker.dto
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
+import no.nav.familie.klage.brevmottaker.domain.NyBrevmottaker
+import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 

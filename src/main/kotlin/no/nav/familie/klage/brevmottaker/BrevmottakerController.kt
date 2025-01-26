@@ -1,5 +1,10 @@
 package no.nav.familie.klage.brevmottaker
 
+import no.nav.familie.klage.brevmottaker.dto.BrevmottakereDto
+import no.nav.familie.klage.brevmottaker.dto.NyBrevmottakerDto
+import no.nav.familie.klage.brevmottaker.dto.SlettbarBrevmottakerDto
+import no.nav.familie.klage.brevmottaker.dto.tilDomene
+import no.nav.familie.klage.brevmottaker.dto.tilDto
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs

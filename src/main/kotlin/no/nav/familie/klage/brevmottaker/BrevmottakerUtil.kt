@@ -1,5 +1,6 @@
 package no.nav.familie.klage.brevmottaker
 
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 
 object BrevmottakerUtil {

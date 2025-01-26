@@ -1,6 +1,7 @@
 package no.nav.familie.klage.brevmottaker
 
 import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.util.UUID

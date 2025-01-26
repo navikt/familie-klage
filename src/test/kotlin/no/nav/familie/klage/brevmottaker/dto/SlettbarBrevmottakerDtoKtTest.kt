@@ -1,5 +1,8 @@
-package no.nav.familie.klage.brevmottaker
+package no.nav.familie.klage.brevmottaker.dto
 
+import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested

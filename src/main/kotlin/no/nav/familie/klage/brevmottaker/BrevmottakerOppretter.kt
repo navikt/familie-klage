@@ -7,6 +7,15 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brevmottaker.domain.Brevmottaker
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
+import no.nav.familie.klage.brevmottaker.domain.NyBrevmottaker
+import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService

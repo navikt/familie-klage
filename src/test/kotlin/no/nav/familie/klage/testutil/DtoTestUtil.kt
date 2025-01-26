@@ -1,9 +1,9 @@
 package no.nav.familie.klage.testutil
 
-import no.nav.familie.klage.brevmottaker.MottakerRolle
-import no.nav.familie.klage.brevmottaker.NyBrevmottakerOrganisasjonDto
-import no.nav.familie.klage.brevmottaker.NyBrevmottakerPersonMedIdentDto
-import no.nav.familie.klage.brevmottaker.NyBrevmottakerPersonUtenIdentDto
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
+import no.nav.familie.klage.brevmottaker.dto.NyBrevmottakerOrganisasjonDto
+import no.nav.familie.klage.brevmottaker.dto.NyBrevmottakerPersonMedIdentDto
+import no.nav.familie.klage.brevmottaker.dto.NyBrevmottakerPersonUtenIdentDto
 
 object DtoTestUtil {
     fun lagNyBrevmottakerPersonUtenIdentDto(

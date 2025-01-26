@@ -4,6 +4,7 @@ import io.mockk.mockk
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.testutil.DomainUtil

@@ -1,5 +1,9 @@
-package no.nav.familie.klage.brevmottaker
+package no.nav.familie.klage.brevmottaker.dto
 
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
+import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.testutil.DtoTestUtil

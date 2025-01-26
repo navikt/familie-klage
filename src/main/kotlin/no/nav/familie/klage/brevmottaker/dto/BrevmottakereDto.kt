@@ -1,5 +1,10 @@
-package no.nav.familie.klage.brevmottaker
+package no.nav.familie.klage.brevmottaker.dto
 
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPerson
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 
 data class BrevmottakereDto(

@@ -2,13 +2,13 @@ package no.nav.familie.klage.kabal
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
-import no.nav.familie.klage.brevmottaker.Brevmottaker
-import no.nav.familie.klage.brevmottaker.BrevmottakerOrganisasjon
-import no.nav.familie.klage.brevmottaker.BrevmottakerPerson
-import no.nav.familie.klage.brevmottaker.BrevmottakerPersonMedIdent
-import no.nav.familie.klage.brevmottaker.BrevmottakerPersonUtenIdent
-import no.nav.familie.klage.brevmottaker.Brevmottakere
-import no.nav.familie.klage.brevmottaker.MottakerRolle
+import no.nav.familie.klage.brevmottaker.domain.Brevmottaker
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPerson
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.tilYtelse
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig

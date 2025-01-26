@@ -1,6 +1,11 @@
 package no.nav.familie.klage.brevmottaker
 
 import no.nav.familie.klage.brev.BrevRepository
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
+import no.nav.familie.klage.brevmottaker.dto.BrevmottakereDto
+import no.nav.familie.klage.brevmottaker.dto.NyBrevmottakerDto
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
