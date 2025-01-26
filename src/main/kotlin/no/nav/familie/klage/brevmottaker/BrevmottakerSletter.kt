@@ -74,7 +74,7 @@ class BrevmottakerSletter(
             }
         }
 
-        val fagsakAktivIdent = fagsakService.hentFagsakForBehandling(behandlingId).hentAktivIdent()
+        val fagsakAktivIdent = fagsakService.hentFagsak(behandling.fagsakId).hentAktivIdent()
 
         val harBrevmottakerPersonBruker = brevmottakerPersoner
             .filterIsInstance<BrevmottakerPersonMedIdent>()
