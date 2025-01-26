@@ -120,7 +120,9 @@ data class NyBrevmottakerPersonMedIdentDto(
         get() = NyBrevmottakerDto.Type.PERSON_MED_IDENT
 
     override fun valider() {
-        // Do nothing...
+        if (mottakerRolle == MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE) {
+            throw ApiFeil.badRequest("Person med ident kan ikke være ${MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE}")
+        }
     }
 }
 

@@ -101,7 +101,7 @@ class NyBrevmottakerDtoKtTest {
     }
 
     @Nested
-    inner class NyBrevmottakerPersonUtenMedDtoTest {
+    inner class NyBrevmottakerPersonMedIdentDtoTest {
         @Test
         fun `skal ha riktig type`() {
             // Arrange
@@ -112,6 +112,21 @@ class NyBrevmottakerDtoKtTest {
 
             // Assert
             assertThat(type).isEqualTo(NyBrevmottakerDto.Type.PERSON_MED_IDENT)
+        }
+
+        @Test
+        fun `skal kaste exception om MottakerRolle er BRUKER_MED_UTENLANDSK_ADRESSE`() {
+            // Arrange
+            val dto = DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto(
+                mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+            )
+
+            // Act & assert
+            val exception = assertThrows<ApiFeil> {
+                dto.valider()
+            }
+            assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
+            assertThat(exception.message).isEqualTo("Person med ident kan ikke være ${MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE}")
         }
     }
 
