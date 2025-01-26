@@ -7,10 +7,10 @@ import io.mockk.mockk
 import io.mockk.slot
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
-import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
-import no.nav.familie.klage.brev.domain.BrevmottakerPerson
-import no.nav.familie.klage.brev.domain.Brevmottakere
-import no.nav.familie.klage.brev.domain.MottakerRolle
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
@@ -147,8 +147,8 @@ internal class KabalServiceTest {
             val behandling =
                 behandling(fagsak, påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer))
             val vurdering = vurdering(behandlingId = behandling.id, hjemmel = hjemmel)
-            val verge = BrevmottakerPerson("01234567890", "Navn", MottakerRolle.VERGE)
-            val bruker = BrevmottakerPerson(fagsak.hentAktivIdent(), "Navn", MottakerRolle.BRUKER)
+            val verge = BrevmottakerPersonMedIdent("01234567890", MottakerRolle.VERGE, "Navn")
+            val bruker = BrevmottakerPersonMedIdent(fagsak.hentAktivIdent(), MottakerRolle.BRUKER, "Navn")
             kabalService.sendTilKabal(
                 fagsak,
                 behandling,
@@ -177,7 +177,7 @@ internal class KabalServiceTest {
             val behandling =
                 behandling(fagsak, påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer))
             val vurdering = vurdering(behandlingId = behandling.id, hjemmel = hjemmel)
-            val verge = BrevmottakerPerson("01234567890", "Navn", MottakerRolle.VERGE)
+            val verge = BrevmottakerPersonMedIdent("01234567890", MottakerRolle.VERGE, "Navn")
             kabalService.sendTilKabal(
                 fagsak,
                 behandling,
@@ -206,7 +206,7 @@ internal class KabalServiceTest {
             val behandling =
                 behandling(fagsak, påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer))
             val vurdering = vurdering(behandlingId = behandling.id, hjemmel = hjemmel)
-            val fullmektig = BrevmottakerPerson("01234567890", "Navn", MottakerRolle.FULLMAKT)
+            val fullmektig = BrevmottakerPersonMedIdent("01234567890", MottakerRolle.FULLMAKT, "Navn")
             kabalService.sendTilKabal(
                 fagsak,
                 behandling,
@@ -265,8 +265,8 @@ internal class KabalServiceTest {
                 behandling(fagsak, påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer))
             val vurdering = vurdering(behandlingId = behandling.id, hjemmel = hjemmel)
             val fullmektigOrganisasjon = BrevmottakerOrganisasjon("012345678", "Navn på org", "Navn på person")
-            val fullmektig = BrevmottakerPerson("01234567890", "Fullmektig", MottakerRolle.FULLMAKT)
-            val verge = BrevmottakerPerson("98765432100", "Verge", MottakerRolle.VERGE)
+            val fullmektig = BrevmottakerPersonMedIdent("01234567890", MottakerRolle.FULLMAKT, "Fullmektig")
+            val verge = BrevmottakerPersonMedIdent("98765432100", MottakerRolle.VERGE, "Verge")
             kabalService.sendTilKabal(
                 fagsak,
                 behandling,

@@ -8,12 +8,13 @@ import io.mockk.verifyOrder
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.domain.Brev
-import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
-import no.nav.familie.klage.brev.domain.BrevmottakerPerson
-import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalpost
+import no.nav.familie.klage.brev.domain.BrevmottakereJournalpostMedIdent
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
-import no.nav.familie.klage.brev.domain.MottakerRolle
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
@@ -68,7 +69,13 @@ internal class JournalførBrevTaskTest {
         every { taskService.save(capture(taskSlots)) } answers { firstArg() }
         every { behandlingService.hentBehandling(any()) } returns DomainUtil.behandling(resultat = BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST)
 
-        journalførBrevTask.onCompletion(Task(JournalførBrevTask.TYPE, behandlingId.toString(), propertiesMedJournalpostId))
+        journalførBrevTask.onCompletion(
+            Task(
+                JournalførBrevTask.TYPE,
+                behandlingId.toString(),
+                propertiesMedJournalpostId,
+            ),
+        )
 
         assertThat(taskSlots).hasSize(1)
         assertThat(taskSlots.first().type).isEqualTo(DistribuerBrevTask.TYPE)
@@ -80,7 +87,13 @@ internal class JournalførBrevTaskTest {
         every { taskService.save(capture(taskSlots)) } answers { firstArg() }
         every { behandlingService.hentBehandling(any()) } returns DomainUtil.behandling(resultat = BehandlingResultat.IKKE_MEDHOLD)
 
-        journalførBrevTask.onCompletion(Task(JournalførBrevTask.TYPE, behandlingId.toString(), propertiesMedJournalpostId))
+        journalførBrevTask.onCompletion(
+            Task(
+                JournalførBrevTask.TYPE,
+                behandlingId.toString(),
+                propertiesMedJournalpostId,
+            ),
+        )
 
         assertThat(taskSlots).hasSize(2)
         assertThat(taskSlots.first().type).isEqualTo(SendTilKabalTask.TYPE)
@@ -96,8 +109,8 @@ internal class JournalførBrevTaskTest {
 
         val mottakere = Brevmottakere(
             listOf(
-                BrevmottakerPerson("1", "1navn", MottakerRolle.BRUKER),
-                BrevmottakerPerson("2", "2navn", MottakerRolle.FULLMAKT),
+                BrevmottakerPersonMedIdent("1", MottakerRolle.BRUKER, "1navn"),
+                BrevmottakerPersonMedIdent("2", MottakerRolle.FULLMAKT, "2navn"),
             ),
             listOf(BrevmottakerOrganisasjon("org1", "orgnavn", "mottaker")),
         )
@@ -121,8 +134,8 @@ internal class JournalførBrevTaskTest {
         @Test
         internal fun `skal fortsette fra forrige state`() {
             val journalposter = listOf(
-                BrevmottakereJournalpost(mottakerPerson.id!!, "journalpostId-0"),
-                BrevmottakereJournalpost(mottakerPerson2.id!!, "journalpostId-1"),
+                BrevmottakereJournalpostMedIdent(mottakerPerson.id!!, "journalpostId-0"),
+                BrevmottakereJournalpostMedIdent(mottakerPerson2.id!!, "journalpostId-1"),
             )
             mockHentBrev(mottakere = mottakere, BrevmottakereJournalposter(journalposter))
 
@@ -148,8 +161,10 @@ internal class JournalførBrevTaskTest {
         ) {
             assertThat(journalposter).hasSize(3)
             mottakere.forEachIndexed { index, avsenderMottaker ->
-                assertThat(journalposter[index].ident).isEqualTo(avsenderMottaker.id)
-                assertThat(journalposter[index].journalpostId).isEqualTo("journalpostId-$index")
+                assertThat(journalposter[index]).isInstanceOfSatisfying(BrevmottakereJournalpostMedIdent::class.java) {
+                    assertThat(it.ident).isEqualTo(avsenderMottaker.id)
+                    assertThat(it.journalpostId).isEqualTo("journalpostId-$index")
+                }
             }
         }
     }
@@ -160,7 +175,10 @@ internal class JournalførBrevTaskTest {
         return task
     }
 
-    private fun mockHentBrev(mottakere: Brevmottakere? = null, mottakereJournalpost: BrevmottakereJournalposter? = null) {
+    private fun mockHentBrev(
+        mottakere: Brevmottakere? = null,
+        mottakereJournalpost: BrevmottakereJournalposter? = null,
+    ) {
         every { brevService.hentBrev(behandlingId) } returns
             Brev(
                 behandlingId = behandlingId,

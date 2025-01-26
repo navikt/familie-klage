@@ -1,5 +1,6 @@
 package no.nav.familie.klage.brev.domain
 
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.felles.domain.Sporbar
 import org.springframework.data.annotation.Id
@@ -24,33 +25,19 @@ data class BrevmottakereJournalposter(
     val journalposter: List<BrevmottakereJournalpost>,
 )
 
-data class BrevmottakereJournalpost(
-    val ident: String,
-    val journalpostId: String,
-    val distribusjonId: String? = null,
-)
+data class BrevmottakereJournalpostMedIdent(
+    val ident: String?, // Enten personnummer eller orgnummer
+    override val journalpostId: String,
+    override val distribusjonId: String? = null,
+) : BrevmottakereJournalpost
 
-data class Brevmottakere(
-    val personer: List<BrevmottakerPerson> = emptyList(),
-    val organisasjoner: List<BrevmottakerOrganisasjon> = emptyList(),
-)
+data class BrevmottakereJournalpostUtenIdent(
+    val idForBrevmottakereUtenIdent: UUID?,
+    override val journalpostId: String,
+    override val distribusjonId: String? = null,
+) : BrevmottakereJournalpost
 
-enum class MottakerRolle {
-    BRUKER,
-    VERGE,
-    FULLMAKT,
+sealed interface BrevmottakereJournalpost {
+    val journalpostId: String
+    val distribusjonId: String?
 }
-
-data class BrevmottakerPerson(
-    val personIdent: String,
-    val navn: String,
-    val mottakerRolle: MottakerRolle,
-) : Brevmottaker()
-
-data class BrevmottakerOrganisasjon(
-    val organisasjonsnummer: String,
-    val organisasjonsnavn: String,
-    val navnHosOrganisasjon: String,
-) : Brevmottaker()
-
-sealed class Brevmottaker

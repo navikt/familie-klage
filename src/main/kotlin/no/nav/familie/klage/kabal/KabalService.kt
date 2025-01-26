@@ -2,11 +2,13 @@ package no.nav.familie.klage.kabal
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
-import no.nav.familie.klage.brev.domain.Brevmottaker
-import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
-import no.nav.familie.klage.brev.domain.BrevmottakerPerson
-import no.nav.familie.klage.brev.domain.Brevmottakere
-import no.nav.familie.klage.brev.domain.MottakerRolle
+import no.nav.familie.klage.brevmottaker.domain.Brevmottaker
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPerson
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.tilYtelse
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
@@ -85,10 +87,17 @@ class KabalService(
     private fun utledPartIdFraFullmektigEllerVerge(it: Brevmottaker) =
         when (it) {
             is BrevmottakerPerson -> {
-                OversendtPartId(
-                    type = OversendtPartIdType.PERSON,
-                    verdi = it.personIdent,
-                )
+                when (it) {
+                    is BrevmottakerPersonMedIdent -> OversendtPartId(
+                        type = OversendtPartIdType.PERSON,
+                        verdi = it.personIdent,
+                    )
+
+                    is BrevmottakerPersonUtenIdent -> OversendtPartId(
+                        type = OversendtPartIdType.PERSON,
+                        verdi = it.id.toString(), // TODO : Denne er mest sannsynlig feil
+                    )
+                }
             }
 
             is BrevmottakerOrganisasjon -> {

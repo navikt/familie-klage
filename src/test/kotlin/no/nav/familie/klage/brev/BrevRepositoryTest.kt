@@ -1,12 +1,12 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.brev.domain.Brev
-import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
-import no.nav.familie.klage.brev.domain.BrevmottakerPerson
-import no.nav.familie.klage.brev.domain.Brevmottakere
-import no.nav.familie.klage.brev.domain.BrevmottakereJournalpost
+import no.nav.familie.klage.brev.domain.BrevmottakereJournalpostMedIdent
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
-import no.nav.familie.klage.brev.domain.MottakerRolle
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.repository.findByIdOrThrow
@@ -60,14 +60,14 @@ internal class BrevRepositoryTest : OppslagSpringRunnerTest() {
         pdf = Fil("123".toByteArray()),
         mottakere = Brevmottakere(
             personer = listOf(
-                BrevmottakerPerson("ident", "navn", MottakerRolle.BRUKER),
+                BrevmottakerPersonMedIdent("ident", MottakerRolle.BRUKER, "navn"),
             ),
             organisasjoner = listOf(BrevmottakerOrganisasjon("orgnr", "navn", "mottaker")),
         ),
         mottakereJournalposter = BrevmottakereJournalposter(listOf(brevmottakereJournalpost("distId"))),
     )
 
-    private fun brevmottakereJournalpost(distribusjonId: String? = null) = BrevmottakereJournalpost(
+    private fun brevmottakereJournalpost(distribusjonId: String? = null) = BrevmottakereJournalpostMedIdent(
         "ident",
         "journalpostId",
         distribusjonId,
