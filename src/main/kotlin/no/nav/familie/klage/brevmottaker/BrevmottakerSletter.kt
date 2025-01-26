@@ -30,8 +30,19 @@ class BrevmottakerSletter(
     private val logger = LoggerFactory.getLogger(BrevmottakerSletter::class.java)
 
     @Transactional
-    fun slettBrevmottaker(behandlingId: UUID, brevmottakerId: UUID) {
-        logger.debug("Sletter brevmottaker {} for behandling {}.", brevmottakerId, behandlingId)
+    fun slettBrevmottaker(behandlingId: UUID, slettbarBrevmottaker: SlettbarBrevmottaker) {
+        return when (slettbarBrevmottaker) {
+            is SlettbarBrevmottakerOrganisasjon -> throw UnsupportedOperationException("Sletting av organisasjon er ikke støttet.")
+            is SlettbarBrevmottakerPersonMedIdent -> throw UnsupportedOperationException("Sletting av person med ident er ikke støttet.")
+            is SlettbarBrevmottakerPersonUtenIdent -> slettBrevmottakerPersonUtenIdent(behandlingId, slettbarBrevmottaker)
+        }
+    }
+
+    private fun slettBrevmottakerPersonUtenIdent(
+        behandlingId: UUID,
+        slettBrevmottakerPersonUtenIdent: SlettbarBrevmottakerPersonUtenIdent,
+    ) {
+        logger.debug("Sletter brevmottaker {} for behandling {}.", slettBrevmottakerPersonUtenIdent.id, behandlingId)
 
         val behandling = behandlingService.hentBehandling(behandlingId)
         validerRedigerbarBehandling(behandling)
@@ -42,16 +53,16 @@ class BrevmottakerSletter(
 
         val brevmottakerPersonSomSkalSlettes = brevmottakerPersoner
             .filterIsInstance<BrevmottakerPersonUtenIdent>()
-            .find { it.id == brevmottakerId }
+            .find { it.id == slettBrevmottakerPersonUtenIdent.id }
 
         if (brevmottakerPersonSomSkalSlettes == null) {
-            throw Feil("Brevmottaker $brevmottakerId kan ikke slettes da den ikke finnes.")
+            throw Feil("Brevmottaker ${slettBrevmottakerPersonUtenIdent.id} kan ikke slettes da den ikke finnes.")
         }
 
         val nyeBrevmottakerPersoner = brevmottakerPersoner.filter {
             when (it) {
                 is BrevmottakerPersonMedIdent -> true
-                is BrevmottakerPersonUtenIdent -> it.id != brevmottakerId
+                is BrevmottakerPersonUtenIdent -> it.id != slettBrevmottakerPersonUtenIdent.id
             }
         }
 

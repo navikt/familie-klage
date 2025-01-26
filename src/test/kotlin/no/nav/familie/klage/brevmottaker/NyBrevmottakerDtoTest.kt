@@ -82,7 +82,49 @@ class NyBrevmottakerDtoTest {
     }
 
     @Nested
+    inner class NyBrevmottakerOrganisasjonDtoTest {
+        @Test
+        fun `skal ha riktig type`() {
+            // Arrange
+            val dto = DtoTestUtil.lagNyBrevmottakerOrganisasjonDto()
+
+            // Act
+            val type = dto.type
+
+            // Assert
+            assertThat(type).isEqualTo(NyBrevmottakerDto.Type.ORGANISASJON)
+        }
+    }
+
+    @Nested
+    inner class NyBrevmottakerPersonUtenMedDtoTest {
+        @Test
+        fun `skal ha riktig type`() {
+            // Arrange
+            val dto = DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto()
+
+            // Act
+            val type = dto.type
+
+            // Assert
+            assertThat(type).isEqualTo(NyBrevmottakerDto.Type.PERSON_MED_IDENT)
+        }
+    }
+
+    @Nested
     inner class NyBrevmottakerPersonUtenIdentDtoTest {
+        @Test
+        fun `skal ha riktig type`() {
+            // Arrange
+            val dto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto()
+
+            // Act
+            val type = dto.type
+
+            // Assert
+            assertThat(type).isEqualTo(NyBrevmottakerDto.Type.PERSON_UTEN_IDENT)
+        }
+
         @Test
         fun `skal kaste exception om mottakertype er bruker`() {
             // Arrange

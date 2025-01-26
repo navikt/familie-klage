@@ -436,7 +436,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
     }
 
     @Nested
-    inner class SlettBrevmottakereTest {
+    inner class SlettBrevmottakere {
         @Test
         fun `skal returnere 403 forbidden når man ikke har tilgang til personen med relasjoner for behandlingen`() {
             // Arrange

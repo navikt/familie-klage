@@ -26,7 +26,7 @@ class BrevmottakerService(
     }
 
     @Transactional
-    fun slettBrevmottaker(behandlingId: UUID, brevmottakerId: UUID) {
-        brevmottakerSletter.slettBrevmottaker(behandlingId, brevmottakerId)
+    fun slettBrevmottaker(behandlingId: UUID, slettbarBrevmottaker: SlettbarBrevmottaker) {
+        brevmottakerSletter.slettBrevmottaker(behandlingId, slettbarBrevmottaker)
     }
 }

@@ -58,14 +58,14 @@ class BrevmottakerController(
         return Ressurs.success(brevmottakere.tilDto())
     }
 
-    @DeleteMapping("/{behandlingId}/{brevmottakerId}")
+    @DeleteMapping("/{behandlingId}")
     fun slettBrevmottaker(
         @PathVariable behandlingId: UUID,
-        @PathVariable brevmottakerId: UUID,
+        @RequestBody slettbarBrevmottakerDto: SlettbarBrevmottakerDto,
     ): Ressurs<BrevmottakereDto> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.DELETE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        brevmottakerService.slettBrevmottaker(behandlingId, brevmottakerId)
+        brevmottakerService.slettBrevmottaker(behandlingId, slettbarBrevmottakerDto.tilDomene())
         val brevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
         return Ressurs.success(brevmottakere.tilDto())
     }

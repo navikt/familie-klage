@@ -34,8 +34,10 @@ class BrevmottakerSletterTest {
             // Arrange
             val behandling = DomainUtil.behandling()
 
+            val slettbarBrevmottaker = SlettbarBrevmottakerPersonUtenIdent(UUID.randomUUID())
+
             // Act
-            brevmottakerSletter.slettBrevmottaker(behandling.id, UUID.randomUUID())
+            brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
 
             // Assert
             assertThat(1).isEqualTo(1)

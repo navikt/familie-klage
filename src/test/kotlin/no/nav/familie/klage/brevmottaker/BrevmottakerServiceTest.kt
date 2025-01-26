@@ -141,17 +141,17 @@ class BrevmottakerServiceTest {
         fun `skal opprette brevmottaker`() {
             // Arrange
             val behandlingId = UUID.randomUUID()
-            val brevmottakerId = UUID.randomUUID()
+            val slettbarBrevmottaker = SlettbarBrevmottakerPersonUtenIdent(UUID.randomUUID())
 
             every {
-                brevmottakerSletter.slettBrevmottaker(behandlingId, brevmottakerId)
+                brevmottakerSletter.slettBrevmottaker(behandlingId, slettbarBrevmottaker)
             } just runs
 
             // Act
-            brevmottakerService.slettBrevmottaker(behandlingId, brevmottakerId)
+            brevmottakerService.slettBrevmottaker(behandlingId, slettbarBrevmottaker)
 
             // Assert
-            verify(exactly = 1) { brevmottakerSletter.slettBrevmottaker(behandlingId, brevmottakerId) }
+            verify(exactly = 1) { brevmottakerSletter.slettBrevmottaker(behandlingId, slettbarBrevmottaker) }
         }
     }
 }
