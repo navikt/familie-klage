@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.http.HttpStatus
 
-class NyBrevmottakerDtoTest {
+class NyBrevmottakerDtoKtTest {
     @Nested
     inner class NyBrevmottakerDtoTest {
         @Test
