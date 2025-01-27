@@ -21,10 +21,10 @@ data class Brev(
 }
 
 data class BrevmottakereJournalposter(
-    val journalposter: List<BrevmottakereJournalpost>,
+    val journalposter: List<BrevmottakerJournalpost>,
 )
 
-data class BrevmottakereJournalpost(
+data class BrevmottakerJournalpost(
     val ident: String,
     val journalpostId: String,
     val distribusjonId: String? = null,

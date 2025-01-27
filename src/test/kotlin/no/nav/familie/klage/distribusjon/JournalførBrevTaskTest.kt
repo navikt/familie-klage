@@ -8,10 +8,10 @@ import io.mockk.verifyOrder
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.domain.Brev
+import no.nav.familie.klage.brev.domain.BrevmottakerJournalpost
 import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
 import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brev.domain.Brevmottakere
-import no.nav.familie.klage.brev.domain.BrevmottakereJournalpost
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.felles.domain.Fil
@@ -121,8 +121,8 @@ internal class JournalførBrevTaskTest {
         @Test
         internal fun `skal fortsette fra forrige state`() {
             val journalposter = listOf(
-                BrevmottakereJournalpost(mottakerPerson.id!!, "journalpostId-0"),
-                BrevmottakereJournalpost(mottakerPerson2.id!!, "journalpostId-1"),
+                BrevmottakerJournalpost(mottakerPerson.id!!, "journalpostId-0"),
+                BrevmottakerJournalpost(mottakerPerson2.id!!, "journalpostId-1"),
             )
             mockHentBrev(mottakere = mottakere, BrevmottakereJournalposter(journalposter))
 
@@ -143,7 +143,7 @@ internal class JournalførBrevTaskTest {
         }
 
         private fun validerLagringAvBrevmottakereJournalposter(
-            journalposter: List<BrevmottakereJournalpost>,
+            journalposter: List<BrevmottakerJournalpost>,
             mottakere: List<AvsenderMottaker> = listOf(mottakerPerson, mottakerPerson2, mottakerOrganisasjon),
         ) {
             assertThat(journalposter).hasSize(3)

@@ -2,7 +2,7 @@ package no.nav.familie.klage.distribusjon
 
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.domain.Brev
-import no.nav.familie.klage.brev.domain.BrevmottakereJournalpost
+import no.nav.familie.klage.brev.domain.BrevmottakerJournalpost
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.prosessering.AsyncTaskStep
@@ -39,9 +39,9 @@ class DistribuerBrevTask(
 
     private fun distribuerOgLagreJournalposter(
         behandlingId: UUID,
-        acc: List<BrevmottakereJournalpost>,
-        journalpost: BrevmottakereJournalpost,
-    ): List<BrevmottakereJournalpost> {
+        acc: List<BrevmottakerJournalpost>,
+        journalpost: BrevmottakerJournalpost,
+    ): List<BrevmottakerJournalpost> {
         return if (journalpost.distribusjonId == null) {
             val distribusjonId = distribusjonService.distribuerBrev(journalpost.journalpostId)
             val nyeJournalposter = acc.map {
@@ -60,14 +60,14 @@ class DistribuerBrevTask(
 
     private fun validerHarJournalposter(
         behandlingId: UUID,
-        journalposter: List<BrevmottakereJournalpost>,
+        journalposter: List<BrevmottakerJournalpost>,
     ) {
         feilHvis(journalposter.isEmpty()) {
             "Mangler journalposter for behandling=$behandlingId"
         }
     }
 
-    private fun mottakereJournalpost(brev: Brev): List<BrevmottakereJournalpost> {
+    private fun mottakereJournalpost(brev: Brev): List<BrevmottakerJournalpost> {
         return brev.mottakereJournalposter?.journalposter?.takeIf { it.isNotEmpty() }
             ?: error("Mangler journalposter koblet til brev=${brev.behandlingId}")
     }

@@ -1,10 +1,10 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.brev.domain.Brev
+import no.nav.familie.klage.brev.domain.BrevmottakerJournalpost
 import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
 import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brev.domain.Brevmottakere
-import no.nav.familie.klage.brev.domain.BrevmottakereJournalpost
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.felles.domain.Fil
@@ -67,7 +67,7 @@ internal class BrevRepositoryTest : OppslagSpringRunnerTest() {
         mottakereJournalposter = BrevmottakereJournalposter(listOf(brevmottakereJournalpost("distId"))),
     )
 
-    private fun brevmottakereJournalpost(distribusjonId: String? = null) = BrevmottakereJournalpost(
+    private fun brevmottakereJournalpost(distribusjonId: String? = null) = BrevmottakerJournalpost(
         "ident",
         "journalpostId",
         distribusjonId,

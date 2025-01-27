@@ -4,8 +4,8 @@ import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.BrevmottakerUtil.validerMinimumEnMottaker
 import no.nav.familie.klage.brev.domain.Brev
+import no.nav.familie.klage.brev.domain.BrevmottakerJournalpost
 import no.nav.familie.klage.brev.domain.Brevmottakere
-import no.nav.familie.klage.brev.domain.BrevmottakereJournalpost
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.distribusjon.JournalføringUtil.mapAvsenderMottaker
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
@@ -55,7 +55,7 @@ class JournalførBrevTask(
             if (acc.none { it.ident == avsenderMottaker.id }) {
                 val journalpostId =
                     distribusjonService.journalførBrev(behandlingId, brevPdf, saksbehandler, index, avsenderMottaker)
-                val resultat = BrevmottakereJournalpost(
+                val resultat = BrevmottakerJournalpost(
                     ident = avsenderMottaker.id ?: error("Mangler id for mottaker=$avsenderMottaker"),
                     journalpostId = journalpostId,
                 )
