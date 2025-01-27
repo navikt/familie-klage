@@ -4,7 +4,7 @@ import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.BrevmottakerUtil.validerMinimumEnMottaker
 import no.nav.familie.klage.brev.domain.Brev
-import no.nav.familie.klage.brev.domain.BrevmottakerJournalpost
+import no.nav.familie.klage.brev.domain.BrevmottakerJournalpostMedIdent
 import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.distribusjon.JournalføringUtil.mapAvsenderMottaker
@@ -48,14 +48,16 @@ class JournalførBrevTask(
     ) {
         val behandlingId = brev.behandlingId
         val avsenderMottakere = mapAvsenderMottaker(mottakere)
-        val journalposter = brev.mottakereJournalposter?.journalposter ?: emptyList()
+        val journalposter =
+            brev.mottakereJournalposter?.journalposter?.filterIsInstance<BrevmottakerJournalpostMedIdent>()
+                ?: emptyList()
         val brevPdf = brev.brevPdf()
 
         avsenderMottakere.foldIndexed(journalposter) { index, acc, avsenderMottaker ->
             if (acc.none { it.ident == avsenderMottaker.id }) {
                 val journalpostId =
                     distribusjonService.journalførBrev(behandlingId, brevPdf, saksbehandler, index, avsenderMottaker)
-                val resultat = BrevmottakerJournalpost(
+                val resultat = BrevmottakerJournalpostMedIdent(
                     ident = avsenderMottaker.id ?: error("Mangler id for mottaker=$avsenderMottaker"),
                     journalpostId = journalpostId,
                 )

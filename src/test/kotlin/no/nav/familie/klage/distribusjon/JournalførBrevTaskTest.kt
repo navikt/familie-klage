@@ -9,6 +9,7 @@ import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakerJournalpost
+import no.nav.familie.klage.brev.domain.BrevmottakerJournalpostMedIdent
 import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
 import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brev.domain.Brevmottakere
@@ -121,8 +122,8 @@ internal class JournalførBrevTaskTest {
         @Test
         internal fun `skal fortsette fra forrige state`() {
             val journalposter = listOf(
-                BrevmottakerJournalpost(mottakerPerson.id!!, "journalpostId-0"),
-                BrevmottakerJournalpost(mottakerPerson2.id!!, "journalpostId-1"),
+                BrevmottakerJournalpostMedIdent(mottakerPerson.id!!, "journalpostId-0"),
+                BrevmottakerJournalpostMedIdent(mottakerPerson2.id!!, "journalpostId-1"),
             )
             mockHentBrev(mottakere = mottakere, BrevmottakereJournalposter(journalposter))
 
@@ -148,8 +149,9 @@ internal class JournalførBrevTaskTest {
         ) {
             assertThat(journalposter).hasSize(3)
             mottakere.forEachIndexed { index, avsenderMottaker ->
-                assertThat(journalposter[index].ident).isEqualTo(avsenderMottaker.id)
-                assertThat(journalposter[index].journalpostId).isEqualTo("journalpostId-$index")
+                val journalpost = journalposter[index] as BrevmottakerJournalpostMedIdent
+                assertThat(journalpost.ident).isEqualTo(avsenderMottaker.id)
+                assertThat(journalpost.journalpostId).isEqualTo("journalpostId-$index")
             }
         }
     }

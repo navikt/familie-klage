@@ -24,8 +24,24 @@ data class BrevmottakereJournalposter(
     val journalposter: List<BrevmottakerJournalpost>,
 )
 
-data class BrevmottakerJournalpost(
+sealed interface BrevmottakerJournalpost {
+    val journalpostId: String
+    val distribusjonId: String?
+    fun medDistribusjonsId(distribusjonId: String): BrevmottakerJournalpost
+}
+
+data class BrevmottakerJournalpostMedIdent(
     val ident: String,
-    val journalpostId: String,
-    val distribusjonId: String? = null,
-)
+    override val journalpostId: String,
+    override val distribusjonId: String? = null,
+) : BrevmottakerJournalpost {
+    override fun medDistribusjonsId(distribusjonId: String) = copy(distribusjonId = distribusjonId)
+}
+
+data class BrevmottakerJournalpostUtenIdent(
+    val id: UUID,
+    override val journalpostId: String,
+    override val distribusjonId: String? = null,
+) : BrevmottakerJournalpost {
+    override fun medDistribusjonsId(distribusjonId: String) = copy(distribusjonId = distribusjonId)
+}

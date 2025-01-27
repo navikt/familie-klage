@@ -46,7 +46,7 @@ class DistribuerBrevTask(
             val distribusjonId = distribusjonService.distribuerBrev(journalpost.journalpostId)
             val nyeJournalposter = acc.map {
                 if (it.journalpostId == journalpost.journalpostId) {
-                    it.copy(distribusjonId = distribusjonId)
+                    it.medDistribusjonsId(distribusjonId = distribusjonId)
                 } else {
                     it
                 }
