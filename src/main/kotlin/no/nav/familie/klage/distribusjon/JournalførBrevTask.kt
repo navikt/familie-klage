@@ -4,10 +4,16 @@ import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.BrevmottakerUtil.validerMinimumEnMottaker
 import no.nav.familie.klage.brev.domain.Brev
+import no.nav.familie.klage.brev.domain.Brevmottaker
+import no.nav.familie.klage.brev.domain.BrevmottakerJournalpost
 import no.nav.familie.klage.brev.domain.BrevmottakerJournalpostMedIdent
-import no.nav.familie.klage.brev.domain.Brevmottakere
+import no.nav.familie.klage.brev.domain.BrevmottakerJournalpostUtenIdent
+import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.distribusjon.JournalføringUtil.mapAvsenderMottaker
+import no.nav.familie.klage.distribusjon.JournalføringUtil.mapBrevmottakerJournalpost
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.personopplysninger.pdl.logger
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
@@ -38,37 +44,92 @@ class JournalførBrevTask(
 
         val mottakere = brev.mottakere ?: error("Mangler mottakere på brev for behandling=$behandlingId")
         validerMinimumEnMottaker(mottakere)
-        journalførBrevmottakere(brev, mottakere, saksbehandler)
+
+        val journalposter = brev.mottakereJournalposter?.journalposter ?: emptyList()
+
+        val journalposterMedNyePersoner =
+            journalførBrevmottakere(
+                mottakere = mottakere.personer,
+                brev = brev,
+                saksbehandler = saksbehandler,
+                journalposter = journalposter,
+            )
+
+        journalførBrevmottakere(
+            brev = brev,
+            mottakere = mottakere.organisasjoner,
+            saksbehandler = saksbehandler,
+            journalposter = journalposterMedNyePersoner,
+        )
     }
 
     private fun journalførBrevmottakere(
         brev: Brev,
-        mottakere: Brevmottakere,
+        mottakere: List<Brevmottaker>,
         saksbehandler: String,
-    ) {
-        val behandlingId = brev.behandlingId
-        val avsenderMottakere = mapAvsenderMottaker(mottakere)
-        val journalposter =
-            brev.mottakereJournalposter?.journalposter?.filterIsInstance<BrevmottakerJournalpostMedIdent>()
-                ?: emptyList()
-        val brevPdf = brev.brevPdf()
+        journalposter: List<BrevmottakerJournalpost>,
+    ): List<BrevmottakerJournalpost> =
+        mottakere.fold(journalposter) { eksisterendeMottakere, brevmottaker ->
+            journalførBrevmottaker(
+                brevmottaker = brevmottaker,
+                eksisterendeMottakere = eksisterendeMottakere,
+                brev = brev,
+                saksbehandler = saksbehandler,
+            )
+        }
 
-        avsenderMottakere.foldIndexed(journalposter) { index, acc, avsenderMottaker ->
-            if (acc.none { it.ident == avsenderMottaker.id }) {
-                val journalpostId =
-                    distribusjonService.journalførBrev(behandlingId, brevPdf, saksbehandler, index, avsenderMottaker)
-                val resultat = BrevmottakerJournalpostMedIdent(
-                    ident = avsenderMottaker.id ?: error("Mangler id for mottaker=$avsenderMottaker"),
-                    journalpostId = journalpostId,
-                )
-                val nyeMottakere = acc + resultat
-                brevService.oppdaterMottakerJournalpost(behandlingId, BrevmottakereJournalposter(nyeMottakere))
-                nyeMottakere
-            } else {
-                acc
-            }
+    private fun journalførBrevmottaker(
+        brevmottaker: Brevmottaker,
+        eksisterendeMottakere: List<BrevmottakerJournalpost>,
+        brev: Brev,
+        saksbehandler: String,
+    ): List<BrevmottakerJournalpost> {
+        val behandlingId = brev.behandlingId
+        val avsenderMottaker = mapAvsenderMottaker(brevmottaker)
+        val brevPdf = brev.brevPdf()
+        return if (eksisterendeMottakere.none { harLikId(it, brevmottaker) }) {
+            val journalpostId = distribusjonService.journalførBrev(
+                behandlingId = behandlingId,
+                brev = brevPdf,
+                saksbehandler = saksbehandler,
+                index = eksisterendeMottakere.size,
+                mottaker = avsenderMottaker,
+            )
+
+            val nyMottaker = mapBrevmottakerJournalpost(
+                brevmottaker = brevmottaker,
+                avsenderMottaker = avsenderMottaker,
+                journalpostId = journalpostId,
+            )
+
+            val nyeMottakere = eksisterendeMottakere + nyMottaker
+            brevService.oppdaterMottakerJournalpost(
+                behandlingId = behandlingId,
+                brevmottakereJournalposter = BrevmottakereJournalposter(nyeMottakere),
+            )
+
+            nyeMottakere
+        } else {
+            eksisterendeMottakere
         }
     }
+
+    private fun harLikId(
+        brevmottakerJournalpost: BrevmottakerJournalpost,
+        brevmottaker: Brevmottaker,
+    ) =
+        when (brevmottakerJournalpost) {
+            is BrevmottakerJournalpostMedIdent -> {
+                when (brevmottaker) {
+                    is BrevmottakerOrganisasjon -> brevmottakerJournalpost.ident == brevmottaker.organisasjonsnummer
+                    is BrevmottakerPersonMedIdent -> brevmottakerJournalpost.ident == brevmottaker.personIdent
+                    is BrevmottakerPersonUtenIdent -> false
+                }
+            }
+
+            is BrevmottakerJournalpostUtenIdent ->
+                brevmottaker is BrevmottakerPersonUtenIdent && brevmottakerJournalpost.id == brevmottaker.id
+        }
 
     override fun onCompletion(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
