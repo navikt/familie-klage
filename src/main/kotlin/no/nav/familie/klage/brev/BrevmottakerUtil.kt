@@ -1,14 +1,20 @@
 package no.nav.familie.klage.brev
 
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvisIkke
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 
 object BrevmottakerUtil {
-
     fun validerUnikeBrevmottakere(mottakere: Brevmottakere) {
-        val personmottakerIdenter = mottakere.personer.map { it.personIdent }
-        brukerfeilHvisIkke(personmottakerIdenter.distinct().size == personmottakerIdenter.size) {
+        val personmottakerIdentifikatorer = mottakere.personer.map {
+            when (it) {
+                is BrevmottakerPersonMedIdent -> it.personIdent
+                is BrevmottakerPersonUtenIdent -> it.id.toString()
+            }
+        }
+        brukerfeilHvisIkke(personmottakerIdentifikatorer.distinct().size == personmottakerIdentifikatorer.size) {
             "En person kan bare legges til en gang som brevmottaker"
         }
 

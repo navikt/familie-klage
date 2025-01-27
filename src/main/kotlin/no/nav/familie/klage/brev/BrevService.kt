@@ -9,7 +9,7 @@ import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.brev.BrevmottakerUtil.validerMinimumEnMottaker
 import no.nav.familie.klage.brev.BrevmottakerUtil.validerUnikeBrevmottakere
 import no.nav.familie.klage.brev.domain.Brev
-import no.nav.familie.klage.brev.domain.BrevmottakerPerson
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.brev.domain.MottakerRolle
@@ -185,7 +185,7 @@ class BrevService(
         fagsak: Fagsak,
     ) = Brevmottakere(
         personer = listOf(
-            BrevmottakerPerson(
+            BrevmottakerPersonMedIdent(
                 personIdent = fagsak.hentAktivIdent(),
                 navn = personopplysningerService.hentPersonopplysninger(behandlingId).navn,
                 mottakerRolle = MottakerRolle.BRUKER,
