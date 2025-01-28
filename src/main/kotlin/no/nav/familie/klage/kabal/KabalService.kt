@@ -51,14 +51,14 @@ class KabalService(
         OversendtKlageAnkeV3(
             type = Type.KLAGE,
             klager =
-                OversendtKlager(
-                    id =
-                        OversendtPartId(
-                            type = OversendtPartIdType.PERSON,
-                            verdi = fagsak.hentAktivIdent(),
-                        ),
-                    klagersProsessfullmektig = utledFullmektigFraBrevmottakere(brevMottakere),
+            OversendtKlager(
+                id =
+                OversendtPartId(
+                    type = OversendtPartIdType.PERSON,
+                    verdi = fagsak.hentAktivIdent(),
                 ),
+                klagersProsessfullmektig = utledFullmektigFraBrevmottakere(brevMottakere),
+            ),
             fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem.tilFellesFagsystem()),
             kildeReferanse = behandling.eksternBehandlingId.toString(),
             innsynUrl = lagInnsynUrl(fagsak, behandling.påklagetVedtak),
