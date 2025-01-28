@@ -13,6 +13,7 @@ import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV3
 import no.nav.familie.klage.kabal.domain.OversendtPartIdType
@@ -35,9 +36,10 @@ import java.util.UUID
 
 internal class KabalServiceTest {
     val kabalClient = mockk<KabalClient>()
+    val featureToggleService = mockk<FeatureToggleService>()
     val integrasjonerClient = mockk<FamilieIntegrasjonerClient>()
     val lenkeConfig = LenkeConfig(efSakLenke = "BASEURL_EF", baSakLenke = "BASEURL_BA", ksSakLenke = "BASEURL_KS")
-    val kabalService = KabalService(kabalClient, integrasjonerClient, lenkeConfig)
+    val kabalService = KabalService(kabalClient, integrasjonerClient, lenkeConfig, featureToggleService)
     val fagsak = fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent("1")))
     val ingenBrevmottaker = Brevmottakere()
 
@@ -49,6 +51,7 @@ internal class KabalServiceTest {
 
     @BeforeEach
     internal fun setUp() {
+        every { featureToggleService.isEnabled(any()) } returns true
         every { kabalClient.sendTilKabal(capture(oversendelseSlot)) } just Runs
         every { integrasjonerClient.hentSaksbehandlerInfo(any()) } answers {
             when (firstArg<String>()) {

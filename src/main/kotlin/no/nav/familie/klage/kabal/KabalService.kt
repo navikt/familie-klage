@@ -6,6 +6,9 @@ import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
+import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle.SKAL_BRUKE_KABAL_API_V4
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.kabal.domain.OversendtKlageAnke
 import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV3
@@ -20,6 +23,7 @@ class KabalService(
     private val kabalClient: KabalClient,
     private val integrasjonerClient: FamilieIntegrasjonerClient,
     private val lenkeConfig: LenkeConfig,
+    private val featureToggleService: FeatureToggleService,
 ) {
     fun sendTilKabal(
         fagsak: Fagsak,
@@ -42,6 +46,10 @@ class KabalService(
         brevMottakere: Brevmottakere,
     ): OversendtKlageAnke =
         if (behandlingInneholderBrevmottakerUtenIdent(brevMottakere)) {
+            if (!featureToggleService.isEnabled(SKAL_BRUKE_KABAL_API_V4)) {
+                throw Feil("V4 av oversendelse til Kabal er foreløpig ikke støttet.")
+            }
+
             OversendtKlageAnkeV4.lagKlageOversendelse(
                 fagsak = fagsak,
                 behandling = behandling,
