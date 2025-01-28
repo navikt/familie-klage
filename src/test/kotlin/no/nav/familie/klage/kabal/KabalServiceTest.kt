@@ -9,16 +9,21 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
 import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
+import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV3
+import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV4
 import no.nav.familie.klage.kabal.domain.OversendtPartIdType
 import no.nav.familie.klage.kabal.domain.Ytelse
 import no.nav.familie.klage.testutil.DomainUtil.behandling
+import no.nav.familie.klage.testutil.DomainUtil.defaultIdent
+import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
 import no.nav.familie.klage.testutil.DomainUtil.påklagetVedtakDetaljer
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
@@ -26,6 +31,7 @@ import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.saksbehandler.Saksbehandler
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -45,14 +51,16 @@ internal class KabalServiceTest {
 
     val hjemmel = Hjemmel.FT_FEMTEN_FIRE
 
-    val oversendelseSlot = slot<OversendtKlageAnkeV3>()
+    val oversendelseSlotV3 = slot<OversendtKlageAnkeV3>()
+    val oversendelseSlotV4 = slot<OversendtKlageAnkeV4>()
     val saksbehandlerA = Saksbehandler(UUID.randomUUID(), "A123456", "Alfa", "Surname", "4415")
     val saksbehandlerB = Saksbehandler(UUID.randomUUID(), "B987654", "Beta", "Etternavn", "4408")
 
     @BeforeEach
     internal fun setUp() {
         every { featureToggleService.isEnabled(any()) } returns true
-        every { kabalClient.sendTilKabal(capture(oversendelseSlot)) } just Runs
+        every { kabalClient.sendTilKabal(capture(oversendelseSlotV3)) } just Runs
+        every { kabalClient.sendTilKabal(capture(oversendelseSlotV4)) } just Runs
         every { integrasjonerClient.hentSaksbehandlerInfo(any()) } answers {
             when (firstArg<String>()) {
                 saksbehandlerA.navIdent -> saksbehandlerA
@@ -71,7 +79,7 @@ internal class KabalServiceTest {
 
         kabalService.sendTilKabal(fagsak, behandling, vurdering, saksbehandlerA.navIdent, ingenBrevmottaker)
 
-        val oversendelse = oversendelseSlot.captured
+        val oversendelse = oversendelseSlotV3.captured
         assertThat(oversendelse.fagsak?.fagsakId).isEqualTo(fagsak.eksternId)
         assertThat(oversendelse.fagsak?.fagsystem).isEqualTo(Fagsystem.EF)
         assertThat(oversendelse.hjemler).containsAll(listOf(hjemmel.kabalHjemmel))
@@ -100,9 +108,9 @@ internal class KabalServiceTest {
 
         kabalService.sendTilKabal(fagsak, behandling, vurdering, saksbehandlerB.navIdent, ingenBrevmottaker)
 
-        assertThat(oversendelseSlot.captured.innsynUrl)
+        assertThat(oversendelseSlotV3.captured.innsynUrl)
             .isEqualTo("${lenkeConfig.efSakLenke}/fagsak/${fagsak.eksternId}/saksoversikt")
-        assertThat(oversendelseSlot.captured.forrigeBehandlendeEnhet).isEqualTo(saksbehandlerB.enhet)
+        assertThat(oversendelseSlotV3.captured.forrigeBehandlendeEnhet).isEqualTo(saksbehandlerB.enhet)
     }
 
     @Test
@@ -118,7 +126,7 @@ internal class KabalServiceTest {
 
         kabalService.sendTilKabal(fagsak, behandling, vurdering, saksbehandlerB.navIdent, ingenBrevmottaker)
 
-        assertThat(oversendelseSlot.captured.hindreAutomatiskSvarbrev).isTrue()
+        assertThat(oversendelseSlotV3.captured.hindreAutomatiskSvarbrev).isTrue()
     }
 
     @Test
@@ -128,9 +136,9 @@ internal class KabalServiceTest {
 
         kabalService.sendTilKabal(fagsak, behandling, vurdering, saksbehandlerB.navIdent, ingenBrevmottaker)
 
-        assertThat(oversendelseSlot.captured.innsynUrl)
+        assertThat(oversendelseSlotV3.captured.innsynUrl)
             .isEqualTo("${lenkeConfig.efSakLenke}/fagsak/${fagsak.eksternId}/saksoversikt")
-        assertThat(oversendelseSlot.captured.forrigeBehandlendeEnhet).isEqualTo(saksbehandlerB.enhet)
+        assertThat(oversendelseSlotV3.captured.forrigeBehandlendeEnhet).isEqualTo(saksbehandlerB.enhet)
     }
 
     @Test
@@ -161,7 +169,7 @@ internal class KabalServiceTest {
                 Brevmottakere(personer = listOf(verge, bruker)),
             )
 
-            val oversendelse = oversendelseSlot.captured
+            val oversendelse = oversendelseSlotV3.captured
             assertThat(
                 oversendelse.klager.klagersProsessfullmektig
                     ?.id
@@ -190,7 +198,7 @@ internal class KabalServiceTest {
                 Brevmottakere(personer = listOf(verge)),
             )
 
-            val oversendelse = oversendelseSlot.captured
+            val oversendelse = oversendelseSlotV3.captured
             assertThat(
                 oversendelse.klager.klagersProsessfullmektig
                     ?.id
@@ -219,7 +227,7 @@ internal class KabalServiceTest {
                 Brevmottakere(personer = listOf(fullmektig)),
             )
 
-            val oversendelse = oversendelseSlot.captured
+            val oversendelse = oversendelseSlotV3.captured
             assertThat(
                 oversendelse.klager.klagersProsessfullmektig
                     ?.id
@@ -248,7 +256,7 @@ internal class KabalServiceTest {
                 Brevmottakere(organisasjoner = listOf(fullmektig)),
             )
 
-            val oversendelse = oversendelseSlot.captured
+            val oversendelse = oversendelseSlotV3.captured
             assertThat(
                 oversendelse.klager.klagersProsessfullmektig
                     ?.id
@@ -279,7 +287,7 @@ internal class KabalServiceTest {
                 Brevmottakere(personer = listOf(verge, fullmektig), organisasjoner = listOf(fullmektigOrganisasjon)),
             )
 
-            val oversendelse = oversendelseSlot.captured
+            val oversendelse = oversendelseSlotV3.captured
             assertThat(
                 oversendelse.klager.klagersProsessfullmektig
                     ?.id
@@ -291,6 +299,149 @@ internal class KabalServiceTest {
                     ?.type,
             ).isEqualTo(OversendtPartIdType.PERSON)
             assertThat(oversendelse.klager.klagersProsessfullmektig?.skalKlagerMottaKopi).isFalse()
+        }
+    }
+
+    @Nested
+    inner class OversendtKlageAnkeV4Test {
+        private val baFagsak = fagsak(stønadstype = Stønadstype.BARNETRYGD)
+        private val baBehandling = behandling(fagsak = baFagsak)
+        private val baHjemmel = Hjemmel.BT_TO
+        private val baVurdering = vurdering(behandlingId = baBehandling.id, hjemmel = baHjemmel)
+        private val bruker = BrevmottakerPersonMedIdent(defaultIdent, MottakerRolle.BRUKER, "Bruker Brukersen")
+
+        private val fullmektigOrganisasjon = BrevmottakerOrganisasjon(
+            organisasjonsnummer = "987654321",
+            organisasjonsnavn = "Fullmektig AS",
+            navnHosOrganisasjon = bruker.navn,
+        )
+
+        private val fullmektigMedIdent = BrevmottakerPersonMedIdent(
+            personIdent = "12345678910",
+            mottakerRolle = MottakerRolle.FULLMAKT,
+            navn = "Fullmektig Fullmektigsen",
+        )
+
+        private val fullmektigUtenIdent = BrevmottakerPersonUtenIdent(
+            id = UUID.randomUUID(),
+            mottakerRolle = MottakerRolle.FULLMAKT,
+            navn = "Fullmektig Fullmektigsen",
+            adresselinje1 = "Adresselinje 1",
+            adresselinje2 = "Adresselinje 2",
+            postnummer = "1234",
+            poststed = "Poststed",
+            landkode = "NO",
+        )
+
+        @Test
+        internal fun `sendTilKabal skal kaste feil dersom toggle er skrudd av`() {
+            // Arrange
+            every { featureToggleService.isEnabled(any()) } returns false
+
+            // Act & Assert
+            val feilmelding = assertThrows<Feil> {
+                kabalService.sendTilKabal(
+                    fagsak = baFagsak,
+                    behandling = baBehandling,
+                    vurdering = baVurdering,
+                    saksbehandlerIdent = saksbehandlerA.navIdent,
+                    brevMottakere = Brevmottakere(personer = listOf(bruker, fullmektigUtenIdent)),
+                )
+            }
+
+            assertThat(feilmelding.message).isEqualTo("V4 av oversendelse til Kabal er foreløpig ikke støttet.")
+        }
+
+        @Test
+        internal fun `skal bruke OversendtKlageAnkeV3 hvis bare bruker er brevmottaker`() {
+            // Act
+            kabalService.sendTilKabal(
+                fagsak = baFagsak,
+                behandling = baBehandling,
+                vurdering = baVurdering,
+                saksbehandlerIdent = saksbehandlerA.navIdent,
+                brevMottakere = Brevmottakere(personer = listOf(bruker)),
+            )
+
+            // Assert
+            assertThat(oversendelseSlotV3.isCaptured).isTrue()
+            with(oversendelseSlotV3.captured) {
+                assertThat(klager.id.verdi).isEqualTo(baFagsak.hentAktivIdent())
+                assertThat(klager.klagersProsessfullmektig).isNull()
+            }
+        }
+
+        @Test
+        internal fun `skal bruke OversendtKlageAnkeV3 hvis brevmottaker er organisasjon`() {
+            // Act
+            kabalService.sendTilKabal(
+                fagsak = baFagsak,
+                behandling = baBehandling,
+                vurdering = baVurdering,
+                saksbehandlerIdent = saksbehandlerA.navIdent,
+                brevMottakere = Brevmottakere(
+                    personer = listOf(bruker),
+                    organisasjoner = listOf(fullmektigOrganisasjon),
+                ),
+            )
+
+            // Assert
+            assertThat(oversendelseSlotV3.isCaptured).isTrue()
+            with(oversendelseSlotV3.captured.klager) {
+                assertThat(id.type).isEqualTo(OversendtPartIdType.PERSON)
+                assertThat(id.verdi).isEqualTo(baFagsak.hentAktivIdent())
+                assertThat(klagersProsessfullmektig?.id?.type).isEqualTo(OversendtPartIdType.VIRKSOMHET)
+                assertThat(klagersProsessfullmektig?.id?.verdi).isEqualTo(fullmektigOrganisasjon.organisasjonsnummer)
+            }
+        }
+
+        @Test
+        internal fun `skal bruke OversendtKlageAnkeV3 hvis alle brevmottakere har ident`() {
+            // Act
+            kabalService.sendTilKabal(
+                fagsak = baFagsak,
+                behandling = baBehandling,
+                vurdering = baVurdering,
+                saksbehandlerIdent = saksbehandlerA.navIdent,
+                brevMottakere = Brevmottakere(personer = listOf(bruker, fullmektigMedIdent)),
+            )
+
+            // Assert
+            assertThat(oversendelseSlotV3.isCaptured).isTrue()
+            with(oversendelseSlotV3.captured.klager) {
+                assertThat(id.type).isEqualTo(OversendtPartIdType.PERSON)
+                assertThat(id.verdi).isEqualTo(baFagsak.hentAktivIdent())
+                assertThat(klagersProsessfullmektig?.id?.type).isEqualTo(OversendtPartIdType.PERSON)
+                assertThat(klagersProsessfullmektig?.id?.verdi).isEqualTo(fullmektigMedIdent.personIdent)
+            }
+        }
+
+        @Test
+        internal fun `skal bruke OversendtKlageAnkeV4 hvis minst én brevmottaker ikke har ident`() {
+            // Act
+            kabalService.sendTilKabal(
+                fagsak = baFagsak,
+                behandling = baBehandling,
+                vurdering = baVurdering,
+                saksbehandlerIdent = saksbehandlerA.navIdent,
+                brevMottakere = Brevmottakere(personer = listOf(bruker, fullmektigUtenIdent)),
+            )
+
+            // Assert
+            assertThat(oversendelseSlotV4.isCaptured).isTrue()
+            with(oversendelseSlotV4.captured) {
+                assertThat(sakenGjelder.id.type).isEqualTo(OversendtPartIdType.PERSON)
+                assertThat(sakenGjelder.id.verdi).isEqualTo(baFagsak.hentAktivIdent())
+                assertThat(prosessfullmektig?.id).isNull()
+                assertThat(prosessfullmektig?.navn).isEqualTo(fullmektigUtenIdent.navn)
+                with(prosessfullmektig?.adresse!!) {
+                    assertThat(adresselinje1).isEqualTo(fullmektigUtenIdent.adresselinje1)
+                    assertThat(adresselinje2).isEqualTo(fullmektigUtenIdent.adresselinje2)
+                    assertThat(postnummer).isEqualTo(fullmektigUtenIdent.postnummer)
+                    assertThat(poststed).isEqualTo(fullmektigUtenIdent.poststed)
+                    assertThat(land).isEqualTo(fullmektigUtenIdent.landkode)
+                }
+            }
         }
     }
 }
