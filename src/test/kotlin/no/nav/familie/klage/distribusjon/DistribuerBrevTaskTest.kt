@@ -7,9 +7,9 @@ import io.mockk.verify
 import io.mockk.verifyOrder
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.domain.Brev
-import no.nav.familie.klage.brev.domain.BrevmottakerJournalpost
-import no.nav.familie.klage.brev.domain.BrevmottakerJournalpostMedIdent
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
+import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpost
+import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpostMedIdent
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.prosessering.domene.Task
 import org.assertj.core.api.Assertions.assertThatThrownBy

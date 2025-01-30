@@ -2,8 +2,8 @@ package no.nav.familie.klage.distribusjon
 
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.domain.Brev
-import no.nav.familie.klage.brev.domain.BrevmottakerJournalpost
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
+import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpost
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
