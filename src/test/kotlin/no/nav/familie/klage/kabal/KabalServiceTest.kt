@@ -345,7 +345,7 @@ internal class KabalServiceTest {
                     behandling = baBehandling,
                     vurdering = baVurdering,
                     saksbehandlerIdent = saksbehandlerA.navIdent,
-                    brevMottakere = Brevmottakere(personer = listOf(bruker, fullmektigUtenIdent)),
+                    brevmottakere = Brevmottakere(personer = listOf(bruker, fullmektigUtenIdent)),
                 )
             }
 
@@ -360,7 +360,7 @@ internal class KabalServiceTest {
                 behandling = baBehandling,
                 vurdering = baVurdering,
                 saksbehandlerIdent = saksbehandlerA.navIdent,
-                brevMottakere = Brevmottakere(personer = listOf(bruker)),
+                brevmottakere = Brevmottakere(personer = listOf(bruker)),
             )
 
             // Assert
@@ -379,7 +379,7 @@ internal class KabalServiceTest {
                 behandling = baBehandling,
                 vurdering = baVurdering,
                 saksbehandlerIdent = saksbehandlerA.navIdent,
-                brevMottakere = Brevmottakere(
+                brevmottakere = Brevmottakere(
                     personer = listOf(bruker),
                     organisasjoner = listOf(fullmektigOrganisasjon),
                 ),
@@ -403,7 +403,7 @@ internal class KabalServiceTest {
                 behandling = baBehandling,
                 vurdering = baVurdering,
                 saksbehandlerIdent = saksbehandlerA.navIdent,
-                brevMottakere = Brevmottakere(personer = listOf(bruker, fullmektigMedIdent)),
+                brevmottakere = Brevmottakere(personer = listOf(bruker, fullmektigMedIdent)),
             )
 
             // Assert
@@ -424,7 +424,7 @@ internal class KabalServiceTest {
                 behandling = baBehandling,
                 vurdering = baVurdering,
                 saksbehandlerIdent = saksbehandlerA.navIdent,
-                brevMottakere = Brevmottakere(personer = listOf(bruker, fullmektigUtenIdent)),
+                brevmottakere = Brevmottakere(personer = listOf(bruker, fullmektigUtenIdent)),
             )
 
             // Assert

@@ -42,7 +42,7 @@ enum class Ytelse {
     KON_KON,
 }
 
-fun utledFullmektigEllerVerge(brevMottakere: Brevmottakere) =
-    brevMottakere.personer.firstOrNull { it.mottakerRolle == MottakerRolle.FULLMAKT }
-        ?: brevMottakere.personer.firstOrNull { it.mottakerRolle == MottakerRolle.VERGE }
-        ?: brevMottakere.organisasjoner.firstOrNull()
+fun utledFullmektigEllerVerge(brevmottakere: Brevmottakere) =
+    brevmottakere.personer.firstOrNull { it.mottakerRolle == MottakerRolle.FULLMAKT }
+        ?: brevmottakere.personer.firstOrNull { it.mottakerRolle == MottakerRolle.VERGE }
+        ?: brevmottakere.organisasjoner.firstOrNull()

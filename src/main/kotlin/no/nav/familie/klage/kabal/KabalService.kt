@@ -30,11 +30,11 @@ class KabalService(
         behandling: Behandling,
         vurdering: Vurdering,
         saksbehandlerIdent: String,
-        brevMottakere: Brevmottakere,
+        brevmottakere: Brevmottakere,
     ) {
         val saksbehandler = integrasjonerClient.hentSaksbehandlerInfo(saksbehandlerIdent)
         val oversendtKlageAnke =
-            lagKlageOversendelse(fagsak, behandling, vurdering, saksbehandler.enhet, brevMottakere)
+            lagKlageOversendelse(fagsak, behandling, vurdering, saksbehandler.enhet, brevmottakere)
         kabalClient.sendTilKabal(oversendtKlageAnke)
     }
 
@@ -43,9 +43,9 @@ class KabalService(
         behandling: Behandling,
         vurdering: Vurdering,
         saksbehandlersEnhet: String,
-        brevMottakere: Brevmottakere,
+        brevmottakere: Brevmottakere,
     ): OversendtKlageAnke =
-        if (behandlingInneholderBrevmottakerUtenIdent(brevMottakere)) {
+        if (behandlingInneholderBrevmottakerUtenIdent(brevmottakere)) {
             if (!featureToggleService.isEnabled(SKAL_BRUKE_KABAL_API_V4)) {
                 throw Feil("V4 av oversendelse til Kabal er foreløpig ikke støttet.")
             }
@@ -55,7 +55,7 @@ class KabalService(
                 behandling = behandling,
                 vurdering = vurdering,
                 saksbehandlersEnhet = saksbehandlersEnhet,
-                brevMottakere = brevMottakere,
+                brevmottakere = brevmottakere,
             )
         } else {
             OversendtKlageAnkeV3.lagKlageOversendelse(
@@ -63,13 +63,13 @@ class KabalService(
                 behandling = behandling,
                 vurdering = vurdering,
                 saksbehandlersEnhet = saksbehandlersEnhet,
-                brevMottakere = brevMottakere,
+                brevmottakere = brevmottakere,
                 innsynUrl = lagInnsynUrl(fagsak, behandling.påklagetVedtak),
             )
         }
 
-    private fun behandlingInneholderBrevmottakerUtenIdent(brevMottakere: Brevmottakere): Boolean =
-        brevMottakere.personer.any { it is BrevmottakerPersonUtenIdent }
+    private fun behandlingInneholderBrevmottakerUtenIdent(brevmottakere: Brevmottakere): Boolean =
+        brevmottakere.personer.any { it is BrevmottakerPersonUtenIdent }
 
     private fun lagInnsynUrl(
         fagsak: Fagsak,

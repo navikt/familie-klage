@@ -35,7 +35,7 @@ data class OversendtKlageAnkeV4(
             behandling: Behandling,
             vurdering: Vurdering,
             saksbehandlersEnhet: String,
-            brevMottakere: Brevmottakere,
+            brevmottakere: Brevmottakere,
         ): OversendtKlageAnkeV4 =
             OversendtKlageAnkeV4(
                 type = OversendtType.KLAGE,
@@ -45,7 +45,7 @@ data class OversendtKlageAnkeV4(
                         verdi = fagsak.hentAktivIdent(),
                     ),
                 ),
-                prosessfullmektig = utledFullmektigFraBrevmottakere(brevMottakere),
+                prosessfullmektig = utledFullmektigFraBrevmottakere(brevmottakere),
                 fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem.tilFellesFagsystem()),
                 kildeReferanse = behandling.eksternBehandlingId.toString(),
                 hjemler = vurdering.hjemmel?.let { listOf(it.kabalHjemmel) } ?: emptyList(),
@@ -56,8 +56,8 @@ data class OversendtKlageAnkeV4(
                 hindreAutomatiskSvarbrev = behandling.årsak == Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL,
             )
 
-        private fun utledFullmektigFraBrevmottakere(brevMottakere: Brevmottakere): OversendtProsessfullmektigV4? =
-            utledFullmektigEllerVerge(brevMottakere)?.let {
+        private fun utledFullmektigFraBrevmottakere(brevmottakere: Brevmottakere): OversendtProsessfullmektigV4? =
+            utledFullmektigEllerVerge(brevmottakere)?.let {
                 OversendtProsessfullmektigV4(
                     id = utledPartIdFraFullmektigEllerVerge(it),
                     navn = utledNavnFraFullmektigEllerVerge(it),
