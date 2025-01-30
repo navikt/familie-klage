@@ -55,6 +55,8 @@ class JournalførBrevTask(
                 journalposter = journalposter,
             )
 
+        // `journalførBrevmottakere` overskriver journalposter på brevet i databasen,
+        // så vi må sende med journalpostene som ble lagt til i forrige kall
         journalførBrevmottakere(
             brev = brev,
             mottakere = mottakere.organisasjoner,
