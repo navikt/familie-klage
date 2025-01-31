@@ -7,10 +7,11 @@ import io.mockk.verify
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.klage.behandling.dto.HenlagtDto
+import no.nav.familie.klage.henlegg.HenlagtDto
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.henlegg.HenleggBehandlingService
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
@@ -58,6 +59,7 @@ internal class BehandlingServiceTest {
         taskService,
         fagsystemVedtakService,
     )
+    val henleggBehandlingService = mockk<HenleggBehandlingService>()
     val behandlingSlot = slot<Behandling>()
 
     @BeforeEach
@@ -86,20 +88,20 @@ internal class BehandlingServiceTest {
                 behandlingRepository.findByIdOrThrow(any())
             } returns behandling
 
-            behandlingService.henleggBehandling(behandling.id, HenlagtDto(henlagtÅrsak))
+            henleggBehandlingService.henleggBehandling(behandling.id, HenlagtDto(henlagtÅrsak))
             assertThat(behandlingSlot.captured.status).isEqualTo(BehandlingStatus.FERDIGSTILT)
             assertThat(behandlingSlot.captured.resultat).isEqualTo(BehandlingResultat.HENLAGT)
             assertThat(behandlingSlot.captured.steg).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
             assertThat(behandlingSlot.captured.vedtakDato).isNotNull
         }
 
-        private fun henleggOgForventApiFeilmelding(behandling: Behandling, henlagtÅrsak: HenlagtÅrsak) {
+        private fun henleggOgForventApiFeilmelding(behandling: Behandling, henlagtÅrsak: HenlagtÅrsak) { //TODO Flytt til test knyttet til henlegg sammen med andre tester
             every {
                 behandlingRepository.findByIdOrThrow(any())
             } returns behandling
 
             val feil: ApiFeil = assertThrows {
-                behandlingService.henleggBehandling(behandling.id, HenlagtDto(henlagtÅrsak))
+                henleggBehandlingService.henleggBehandling(behandling.id, HenlagtDto(henlagtÅrsak))
             }
 
             assertThat(feil.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)

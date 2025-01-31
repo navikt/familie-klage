@@ -6,19 +6,15 @@ import no.nav.familie.klage.behandling.domain.Klagebehandlingsresultat
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
-import no.nav.familie.klage.behandling.domain.StegType.BEHANDLING_FERDIGSTILT
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandling.domain.harManuellVedtaksdato
 import no.nav.familie.klage.behandling.dto.BehandlingDto
-import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.behandling.dto.tilPåklagetVedtakDetaljer
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
-import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
-import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
@@ -31,7 +27,6 @@ import no.nav.familie.klage.personopplysninger.pdl.secureLogger
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
-import no.nav.familie.kontrakter.felles.klage.BehandlingStatus.FERDIGSTILT
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
@@ -154,35 +149,6 @@ class BehandlingService(
             PåklagetVedtakstype.UTESTENGELSE -> FagsystemType.UTESTENGELSE
             PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK -> FagsystemType.ORDNIÆR
             else -> error("Kan ikke utlede fagsystemType for påklagetVedtakType ${påklagetVedtakDto.påklagetVedtakstype}")
-        }
-    }
-
-    @Transactional
-    fun henleggBehandling(behandlingId: UUID, henlagt: HenlagtDto) {
-        val behandling = hentBehandling(behandlingId)
-
-        validerKanHenleggeBehandling(behandling)
-
-        val henlagtBehandling = behandling.copy(
-            henlagtÅrsak = henlagt.årsak,
-            resultat = BehandlingResultat.HENLAGT,
-            steg = BEHANDLING_FERDIGSTILT,
-            status = FERDIGSTILT,
-            vedtakDato = SporbarUtils.now(),
-        )
-
-        behandlinghistorikkService.opprettBehandlingshistorikk(
-            behandlingId = behandlingId,
-            steg = BEHANDLING_FERDIGSTILT,
-        )
-        oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
-        behandlingRepository.update(henlagtBehandling)
-        taskService.save(taskService.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId)))
-    }
-
-    private fun validerKanHenleggeBehandling(behandling: Behandling) {
-        brukerfeilHvis(behandling.status.erLåstForVidereBehandling()) {
-            "Kan ikke henlegge behandling med status ${behandling.status}"
         }
     }
 
