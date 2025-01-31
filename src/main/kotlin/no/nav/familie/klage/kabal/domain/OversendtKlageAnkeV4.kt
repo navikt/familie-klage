@@ -59,13 +59,13 @@ data class OversendtKlageAnkeV4(
         private fun utledFullmektigFraBrevmottakere(brevmottakere: Brevmottakere): OversendtProsessfullmektigV4? =
             utledFullmektigEllerVerge(brevmottakere)?.let {
                 OversendtProsessfullmektigV4(
-                    id = utledPartIdFraFullmektigEllerVerge(it),
-                    navn = utledNavnFraFullmektigEllerVerge(it),
-                    adresse = utledAdresseFraFullmektigEllerVerge(it),
+                    id = utledPartIdFraBrevmottaker(it),
+                    navn = utledNavnFraBrevmottaker(it),
+                    adresse = utledAdresseFraBrevmottaker(it),
                 )
             }
 
-        private fun utledPartIdFraFullmektigEllerVerge(brevmottaker: Brevmottaker) =
+        private fun utledPartIdFraBrevmottaker(brevmottaker: Brevmottaker) =
             when (brevmottaker) {
                 is BrevmottakerPersonMedIdent -> {
                     OversendtPartId(
@@ -84,13 +84,13 @@ data class OversendtKlageAnkeV4(
                 is BrevmottakerPersonUtenIdent -> null
             }
 
-        private fun utledNavnFraFullmektigEllerVerge(brevmottaker: Brevmottaker): String =
+        private fun utledNavnFraBrevmottaker(brevmottaker: Brevmottaker): String =
             when (brevmottaker) {
                 is BrevmottakerOrganisasjon -> brevmottaker.organisasjonsnavn
                 is BrevmottakerPerson -> brevmottaker.navn
             }
 
-        private fun utledAdresseFraFullmektigEllerVerge(brevmottaker: Brevmottaker): OversendtAdresseV4? =
+        private fun utledAdresseFraBrevmottaker(brevmottaker: Brevmottaker): OversendtAdresseV4? =
             when (brevmottaker) {
                 is BrevmottakerPersonUtenIdent ->
                     OversendtAdresseV4(

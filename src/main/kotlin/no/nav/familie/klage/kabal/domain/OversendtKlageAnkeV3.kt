@@ -69,12 +69,12 @@ data class OversendtKlageAnkeV3(
         private fun utledFullmektigFraBrevmottakere(brevmottakere: Brevmottakere): OversendtProsessfullmektigV3? =
             utledFullmektigEllerVerge(brevmottakere)?.let {
                 OversendtProsessfullmektigV3(
-                    id = utledPartIdFraFullmektigEllerVerge(it),
+                    id = utledPartIdFraBrevmottaker(it),
                     skalKlagerMottaKopi = false,
                 )
             }
 
-        private fun utledPartIdFraFullmektigEllerVerge(brevmottaker: Brevmottaker) =
+        private fun utledPartIdFraBrevmottaker(brevmottaker: Brevmottaker) =
             when (brevmottaker) {
                 is BrevmottakerPersonMedIdent -> {
                     OversendtPartId(
