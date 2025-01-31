@@ -2,6 +2,7 @@ package no.nav.familie.klage.kabal
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.kabal.domain.Type
 import no.nav.familie.klage.kabal.event.BehandlingEventService
 import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType

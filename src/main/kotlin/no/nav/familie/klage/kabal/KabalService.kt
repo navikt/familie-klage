@@ -2,24 +2,20 @@ package no.nav.familie.klage.kabal
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
-import no.nav.familie.klage.brev.domain.Brevmottaker
-import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
-import no.nav.familie.klage.brev.domain.BrevmottakerPerson
-import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brev.domain.Brevmottakere
-import no.nav.familie.klage.brev.domain.MottakerRolle
 import no.nav.familie.klage.fagsak.domain.Fagsak
-import no.nav.familie.klage.fagsak.domain.tilYtelse
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
+import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle.SKAL_BRUKE_KABAL_API_V4
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
-import no.nav.familie.klage.kabal.domain.OversendtPartId
-import no.nav.familie.klage.kabal.domain.OversendtPartIdType
-import no.nav.familie.klage.kabal.domain.OversendtSak
+import no.nav.familie.klage.kabal.domain.OversendtKlageAnke
+import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV3
+import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV4
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
-import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
 import org.springframework.stereotype.Service
 
 @Service
@@ -27,83 +23,53 @@ class KabalService(
     private val kabalClient: KabalClient,
     private val integrasjonerClient: FamilieIntegrasjonerClient,
     private val lenkeConfig: LenkeConfig,
+    private val featureToggleService: FeatureToggleService,
 ) {
     fun sendTilKabal(
         fagsak: Fagsak,
         behandling: Behandling,
         vurdering: Vurdering,
         saksbehandlerIdent: String,
-        brevMottakere: Brevmottakere,
+        brevmottakere: Brevmottakere,
     ) {
         val saksbehandler = integrasjonerClient.hentSaksbehandlerInfo(saksbehandlerIdent)
-        val oversendtKlageAnkeV3 =
-            lagKlageOversendelseV3(fagsak, behandling, vurdering, saksbehandler.enhet, brevMottakere)
-        kabalClient.sendTilKabal(oversendtKlageAnkeV3)
+        val oversendtKlageAnke =
+            lagKlageOversendelse(fagsak, behandling, vurdering, saksbehandler.enhet, brevmottakere)
+        kabalClient.sendTilKabal(oversendtKlageAnke)
     }
 
-    private fun lagKlageOversendelseV3(
+    private fun lagKlageOversendelse(
         fagsak: Fagsak,
         behandling: Behandling,
         vurdering: Vurdering,
         saksbehandlersEnhet: String,
-        brevMottakere: Brevmottakere,
-    ): OversendtKlageAnkeV3 =
-        OversendtKlageAnkeV3(
-            type = Type.KLAGE,
-            klager =
-            OversendtKlager(
-                id =
-                OversendtPartId(
-                    type = OversendtPartIdType.PERSON,
-                    verdi = fagsak.hentAktivIdent(),
-                ),
-                klagersProsessfullmektig = utledFullmektigFraBrevmottakere(brevMottakere),
-            ),
-            fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem.tilFellesFagsystem()),
-            kildeReferanse = behandling.eksternBehandlingId.toString(),
-            innsynUrl = lagInnsynUrl(fagsak, behandling.påklagetVedtak),
-            hjemler = vurdering.hjemmel?.let { listOf(it.kabalHjemmel) } ?: emptyList(),
-            forrigeBehandlendeEnhet = saksbehandlersEnhet,
-            tilknyttedeJournalposter = listOf(),
-            brukersHenvendelseMottattNavDato = behandling.klageMottatt,
-            innsendtTilNav = behandling.klageMottatt,
-            kilde = fagsak.fagsystem.tilFellesFagsystem(),
-            ytelse = fagsak.stønadstype.tilYtelse(),
-            hindreAutomatiskSvarbrev = behandling.årsak == Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL,
-        )
-
-    private fun utledFullmektigFraBrevmottakere(brevMottakere: Brevmottakere): OversendtProsessfullmektig? {
-        val fullmektigEllerVerge =
-            brevMottakere.personer.firstOrNull { it.mottakerRolle == MottakerRolle.FULLMAKT }
-                ?: brevMottakere.personer.firstOrNull { it.mottakerRolle == MottakerRolle.VERGE }
-                ?: brevMottakere.organisasjoner.firstOrNull()
-
-        return fullmektigEllerVerge?.let {
-            val oversendtPartId: OversendtPartId = utledPartIdFraFullmektigEllerVerge(it)
-            return OversendtProsessfullmektig(id = oversendtPartId, skalKlagerMottaKopi = false)
-        }
-    }
-
-    private fun utledPartIdFraFullmektigEllerVerge(it: Brevmottaker) =
-        when (it) {
-            is BrevmottakerPerson -> {
-                when (it) {
-                    is BrevmottakerPersonMedIdent -> OversendtPartId(
-                        type = OversendtPartIdType.PERSON,
-                        verdi = it.personIdent,
-                    )
-
-                    is BrevmottakerPersonUtenIdent -> throw IllegalStateException("BrevmottakerPersonUtenIdent er foreløpig ikke støttet.")
-                }
+        brevmottakere: Brevmottakere,
+    ): OversendtKlageAnke =
+        if (behandlingInneholderBrevmottakerUtenIdent(brevmottakere)) {
+            if (!featureToggleService.isEnabled(SKAL_BRUKE_KABAL_API_V4)) {
+                throw Feil("V4 av oversendelse til Kabal er foreløpig ikke støttet.")
             }
 
-            is BrevmottakerOrganisasjon -> {
-                OversendtPartId(
-                    type = OversendtPartIdType.VIRKSOMHET,
-                    verdi = it.organisasjonsnummer,
-                )
-            }
+            OversendtKlageAnkeV4.lagKlageOversendelse(
+                fagsak = fagsak,
+                behandling = behandling,
+                vurdering = vurdering,
+                saksbehandlersEnhet = saksbehandlersEnhet,
+                brevmottakere = brevmottakere,
+            )
+        } else {
+            OversendtKlageAnkeV3.lagKlageOversendelse(
+                fagsak = fagsak,
+                behandling = behandling,
+                vurdering = vurdering,
+                saksbehandlersEnhet = saksbehandlersEnhet,
+                brevmottakere = brevmottakere,
+                innsynUrl = lagInnsynUrl(fagsak, behandling.påklagetVedtak),
+            )
         }
+
+    private fun behandlingInneholderBrevmottakerUtenIdent(brevmottakere: Brevmottakere): Boolean =
+        brevmottakere.personer.any { it is BrevmottakerPersonUtenIdent }
 
     private fun lagInnsynUrl(
         fagsak: Fagsak,
