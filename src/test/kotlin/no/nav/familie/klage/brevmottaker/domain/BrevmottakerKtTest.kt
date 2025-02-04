@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-class BrevmottakerPersonDeserializerTest {
+class BrevmottakerKtTest {
     private val brevmottakerPersonDeserializer: BrevmottakerPersonDeserializer = BrevmottakerPersonDeserializer()
 
     @Nested
-    inner class DeserializTest {
+    inner class BrevmottakerPersonDeserializerTest {
         @Test
         fun `skal deserialisere BrevmottakerPersonMedIdent`() {
             // Arrange
