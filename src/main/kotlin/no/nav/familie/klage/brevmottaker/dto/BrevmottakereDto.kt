@@ -1,8 +1,8 @@
-package no.nav.familie.klage.brev.dto
+package no.nav.familie.klage.brevmottaker.dto
 
-import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
-import no.nav.familie.klage.brev.domain.BrevmottakerPerson
-import no.nav.familie.klage.brev.domain.Brevmottakere
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPerson
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 
 data class BrevmottakereDto(
     val personer: List<BrevmottakerPerson>,
