@@ -39,9 +39,7 @@ class BrevController(
     }
 
     @GetMapping("/{behandlingId}/mottakere")
-    fun hentBrevmottakere(
-        @PathVariable behandlingId: UUID,
-    ): Ressurs<BrevmottakereDto> {
+    fun hentBrevmottakere(@PathVariable behandlingId: UUID): Ressurs<BrevmottakereDto> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(brevService.hentBrevmottakere(behandlingId).tilDto())
