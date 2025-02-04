@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev.domain
+package no.nav.familie.klage.brevmottaker.domain
 
 import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
 import org.assertj.core.api.Assertions.assertThat

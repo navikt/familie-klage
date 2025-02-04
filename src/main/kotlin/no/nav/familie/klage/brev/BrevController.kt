@@ -1,7 +1,7 @@
 package no.nav.familie.klage.brev
 
-import no.nav.familie.klage.brev.dto.BrevmottakereDto
-import no.nav.familie.klage.brev.dto.tilDto
+import no.nav.familie.klage.brevmottaker.dto.BrevmottakereDto
+import no.nav.familie.klage.brevmottaker.dto.tilDto
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -39,7 +39,9 @@ class BrevController(
     }
 
     @GetMapping("/{behandlingId}/mottakere")
-    fun hentBrevmottakere(@PathVariable behandlingId: UUID): Ressurs<BrevmottakereDto> {
+    fun hentBrevmottakere(
+        @PathVariable behandlingId: UUID,
+    ): Ressurs<BrevmottakereDto> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(brevService.hentBrevmottakere(behandlingId).tilDto())

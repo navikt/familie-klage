@@ -1,4 +1,4 @@
-package no.nav.familie.klage.brev.domain
+package no.nav.familie.klage.brevmottaker.domain
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
@@ -7,11 +7,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
 import java.util.UUID
-
-data class Brevmottakere(
-    val personer: List<BrevmottakerPerson> = emptyList(),
-    val organisasjoner: List<BrevmottakerOrganisasjon> = emptyList(),
-)
 
 sealed interface Brevmottaker
 
