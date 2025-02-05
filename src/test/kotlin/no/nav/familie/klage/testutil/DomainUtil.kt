@@ -7,7 +7,6 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
-import no.nav.familie.klage.brev.baks.BaksBrev
 import no.nav.familie.klage.brev.baks.brevmottaker.Brevmottaker
 import no.nav.familie.klage.brev.baks.brevmottaker.Mottakertype
 import no.nav.familie.klage.brev.baks.brevmottaker.NyBrevmottaker
@@ -17,7 +16,6 @@ import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.fagsak.domain.PersonIdent
-import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.felles.domain.Sporbar
 import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.formkrav.domain.Form
@@ -363,20 +361,6 @@ object DomainUtil {
         egenAnsatt = egenAnsatt,
         vergemål = vergemål,
     )
-
-    fun lagBaksBrev(
-        behandlingId: UUID = UUID.randomUUID(),
-        html: String = "<html />",
-        pdf: Fil = Fil("data".toByteArray()),
-        sporbar: Sporbar = Sporbar(),
-    ): BaksBrev {
-        return BaksBrev(
-            behandlingId = behandlingId,
-            html = html,
-            pdf = pdf,
-            sporbar = sporbar,
-        )
-    }
 
     fun lagPåklagetVedtakDetaljer(
         fagsystemType: FagsystemType = FagsystemType.ORDNIÆR,
