@@ -47,18 +47,18 @@ class BrevmottakerErstatter(
     }
 
     private fun validerUnikeBrevmottakere(brevmottakere: Brevmottakere) {
-        val personmottakerIdentifikatorer = brevmottakere.personer.map {
+        val personBrevmottakerIdentifikatorer = brevmottakere.personer.map {
             when (it) {
                 is BrevmottakerPersonMedIdent -> it.personIdent
                 is BrevmottakerPersonUtenIdent -> it.id.toString()
             }
         }
-        if (personmottakerIdentifikatorer.distinct().size != personmottakerIdentifikatorer.size) {
+        if (personBrevmottakerIdentifikatorer.distinct().size != personBrevmottakerIdentifikatorer.size) {
             throw Feil("En person kan bare legges til en gang som brevmottaker.")
         }
 
-        val organisasjonsmottakerIdenter = brevmottakere.organisasjoner.map { it.organisasjonsnummer }
-        if (organisasjonsmottakerIdenter.distinct().size != organisasjonsmottakerIdenter.size) {
+        val organisasjonBrevmottakerIdenter = brevmottakere.organisasjoner.map { it.organisasjonsnummer }
+        if (organisasjonBrevmottakerIdenter.distinct().size != organisasjonBrevmottakerIdenter.size) {
             throw Feil("En organisasjon kan bare legges til en gang som brevmottaker.")
         }
     }
