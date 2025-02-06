@@ -6,8 +6,8 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
-import no.nav.familie.klage.brev.BrevmottakerUtil.validerMinimumEnMottaker
-import no.nav.familie.klage.brev.BrevmottakerUtil.validerUnikeBrevmottakere
+import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerMinimumEnMottaker
+import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerUnikeBrevmottakere
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto

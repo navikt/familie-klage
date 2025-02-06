@@ -39,7 +39,25 @@ data class BrevmottakerPersonUtenIdent(
     val postnummer: String?,
     val poststed: String?,
     val landkode: String,
-) : BrevmottakerPerson
+) : BrevmottakerPerson {
+    companion object Fabrikk {
+        fun opprettFra(
+            id: UUID = UUID.randomUUID(),
+            nyBrevmottakerPersonUtenIdent: NyBrevmottakerPersonUtenIdent,
+        ): BrevmottakerPersonUtenIdent {
+            return BrevmottakerPersonUtenIdent(
+                id = id,
+                mottakerRolle = nyBrevmottakerPersonUtenIdent.mottakerRolle,
+                navn = nyBrevmottakerPersonUtenIdent.navn,
+                adresselinje1 = nyBrevmottakerPersonUtenIdent.adresselinje1,
+                adresselinje2 = nyBrevmottakerPersonUtenIdent.adresselinje2,
+                postnummer = nyBrevmottakerPersonUtenIdent.postnummer,
+                poststed = nyBrevmottakerPersonUtenIdent.poststed,
+                landkode = nyBrevmottakerPersonUtenIdent.landkode,
+            )
+        }
+    }
+}
 
 class BrevmottakerPersonDeserializer : JsonDeserializer<BrevmottakerPerson>() {
     override fun deserialize(jsonParser: JsonParser, context: DeserializationContext): BrevmottakerPerson {
