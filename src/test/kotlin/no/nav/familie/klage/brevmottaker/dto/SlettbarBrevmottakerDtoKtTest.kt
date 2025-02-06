@@ -102,9 +102,9 @@ class SlettbarBrevmottakerDtoKtTest {
     }
 
     @Nested
-    inner class SlettBrevmottakerDtoDeserializerTest {
-        private val slettBrevmottakerDtoDeserializer: SlettBrevmottakerDtoDeserializer =
-            SlettBrevmottakerDtoDeserializer()
+    inner class SlettbarBrevmottakerDtoDeserializerTest {
+        private val slettbarBrevmottakerDtoDeserializer: SlettbarBrevmottakerDtoDeserializer =
+            SlettbarBrevmottakerDtoDeserializer()
 
         @Test
         fun `skal deserialisere SlettbarBrevmottakerOrganisasjonDto`() {
@@ -117,7 +117,10 @@ class SlettbarBrevmottakerDtoKtTest {
             val parser = objectMapper.factory.createParser(json)
 
             // Act
-            val deserialize = slettBrevmottakerDtoDeserializer.deserialize(parser, objectMapper.deserializationContext)
+            val deserialize = slettbarBrevmottakerDtoDeserializer.deserialize(
+                parser,
+                objectMapper.deserializationContext,
+            )
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(SlettbarBrevmottakerOrganisasjonDto::class.java) {
@@ -136,7 +139,10 @@ class SlettbarBrevmottakerDtoKtTest {
             val parser = objectMapper.factory.createParser(json)
 
             // Act
-            val deserialize = slettBrevmottakerDtoDeserializer.deserialize(parser, objectMapper.deserializationContext)
+            val deserialize = slettbarBrevmottakerDtoDeserializer.deserialize(
+                parser,
+                objectMapper.deserializationContext,
+            )
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(SlettbarBrevmottakerPersonMedIdentDto::class.java) {
@@ -157,7 +163,10 @@ class SlettbarBrevmottakerDtoKtTest {
             val parser = objectMapper.factory.createParser(json)
 
             // Act
-            val deserialize = slettBrevmottakerDtoDeserializer.deserialize(parser, objectMapper.deserializationContext)
+            val deserialize = slettbarBrevmottakerDtoDeserializer.deserialize(
+                parser,
+                objectMapper.deserializationContext,
+            )
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(SlettbarBrevmottakerPersonUtenIdentDto::class.java) {

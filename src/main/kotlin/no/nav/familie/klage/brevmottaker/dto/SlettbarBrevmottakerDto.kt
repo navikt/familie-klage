@@ -12,7 +12,7 @@ import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonUtenId
 import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
 import java.util.UUID
 
-@JsonDeserialize(using = SlettBrevmottakerDtoDeserializer::class)
+@JsonDeserialize(using = SlettbarBrevmottakerDtoDeserializer::class)
 sealed interface SlettbarBrevmottakerDto {
     val type: Type
 
@@ -49,7 +49,7 @@ data class SlettbarBrevmottakerOrganisasjonDto(val organisasjonsnummer: String) 
         get() = SlettbarBrevmottakerDto.Type.ORGANISASJON
 }
 
-class SlettBrevmottakerDtoDeserializer : JsonDeserializer<SlettbarBrevmottakerDto>() {
+class SlettbarBrevmottakerDtoDeserializer : JsonDeserializer<SlettbarBrevmottakerDto>() {
     override fun deserialize(jsonParser: JsonParser, context: DeserializationContext): SlettbarBrevmottakerDto {
         val tree = jsonParser.readValueAsTree<JsonNode>()
         val type = SlettbarBrevmottakerDto.Type.valueOf(tree.get("type").asText())
