@@ -25,8 +25,19 @@ data class BrevmottakereJournalposter(
     val journalposter: List<BrevmottakereJournalpost>,
 )
 
-data class BrevmottakereJournalpost(
-    val ident: String,
-    val journalpostId: String,
-    val distribusjonId: String? = null,
-)
+data class BrevmottakereJournalpostMedIdent(
+    val ident: String?, // Enten personnummer eller orgnummer
+    override val journalpostId: String,
+    override val distribusjonId: String? = null,
+) : BrevmottakereJournalpost
+
+data class BrevmottakereJournalpostUtenIdent(
+    val idForBrevmottakereUtenIdent: UUID?,
+    override val journalpostId: String,
+    override val distribusjonId: String? = null,
+) : BrevmottakereJournalpost
+
+sealed interface BrevmottakereJournalpost {
+    val journalpostId: String
+    val distribusjonId: String?
+}

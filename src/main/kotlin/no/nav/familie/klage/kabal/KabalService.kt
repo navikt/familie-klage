@@ -51,14 +51,14 @@ class KabalService(
         OversendtKlageAnkeV3(
             type = Type.KLAGE,
             klager =
-            OversendtKlager(
-                id =
-                OversendtPartId(
-                    type = OversendtPartIdType.PERSON,
-                    verdi = fagsak.hentAktivIdent(),
+                OversendtKlager(
+                    id =
+                        OversendtPartId(
+                            type = OversendtPartIdType.PERSON,
+                            verdi = fagsak.hentAktivIdent(),
+                        ),
+                    klagersProsessfullmektig = utledFullmektigFraBrevmottakere(brevMottakere),
                 ),
-                klagersProsessfullmektig = utledFullmektigFraBrevmottakere(brevMottakere),
-            ),
             fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem.tilFellesFagsystem()),
             kildeReferanse = behandling.eksternBehandlingId.toString(),
             innsynUrl = lagInnsynUrl(fagsak, behandling.påklagetVedtak),
@@ -93,7 +93,10 @@ class KabalService(
                         verdi = it.personIdent,
                     )
 
-                    is BrevmottakerPersonUtenIdent -> throw IllegalStateException("BrevmottakerPersonUtenIdent er foreløpig ikke støttet.")
+                    is BrevmottakerPersonUtenIdent -> OversendtPartId(
+                        type = OversendtPartIdType.PERSON,
+                        verdi = it.id.toString(), // TODO : Denne er mest sannsynlig feil
+                    )
                 }
             }
 
