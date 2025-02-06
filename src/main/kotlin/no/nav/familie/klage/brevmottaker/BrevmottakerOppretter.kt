@@ -52,7 +52,7 @@ class BrevmottakerOppretter(
 
     private fun opprettBrevmottakerPersonUtenIdent(
         behandlingId: UUID,
-        nyBrevmottaker: NyBrevmottakerPersonUtenIdent,
+        nyBrevmottakerPersonUtenIdent: NyBrevmottakerPersonUtenIdent,
     ): Brevmottaker {
         logger.debug("Oppretter brevmottaker for behandling {}.", behandlingId)
 
@@ -62,9 +62,12 @@ class BrevmottakerOppretter(
 
         val brev = brevService.hentBrev(behandlingId)
         val brevmottakerPersoner = brev.mottakere?.personer ?: emptyList()
-
         val brevmottakerePersonerUtenIdent = brevmottakerPersoner.filterIsInstance<BrevmottakerPersonUtenIdent>()
-        validerNyBrevmottaker(behandlingId, nyBrevmottaker, brevmottakerePersonerUtenIdent)
+        validerNyBrevmottakerPersonUtenIdent(
+            behandlingId,
+            nyBrevmottakerPersonUtenIdent,
+            brevmottakerePersonerUtenIdent,
+        )
 
         val aktivIdentForFagsak = fagsakService.hentFagsak(behandling.fagsakId).hentAktivIdent()
 
@@ -74,17 +77,11 @@ class BrevmottakerOppretter(
             .any { it.personIdent == aktivIdentForFagsak }
 
         val skalSletteBrevmottakerPersonBruker = harBrevmottakerPersonBruker &&
-            nyBrevmottaker.mottakerRolle in MOTTAKER_ROLLER_HVOR_BRUKER_SKAL_SLETTES_VED_OPPRETTELSE
+            nyBrevmottakerPersonUtenIdent.mottakerRolle in MOTTAKER_ROLLER_HVOR_BRUKER_SKAL_SLETTES_VED_OPPRETTELSE
 
-        val nyBrevmottakerPersonUtenIdent = BrevmottakerPersonUtenIdent(
+        val brevmottakerPersonUtenIdentSomSkalOpprettes = BrevmottakerPersonUtenIdent.opprettFra(
             id = UUID.randomUUID(),
-            mottakerRolle = nyBrevmottaker.mottakerRolle,
-            navn = nyBrevmottaker.navn,
-            adresselinje1 = nyBrevmottaker.adresselinje1,
-            adresselinje2 = nyBrevmottaker.adresselinje2,
-            postnummer = nyBrevmottaker.postnummer,
-            poststed = nyBrevmottaker.poststed,
-            landkode = nyBrevmottaker.landkode,
+            nyBrevmottakerPersonUtenIdent = nyBrevmottakerPersonUtenIdent,
         )
 
         brevRepository.update(
@@ -97,15 +94,15 @@ class BrevmottakerOppretter(
                                 is BrevmottakerPersonUtenIdent -> true
                             }
                         }
-                        filtrerteBrevmottakerPersoner + nyBrevmottakerPersonUtenIdent
+                        filtrerteBrevmottakerPersoner + brevmottakerPersonUtenIdentSomSkalOpprettes
                     } else {
-                        brevmottakerPersoner + nyBrevmottakerPersonUtenIdent
+                        brevmottakerPersoner + brevmottakerPersonUtenIdentSomSkalOpprettes
                     },
                 ),
             ),
         )
 
-        return nyBrevmottakerPersonUtenIdent
+        return brevmottakerPersonUtenIdentSomSkalOpprettes
     }
 
     private fun validerRedigerbarBehandling(behandling: Behandling) {
@@ -120,7 +117,7 @@ class BrevmottakerOppretter(
         }
     }
 
-    private fun validerNyBrevmottaker(
+    private fun validerNyBrevmottakerPersonUtenIdent(
         behandlingId: UUID,
         nyBrevmottakerPersonUtenIdent: NyBrevmottakerPersonUtenIdent,
         eksisterendeBrevmottakerePersonerUtenIdent: List<BrevmottakerPersonUtenIdent>,
