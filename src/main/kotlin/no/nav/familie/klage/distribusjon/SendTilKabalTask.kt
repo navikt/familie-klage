@@ -1,7 +1,7 @@
 package no.nav.familie.klage.distribusjon
 
 import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brevmottaker.BrevmottakerService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.util.TaskMetadata
 import no.nav.familie.klage.kabal.KabalService
@@ -22,17 +22,16 @@ class SendTilKabalTask(
     private val behandlingService: BehandlingService,
     private val kabalService: KabalService,
     private val vurderingService: VurderingService,
-    private val brevService: BrevService,
+    private val brevmottakerService: BrevmottakerService,
 ) : AsyncTaskStep {
-
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
         val saksbehandlerIdent = task.metadata[TaskMetadata.saksbehandlerMetadataKey].toString()
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
-        val vurdering =
-            vurderingService.hentVurdering(behandlingId) ?: error("Mangler vurdering på klagen - kan ikke oversendes til kabal")
-        val brevmottakere = brevService.hentBrevmottakere(behandlingId)
+        val vurdering = vurderingService.hentVurdering(behandlingId)
+            ?: error("Mangler vurdering på klagen - kan ikke oversendes til kabal")
+        val brevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
         kabalService.sendTilKabal(fagsak, behandling, vurdering, saksbehandlerIdent, brevmottakere)
     }
 
