@@ -32,15 +32,15 @@ class SendTrukketKlageHenleggelsesbrevTask(
     private val fagsakService: FagsakService,
 ) : AsyncTaskStep {
     override fun doTask(task: Task) {
-        val trukketKlageDto = objectMapper.readValue<TrukketKlageDto>(task.payload)
-        val saksbehandlerIdent = trukketKlageDto.saksbehandlerIdent
-        val journalførendeEnhet = behandlingService.hentBehandling(trukketKlageDto.behandlingId).behandlendeEnhet
-        val henleggBrev = henleggBehandlingService.genererHenleggelsesbrev(behandlingId = trukketKlageDto.behandlingId, saksbehandlerSignatur = trukketKlageDto.saksbehandlerSignatur)
+        val trukketKlageBrevDto = objectMapper.readValue<TrukketKlageBrevDto>(task.payload)
+        val saksbehandlerIdent = trukketKlageBrevDto.saksbehandlerIdent
+        val journalførendeEnhet = behandlingService.hentBehandling(trukketKlageBrevDto.behandlingId).behandlendeEnhet
+        val henleggBrev = henleggBehandlingService.genererHenleggelsesbrev(behandlingId = trukketKlageBrevDto.behandlingId, saksbehandlerSignatur = trukketKlageBrevDto.saksbehandlerSignatur)
 
         val hennleggbrevDto =
             FrittståendeBrevDto(
-                personIdent = personopplysningerService.hentPersonopplysninger(trukketKlageDto.behandlingId).personIdent,
-                eksternFagsakId = fagsakService.hentFagsak(trukketKlageDto.behandlingId).eksternId.toLong(),
+                personIdent = personopplysningerService.hentPersonopplysninger(trukketKlageBrevDto.behandlingId).personIdent,
+                eksternFagsakId = fagsakService.hentFagsak(trukketKlageBrevDto.behandlingId).eksternId.toLong(),
                 stønadType = StønadType.SKOLEPENGER, // TODO
                 /* TODO brevtype = FrittståendeBrevType.INFORMASJONSBREV_TRUKKET_KlAGE, */
                 brevtype = FrittståendeBrevType.INFORMASJONSBREV_TRUKKET_SØKNAD,
@@ -48,7 +48,7 @@ class SendTrukketKlageHenleggelsesbrevTask(
                 fil = henleggBrev,
                 journalførendeEnhet = journalførendeEnhet,
                 saksbehandlerIdent = saksbehandlerIdent,
-                mottakere = lagBrevMottaker(personopplysningerService.hentPersonopplysninger(trukketKlageDto.behandlingId).personIdent, trukketKlageDto.behandlingId),
+                mottakere = lagBrevMottaker(personopplysningerService.hentPersonopplysninger(trukketKlageBrevDto.behandlingId).personIdent, trukketKlageBrevDto.behandlingId),
             )
         brevClient.sendFrittståendeBrev(frittståendeBrevDto = hennleggbrevDto)
     }
@@ -71,7 +71,7 @@ class SendTrukketKlageHenleggelsesbrevTask(
         ): Task =
             Task(
                 type = TYPE,
-                payload = objectMapper.writeValueAsString(TrukketKlageDto(behandlingId, saksbehandlerSignatur, saksbehandlerIdent)),
+                payload = objectMapper.writeValueAsString(TrukketKlageBrevDto(behandlingId, saksbehandlerSignatur, saksbehandlerIdent)),
             )
 
         const val TYPE = "SendHenleggelsesbrevOmTrukketKlageTask"
