@@ -98,8 +98,9 @@ class HenleggBehandlingService(
         validerIkkeSendBrevPåFeilType(henlagt)
         val saksbehandlerSignatur = SikkerhetContext.hentSaksbehandlerNavn(strict = true)
         val saksbehandlerIdent = SikkerhetContext.hentSaksbehandler()
+        val fagSak = fagsakService.hentFagsakForBehandling(behandlingId)
         val task: Task =
-            SendTrukketKlageHenleggelsesbrevTask.opprettTask(behandlingId, saksbehandlerSignatur, saksbehandlerIdent)
+            SendTrukketKlageHenleggelsesbrevTask.opprettTask(behandlingId, saksbehandlerSignatur, saksbehandlerIdent, fagSak)
 
         taskService.save(task)
     }

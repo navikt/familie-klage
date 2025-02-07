@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevClient
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.kontrakter.ef.felles.FrittståendeBrevDto
 import no.nav.familie.kontrakter.ef.felles.FrittståendeBrevType
@@ -40,7 +41,7 @@ class SendTrukketKlageHenleggelsesbrevTask(
         val hennleggbrevDto =
             FrittståendeBrevDto(
                 personIdent = personopplysningerService.hentPersonopplysninger(trukketKlageBrevDto.behandlingId).personIdent,
-                eksternFagsakId = fagsakService.hentFagsak(trukketKlageBrevDto.behandlingId).eksternId.toLong(),
+                eksternFagsakId = trukketKlageBrevDto.fagSak.eksternId.toLong(),
                 stønadType = StønadType.SKOLEPENGER, // TODO
                 /* TODO brevtype = FrittståendeBrevType.INFORMASJONSBREV_TRUKKET_KlAGE, */
                 brevtype = FrittståendeBrevType.INFORMASJONSBREV_TRUKKET_SØKNAD,
@@ -68,10 +69,11 @@ class SendTrukketKlageHenleggelsesbrevTask(
             behandlingId: UUID,
             saksbehandlerSignatur: String,
             saksbehandlerIdent: String,
+            fagsak: Fagsak,
         ): Task =
             Task(
                 type = TYPE,
-                payload = objectMapper.writeValueAsString(TrukketKlageBrevDto(behandlingId, saksbehandlerSignatur, saksbehandlerIdent)),
+                payload = objectMapper.writeValueAsString(TrukketKlageBrevDto(behandlingId, saksbehandlerSignatur, saksbehandlerIdent, fagsak)),
             )
 
         const val TYPE = "SendHenleggelsesbrevOmTrukketKlageTask"
