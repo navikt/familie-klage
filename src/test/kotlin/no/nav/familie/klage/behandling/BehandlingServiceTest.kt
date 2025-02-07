@@ -9,6 +9,8 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
+import no.nav.familie.klage.brev.BrevClient
+import no.nav.familie.klage.brev.FamilieDokumentClient
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.henlegg.HenlagtDto
 import no.nav.familie.klage.henlegg.HenleggBehandlingService
@@ -17,6 +19,7 @@ import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.oppgave.OppgaveTaskService
+import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.BrukerContextUtil.clearBrukerContext
 import no.nav.familie.klage.testutil.BrukerContextUtil.mockBrukerContext
@@ -49,6 +52,9 @@ internal class BehandlingServiceTest {
     val taskService = mockk<TaskService>()
     val oppgaveTaskService = mockk<OppgaveTaskService>()
     val fagsystemVedtakService = mockk<FagsystemVedtakService>()
+    val familieDokumentClient = mockk<FamilieDokumentClient>()
+    val personopplysningerService = mockk<PersonopplysningerService>()
+    val brevClient = mockk<BrevClient>()
 
     val behandlingService = BehandlingService(
         behandlingRepository,
@@ -59,7 +65,19 @@ internal class BehandlingServiceTest {
         taskService,
         fagsystemVedtakService,
     )
-    val henleggBehandlingService = mockk<HenleggBehandlingService>()
+    // TODO RYDD OPP
+    val henleggBehandlingService = HenleggBehandlingService(
+        behandlingRepository, behandlingService,
+        fagsakService,
+        klageresultatRepository,
+        behandlinghistorikkService,
+        oppgaveTaskService,
+        taskService,
+        fagsystemVedtakService,
+        familieDokumentClient = familieDokumentClient,
+        personopplysningerService = personopplysningerService,
+        brevClient = brevClient,
+    )
     val behandlingSlot = slot<Behandling>()
 
     @BeforeEach
