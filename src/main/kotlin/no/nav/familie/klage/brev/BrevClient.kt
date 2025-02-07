@@ -7,6 +7,7 @@ import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.felles.util.TekstUtil.norskFormat
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
+import no.nav.familie.kontrakter.ef.felles.FrittståendeBrevDto
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
@@ -71,6 +72,10 @@ class BrevClient(
             ),
             HttpHeaders().medContentTypeJsonUTF8(),
         )
+    }
+
+    fun sendFrittståendeBrev(frittståendeBrevDto: FrittståendeBrevDto) {
+        postForEntity<Any>(URI.create("http://familie-ef-iverksett/api/brev/frittstaende"), frittståendeBrevDto)
     }
 }
 

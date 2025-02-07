@@ -25,6 +25,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingStatus.FERDIGSTILT
 import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -90,7 +91,7 @@ class HenleggBehandlingService(
         return behandlingRepository.update(t = behandling.copy(status = status))
     }
 
-    /* TODO
+
     fun sendHenleggelsesbrev(
         henlagt: HenlagtDto,
         behandlingId: UUID,
@@ -99,11 +100,11 @@ class HenleggBehandlingService(
         val saksbehandlerSignatur = SikkerhetContext.hentSaksbehandlerNavn(strict = true)
         val saksbehandlerIdent = SikkerhetContext.hentSaksbehandler()
         val task: Task =
-            SendTrukketSøknadHenleggelsesbrevTask.opprettTask(behandlingId, saksbehandlerSignatur, saksbehandlerIdent)
+            SendTrukketKlageHenleggelsesbrevTask.opprettTask(behandlingId, saksbehandlerSignatur, saksbehandlerIdent)
 
         taskService.save(task)
     }
-*/
+
     private fun validerIkkeSendBrevPåFeilType(henlagt: HenlagtDto) {
         feilHvis(henlagt.skalSendeHenleggelsesbrev && henlagt.årsak == HenlagtÅrsak.FEILREGISTRERT) { "Skal ikke sende brev hvis type er ulik trukket tilbake" }
     }
