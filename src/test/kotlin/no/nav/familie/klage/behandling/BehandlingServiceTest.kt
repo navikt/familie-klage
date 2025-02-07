@@ -65,6 +65,7 @@ internal class BehandlingServiceTest {
         taskService,
         fagsystemVedtakService,
     )
+
     // TODO RYDD OPP
     val henleggBehandlingService = HenleggBehandlingService(
         behandlingRepository, behandlingService,
