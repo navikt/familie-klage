@@ -7,10 +7,10 @@ import io.mockk.verify
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.klage.henlegg.HenlagtDto
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.henlegg.HenlagtDto
 import no.nav.familie.klage.henlegg.HenleggBehandlingService
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.exception.Feil
@@ -95,7 +95,7 @@ internal class BehandlingServiceTest {
             assertThat(behandlingSlot.captured.vedtakDato).isNotNull
         }
 
-        private fun henleggOgForventApiFeilmelding(behandling: Behandling, henlagtÅrsak: HenlagtÅrsak) { //TODO Flytt til test knyttet til henlegg sammen med andre tester
+        private fun henleggOgForventApiFeilmelding(behandling: Behandling, henlagtÅrsak: HenlagtÅrsak) { // TODO Flytt til test knyttet til henlegg sammen med andre tester
             every {
                 behandlingRepository.findByIdOrThrow(any())
             } returns behandling

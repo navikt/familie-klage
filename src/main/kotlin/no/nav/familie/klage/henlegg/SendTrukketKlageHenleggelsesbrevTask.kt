@@ -2,7 +2,6 @@ package no.nav.familie.klage.henlegg
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.brev.BrevClient
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
@@ -15,7 +14,6 @@ import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import org.springframework.stereotype.Service
-import java.net.URI
 import java.util.UUID
 
 @Service

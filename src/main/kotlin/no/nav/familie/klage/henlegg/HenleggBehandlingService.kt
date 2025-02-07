@@ -91,7 +91,6 @@ class HenleggBehandlingService(
         return behandlingRepository.update(t = behandling.copy(status = status))
     }
 
-
     fun sendHenleggelsesbrev(
         henlagt: HenlagtDto,
         behandlingId: UUID,
