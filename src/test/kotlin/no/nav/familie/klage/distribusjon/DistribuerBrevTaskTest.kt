@@ -7,8 +7,9 @@ import io.mockk.verify
 import io.mockk.verifyOrder
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.domain.Brev
-import no.nav.familie.klage.brev.domain.BrevmottakereJournalpost
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
+import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpost
+import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpostMedIdent
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.prosessering.domene.Task
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -112,13 +113,13 @@ internal class DistribuerBrevTaskTest {
     }
 
     private fun journalpost(journalpostId: String, distribusjonId: String? = null) =
-        BrevmottakereJournalpost("ident", journalpostId, distribusjonId = distribusjonId)
+        BrevmottakerJournalpostMedIdent("ident", journalpostId, distribusjonId = distribusjonId)
 
     private fun doTask() {
         distribuerBrevTask.doTask(Task(DistribuerBrevTask.TYPE, behandlingId.toString()))
     }
 
-    private fun mockHentBrev(journalposter: List<BrevmottakereJournalpost>? = null) {
+    private fun mockHentBrev(journalposter: List<BrevmottakerJournalpost>? = null) {
         every { brevService.hentBrev(behandlingId) } returns
             Brev(
                 behandlingId = behandlingId,
