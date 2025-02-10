@@ -1,14 +1,9 @@
 package no.nav.familie.klage.henlegg
 
-import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.behandling.FerdigstillBehandlingService
-import no.nav.familie.klage.behandling.OpprettRevurderingService
+import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
-import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
-import no.nav.familie.klage.oppgave.OppgaveService
-import no.nav.familie.klage.oppgave.TilordnetRessursService
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
@@ -25,14 +20,9 @@ import java.util.UUID
 @ProtectedWithClaims(issuer = "azuread")
 @Validated
 class HenleggBehandlingController(
-    private val behandlingService: BehandlingService,
     private val tilgangService: TilgangService,
-    private val ferdigstillBehandlingService: FerdigstillBehandlingService,
-    private val fagsystemVedtakService: FagsystemVedtakService,
-    private val opprettRevurderingService: OpprettRevurderingService,
-    private val tilordnetRessursService: TilordnetRessursService,
-    private val oppgaveService: OppgaveService,
     private val henleggBehandlingService: HenleggBehandlingService,
+    private val brevService: BrevService,
 ) {
 
     @PostMapping("{behandlingId}/henlegg")
@@ -40,7 +30,7 @@ class HenleggBehandlingController(
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         if (henlegg.skalSendeHenleggelsesbrev) {
-            henleggBehandlingService.opprettJournalførBrevTaskHenlegg(behandlingId)
+            brevService.opprettJournalførHenleggelsesbrevTask(behandlingId)
         }
         return Ressurs.success(henleggBehandlingService.henleggBehandling(behandlingId, henlegg))
     }
@@ -58,5 +48,5 @@ class HenleggBehandlingController(
     private fun henleggBrevRessurs(
         behandlingId: UUID,
         saksbehandlerSignatur: String,
-    ) = Ressurs.success(henleggBehandlingService.genererHenleggelsesbrev(behandlingId, saksbehandlerSignatur))
+    ) = Ressurs.success(brevService.genererHenleggelsesbrev(behandlingId, saksbehandlerSignatur))
 }

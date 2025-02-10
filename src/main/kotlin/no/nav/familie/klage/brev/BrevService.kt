@@ -16,22 +16,30 @@ import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.brevmottaker.dto.BrevmottakereDto
 import no.nav.familie.klage.brevmottaker.dto.tilDomene
+import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.felles.domain.Fil
+import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
+import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
+import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.prosessering.domene.Task
+import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
+import java.util.Properties
 import java.util.UUID
 
 @Service
@@ -46,6 +54,7 @@ class BrevService(
     private val vurderingService: VurderingService,
     private val personopplysningerService: PersonopplysningerService,
     private val brevInnholdUtleder: BrevInnholdUtleder,
+    private val taskService: TaskService,
 ) {
 
     fun hentBrev(behandlingId: UUID): Brev = brevRepository.findByIdOrThrow(behandlingId)
@@ -216,4 +225,106 @@ class BrevService(
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST
         }
     }
+
+    fun opprettJournalførHenleggelsesbrevTask(behandlingId: UUID) {
+        val html = lagHenleggelsesbrevHtml(behandlingId, SikkerhetContext.hentSaksbehandler(strict = true))
+        val behandling = behandlingService.hentBehandling(behandlingId)
+        val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
+
+        lagreEllerOppdaterBrev(
+            behandlingId = behandlingId,
+            saksbehandlerHtml = html,
+            fagsak = fagsak,
+        )
+
+        lagBrevPdf(behandlingId)
+
+        val journalførBrevTask = Task(
+            type = JournalførBrevTask.TYPE,
+            payload = behandlingId.toString(),
+            properties = Properties().apply {
+                this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
+            },
+        )
+        taskService.save(journalførBrevTask)
+    }
+
+    fun genererHenleggelsesbrev(
+        behandlingId: UUID,
+        saksbehandlerSignatur: String,
+    ): ByteArray {
+        val html =
+            lagHenleggelsesbrevHtml(behandlingId, saksbehandlerSignatur)
+
+        return familieDokumentClient.genererPdfFraHtml(html)
+    }
+
+    fun lagHenleggelsesbrevHtml(behandlingId: UUID, saksbehandlerSignatur: String): String {
+        val stønadstype = behandlingService.hentBehandlingDto(behandlingId).stønadstype
+        val henleggelsesbrev =
+            Henleggelsesbrev(
+                lagDemalMedFlettefeltForStønadstype(stønadstype),
+                lagNavnOgIdentFlettefelt(behandlingId),
+            )
+
+        val html =
+            brevClient
+                .genererHtml(
+                    brevmal = "informasjonsbrevTrukketKlage",
+                    saksbehandlerBrevrequest = objectMapper.valueToTree(henleggelsesbrev),
+                    saksbehandlersignatur = saksbehandlerSignatur,
+                    enhet = "Nav Arbeid og ytelser", /* TODO ?? */
+                    skjulBeslutterSignatur = true,
+                )
+        return html
+    }
+
+    private fun lagNavnOgIdentFlettefelt(behandlingId: UUID): Flettefelter {
+        val visningsNavn = personopplysningerService.hentPersonopplysninger(behandlingId).navn
+        val navnOgIdentFlettefelt = Flettefelter(navn = listOf(visningsNavn), fodselsnummer = listOf(personopplysningerService.hentPersonopplysninger(behandlingId).personIdent))
+        return navnOgIdentFlettefelt
+    }
+
+    private fun lagDemalMedFlettefeltForStønadstype(stønadstype: Stønadstype) =
+        Delmaler(
+            listOf(
+                Delmal(
+                    DelmalFlettefelt(
+                        listOf(
+                            lagStringForDelmalFlettefelt(stønadstype),
+                        ),
+                    ),
+                ),
+            ),
+        )
+
+    private fun lagStringForDelmalFlettefelt(stønadstype: Stønadstype): String =
+        when (stønadstype) {
+            Stønadstype.BARNETILSYN -> "stønad til " + stønadstype.name.lowercase()
+            Stønadstype.SKOLEPENGER -> "stønad til " + stønadstype.name.lowercase()
+            Stønadstype.BARNETRYGD -> "stønad til " + stønadstype.name.lowercase()
+            else -> stønadstype.name.lowercase()
+        }
+
+    private data class Flettefelter(
+        val navn: List<String>,
+        val fodselsnummer: List<String>,
+    )
+
+    private data class Henleggelsesbrev(
+        val delmaler: Delmaler,
+        val flettefelter: Flettefelter,
+    )
+
+    private data class Delmal(
+        val flettefelter: DelmalFlettefelt,
+    )
+
+    private data class Delmaler(
+        val stonadstypeKlage: List<Delmal>,
+    )
+
+    private data class DelmalFlettefelt(
+        val stonadstype: List<String>,
+    )
 }
