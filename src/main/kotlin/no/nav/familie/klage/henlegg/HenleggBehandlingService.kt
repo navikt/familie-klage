@@ -107,6 +107,8 @@ class HenleggBehandlingService(
             fagsak = fagsak,
         )
 
+        brevService.lagBrevPdf(behandlingId)
+
         val journalførBrevTask = Task(
             type = JournalførBrevTask.TYPE,
             payload = behandlingId.toString(),
