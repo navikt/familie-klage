@@ -97,13 +97,13 @@ class HenleggBehandlingService(
     }
 
     fun opprettJournalførBrevTaskHenlegg(behandlingId: UUID) {
-        val html = genererHenleggelsesbrev(behandlingId, SikkerhetContext.hentSaksbehandler(strict = true))
+        val html = lagHenleggelsesbrevHtml(behandlingId, SikkerhetContext.hentSaksbehandler(strict = true))
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
 
         brevService.lagreEllerOppdaterBrev(
             behandlingId = behandlingId,
-            saksbehandlerHtml = html.toString(),
+            saksbehandlerHtml = html,
             fagsak = fagsak,
         )
 
@@ -127,6 +127,13 @@ class HenleggBehandlingService(
         behandlingId: UUID,
         saksbehandlerSignatur: String,
     ): ByteArray {
+        val html =
+            lagHenleggelsesbrevHtml(behandlingId, saksbehandlerSignatur)
+
+        return familieDokumentClient.genererPdfFraHtml(html)
+    }
+
+    fun lagHenleggelsesbrevHtml(behandlingId: UUID, saksbehandlerSignatur: String): String {
         val stønadstype = behandlingService.hentBehandlingDto(behandlingId).stønadstype
         val henleggelsesbrev =
             Henleggelsesbrev(
@@ -143,8 +150,7 @@ class HenleggBehandlingService(
                     enhet = "Nav Arbeid og ytelser", /* TODO ?? */
                     skjulBeslutterSignatur = true,
                 )
-
-        return familieDokumentClient.genererPdfFraHtml(html)
+        return html
     }
 
     private fun lagNavnOgIdentFlettefelt(behandlingId: UUID): Flettefelter {
