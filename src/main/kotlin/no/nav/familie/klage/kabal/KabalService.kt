@@ -2,8 +2,8 @@ package no.nav.familie.klage.kabal
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
-import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
-import no.nav.familie.klage.brev.domain.Brevmottakere
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
 import no.nav.familie.klage.infrastruktur.exception.Feil

@@ -2,11 +2,11 @@ package no.nav.familie.klage.distribusjon
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevService
-import no.nav.familie.klage.brev.BrevmottakerUtil.validerMinimumEnMottaker
+import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerMinimumEnMottaker
 import no.nav.familie.klage.brev.domain.Brev
-import no.nav.familie.klage.brev.domain.Brevmottakere
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalpost
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.distribusjon.JournalføringUtil.mapAvsenderMottaker
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.personopplysninger.pdl.logger

@@ -1,11 +1,11 @@
 package no.nav.familie.klage.kabal.domain
 
 import no.nav.familie.klage.behandling.domain.Behandling
-import no.nav.familie.klage.brev.domain.Brevmottaker
-import no.nav.familie.klage.brev.domain.BrevmottakerOrganisasjon
-import no.nav.familie.klage.brev.domain.BrevmottakerPersonMedIdent
-import no.nav.familie.klage.brev.domain.BrevmottakerPersonUtenIdent
-import no.nav.familie.klage.brev.domain.Brevmottakere
+import no.nav.familie.klage.brevmottaker.domain.Brevmottaker
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.tilYtelse
 import no.nav.familie.klage.kabal.KabalHjemmel

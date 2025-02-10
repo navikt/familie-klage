@@ -1,7 +1,7 @@
 package no.nav.familie.klage.kabal.domain
 
-import no.nav.familie.klage.brev.domain.Brevmottakere
-import no.nav.familie.klage.brev.domain.MottakerRolle
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.kontrakter.felles.Fagsystem
 
 sealed interface OversendtKlageAnke
