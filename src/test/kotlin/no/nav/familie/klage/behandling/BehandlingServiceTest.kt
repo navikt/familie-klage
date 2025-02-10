@@ -10,6 +10,7 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.brev.BrevClient
+import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.FamilieDokumentClient
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.henlegg.HenlagtDto
@@ -55,6 +56,7 @@ internal class BehandlingServiceTest {
     val familieDokumentClient = mockk<FamilieDokumentClient>()
     val personopplysningerService = mockk<PersonopplysningerService>()
     val brevClient = mockk<BrevClient>()
+    val brevService = mockk<BrevService>()
 
     val behandlingService = BehandlingService(
         behandlingRepository,
@@ -78,6 +80,7 @@ internal class BehandlingServiceTest {
         familieDokumentClient = familieDokumentClient,
         personopplysningerService = personopplysningerService,
         brevClient = brevClient,
+        brevService = brevService,
     )
     val behandlingSlot = slot<Behandling>()
 
