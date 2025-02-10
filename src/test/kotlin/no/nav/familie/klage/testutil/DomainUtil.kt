@@ -7,12 +7,19 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
-import no.nav.familie.klage.brev.baks.BaksBrev
-import no.nav.familie.klage.brev.baks.brevmottaker.Brevmottaker
-import no.nav.familie.klage.brev.baks.brevmottaker.Mottakertype
-import no.nav.familie.klage.brev.baks.brevmottaker.NyBrevmottaker
+import no.nav.familie.klage.brev.domain.Brev
+import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.brev.dto.AvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPerson
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
+import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
@@ -183,15 +190,15 @@ object DomainUtil {
             sporbar = sporbar,
             eksternId = "1",
             fagsystem =
-            when (stønadstype) {
-                Stønadstype.OVERGANGSSTØNAD,
-                Stønadstype.BARNETILSYN,
-                Stønadstype.SKOLEPENGER,
-                -> Fagsystem.EF
+                when (stønadstype) {
+                    Stønadstype.OVERGANGSSTØNAD,
+                    Stønadstype.BARNETILSYN,
+                    Stønadstype.SKOLEPENGER,
+                    -> Fagsystem.EF
 
-                Stønadstype.BARNETRYGD -> Fagsystem.BA
-                Stønadstype.KONTANTSTØTTE -> Fagsystem.KS
-            },
+                    Stønadstype.BARNETRYGD -> Fagsystem.BA
+                    Stønadstype.KONTANTSTØTTE -> Fagsystem.KS
+                },
         )
 
     fun klageresultat(
@@ -298,50 +305,6 @@ object DomainUtil {
         regelverk = regelverk,
     )
 
-    fun lagBrevmottaker(
-        id: UUID = UUID.randomUUID(),
-        behandlingId: UUID = UUID.randomUUID(),
-        mottakertype: Mottakertype = Mottakertype.BRUKER,
-        navn: String = "Navn Navnesen",
-        adresselinje1: String = "Onkel Pølsemakers vei 10",
-        adresselinje2: String? = null,
-        postnummer: String? = "0010",
-        poststed: String? = "Oslo",
-        landkode: String = "NO",
-    ): Brevmottaker {
-        return Brevmottaker(
-            id = id,
-            behandlingId = behandlingId,
-            mottakertype = mottakertype,
-            navn = navn,
-            adresselinje1 = adresselinje1,
-            adresselinje2 = adresselinje2,
-            postnummer = postnummer,
-            poststed = poststed,
-            landkode = landkode,
-        )
-    }
-
-    fun lagNyBrevmottaker(
-        mottakertype: Mottakertype = Mottakertype.BRUKER,
-        navn: String = "Navn Navnesen",
-        adresselinje1: String = "Onkel Pølsemakers vei 10",
-        adresselinje2: String? = null,
-        postnummer: String? = "0010",
-        poststed: String? = "Oslo",
-        landkode: String = "NO",
-    ): NyBrevmottaker {
-        return NyBrevmottaker(
-            mottakertype = mottakertype,
-            navn = navn,
-            adresselinje1 = adresselinje1,
-            adresselinje2 = adresselinje2,
-            postnummer = postnummer,
-            poststed = poststed,
-            landkode = landkode,
-        )
-    }
-
     fun lagPersonopplysningerDto(
         personIdent: String = "123",
         navn: String = "Navn Navnesen",
@@ -363,20 +326,6 @@ object DomainUtil {
         egenAnsatt = egenAnsatt,
         vergemål = vergemål,
     )
-
-    fun lagBaksBrev(
-        behandlingId: UUID = UUID.randomUUID(),
-        html: String = "<html />",
-        pdf: Fil = Fil("data".toByteArray()),
-        sporbar: Sporbar = Sporbar(),
-    ): BaksBrev {
-        return BaksBrev(
-            behandlingId = behandlingId,
-            html = html,
-            pdf = pdf,
-            sporbar = sporbar,
-        )
-    }
 
     fun lagPåklagetVedtakDetaljer(
         fagsystemType: FagsystemType = FagsystemType.ORDNIÆR,
@@ -423,6 +372,124 @@ object DomainUtil {
         return PåklagetVedtak(
             påklagetVedtakstype = påklagetVedtakstype,
             påklagetVedtakDetaljer = påklagetVedtakDetaljer,
+        )
+    }
+
+    fun lagBrevmottakerPersonUtenIdent(
+        id: UUID = UUID.randomUUID(),
+        mottakerRolle: MottakerRolle = MottakerRolle.FULLMAKT,
+        navn: String = "Navn Navnesen",
+        adresselinje1: String = "Onkel Pølsemakers vei 10",
+        adresselinje2: String? = null,
+        postnummer: String? = "0010",
+        poststed: String? = "Oslo",
+        landkode: String = "NO",
+    ): BrevmottakerPersonUtenIdent {
+        return BrevmottakerPersonUtenIdent(
+            id,
+            mottakerRolle,
+            navn,
+            adresselinje1,
+            adresselinje2,
+            postnummer,
+            poststed,
+            landkode,
+        )
+    }
+
+    fun lagBrevmottakerPersonMedIdent(
+        personIdent: String = "23097825289",
+        mottakerRolle: MottakerRolle = MottakerRolle.FULLMAKT,
+        navn: String = "Navn Navnesen",
+    ): BrevmottakerPersonMedIdent {
+        return BrevmottakerPersonMedIdent(
+            personIdent,
+            mottakerRolle,
+            navn,
+        )
+    }
+
+    fun lagBrevmottakere(
+        personer: List<BrevmottakerPerson> = emptyList(),
+        organisasjoner: List<BrevmottakerOrganisasjon> = emptyList(),
+    ): Brevmottakere {
+        return Brevmottakere(
+            personer = personer,
+            organisasjoner = organisasjoner,
+        )
+    }
+
+    fun lagBrev(
+        behandlingId: UUID = UUID.randomUUID(),
+        saksbehandlerHtml: String = "<html />",
+        pdf: Fil? = null,
+        mottakere: Brevmottakere? = null,
+        mottakereJournalposter: BrevmottakereJournalposter? = null,
+        sporbar: Sporbar = Sporbar(),
+    ): Brev {
+        return Brev(
+            behandlingId = behandlingId,
+            saksbehandlerHtml = saksbehandlerHtml,
+            pdf = pdf,
+            mottakere = mottakere,
+            mottakereJournalposter = mottakereJournalposter,
+            sporbar = sporbar,
+        )
+    }
+
+    fun lagNyBrevmottakerPersonUtenIdent(
+        mottakerRolle: MottakerRolle = MottakerRolle.FULLMAKT,
+        navn: String = "Navn Navnesen",
+        adresselinje1: String = "Adresselinje 1",
+        adresselinje2: String? = null,
+        postnummer: String? = "0010",
+        poststed: String? = "Oslo",
+        landkode: String = "NO",
+    ): NyBrevmottakerPersonUtenIdent {
+        return NyBrevmottakerPersonUtenIdent(
+            mottakerRolle = mottakerRolle,
+            navn = navn,
+            adresselinje1 = adresselinje1,
+            adresselinje2 = adresselinje2,
+            postnummer = postnummer,
+            poststed = poststed,
+            landkode = landkode,
+        )
+    }
+
+    fun lagNyBrevmottakerPersonMedIdent(
+        personIdent: String = "23097825289",
+        mottakerRolle: MottakerRolle = MottakerRolle.FULLMAKT,
+        navn: String = "Navn Navnesen",
+    ): NyBrevmottakerPersonMedIdent {
+        return NyBrevmottakerPersonMedIdent(
+            personIdent,
+            mottakerRolle,
+            navn,
+        )
+    }
+
+    fun lagNyBrevmottakerOrganisasjon(
+        organisasjonsnummer: String = "123",
+        organisasjonsnavn: String = "Orgnavn",
+        navnHosOrganisasjon: String = "navnHosOrganisasjon",
+    ): NyBrevmottakerOrganisasjon {
+        return NyBrevmottakerOrganisasjon(
+            organisasjonsnummer = organisasjonsnummer,
+            organisasjonsnavn = organisasjonsnavn,
+            navnHosOrganisasjon = navnHosOrganisasjon,
+        )
+    }
+
+    fun lagBrevmottakerOrganisasjon(
+        organisasjonsnummer: String = "123",
+        organisasjonsnavn: String = "Orgnavn",
+        navnHosOrganisasjon: String = "navnHosOrganisasjon",
+    ): BrevmottakerOrganisasjon {
+        return BrevmottakerOrganisasjon(
+            organisasjonsnummer = organisasjonsnummer,
+            organisasjonsnavn = organisasjonsnavn,
+            navnHosOrganisasjon = navnHosOrganisasjon,
         )
     }
 }
