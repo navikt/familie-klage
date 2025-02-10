@@ -40,7 +40,7 @@ class HenleggBehandlingController(
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         if (henlegg.skalSendeHenleggelsesbrev) {
-            henleggBehandlingService.sendHenleggelsesbrev(henlegg, behandlingId)
+            henleggBehandlingService.opprettJournalførBrevTaskHenlegg(behandlingId)
         }
         return Ressurs.success(henleggBehandlingService.henleggBehandling(behandlingId, henlegg))
     }

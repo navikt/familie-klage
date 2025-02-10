@@ -149,9 +149,9 @@ class BrevService(
                     )
                 }
             }
+            BehandlingResultat.HENLAGT,
             BehandlingResultat.MEDHOLD,
             BehandlingResultat.IKKE_SATT,
-            BehandlingResultat.HENLAGT,
             -> throw Feil("Kan ikke lage brev for behandling med behandlingResultat=$behandlingResultat")
         }
     }
@@ -161,7 +161,7 @@ class BrevService(
             ?: error("Finner ikke brev-pdf for behandling=$behandlingId")
     }
 
-    private fun lagreEllerOppdaterBrev(
+    fun lagreEllerOppdaterBrev(
         behandlingId: UUID,
         saksbehandlerHtml: String,
         fagsak: Fagsak,

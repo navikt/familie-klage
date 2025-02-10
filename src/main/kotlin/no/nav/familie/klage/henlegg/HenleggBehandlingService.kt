@@ -8,9 +8,12 @@ import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.brev.BrevClient
+import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.FamilieDokumentClient
+import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.domain.SporbarUtils
+import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
@@ -31,6 +34,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.Properties
 import java.util.UUID
 
 @Service
@@ -46,6 +50,7 @@ class HenleggBehandlingService(
     private val familieDokumentClient: FamilieDokumentClient,
     private val personopplysningerService: PersonopplysningerService,
     private val brevClient: BrevClient,
+    private val brevService: BrevService,
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -91,18 +96,25 @@ class HenleggBehandlingService(
         return behandlingRepository.update(t = behandling.copy(status = status))
     }
 
-    fun sendHenleggelsesbrev(
-        henlagt: HenlagtDto,
-        behandlingId: UUID,
-    ) {
-        validerIkkeSendBrevPåFeilType(henlagt)
-        val saksbehandlerSignatur = SikkerhetContext.hentSaksbehandlerNavn(strict = true)
-        val saksbehandlerIdent = SikkerhetContext.hentSaksbehandler()
-        val fagSak = fagsakService.hentFagsakForBehandling(behandlingId)
-        val task: Task =
-            SendTrukketKlageHenleggelsesbrevTask.opprettTask(behandlingId, saksbehandlerSignatur, saksbehandlerIdent, fagSak)
+    fun opprettJournalførBrevTaskHenlegg(behandlingId: UUID) {
+        val html = genererHenleggelsesbrev(behandlingId, SikkerhetContext.hentSaksbehandler(strict = true))
+        val behandling = behandlingService.hentBehandling(behandlingId)
+        val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
 
-        taskService.save(task)
+        brevService.lagreEllerOppdaterBrev(
+            behandlingId = behandlingId,
+            saksbehandlerHtml = html.toString(),
+            fagsak = fagsak,
+        )
+
+        val journalførBrevTask = Task(
+            type = JournalførBrevTask.TYPE,
+            payload = behandlingId.toString(),
+            properties = Properties().apply {
+                this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
+            },
+        )
+        taskService.save(journalførBrevTask)
     }
 
     private fun validerIkkeSendBrevPåFeilType(henlagt: HenlagtDto) {
