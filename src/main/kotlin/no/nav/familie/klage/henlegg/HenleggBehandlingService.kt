@@ -9,11 +9,9 @@ import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
-import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus.FERDIGSTILT
-import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -59,9 +57,5 @@ class HenleggBehandlingService(
         brukerfeilHvis(behandling.status.erLåstForVidereBehandling()) {
             "Kan ikke henlegge behandling med status ${behandling.status}"
         }
-    }
-
-    private fun validerIkkeSendBrevPåFeilType(henlagt: HenlagtDto) {
-        feilHvis(henlagt.skalSendeHenleggelsesbrev && henlagt.årsak == HenlagtÅrsak.FEILREGISTRERT) { "Skal ikke sende brev hvis type er ulik trukket tilbake" }
     }
 }
