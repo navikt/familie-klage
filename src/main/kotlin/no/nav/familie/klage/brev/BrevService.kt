@@ -271,14 +271,14 @@ class BrevService(
                 lagDemalMedFlettefeltForStønadstype(stønadstype),
                 lagNavnOgIdentFlettefelt(behandlingId),
             )
-
+        /* TODO sjekke med baks enhet */
         val html =
             brevClient
                 .genererHtml(
                     brevmal = "informasjonsbrevTrukketKlage",
                     saksbehandlerBrevrequest = objectMapper.valueToTree(henleggelsesbrev),
                     saksbehandlersignatur = saksbehandlerSignatur,
-                    enhet = "Nav Arbeid og ytelser", /* TODO ?? */
+                    enhet = "Nav Arbeid og ytelser",
                     skjulBeslutterSignatur = true,
                 )
         return html
