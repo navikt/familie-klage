@@ -232,7 +232,7 @@ class BrevService(
     }
 
     fun opprettJournalførHenleggelsesbrevTask(behandlingId: UUID) {
-        val html = lagHenleggelsesbrevHtml(behandlingId, SikkerhetContext.hentSaksbehandler(strict = true))
+        val html = lagHenleggelsesbrevHtml(behandlingId)
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
 
@@ -256,29 +256,31 @@ class BrevService(
 
     fun genererHenleggelsesbrev(
         behandlingId: UUID,
-        saksbehandlerSignatur: String,
     ): ByteArray {
         val html =
-            lagHenleggelsesbrevHtml(behandlingId, saksbehandlerSignatur)
+            lagHenleggelsesbrevHtml(behandlingId)
 
         return familieDokumentClient.genererPdfFraHtml(html)
     }
 
-    fun lagHenleggelsesbrevHtml(behandlingId: UUID, saksbehandlerSignatur: String): String {
+    fun lagHenleggelsesbrevHtml(behandlingId: UUID): String {
+        val behandling = behandlingService.hentBehandling(behandlingId)
+        val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
+        val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
+        val signaturMedEnhet = brevsignaturService.lagSignatur(personopplysninger, fagsak.fagsystem)
         val stønadstype = behandlingService.hentBehandlingDto(behandlingId).stønadstype
         val henleggelsesbrev =
             Henleggelsesbrev(
                 lagDemalMedFlettefeltForStønadstype(stønadstype),
                 lagNavnOgIdentFlettefelt(behandlingId),
             )
-        /* TODO sjekke med baks enhet */
         val html =
             brevClient
                 .genererHtml(
                     brevmal = "informasjonsbrevTrukketKlage",
                     saksbehandlerBrevrequest = objectMapper.valueToTree(henleggelsesbrev),
-                    saksbehandlersignatur = saksbehandlerSignatur,
-                    enhet = "Nav Arbeid og ytelser",
+                    saksbehandlersignatur = signaturMedEnhet.navn,
+                    enhet = signaturMedEnhet.enhet,
                     skjulBeslutterSignatur = true,
                 )
         return html

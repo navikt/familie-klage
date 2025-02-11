@@ -4,7 +4,6 @@ import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.felles.util.isEqualOrAfter
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
-import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -49,14 +48,12 @@ class HenleggBehandlingController(
     ): Ressurs<ByteArray> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        val saksbehandlerSignatur = SikkerhetContext.hentSaksbehandlerNavn(strict = true)
-        return henleggBrevRessurs(behandlingId, saksbehandlerSignatur)
+        return henleggBrevRessurs(behandlingId)
     }
 
     private fun henleggBrevRessurs(
         behandlingId: UUID,
-        saksbehandlerSignatur: String,
-    ) = Ressurs.success(brevService.genererHenleggelsesbrev(behandlingId, saksbehandlerSignatur))
+    ) = Ressurs.success(brevService.genererHenleggelsesbrev(behandlingId))
 
     private fun validerIkkeSendBrevPåFeilType(henlagt: HenlagtDto) {
         feilHvis(henlagt.skalSendeHenleggelsesbrev && henlagt.årsak == HenlagtÅrsak.FEILREGISTRERT) { "Skal ikke sende brev hvis type er ulik trukket tilbake" }
