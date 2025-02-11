@@ -35,7 +35,7 @@ import org.junit.jupiter.api.TestInstance
 import org.springframework.http.HttpStatus
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
-internal class HenleggBehandlingServiceTest{
+internal class HenleggBehandlingServiceTest {
 
     val fagsakService = mockk<FagsakService>()
     val behandlingRepository = mockk<BehandlingRepository>()
@@ -83,7 +83,6 @@ internal class HenleggBehandlingServiceTest{
     fun tearDown() {
         clearBrukerContext()
     }
-
 
     @Nested
     inner class HenleggBehandling {

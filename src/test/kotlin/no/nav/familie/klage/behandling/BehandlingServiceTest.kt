@@ -6,41 +6,30 @@ import io.mockk.slot
 import io.mockk.verify
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
-import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
-import no.nav.familie.klage.brev.BrevClient
 import no.nav.familie.klage.brev.BrevService
-import no.nav.familie.klage.brev.FamilieDokumentClient
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.henlegg.HenlagtDto
-import no.nav.familie.klage.henlegg.HenleggBehandlingService
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.oppgave.OppgaveTaskService
-import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.BrukerContextUtil.clearBrukerContext
 import no.nav.familie.klage.testutil.BrukerContextUtil.mockBrukerContext
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.klage.testutil.DomainUtil.fagsystemVedtak
-import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
-import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
-import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak.TRUKKET_TILBAKE
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
-import org.springframework.http.HttpStatus
 import java.time.LocalDate
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
@@ -84,8 +73,6 @@ internal class BehandlingServiceTest {
     fun tearDown() {
         clearBrukerContext()
     }
-
-
 
     @Nested
     inner class PåklagetVedtak {
