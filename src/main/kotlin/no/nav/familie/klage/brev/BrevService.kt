@@ -8,7 +8,12 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
+import no.nav.familie.klage.brev.dto.Delmal
+import no.nav.familie.klage.brev.dto.DelmalFlettefelt
+import no.nav.familie.klage.brev.dto.Delmaler
+import no.nav.familie.klage.brev.dto.Flettefelter
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
+import no.nav.familie.klage.brev.dto.Henleggelsesbrev
 import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerMinimumEnMottaker
 import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerUnikeBrevmottakere
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
@@ -305,26 +310,4 @@ class BrevService(
             Stønadstype.BARNETRYGD -> "stønad til " + stønadstype.name.lowercase()
             else -> stønadstype.name.lowercase()
         }
-
-    private data class Flettefelter(
-        val navn: List<String>,
-        val fodselsnummer: List<String>,
-    )
-
-    private data class Henleggelsesbrev(
-        val delmaler: Delmaler,
-        val flettefelter: Flettefelter,
-    )
-
-    private data class Delmal(
-        val flettefelter: DelmalFlettefelt,
-    )
-
-    private data class Delmaler(
-        val stonadstypeKlage: List<Delmal>,
-    )
-
-    private data class DelmalFlettefelt(
-        val stonadstype: List<String>,
-    )
 }

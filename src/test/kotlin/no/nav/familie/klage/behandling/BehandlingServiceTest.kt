@@ -53,9 +53,6 @@ internal class BehandlingServiceTest {
     val taskService = mockk<TaskService>()
     val oppgaveTaskService = mockk<OppgaveTaskService>()
     val fagsystemVedtakService = mockk<FagsystemVedtakService>()
-    val familieDokumentClient = mockk<FamilieDokumentClient>()
-    val personopplysningerService = mockk<PersonopplysningerService>()
-    val brevClient = mockk<BrevClient>()
     val brevService = mockk<BrevService>()
 
     val behandlingService = BehandlingService(
@@ -68,20 +65,6 @@ internal class BehandlingServiceTest {
         fagsystemVedtakService,
     )
 
-    // TODO RYDD OPP
-    val henleggBehandlingService = HenleggBehandlingService(
-        behandlingRepository, behandlingService,
-        fagsakService,
-        klageresultatRepository,
-        behandlinghistorikkService,
-        oppgaveTaskService,
-        taskService,
-        fagsystemVedtakService,
-        familieDokumentClient = familieDokumentClient,
-        personopplysningerService = personopplysningerService,
-        brevClient = brevClient,
-        brevService = brevService,
-    )
     val behandlingSlot = slot<Behandling>()
 
     @BeforeEach
@@ -102,66 +85,7 @@ internal class BehandlingServiceTest {
         clearBrukerContext()
     }
 
-    @Nested
-    inner class HenleggBehandling {
 
-        private fun henleggOgForventOk(behandling: Behandling, henlagtÅrsak: HenlagtÅrsak) {
-            every {
-                behandlingRepository.findByIdOrThrow(any())
-            } returns behandling
-
-            henleggBehandlingService.henleggBehandling(behandling.id, HenlagtDto(henlagtÅrsak))
-            assertThat(behandlingSlot.captured.status).isEqualTo(BehandlingStatus.FERDIGSTILT)
-            assertThat(behandlingSlot.captured.resultat).isEqualTo(BehandlingResultat.HENLAGT)
-            assertThat(behandlingSlot.captured.steg).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
-            assertThat(behandlingSlot.captured.vedtakDato).isNotNull
-        }
-
-        private fun henleggOgForventApiFeilmelding(behandling: Behandling, henlagtÅrsak: HenlagtÅrsak) { // TODO Flytt til test knyttet til henlegg sammen med andre tester
-            every {
-                behandlingRepository.findByIdOrThrow(any())
-            } returns behandling
-
-            val feil: ApiFeil = assertThrows {
-                henleggBehandlingService.henleggBehandling(behandling.id, HenlagtDto(henlagtÅrsak))
-            }
-
-            assertThat(feil.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
-        }
-
-        @Test
-        internal fun `skal kunne henlegge behandling`() {
-            val behandling = behandling(fagsak(), status = BehandlingStatus.UTREDES)
-            henleggOgForventOk(behandling, henlagtÅrsak = HenlagtÅrsak.FEILREGISTRERT)
-            verify(exactly = 1) { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any()) }
-        }
-
-        @Test
-        internal fun `skal ikke kunne henlegge behandling som er oversendt kabal`() {
-            val behandling = behandling(fagsak(), status = BehandlingStatus.VENTER)
-            henleggOgForventApiFeilmelding(behandling, HenlagtÅrsak.FEILREGISTRERT)
-        }
-
-        @Test
-        internal fun `skal ikke kunne henlegge behandling som er ferdigstilt`() {
-            val behandling = behandling(fagsak(), status = BehandlingStatus.FERDIGSTILT)
-            henleggOgForventApiFeilmelding(behandling, TRUKKET_TILBAKE)
-        }
-
-        @Test
-        internal fun `henlegg og forvent historikkinnslag`() {
-            val behandling = behandling(fagsak(), status = BehandlingStatus.UTREDES)
-            henleggOgForventOk(behandling, TRUKKET_TILBAKE)
-            verify {
-                behandlinghistorikkService.opprettBehandlingshistorikk(
-                    behandlingId = any(),
-                    steg = StegType.BEHANDLING_FERDIGSTILT,
-                    historikkHendelse = null,
-                )
-            }
-            verify(exactly = 1) { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any()) }
-        }
-    }
 
     @Nested
     inner class PåklagetVedtak {
