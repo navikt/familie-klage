@@ -163,9 +163,9 @@ class BrevService(
                     )
                 }
             }
-            BehandlingResultat.HENLAGT,
             BehandlingResultat.MEDHOLD,
             BehandlingResultat.IKKE_SATT,
+            BehandlingResultat.HENLAGT,
             -> throw Feil("Kan ikke lage brev for behandling med behandlingResultat=$behandlingResultat")
         }
     }
