@@ -105,7 +105,6 @@ abstract class OppslagSpringRunnerTest {
 
     private fun resetDatabase() {
         listOf(
-            Brevmottaker::class,
             BehandleSakOppgave::class,
             Behandlingshistorikk::class,
             Avsnitt::class,
