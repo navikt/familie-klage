@@ -26,7 +26,9 @@ import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
+import no.nav.familie.klage.felles.util.isEqualOrAfter
 import no.nav.familie.klage.formkrav.FormService
+import no.nav.familie.klage.henlegg.HenlagtDto
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
@@ -35,6 +37,7 @@ import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
+import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.domene.Task
@@ -231,7 +234,9 @@ class BrevService(
         }
     }
 
-    fun opprettJournalførHenleggelsesbrevTask(behandlingId: UUID) {
+    fun opprettJournalførHenleggelsesbrevTask(behandlingId: UUID, henlagt: HenlagtDto) {
+        validerIkkeSendTrukketKlageBrevPåFeilType(henlagt)
+        validerIkkeSendTrukketKlageBrevHvisVergemålEllerFullmakt(behandlingId)
         val html = lagHenleggelsesbrevHtml(behandlingId)
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
@@ -263,17 +268,13 @@ class BrevService(
         return familieDokumentClient.genererPdfFraHtml(html)
     }
 
-    fun lagHenleggelsesbrevHtml(behandlingId: UUID): String {
+    private fun lagHenleggelsesbrevHtml(behandlingId: UUID): String {
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
         val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
         val signaturMedEnhet = brevsignaturService.lagSignatur(personopplysninger, fagsak.fagsystem)
-        val stønadstype = behandlingService.hentBehandlingDto(behandlingId).stønadstype
-        val henleggelsesbrev =
-            Henleggelsesbrev(
-                lagDemalMedFlettefeltForStønadstype(stønadstype),
-                lagNavnOgIdentFlettefelt(behandlingId),
-            )
+        val henleggelsesbrev = lagHenleggelsesbrevRequest(behandlingId)
+
         val html =
             brevClient
                 .genererHtml(
@@ -284,6 +285,14 @@ class BrevService(
                     skjulBeslutterSignatur = true,
                 )
         return html
+    }
+
+    private fun lagHenleggelsesbrevRequest(behandlingId: UUID): Henleggelsesbrev {
+        val stønadstype = behandlingService.hentBehandlingDto(behandlingId).stønadstype
+        return Henleggelsesbrev(
+            lagDemalMedFlettefeltForStønadstype(stønadstype),
+            lagNavnOgIdentFlettefelt(behandlingId),
+        )
     }
 
     private fun lagNavnOgIdentFlettefelt(behandlingId: UUID): Flettefelter {
@@ -312,4 +321,28 @@ class BrevService(
             Stønadstype.BARNETRYGD -> "stønad til " + stønadstype.name.lowercase()
             else -> stønadstype.name.lowercase()
         }
+
+    private fun validerIkkeSendTrukketKlageBrevPåFeilType(henlagt: HenlagtDto) {
+        feilHvis(henlagt.skalSendeHenleggelsesbrev && henlagt.årsak == HenlagtÅrsak.FEILREGISTRERT) { "Skal ikke sende brev hvis type er ulik trukket tilbake" }
+    }
+
+    private fun validerIkkeSendTrukketKlageBrevHvisVergemålEllerFullmakt(
+        ident: UUID,
+    ) {
+        val personopplysninger = personopplysningerService.hentPersonopplysninger(ident)
+        val harVerge = personopplysninger.vergemål.isNotEmpty()
+        val harFullmakt: Boolean =
+            personopplysninger.fullmakt
+                .filter {
+                    it.gyldigTilOgMed == null ||
+                        (
+                            it.gyldigTilOgMed.isEqualOrAfter(
+                                LocalDate.now(),
+                            )
+                            )
+                }.isNotEmpty()
+        feilHvis(harVerge || harFullmakt) {
+            "Skal ikke sende brev hvis person er tilknyttet vergemål eller fullmakt"
+        }
+    }
 }
