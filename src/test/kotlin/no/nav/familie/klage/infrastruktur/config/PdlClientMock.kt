@@ -52,13 +52,13 @@ class PdlClientMock {
                 listOf(
                     PdlIdent(
                         firstArg(),
-                        false
+                        false,
                     ),
                     PdlIdent(
                         "98765432109",
-                        true
-                    )
-                )
+                        true,
+                    ),
+                ),
             )
         }
 
