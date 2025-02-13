@@ -13,9 +13,9 @@ import no.nav.familie.klage.brev.dto.DelmalFlettefelt
 import no.nav.familie.klage.brev.dto.Delmaler
 import no.nav.familie.klage.brev.dto.Flettefelter
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
+import no.nav.familie.klage.brev.dto.Henleggelsesbrev
 import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerMinimumEnMottaker
 import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerUnikeBrevmottakere
-import no.nav.familie.klage.brev.dto.Henleggelsesbrev
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle

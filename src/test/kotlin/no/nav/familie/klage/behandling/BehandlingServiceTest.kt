@@ -48,9 +48,6 @@ internal class BehandlingServiceTest {
         behandlingRepository,
         fagsakService,
         klageresultatRepository,
-        behandlinghistorikkService,
-        oppgaveTaskService,
-        taskService,
         fagsystemVedtakService,
     )
 

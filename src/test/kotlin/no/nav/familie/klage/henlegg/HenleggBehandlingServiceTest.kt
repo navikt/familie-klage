@@ -50,9 +50,6 @@ internal class HenleggBehandlingServiceTest {
         behandlingRepository,
         fagsakService,
         klageresultatRepository,
-        behandlinghistorikkService,
-        oppgaveTaskService,
-        taskService,
         fagsystemVedtakService,
     )
 
