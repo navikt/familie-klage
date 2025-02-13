@@ -1,15 +1,19 @@
 package no.nav.familie.klage.brev
 
+import com.fasterxml.jackson.databind.JsonNode
 import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.klage.blankett.BlankettPdfRequest
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
+import no.nav.familie.klage.felles.util.TekstUtil.norskFormat
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
+import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
 import java.net.URI
+import java.time.LocalDate
 
 @Component
 class BrevClient(
@@ -42,10 +46,48 @@ class BrevClient(
     fun genererBlankett(blankettPdfRequest: BlankettPdfRequest): ByteArray {
         return postForEntity(pdfUri, blankettPdfRequest, HttpHeaders().medContentTypeJsonUTF8())
     }
+
+    fun genererHtml(
+        brevmal: String,
+        saksbehandlerBrevrequest: JsonNode,
+        saksbehandlersignatur: String,
+        enhet: String?,
+        skjulBeslutterSignatur: Boolean,
+    ): String {
+        feilHvis(brevmal === FRITEKST) {
+            "HTML-generering av fritekstbrev er ikke implementert"
+        }
+
+        val url = URI.create("$familieBrevUri/api/ef-brev/avansert-dokument/bokmaal/$brevmal/html")
+
+        return postForEntity(
+            url,
+            BrevRequest(
+                brevFraSaksbehandler = saksbehandlerBrevrequest,
+                saksbehandlersignatur = saksbehandlersignatur,
+                enhet = enhet,
+                skjulBeslutterSignatur = skjulBeslutterSignatur,
+                dato = LocalDate.now().norskFormat(),
+            ),
+            HttpHeaders().medContentTypeJsonUTF8(),
+        )
+    }
+
+    companion object {
+        const val FRITEKST = "fritekst"
+    }
 }
 
 data class FritekstBrevRequestMedSignatur(
     val brevFraSaksbehandler: FritekstBrevRequestDto,
     val saksbehandlersignatur: String,
     val enhet: String,
+)
+
+data class BrevRequest(
+    val brevFraSaksbehandler: JsonNode,
+    val saksbehandlersignatur: String,
+    val enhet: String?,
+    val skjulBeslutterSignatur: Boolean,
+    val dato: String,
 )
