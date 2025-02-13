@@ -22,6 +22,10 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
 import java.time.LocalDateTime.now
+import no.nav.familie.klage.infrastruktur.config.FamilieBASakClientMock
+import no.nav.familie.klage.infrastruktur.config.FamilieKSSakClientMock
+import no.nav.familie.klage.integrasjoner.FamilieBASakClient
+import no.nav.familie.klage.integrasjoner.FamilieKSSakClient
 
 internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
 
@@ -30,6 +34,12 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
 
     @Autowired
     private lateinit var efSakClientMock: FamilieEFSakClient
+
+    @Autowired
+    private lateinit var baSakClientMock: FamilieBASakClient
+
+    @Autowired
+    private lateinit var ksSakClientMock: FamilieKSSakClient
 
     private val fagsak = fagsak()
     private val behandling = behandling(fagsak)
@@ -44,6 +54,8 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
     @AfterEach
     internal fun tearDown() {
         FamilieEFSakClientMock.resetMock(efSakClientMock)
+        FamilieBASakClientMock.resetMock(baSakClientMock)
+        FamilieKSSakClientMock.resetMock(ksSakClientMock)
         BrukerContextUtil.clearBrukerContext()
     }
 
