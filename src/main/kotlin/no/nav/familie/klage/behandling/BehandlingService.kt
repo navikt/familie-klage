@@ -12,7 +12,6 @@ import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.behandling.dto.tilPåklagetVedtakDetaljer
-import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
@@ -22,7 +21,6 @@ import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.tilDto
-import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.klage.personopplysninger.pdl.secureLogger
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
@@ -30,7 +28,6 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
-import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -43,9 +40,6 @@ class BehandlingService(
     private val behandlingRepository: BehandlingRepository,
     private val fagsakService: FagsakService,
     private val klageresultatRepository: KlageresultatRepository,
-    private val behandlinghistorikkService: BehandlingshistorikkService,
-    private val oppgaveTaskService: OppgaveTaskService,
-    private val taskService: TaskService,
     private val fagsystemVedtakService: FagsystemVedtakService,
 ) {
 
