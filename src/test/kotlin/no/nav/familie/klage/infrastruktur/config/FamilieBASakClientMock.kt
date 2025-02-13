@@ -3,7 +3,10 @@ package no.nav.familie.klage.infrastruktur.config
 import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.familie.klage.integrasjoner.FamilieEFSakClient
+import java.time.LocalDateTime
+import java.time.Month
+import java.util.UUID
+import no.nav.familie.klage.integrasjoner.FamilieBASakClient
 import no.nav.familie.kontrakter.felles.Regelverk
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
@@ -17,23 +20,21 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
-import java.time.LocalDateTime
-import java.time.Month
-import java.util.UUID
 
 @Configuration
-@Profile("mock-ef-sak")
-class FamilieEFSakClientMock {
+@Profile("mock-ba-sak")
+class FamilieBASakClientMock {
 
     @Bean
     @Primary
-    fun familieEFSakClient(): FamilieEFSakClient {
+    fun familieBASakClient(): FamilieBASakClient {
         return resetMock(mockk())
     }
 
     companion object {
 
-        fun resetMock(mock: FamilieEFSakClient): FamilieEFSakClient {
+        fun resetMock(mock: FamilieBASakClient): FamilieBASakClient {
+
             clearMocks(mock)
 
             every { mock.hentVedtak(any()) } returns listOf(
@@ -70,6 +71,7 @@ class FamilieEFSakClientMock {
                     regelverk = Regelverk.NASJONAL,
                 ),
             )
+
             // mocker annen hver
             var opprettet = true
             every { mock.opprettRevurdering(any()) } answers {
@@ -92,6 +94,9 @@ class FamilieEFSakClientMock {
             }
 
             return mock
+
         }
+
     }
+
 }
