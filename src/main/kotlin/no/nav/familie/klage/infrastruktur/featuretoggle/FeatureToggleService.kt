@@ -25,6 +25,8 @@ enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
 
     // Release
     SETT_PÅ_VENT("familie.klage.sett-pa-vent", "Release"),
+    VIS_BREVMOTTAKER_BAKS("familie-klage.vis-brevmottaker-baks", "Release"),
+    LEGG_TIL_BREVMOTTAKER_BAKS("familie-klage.legg-til-brevmottaker-baks", "Release"),
     ;
 
     companion object {
