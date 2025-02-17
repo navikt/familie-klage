@@ -44,7 +44,7 @@ class PdlClientMock {
         every {
             pdlClient.hentPersonidenter(
                 any(),
-                or(Stønadstype.OVERGANGSSTØNAD, Stønadstype.BARNETRYGD),
+                any<Stønadstype>(),
                 eq(true),
             )
         } answers {
