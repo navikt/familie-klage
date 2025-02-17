@@ -25,6 +25,7 @@ import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.felles.domain.Fil
+import no.nav.familie.klage.felles.util.StønadstypeVisningsnavn.visningsnavn
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.felles.util.isEqualOrAfter
 import no.nav.familie.klage.formkrav.FormService
@@ -307,20 +308,12 @@ class BrevService(
                 Delmal(
                     DelmalFlettefelt(
                         listOf(
-                            lagStringForDelmalFlettefelt(stønadstype),
+                            stønadstype.visningsnavn(),
                         ),
                     ),
                 ),
             ),
         )
-
-    private fun lagStringForDelmalFlettefelt(stønadstype: Stønadstype): String =
-        when (stønadstype) {
-            Stønadstype.BARNETILSYN -> "stønad til " + stønadstype.name.lowercase()
-            Stønadstype.SKOLEPENGER -> "stønad til " + stønadstype.name.lowercase()
-            Stønadstype.BARNETRYGD -> "stønad til " + stønadstype.name.lowercase()
-            else -> stønadstype.name.lowercase()
-        }
 
     private fun validerIkkeSendTrukketKlageBrevPåFeilType(henlagt: HenlagtDto) {
         feilHvis(henlagt.skalSendeHenleggelsesbrev && henlagt.årsak == HenlagtÅrsak.FEILREGISTRERT) { "Skal ikke sende brev hvis type er ulik trukket tilbake" }
