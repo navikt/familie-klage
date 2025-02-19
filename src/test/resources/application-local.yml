@@ -27,6 +27,7 @@ FAMILIE_INTEGRASJONER_URL: http://localhost:8386
 FAMILIE_BREV_API_URL: http://localhost:8002
 FAMILIE_DOKUMENT_URL: http://localhost:8082
 FAMILIE_EF_SAK_URL: http://localhost:8093
+FAMILIE_BA_SAK_URL: http://localhost:8083
 FAMILIE_KS_SAK_URL: http://localhost:8083
 
 AZURE_APP_TENANT_ID: navq.onmicrosoft.com

@@ -49,6 +49,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
     "mock-kabal",
     "mock-dokument",
     "mock-ef-sak",
+    "mock-ks-sak",
+    "mock-ba-sak",
     "mock-ereg",
     "mock-inntekt",
     "mock-fullmakt",
