@@ -1,6 +1,8 @@
 package no.nav.familie.klage.kabal
 
 import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.getDataOrThrow
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
@@ -24,6 +26,6 @@ class KabalClient(
         UriComponentsBuilder.fromUri(kabalUrl).pathSegment("api/oversendelse/v3/sak").build().toUri()
 
     fun sendTilKabal(oversendtKlage: OversendtKlageAnkeV3) {
-        return postForEntity(oversendelseUrl, oversendtKlage)
+        return postForEntity<Ressurs<Unit>>(oversendelseUrl, oversendtKlage).getDataOrThrow()
     }
 }
