@@ -4,9 +4,13 @@ import io.mockk.every
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandling.dto.tilPåklagetVedtakDetaljer
+import no.nav.familie.klage.infrastruktur.config.FamilieBASakClientMock
 import no.nav.familie.klage.infrastruktur.config.FamilieEFSakClientMock
+import no.nav.familie.klage.infrastruktur.config.FamilieKSSakClientMock
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
+import no.nav.familie.klage.integrasjoner.FamilieBASakClient
 import no.nav.familie.klage.integrasjoner.FamilieEFSakClient
+import no.nav.familie.klage.integrasjoner.FamilieKSSakClient
 import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
@@ -22,10 +26,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
 import java.time.LocalDateTime.now
-import no.nav.familie.klage.infrastruktur.config.FamilieBASakClientMock
-import no.nav.familie.klage.infrastruktur.config.FamilieKSSakClientMock
-import no.nav.familie.klage.integrasjoner.FamilieBASakClient
-import no.nav.familie.klage.integrasjoner.FamilieKSSakClient
 
 internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
 

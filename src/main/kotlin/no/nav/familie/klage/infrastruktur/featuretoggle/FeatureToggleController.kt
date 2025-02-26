@@ -16,7 +16,7 @@ class FeatureToggleController(private val featureToggleService: FeatureToggleSer
     private val funksjonsbrytere: Set<Toggle> = setOf(
         Toggle.SETT_PÅ_VENT,
         Toggle.VIS_BREVMOTTAKER_BAKS,
-        Toggle.LEGG_TIL_BREVMOTTAKER_BAKS
+        Toggle.LEGG_TIL_BREVMOTTAKER_BAKS,
     )
 
     @GetMapping
