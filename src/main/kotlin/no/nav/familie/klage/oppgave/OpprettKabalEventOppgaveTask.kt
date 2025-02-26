@@ -39,34 +39,39 @@ class OpprettKabalEventOppgaveTask(
 
     override fun doTask(task: Task) {
         val opprettOppgavePayload = objectMapper.readValue<OpprettOppgavePayload>(task.payload)
+
         val behandling = behandlingRepository.findByEksternBehandlingId(opprettOppgavePayload.klagebehandlingEksternId)
+
         val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
-        val personId = fagsakDomain?.fagsakPersonId
-            ?: throw Feil("Feil ved henting av aktiv ident: Finner ikke fagsak for behandling med klagebehandlingEksternId ${opprettOppgavePayload.klagebehandlingEksternId}")
+        if (fagsakDomain == null) {
+            logger.error("Finner ikke fagsak for behandling med ekstern id ${behandling.eksternBehandlingId}.")
+            throw Feil("Finner ikke fagsak for behandling med ekstern id ${behandling.eksternBehandlingId}.")
+        }
 
-        val aktivIdent = personRepository.hentAktivIdent(personId)
-        val prioritet = utledOppgavePrioritet(opprettOppgavePayload.klageinstansUtfall)
+        val aktivIdent = personRepository.hentAktivIdent(fagsakDomain.fagsakPersonId)
 
-        val opprettOppgaveRequest =
-            OpprettOppgaveRequest(
-                ident = OppgaveIdentV2(ident = aktivIdent, gruppe = IdentGruppe.FOLKEREGISTERIDENT),
-                saksId = fagsakDomain.eksternId,
-                tema = fagsakDomain.stønadstype.tilTema(),
-                oppgavetype = Oppgavetype.VurderKonsekvensForYtelse,
-                fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
-                beskrivelse = opprettOppgavePayload.oppgaveTekst,
-                enhetsnummer = behandling.behandlendeEnhet,
-                behandlingstema = opprettOppgavePayload.behandlingstema?.value,
-                behandlingstype = opprettOppgavePayload.behandlingstype,
-                prioritet = prioritet,
-            )
+        val opprettOppgaveRequest = OpprettOppgaveRequest(
+            ident = OppgaveIdentV2(
+                ident = aktivIdent,
+                gruppe = IdentGruppe.FOLKEREGISTERIDENT
+            ),
+            saksId = fagsakDomain.eksternId,
+            tema = fagsakDomain.stønadstype.tilTema(),
+            oppgavetype = Oppgavetype.VurderKonsekvensForYtelse,
+            fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
+            beskrivelse = opprettOppgavePayload.oppgaveTekst,
+            enhetsnummer = behandling.behandlendeEnhet,
+            behandlingstema = opprettOppgavePayload.behandlingstema?.value,
+            behandlingstype = opprettOppgavePayload.behandlingstype,
+            prioritet = utledOppgavePrioritet(opprettOppgavePayload.klageinstansUtfall),
+        )
 
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
-        logger.info("Oppgave opprettet med id $oppgaveId")
+
+        logger.info("Oppgave opprettet med id $oppgaveId for behandling med ekstern id ${behandling.eksternBehandlingId}")
     }
 
     companion object {
-
         const val TYPE = "opprettOppgaveForKlagehendelse"
 
         fun opprettTask(opprettOppgavePayload: OpprettOppgavePayload): Task {
@@ -80,9 +85,7 @@ class OpprettKabalEventOppgaveTask(
     private fun utledOppgavePrioritet(klageinstansUtfall: KlageinstansUtfall?): OppgavePrioritet {
         return when (klageinstansUtfall) {
             KlageinstansUtfall.OPPHEVET -> OppgavePrioritet.HOY
-            else -> {
-                OppgavePrioritet.NORM
-            }
+            else -> OppgavePrioritet.NORM
         }
     }
 }
