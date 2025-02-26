@@ -3,9 +3,6 @@ package no.nav.familie.klage.infrastruktur.config
 import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDateTime
-import java.time.Month
-import java.util.UUID
 import no.nav.familie.klage.integrasjoner.FamilieKSSakClient
 import no.nav.familie.kontrakter.felles.Regelverk
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
@@ -20,6 +17,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
+import java.time.LocalDateTime
+import java.time.Month
+import java.util.UUID
 
 @Configuration
 @Profile("mock-ks-sak")
@@ -34,7 +34,6 @@ class FamilieKSSakClientMock {
     companion object {
 
         fun resetMock(mock: FamilieKSSakClient): FamilieKSSakClient {
-
             clearMocks(mock)
 
             every { mock.hentVedtak(any()) } returns listOf(
@@ -94,9 +93,6 @@ class FamilieKSSakClientMock {
             }
 
             return mock
-
         }
-
     }
-
 }
