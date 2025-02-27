@@ -284,6 +284,7 @@ class BrevService(
                     saksbehandlersignatur = signaturMedEnhet.navn,
                     enhet = signaturMedEnhet.enhet,
                     skjulBeslutterSignatur = true,
+                    stønadstype = fagsak.stønadstype,
                 )
         return html
     }
