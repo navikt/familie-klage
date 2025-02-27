@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 
 @Service
 class BehandlingEventService(
@@ -33,6 +35,7 @@ class BehandlingEventService(
     private val klageresultatRepository: KlageresultatRepository,
     private val stegService: StegService,
     private val integrasjonerClient: FamilieIntegrasjonerClient,
+    private val featureToggleService: FeatureToggleService
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -130,12 +133,25 @@ class BehandlingEventService(
         }
 
     private fun finnBehandlingstema(stønadstype: Stønadstype): Behandlingstema {
+        val skalSetteBehandlingstemaTilKlage = featureToggleService.isEnabled(
+            Toggle.SETT_BEHANDLINGSTEMA_TIL_KLAGE,
+            false
+        )
         return when (stønadstype) {
-            Stønadstype.BARNETRYGD -> Behandlingstema.Barnetrygd
+            Stønadstype.BARNETRYGD -> if (skalSetteBehandlingstemaTilKlage) {
+                Behandlingstema.Klage
+            } else {
+                Behandlingstema.Barnetrygd
+            }
+
             Stønadstype.OVERGANGSSTØNAD -> Behandlingstema.Overgangsstønad
             Stønadstype.BARNETILSYN -> Behandlingstema.Barnetilsyn
             Stønadstype.SKOLEPENGER -> Behandlingstema.Skolepenger
-            Stønadstype.KONTANTSTØTTE -> Behandlingstema.Kontantstøtte
+            Stønadstype.KONTANTSTØTTE -> if (skalSetteBehandlingstemaTilKlage) {
+                Behandlingstema.Klage
+            } else {
+                Behandlingstema.Kontantstøtte
+            }
         }
     }
 
