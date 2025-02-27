@@ -3,9 +3,6 @@ package no.nav.familie.klage.oppgave
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.UUID
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
@@ -40,6 +37,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.UUID
 
 class OpprettKabalEventOppgaveTaskTest {
     @Nested
@@ -52,7 +52,7 @@ class OpprettKabalEventOppgaveTaskTest {
             fagsakRepository = fagsakRepository,
             behandlingRepository = behandlingRepository,
             personRepository = fagsakPersonRepository,
-            oppgaveClient = oppgaveClient
+            oppgaveClient = oppgaveClient,
         )
 
         @Test
@@ -69,15 +69,14 @@ class OpprettKabalEventOppgaveTaskTest {
 
             val task = Task(
                 OpprettKabalEventOppgaveTask.TYPE,
-                objectMapper.writeValueAsString(opprettOppgavePayload)
+                objectMapper.writeValueAsString(opprettOppgavePayload),
             )
 
             val fagsak = fagsak(
                 id = UUID.fromString("5d4a47f1-9d72-4bab-a86d-8f3ed269a8b7"),
                 stønadstype = Stønadstype.BARNETRYGD,
-                fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69")
+                fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
             )
-
 
             val behandling = behandling(
                 id = UUID.fromString("d4122035-d9c5-41d1-a424-98ccd3e5c723"),
@@ -98,11 +97,11 @@ class OpprettKabalEventOppgaveTaskTest {
                         behandlingstype = "Førstegangsbehandling",
                         resultat = "Innvilget",
                         vedtakstidspunkt = LocalDateTime.of(2025, 2, 18, 8, 40, 23),
-                        regelverk = Regelverk.NASJONAL
-                    )
+                        regelverk = Regelverk.NASJONAL,
+                    ),
                 ),
                 fagsystemRevurdering = null,
-                årsak = Klagebehandlingsårsak.ORDINÆR
+                årsak = Klagebehandlingsårsak.ORDINÆR,
             )
 
             every { behandlingRepository.findByEksternBehandlingId(opprettOppgavePayload.klagebehandlingEksternId) } returns behandling
@@ -122,7 +121,7 @@ class OpprettKabalEventOppgaveTaskTest {
             mode = EnumSource.Mode.EXCLUDE,
         )
         fun `skal opprette oppgave med normal prioritert`(
-            utfall: KlageinstansUtfall
+            utfall: KlageinstansUtfall,
         ) {
             // Arrange
             val opprettOppgavePayload = OpprettOppgavePayload(
@@ -136,13 +135,13 @@ class OpprettKabalEventOppgaveTaskTest {
 
             val task = Task(
                 OpprettKabalEventOppgaveTask.TYPE,
-                objectMapper.writeValueAsString(opprettOppgavePayload)
+                objectMapper.writeValueAsString(opprettOppgavePayload),
             )
 
             val fagsak = fagsak(
                 id = UUID.fromString("5d4a47f1-9d72-4bab-a86d-8f3ed269a8b7"),
                 stønadstype = Stønadstype.BARNETRYGD,
-                fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69")
+                fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
             )
 
             val fagsakDomain = fagsakDomain(
@@ -150,7 +149,7 @@ class OpprettKabalEventOppgaveTaskTest {
                 stønadstype = fagsak.stønadstype,
                 personId = fagsak.fagsakPersonId,
                 fagsystem = fagsak.fagsystem,
-                eksternId = fagsak.eksternId
+                eksternId = fagsak.eksternId,
             )
 
             val behandling = behandling(
@@ -172,11 +171,11 @@ class OpprettKabalEventOppgaveTaskTest {
                         behandlingstype = "Førstegangsbehandling",
                         resultat = "Innvilget",
                         vedtakstidspunkt = LocalDateTime.of(2025, 2, 18, 8, 40, 23),
-                        regelverk = Regelverk.NASJONAL
-                    )
+                        regelverk = Regelverk.NASJONAL,
+                    ),
                 ),
                 fagsystemRevurdering = null,
-                årsak = Klagebehandlingsårsak.ORDINÆR
+                årsak = Klagebehandlingsårsak.ORDINÆR,
             )
 
             val opprettOppgaveRequestSlot = slot<OpprettOppgaveRequest>()
@@ -223,13 +222,13 @@ class OpprettKabalEventOppgaveTaskTest {
 
             val task = Task(
                 OpprettKabalEventOppgaveTask.TYPE,
-                objectMapper.writeValueAsString(opprettOppgavePayload)
+                objectMapper.writeValueAsString(opprettOppgavePayload),
             )
 
             val fagsak = fagsak(
                 id = UUID.fromString("5d4a47f1-9d72-4bab-a86d-8f3ed269a8b7"),
                 stønadstype = Stønadstype.BARNETRYGD,
-                fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69")
+                fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
             )
 
             val fagsakDomain = fagsakDomain(
@@ -237,7 +236,7 @@ class OpprettKabalEventOppgaveTaskTest {
                 stønadstype = fagsak.stønadstype,
                 personId = fagsak.fagsakPersonId,
                 fagsystem = fagsak.fagsystem,
-                eksternId = fagsak.eksternId
+                eksternId = fagsak.eksternId,
             )
 
             val behandling = behandling(
@@ -259,11 +258,11 @@ class OpprettKabalEventOppgaveTaskTest {
                         behandlingstype = "Førstegangsbehandling",
                         resultat = "Innvilget",
                         vedtakstidspunkt = LocalDateTime.of(2025, 2, 18, 8, 40, 23),
-                        regelverk = Regelverk.NASJONAL
-                    )
+                        regelverk = Regelverk.NASJONAL,
+                    ),
                 ),
                 fagsystemRevurdering = null,
-                årsak = Klagebehandlingsårsak.ORDINÆR
+                årsak = Klagebehandlingsårsak.ORDINÆR,
             )
 
             val opprettOppgaveRequestSlot = slot<OpprettOppgaveRequest>()
@@ -310,13 +309,13 @@ class OpprettKabalEventOppgaveTaskTest {
 
             val task = Task(
                 OpprettKabalEventOppgaveTask.TYPE,
-                objectMapper.writeValueAsString(opprettOppgavePayload)
+                objectMapper.writeValueAsString(opprettOppgavePayload),
             )
 
             val fagsak = fagsak(
                 id = UUID.fromString("5d4a47f1-9d72-4bab-a86d-8f3ed269a8b7"),
                 stønadstype = Stønadstype.BARNETRYGD,
-                fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69")
+                fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
             )
 
             val fagsakDomain = fagsakDomain(
@@ -324,7 +323,7 @@ class OpprettKabalEventOppgaveTaskTest {
                 stønadstype = fagsak.stønadstype,
                 personId = fagsak.fagsakPersonId,
                 fagsystem = fagsak.fagsystem,
-                eksternId = fagsak.eksternId
+                eksternId = fagsak.eksternId,
             )
 
             val behandling = behandling(
@@ -346,11 +345,11 @@ class OpprettKabalEventOppgaveTaskTest {
                         behandlingstype = "Førstegangsbehandling",
                         resultat = "Innvilget",
                         vedtakstidspunkt = LocalDateTime.of(2025, 2, 18, 8, 40, 23),
-                        regelverk = Regelverk.NASJONAL
-                    )
+                        regelverk = Regelverk.NASJONAL,
+                    ),
                 ),
                 fagsystemRevurdering = null,
-                årsak = Klagebehandlingsårsak.ORDINÆR
+                årsak = Klagebehandlingsårsak.ORDINÆR,
             )
 
             val opprettOppgaveRequestSlot = slot<OpprettOppgaveRequest>()

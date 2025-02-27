@@ -1,6 +1,5 @@
 package no.nav.familie.klage.distribusjon
 
-import no.nav.familie.http.client.RessursException
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.fagsak.FagsakService
@@ -11,6 +10,7 @@ import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.client.HttpClientErrorException
 import java.util.UUID
@@ -41,8 +41,8 @@ class SendTilKabalTask(
         val brevmottakere = brevService.hentBrevmottakere(behandlingId)
         try {
             kabalService.sendTilKabal(fagsak, behandling, vurdering, saksbehandlerIdent, brevmottakere)
-        } catch (e: RessursException) {
-            if (e.cause is HttpClientErrorException.Conflict) {
+        } catch (e: HttpClientErrorException) {
+            if (e.statusCode == HttpStatus.CONFLICT) {
                 logger.warn("409 conflict ved sending av klage til Kabal. Gjelder behandlingId=$behandlingId")
             } else {
                 throw e
