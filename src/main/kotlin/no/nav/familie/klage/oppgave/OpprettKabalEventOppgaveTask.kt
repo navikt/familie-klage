@@ -53,7 +53,7 @@ class OpprettKabalEventOppgaveTask(
         val opprettOppgaveRequest = OpprettOppgaveRequest(
             ident = OppgaveIdentV2(
                 ident = aktivIdent,
-                gruppe = IdentGruppe.FOLKEREGISTERIDENT
+                gruppe = IdentGruppe.FOLKEREGISTERIDENT,
             ),
             saksId = fagsakDomain.eksternId,
             tema = fagsakDomain.stønadstype.tilTema(),
