@@ -33,7 +33,7 @@ class KabalService(
         behandling: Behandling,
         vurdering: Vurdering,
         saksbehandlerIdent: String,
-        brevMottakere: Brevmottakere,
+        brevMottakere: Brevmottakere?,
     ) {
         val saksbehandler = integrasjonerClient.hentSaksbehandlerInfo(saksbehandlerIdent)
         val oversendtKlageAnkeV3 =
@@ -46,7 +46,7 @@ class KabalService(
         behandling: Behandling,
         vurdering: Vurdering,
         saksbehandlersEnhet: String,
-        brevMottakere: Brevmottakere,
+        brevMottakere: Brevmottakere?,
     ): OversendtKlageAnkeV3 =
         OversendtKlageAnkeV3(
             type = Type.KLAGE,
@@ -57,7 +57,7 @@ class KabalService(
                     type = OversendtPartIdType.PERSON,
                     verdi = fagsak.hentAktivIdent(),
                 ),
-                klagersProsessfullmektig = utledFullmektigFraBrevmottakere(brevMottakere),
+                klagersProsessfullmektig = brevMottakere?.let { utledFullmektigFraBrevmottakere(brevMottakere) },
             ),
             fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem.tilFellesFagsystem()),
             kildeReferanse = behandling.eksternBehandlingId.toString(),
