@@ -7,6 +7,7 @@ import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.felles.util.TekstUtil.norskFormat
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
@@ -53,12 +54,14 @@ class BrevClient(
         saksbehandlersignatur: String,
         enhet: String?,
         skjulBeslutterSignatur: Boolean,
+        stønadstype: Stønadstype,
     ): String {
         feilHvis(brevmal === FRITEKST) {
             "HTML-generering av fritekstbrev er ikke implementert"
         }
 
-        val url = URI.create("$familieBrevUri/api/ef-brev/avansert-dokument/bokmaal/$brevmal/html")
+        val dataset = hentTilhørendeSanityDataset(stønadstype)
+        val url = URI.create("$familieBrevUri/api/$dataset/avansert-dokument/bokmaal/$brevmal/html")
 
         return postForEntity(
             url,
@@ -73,8 +76,19 @@ class BrevClient(
         )
     }
 
+    private fun hentTilhørendeSanityDataset(stønadstype: Stønadstype) =
+        when (stønadstype) {
+            Stønadstype.BARNETRYGD -> BA_SANITY_DATASET
+            Stønadstype.KONTANTSTØTTE -> KS_SANITY_DATASET
+            Stønadstype.OVERGANGSSTØNAD, Stønadstype.BARNETILSYN, Stønadstype.SKOLEPENGER -> EF_SANITTY_DATASET
+        }
+
     companion object {
         const val FRITEKST = "fritekst"
+
+        const val BA_SANITY_DATASET = "ba-brev"
+        const val KS_SANITY_DATASET = "ks-brev"
+        const val EF_SANITTY_DATASET = "ef-brev"
     }
 }
 
