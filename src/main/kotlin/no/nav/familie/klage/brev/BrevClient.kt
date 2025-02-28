@@ -60,8 +60,8 @@ class BrevClient(
             "HTML-generering av fritekstbrev er ikke implementert"
         }
 
-        val dataset = hentTilhørendeSanityDataset(stønadstype)
-        val url = URI.create("$familieBrevUri/api/$dataset/avansert-dokument/bokmaal/$brevmal/html")
+        val datasetOgType = hentTilhørendeSanityDatasetOgType(stønadstype)
+        val url = URI.create("$familieBrevUri/api/$datasetOgType/bokmaal/$brevmal/html")
 
         return postForEntity(
             url,
@@ -76,7 +76,7 @@ class BrevClient(
         )
     }
 
-    private fun hentTilhørendeSanityDataset(stønadstype: Stønadstype) =
+    private fun hentTilhørendeSanityDatasetOgType(stønadstype: Stønadstype) =
         when (stønadstype) {
             Stønadstype.BARNETRYGD -> BA_SANITY_DATASET
             Stønadstype.KONTANTSTØTTE -> KS_SANITY_DATASET
@@ -86,9 +86,9 @@ class BrevClient(
     companion object {
         const val FRITEKST = "fritekst"
 
-        const val BA_SANITY_DATASET = "ba-brev"
-        const val KS_SANITY_DATASET = "ks-brev"
-        const val EF_SANITTY_DATASET = "ef-brev"
+        const val BA_SANITY_DATASET = "ba-brev/dokument"
+        const val KS_SANITY_DATASET = "ks-brev/dokument"
+        const val EF_SANITTY_DATASET = "ef-brev/avansert-dokument"
     }
 }
 
