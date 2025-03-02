@@ -147,7 +147,7 @@ class BrevInnholdUtleder(
             listOf(
                 AvsnittDto(
                     deloverskrift = "",
-                    innhold = "Du har gitt oss beskjed om at du trekker klagen din på vedtaket om ${stønadstype.name.lowercase()}",
+                    innhold = "Du har gitt oss beskjed om at du trekker klagen din på vedtaket om ${stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din.",
                 ),
                 harDuSpørsmålAvsnitt(stønadstype),
             ),
