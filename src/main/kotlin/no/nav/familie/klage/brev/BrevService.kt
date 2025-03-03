@@ -14,6 +14,7 @@ import no.nav.familie.klage.brev.dto.Delmaler
 import no.nav.familie.klage.brev.dto.Flettefelter
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.brev.dto.Henleggelsesbrev
+import no.nav.familie.klage.brev.dto.SignaturDto
 import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerMinimumEnMottaker
 import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerUnikeBrevmottakere
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
@@ -148,6 +149,7 @@ class BrevService(
                     klageMottatt = klageMottatt,
                 )
             }
+
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> {
                 val formkrav = formService.hentForm(behandling.id)
                 return when (behandling.påklagetVedtak.påklagetVedtakstype) {
@@ -157,6 +159,7 @@ class BrevService(
                         formkrav = formkrav,
                         stønadstype = fagsak.stønadstype,
                     )
+
                     else -> brevInnholdUtleder.lagFormkravAvvistBrev(
                         ident = fagsak.hentAktivIdent(),
                         navn = navn,
@@ -167,6 +170,7 @@ class BrevService(
                     )
                 }
             }
+
             BehandlingResultat.MEDHOLD,
             BehandlingResultat.IKKE_SATT,
             BehandlingResultat.HENLAGT,
@@ -274,6 +278,27 @@ class BrevService(
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
         val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
         val signaturMedEnhet = brevsignaturService.lagSignatur(personopplysninger, fagsak.fagsystem)
+        val stønadstype = fagsak.stønadstype
+
+        val html = when (stønadstype) {
+            Stønadstype.BARNETRYGD,
+            Stønadstype.KONTANTSTØTTE,
+            -> lagHenleggelsesbrevHtmlBaks(signaturMedEnhet, personopplysninger.navn, fagsak)
+
+            Stønadstype.OVERGANGSSTØNAD,
+            Stønadstype.BARNETILSYN,
+            Stønadstype.SKOLEPENGER,
+            -> lagHenleggelsesbrevHtmlEf(behandlingId, signaturMedEnhet, fagsak)
+        }
+
+        return html
+    }
+
+    private fun lagHenleggelsesbrevHtmlEf(
+        behandlingId: UUID,
+        signaturMedEnhet: SignaturDto,
+        fagsak: Fagsak,
+    ): String {
         val henleggelsesbrev = lagHenleggelsesbrevRequest(behandlingId)
 
         val html =
@@ -289,6 +314,24 @@ class BrevService(
         return html
     }
 
+    private fun lagHenleggelsesbrevHtmlBaks(
+        signaturMedEnhet: SignaturDto,
+        navn: String,
+        fagsak: Fagsak,
+    ): String {
+        val henleggelsesbrevInnhold = brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(
+            ident = fagsak.hentAktivIdent(),
+            navn = navn,
+            stønadstype = fagsak.stønadstype,
+        )
+
+        return brevClient.genererHtmlFritekstbrev(
+            fritekstBrev = henleggelsesbrevInnhold,
+            saksbehandlerNavn = signaturMedEnhet.navn,
+            enhet = signaturMedEnhet.enhet,
+        )
+    }
+
     private fun lagHenleggelsesbrevRequest(behandlingId: UUID): Henleggelsesbrev {
         val stønadstype = behandlingService.hentBehandlingDto(behandlingId).stønadstype
         return Henleggelsesbrev(
@@ -299,7 +342,10 @@ class BrevService(
 
     private fun lagNavnOgIdentFlettefelt(behandlingId: UUID): Flettefelter {
         val visningsNavn = personopplysningerService.hentPersonopplysninger(behandlingId).navn
-        val navnOgIdentFlettefelt = Flettefelter(navn = listOf(visningsNavn), fodselsnummer = listOf(personopplysningerService.hentPersonopplysninger(behandlingId).personIdent))
+        val navnOgIdentFlettefelt = Flettefelter(
+            navn = listOf(visningsNavn),
+            fodselsnummer = listOf(personopplysningerService.hentPersonopplysninger(behandlingId).personIdent),
+        )
         return navnOgIdentFlettefelt
     }
 
