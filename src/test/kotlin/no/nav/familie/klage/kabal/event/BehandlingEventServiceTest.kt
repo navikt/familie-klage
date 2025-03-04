@@ -44,7 +44,6 @@ internal class BehandlingEventServiceTest {
     private val stegService = mockk<StegService>(relaxed = true)
     private val klageresultatRepository = mockk<KlageresultatRepository>(relaxed = true)
     private val integrasjonerClient = mockk<FamilieIntegrasjonerClient>(relaxed = true)
-    private val featureToggleService = mockk<FeatureToggleService>(relaxed = true)
 
     val behandlingEventService = BehandlingEventService(
         behandlingRepository = behandlingRepository,
@@ -53,7 +52,6 @@ internal class BehandlingEventServiceTest {
         taskService = taskService,
         klageresultatRepository = klageresultatRepository,
         integrasjonerClient = integrasjonerClient,
-        featureToggleService = featureToggleService,
     )
 
     val behandlingMedStatusVenter = DomainUtil.behandling(status = BehandlingStatus.VENTER)
@@ -65,7 +63,6 @@ internal class BehandlingEventServiceTest {
         every { klageresultatRepository.insert(any()) } answers { firstArg() }
         every { klageresultatRepository.existsById(any()) } returns false
         every { integrasjonerClient.hentSaksbehandlerInfo(any()) } returns saksbehandler
-        every { featureToggleService.isEnabled(any(), any()) } returns false
     }
 
     @Test
@@ -135,7 +132,12 @@ internal class BehandlingEventServiceTest {
         behandlingEventService.handleEvent(
             lagBehandlingEvent(
                 BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
-                BehandlingDetaljer(ankeITrygderettenbehandlingOpprettet = AnkeITrygderettenbehandlingOpprettetDetaljer(LocalDateTime.of(2023, 6, 21, 1, 1), null)),
+                BehandlingDetaljer(
+                    ankeITrygderettenbehandlingOpprettet = AnkeITrygderettenbehandlingOpprettetDetaljer(
+                        LocalDateTime.of(2023, 6, 21, 1, 1),
+                        null
+                    )
+                ),
             ),
         )
 
@@ -152,7 +154,13 @@ internal class BehandlingEventServiceTest {
         behandlingEventService.handleEvent(
             lagBehandlingEvent(
                 BehandlingEventType.OMGJOERINGSKRAVBEHANDLING_AVSLUTTET,
-                BehandlingDetaljer(omgjoeringskravbehandlingAvsluttet = OmgjoeringskravbehandlingAvsluttetDetaljer(LocalDateTime.of(2023, 6, 21, 1, 1), KlageinstansUtfall.MEDHOLD_ETTER_FVL_35, emptyList())),
+                BehandlingDetaljer(
+                    omgjoeringskravbehandlingAvsluttet = OmgjoeringskravbehandlingAvsluttetDetaljer(
+                        LocalDateTime.of(2023, 6, 21, 1, 1),
+                        KlageinstansUtfall.MEDHOLD_ETTER_FVL_35,
+                        emptyList()
+                    )
+                ),
             ),
         )
 
@@ -169,7 +177,13 @@ internal class BehandlingEventServiceTest {
         behandlingEventService.handleEvent(
             lagBehandlingEvent(
                 BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET,
-                BehandlingDetaljer(behandlingEtterTrygderettenOpphevetAvsluttet = BehandlingEtterTrygderettenOpphevetAvsluttetDetaljer(LocalDateTime.of(2023, 6, 21, 1, 1), KlageinstansUtfall.HEVET, emptyList())),
+                BehandlingDetaljer(
+                    behandlingEtterTrygderettenOpphevetAvsluttet = BehandlingEtterTrygderettenOpphevetAvsluttetDetaljer(
+                        LocalDateTime.of(2023, 6, 21, 1, 1),
+                        KlageinstansUtfall.HEVET,
+                        emptyList()
+                    )
+                ),
             ),
         )
 
@@ -186,7 +200,12 @@ internal class BehandlingEventServiceTest {
         behandlingEventService.handleEvent(
             lagBehandlingEvent(
                 BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
-                BehandlingDetaljer(ankeITrygderettenbehandlingOpprettet = AnkeITrygderettenbehandlingOpprettetDetaljer(LocalDateTime.of(2023, 6, 21, 1, 1), null)),
+                BehandlingDetaljer(
+                    ankeITrygderettenbehandlingOpprettet = AnkeITrygderettenbehandlingOpprettetDetaljer(
+                        LocalDateTime.of(2023, 6, 21, 1, 1),
+                        null
+                    )
+                ),
             ),
         )
 
@@ -198,11 +217,17 @@ internal class BehandlingEventServiceTest {
     internal fun `Skal opprette task for behandlingsevent BEHANDLING_FEILREGISTRERT`() {
         val taskSlot = slot<Task>()
 
-        val behandlingFeilregistrertDetaljer = BehandlingFeilregistrertDetaljer("Fordi", Type.KLAGE, LocalDateTime.of(2023, 6, 21, 1, 1))
+        val behandlingFeilregistrertDetaljer =
+            BehandlingFeilregistrertDetaljer("Fordi", Type.KLAGE, LocalDateTime.of(2023, 6, 21, 1, 1))
 
         every { taskService.save(capture(taskSlot)) } returns mockk()
 
-        behandlingEventService.handleEvent(lagBehandlingEvent(BehandlingEventType.BEHANDLING_FEILREGISTRERT, BehandlingDetaljer(behandlingFeilregistrert = behandlingFeilregistrertDetaljer)))
+        behandlingEventService.handleEvent(
+            lagBehandlingEvent(
+                BehandlingEventType.BEHANDLING_FEILREGISTRERT,
+                BehandlingDetaljer(behandlingFeilregistrert = behandlingFeilregistrertDetaljer)
+            )
+        )
 
         assertThat(taskSlot.captured.type).isEqualTo(BehandlingFeilregistrertTask.TYPE)
         assertThat(taskSlot.captured.payload).isEqualTo(behandlingMedStatusVenter.id.toString())
@@ -212,11 +237,20 @@ internal class BehandlingEventServiceTest {
     internal fun `Skal lage OpprettOppgave-task for behandlingsevent BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET`() {
         val taskSlot = slot<Task>()
 
-        val behandlingEtterTrygderettenOpphevetAvsluttetDetaljer = BehandlingEtterTrygderettenOpphevetAvsluttetDetaljer(LocalDateTime.now(), KlageinstansUtfall.HEVET, emptyList())
+        val behandlingEtterTrygderettenOpphevetAvsluttetDetaljer = BehandlingEtterTrygderettenOpphevetAvsluttetDetaljer(
+            LocalDateTime.now(),
+            KlageinstansUtfall.HEVET,
+            emptyList()
+        )
 
         every { taskService.save(capture(taskSlot)) } returns mockk()
 
-        behandlingEventService.handleEvent(lagBehandlingEvent(BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET, BehandlingDetaljer(behandlingEtterTrygderettenOpphevetAvsluttet = behandlingEtterTrygderettenOpphevetAvsluttetDetaljer)))
+        behandlingEventService.handleEvent(
+            lagBehandlingEvent(
+                BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET,
+                BehandlingDetaljer(behandlingEtterTrygderettenOpphevetAvsluttet = behandlingEtterTrygderettenOpphevetAvsluttetDetaljer)
+            )
+        )
 
         assertThat(taskSlot.captured.type).isEqualTo(OpprettKabalEventOppgaveTask.TYPE)
         assertThat(taskSlot.captured.payload).contains("Hendelse fra klage av type behandling etter trygderetten opphevet avsluttet med utfall: HEVET mottatt.")
