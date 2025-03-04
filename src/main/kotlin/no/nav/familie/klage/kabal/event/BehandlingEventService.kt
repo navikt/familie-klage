@@ -35,7 +35,6 @@ class BehandlingEventService(
     private val klageresultatRepository: KlageresultatRepository,
     private val stegService: StegService,
     private val integrasjonerClient: FamilieIntegrasjonerClient,
-    private val featureToggleService: FeatureToggleService,
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -105,7 +104,7 @@ class BehandlingEventService(
         }
     }
 
-    fun opprettOppgaveTask(behandling: Behandling, behandlingEvent: BehandlingEvent) {
+    private fun opprettOppgaveTask(behandling: Behandling, behandlingEvent: BehandlingEvent) {
         val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
             ?: error("Finner ikke fagsak for behandlingId: ${behandling.id}")
         val saksbehandlerIdent = behandling.sporbar.endret.endretAv
@@ -133,25 +132,12 @@ class BehandlingEventService(
         }
 
     private fun finnBehandlingstema(stønadstype: Stønadstype): Behandlingstema {
-        val skalSetteBehandlingstemaTilKlage = featureToggleService.isEnabled(
-            Toggle.SETT_BEHANDLINGSTEMA_TIL_KLAGE,
-            false,
-        )
         return when (stønadstype) {
-            Stønadstype.BARNETRYGD -> if (skalSetteBehandlingstemaTilKlage) {
-                Behandlingstema.Klage
-            } else {
-                Behandlingstema.Barnetrygd
-            }
-
+            Stønadstype.BARNETRYGD -> Behandlingstema.Klage
             Stønadstype.OVERGANGSSTØNAD -> Behandlingstema.Overgangsstønad
             Stønadstype.BARNETILSYN -> Behandlingstema.Barnetilsyn
             Stønadstype.SKOLEPENGER -> Behandlingstema.Skolepenger
-            Stønadstype.KONTANTSTØTTE -> if (skalSetteBehandlingstemaTilKlage) {
-                Behandlingstema.Klage
-            } else {
-                Behandlingstema.Kontantstøtte
-            }
+            Stønadstype.KONTANTSTØTTE -> Behandlingstema.Klage
         }
     }
 
