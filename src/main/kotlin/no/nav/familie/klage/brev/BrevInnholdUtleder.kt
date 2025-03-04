@@ -134,6 +134,26 @@ class BrevInnholdUtleder(
         )
     }
 
+    fun lagHenleggelsesbrevBaksInnhold(
+        ident: String,
+        navn: String,
+        stønadstype: Stønadstype,
+    ): FritekstBrevRequestDto {
+        return FritekstBrevRequestDto(
+            overskrift = "Saken din er avsluttet",
+            personIdent = ident,
+            navn = navn,
+            avsnitt =
+            listOf(
+                AvsnittDto(
+                    deloverskrift = "",
+                    innhold = "Du har gitt oss beskjed om at du trekker klagen din på vedtaket om ${stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din.",
+                ),
+                harDuSpørsmålAvsnitt(stønadstype),
+            ),
+        )
+    }
+
     private fun duHarRettTilÅKlageAvsnitt(stønadstype: Stønadstype) =
         AvsnittDto(
             deloverskrift = "Du har rett til å klage",

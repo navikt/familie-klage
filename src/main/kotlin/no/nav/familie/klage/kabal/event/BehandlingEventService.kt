@@ -7,6 +7,8 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration.StringListWrapper
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.kabal.BehandlingEvent
 import no.nav.familie.klage.kabal.BehandlingFeilregistrertTask
@@ -24,8 +26,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 
 @Service
 class BehandlingEventService(
@@ -35,7 +35,7 @@ class BehandlingEventService(
     private val klageresultatRepository: KlageresultatRepository,
     private val stegService: StegService,
     private val integrasjonerClient: FamilieIntegrasjonerClient,
-    private val featureToggleService: FeatureToggleService
+    private val featureToggleService: FeatureToggleService,
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -135,7 +135,7 @@ class BehandlingEventService(
     private fun finnBehandlingstema(stønadstype: Stønadstype): Behandlingstema {
         val skalSetteBehandlingstemaTilKlage = featureToggleService.isEnabled(
             Toggle.SETT_BEHANDLINGSTEMA_TIL_KLAGE,
-            false
+            false,
         )
         return when (stønadstype) {
             Stønadstype.BARNETRYGD -> if (skalSetteBehandlingstemaTilKlage) {
