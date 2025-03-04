@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
+import no.nav.familie.kontrakter.felles.oppgave.Behandlingstype
 
 @Service
 class BehandlingEventService(
@@ -105,7 +106,7 @@ class BehandlingEventService(
         }
     }
 
-    fun opprettOppgaveTask(behandling: Behandling, behandlingEvent: BehandlingEvent) {
+    private fun opprettOppgaveTask(behandling: Behandling, behandlingEvent: BehandlingEvent) {
         val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
             ?: error("Finner ikke fagsak for behandlingId: ${behandling.id}")
         val saksbehandlerIdent = behandling.sporbar.endret.endretAv
@@ -118,9 +119,26 @@ class BehandlingEventService(
             fagsystem = fagsakDomain.fagsystem,
             klageinstansUtfall = behandlingEvent.utfall(),
             behandlingstema = finnBehandlingstema(fagsakDomain.stønadstype),
+            behandlingstype = finnBehandlingstype(fagsakDomain.stønadstype)?.value
         )
         val opprettOppgaveTask = OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload)
         taskService.save(opprettOppgaveTask)
+    }
+
+    private fun finnBehandlingstype(stønadstype: Stønadstype): Behandlingstype? {
+        if (!featureToggleService.isEnabled(Toggle.SETT_BEHANDLINGSTEMA_OG_BEHANDLINGSTYPE_FOR_BAKS, false)) {
+            return null;
+        }
+        return when (stønadstype) {
+            Stønadstype.BARNETRYGD,
+            Stønadstype.KONTANTSTØTTE
+                -> Behandlingstype.Klage
+
+            Stønadstype.OVERGANGSSTØNAD,
+            Stønadstype.BARNETILSYN,
+            Stønadstype.SKOLEPENGER
+                -> null
+        }
     }
 
     private fun utledSaksbehandlerEnhet(saksbehandlerIdent: String) =
@@ -132,14 +150,14 @@ class BehandlingEventService(
             "Ukjent"
         }
 
-    private fun finnBehandlingstema(stønadstype: Stønadstype): Behandlingstema {
-        val skalSetteBehandlingstemaTilKlage = featureToggleService.isEnabled(
-            Toggle.SETT_BEHANDLINGSTEMA_TIL_KLAGE,
+    private fun finnBehandlingstema(stønadstype: Stønadstype): Behandlingstema? {
+        val skalSetteBehandlingstemaOgBehandlingstypeForBaks = featureToggleService.isEnabled(
+            Toggle.SETT_BEHANDLINGSTEMA_OG_BEHANDLINGSTYPE_FOR_BAKS,
             false,
         )
         return when (stønadstype) {
-            Stønadstype.BARNETRYGD -> if (skalSetteBehandlingstemaTilKlage) {
-                Behandlingstema.Klage
+            Stønadstype.BARNETRYGD -> if (skalSetteBehandlingstemaOgBehandlingstypeForBaks) {
+                null
             } else {
                 Behandlingstema.Barnetrygd
             }
@@ -147,8 +165,8 @@ class BehandlingEventService(
             Stønadstype.OVERGANGSSTØNAD -> Behandlingstema.Overgangsstønad
             Stønadstype.BARNETILSYN -> Behandlingstema.Barnetilsyn
             Stønadstype.SKOLEPENGER -> Behandlingstema.Skolepenger
-            Stønadstype.KONTANTSTØTTE -> if (skalSetteBehandlingstemaTilKlage) {
-                Behandlingstema.Klage
+            Stønadstype.KONTANTSTØTTE -> if (skalSetteBehandlingstemaOgBehandlingstypeForBaks) {
+                null
             } else {
                 Behandlingstema.Kontantstøtte
             }
