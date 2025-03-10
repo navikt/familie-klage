@@ -179,7 +179,7 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
 
             // Act
             val response = restTemplate.exchange<UUID>(
-                localhost("$baseUrl/opprett"),
+                localhost("$baseUrl/v2/opprett"),
                 HttpMethod.POST,
                 HttpEntity<OpprettKlagebehandlingRequest>(
                     opprettKlagebehandlingRequest,
