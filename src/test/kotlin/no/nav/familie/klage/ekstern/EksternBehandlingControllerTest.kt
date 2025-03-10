@@ -34,7 +34,7 @@ import org.springframework.http.HttpStatus
 
 internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
 
-    private val baseUrl = localhost("/api/ekstern/behandling")
+    private val baseUrl = "/api/ekstern/behandling"
 
     @Autowired
     private lateinit var behandlingRepository: BehandlingRepository
@@ -179,7 +179,7 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
 
             // Act
             val response = restTemplate.exchange<UUID>(
-                baseUrl + "/opprett",
+                localhost("$baseUrl/opprett"),
                 HttpMethod.POST,
                 HttpEntity<OpprettKlagebehandlingRequest>(
                     opprettKlagebehandlingRequest,
