@@ -76,14 +76,14 @@ object DtoTestUtil {
         behandlingsårsak: Klagebehandlingsårsak = Klagebehandlingsårsak.ORDINÆR
     ): OpprettKlagebehandlingRequest {
         return OpprettKlagebehandlingRequest(
-            ident = "123",
-            stønadstype = Stønadstype.BARNETRYGD,
-            eksternFagsakId = "321",
-            fagsystem = Fagsystem.BA,
-            klageMottatt = LocalDate.now(),
-            behandlendeEnhet = "1000",
-            klageGjelderTilbakekreving = false,
-            behandlingsårsak = Klagebehandlingsårsak.ORDINÆR
+            ident,
+            stønadstype,
+            eksternFagsakId,
+            fagsystem,
+            klageMottatt,
+            behandlendeEnhet,
+            klageGjelderTilbakekreving,
+            behandlingsårsak,
         )
     }
 }
