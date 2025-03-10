@@ -1,5 +1,6 @@
 package no.nav.familie.klage.ekstern
 
+import java.util.UUID
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.felles.domain.SporbarUtils
@@ -9,6 +10,7 @@ import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.klageresultat
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
+import no.nav.familie.klage.testutil.DtoTestUtil.lagOpprettKlagebehandlingRequest
 import no.nav.familie.klage.vurdering.VurderingRepository
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Status
@@ -16,6 +18,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import no.nav.familie.kontrakter.felles.klage.KlagebehandlingDto
+import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.klage.Årsak
 import org.assertj.core.api.Assertions.assertThat
@@ -30,6 +33,8 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 
 internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
+
+    private val baseUrl = "/api/ekstern/behandling"
 
     @Autowired
     private lateinit var behandlingRepository: BehandlingRepository
@@ -130,7 +135,11 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
             assertThat(body.status).isEqualTo(Status.SUKSESS)
             val data = body.data
             assertThat(data!!).hasSize(3)
-            assertThat(data.entries.map { it.key }).containsExactlyInAnyOrder(fagsak.eksternId, fagsak2.eksternId, fagsak3EksternId)
+            assertThat(data.entries.map { it.key }).containsExactlyInAnyOrder(
+                fagsak.eksternId,
+                fagsak2.eksternId,
+                fagsak3EksternId
+            )
             assertThat(data.getValue(fagsak.eksternId)).hasSize(1)
             assertThat(data.getValue(fagsak2.eksternId)).hasSize(1)
             assertThat(data.getValue(fagsak3EksternId)).isEmpty()
@@ -154,6 +163,33 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
         }
 
         private fun hentBehandlinger(url: String) =
-            restTemplate.exchange<Ressurs<Map<String, List<KlagebehandlingDto>>>>(url, HttpMethod.GET, HttpEntity(null, headers))
+            restTemplate.exchange<Ressurs<Map<String, List<KlagebehandlingDto>>>>(
+                url,
+                HttpMethod.GET,
+                HttpEntity(null, headers)
+            )
+    }
+
+    @Nested
+    inner class OpprettBehandling {
+        @Test
+        fun `skal opprette behandling og returnere UUID`() {
+            // Arrange
+            val opprettKlagebehandlingRequest = lagOpprettKlagebehandlingRequest()
+
+            // Act
+            val response = restTemplate.exchange<UUID>(
+                baseUrl + "/opprett",
+                HttpMethod.POST,
+                HttpEntity<OpprettKlagebehandlingRequest>(
+                    opprettKlagebehandlingRequest,
+                    headers
+                )
+            )
+
+            // Arrange
+            assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
+            assertThat(response.body).isNotNull()
+        }
     }
 }

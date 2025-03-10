@@ -1,11 +1,16 @@
 package no.nav.familie.klage.testutil
 
+import java.time.LocalDate
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.brevmottaker.dto.NyBrevmottakerOrganisasjonDto
 import no.nav.familie.klage.brevmottaker.dto.NyBrevmottakerPersonMedIdentDto
 import no.nav.familie.klage.brevmottaker.dto.NyBrevmottakerPersonUtenIdentDto
 import no.nav.familie.klage.brevmottaker.dto.SlettbarBrevmottakerPersonUtenIdentDto
 import java.util.UUID
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
+import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 
 object DtoTestUtil {
     fun lagNyBrevmottakerPersonUtenIdentDto(
@@ -57,6 +62,28 @@ object DtoTestUtil {
     ): SlettbarBrevmottakerPersonUtenIdentDto {
         return SlettbarBrevmottakerPersonUtenIdentDto(
             id,
+        )
+    }
+
+    fun lagOpprettKlagebehandlingRequest(
+        ident: String = "123",
+        stønadstype: Stønadstype = Stønadstype.BARNETRYGD,
+        eksternFagsakId: String = "321",
+        fagsystem: Fagsystem = Fagsystem.BA,
+        klageMottatt: LocalDate = LocalDate.now(),
+        behandlendeEnhet: String = "1000",
+        klageGjelderTilbakekreving: Boolean = false,
+        behandlingsårsak: Klagebehandlingsårsak = Klagebehandlingsårsak.ORDINÆR
+    ): OpprettKlagebehandlingRequest {
+        return OpprettKlagebehandlingRequest(
+            ident = "123",
+            stønadstype = Stønadstype.BARNETRYGD,
+            eksternFagsakId = "321",
+            fagsystem = Fagsystem.BA,
+            klageMottatt = LocalDate.now(),
+            behandlendeEnhet = "1000",
+            klageGjelderTilbakekreving = false,
+            behandlingsårsak = Klagebehandlingsårsak.ORDINÆR
         )
     }
 }
