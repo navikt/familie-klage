@@ -65,7 +65,12 @@ class EksternBehandlingController(
     }
 
     @PostMapping("/opprett")
-    fun opprettBehandling(@RequestBody opprettKlageBehandlingDto: OpprettKlagebehandlingRequest): UUID {
+    fun opprettBehandling(@RequestBody opprettKlageBehandlingDto: OpprettKlagebehandlingRequest) {
+        opprettBehandlingService.opprettBehandling(opprettKlageBehandlingDto)
+    }
+
+    @PostMapping("/v2/opprett")
+    fun opprettBehandlingV2(@RequestBody opprettKlageBehandlingDto: OpprettKlagebehandlingRequest): UUID {
         return opprettBehandlingService.opprettBehandling(opprettKlageBehandlingDto)
     }
 
