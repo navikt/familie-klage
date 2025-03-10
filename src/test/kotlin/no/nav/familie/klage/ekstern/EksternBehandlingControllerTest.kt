@@ -34,7 +34,7 @@ import org.springframework.http.HttpStatus
 
 internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
 
-    private val baseUrl = "/api/ekstern/behandling"
+    private val baseUrl = localhost("/api/ekstern/behandling")
 
     @Autowired
     private lateinit var behandlingRepository: BehandlingRepository
