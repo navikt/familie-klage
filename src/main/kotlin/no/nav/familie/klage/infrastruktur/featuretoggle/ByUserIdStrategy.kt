@@ -1,7 +1,7 @@
 package no.nav.familie.klage.infrastruktur.featuretoggle
 
+import io.getunleash.UnleashContext
 import io.getunleash.strategy.Strategy
-import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 
 class ByUserIdStrategy : Strategy {
 
@@ -9,10 +9,9 @@ class ByUserIdStrategy : Strategy {
         return "byUserId"
     }
 
-    override fun isEnabled(map: MutableMap<String, String>): Boolean {
-        return map["user"]
-            ?.split(',')
-            ?.any { SikkerhetContext.hentSaksbehandler(strict = true) == it }
-            ?: false
+    override fun isEnabled(map: MutableMap<String, String>, context: UnleashContext): Boolean {
+        return context.userId
+            .map { userId -> map["user"]?.split(',')?.contains(userId) ?: false }
+            .orElse(false)
     }
 }
