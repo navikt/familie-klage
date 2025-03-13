@@ -178,7 +178,7 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
             val opprettKlagebehandlingRequest = lagOpprettKlagebehandlingRequest()
 
             // Act
-            val response = restTemplate.exchange<UUID>(
+            val response = restTemplate.exchange<Ressurs<UUID>>(
                 localhost("$baseUrl/v2/opprett"),
                 HttpMethod.POST,
                 HttpEntity<OpprettKlagebehandlingRequest>(
@@ -189,7 +189,8 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
 
             // Arrange
             assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
-            assertThat(response.body).isNotNull()
+            assertThat(response.body?.status).isEqualTo(Status.SUKSESS)
+            assertThat(response.body?.data).isNotNull()
         }
     }
 }
