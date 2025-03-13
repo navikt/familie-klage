@@ -16,6 +16,7 @@ class ByTargetingStrategy : Strategy {
     ): Boolean {
         val currentUserId = unleashContext.userId.orElse(null)
 
+        logger.info("UNLEASH_CONTEXT_DEBUG --- unleashContext sier at miljø er: ${unleashContext.environment}")
         logger.info("UNLEASH_CONTEXT_DEBUG --- unleashContext sier at unleashContext.userId er: $currentUserId.")
         logger.info("UNLEASH_CONTEXT_DEBUG --- map som sendes med har en størrelse på: ${map.size}.s")
         logger.info("UNLEASH_CONTEXT_DEBUG --- map som sendes med sine keys: ${map.keys} og verdier: ${map.values}.")
