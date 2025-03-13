@@ -11,18 +11,19 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping(path = ["/api/featuretoggle"], produces = [MediaType.APPLICATION_JSON_VALUE])
 @Unprotected
-class FeatureToggleController(private val featureToggleService: FeatureToggleService) {
-
-    private val funksjonsbrytere: Set<Toggle> = setOf(
-        Toggle.SETT_PÅ_VENT,
-        Toggle.VIS_BREVMOTTAKER_BAKS,
-        Toggle.LEGG_TIL_BREVMOTTAKER_BAKS,
-        Toggle.TEST_TOGGLE_MED_STRATEGI,
+class FeatureToggleController(
+    private val featureToggleService: FeatureToggleService,
+) {
+    private val aktiveFeatureToggles: Set<FeatureToggle> = setOf(
+        FeatureToggle.SettPåVent,
+        FeatureToggle.VisBrevmottakerBaks,
+        FeatureToggle.LeggTilBrevmottakerBaks,
+        FeatureToggle.TestToggleMedStrategi,
     )
 
     @GetMapping
     fun sjekkAlle(): Map<String, Boolean> {
-        return funksjonsbrytere.associate { it.toggleId to featureToggleService.isEnabled(it) }
+        return aktiveFeatureToggles.associate { it.toggleId to featureToggleService.isEnabledMedContextField(it) }
     }
 
     @GetMapping("/{toggleId}")
@@ -32,11 +33,5 @@ class FeatureToggleController(private val featureToggleService: FeatureToggleSer
     ): Boolean {
         val toggle = Toggle.byToggleId(toggleId)
         return featureToggleService.isEnabled(toggle, defaultVerdi ?: false)
-    }
-
-    @GetMapping("/unleash-context")
-    fun sjekkFunksjonsbryterMedContext(): Boolean {
-        val featureToggle = FeatureToggle.TestToggleMedStrategi
-        return featureToggleService.isEnabledMedContextField(featureToggle)
     }
 }

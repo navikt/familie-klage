@@ -8,7 +8,6 @@ class FeatureToggleService(
     val unleashService: UnleashService,
     val unleashNextService: UnleashNextService,
 ) {
-
     fun isEnabled(toggle: Toggle): Boolean {
         return unleashService.isEnabled(toggle.toggleId, false)
     }
