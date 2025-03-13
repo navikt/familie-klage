@@ -34,10 +34,8 @@ class FeatureToggleController(private val featureToggleService: FeatureToggleSer
         return featureToggleService.isEnabled(toggle, defaultVerdi ?: false)
     }
 
-    @GetMapping("/context/{toggleId}")
-    fun sjekkFunksjonsbryterMedContext(
-        @PathVariable toggleId: String,
-    ): Boolean {
+    @GetMapping("/unleash-context}")
+    fun sjekkFunksjonsbryterMedContext(): Boolean {
         val featureToggle = FeatureToggle.TestToggleMedStrategi
         return featureToggleService.isEnabledMedContextField(featureToggle)
     }
