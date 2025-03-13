@@ -17,7 +17,7 @@ class FeatureToggleController(private val featureToggleService: FeatureToggleSer
         Toggle.SETT_PÅ_VENT,
         Toggle.VIS_BREVMOTTAKER_BAKS,
         Toggle.LEGG_TIL_BREVMOTTAKER_BAKS,
-        Toggle.TEST_TOGGLE_MED_STRATEGI
+        Toggle.TEST_TOGGLE_MED_STRATEGI,
     )
 
     @GetMapping
@@ -32,5 +32,13 @@ class FeatureToggleController(private val featureToggleService: FeatureToggleSer
     ): Boolean {
         val toggle = Toggle.byToggleId(toggleId)
         return featureToggleService.isEnabled(toggle, defaultVerdi ?: false)
+    }
+
+    @GetMapping("/context/{toggleId}")
+    fun sjekkFunksjonsbryterMedContext(
+        @PathVariable toggleId: String,
+    ): Boolean {
+        val featureToggle = FeatureToggle.TestToggleMedStrategi
+        return featureToggleService.isEnabledMedContextField(featureToggle)
     }
 }

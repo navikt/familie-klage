@@ -12,7 +12,7 @@ class ByTargetingStrategy : Strategy {
 
     override fun isEnabled(
         map: MutableMap<String, String>,
-        unleashContext: UnleashContext
+        unleashContext: UnleashContext,
     ): Boolean {
         val currentUserId = unleashContext.userId.orElse(null)
 

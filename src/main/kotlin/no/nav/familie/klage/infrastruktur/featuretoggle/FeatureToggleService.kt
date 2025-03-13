@@ -4,7 +4,10 @@ import no.nav.familie.unleash.UnleashService
 import org.springframework.stereotype.Service
 
 @Service
-class FeatureToggleService(val unleashService: UnleashService) {
+class FeatureToggleService(
+    val unleashService: UnleashService,
+    val unleashNextService: UnleashNextService,
+) {
 
     fun isEnabled(toggle: Toggle): Boolean {
         return unleashService.isEnabled(toggle.toggleId, false)
@@ -12,6 +15,10 @@ class FeatureToggleService(val unleashService: UnleashService) {
 
     fun isEnabled(toggle: Toggle, defaultVerdi: Boolean): Boolean {
         return unleashService.isEnabled(toggle.toggleId, defaultVerdi)
+    }
+
+    fun isEnabledMedContextField(featureToggle: FeatureToggle): Boolean {
+        return unleashNextService.isEnabled(featureToggle)
     }
 }
 
@@ -31,7 +38,7 @@ enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
         "familie-klage.nav-24445-sett-behandlingstema-til-klage",
         "Release",
     ),
-    TEST_TOGGLE_MED_STRATEGI("familie-klage.test-toggle-med-strategi")
+    TEST_TOGGLE_MED_STRATEGI("familie-klage.test-toggle-med-strategi"),
     ;
 
     companion object {
