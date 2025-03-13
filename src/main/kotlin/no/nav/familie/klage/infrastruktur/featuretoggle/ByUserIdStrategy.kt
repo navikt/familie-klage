@@ -5,13 +5,10 @@ import io.getunleash.strategy.Strategy
 
 class ByUserIdStrategy : Strategy {
 
-    override fun getName(): String {
-        return "byUserId"
-    }
+    override fun getName(): String = "byUserId"
 
-    override fun isEnabled(map: MutableMap<String, String>, context: UnleashContext): Boolean {
-        return context.userId
+    override fun isEnabled(map: MutableMap<String, String>, unleashContext: UnleashContext): Boolean =
+        unleashContext.userId
             .map { userId -> map["user"]?.split(',')?.contains(userId) ?: false }
             .orElse(false)
-    }
 }

@@ -31,6 +31,7 @@ enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
         "familie-klage.nav-24445-sett-behandlingstema-til-klage",
         "Release",
     ),
+    TEST_TOGGLE_MED_STRATEGI("familie-klage.test-toggle-med-strategi")
     ;
 
     companion object {

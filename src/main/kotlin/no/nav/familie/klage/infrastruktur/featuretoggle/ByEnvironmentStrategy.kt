@@ -5,17 +5,13 @@ import io.getunleash.strategy.Strategy
 
 class ByEnvironmentStrategy : Strategy {
 
-    override fun getName(): String {
-        return "byEnvironment"
-    }
+    override fun getName(): String = "byEnvironment"
 
-    override fun isEnabled(map: MutableMap<String, String>, context: UnleashContext): Boolean {
-        return context.environment
-            .map { env -> map[miljøKey]?.split(',')?.contains(env) ?: false }
-            .orElse(false)
-    }
+    override fun isEnabled(map: MutableMap<String, String>, unleashContext: UnleashContext): Boolean = unleashContext.environment
+        .map { env -> map[MILJØ_KEY]?.split(',')?.contains(env) ?: false }
+        .orElse(false)
 
     companion object {
-        private const val miljøKey = "miljø"
+        private const val MILJØ_KEY = "miljø"
     }
 }

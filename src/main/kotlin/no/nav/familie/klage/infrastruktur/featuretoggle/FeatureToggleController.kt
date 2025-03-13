@@ -17,6 +17,7 @@ class FeatureToggleController(private val featureToggleService: FeatureToggleSer
         Toggle.SETT_PÅ_VENT,
         Toggle.VIS_BREVMOTTAKER_BAKS,
         Toggle.LEGG_TIL_BREVMOTTAKER_BAKS,
+        Toggle.TEST_TOGGLE_MED_STRATEGI
     )
 
     @GetMapping
