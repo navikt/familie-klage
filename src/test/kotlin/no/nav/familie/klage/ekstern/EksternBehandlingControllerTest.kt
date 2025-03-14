@@ -1,6 +1,5 @@
 package no.nav.familie.klage.ekstern
 
-import java.util.UUID
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.felles.domain.SporbarUtils
@@ -31,6 +30,7 @@ import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import java.util.UUID
 
 internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
 
@@ -138,7 +138,7 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
             assertThat(data.entries.map { it.key }).containsExactlyInAnyOrder(
                 fagsak.eksternId,
                 fagsak2.eksternId,
-                fagsak3EksternId
+                fagsak3EksternId,
             )
             assertThat(data.getValue(fagsak.eksternId)).hasSize(1)
             assertThat(data.getValue(fagsak2.eksternId)).hasSize(1)
@@ -166,7 +166,7 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
             restTemplate.exchange<Ressurs<Map<String, List<KlagebehandlingDto>>>>(
                 url,
                 HttpMethod.GET,
-                HttpEntity(null, headers)
+                HttpEntity(null, headers),
             )
     }
 
@@ -183,8 +183,8 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
                 HttpMethod.POST,
                 HttpEntity<OpprettKlagebehandlingRequest>(
                     opprettKlagebehandlingRequest,
-                    headers
-                )
+                    headers,
+                ),
             )
 
             // Arrange

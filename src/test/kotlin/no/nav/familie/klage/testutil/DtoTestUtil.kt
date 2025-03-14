@@ -1,16 +1,16 @@
 package no.nav.familie.klage.testutil
 
-import java.time.LocalDate
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.brevmottaker.dto.NyBrevmottakerOrganisasjonDto
 import no.nav.familie.klage.brevmottaker.dto.NyBrevmottakerPersonMedIdentDto
 import no.nav.familie.klage.brevmottaker.dto.NyBrevmottakerPersonUtenIdentDto
 import no.nav.familie.klage.brevmottaker.dto.SlettbarBrevmottakerPersonUtenIdentDto
-import java.util.UUID
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
+import java.time.LocalDate
+import java.util.UUID
 
 object DtoTestUtil {
     fun lagNyBrevmottakerPersonUtenIdentDto(
@@ -73,7 +73,7 @@ object DtoTestUtil {
         klageMottatt: LocalDate = LocalDate.now(),
         behandlendeEnhet: String = "1000",
         klageGjelderTilbakekreving: Boolean = false,
-        behandlingsårsak: Klagebehandlingsårsak = Klagebehandlingsårsak.ORDINÆR
+        behandlingsårsak: Klagebehandlingsårsak = Klagebehandlingsårsak.ORDINÆR,
     ): OpprettKlagebehandlingRequest {
         return OpprettKlagebehandlingRequest(
             ident,

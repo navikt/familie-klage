@@ -21,12 +21,12 @@ import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
+import no.nav.familie.kontrakter.felles.oppgave.Behandlingstype
 import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
-import no.nav.familie.kontrakter.felles.oppgave.Behandlingstype
 
 @Service
 class BehandlingEventService(
@@ -119,25 +119,25 @@ class BehandlingEventService(
             fagsystem = fagsakDomain.fagsystem,
             klageinstansUtfall = behandlingEvent.utfall(),
             behandlingstema = finnBehandlingstema(fagsakDomain.stønadstype),
-            behandlingstype = finnBehandlingstype(fagsakDomain.stønadstype)?.value
+            behandlingstype = finnBehandlingstype(fagsakDomain.stønadstype)?.value,
         )
         val opprettOppgaveTask = OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload)
         taskService.save(opprettOppgaveTask)
     }
 
     private fun finnBehandlingstype(stønadstype: Stønadstype): Behandlingstype? {
-        if (!featureToggleService.isEnabled(Toggle.SETT_BEHANDLINGSTEMA_OG_BEHANDLINGSTYPE_FOR_BAKS, false)) {
-            return null;
+        if (!featureToggleService.isEnabled(Toggle.SETT_BEHANDLINGSTEMA_OG_BEHANDLINGSTYPE_FOR_BAKS)) {
+            return null
         }
         return when (stønadstype) {
             Stønadstype.BARNETRYGD,
-            Stønadstype.KONTANTSTØTTE
-                -> Behandlingstype.Klage
+            Stønadstype.KONTANTSTØTTE,
+            -> Behandlingstype.Klage
 
             Stønadstype.OVERGANGSSTØNAD,
             Stønadstype.BARNETILSYN,
-            Stønadstype.SKOLEPENGER
-                -> null
+            Stønadstype.SKOLEPENGER,
+            -> null
         }
     }
 
@@ -153,7 +153,6 @@ class BehandlingEventService(
     private fun finnBehandlingstema(stønadstype: Stønadstype): Behandlingstema? {
         val skalSetteBehandlingstemaOgBehandlingstypeForBaks = featureToggleService.isEnabled(
             Toggle.SETT_BEHANDLINGSTEMA_OG_BEHANDLINGSTYPE_FOR_BAKS,
-            false,
         )
         return when (stønadstype) {
             Stønadstype.BARNETRYGD -> if (skalSetteBehandlingstemaOgBehandlingstypeForBaks) {

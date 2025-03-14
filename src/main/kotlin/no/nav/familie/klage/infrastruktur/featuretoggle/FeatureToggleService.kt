@@ -1,17 +1,13 @@
 package no.nav.familie.klage.infrastruktur.featuretoggle
 
-import no.nav.familie.unleash.UnleashService
 import org.springframework.stereotype.Service
 
 @Service
-class FeatureToggleService(val unleashService: UnleashService) {
-
+class FeatureToggleService(
+    val unleashNextService: UnleashNextService,
+) {
     fun isEnabled(toggle: Toggle): Boolean {
-        return unleashService.isEnabled(toggle.toggleId, false)
-    }
-
-    fun isEnabled(toggle: Toggle, defaultVerdi: Boolean): Boolean {
-        return unleashService.isEnabled(toggle.toggleId, defaultVerdi)
+        return unleashNextService.isEnabled(toggle)
     }
 }
 
@@ -29,7 +25,7 @@ enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
     LEGG_TIL_BREVMOTTAKER_BAKS("familie-klage.legg-til-brevmottaker-baks", "Release"),
     SETT_BEHANDLINGSTEMA_OG_BEHANDLINGSTYPE_FOR_BAKS(
         "familie-klage.nav-24445-sett-behandlingstema-til-klage",
-        "Release"
+        "Release",
     ),
     ;
 

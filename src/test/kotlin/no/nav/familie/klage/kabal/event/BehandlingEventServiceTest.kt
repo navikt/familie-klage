@@ -65,7 +65,7 @@ internal class BehandlingEventServiceTest {
         every { klageresultatRepository.insert(any()) } answers { firstArg() }
         every { klageresultatRepository.existsById(any()) } returns false
         every { integrasjonerClient.hentSaksbehandlerInfo(any()) } returns saksbehandler
-        every { featureToggleService.isEnabled(any(), any()) } returns false
+        every { featureToggleService.isEnabled(any()) } returns false
     }
 
     @Test
