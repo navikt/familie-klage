@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController
 class FeatureToggleController(
     private val featureToggleService: FeatureToggleService,
 ) {
-    private val aktiveFeatureToggles: Set<FeatureToggle> = setOf(
-        FeatureToggle.SettPåVent,
-        FeatureToggle.VisBrevmottakerBaks,
-        FeatureToggle.LeggTilBrevmottakerBaks,
-        FeatureToggle.TestToggleMedStrategi,
+    private val aktiveFeatureToggles: Set<Toggle> = setOf(
+        Toggle.SETT_PÅ_VENT,
+        Toggle.VIS_BREVMOTTAKER_BAKS,
+        Toggle.LEGG_TIL_BREVMOTTAKER_BAKS,
+        Toggle.TEST_TOGGLE_MED_STRATEGI
     )
 
     @GetMapping

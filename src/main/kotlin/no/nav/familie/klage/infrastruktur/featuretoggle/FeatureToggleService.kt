@@ -16,8 +16,8 @@ class FeatureToggleService(
         return unleashService.isEnabled(toggle.toggleId, defaultVerdi)
     }
 
-    fun isEnabledMedContextField(featureToggle: FeatureToggle): Boolean {
-        return unleashNextService.isEnabled(featureToggle)
+    fun isEnabledMedContextField(toggle: Toggle): Boolean {
+        return unleashNextService.isEnabled(toggle)
     }
 }
 
