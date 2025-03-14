@@ -18,12 +18,12 @@ class FeatureToggleController(
         Toggle.SETT_PÅ_VENT,
         Toggle.VIS_BREVMOTTAKER_BAKS,
         Toggle.LEGG_TIL_BREVMOTTAKER_BAKS,
-        Toggle.TEST_TOGGLE_MED_STRATEGI
+        Toggle.TEST_TOGGLE_MED_STRATEGI,
     )
 
     @GetMapping
     fun sjekkAlle(): Map<String, Boolean> {
-        return aktiveFeatureToggles.associate { it.toggleId to featureToggleService.isEnabledMedContextField(it) }
+        return aktiveFeatureToggles.associate { it.toggleId to featureToggleService.isEnabled(it) }
     }
 
     @GetMapping("/{toggleId}")
@@ -32,6 +32,6 @@ class FeatureToggleController(
         @RequestParam("defaultverdi") defaultVerdi: Boolean? = false,
     ): Boolean {
         val toggle = Toggle.byToggleId(toggleId)
-        return featureToggleService.isEnabled(toggle, defaultVerdi ?: false)
+        return featureToggleService.isEnabled(toggle)
     }
 }
