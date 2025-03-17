@@ -10,6 +10,10 @@ class UnleashNextService(
     private val unleashService: UnleashService,
 ) {
     fun isEnabled(toggle: Toggle): Boolean {
+        if (SikkerhetContext.erSystembruker()) {
+            return false
+        }
+
         val unleashContextFieldsMap = mapOf(
             UnleashContextFields.NAV_IDENT to SikkerhetContext.hentSaksbehandler(),
         )
