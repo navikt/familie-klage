@@ -24,7 +24,6 @@ enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
     VELG_SIGNATUR_BASERT_PÅ_FAGSAK("familie-klage.velg-signatur-basert-paa-fagsak", "Permission"),
 
     // Release
-    SETT_PÅ_VENT("familie.klage.sett-pa-vent", "Release"),
     VIS_BREVMOTTAKER_BAKS("familie-klage.vis-brevmottaker-baks", "Release"),
     LEGG_TIL_BREVMOTTAKER_BAKS("familie-klage.legg-til-brevmottaker-baks", "Release"),
     SETT_BEHANDLINGSTEMA_OG_BEHANDLINGSTYPE_FOR_BAKS(
