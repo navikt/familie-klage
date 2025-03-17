@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 class FeatureToggleController(
     private val featureToggleService: FeatureToggleService,
 ) {
-    private val aktiveFeatureToggles: Set<Toggle> = setOf(
+    private val featureTogglesIBruk: Set<Toggle> = setOf(
         Toggle.SETT_PÅ_VENT,
         Toggle.VIS_BREVMOTTAKER_BAKS,
         Toggle.LEGG_TIL_BREVMOTTAKER_BAKS,
@@ -22,7 +22,7 @@ class FeatureToggleController(
 
     @GetMapping
     fun sjekkAlle(): Map<String, Boolean> {
-        return aktiveFeatureToggles.associate { it.toggleId to featureToggleService.isEnabled(it) }
+        return featureTogglesIBruk.associate { it.toggleId to featureToggleService.isEnabled(it) }
     }
 
     @GetMapping("/{toggleId}")
