@@ -14,6 +14,7 @@ import no.nav.familie.klage.oppgave.dto.SaksbehandlerDto
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.KanOppretteRevurderingResponse
+import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
 import no.nav.familie.kontrakter.felles.oppgave.MappeDto
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
@@ -127,5 +128,10 @@ class BehandlingController(
         behandlingPåVentService.taAvVent(behandlingId = behandlingId)
 
         return Ressurs.success(data = behandlingId)
+    }
+
+    @GetMapping("{behandlingId}/hent-klager")
+    fun hentKlager(@PathVariable behandlingId: UUID): Ressurs<List<KlageinstansResultatDto>> {
+        return Ressurs.success(behandlingService.hentKlageresultatDto(behandlingId))
     }
 }
