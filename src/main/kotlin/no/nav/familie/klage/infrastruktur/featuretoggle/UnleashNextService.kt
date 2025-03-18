@@ -10,13 +10,14 @@ class UnleashNextService(
     private val unleashService: UnleashService,
 ) {
     fun isEnabled(toggle: Toggle): Boolean {
-        if (SikkerhetContext.erSystembruker()) {
-            return false
-        }
-
-        val unleashContextFieldsMap = mapOf(
-            UnleashContextFields.NAV_IDENT to SikkerhetContext.hentSaksbehandler(),
-        )
+        val unleashContextFieldsMap =
+            if (!SikkerhetContext.erSystembruker()) {
+                mapOf(
+                    UnleashContextFields.NAV_IDENT to SikkerhetContext.hentSaksbehandler(),
+                )
+            } else {
+                emptyMap()
+            }
 
         return unleashService.isEnabled(
             toggleId = toggle.toggleId,
