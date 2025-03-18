@@ -60,6 +60,7 @@ enum class PåklagetVedtakstype {
     IKKE_VALGT,
     UTESTENGELSE,
     INFOTRYGD_ORDINÆRT_VEDTAK,
+    AVVIST_KLAGE,
 }
 
 fun PåklagetVedtakstype.harManuellVedtaksdato(): Boolean =
