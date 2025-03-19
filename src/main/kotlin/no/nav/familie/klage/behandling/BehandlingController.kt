@@ -1,8 +1,10 @@
 package no.nav.familie.klage.behandling
 
+import no.nav.familie.klage.behandling.domain.Klagebehandlingsresultat
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.OppgaveDto
 import no.nav.familie.klage.behandling.dto.SettPåVentRequest
+import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
@@ -14,7 +16,6 @@ import no.nav.familie.klage.oppgave.dto.SaksbehandlerDto
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.KanOppretteRevurderingResponse
-import no.nav.familie.kontrakter.felles.klage.KlageinstansResultatDto
 import no.nav.familie.kontrakter.felles.oppgave.MappeDto
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
@@ -39,6 +40,7 @@ class BehandlingController(
     private val tilordnetRessursService: TilordnetRessursService,
     private val behandlingPåVentService: BehandlingPåVentService,
     private val oppgaveService: OppgaveService,
+    private val fagsakService: FagsakService,
 ) {
 
     @GetMapping("{behandlingId}")
@@ -131,7 +133,8 @@ class BehandlingController(
     }
 
     @GetMapping("{behandlingId}/hent-klager")
-    fun hentKlager(@PathVariable behandlingId: UUID): Ressurs<List<KlageinstansResultatDto>> {
-        return Ressurs.success(behandlingService.hentKlageresultatDto(behandlingId))
+    fun hentKlager(@PathVariable behandlingId: UUID): Ressurs<List<Klagebehandlingsresultat>> {
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
+        return Ressurs.success(behandlingService.finnKlagebehandlingsresultat(fagsak.eksternId, fagsak.fagsystem))
     }
 }
