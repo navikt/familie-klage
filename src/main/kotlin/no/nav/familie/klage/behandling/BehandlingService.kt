@@ -147,7 +147,7 @@ class BehandlingService(
             eksternFagsystemBehandlingId = null,
             internKlagebehandlingId = påklagetVedtakDto.internKlagebehandlingId,
             behandlingstype = "Klage",
-            resultat = "", // TODO FIKS??
+            resultat = "Ikke medhold formkrav avvist",
             vedtakstidspunkt = LocalDateTime.now(), // TODO FIKS
             regelverk = påklagetVedtakDto.regelverk,
         )
