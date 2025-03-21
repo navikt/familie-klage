@@ -157,7 +157,7 @@ class BehandlingService(
             PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING -> FagsystemType.TILBAKEKREVING
             PåklagetVedtakstype.UTESTENGELSE -> FagsystemType.UTESTENGELSE
             PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK -> FagsystemType.ORDNIÆR
-            PåklagetVedtakstype.AVVIST_KLAGE -> FagsystemType.ORDNIÆR //TODO FJern?
+            PåklagetVedtakstype.AVVIST_KLAGE -> FagsystemType.ORDNIÆR // TODO FJern?
             else -> error("Kan ikke utlede fagsystemType for påklagetVedtakType ${påklagetVedtakDto.påklagetVedtakstype}")
         }
     }

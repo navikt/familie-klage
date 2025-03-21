@@ -14,6 +14,7 @@ import no.nav.familie.klage.oppgave.OppgaveUtil.ENHET_NR_NAY
 import no.nav.familie.klage.oppgave.TilordnetRessursService
 import no.nav.familie.klage.oppgave.dto.SaksbehandlerDto
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.KanOppretteRevurderingResponse
 import no.nav.familie.kontrakter.felles.oppgave.MappeDto
@@ -132,9 +133,9 @@ class BehandlingController(
         return Ressurs.success(data = behandlingId)
     }
 
-    @GetMapping("{behandlingId}/hent-klager")
+    @GetMapping("{behandlingId}/hent-klager-ikke-medhold-formkrav-avvist")
     fun hentKlager(@PathVariable behandlingId: UUID): Ressurs<List<Klagebehandlingsresultat>> {
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
-        return Ressurs.success(behandlingService.finnKlagebehandlingsresultat(fagsak.eksternId, fagsak.fagsystem))
+        return Ressurs.success(behandlingService.finnKlagebehandlingsresultat(fagsak.eksternId, fagsak.fagsystem).filter { klage -> klage.resultat == BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST })
     }
 }
