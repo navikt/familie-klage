@@ -14,9 +14,9 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 internal class FormUtilTest {
-    val påklagetVedtakMedBehandling = PåklagetVedtakDto(eksternFagsystemBehandlingId = "123", PåklagetVedtakstype.VEDTAK)
-    val påklagetVedtakUtenBehandling = PåklagetVedtakDto(eksternFagsystemBehandlingId = null, PåklagetVedtakstype.UTEN_VEDTAK)
-    val påklagetVedtakIkkeValgt = PåklagetVedtakDto(eksternFagsystemBehandlingId = null, PåklagetVedtakstype.IKKE_VALGT)
+    val påklagetVedtakMedBehandling = PåklagetVedtakDto(eksternFagsystemBehandlingId = "123", null, PåklagetVedtakstype.VEDTAK)
+    val påklagetVedtakUtenBehandling = PåklagetVedtakDto(eksternFagsystemBehandlingId = null, null, PåklagetVedtakstype.UTEN_VEDTAK)
+    val påklagetVedtakIkkeValgt = PåklagetVedtakDto(eksternFagsystemBehandlingId = null, null, PåklagetVedtakstype.IKKE_VALGT)
 
     val behandlingId = UUID.randomUUID()
     val oppfyltForm = oppfyltForm(behandlingId)

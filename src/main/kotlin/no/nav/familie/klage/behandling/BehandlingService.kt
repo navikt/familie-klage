@@ -96,7 +96,7 @@ class BehandlingService(
             "Kan ikke oppdatere påklaget vedtak siden behandlingen er låst for videre saksbehandling"
         }
         feilHvisIkke(påklagetVedtakDto.erGyldig()) {
-            "Påklaget vedtak er i en ugyldig tilstand: EksternFagsystemBehandlingId:${påklagetVedtakDto.eksternFagsystemBehandlingId}, PåklagetVedtakType: ${påklagetVedtakDto.påklagetVedtakstype}"
+            "Påklaget vedtak er i en ugyldig tilstand: EksternFagsystemBehandlingId:${påklagetVedtakDto.eksternFagsystemBehandlingId}, InternKlagebehandlingId:${påklagetVedtakDto.internKlagebehandlingId}, PåklagetVedtakType: ${påklagetVedtakDto.påklagetVedtakstype}"
         }
 
         feilHvis(påklagetVedtakDto.manglerVedtaksDato()) {
@@ -121,6 +121,9 @@ class BehandlingService(
         if (påklagetVedtakDto.påklagetVedtakstype.harManuellVedtaksdato()) {
             return tilPåklagetVedtakDetaljerMedManuellDato(påklagetVedtakDto)
         }
+        if (påklagetVedtakDto.påklagetVedtakstype === PåklagetVedtakstype.AVVIST_KLAGE) {
+            return tilPåklagetKlageAvvistVedtak(påklagetVedtakDto)
+        }
         return påklagetVedtakDto.eksternFagsystemBehandlingId?.let {
             fagsystemVedtakService.hentFagsystemVedtakForPåklagetBehandlingId(behandlingId, it)
                 .tilPåklagetVedtakDetaljer()
@@ -131,9 +134,21 @@ class BehandlingService(
         PåklagetVedtakDetaljer(
             fagsystemType = utledFagsystemType(påklagetVedtakDto),
             eksternFagsystemBehandlingId = null,
+            internKlagebehandlingId = null,
             behandlingstype = "",
             resultat = "",
             vedtakstidspunkt = påklagetVedtakDto.manuellVedtaksdato?.atStartOfDay() ?: error("Mangler vedtaksdato"),
+            regelverk = påklagetVedtakDto.regelverk,
+        )
+
+    private fun tilPåklagetKlageAvvistVedtak(påklagetVedtakDto: PåklagetVedtakDto) =
+        PåklagetVedtakDetaljer(
+            fagsystemType = utledFagsystemType(påklagetVedtakDto),
+            eksternFagsystemBehandlingId = null,
+            internKlagebehandlingId = påklagetVedtakDto.internKlagebehandlingId,
+            behandlingstype = "Klage",
+            resultat = "", // TODO FIKS??
+            vedtakstidspunkt = LocalDateTime.now(), // TODO FIKS
             regelverk = påklagetVedtakDto.regelverk,
         )
 
@@ -142,7 +157,6 @@ class BehandlingService(
             PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING -> FagsystemType.TILBAKEKREVING
             PåklagetVedtakstype.UTESTENGELSE -> FagsystemType.UTESTENGELSE
             PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK -> FagsystemType.ORDNIÆR
-            PåklagetVedtakstype.AVVIST_KLAGE -> FagsystemType.ORDNIÆR // TODO RIKTIG?
             else -> error("Kan ikke utlede fagsystemType for påklagetVedtakType ${påklagetVedtakDto.påklagetVedtakstype}")
         }
     }

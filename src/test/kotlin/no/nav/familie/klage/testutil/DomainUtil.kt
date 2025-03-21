@@ -265,6 +265,7 @@ object DomainUtil {
     ) = PåklagetVedtakDetaljer(
         fagsystemType = fagsystemType,
         eksternFagsystemBehandlingId = eksternFagsystemBehandlingId,
+        internKlagebehandlingId = null,
         behandlingstype = "type",
         resultat = "resultat",
         vedtakstidspunkt = vedtakstidspunkt,
@@ -272,7 +273,7 @@ object DomainUtil {
     )
 
     fun påklagetVedtakDto(): PåklagetVedtakDto =
-        PåklagetVedtakDto(eksternFagsystemBehandlingId = null, påklagetVedtakstype = PåklagetVedtakstype.UTEN_VEDTAK)
+        PåklagetVedtakDto(eksternFagsystemBehandlingId = null, internKlagebehandlingId = null, påklagetVedtakstype = PåklagetVedtakstype.UTEN_VEDTAK)
 
     fun personopplysningerDto(
         personIdent: String = "123",
@@ -338,6 +339,7 @@ object DomainUtil {
         return PåklagetVedtakDetaljer(
             fagsystemType = fagsystemType,
             eksternFagsystemBehandlingId = eksternFagsystemBehandlingId,
+            internKlagebehandlingId = null,
             behandlingstype = behandlingstype,
             resultat = resultat,
             vedtakstidspunkt = vedtakstidspunkt,

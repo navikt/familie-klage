@@ -40,6 +40,7 @@ data class Behandling(
 data class PåklagetVedtakDetaljer(
     val fagsystemType: FagsystemType,
     val eksternFagsystemBehandlingId: String?,
+    val internKlagebehandlingId: String?,
     val behandlingstype: String,
     val resultat: String,
     val vedtakstidspunkt: LocalDateTime,
