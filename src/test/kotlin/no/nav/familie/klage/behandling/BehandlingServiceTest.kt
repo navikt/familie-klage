@@ -92,10 +92,10 @@ internal class BehandlingServiceTest {
             every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
             val ugyldigManglerBehandlingId = PåklagetVedtakDto(null, null, PåklagetVedtakstype.VEDTAK)
             val ugyldigManglerVedtaksdatoInfotrygd = PåklagetVedtakDto(null, null, PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING)
-            val ugyldigManglerVedtaksdatoUtestengelse = PåklagetVedtakDto(null, null,  PåklagetVedtakstype.UTESTENGELSE)
-            val ugyldigManglerVedtaksdatoInfotrygdOrdinærtVedtak = PåklagetVedtakDto(null, null,  PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK)
+            val ugyldigManglerVedtaksdatoUtestengelse = PåklagetVedtakDto(null, null, PåklagetVedtakstype.UTESTENGELSE)
+            val ugyldigManglerVedtaksdatoInfotrygdOrdinærtVedtak = PåklagetVedtakDto(null, null, PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK)
             val ugyldigUtenVedtakMedBehandlingId = PåklagetVedtakDto("123", null, PåklagetVedtakstype.UTEN_VEDTAK)
-            val ugyldigIkkeValgtMedBehandlingId = PåklagetVedtakDto("123", null,  PåklagetVedtakstype.IKKE_VALGT)
+            val ugyldigIkkeValgtMedBehandlingId = PåklagetVedtakDto("123", null, PåklagetVedtakstype.IKKE_VALGT)
 
             assertThrows<Feil> { behandlingService.oppdaterPåklagetVedtak(behandling.id, ugyldigManglerBehandlingId) }
             assertThrows<Feil> { behandlingService.oppdaterPåklagetVedtak(behandling.id, ugyldigUtenVedtakMedBehandlingId) }
@@ -112,8 +112,8 @@ internal class BehandlingServiceTest {
             mockHentFagsystemVedtak(behandling, "123")
 
             val medVedtak = PåklagetVedtakDto("123", null, PåklagetVedtakstype.VEDTAK)
-            val utenVedtak = PåklagetVedtakDto(null, null,  PåklagetVedtakstype.UTEN_VEDTAK)
-            val ikkeValgt = PåklagetVedtakDto(null, null,  PåklagetVedtakstype.IKKE_VALGT)
+            val utenVedtak = PåklagetVedtakDto(null, null, PåklagetVedtakstype.UTEN_VEDTAK)
+            val ikkeValgt = PåklagetVedtakDto(null, null, PåklagetVedtakstype.IKKE_VALGT)
             val gjelderInfotrygd = PåklagetVedtakDto(null, null, PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING, manuellVedtaksdato = LocalDate.now())
             val utestengelse = PåklagetVedtakDto(null, null, PåklagetVedtakstype.UTESTENGELSE, manuellVedtaksdato = LocalDate.now())
 
