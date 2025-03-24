@@ -81,7 +81,7 @@ class FerdigstillBehandlingService(
             stegForResultat(behandlingsresultat),
             behandlingsresultat,
         )
-        taskService.save(LagSaksbehandlingsblankettTask.opprettTask(behandlingId))
+        taskService.save(LagSaksbehandlingsblankettTask.opprettTask(behandlingId = behandlingId, eksternFagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem))
         if (behandlingsresultat == IKKE_MEDHOLD) {
             taskService.save(BehandlingsstatistikkTask.opprettSendtTilKATask(behandlingId = behandlingId, eksternFagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem))
         }

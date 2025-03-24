@@ -3,6 +3,7 @@ package no.nav.familie.klage.blankett
 import no.nav.familie.klage.distribusjon.DistribusjonService
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
@@ -39,12 +40,14 @@ class LagSaksbehandlingsblankettTask(
 
         const val TYPE = "LagSaksbehandlingsblankett"
 
-        fun opprettTask(behandlingId: UUID): Task {
+        fun opprettTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem): Task {
             return Task(
                 type = TYPE,
                 payload = behandlingId.toString(),
                 properties = Properties().apply {
-                    setProperty(saksbehandlerMetadataKey, SikkerhetContext.hentSaksbehandler(strict = true))
+                    this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
+                    this["eksternFagsakId"] = eksternFagsakId
+                    this["fagsystem"] = fagsystem
                 },
             )
         }
