@@ -259,6 +259,8 @@ class BrevService(
             payload = behandlingId.toString(),
             properties = Properties().apply {
                 this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
+                this["eksterFagsakId"] = fagsak.eksternId
+                this["fagsystem"] = fagsak.fagsystem
             },
         )
         taskService.save(journalførBrevTask)
