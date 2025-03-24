@@ -66,10 +66,11 @@ object VurderingValidator {
                     feilHvis(felterSomMangler.isNotEmpty()) {
                         val felterSomManglerFormatert =
                             if (felterSomMangler.size > 1) {
-                                "Feltene " + felterSomMangler.dropLast(1)
-                                    .joinToString(", ") + " og " + felterSomMangler.last()
+                                "Feltene ${
+                                    felterSomMangler.dropLast(1).joinToString(", ")
+                                } og ${felterSomMangler.last()}"
                             } else {
-                                "Feltet " + felterSomMangler.first()
+                                "Feltet ${felterSomMangler.first()}"
                             }
                         "$felterSomManglerFormatert må fylles ut ved opprettholdelse av vedtak."
                     }
