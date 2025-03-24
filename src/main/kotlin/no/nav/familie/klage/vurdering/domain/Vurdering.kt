@@ -19,6 +19,13 @@ data class Vurdering(
     val begrunnelseOmgjøring: String? = null,
     val hjemmel: Hjemmel? = null,
     val innstillingKlageinstans: String? = null,
+    val dokumentasjonOgUtredning: String? = null,
+    @Column("sporsmalet_i_saken")
+    val spørsmåletISaken: String? = null,
+    val aktuelleRettskilder: String? = null,
+    @Column("klagers_anforsler")
+    val klagersAnførsler: String? = null,
+    val vurderingAvKlagen: String? = null,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),
     val interntNotat: String?,

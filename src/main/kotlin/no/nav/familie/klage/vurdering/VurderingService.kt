@@ -55,6 +55,11 @@ class VurderingService(
             begrunnelseOmgjøring = vurdering.begrunnelseOmgjøring,
             hjemmel = vurdering.hjemmel,
             innstillingKlageinstans = vurdering.innstillingKlageinstans,
+            dokumentasjonOgUtredning = vurdering.dokumentasjonOgUtredning,
+            spørsmåletISaken = vurdering.spørsmåletISaken,
+            aktuelleRettskilder = vurdering.aktuelleRettskilder,
+            klagersAnførsler = vurdering.klagersAnførsler,
+            vurderingAvKlagen = vurdering.vurderingAvKlagen,
             interntNotat = vurdering.interntNotat,
         ),
     )
@@ -67,6 +72,11 @@ class VurderingService(
                 årsak = vurdering.årsak,
                 begrunnelseOmgjøring = vurdering.begrunnelseOmgjøring,
                 hjemmel = vurdering.hjemmel,
+                dokumentasjonOgUtredning = vurdering.dokumentasjonOgUtredning,
+                spørsmåletISaken = vurdering.spørsmåletISaken,
+                aktuelleRettskilder = vurdering.aktuelleRettskilder,
+                klagersAnførsler = vurdering.klagersAnførsler,
+                vurderingAvKlagen = vurdering.vurderingAvKlagen,
                 interntNotat = vurdering.interntNotat,
             ),
         )
