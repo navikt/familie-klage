@@ -70,7 +70,7 @@ class OpprettBehandlingService(
 
         oppgaveTaskService.opprettBehandleSakOppgave(behandlingId, request.klageGjelderTilbakekreving)
         taskService.save(
-            BehandlingsstatistikkTask.opprettMottattTask(behandlingId = behandlingId),
+            BehandlingsstatistikkTask.opprettMottattTask(behandlingId = behandlingId, eksternFagsakId = eksternFagsakId, request.fagsystem),
         )
         logger.info(
             "Opprettet behandling=$behandlingId for stønadstype=$stønadstype " +

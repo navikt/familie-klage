@@ -11,6 +11,7 @@ import no.nav.familie.klage.blankett.LagSaksbehandlingsblankettTask
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.distribusjon.SendTilKabalTask
+import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
@@ -45,6 +46,7 @@ class FerdigstillBehandlingService(
     private val brevService: BrevService,
     private val fagsystemVedtakService: FagsystemVedtakService,
     private val featureToggleService: FeatureToggleService,
+    private val fagsakService: FagsakService,
 ) {
 
     /**
@@ -54,6 +56,7 @@ class FerdigstillBehandlingService(
     fun ferdigstillKlagebehandling(behandlingId: UUID) {
         val behandling = behandlingService.hentBehandling(behandlingId)
         val behandlingsresultat = utledBehandlingResultat(behandlingId)
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
 
         validerKanFerdigstille(behandling)
         if (behandlingsresultat == IKKE_MEDHOLD || behandlingsresultat == IKKE_MEDHOLD_FORMKRAV_AVVIST) {
@@ -80,9 +83,9 @@ class FerdigstillBehandlingService(
         )
         taskService.save(LagSaksbehandlingsblankettTask.opprettTask(behandlingId))
         if (behandlingsresultat == IKKE_MEDHOLD) {
-            taskService.save(BehandlingsstatistikkTask.opprettSendtTilKATask(behandlingId = behandlingId))
+            taskService.save(BehandlingsstatistikkTask.opprettSendtTilKATask(behandlingId = behandlingId, eksternFagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem))
         }
-        taskService.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId))
+        taskService.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId, eksternFagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem))
     }
 
     /**
