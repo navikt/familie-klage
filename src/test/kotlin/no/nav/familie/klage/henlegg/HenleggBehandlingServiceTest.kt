@@ -76,7 +76,7 @@ internal class HenleggBehandlingServiceTest {
             behandlingSlot.captured
         }
         every { behandlinghistorikkService.opprettBehandlingshistorikk(any(), any(), any()) } returns mockk()
-        every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any()) } returns mockk()
+        every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any(), any(), any()) } returns mockk()
         every { taskService.save(any()) } returns mockk<Task>()
         every { fagsakMock.eksternId } returns "123"
         every { fagsakMock.fagsystem } returns Fagsystem.BA
@@ -119,7 +119,7 @@ internal class HenleggBehandlingServiceTest {
         internal fun `skal kunne henlegge behandling`() {
             val behandling = behandling(fagsak(), status = BehandlingStatus.UTREDES)
             henleggOgForventOk(behandling, henlagtÅrsak = HenlagtÅrsak.FEILREGISTRERT)
-            verify(exactly = 1) { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any()) }
+            verify(exactly = 1) { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any(), any(), any()) }
         }
 
         @Test
@@ -145,7 +145,7 @@ internal class HenleggBehandlingServiceTest {
                     historikkHendelse = null,
                 )
             }
-            verify(exactly = 1) { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any()) }
+            verify(exactly = 1) { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any(), any(), any()) }
         }
     }
 }
