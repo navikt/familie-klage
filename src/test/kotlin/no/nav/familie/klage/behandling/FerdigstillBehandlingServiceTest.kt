@@ -70,6 +70,7 @@ internal class FerdigstillBehandlingServiceTest {
         brevService = brevService,
         fagsystemVedtakService = fagsystemVedtakService,
         featureToggleService = featureToggleService,
+        fagsakService = fagsakService,
     )
     val fagsak = DomainUtil.fagsakDomain().tilFagsak()
     val behandling = DomainUtil.behandling(fagsak = fagsak, steg = StegType.BREV, status = BehandlingStatus.UTREDES)
