@@ -70,7 +70,7 @@ class FerdigstillBehandlingService(
                 }
             }
         }
-        oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
+        oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandlingId = behandling.id, eksternFagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem)
 
         val opprettetRevurdering = opprettRevurderingHvisMedhold(behandling, behandlingsresultat)
 
