@@ -150,9 +150,8 @@ class BrevService(
                         klageMottatt = klageMottatt,
                     )
                 } else {
-                    val getOrThrow = { verdi: String?, felt: String ->
-                        verdi ?: throw Feil("Behandling med resultat $behandlingResultat mangler $felt for generering av brev")
-                    }
+                    fun getOrThrow(verdi: String?, felt: String) = verdi
+                        ?: throw Feil("Behandling med resultat $behandlingResultat mangler $felt for generering av brev")
 
                     val dokumentasjonOgUtredning = getOrThrow(vurdering?.dokumentasjonOgUtredning, "dokumentasjonOgUtredning")
                     val spørsmåletISaken = getOrThrow(vurdering?.spørsmåletISaken, "spørsmåletISaken")
@@ -388,7 +387,9 @@ class BrevService(
         )
 
     private fun validerIkkeSendTrukketKlageBrevPåFeilType(henlagt: HenlagtDto) {
-        feilHvis(henlagt.skalSendeHenleggelsesbrev && henlagt.årsak == HenlagtÅrsak.FEILREGISTRERT) { "Skal ikke sende brev hvis type er ulik trukket tilbake" }
+        feilHvis(henlagt.skalSendeHenleggelsesbrev && henlagt.årsak == HenlagtÅrsak.FEILREGISTRERT) {
+            "Skal ikke sende brev hvis type er ulik trukket tilbake"
+        }
     }
 
     private fun validerIkkeSendTrukketKlageBrevHvisVergemålEllerFullmakt(
