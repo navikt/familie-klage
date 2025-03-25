@@ -47,7 +47,7 @@ class LagSaksbehandlingsblankettTask(
                 properties = Properties().apply {
                     this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
                     this["eksternFagsakId"] = eksternFagsakId
-                    this["fagsystem"] = fagsystem
+                    this["fagsystem"] = fagsystem.name
                 },
             )
         }

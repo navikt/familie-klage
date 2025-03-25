@@ -99,8 +99,8 @@ class BehandlingsstatistikkTask(
             hendelse: BehandlingsstatistikkHendelse,
             hendelseTidspunkt: LocalDateTime = LocalDateTime.now(),
             gjeldendeSaksbehandler: String,
-            eksternFagsakId: String? = null,
-            fagsystem: Fagsystem? = null,
+            eksternFagsakId: String,
+            fagsystem: Fagsystem,
         ): Task =
             Task(
                 type = TYPE,
@@ -118,7 +118,7 @@ class BehandlingsstatistikkTask(
                     this["hendelse"] = hendelse.name
                     this["hendelseTidspunkt"] = hendelseTidspunkt.toString()
                     this["eksternFagsakId"] = eksternFagsakId
-                    this["fagsystem"] = fagsystem
+                    this["fagsystem"] = fagsystem.name
                 },
             )
 
