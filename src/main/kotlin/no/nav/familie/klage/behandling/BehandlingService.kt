@@ -148,7 +148,7 @@ class BehandlingService(
             internKlagebehandlingId = påklagetVedtakDto.internKlagebehandlingId,
             behandlingstype = "Klage",
             resultat = "Ikke medhold formkrav avvist",
-            vedtakstidspunkt = LocalDateTime.now(), // TODO FIKS
+            vedtakstidspunkt = hentBehandling(UUID.fromString(påklagetVedtakDto.eksternFagsystemBehandlingId)).vedtakDato ?: error("Mangler vedtaksdato"),
             regelverk = påklagetVedtakDto.regelverk,
         )
 
@@ -157,7 +157,7 @@ class BehandlingService(
             PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING -> FagsystemType.TILBAKEKREVING
             PåklagetVedtakstype.UTESTENGELSE -> FagsystemType.UTESTENGELSE
             PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK -> FagsystemType.ORDNIÆR
-            PåklagetVedtakstype.AVVIST_KLAGE -> FagsystemType.ORDNIÆR // TODO FJern?
+            PåklagetVedtakstype.AVVIST_KLAGE -> FagsystemType.ORDNIÆR
             else -> error("Kan ikke utlede fagsystemType for påklagetVedtakType ${påklagetVedtakDto.påklagetVedtakstype}")
         }
     }
