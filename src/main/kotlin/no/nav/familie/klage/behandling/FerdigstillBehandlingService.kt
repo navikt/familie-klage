@@ -26,6 +26,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_MEDHOLD
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_SATT
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.MEDHOLD
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL
 import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak.ORDINÆR
 import no.nav.familie.prosessering.domene.Task
@@ -63,10 +64,10 @@ class FerdigstillBehandlingService(
             when (behandling.årsak) {
                 ORDINÆR -> {
                     brevService.lagBrevPdf(behandlingId)
-                    opprettJournalførBrevTask(behandlingId)
+                    opprettJournalførBrevTask(behandlingId, fagsak.eksternId, fagsak.fagsystem)
                 }
                 HENVENDELSE_FRA_KABAL -> {
-                    opprettSendTilKabalTask(behandlingId)
+                    opprettSendTilKabalTask(behandlingId, fagsak.eksternId, fagsak.fagsystem)
                 }
             }
         }
@@ -105,23 +106,27 @@ class FerdigstillBehandlingService(
         }
     }
 
-    private fun opprettJournalførBrevTask(behandlingId: UUID) {
+    private fun opprettJournalførBrevTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem) {
         val journalførBrevTask = Task(
             type = JournalførBrevTask.TYPE,
             payload = behandlingId.toString(),
             properties = Properties().apply {
                 this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
+                this["eksternFagsakId"] = eksternFagsakId
+                this["fagsystem"] = fagsystem.name
             },
         )
         taskService.save(journalførBrevTask)
     }
 
-    private fun opprettSendTilKabalTask(behandlingId: UUID) {
+    private fun opprettSendTilKabalTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem) {
         val sendTilKabalTask = Task(
             type = SendTilKabalTask.TYPE,
             payload = behandlingId.toString(),
             properties = Properties().apply {
                 this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
+                this["eksternFagsakId"] = eksternFagsakId
+                this["fagsystem"] = fagsystem.name
             },
         )
         taskService.save(sendTilKabalTask)
