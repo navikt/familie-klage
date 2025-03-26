@@ -148,7 +148,7 @@ class BehandlingService(
             internKlagebehandlingId = påklagetVedtakDto.internKlagebehandlingId,
             behandlingstype = "Klage",
             resultat = "Ikke medhold formkrav avvist",
-            vedtakstidspunkt = hentBehandling(UUID.fromString(påklagetVedtakDto.eksternFagsystemBehandlingId)).vedtakDato ?: error("Mangler vedtaksdato"),
+            vedtakstidspunkt = hentBehandling(UUID.fromString(påklagetVedtakDto.internKlagebehandlingId)).vedtakDato ?: error("Mangler vedtaksdato"),
             regelverk = påklagetVedtakDto.regelverk,
         )
 
