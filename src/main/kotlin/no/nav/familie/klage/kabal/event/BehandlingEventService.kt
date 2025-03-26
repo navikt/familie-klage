@@ -121,7 +121,7 @@ class BehandlingEventService(
             behandlingstema = finnBehandlingstema(fagsakDomain.stønadstype),
             behandlingstype = finnBehandlingstype(fagsakDomain.stønadstype)?.value,
         )
-        val opprettOppgaveTask = OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload)
+        val opprettOppgaveTask = OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload, fagsakDomain.eksternId, fagsakDomain.fagsystem)
         taskService.save(opprettOppgaveTask)
     }
 

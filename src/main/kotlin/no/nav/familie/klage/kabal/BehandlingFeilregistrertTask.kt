@@ -55,6 +55,8 @@ class BehandlingFeilregistrertTask(
                 klageinstansUtfall = null,
                 behandlingstype = Behandlingstype.Klage.value,
             ),
+            eksternFagsakId = fagsak.eksternId,
+            fagsystem = fagsak.fagsystem,
         )
     }
 

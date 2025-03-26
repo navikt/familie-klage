@@ -149,7 +149,7 @@ internal class FerdigstillBehandlingServiceTest {
             BehandlingsstatistikkTask.TYPE,
             BehandlingsstatistikkTask.TYPE,
         )
-        verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id, any(), any()) }
+        verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id, fagsak.eksternId, fagsak.fagsystem) }
     }
 
     @Test

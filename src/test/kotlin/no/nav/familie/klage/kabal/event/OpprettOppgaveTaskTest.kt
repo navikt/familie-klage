@@ -68,7 +68,7 @@ class OpprettOppgaveTaskTest : OppslagSpringRunnerTest() {
         val fagsakDomain = fagsakRepository.findByIdOrNull(fagsak.id) ?: error("Finner ikke fagsak med id")
 
         val opprettOppgavePayload = OpprettOppgavePayload(behandling.eksternBehandlingId, "tekst", Fagsystem.EF, null, behandlingstema = Behandlingstema.Overgangsstønad)
-        opprettOppgaveTask.doTask(OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload))
+        opprettOppgaveTask.doTask(OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload, fagsakDomain.eksternId, fagsakDomain.fagsystem))
 
         assertThat(opprettOppgaveRequestSlot.captured.tema).isEqualTo(Tema.ENF)
         assertThat(opprettOppgaveRequestSlot.captured.beskrivelse).contains("tekst")
@@ -82,7 +82,7 @@ class OpprettOppgaveTaskTest : OppslagSpringRunnerTest() {
     @Test
     fun `skal gi høy prioritet til oppgaver med klageinnstansutfall lik opphevet`() {
         val opprettOppgavePayload = OpprettOppgavePayload(behandling.eksternBehandlingId, "tekst", Fagsystem.EF, KlageinstansUtfall.OPPHEVET)
-        opprettOppgaveTask.doTask(OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload))
+        opprettOppgaveTask.doTask(OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload, fagsak.eksternId, fagsak.fagsystem))
 
         assertThat(opprettOppgaveRequestSlot.captured.prioritet).isEqualTo(OppgavePrioritet.HOY)
     }
@@ -90,7 +90,7 @@ class OpprettOppgaveTaskTest : OppslagSpringRunnerTest() {
     @Test
     fun `skal gi norm prioritet til oppgaver med klageinnstansutfall ikke lik opphevet`() {
         val opprettOppgavePayload = OpprettOppgavePayload(behandling.eksternBehandlingId, "tekst", Fagsystem.EF, KlageinstansUtfall.MEDHOLD)
-        opprettOppgaveTask.doTask(OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload))
+        opprettOppgaveTask.doTask(OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload, fagsak.eksternId, fagsak.fagsystem))
 
         assertThat(opprettOppgaveRequestSlot.captured.prioritet).isEqualTo(OppgavePrioritet.NORM)
     }
