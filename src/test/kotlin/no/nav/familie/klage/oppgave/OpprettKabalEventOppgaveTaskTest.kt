@@ -398,7 +398,7 @@ class OpprettKabalEventOppgaveTaskTest {
             )
 
             // Act
-            val task = OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload, "1234", Fagsystem.BA)
+            val task = OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload, "1234", "4321", Fagsystem.BA)
 
             // Assert
             assertThat(task.type).isEqualTo(OpprettKabalEventOppgaveTask.TYPE)

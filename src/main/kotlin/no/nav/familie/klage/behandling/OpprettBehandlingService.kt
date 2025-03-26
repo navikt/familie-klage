@@ -72,13 +72,16 @@ class OpprettBehandlingService(
             behandlingId = behandlingId,
             klageGjelderTilbakekreving = request.klageGjelderTilbakekreving,
             eksternFagsakId = eksternFagsakId,
+            eksternBehandlingId = behandlingService.hentBehandling(behandlingId).eksternBehandlingId.toString(),
             fagsystem = fagsak.fagsystem
         )
         taskService.save(
             BehandlingsstatistikkTask.opprettMottattTask(
                 behandlingId = behandlingId,
                 eksternFagsakId = eksternFagsakId,
-                fagsystem = fagsak.fagsystem
+                eksternBehandlingId = behandlingService.hentBehandling(behandlingId).eksternBehandlingId.toString(),
+                fagsystem = fagsak.fagsystem,
+
             ),
         )
         logger.info(

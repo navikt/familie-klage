@@ -260,6 +260,7 @@ class BrevService(
             properties = Properties().apply {
                 this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
                 this["eksterFagsakId"] = fagsak.eksternId
+                this["eksternBehandlingId"] = behandling.eksternBehandlingId.toString()
                 this["fagsystem"] = fagsak.fagsystem.name
             },
         )

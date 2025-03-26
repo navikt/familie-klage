@@ -42,6 +42,7 @@ class FormService(
     @Transactional
     fun oppdaterFormkrav(formkrav: FormkravDto): FormkravDto {
         val behandlingId = formkrav.behandlingId
+        val eksternBehandlingId = behandlingService.hentBehandling(behandlingId).eksternBehandlingId
         val nyttPåklagetVedtak = formkrav.påklagetVedtak
 
         val oppdaterteFormkrav = formRepository.findByIdOrThrow(behandlingId).copy(
@@ -55,16 +56,18 @@ class FormService(
         )
         behandlingService.oppdaterPåklagetVedtak(behandlingId, nyttPåklagetVedtak)
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
-        opprettBehandlingsstatistikk(behandlingId, fagsak.eksternId, fagsak.fagsystem)
+        opprettBehandlingsstatistikk(behandlingId, fagsak.eksternId, eksternBehandlingId.toString(), fagsak.fagsystem)
         val formresultat = utledFormresultat(oppdaterteFormkrav, nyttPåklagetVedtak)
         when (formresultat) {
             FormVilkår.OPPFYLT -> {
                 stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.VURDERING)
             }
+
             FormVilkår.IKKE_OPPFYLT -> {
                 vurderingService.slettVurderingForBehandling(behandlingId)
                 stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.BREV)
             }
+
             FormVilkår.IKKE_SATT -> {
                 vurderingService.slettVurderingForBehandling(behandlingId)
                 stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.FORMKRAV)
@@ -73,10 +76,22 @@ class FormService(
         return formRepository.update(oppdaterteFormkrav).tilDto(nyttPåklagetVedtak)
     }
 
-    private fun opprettBehandlingsstatistikk(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem) {
+    private fun opprettBehandlingsstatistikk(
+        behandlingId: UUID,
+        eksternFagsakId: String,
+        eksternBehandlingId: String,
+        fagsystem: Fagsystem
+    ) {
         behandlingshistorikkService.hentBehandlingshistorikk(behandlingId).find { it.steg == StegType.FORMKRAV }
             ?: run {
-                taskService.save(BehandlingsstatistikkTask.opprettPåbegyntTask(behandlingId = behandlingId, eksternFagsakId = eksternFagsakId, fagsystem = fagsystem))
+                taskService.save(
+                    BehandlingsstatistikkTask.opprettPåbegyntTask(
+                        behandlingId = behandlingId,
+                        eksternFagsakId = eksternFagsakId,
+                        eksternBehandlingId = eksternBehandlingId,
+                        fagsystem = fagsystem
+                    )
+                )
             }
     }
 

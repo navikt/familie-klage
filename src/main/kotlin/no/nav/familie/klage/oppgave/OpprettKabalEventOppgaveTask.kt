@@ -75,12 +75,13 @@ class OpprettKabalEventOppgaveTask(
     companion object {
         const val TYPE = "opprettOppgaveForKlagehendelse"
 
-        fun opprettTask(opprettOppgavePayload: OpprettOppgavePayload, eksternFagsakId: String, fagsystem: Fagsystem): Task {
+        fun opprettTask(opprettOppgavePayload: OpprettOppgavePayload, eksternFagsakId: String, eksternBehandlingId: String, fagsystem: Fagsystem): Task {
             return Task(
                 type = TYPE,
                 payload = objectMapper.writeValueAsString(opprettOppgavePayload),
                 properties = Properties().apply {
                     this["eksternFagsakId"] = eksternFagsakId
+                    this["eksternBehandlingId"] = eksternBehandlingId
                     this["fagsystem"] = fagsystem.name
                 }
             )
