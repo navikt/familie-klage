@@ -56,6 +56,69 @@ class BrevInnholdUtleder(
             ),
         )
 
+    fun lagOpprettholdelseBrev(
+        ident: String,
+        dokumentasjonOgUtredning: String,
+        spørsmåletISaken: String,
+        aktuelleRettskilder: String,
+        klagersAnførsler: String,
+        vurderingAvKlagen: String,
+        navn: String,
+        stønadstype: Stønadstype,
+        påklagetVedtakDetaljer: PåklagetVedtakDetaljer,
+        klageMottatt: LocalDate,
+    ): FritekstBrevRequestDto =
+        FritekstBrevRequestDto(
+            overskrift = "Vi har sendt klagen din til Nav Klageinstans Nord",
+            navn = navn,
+            personIdent = ident,
+            avsnitt =
+                listOf(
+                    AvsnittDto(
+                        deloverskrift = "",
+                        innhold =
+                            "Vi har ${klageMottatt.norskFormat()} fått klagen din på vedtaket om " +
+                                "${visningsnavn(stønadstype, påklagetVedtakDetaljer)} som ble gjort " +
+                                "${påklagetVedtakDetaljer.vedtakstidspunkt.norskFormat()}, " +
+                                "og kommet frem til at vi ikke endrer vedtaket. Nav Klageinstans skal derfor vurdere saken din på nytt.",
+                    ),
+                    AvsnittDto(
+                        deloverskrift = "",
+                        innhold = "Saksbehandlingstidene finner du på nav.no/saksbehandlingstider.",
+                    ),
+                    AvsnittDto(
+                        deloverskrift = "Dette er vurderingen vi har sendt til Nav Klageinstans",
+                        innhold = "",
+                    ),
+                    AvsnittDto(
+                        deloverskrift = "Dokumentasjon og utredning",
+                        innhold = dokumentasjonOgUtredning,
+                    ),
+                    AvsnittDto(
+                        deloverskrift = "Spørsmålet i saken",
+                        innhold = spørsmåletISaken,
+                    ),
+                    AvsnittDto(
+                        deloverskrift = "Aktuelle rettskilder",
+                        innhold = aktuelleRettskilder,
+                    ),
+                    AvsnittDto(
+                        deloverskrift = "Klagers anførsler",
+                        innhold = klagersAnførsler,
+                    ),
+                    AvsnittDto(
+                        deloverskrift = "Vurdering av klagen",
+                        innhold = vurderingAvKlagen,
+                    ),
+                    AvsnittDto(
+                        deloverskrift = "Har du nye opplysninger?",
+                        innhold =
+                            "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via \n${stønadstype.klageUrl()}.",
+                    ),
+                    harDuSpørsmålAvsnitt(stønadstype),
+                ),
+        )
+
     fun lagFormkravAvvistBrev(
         ident: String,
         navn: String,
