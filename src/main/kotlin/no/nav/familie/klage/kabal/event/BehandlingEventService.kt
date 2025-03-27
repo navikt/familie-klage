@@ -133,7 +133,7 @@ class BehandlingEventService(
     }
 
     private fun finnBehandlingstype(stønadstype: Stønadstype): Behandlingstype? {
-        if (!featureToggleService.isEnabled(Toggle.SETT_BEHANDLINGSTEMA_OG_BEHANDLINGSTYPE_FOR_BAKS, false)) {
+        if (!featureToggleService.isEnabled(Toggle.SETT_BEHANDLINGSTEMA_OG_BEHANDLINGSTYPE_FOR_BAKS)) {
             return null
         }
         return when (stønadstype) {
@@ -160,7 +160,6 @@ class BehandlingEventService(
     private fun finnBehandlingstema(stønadstype: Stønadstype): Behandlingstema? {
         val skalSetteBehandlingstemaOgBehandlingstypeForBaks = featureToggleService.isEnabled(
             Toggle.SETT_BEHANDLINGSTEMA_OG_BEHANDLINGSTYPE_FOR_BAKS,
-            false,
         )
         return when (stønadstype) {
             Stønadstype.BARNETRYGD -> if (skalSetteBehandlingstemaOgBehandlingstypeForBaks) {

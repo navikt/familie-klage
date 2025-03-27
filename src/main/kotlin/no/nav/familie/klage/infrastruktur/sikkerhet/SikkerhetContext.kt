@@ -16,6 +16,8 @@ object SikkerhetContext {
             claims.getAsList("roles").contains("access_as_application")
     }
 
+    fun erSystembruker(): Boolean = hentSaksbehandler() == SYSTEM_FORKORTELSE
+
     /**
      * @param strict hvis true - skal kaste feil hvis token ikke inneholder NAVident
      */

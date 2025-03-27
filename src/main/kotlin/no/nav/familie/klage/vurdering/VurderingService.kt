@@ -3,6 +3,7 @@ package no.nav.familie.klage.vurdering
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.brev.BrevRepository
+import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.vurdering.VurderingValidator.validerVurdering
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.domain.Vurdering
@@ -18,6 +19,7 @@ class VurderingService(
     private val vurderingRepository: VurderingRepository,
     private val stegService: StegService,
     private val brevRepository: BrevRepository,
+    private val fagsakService: FagsakService,
 ) {
 
     fun hentVurdering(behandlingId: UUID): Vurdering? =
@@ -28,7 +30,8 @@ class VurderingService(
 
     @Transactional
     fun opprettEllerOppdaterVurdering(vurdering: VurderingDto): VurderingDto {
-        validerVurdering(vurdering)
+        val fagsystem = fagsakService.hentFagsakForBehandling(vurdering.behandlingId).fagsystem
+        validerVurdering(vurdering, fagsystem)
         if (vurdering.vedtak === Vedtak.OMGJØR_VEDTAK) {
             brevRepository.deleteById(vurdering.behandlingId)
         }
@@ -55,6 +58,11 @@ class VurderingService(
             begrunnelseOmgjøring = vurdering.begrunnelseOmgjøring,
             hjemmel = vurdering.hjemmel,
             innstillingKlageinstans = vurdering.innstillingKlageinstans,
+            dokumentasjonOgUtredning = vurdering.dokumentasjonOgUtredning,
+            spørsmåletISaken = vurdering.spørsmåletISaken,
+            aktuelleRettskilder = vurdering.aktuelleRettskilder,
+            klagersAnførsler = vurdering.klagersAnførsler,
+            vurderingAvKlagen = vurdering.vurderingAvKlagen,
             interntNotat = vurdering.interntNotat,
         ),
     )
@@ -67,6 +75,11 @@ class VurderingService(
                 årsak = vurdering.årsak,
                 begrunnelseOmgjøring = vurdering.begrunnelseOmgjøring,
                 hjemmel = vurdering.hjemmel,
+                dokumentasjonOgUtredning = vurdering.dokumentasjonOgUtredning,
+                spørsmåletISaken = vurdering.spørsmåletISaken,
+                aktuelleRettskilder = vurdering.aktuelleRettskilder,
+                klagersAnførsler = vurdering.klagersAnførsler,
+                vurderingAvKlagen = vurdering.vurderingAvKlagen,
                 interntNotat = vurdering.interntNotat,
             ),
         )
