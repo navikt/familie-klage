@@ -4,8 +4,10 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.brev.avvistbrev.AvvistBrevInnholdUtleder
 import no.nav.familie.klage.brev.dto.AvsnittDto
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
+import no.nav.familie.klage.brev.dto.Heading
 import no.nav.familie.klage.felles.util.StønadstypeVisningsnavn.visningsnavn
 import no.nav.familie.klage.felles.util.TekstUtil.norskFormat
+import no.nav.familie.klage.felles.util.TekstUtil.norskFormatLang
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
@@ -88,30 +90,37 @@ class BrevInnholdUtleder(
                     ),
                     AvsnittDto(
                         deloverskrift = "Dette er vurderingen vi har sendt til Nav Klageinstans",
+                        deloverskriftHeading = Heading.H2,
                         innhold = "",
                     ),
                     AvsnittDto(
                         deloverskrift = "Dokumentasjon og utredning",
+                        deloverskriftHeading = Heading.H3,
                         innhold = dokumentasjonOgUtredning,
                     ),
                     AvsnittDto(
                         deloverskrift = "Spørsmålet i saken",
+                        deloverskriftHeading = Heading.H3,
                         innhold = spørsmåletISaken,
                     ),
                     AvsnittDto(
                         deloverskrift = "Aktuelle rettskilder",
+                        deloverskriftHeading = Heading.H3,
                         innhold = aktuelleRettskilder,
                     ),
                     AvsnittDto(
                         deloverskrift = "Klagers anførsler",
+                        deloverskriftHeading = Heading.H3,
                         innhold = klagersAnførsler,
                     ),
                     AvsnittDto(
                         deloverskrift = "Vurdering av klagen",
+                        deloverskriftHeading = Heading.H3,
                         innhold = vurderingAvKlagen,
                     ),
                     AvsnittDto(
                         deloverskrift = "Har du nye opplysninger?",
+                        deloverskriftHeading = Heading.H2,
                         innhold =
                             "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via \n${stønadstype.klageUrl()}.",
                     ),
@@ -194,6 +203,7 @@ class BrevInnholdUtleder(
         if (stønadstype.erBarnetrygdEllerKontantstøtte()) {
             AvsnittDto(
                 deloverskrift = "Du har rett til innsyn i saken din",
+                deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
                 innhold = "Du har rett til å se dokumentene i saken din. Dette følger av forvaltningsloven § 18. Kontakt oss om du vil se dokumentene i saken din. Ta kontakt på nav.no/kontakt eller på telefon 55 55 33 33 <34>. Du kan lese mer om innsynsretten på nav.no/personvernerklaering.",
             )
         } else {
@@ -227,6 +237,7 @@ class BrevInnholdUtleder(
     private fun duHarRettTilÅKlageAvsnitt(stønadstype: Stønadstype) =
         AvsnittDto(
             deloverskrift = "Du har rett til å klage",
+            deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
             innhold =
             "Hvis du vil klage, må du gjøre dette innen 6 uker fra den datoen du fikk dette brevet. " +
                 "Du finner skjema og informasjon på ${stønadstype.klageUrl()}.",
@@ -235,10 +246,17 @@ class BrevInnholdUtleder(
     private fun harDuSpørsmålAvsnitt(stønadstype: Stønadstype) =
         AvsnittDto(
             deloverskrift = "Har du spørsmål?",
+            deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
             innhold =
-            "Du finner mer informasjon på ${stønadstype.lesMerUrl()}.\n\n" +
-                "På nav.no/kontakt kan du chatte eller skrive til oss.\n\n" +
-                "Hvis du ikke finner svar på nav.no kan du ringe oss på telefon 55 55 33 33, hverdager 09.00-15.00.",
+                if (stønadstype.erBarnetrygdEllerKontantstøtte()) {
+                    "Du finner mer informasjon på ${stønadstype.lesMerUrl()}. " +
+                        "På nav.no/kontakt kan du chatte eller skrive til oss. " +
+                        "Hvis du ikke finner svar på nav.no kan du ringe oss på telefon 55 55 33 33, hverdager 09.00-15.00."
+                } else {
+                    "Du finner mer informasjon på ${stønadstype.lesMerUrl()}.\n\n" +
+                        "På nav.no/kontakt kan du chatte eller skrive til oss.\n\n" +
+                        "Hvis du ikke finner svar på nav.no kan du ringe oss på telefon 55 55 33 33, hverdager 09.00-15.00."
+                },
         )
 
     private fun visningsnavn(
@@ -251,6 +269,13 @@ class BrevInnholdUtleder(
             FagsystemType.UTESTENGELSE -> "utestengelse"
             else ->
                 stønadstype.visningsnavn()
+        }
+
+    private fun utledDeloverskriftHeading(stønadstype: Stønadstype) =
+        if (stønadstype.erBarnetrygdEllerKontantstøtte()) {
+            Heading.H2
+        } else {
+            null
         }
 
     private fun Stønadstype.lesMerUrl() =
