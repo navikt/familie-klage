@@ -124,16 +124,26 @@ object DomainUtil {
         vedtak: Vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
         hjemmel: Hjemmel? = Hjemmel.FT_FEMTEN_FEM,
         innstillingKlageinstans: String? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
+        dokumentasjonOgUtredning: String? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
+        spørsmåletISaken: String? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
+        aktuelleRettskilder: String? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
+        klagersAnførsler: String? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
+        vurderingAvKlagen: String? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
         årsak: Årsak? = null,
         begrunnelseOmgjøring: String? = null,
         interntNotat: String? = null,
     ) = Vurdering(
         behandlingId = behandlingId,
         vedtak = vedtak,
-        hjemmel = hjemmel,
-        innstillingKlageinstans = innstillingKlageinstans,
         årsak = årsak,
         begrunnelseOmgjøring = begrunnelseOmgjøring,
+        hjemmel = hjemmel,
+        innstillingKlageinstans = innstillingKlageinstans,
+        dokumentasjonOgUtredning = dokumentasjonOgUtredning,
+        spørsmåletISaken = spørsmåletISaken,
+        aktuelleRettskilder = aktuelleRettskilder,
+        klagersAnførsler = klagersAnførsler,
+        vurderingAvKlagen = vurderingAvKlagen,
         interntNotat = interntNotat,
     )
 
@@ -144,6 +154,11 @@ object DomainUtil {
         begrunnelseOmgjøring: String? = null,
         hjemmel: Hjemmel? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) Hjemmel.BT_FEM else null,
         innstillingKlageinstans: String? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
+        dokumentasjonOgUtredning: String? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
+        spørsmåletISaken: String? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
+        aktuelleRettskilder: String? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
+        klagersAnførsler: String? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
+        vurderingAvKlagen: String? = if (vedtak == Vedtak.OPPRETTHOLD_VEDTAK) "En begrunnelse" else null,
         interntNotat: String? = null,
     ) = VurderingDto(
         behandlingId = behandlingId,
@@ -152,6 +167,11 @@ object DomainUtil {
         begrunnelseOmgjøring = begrunnelseOmgjøring,
         hjemmel = hjemmel,
         innstillingKlageinstans = innstillingKlageinstans,
+        dokumentasjonOgUtredning = dokumentasjonOgUtredning,
+        spørsmåletISaken = spørsmåletISaken,
+        aktuelleRettskilder = aktuelleRettskilder,
+        klagersAnførsler = klagersAnførsler,
+        vurderingAvKlagen = vurderingAvKlagen,
         interntNotat = interntNotat,
     )
 
@@ -190,15 +210,15 @@ object DomainUtil {
             sporbar = sporbar,
             eksternId = "1",
             fagsystem =
-            when (stønadstype) {
-                Stønadstype.OVERGANGSSTØNAD,
-                Stønadstype.BARNETILSYN,
-                Stønadstype.SKOLEPENGER,
-                -> Fagsystem.EF
+                when (stønadstype) {
+                    Stønadstype.OVERGANGSSTØNAD,
+                    Stønadstype.BARNETILSYN,
+                    Stønadstype.SKOLEPENGER,
+                    -> Fagsystem.EF
 
-                Stønadstype.BARNETRYGD -> Fagsystem.BA
-                Stønadstype.KONTANTSTØTTE -> Fagsystem.KS
-            },
+                    Stønadstype.BARNETRYGD -> Fagsystem.BA
+                    Stønadstype.KONTANTSTØTTE -> Fagsystem.KS
+                },
         )
 
     fun klageresultat(

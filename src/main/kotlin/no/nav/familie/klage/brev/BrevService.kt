@@ -39,6 +39,7 @@ import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -49,8 +50,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
-import java.util.Properties
-import java.util.UUID
+import java.util.*
 
 @Service
 class BrevService(
@@ -135,19 +135,43 @@ class BrevService(
 
         return when (behandlingResultat) {
             BehandlingResultat.IKKE_MEDHOLD -> {
-                val instillingKlageinstans = vurdering?.innstillingKlageinstans
-                    ?: throw Feil("Behandling med resultat $behandlingResultat mangler instillingKlageinstans for generering av brev")
                 brukerfeilHvis(påklagetVedtakDetaljer == null) {
                     "Kan ikke opprette brev til klageinstansen når det ikke er valgt et påklaget vedtak"
                 }
-                brevInnholdUtleder.lagOpprettholdelseBrev(
-                    ident = fagsak.hentAktivIdent(),
-                    instillingKlageinstans = instillingKlageinstans,
-                    navn = navn,
-                    stønadstype = fagsak.stønadstype,
-                    påklagetVedtakDetaljer = påklagetVedtakDetaljer,
-                    klageMottatt = klageMottatt,
-                )
+                if (fagsak.fagsystem == Fagsystem.EF) {
+                    val instillingKlageinstans = vurdering?.innstillingKlageinstans
+                        ?: throw Feil("Behandling med resultat $behandlingResultat mangler instillingKlageinstans for generering av brev")
+                    brevInnholdUtleder.lagOpprettholdelseBrev(
+                        ident = fagsak.hentAktivIdent(),
+                        instillingKlageinstans = instillingKlageinstans,
+                        navn = navn,
+                        stønadstype = fagsak.stønadstype,
+                        påklagetVedtakDetaljer = påklagetVedtakDetaljer,
+                        klageMottatt = klageMottatt,
+                    )
+                } else {
+                    fun getOrThrow(verdi: String?, felt: String) = verdi
+                        ?: throw Feil("Behandling med resultat $behandlingResultat mangler $felt for generering av brev")
+
+                    val dokumentasjonOgUtredning = getOrThrow(vurdering?.dokumentasjonOgUtredning, "dokumentasjonOgUtredning")
+                    val spørsmåletISaken = getOrThrow(vurdering?.spørsmåletISaken, "spørsmåletISaken")
+                    val aktuelleRettskilder = getOrThrow(vurdering?.aktuelleRettskilder, "aktuelleRettskilder")
+                    val klagersAnførsler = getOrThrow(vurdering?.klagersAnførsler, "klagersAnførsler")
+                    val vurderingAvKlagen = getOrThrow(vurdering?.vurderingAvKlagen, "vurderingAvKlagen")
+
+                    brevInnholdUtleder.lagOpprettholdelseBrev(
+                        ident = fagsak.hentAktivIdent(),
+                        dokumentasjonOgUtredning = dokumentasjonOgUtredning,
+                        spørsmåletISaken = spørsmåletISaken,
+                        aktuelleRettskilder = aktuelleRettskilder,
+                        klagersAnførsler = klagersAnførsler,
+                        vurderingAvKlagen = vurderingAvKlagen,
+                        navn = navn,
+                        stønadstype = fagsak.stønadstype,
+                        påklagetVedtakDetaljer = påklagetVedtakDetaljer,
+                        klageMottatt = klageMottatt,
+                    )
+                }
             }
 
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> {
@@ -363,7 +387,9 @@ class BrevService(
         )
 
     private fun validerIkkeSendTrukketKlageBrevPåFeilType(henlagt: HenlagtDto) {
-        feilHvis(henlagt.skalSendeHenleggelsesbrev && henlagt.årsak == HenlagtÅrsak.FEILREGISTRERT) { "Skal ikke sende brev hvis type er ulik trukket tilbake" }
+        feilHvis(henlagt.skalSendeHenleggelsesbrev && henlagt.årsak == HenlagtÅrsak.FEILREGISTRERT) {
+            "Skal ikke sende brev hvis type er ulik trukket tilbake"
+        }
     }
 
     private fun validerIkkeSendTrukketKlageBrevHvisVergemålEllerFullmakt(
