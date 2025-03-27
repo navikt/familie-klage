@@ -105,7 +105,7 @@ internal class FerdigstillBehandlingServiceTest {
             )
         }
         every { taskService.save(capture(saveTaskSlot)) } answers { firstArg() }
-        every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id, any(), any(), any()) } just Runs
+        every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id, any(), any()) } just Runs
         justRun { brevService.lagBrevPdf(any()) }
         every { fagsystemVedtakService.opprettRevurdering(any()) } returns OpprettRevurderingResponse(Opprettet("opprettetId"))
     }
@@ -130,7 +130,7 @@ internal class FerdigstillBehandlingServiceTest {
             BehandlingsstatistikkTask.TYPE,
             BehandlingsstatistikkTask.TYPE,
         )
-        verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id, any(), any(), any()) }
+        verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id, any(), any()) }
     }
 
     @Test
@@ -149,7 +149,7 @@ internal class FerdigstillBehandlingServiceTest {
             BehandlingsstatistikkTask.TYPE,
             BehandlingsstatistikkTask.TYPE,
         )
-        verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id, fagsak.eksternId, behandling.eksternBehandlingId.toString(), fagsak.fagsystem) }
+        verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id, fagsak.eksternId, fagsak.fagsystem) }
     }
 
     @Test

@@ -42,7 +42,6 @@ class FormService(
     @Transactional
     fun oppdaterFormkrav(formkrav: FormkravDto): FormkravDto {
         val behandlingId = formkrav.behandlingId
-        val eksternBehandlingId = behandlingService.hentBehandling(behandlingId).eksternBehandlingId
         val nyttPåklagetVedtak = formkrav.påklagetVedtak
 
         val oppdaterteFormkrav = formRepository.findByIdOrThrow(behandlingId).copy(
@@ -56,7 +55,7 @@ class FormService(
         )
         behandlingService.oppdaterPåklagetVedtak(behandlingId, nyttPåklagetVedtak)
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
-        opprettBehandlingsstatistikk(behandlingId, fagsak.eksternId, eksternBehandlingId.toString(), fagsak.fagsystem)
+        opprettBehandlingsstatistikk(behandlingId, fagsak.eksternId, fagsak.fagsystem)
         val formresultat = utledFormresultat(oppdaterteFormkrav, nyttPåklagetVedtak)
         when (formresultat) {
             FormVilkår.OPPFYLT -> {
@@ -79,7 +78,6 @@ class FormService(
     private fun opprettBehandlingsstatistikk(
         behandlingId: UUID,
         eksternFagsakId: String,
-        eksternBehandlingId: String,
         fagsystem: Fagsystem
     ) {
         behandlingshistorikkService.hentBehandlingshistorikk(behandlingId).find { it.steg == StegType.FORMKRAV }
@@ -88,7 +86,6 @@ class FormService(
                     BehandlingsstatistikkTask.opprettPåbegyntTask(
                         behandlingId = behandlingId,
                         eksternFagsakId = eksternFagsakId,
-                        eksternBehandlingId = eksternBehandlingId,
                         fagsystem = fagsystem
                     )
                 )

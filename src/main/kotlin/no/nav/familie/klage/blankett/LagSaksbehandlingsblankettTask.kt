@@ -40,14 +40,13 @@ class LagSaksbehandlingsblankettTask(
 
         const val TYPE = "LagSaksbehandlingsblankett"
 
-        fun opprettTask(behandlingId: UUID, eksternFagsakId: String, eksternBehandlingId: String, fagsystem: Fagsystem): Task {
+        fun opprettTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem): Task {
             return Task(
                 type = TYPE,
                 payload = behandlingId.toString(),
                 properties = Properties().apply {
                     this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
                     this["eksternFagsakId"] = eksternFagsakId
-                    this["eksternBehandlingId"] = eksternBehandlingId
                     this["fagsystem"] = fagsystem.name
                 },
             )

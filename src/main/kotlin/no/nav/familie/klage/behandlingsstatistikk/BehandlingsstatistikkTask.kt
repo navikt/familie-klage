@@ -38,47 +38,43 @@ class BehandlingsstatistikkTask(
 
     companion object {
 
-        fun opprettMottattTask(behandlingId: UUID, eksternFagsakId: String, eksternBehandlingId: String, fagsystem: Fagsystem): Task =
+        fun opprettMottattTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem): Task =
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.MOTTATT,
                 hendelseTidspunkt = LocalDateTime.now(),
                 gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(),
                 eksternFagsakId = eksternFagsakId,
-                eksternBehandlingId = eksternBehandlingId,
                 fagsystem = fagsystem
             )
 
-        fun opprettPåbegyntTask(behandlingId: UUID, eksternFagsakId: String, eksternBehandlingId: String, fagsystem: Fagsystem): Task =
+        fun opprettPåbegyntTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem): Task =
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.PÅBEGYNT,
                 hendelseTidspunkt = LocalDateTime.now(),
                 gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true),
                 eksternFagsakId = eksternFagsakId,
-                eksternBehandlingId = eksternBehandlingId,
                 fagsystem = fagsystem
             )
 
-        fun opprettVenterTask(behandlingId: UUID, eksternFagsakId: String, eksternBehandlingId: String, fagsystem: Fagsystem): Task =
+        fun opprettVenterTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem): Task =
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.VENTER,
                 hendelseTidspunkt = LocalDateTime.now(),
                 gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(),
                 eksternFagsakId = eksternFagsakId,
-                eksternBehandlingId = eksternBehandlingId,
                 fagsystem = fagsystem
             )
 
-        fun opprettFerdigTask(behandlingId: UUID, eksternFagsakId: String, eksternBehandlingId: String, fagsystem: Fagsystem): Task =
+        fun opprettFerdigTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem): Task =
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.FERDIG,
                 hendelseTidspunkt = LocalDateTime.now(),
                 gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true),
                 eksternFagsakId = eksternFagsakId,
-                eksternBehandlingId = eksternBehandlingId,
                 fagsystem = fagsystem
             )
 
@@ -87,7 +83,6 @@ class BehandlingsstatistikkTask(
             hendelseTidspunkt: LocalDateTime = LocalDateTime.now(),
             gjeldendeSaksbehandler: String = SikkerhetContext.hentSaksbehandler(true),
             eksternFagsakId: String,
-            eksternBehandlingId: String,
             fagsystem: Fagsystem
         ): Task =
             opprettTask(
@@ -96,7 +91,6 @@ class BehandlingsstatistikkTask(
                 hendelseTidspunkt = hendelseTidspunkt,
                 gjeldendeSaksbehandler = gjeldendeSaksbehandler,
                 eksternFagsakId = eksternFagsakId,
-                eksternBehandlingId = eksternBehandlingId,
                 fagsystem = fagsystem
             )
 
@@ -106,7 +100,6 @@ class BehandlingsstatistikkTask(
             hendelseTidspunkt: LocalDateTime = LocalDateTime.now(),
             gjeldendeSaksbehandler: String,
             eksternFagsakId: String,
-            eksternBehandlingId: String,
             fagsystem: Fagsystem,
         ): Task =
             Task(
@@ -125,7 +118,6 @@ class BehandlingsstatistikkTask(
                     this["hendelse"] = hendelse.name
                     this["hendelseTidspunkt"] = hendelseTidspunkt.toString()
                     this["eksternFagsakId"] = eksternFagsakId
-                    this["eksternBehandlingId"] = eksternBehandlingId
                     this["fagsystem"] = fagsystem.name
                 },
             )

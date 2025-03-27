@@ -60,7 +60,6 @@ class BehandlingPåVentService(
                 BehandlingsstatistikkTask.opprettVenterTask(
                     behandlingId,
                     fagsak.eksternId,
-                    behandling.eksternBehandlingId.toString(),
                     fagsak.fagsystem
                 )
             )
@@ -88,7 +87,6 @@ class BehandlingPåVentService(
             BehandlingsstatistikkTask.opprettPåbegyntTask(
                 behandlingId,
                 fagsak.eksternId,
-                behandling.eksternBehandlingId.toString(),
                 fagsak.fagsystem
             )
         )

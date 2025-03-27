@@ -56,7 +56,6 @@ class BehandlingFeilregistrertTask(
                 behandlingstype = Behandlingstype.Klage.value,
             ),
             eksternFagsakId = fagsak.eksternId,
-            eksternBehandlingId = behandling.eksternBehandlingId.toString(),
             fagsystem = fagsak.fagsystem,
         )
     }

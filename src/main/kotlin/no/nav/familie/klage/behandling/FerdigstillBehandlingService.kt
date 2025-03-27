@@ -64,18 +64,17 @@ class FerdigstillBehandlingService(
             when (behandling.årsak) {
                 ORDINÆR -> {
                     brevService.lagBrevPdf(behandlingId)
-                    opprettJournalførBrevTask(behandlingId, fagsak.eksternId, behandling.eksternBehandlingId.toString(), fagsak.fagsystem)
+                    opprettJournalførBrevTask(behandlingId, fagsak.eksternId, fagsak.fagsystem)
                 }
 
                 HENVENDELSE_FRA_KABAL -> {
-                    opprettSendTilKabalTask(behandlingId, fagsak.eksternId, behandling.eksternBehandlingId.toString(), fagsak.fagsystem)
+                    opprettSendTilKabalTask(behandlingId, fagsak.eksternId, fagsak.fagsystem)
                 }
             }
         }
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(
             behandlingId = behandling.id,
             eksternFagsakId = fagsak.eksternId,
-            eksternBehandlingId = behandling.eksternBehandlingId.toString(),
             fagsystem = fagsak.fagsystem
         )
 
@@ -92,7 +91,6 @@ class FerdigstillBehandlingService(
             LagSaksbehandlingsblankettTask.opprettTask(
                 behandlingId = behandlingId,
                 eksternFagsakId = fagsak.eksternId,
-                eksternBehandlingId = behandling.eksternBehandlingId.toString(),
                 fagsystem = fagsak.fagsystem
             )
         )
@@ -101,7 +99,6 @@ class FerdigstillBehandlingService(
                 BehandlingsstatistikkTask.opprettSendtTilKATask(
                     behandlingId = behandlingId,
                     eksternFagsakId = fagsak.eksternId,
-                    eksternBehandlingId = behandling.eksternBehandlingId.toString(),
                     fagsystem = fagsak.fagsystem
                 )
             )
@@ -110,7 +107,6 @@ class FerdigstillBehandlingService(
             BehandlingsstatistikkTask.opprettFerdigTask(
                 behandlingId = behandlingId,
                 eksternFagsakId = fagsak.eksternId,
-                eksternBehandlingId = behandling.eksternBehandlingId.toString(),
                 fagsak.fagsystem
             )
         )
@@ -133,28 +129,26 @@ class FerdigstillBehandlingService(
         }
     }
 
-    private fun opprettJournalførBrevTask(behandlingId: UUID, eksternFagsakId: String, eksternBehandlingId: String, fagsystem: Fagsystem) {
+    private fun opprettJournalførBrevTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem) {
         val journalførBrevTask = Task(
             type = JournalførBrevTask.TYPE,
             payload = behandlingId.toString(),
             properties = Properties().apply {
                 this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
                 this["eksternFagsakId"] = eksternFagsakId
-                this["eksternBehandlingId"] = eksternBehandlingId
                 this["fagsystem"] = fagsystem.name
             },
         )
         taskService.save(journalførBrevTask)
     }
 
-    private fun opprettSendTilKabalTask(behandlingId: UUID, eksternFagsakId: String, eksternBehandlingId: String, fagsystem: Fagsystem) {
+    private fun opprettSendTilKabalTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem) {
         val sendTilKabalTask = Task(
             type = SendTilKabalTask.TYPE,
             payload = behandlingId.toString(),
             properties = Properties().apply {
                 this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
                 this["eksternFagsakId"] = eksternFagsakId
-                this["eksternBehandlingId"] = eksternBehandlingId
                 this["fagsystem"] = fagsystem.name
             },
         )

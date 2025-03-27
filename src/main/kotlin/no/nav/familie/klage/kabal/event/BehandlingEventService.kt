@@ -127,7 +127,6 @@ class BehandlingEventService(
         val opprettOppgaveTask = OpprettKabalEventOppgaveTask.opprettTask(
             opprettOppgavePayload,
             fagsakDomain.eksternId,
-            behandling.eksternBehandlingId.toString(),
             fagsakDomain.fagsystem
         )
         taskService.save(opprettOppgaveTask)
