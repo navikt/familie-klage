@@ -77,9 +77,9 @@ class BrevInnholdUtleder(
                     AvsnittDto(
                         deloverskrift = "",
                         innhold =
-                            "Vi har ${klageMottatt.norskFormat()} fått klagen din på vedtaket om " +
+                            "Vi har ${klageMottatt.norskFormatLang()} fått klagen din på vedtaket om " +
                                 "${visningsnavn(stønadstype, påklagetVedtakDetaljer)} som ble gjort " +
-                                "${påklagetVedtakDetaljer.vedtakstidspunkt.norskFormat()}, " +
+                                "${påklagetVedtakDetaljer.vedtakstidspunkt.norskFormatLang()}, " +
                                 "og kommet frem til at vi ikke endrer vedtaket. Nav Klageinstans skal derfor vurdere saken din på nytt.",
                     ),
                     AvsnittDto(
