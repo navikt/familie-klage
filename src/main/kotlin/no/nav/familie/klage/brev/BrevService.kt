@@ -103,6 +103,7 @@ class BrevService(
             fritekstBrev = brevRequest,
             saksbehandlerNavn = signaturMedEnhet.navn,
             enhet = signaturMedEnhet.enhet,
+            fagsystem = fagsak.fagsystem,
         )
 
         lagreEllerOppdaterBrev(
@@ -355,6 +356,7 @@ class BrevService(
             fritekstBrev = henleggelsesbrevInnhold,
             saksbehandlerNavn = signaturMedEnhet.navn,
             enhet = signaturMedEnhet.enhet,
+            fagsystem = fagsak.fagsystem,
         )
     }
 
