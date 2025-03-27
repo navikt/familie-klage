@@ -10,6 +10,7 @@ import no.nav.familie.klage.behandling.dto.OppgaveDto
 import no.nav.familie.klage.behandling.dto.SettPåVentRequest
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingshistorikk.domain.HistorikkHendelse
+import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.oppgave.OppgaveService
@@ -36,6 +37,7 @@ class BehandlingPåVentServiceTest {
     private val behandlinghistorikkService = mockk<BehandlingshistorikkService>(relaxed = true)
     private val taskService = mockk<TaskService>(relaxed = true)
     private val tilordnetRessursService = mockk<TilordnetRessursService>(relaxed = true)
+    private val fagsakService = mockk<FagsakService>(relaxed = true)
 
     private val fagsakEf = fagsak()
     private val behandling = behandling(fagsakEf)
@@ -47,6 +49,7 @@ class BehandlingPåVentServiceTest {
         behandlinghistorikkService = behandlinghistorikkService,
         taskService = taskService,
         tilordnetRessursService = tilordnetRessursService,
+        fagsakService = fagsakService,
     )
 
     @BeforeEach

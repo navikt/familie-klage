@@ -68,13 +68,23 @@ class OpprettBehandlingService(
 
         formService.opprettInitielleFormkrav(behandlingId)
 
-        oppgaveTaskService.opprettBehandleSakOppgave(behandlingId, request.klageGjelderTilbakekreving)
+        oppgaveTaskService.opprettBehandleSakOppgave(
+            behandlingId = behandlingId,
+            klageGjelderTilbakekreving = request.klageGjelderTilbakekreving,
+            eksternFagsakId = eksternFagsakId,
+            fagsystem = fagsak.fagsystem
+        )
         taskService.save(
-            BehandlingsstatistikkTask.opprettMottattTask(behandlingId = behandlingId),
+            BehandlingsstatistikkTask.opprettMottattTask(
+                behandlingId = behandlingId,
+                eksternFagsakId = eksternFagsakId,
+                fagsystem = fagsak.fagsystem,
+
+            ),
         )
         logger.info(
             "Opprettet behandling=$behandlingId for stønadstype=$stønadstype " +
-                "eksternFagsakId=$eksternFagsakId klageMottatt=$klageMottatt",
+                    "eksternFagsakId=$eksternFagsakId klageMottatt=$klageMottatt",
         )
         return behandlingId
     }

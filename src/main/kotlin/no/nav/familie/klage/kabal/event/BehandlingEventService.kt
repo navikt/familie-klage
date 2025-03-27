@@ -58,12 +58,14 @@ class BehandlingEventService(
                 BehandlingEventType.ANKEBEHANDLING_AVSLUTTET,
                 BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET,
                 BehandlingEventType.OMGJOERINGSKRAVBEHANDLING_AVSLUTTET,
-                -> opprettOppgaveTask(behandling, behandlingEvent)
+                    -> opprettOppgaveTask(behandling, behandlingEvent)
+
                 BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
                 BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
-                -> {
+                    -> {
                     // Skal ikke gjøre noe dersom eventtype er ANKEBEHANDLING_OPPRETTET eller ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET
                 }
+
                 BehandlingEventType.BEHANDLING_FEILREGISTRERT -> opprettBehandlingFeilregistrertTask(behandling.id)
             }
         }
@@ -111,7 +113,8 @@ class BehandlingEventService(
             ?: error("Finner ikke fagsak for behandlingId: ${behandling.id}")
         val saksbehandlerIdent = behandling.sporbar.endret.endretAv
         val saksbehandlerEnhet = utledSaksbehandlerEnhet(saksbehandlerIdent)
-        val oppgaveTekst = "${behandlingEvent.detaljer.oppgaveTekst(saksbehandlerEnhet)} Gjelder: ${fagsakDomain.stønadstype}"
+        val oppgaveTekst =
+            "${behandlingEvent.detaljer.oppgaveTekst(saksbehandlerEnhet)} Gjelder: ${fagsakDomain.stønadstype}"
         val klageBehandlingEksternId = UUID.fromString(behandlingEvent.kildeReferanse)
         val opprettOppgavePayload = OpprettOppgavePayload(
             klagebehandlingEksternId = klageBehandlingEksternId,
@@ -121,7 +124,11 @@ class BehandlingEventService(
             behandlingstema = finnBehandlingstema(fagsakDomain.stønadstype),
             behandlingstype = finnBehandlingstype(fagsakDomain.stønadstype)?.value,
         )
-        val opprettOppgaveTask = OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload)
+        val opprettOppgaveTask = OpprettKabalEventOppgaveTask.opprettTask(
+            opprettOppgavePayload,
+            fagsakDomain.eksternId,
+            fagsakDomain.fagsystem
+        )
         taskService.save(opprettOppgaveTask)
     }
 
@@ -132,12 +139,12 @@ class BehandlingEventService(
         return when (stønadstype) {
             Stønadstype.BARNETRYGD,
             Stønadstype.KONTANTSTØTTE,
-            -> Behandlingstype.Klage
+                -> Behandlingstype.Klage
 
             Stønadstype.OVERGANGSSTØNAD,
             Stønadstype.BARNETILSYN,
             Stønadstype.SKOLEPENGER,
-            -> null
+                -> null
         }
     }
 
