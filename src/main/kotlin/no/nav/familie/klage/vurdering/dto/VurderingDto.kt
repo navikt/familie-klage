@@ -13,6 +13,11 @@ data class VurderingDto(
     val begrunnelseOmgjøring: String? = null,
     val hjemmel: Hjemmel? = null,
     val innstillingKlageinstans: String? = null,
+    val dokumentasjonOgUtredning: String? = null,
+    val spørsmåletISaken: String? = null,
+    val aktuelleRettskilder: String? = null,
+    val klagersAnførsler: String? = null,
+    val vurderingAvKlagen: String? = null,
     val interntNotat: String?,
 )
 
@@ -24,5 +29,10 @@ fun Vurdering.tilDto(): VurderingDto =
         begrunnelseOmgjøring = this.begrunnelseOmgjøring,
         hjemmel = this.hjemmel,
         innstillingKlageinstans = this.innstillingKlageinstans,
+        dokumentasjonOgUtredning = this.dokumentasjonOgUtredning,
+        spørsmåletISaken = this.spørsmåletISaken,
+        aktuelleRettskilder = this.aktuelleRettskilder,
+        klagersAnførsler = this.klagersAnførsler,
+        vurderingAvKlagen = this.vurderingAvKlagen,
         interntNotat = this.interntNotat,
     )

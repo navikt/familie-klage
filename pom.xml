@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.3</version>
+        <version>3.4.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <repositories>
@@ -29,15 +29,19 @@
         <sha1/>
         <changelist>-SNAPSHOT</changelist>
         <java.version>21</java.version>
-        <kotlin.version>2.1.10</kotlin.version>
+        <kotlin.version>2.1.20</kotlin.version>
         <springdoc.version>2.8.5</springdoc.version>
         <mockk-jvm.version>1.13.17</mockk-jvm.version>
         <felles.version>3.20250312114810_5371990</felles.version>
         <prosessering.version>2.20250311132904_6ee7728</prosessering.version>
+        <springdoc.version>2.8.5</springdoc.version>
+        <mockk-jvm.version>1.13.17</mockk-jvm.version>
+        <felles.version>3.20250320122046_7ca9dae</felles.version>
+        <prosessering.version>2.20250317161652_fe22655</prosessering.version>
         <start-class>no.nav.familie.klage.ApplicationKt</start-class>
-        <kontrakter.version>3.0_20250313112514_5a97829</kontrakter.version>
+        <kontrakter.version>3.0_20250317084213_0b7e8b1</kontrakter.version>
         <saksstatistikk-klage.version>2.0_20230214104704_706e9c0</saksstatistikk-klage.version>
-        <nav.security.version>5.0.19</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
+        <nav.security.version>5.0.20</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskriver spring sin versjon, blir brukt av mock-oauth2-server -->
     </properties>
 
@@ -89,7 +93,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>11.4.0</version>
+            <version>11.4.1</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -113,7 +117,7 @@
         <dependency>
             <groupId>no.nav.familie.felles</groupId>
             <artifactId>unleash</artifactId>
-            <version>3.20250122103549_5bcb4dc</version>
+            <version>3.20250320122046_7ca9dae</version>
         </dependency>
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>

@@ -7,6 +7,8 @@ import io.mockk.verify
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.brev.BrevRepository
+import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
@@ -22,7 +24,8 @@ class VurderingServiceTest {
     val vurderingRepository = mockk<VurderingRepository>()
     val stegService = mockk<StegService>()
     val brevRepository = mockk<BrevRepository>()
-    val vurderingService = VurderingService(vurderingRepository, stegService, brevRepository)
+    val fagsakService = mockk<FagsakService>()
+    val vurderingService = VurderingService(vurderingRepository, stegService, brevRepository, fagsakService)
 
     val omgjørVedtakVurdering = vurdering(
         behandlingId = UUID.randomUUID(),
@@ -42,6 +45,7 @@ class VurderingServiceTest {
     fun setup() {
         every { vurderingRepository.findByIdOrNull(any()) } returns omgjørVedtakVurdering
         every { vurderingRepository.update(any()) } answers { firstArg() }
+        every { fagsakService.hentFagsakForBehandling(any()) } returns fagsak()
         justRun { stegService.oppdaterSteg(any(), any(), any(), any()) }
         justRun { brevRepository.deleteById(any()) }
     }
