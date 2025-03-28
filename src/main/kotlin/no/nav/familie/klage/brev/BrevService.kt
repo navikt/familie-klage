@@ -30,7 +30,9 @@ import no.nav.familie.klage.felles.util.StønadstypeVisningsnavn.visningsnavn
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.felles.util.isEqualOrAfter
 import no.nav.familie.klage.formkrav.FormService
+import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
 import no.nav.familie.klage.henlegg.HenlagtDto
+import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
@@ -46,11 +48,13 @@ import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
-import java.util.*
+import java.util.Properties
+import java.util.UUID
 
 @Service
 class BrevService(
@@ -66,7 +70,6 @@ class BrevService(
     private val brevInnholdUtleder: BrevInnholdUtleder,
     private val taskService: TaskService,
 ) {
-
     fun hentBrev(behandlingId: UUID): Brev = brevRepository.findByIdOrThrow(behandlingId)
 
     fun hentBrevmottakere(behandlingId: UUID): Brevmottakere {
@@ -74,7 +77,10 @@ class BrevService(
         return brev.mottakere ?: Brevmottakere()
     }
 
-    fun settBrevmottakere(behandlingId: UUID, brevmottakere: BrevmottakereDto) {
+    fun settBrevmottakere(
+        behandlingId: UUID,
+        brevmottakere: BrevmottakereDto,
+    ) {
         val behandling = behandlingService.hentBehandling(behandlingId)
         validerKanLageBrev(behandling)
 
@@ -99,11 +105,12 @@ class BrevService(
 
         val signaturMedEnhet = brevsignaturService.lagSignatur(personopplysninger, fagsak.fagsystem)
 
-        val html = brevClient.genererHtmlFritekstbrev(
-            fritekstBrev = brevRequest,
-            saksbehandlerNavn = signaturMedEnhet.navn,
-            enhet = signaturMedEnhet.enhet,
-        )
+        val html =
+            brevClient.genererHtmlFritekstbrev(
+                fritekstBrev = brevRequest,
+                saksbehandlerNavn = signaturMedEnhet.navn,
+                enhet = signaturMedEnhet.enhet,
+            )
 
         lagreEllerOppdaterBrev(
             behandlingId = behandlingId,
@@ -132,6 +139,7 @@ class BrevService(
     ): FritekstBrevRequestDto {
         val behandlingResultat = utledBehandlingResultat(behandling.id)
         val vurdering = vurderingService.hentVurdering(behandling.id)
+        val formkrav = formService.hentForm(behandling.id)
 
         return when (behandlingResultat) {
             BehandlingResultat.IKKE_MEDHOLD -> {
@@ -139,8 +147,11 @@ class BrevService(
                     "Kan ikke opprette brev til klageinstansen når det ikke er valgt et påklaget vedtak"
                 }
                 if (fagsak.fagsystem == Fagsystem.EF) {
-                    val instillingKlageinstans = vurdering?.innstillingKlageinstans
-                        ?: throw Feil("Behandling med resultat $behandlingResultat mangler instillingKlageinstans for generering av brev")
+                    val instillingKlageinstans =
+                        vurdering?.innstillingKlageinstans
+                            ?: throw Feil(
+                                "Behandling med resultat $behandlingResultat mangler instillingKlageinstans for generering av brev",
+                            )
                     brevInnholdUtleder.lagOpprettholdelseBrev(
                         ident = fagsak.hentAktivIdent(),
                         instillingKlageinstans = instillingKlageinstans,
@@ -150,8 +161,24 @@ class BrevService(
                         klageMottatt = klageMottatt,
                     )
                 } else {
-                    fun getOrThrow(verdi: String?, felt: String) = verdi
+                    fun getOrThrow(
+                        verdi: String?,
+                        felt: String,
+                    ) = verdi
                         ?: throw Feil("Behandling med resultat $behandlingResultat mangler $felt for generering av brev")
+
+                    val klagefristUnntakOppfylt =
+                        formkrav.klagefristOverholdtUnntak in
+                            listOf(FormkravFristUnntak.UNNTAK_SÆRLIG_GRUNN, FormkravFristUnntak.UNNTAK_KAN_IKKE_LASTES)
+
+                    if (klagefristUnntakOppfylt &&
+                        formkrav.brevtekst == null
+                    ) {
+                        throw ApiFeil(
+                            "Fritekst må fylles ut.",
+                            httpStatus = HttpStatus.BAD_REQUEST,
+                        )
+                    }
 
                     val dokumentasjonOgUtredning = getOrThrow(vurdering?.dokumentasjonOgUtredning, "dokumentasjonOgUtredning")
                     val spørsmåletISaken = getOrThrow(vurdering?.spørsmåletISaken, "spørsmåletISaken")
@@ -161,6 +188,7 @@ class BrevService(
 
                     brevInnholdUtleder.lagOpprettholdelseBrev(
                         ident = fagsak.hentAktivIdent(),
+                        saksbehandlerFritekst = formkrav.brevtekst,
                         dokumentasjonOgUtredning = dokumentasjonOgUtredning,
                         spørsmåletISaken = spørsmåletISaken,
                         aktuelleRettskilder = aktuelleRettskilder,
@@ -177,21 +205,23 @@ class BrevService(
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> {
                 val formkrav = formService.hentForm(behandling.id)
                 return when (behandling.påklagetVedtak.påklagetVedtakstype) {
-                    PåklagetVedtakstype.UTEN_VEDTAK -> brevInnholdUtleder.lagFormkravAvvistBrevIkkePåklagetVedtak(
-                        ident = fagsak.hentAktivIdent(),
-                        navn = navn,
-                        formkrav = formkrav,
-                        stønadstype = fagsak.stønadstype,
-                    )
+                    PåklagetVedtakstype.UTEN_VEDTAK ->
+                        brevInnholdUtleder.lagFormkravAvvistBrevIkkePåklagetVedtak(
+                            ident = fagsak.hentAktivIdent(),
+                            navn = navn,
+                            formkrav = formkrav,
+                            stønadstype = fagsak.stønadstype,
+                        )
 
-                    else -> brevInnholdUtleder.lagFormkravAvvistBrev(
-                        ident = fagsak.hentAktivIdent(),
-                        navn = navn,
-                        form = formkrav,
-                        stønadstype = fagsak.stønadstype,
-                        påklagetVedtakDetaljer = påklagetVedtakDetaljer,
-                        fagsystem = fagsak.fagsystem,
-                    )
+                    else ->
+                        brevInnholdUtleder.lagFormkravAvvistBrev(
+                            ident = fagsak.hentAktivIdent(),
+                            navn = navn,
+                            form = formkrav,
+                            stønadstype = fagsak.stønadstype,
+                            påklagetVedtakDetaljer = påklagetVedtakDetaljer,
+                            fagsystem = fagsak.fagsystem,
+                        )
                 }
             }
 
@@ -202,10 +232,9 @@ class BrevService(
         }
     }
 
-    fun hentBrevPdf(behandlingId: UUID): ByteArray {
-        return brevRepository.findByIdOrThrow(behandlingId).pdf?.bytes
+    fun hentBrevPdf(behandlingId: UUID): ByteArray =
+        brevRepository.findByIdOrThrow(behandlingId).pdf?.bytes
             ?: error("Finner ikke brev-pdf for behandling=$behandlingId")
-    }
 
     fun lagreEllerOppdaterBrev(
         behandlingId: UUID,
@@ -230,13 +259,14 @@ class BrevService(
         behandlingId: UUID,
         fagsak: Fagsak,
     ) = Brevmottakere(
-        personer = listOf(
-            BrevmottakerPersonMedIdent(
-                personIdent = fagsak.hentAktivIdent(),
-                navn = personopplysningerService.hentPersonopplysninger(behandlingId).navn,
-                mottakerRolle = MottakerRolle.BRUKER,
+        personer =
+            listOf(
+                BrevmottakerPersonMedIdent(
+                    personIdent = fagsak.hentAktivIdent(),
+                    navn = personopplysningerService.hentPersonopplysninger(behandlingId).navn,
+                    mottakerRolle = MottakerRolle.BRUKER,
+                ),
             ),
-        ),
     )
 
     fun lagBrevPdf(behandlingId: UUID) {
@@ -250,20 +280,25 @@ class BrevService(
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    fun oppdaterMottakerJournalpost(behandlingId: UUID, brevmottakereJournalposter: BrevmottakereJournalposter) {
+    fun oppdaterMottakerJournalpost(
+        behandlingId: UUID,
+        brevmottakereJournalposter: BrevmottakereJournalposter,
+    ) {
         brevRepository.oppdaterMottakerJournalpost(behandlingId, brevmottakereJournalposter)
     }
 
-    private fun utledBehandlingResultat(behandlingId: UUID): BehandlingResultat {
-        return if (formService.formkravErOppfyltForBehandling(behandlingId)) {
+    private fun utledBehandlingResultat(behandlingId: UUID): BehandlingResultat =
+        if (formService.formkravErOppfyltForBehandling(behandlingId)) {
             vurderingService.hentVurdering(behandlingId)?.vedtak?.tilBehandlingResultat()
                 ?: throw Feil("Burde funnet behandling $behandlingId")
         } else {
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST
         }
-    }
 
-    fun opprettJournalførHenleggelsesbrevTask(behandlingId: UUID, henlagt: HenlagtDto) {
+    fun opprettJournalførHenleggelsesbrevTask(
+        behandlingId: UUID,
+        henlagt: HenlagtDto,
+    ) {
         validerIkkeSendTrukketKlageBrevPåFeilType(henlagt)
         validerIkkeSendTrukketKlageBrevHvisVergemålEllerFullmakt(behandlingId)
         val html = lagHenleggelsesbrevHtml(behandlingId)
@@ -278,21 +313,21 @@ class BrevService(
 
         lagBrevPdf(behandlingId)
 
-        val journalførBrevTask = Task(
-            type = JournalførBrevTask.TYPE,
-            payload = behandlingId.toString(),
-            properties = Properties().apply {
-                this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
-                this["eksterFagsakId"] = fagsak.eksternId
-                this["fagsystem"] = fagsak.fagsystem.name
-            },
-        )
+        val journalførBrevTask =
+            Task(
+                type = JournalførBrevTask.TYPE,
+                payload = behandlingId.toString(),
+                properties =
+                    Properties().apply {
+                        this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
+                        this["eksterFagsakId"] = fagsak.eksternId
+                        this["fagsystem"] = fagsak.fagsystem.name
+                    },
+            )
         taskService.save(journalførBrevTask)
     }
 
-    fun genererHenleggelsesbrev(
-        behandlingId: UUID,
-    ): ByteArray {
+    fun genererHenleggelsesbrev(behandlingId: UUID): ByteArray {
         val html =
             lagHenleggelsesbrevHtml(behandlingId)
 
@@ -306,16 +341,17 @@ class BrevService(
         val signaturMedEnhet = brevsignaturService.lagSignatur(personopplysninger, fagsak.fagsystem)
         val stønadstype = fagsak.stønadstype
 
-        val html = when (stønadstype) {
-            Stønadstype.BARNETRYGD,
-            Stønadstype.KONTANTSTØTTE,
-            -> lagHenleggelsesbrevHtmlBaks(signaturMedEnhet, personopplysninger.navn, fagsak)
+        val html =
+            when (stønadstype) {
+                Stønadstype.BARNETRYGD,
+                Stønadstype.KONTANTSTØTTE,
+                -> lagHenleggelsesbrevHtmlBaks(signaturMedEnhet, personopplysninger.navn, fagsak)
 
-            Stønadstype.OVERGANGSSTØNAD,
-            Stønadstype.BARNETILSYN,
-            Stønadstype.SKOLEPENGER,
-            -> lagHenleggelsesbrevHtmlEf(behandlingId, signaturMedEnhet, fagsak)
-        }
+                Stønadstype.OVERGANGSSTØNAD,
+                Stønadstype.BARNETILSYN,
+                Stønadstype.SKOLEPENGER,
+                -> lagHenleggelsesbrevHtmlEf(behandlingId, signaturMedEnhet, fagsak)
+            }
 
         return html
     }
@@ -345,11 +381,12 @@ class BrevService(
         navn: String,
         fagsak: Fagsak,
     ): String {
-        val henleggelsesbrevInnhold = brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(
-            ident = fagsak.hentAktivIdent(),
-            navn = navn,
-            stønadstype = fagsak.stønadstype,
-        )
+        val henleggelsesbrevInnhold =
+            brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(
+                ident = fagsak.hentAktivIdent(),
+                navn = navn,
+                stønadstype = fagsak.stønadstype,
+            )
 
         return brevClient.genererHtmlFritekstbrev(
             fritekstBrev = henleggelsesbrevInnhold,
@@ -368,10 +405,11 @@ class BrevService(
 
     private fun lagNavnOgIdentFlettefelt(behandlingId: UUID): Flettefelter {
         val visningsNavn = personopplysningerService.hentPersonopplysninger(behandlingId).navn
-        val navnOgIdentFlettefelt = Flettefelter(
-            navn = listOf(visningsNavn),
-            fodselsnummer = listOf(personopplysningerService.hentPersonopplysninger(behandlingId).personIdent),
-        )
+        val navnOgIdentFlettefelt =
+            Flettefelter(
+                navn = listOf(visningsNavn),
+                fodselsnummer = listOf(personopplysningerService.hentPersonopplysninger(behandlingId).personIdent),
+            )
         return navnOgIdentFlettefelt
     }
 
@@ -394,9 +432,7 @@ class BrevService(
         }
     }
 
-    private fun validerIkkeSendTrukketKlageBrevHvisVergemålEllerFullmakt(
-        ident: UUID,
-    ) {
+    private fun validerIkkeSendTrukketKlageBrevHvisVergemålEllerFullmakt(ident: UUID) {
         val personopplysninger = personopplysningerService.hentPersonopplysninger(ident)
         val harVerge = personopplysninger.vergemål.isNotEmpty()
         val harFullmakt: Boolean =
@@ -407,7 +443,7 @@ class BrevService(
                             it.gyldigTilOgMed.isEqualOrAfter(
                                 LocalDate.now(),
                             )
-                            )
+                        )
                 }.isNotEmpty()
         feilHvis(harVerge || harFullmakt) {
             "Skal ikke sende brev hvis person er tilknyttet vergemål eller fullmakt"

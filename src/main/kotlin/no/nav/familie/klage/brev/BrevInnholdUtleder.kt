@@ -30,34 +30,35 @@ class BrevInnholdUtleder(
             navn = navn,
             personIdent = ident,
             avsnitt =
-            listOf(
-                AvsnittDto(
-                    deloverskrift = "",
-                    innhold =
-                    "Vi har ${klageMottatt.norskFormat()} fått klagen din på vedtaket om " +
-                        "${visningsnavn(stønadstype, påklagetVedtakDetaljer)} som ble gjort " +
-                        "${påklagetVedtakDetaljer.vedtakstidspunkt.norskFormat()}, " +
-                        "og kommet frem til at vi ikke endrer vedtaket. Nav Klageinstans skal derfor vurdere saken din på nytt.",
+                listOf(
+                    AvsnittDto(
+                        deloverskrift = "",
+                        innhold =
+                            "Vi har ${klageMottatt.norskFormat()} fått klagen din på vedtaket om " +
+                                "${visningsnavn(stønadstype, påklagetVedtakDetaljer)} som ble gjort " +
+                                "${påklagetVedtakDetaljer.vedtakstidspunkt.norskFormat()}, " +
+                                "og kommet frem til at vi ikke endrer vedtaket. Nav Klageinstans skal derfor vurdere saken din på nytt.",
+                    ),
+                    AvsnittDto(
+                        deloverskrift = "",
+                        innhold = "Saksbehandlingstidene finner du på nav.no/saksbehandlingstider.",
+                    ),
+                    AvsnittDto(
+                        deloverskrift = "Dette er vurderingen vi har sendt til Nav Klageinstans",
+                        innhold = instillingKlageinstans,
+                    ),
+                    AvsnittDto(
+                        deloverskrift = "Har du nye opplysninger?",
+                        innhold =
+                            "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via \n${stønadstype.klageUrl()}.",
+                    ),
+                    harDuSpørsmålAvsnitt(stønadstype),
                 ),
-                AvsnittDto(
-                    deloverskrift = "",
-                    innhold = "Saksbehandlingstidene finner du på nav.no/saksbehandlingstider.",
-                ),
-                AvsnittDto(
-                    deloverskrift = "Dette er vurderingen vi har sendt til Nav Klageinstans",
-                    innhold = instillingKlageinstans,
-                ),
-                AvsnittDto(
-                    deloverskrift = "Har du nye opplysninger?",
-                    innhold =
-                    "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via \n${stønadstype.klageUrl()}.",
-                ),
-                harDuSpørsmålAvsnitt(stønadstype),
-            ),
         )
 
     fun lagOpprettholdelseBrev(
         ident: String,
+        saksbehandlerFritekst: String?,
         dokumentasjonOgUtredning: String,
         spørsmåletISaken: String,
         aktuelleRettskilder: String,
@@ -73,7 +74,7 @@ class BrevInnholdUtleder(
             navn = navn,
             personIdent = ident,
             avsnitt =
-                listOf(
+                listOfNotNull(
                     AvsnittDto(
                         deloverskrift = "",
                         innhold =
@@ -82,6 +83,12 @@ class BrevInnholdUtleder(
                                 "${påklagetVedtakDetaljer.vedtakstidspunkt.norskFormat()}, " +
                                 "og kommet frem til at vi ikke endrer vedtaket. Nav Klageinstans skal derfor vurdere saken din på nytt.",
                     ),
+                    saksbehandlerFritekst?.let {
+                        AvsnittDto(
+                            deloverskrift = "",
+                            innhold = saksbehandlerFritekst,
+                        )
+                    },
                     AvsnittDto(
                         deloverskrift = "",
                         innhold = "Saksbehandlingstidene finner du på nav.no/saksbehandlingstider.",
@@ -135,27 +142,27 @@ class BrevInnholdUtleder(
             personIdent = ident,
             navn = navn,
             avsnitt =
-            listOf(
-                AvsnittDto(
-                    deloverskrift = "",
-                    innhold = avvistBrevInnhold.årsakTilAvvisning,
+                listOf(
+                    AvsnittDto(
+                        deloverskrift = "",
+                        innhold = avvistBrevInnhold.årsakTilAvvisning,
+                    ),
+                    AvsnittDto(
+                        deloverskrift = "",
+                        innhold = avvistBrevInnhold.brevtekstFraSaksbehandler,
+                    ),
+                    AvsnittDto(
+                        deloverskrift = "",
+                        innhold = avvistBrevInnhold.lovtekst,
+                    ),
+                    duHarRettTilÅKlageAvsnitt(stønadstype),
+                    AvsnittDto(
+                        deloverskrift = "Du har rett til innsyn",
+                        innhold =
+                            "På nav.no/dittnav kan du se dokumentene i saken din.",
+                    ),
+                    harDuSpørsmålAvsnitt(stønadstype),
                 ),
-                AvsnittDto(
-                    deloverskrift = "",
-                    innhold = avvistBrevInnhold.brevtekstFraSaksbehandler,
-                ),
-                AvsnittDto(
-                    deloverskrift = "",
-                    innhold = avvistBrevInnhold.lovtekst,
-                ),
-                duHarRettTilÅKlageAvsnitt(stønadstype),
-                AvsnittDto(
-                    deloverskrift = "Du har rett til innsyn",
-                    innhold =
-                    "På nav.no/dittnav kan du se dokumentene i saken din.",
-                ),
-                harDuSpørsmålAvsnitt(stønadstype),
-            ),
         )
     }
 
@@ -173,27 +180,27 @@ class BrevInnholdUtleder(
             personIdent = ident,
             navn = navn,
             avsnitt =
-            listOf(
-                AvsnittDto(
-                    deloverskrift = "",
-                    innhold = "Vi har avvist klagen din fordi du ikke har klaget på et vedtak.",
+                listOf(
+                    AvsnittDto(
+                        deloverskrift = "",
+                        innhold = "Vi har avvist klagen din fordi du ikke har klaget på et vedtak.",
+                    ),
+                    AvsnittDto(
+                        deloverskrift = "",
+                        innhold = brevtekstFraSaksbehandler,
+                    ),
+                    AvsnittDto(
+                        deloverskrift = "",
+                        innhold = "Vedtaket er gjort etter forvaltningsloven §§ 28 og 33.",
+                    ),
+                    duHarRettTilÅKlageAvsnitt(stønadstype),
+                    AvsnittDto(
+                        deloverskrift = "Du har rett til innsyn",
+                        innhold =
+                            "På nav.no/dittnav kan du se dokumentene i saken din.",
+                    ),
+                    harDuSpørsmålAvsnitt(stønadstype),
                 ),
-                AvsnittDto(
-                    deloverskrift = "",
-                    innhold = brevtekstFraSaksbehandler,
-                ),
-                AvsnittDto(
-                    deloverskrift = "",
-                    innhold = "Vedtaket er gjort etter forvaltningsloven §§ 28 og 33.",
-                ),
-                duHarRettTilÅKlageAvsnitt(stønadstype),
-                AvsnittDto(
-                    deloverskrift = "Du har rett til innsyn",
-                    innhold =
-                    "På nav.no/dittnav kan du se dokumentene i saken din.",
-                ),
-                harDuSpørsmålAvsnitt(stønadstype),
-            ),
         )
     }
 
@@ -201,37 +208,38 @@ class BrevInnholdUtleder(
         ident: String,
         navn: String,
         stønadstype: Stønadstype,
-    ): FritekstBrevRequestDto {
-        return FritekstBrevRequestDto(
+    ): FritekstBrevRequestDto =
+        FritekstBrevRequestDto(
             overskrift = "Saken din er avsluttet",
             personIdent = ident,
             navn = navn,
             avsnitt =
-            listOf(
-                AvsnittDto(
-                    deloverskrift = "",
-                    innhold = "Du har gitt oss beskjed om at du trekker klagen din på vedtaket om ${stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din.",
+                listOf(
+                    AvsnittDto(
+                        deloverskrift = "",
+                        innhold =
+                            "Du har gitt oss beskjed om at du trekker klagen din på vedtaket om ${stønadstype.name.lowercase()}." +
+                                "Vi har derfor avsluttet saken din.",
+                    ),
+                    harDuSpørsmålAvsnitt(stønadstype),
                 ),
-                harDuSpørsmålAvsnitt(stønadstype),
-            ),
         )
-    }
 
     private fun duHarRettTilÅKlageAvsnitt(stønadstype: Stønadstype) =
         AvsnittDto(
             deloverskrift = "Du har rett til å klage",
             innhold =
-            "Hvis du vil klage, må du gjøre dette innen 6 uker fra den datoen du fikk dette brevet. " +
-                "Du finner skjema og informasjon på ${stønadstype.klageUrl()}.",
+                "Hvis du vil klage, må du gjøre dette innen 6 uker fra den datoen du fikk dette brevet. " +
+                    "Du finner skjema og informasjon på ${stønadstype.klageUrl()}.",
         )
 
     private fun harDuSpørsmålAvsnitt(stønadstype: Stønadstype) =
         AvsnittDto(
             deloverskrift = "Har du spørsmål?",
             innhold =
-            "Du finner mer informasjon på ${stønadstype.lesMerUrl()}.\n\n" +
-                "På nav.no/kontakt kan du chatte eller skrive til oss.\n\n" +
-                "Hvis du ikke finner svar på nav.no kan du ringe oss på telefon 55 55 33 33, hverdager 09.00-15.00.",
+                "Du finner mer informasjon på ${stønadstype.lesMerUrl()}.\n\n" +
+                    "På nav.no/kontakt kan du chatte eller skrive til oss.\n\n" +
+                    "Hvis du ikke finner svar på nav.no kan du ringe oss på telefon 55 55 33 33, hverdager 09.00-15.00.",
         )
 
     private fun visningsnavn(
