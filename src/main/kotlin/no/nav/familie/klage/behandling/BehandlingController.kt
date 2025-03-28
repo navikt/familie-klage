@@ -41,7 +41,6 @@ class BehandlingController(
     private val tilordnetRessursService: TilordnetRessursService,
     private val behandlingPåVentService: BehandlingPåVentService,
     private val oppgaveService: OppgaveService,
-    private val fagsakService: FagsakService,
 ) {
 
     @GetMapping("{behandlingId}")
