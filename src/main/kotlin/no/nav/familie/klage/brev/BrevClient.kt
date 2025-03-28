@@ -7,6 +7,7 @@ import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.felles.util.TekstUtil.norskFormat
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -31,8 +32,18 @@ class BrevClient(
         operations.optionsForAllow(pingUri)
     }
 
-    fun genererHtmlFritekstbrev(fritekstBrev: FritekstBrevRequestDto, saksbehandlerNavn: String, enhet: String): String {
-        val url = URI.create("$familieBrevUri/api/fritekst-brev/html")
+    fun genererHtmlFritekstbrev(
+        fritekstBrev: FritekstBrevRequestDto,
+        saksbehandlerNavn: String,
+        enhet: String,
+        fagsystem: Fagsystem
+    ): String {
+        val url =
+            if (fagsystem == Fagsystem.EF) {
+                URI.create("$familieBrevUri/api/fritekst-brev/html")
+            } else {
+                URI.create("$familieBrevUri/api/fritekst-brev/baks/html")
+            }
         return postForEntity(
             url,
             FritekstBrevRequestMedSignatur(
