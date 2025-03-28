@@ -62,7 +62,7 @@ internal class BehandlingServiceTest {
             behandlingSlot.captured
         }
         every { behandlinghistorikkService.opprettBehandlingshistorikk(any(), any(), any()) } returns mockk()
-        every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any()) } returns mockk()
+        every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any(), any(), any()) } returns mockk()
         every { taskService.save(any()) } returns mockk<Task>()
     }
 

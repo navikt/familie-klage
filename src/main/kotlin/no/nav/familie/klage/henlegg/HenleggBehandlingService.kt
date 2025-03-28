@@ -7,6 +7,7 @@ import no.nav.familie.klage.behandling.domain.StegType.BEHANDLING_FERDIGSTILT
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
+import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.oppgave.OppgaveTaskService
@@ -26,6 +27,7 @@ class HenleggBehandlingService(
     private val behandlinghistorikkService: BehandlingshistorikkService,
     private val oppgaveTaskService: OppgaveTaskService,
     private val taskService: TaskService,
+    private val fagsakService: FagsakService,
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -33,6 +35,7 @@ class HenleggBehandlingService(
     @Transactional
     fun henleggBehandling(behandlingId: UUID, henlagt: HenlagtDto) {
         val behandling = behandlingService.hentBehandling(behandlingId)
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
 
         validerKanHenleggeBehandling(behandling)
 
@@ -48,9 +51,21 @@ class HenleggBehandlingService(
             behandlingId = behandlingId,
             steg = BEHANDLING_FERDIGSTILT,
         )
-        oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
+        oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(
+            behandlingId = behandling.id,
+            eksternFagsakId = fagsak.eksternId,
+            fagsystem = fagsak.fagsystem
+        )
         behandlingRepository.update(henlagtBehandling)
-        taskService.save(taskService.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId)))
+        taskService.save(
+            taskService.save(
+                BehandlingsstatistikkTask.opprettFerdigTask(
+                    behandlingId = behandlingId,
+                    eksternFagsakId = fagsak.eksternId,
+                    fagsak.fagsystem
+                )
+            )
+        )
     }
 
     private fun validerKanHenleggeBehandling(behandling: Behandling) {

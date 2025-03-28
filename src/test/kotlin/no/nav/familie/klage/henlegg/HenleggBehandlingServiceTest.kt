@@ -11,6 +11,7 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.kabal.KlageresultatRepository
@@ -22,6 +23,7 @@ import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak.TRUKKET_TILBAKE
 import no.nav.familie.prosessering.domene.Task
@@ -45,6 +47,7 @@ internal class HenleggBehandlingServiceTest {
     val brevService = mockk<BrevService>()
     val klageresultatRepository = mockk<KlageresultatRepository>()
     val fagsystemVedtakService = mockk<FagsystemVedtakService>()
+    val fagsakMock = mockk<Fagsak>()
 
     val behandlingService = BehandlingService(
         behandlingRepository,
@@ -59,6 +62,7 @@ internal class HenleggBehandlingServiceTest {
         behandlinghistorikkService,
         oppgaveTaskService,
         taskService,
+        fagsakService,
     )
 
     val behandlingSlot = slot<Behandling>()
@@ -72,8 +76,11 @@ internal class HenleggBehandlingServiceTest {
             behandlingSlot.captured
         }
         every { behandlinghistorikkService.opprettBehandlingshistorikk(any(), any(), any()) } returns mockk()
-        every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any()) } returns mockk()
+        every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any(), any(), any()) } returns mockk()
         every { taskService.save(any()) } returns mockk<Task>()
+        every { fagsakMock.eksternId } returns "123"
+        every { fagsakMock.fagsystem } returns Fagsystem.BA
+        every { fagsakService.hentFagsakForBehandling(any()) } returns fagsakMock
     }
 
     @AfterEach
@@ -112,7 +119,7 @@ internal class HenleggBehandlingServiceTest {
         internal fun `skal kunne henlegge behandling`() {
             val behandling = behandling(fagsak(), status = BehandlingStatus.UTREDES)
             henleggOgForventOk(behandling, henlagtÅrsak = HenlagtÅrsak.FEILREGISTRERT)
-            verify(exactly = 1) { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any()) }
+            verify(exactly = 1) { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any(), any(), any()) }
         }
 
         @Test
@@ -138,7 +145,7 @@ internal class HenleggBehandlingServiceTest {
                     historikkHendelse = null,
                 )
             }
-            verify(exactly = 1) { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any()) }
+            verify(exactly = 1) { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(any(), any(), any()) }
         }
     }
 }

@@ -3,6 +3,7 @@ package no.nav.familie.klage.behandlingsstatistikk
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
@@ -37,48 +38,60 @@ class BehandlingsstatistikkTask(
 
     companion object {
 
-        fun opprettMottattTask(behandlingId: UUID): Task =
+        fun opprettMottattTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem): Task =
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.MOTTATT,
                 hendelseTidspunkt = LocalDateTime.now(),
                 gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(),
+                eksternFagsakId = eksternFagsakId,
+                fagsystem = fagsystem
             )
 
-        fun opprettPåbegyntTask(behandlingId: UUID): Task =
+        fun opprettPåbegyntTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem): Task =
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.PÅBEGYNT,
                 hendelseTidspunkt = LocalDateTime.now(),
                 gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true),
+                eksternFagsakId = eksternFagsakId,
+                fagsystem = fagsystem
             )
 
-        fun opprettVenterTask(behandlingId: UUID): Task =
+        fun opprettVenterTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem): Task =
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.VENTER,
                 hendelseTidspunkt = LocalDateTime.now(),
                 gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(),
+                eksternFagsakId = eksternFagsakId,
+                fagsystem = fagsystem
             )
 
-        fun opprettFerdigTask(behandlingId: UUID): Task =
+        fun opprettFerdigTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem): Task =
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.FERDIG,
                 hendelseTidspunkt = LocalDateTime.now(),
                 gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true),
+                eksternFagsakId = eksternFagsakId,
+                fagsystem = fagsystem
             )
 
         fun opprettSendtTilKATask(
             behandlingId: UUID,
             hendelseTidspunkt: LocalDateTime = LocalDateTime.now(),
             gjeldendeSaksbehandler: String = SikkerhetContext.hentSaksbehandler(true),
+            eksternFagsakId: String,
+            fagsystem: Fagsystem
         ): Task =
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.SENDT_TIL_KA,
                 hendelseTidspunkt = hendelseTidspunkt,
                 gjeldendeSaksbehandler = gjeldendeSaksbehandler,
+                eksternFagsakId = eksternFagsakId,
+                fagsystem = fagsystem
             )
 
         private fun opprettTask(
@@ -86,6 +99,8 @@ class BehandlingsstatistikkTask(
             hendelse: BehandlingsstatistikkHendelse,
             hendelseTidspunkt: LocalDateTime = LocalDateTime.now(),
             gjeldendeSaksbehandler: String,
+            eksternFagsakId: String,
+            fagsystem: Fagsystem,
         ): Task =
             Task(
                 type = TYPE,
@@ -102,6 +117,8 @@ class BehandlingsstatistikkTask(
                     this["behandlingId"] = behandlingId.toString()
                     this["hendelse"] = hendelse.name
                     this["hendelseTidspunkt"] = hendelseTidspunkt.toString()
+                    this["eksternFagsakId"] = eksternFagsakId
+                    this["fagsystem"] = fagsystem.name
                 },
             )
 

@@ -21,6 +21,7 @@ import no.nav.familie.prosessering.domene.Task
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import java.util.Properties
 import java.util.UUID
 
 @Service
@@ -74,10 +75,14 @@ class OpprettKabalEventOppgaveTask(
     companion object {
         const val TYPE = "opprettOppgaveForKlagehendelse"
 
-        fun opprettTask(opprettOppgavePayload: OpprettOppgavePayload): Task {
+        fun opprettTask(opprettOppgavePayload: OpprettOppgavePayload, eksternFagsakId: String, fagsystem: Fagsystem): Task {
             return Task(
-                TYPE,
-                objectMapper.writeValueAsString(opprettOppgavePayload),
+                type = TYPE,
+                payload = objectMapper.writeValueAsString(opprettOppgavePayload),
+                properties = Properties().apply {
+                    this["eksternFagsakId"] = eksternFagsakId
+                    this["fagsystem"] = fagsystem.name
+                }
             )
         }
     }
