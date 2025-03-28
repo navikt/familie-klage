@@ -135,7 +135,6 @@ class BehandlingController(
 
     @GetMapping("{behandlingId}/hent-klager-ikke-medhold-formkrav-avvist")
     fun hentKlager(@PathVariable behandlingId: UUID): Ressurs<List<Klagebehandlingsresultat>> {
-        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
-        return Ressurs.success(behandlingService.finnKlagebehandlingsresultat(fagsak.eksternId, fagsak.fagsystem).filter { klage -> klage.resultat == BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST })
+        return Ressurs.success(behandlingService.hentKlagerIkkeMedholdFormkravAvvist(behandlingId))
     }
 }

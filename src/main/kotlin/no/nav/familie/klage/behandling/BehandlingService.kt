@@ -23,6 +23,7 @@ import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.tilDto
 import no.nav.familie.klage.personopplysninger.pdl.secureLogger
 import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
@@ -172,5 +173,10 @@ class BehandlingService(
                 "fra ${behandling.status} til $status",
         )
         return behandlingRepository.update(t = behandling.copy(status = status))
+    }
+
+    fun hentKlagerIkkeMedholdFormkravAvvist(behandlingId: UUID): List<Klagebehandlingsresultat> {
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
+        return finnKlagebehandlingsresultat(fagsak.eksternId, fagsak.fagsystem).filter { klage -> klage.resultat == BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST }
     }
 }
