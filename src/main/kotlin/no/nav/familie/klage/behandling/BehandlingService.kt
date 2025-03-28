@@ -23,6 +23,7 @@ import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.tilDto
 import no.nav.familie.klage.personopplysninger.pdl.secureLogger
 import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
@@ -96,7 +97,7 @@ class BehandlingService(
             "Kan ikke oppdatere påklaget vedtak siden behandlingen er låst for videre saksbehandling"
         }
         feilHvisIkke(påklagetVedtakDto.erGyldig()) {
-            "Påklaget vedtak er i en ugyldig tilstand: EksternFagsystemBehandlingId:${påklagetVedtakDto.eksternFagsystemBehandlingId}, PåklagetVedtakType: ${påklagetVedtakDto.påklagetVedtakstype}"
+            "Påklaget vedtak er i en ugyldig tilstand: EksternFagsystemBehandlingId:${påklagetVedtakDto.eksternFagsystemBehandlingId}, InternKlagebehandlingId:${påklagetVedtakDto.internKlagebehandlingId}, PåklagetVedtakType: ${påklagetVedtakDto.påklagetVedtakstype}"
         }
 
         feilHvis(påklagetVedtakDto.manglerVedtaksDato()) {
@@ -121,6 +122,9 @@ class BehandlingService(
         if (påklagetVedtakDto.påklagetVedtakstype.harManuellVedtaksdato()) {
             return tilPåklagetVedtakDetaljerMedManuellDato(påklagetVedtakDto)
         }
+        if (påklagetVedtakDto.påklagetVedtakstype === PåklagetVedtakstype.AVVIST_KLAGE) {
+            return tilPåklagetKlageAvvistVedtak(påklagetVedtakDto)
+        }
         return påklagetVedtakDto.eksternFagsystemBehandlingId?.let {
             fagsystemVedtakService.hentFagsystemVedtakForPåklagetBehandlingId(behandlingId, it)
                 .tilPåklagetVedtakDetaljer()
@@ -131,9 +135,21 @@ class BehandlingService(
         PåklagetVedtakDetaljer(
             fagsystemType = utledFagsystemType(påklagetVedtakDto),
             eksternFagsystemBehandlingId = null,
+            internKlagebehandlingId = null,
             behandlingstype = "",
             resultat = "",
             vedtakstidspunkt = påklagetVedtakDto.manuellVedtaksdato?.atStartOfDay() ?: error("Mangler vedtaksdato"),
+            regelverk = påklagetVedtakDto.regelverk,
+        )
+
+    private fun tilPåklagetKlageAvvistVedtak(påklagetVedtakDto: PåklagetVedtakDto) =
+        PåklagetVedtakDetaljer(
+            fagsystemType = utledFagsystemType(påklagetVedtakDto),
+            eksternFagsystemBehandlingId = null,
+            internKlagebehandlingId = påklagetVedtakDto.internKlagebehandlingId,
+            behandlingstype = "Klage",
+            resultat = "Ikke medhold formkrav avvist",
+            vedtakstidspunkt = hentBehandling(UUID.fromString(påklagetVedtakDto.internKlagebehandlingId)).vedtakDato ?: error("Mangler vedtaksdato"),
             regelverk = påklagetVedtakDto.regelverk,
         )
 
@@ -142,6 +158,7 @@ class BehandlingService(
             PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING -> FagsystemType.TILBAKEKREVING
             PåklagetVedtakstype.UTESTENGELSE -> FagsystemType.UTESTENGELSE
             PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK -> FagsystemType.ORDNIÆR
+            PåklagetVedtakstype.AVVIST_KLAGE -> FagsystemType.ORDNIÆR
             else -> error("Kan ikke utlede fagsystemType for påklagetVedtakType ${påklagetVedtakDto.påklagetVedtakstype}")
         }
     }
@@ -156,5 +173,10 @@ class BehandlingService(
                 "fra ${behandling.status} til $status",
         )
         return behandlingRepository.update(t = behandling.copy(status = status))
+    }
+
+    fun hentKlagerIkkeMedholdFormkravAvvist(behandlingId: UUID): List<Klagebehandlingsresultat> {
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
+        return finnKlagebehandlingsresultat(fagsak.eksternId, fagsak.fagsystem).filter { klage -> klage.resultat == BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST }
     }
 }

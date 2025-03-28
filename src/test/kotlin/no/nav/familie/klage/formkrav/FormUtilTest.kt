@@ -14,9 +14,10 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 internal class FormUtilTest {
-    val påklagetVedtakMedBehandling = PåklagetVedtakDto(eksternFagsystemBehandlingId = "123", PåklagetVedtakstype.VEDTAK)
-    val påklagetVedtakUtenBehandling = PåklagetVedtakDto(eksternFagsystemBehandlingId = null, PåklagetVedtakstype.UTEN_VEDTAK)
-    val påklagetVedtakIkkeValgt = PåklagetVedtakDto(eksternFagsystemBehandlingId = null, PåklagetVedtakstype.IKKE_VALGT)
+    val påklagetVedtakMedBehandling = PåklagetVedtakDto(eksternFagsystemBehandlingId = "123", null, PåklagetVedtakstype.VEDTAK)
+    val påklagetVedtakMedKlage = PåklagetVedtakDto(eksternFagsystemBehandlingId = null, "123", PåklagetVedtakstype.AVVIST_KLAGE)
+    val påklagetVedtakUtenBehandling = PåklagetVedtakDto(eksternFagsystemBehandlingId = null, null, PåklagetVedtakstype.UTEN_VEDTAK)
+    val påklagetVedtakIkkeValgt = PåklagetVedtakDto(eksternFagsystemBehandlingId = null, null, PåklagetVedtakstype.IKKE_VALGT)
 
     val behandlingId = UUID.randomUUID()
     val oppfyltForm = oppfyltForm(behandlingId)
@@ -33,6 +34,7 @@ internal class FormUtilTest {
         @Test
         internal fun `alle formkrav er ferdigutfylte`() {
             assertThat(utledFormresultat(oppfyltForm, påklagetVedtakMedBehandling)).isEqualTo(FormVilkår.OPPFYLT)
+            assertThat(utledFormresultat(oppfyltForm, påklagetVedtakMedKlage)).isEqualTo(FormVilkår.OPPFYLT)
             assertThat(utledFormresultat(oppfyltForm, påklagetVedtakUtenBehandling)).isEqualTo(FormVilkår.OPPFYLT)
             assertThat(utledFormresultat(ikkeOppfyltForm, påklagetVedtakMedBehandling)).isEqualTo(FormVilkår.IKKE_OPPFYLT)
             assertThat(utledFormresultat(ikkeOppfyltForm, påklagetVedtakUtenBehandling)).isEqualTo(FormVilkår.IKKE_OPPFYLT)
@@ -41,9 +43,11 @@ internal class FormUtilTest {
         @Test
         internal fun `et eller flere formkrav er ikke utfylt`() {
             assertThat(utledFormresultat(ikkeOppfyltForm, påklagetVedtakMedBehandling)).isEqualTo(FormVilkår.IKKE_OPPFYLT)
+            assertThat(utledFormresultat(ikkeOppfyltForm, påklagetVedtakMedKlage)).isEqualTo(FormVilkår.IKKE_OPPFYLT)
             assertThat(utledFormresultat(ikkeOppfyltForm, påklagetVedtakUtenBehandling)).isEqualTo(FormVilkår.IKKE_OPPFYLT)
             assertThat(utledFormresultat(ikkeOppfyltForm, påklagetVedtakIkkeValgt)).isEqualTo(FormVilkår.IKKE_SATT)
             assertThat(utledFormresultat(ikkeFerdigUtfyltForm, påklagetVedtakMedBehandling)).isEqualTo(FormVilkår.IKKE_SATT)
+            assertThat(utledFormresultat(ikkeFerdigUtfyltForm, påklagetVedtakMedKlage)).isEqualTo(FormVilkår.IKKE_SATT)
             assertThat(utledFormresultat(ikkeFerdigUtfyltForm, påklagetVedtakUtenBehandling)).isEqualTo(FormVilkår.IKKE_SATT)
             assertThat(utledFormresultat(ikkeFerdigUtfyltForm, påklagetVedtakIkkeValgt)).isEqualTo(FormVilkår.IKKE_SATT)
         }

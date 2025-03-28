@@ -94,6 +94,7 @@ class OpprettKabalEventOppgaveTaskTest {
                     påklagetVedtakDetaljer = PåklagetVedtakDetaljer(
                         fagsystemType = FagsystemType.ORDNIÆR,
                         eksternFagsystemBehandlingId = "100224307",
+                        internKlagebehandlingId = null,
                         behandlingstype = "Førstegangsbehandling",
                         resultat = "Innvilget",
                         vedtakstidspunkt = LocalDateTime.of(2025, 2, 18, 8, 40, 23),
@@ -168,6 +169,7 @@ class OpprettKabalEventOppgaveTaskTest {
                     påklagetVedtakDetaljer = PåklagetVedtakDetaljer(
                         fagsystemType = FagsystemType.ORDNIÆR,
                         eksternFagsystemBehandlingId = "100224307",
+                        internKlagebehandlingId = null,
                         behandlingstype = "Førstegangsbehandling",
                         resultat = "Innvilget",
                         vedtakstidspunkt = LocalDateTime.of(2025, 2, 18, 8, 40, 23),
@@ -255,6 +257,7 @@ class OpprettKabalEventOppgaveTaskTest {
                     påklagetVedtakDetaljer = PåklagetVedtakDetaljer(
                         fagsystemType = FagsystemType.ORDNIÆR,
                         eksternFagsystemBehandlingId = "100224307",
+                        internKlagebehandlingId = null,
                         behandlingstype = "Førstegangsbehandling",
                         resultat = "Innvilget",
                         vedtakstidspunkt = LocalDateTime.of(2025, 2, 18, 8, 40, 23),
@@ -342,6 +345,7 @@ class OpprettKabalEventOppgaveTaskTest {
                     påklagetVedtakDetaljer = PåklagetVedtakDetaljer(
                         fagsystemType = FagsystemType.ORDNIÆR,
                         eksternFagsystemBehandlingId = "100224307",
+                        internKlagebehandlingId = null,
                         behandlingstype = "Førstegangsbehandling",
                         resultat = "Innvilget",
                         vedtakstidspunkt = LocalDateTime.of(2025, 2, 18, 8, 40, 23),
