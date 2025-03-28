@@ -30,6 +30,11 @@
     "begrunnelseOmgjøring" : "begrunnelse",
     "hjemmel" : "BT_FEM",
     "innstillingKlageinstans" : "innstillingKlageinstans",
+    "dokumentasjonOgUtredning" : "dokumentasjonOgUtredning",
+    "spørsmåletISaken" : "spørsmåletISaken",
+    "aktuelleRettskilder" : "aktuelleRettskilder",
+    "klagersAnførsler" : "klagersAnførsler",
+    "vurderingAvKlagen" : "vurderingAvKlagen",
     "interntNotat" : "interntNotat"
   }
 }

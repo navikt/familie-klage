@@ -64,6 +64,11 @@ class BlankettService(
                 begrunnelseOmgjøring = it.begrunnelseOmgjøring,
                 hjemmel = it.hjemmel,
                 innstillingKlageinstans = it.innstillingKlageinstans,
+                dokumentasjonOgUtredning = it.dokumentasjonOgUtredning,
+                spørsmåletISaken = it.spørsmåletISaken,
+                aktuelleRettskilder = it.aktuelleRettskilder,
+                klagersAnførsler = it.klagersAnførsler,
+                vurderingAvKlagen = it.vurderingAvKlagen,
                 interntNotat = it.interntNotat,
             )
         }
