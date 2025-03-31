@@ -39,7 +39,7 @@ class BrevClient(
         fritekstBrev: FritekstBrevRequestDto,
         saksbehandlerNavn: String,
         enhet: String,
-        fagsystem: Fagsystem
+        fagsystem: Fagsystem,
     ): String {
         val url =
             if (fagsystem in setOf(Fagsystem.BA, Fagsystem.KS) && featureToggleService.isEnabled(Toggle.BRUK_NYTT_BREV_BA_KS)) {
