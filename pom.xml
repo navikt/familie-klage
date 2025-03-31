@@ -117,7 +117,7 @@
         <dependency>
             <groupId>no.nav.familie.felles</groupId>
             <artifactId>unleash</artifactId>
-            <version>3.20250320122046_7ca9dae</version>
+            <version>3.20250330150138_0502cea</version>
         </dependency>
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
