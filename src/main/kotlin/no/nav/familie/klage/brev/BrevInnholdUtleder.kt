@@ -122,6 +122,7 @@ class BrevInnholdUtleder(
                         innhold =
                             "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via \n${stønadstype.klageUrl()}.",
                     ),
+                    duHarRettTilInnsynAvsnitt(stønadstype),
                     harDuSpørsmålAvsnitt(stønadstype),
                 ),
         )
@@ -156,11 +157,7 @@ class BrevInnholdUtleder(
                         innhold = avvistBrevInnhold.lovtekst,
                     ),
                     duHarRettTilÅKlageAvsnitt(stønadstype),
-                    AvsnittDto(
-                        deloverskrift = "Du har rett til innsyn",
-                        innhold =
-                            "På nav.no/dittnav kan du se dokumentene i saken din.",
-                    ),
+                    duHarRettTilInnsynAvsnitt(stønadstype),
                     harDuSpørsmålAvsnitt(stønadstype),
                 ),
         )
@@ -194,15 +191,24 @@ class BrevInnholdUtleder(
                         innhold = "Vedtaket er gjort etter forvaltningsloven §§ 28 og 33.",
                     ),
                     duHarRettTilÅKlageAvsnitt(stønadstype),
-                    AvsnittDto(
-                        deloverskrift = "Du har rett til innsyn",
-                        innhold =
-                            "På nav.no/dittnav kan du se dokumentene i saken din.",
-                    ),
+                    duHarRettTilInnsynAvsnitt(stønadstype),
                     harDuSpørsmålAvsnitt(stønadstype),
                 ),
         )
     }
+
+    private fun duHarRettTilInnsynAvsnitt(stønadstype: Stønadstype): AvsnittDto =
+        if (stønadstype.erBarnetrygdEllerKontantstøtte()) {
+            AvsnittDto(
+                deloverskrift = "Du har rett til innsyn i saken din",
+                innhold = "Du har rett til å se dokumentene i saken din. Dette følger av forvaltningsloven § 18. Kontakt oss om du vil se dokumentene i saken din. Ta kontakt på nav.no/kontakt eller på telefon 55 55 33 33 <34>. Du kan lese mer om innsynsretten på nav.no/personvernerklaering.",
+            )
+        } else {
+            AvsnittDto(
+                deloverskrift = "Du har rett til innsyn",
+                innhold = "På nav.no/dittnav kan du se dokumentene i saken din.",
+            )
+        }
 
     fun lagHenleggelsesbrevBaksInnhold(
         ident: String,
@@ -214,13 +220,12 @@ class BrevInnholdUtleder(
             personIdent = ident,
             navn = navn,
             avsnitt =
-                listOf(
+                listOfNotNull(
                     AvsnittDto(
                         deloverskrift = "",
-                        innhold =
-                            "Du har gitt oss beskjed om at du trekker klagen din på vedtaket om ${stønadstype.name.lowercase()}." +
-                                "Vi har derfor avsluttet saken din.",
+                        innhold = "Du har gitt oss beskjed om at du trekker klagen din på vedtaket om ${stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din.",
                     ),
+                    if (stønadstype.erBarnetrygdEllerKontantstøtte()) duHarRettTilInnsynAvsnitt(stønadstype) else null,
                     harDuSpørsmålAvsnitt(stønadstype),
                 ),
         )
@@ -274,5 +279,16 @@ class BrevInnholdUtleder(
             -> "nav.no/klage#stonad-til-skolepenger-for-enslig-mor-eller-far"
             Stønadstype.BARNETRYGD -> "nav.no/klage#barnetrygd"
             Stønadstype.KONTANTSTØTTE -> "nav.no/klage#kontantstotte"
+        }
+
+    private fun Stønadstype.erBarnetrygdEllerKontantstøtte() =
+        when (this) {
+            Stønadstype.OVERGANGSSTØNAD,
+            Stønadstype.BARNETILSYN,
+            Stønadstype.SKOLEPENGER,
+            -> false
+            Stønadstype.BARNETRYGD,
+            Stønadstype.KONTANTSTØTTE,
+            -> true
         }
 }

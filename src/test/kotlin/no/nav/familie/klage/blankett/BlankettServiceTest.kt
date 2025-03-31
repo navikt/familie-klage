@@ -81,6 +81,11 @@ internal class BlankettServiceTest {
             hjemmel = Hjemmel.BT_FEM,
             interntNotat = "interntNotat",
             innstillingKlageinstans = "innstillingKlageinstans",
+            dokumentasjonOgUtredning = "dokumentasjonOgUtredning",
+            spørsmåletISaken = "spørsmåletISaken",
+            aktuelleRettskilder = "aktuelleRettskilder",
+            klagersAnførsler = "klagersAnførsler",
+            vurderingAvKlagen = "vurderingAvKlagen",
         )
         every { brevClient.genererBlankett(capture(blankettRequestSpot)) } returns byteArrayOf()
         every { fagsystemVedtakService.hentFagsystemVedtak(behandlingId) } returns listOf(
