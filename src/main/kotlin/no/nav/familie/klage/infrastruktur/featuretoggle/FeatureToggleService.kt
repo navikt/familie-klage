@@ -26,6 +26,7 @@ enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
         "familie-klage.nav-24445-sett-behandlingstema-til-klage",
         "Release",
     ),
+    BRUK_NYTT_BREV_BA_KS("familie-klage.bruk-nytt-brev-ba-ks", "Release"),
     ;
 
     companion object {
