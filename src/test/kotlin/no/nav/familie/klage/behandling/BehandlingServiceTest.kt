@@ -5,6 +5,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.behandling.domain.Klagebehandlingsresultat
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
@@ -21,16 +22,20 @@ import no.nav.familie.klage.testutil.BrukerContextUtil.mockBrukerContext
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.klage.testutil.DomainUtil.fagsystemVedtak
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.UUID
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 internal class BehandlingServiceTest {
@@ -134,6 +139,48 @@ internal class BehandlingServiceTest {
         }
     }
 
+    @Nested
+    inner class hentklagebehandlingsresultat {
+
+        @Test
+        fun `Skal ikke filtrere bort Klagebehandlingsresultat hvis behandlingResultat er IKKE_MEDHOLD_FORMKRAV_AVVIST`() {
+            val behandlingId = UUID.randomUUID()
+            val fagsak = fagsak()
+            val klagebehandlingsresultat = listOf(
+                lagKlageBehandlingsresultat(BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST),
+            )
+
+            val behandling = behandling(id = behandlingId, fagsak = fagsak, status = BehandlingStatus.UTREDES)
+            every { fagsakService.hentFagsakForBehandling(behandlingId) } returns fagsak
+            every { behandlingService.finnKlagebehandlingsresultat(any(), any()) } returns klagebehandlingsresultat
+
+            val filtrertListeKlager = behandlingService.hentKlagerIkkeMedholdFormkravAvvist(behandling.id)
+
+            assertEquals(1, filtrertListeKlager.size)
+            assertEquals(BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST, filtrertListeKlager[0].resultat)
+        }
+
+        @Test
+        fun `Skal filtrere bort Klagebehandlingsresultat hvis behandlingResultat ikke er IKKE_MEDHOLD_FORMKRAV_AVVIST`() {
+            val behandlingId = UUID.randomUUID()
+            val fagsak = fagsak()
+            val klagebehandlingsresultat = listOf(
+                lagKlageBehandlingsresultat(BehandlingResultat.MEDHOLD),
+                lagKlageBehandlingsresultat(BehandlingResultat.IKKE_SATT),
+                lagKlageBehandlingsresultat(BehandlingResultat.IKKE_MEDHOLD),
+                lagKlageBehandlingsresultat(BehandlingResultat.HENLAGT),
+            )
+
+            val behandling = behandling(id = behandlingId, fagsak = fagsak, status = BehandlingStatus.UTREDES)
+            every { fagsakService.hentFagsakForBehandling(behandlingId) } returns fagsak
+            every { behandlingService.finnKlagebehandlingsresultat(any(), any()) } returns klagebehandlingsresultat
+
+            val filtrertListeKlager = behandlingService.hentKlagerIkkeMedholdFormkravAvvist(behandling.id)
+
+            assertEquals(0, filtrertListeKlager.size)
+        }
+    }
+
     fun mockHentFagsystemVedtak(
         behandling: Behandling,
         eksternBehandlingId: String,
@@ -142,5 +189,20 @@ internal class BehandlingServiceTest {
         every {
             fagsystemVedtakService.hentFagsystemVedtakForPåklagetBehandlingId(behandling.id, eksternBehandlingId)
         } returns fagsystemVedtak
+    }
+
+    fun lagKlageBehandlingsresultat(resultat: BehandlingResultat): Klagebehandlingsresultat {
+        return Klagebehandlingsresultat(
+            id = UUID.randomUUID(),
+            fagsakId = UUID.randomUUID(),
+            fagsakPersonId = UUID.randomUUID(),
+            status = BehandlingStatus.FERDIGSTILT,
+            opprettet = LocalDateTime.now(),
+            mottattDato = LocalDate.now(),
+            resultat = resultat,
+            årsak = null,
+            vedtaksdato = null,
+            henlagtÅrsak = null,
+        )
     }
 }
