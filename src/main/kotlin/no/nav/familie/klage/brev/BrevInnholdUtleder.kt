@@ -101,7 +101,8 @@ class BrevInnholdUtleder(
                     ),
                     saksbehandlerFritekst?.let {
                         AvsnittDto(
-                            deloverskrift = "",
+                            deloverskrift = "Unntak for klagefristen er oppfylt",
+                            deloverskriftHeading = Heading.H4,
                             innhold = saksbehandlerFritekst,
                         )
                     },
