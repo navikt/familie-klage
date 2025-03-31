@@ -140,7 +140,7 @@ internal class BehandlingServiceTest {
     }
 
     @Nested
-    inner class hentklagebehandlingsresultat {
+    inner class Hentklagebehandlingsresultat {
 
         @Test
         fun `Skal ikke filtrere bort Klagebehandlingsresultat hvis behandlingResultat er IKKE_MEDHOLD_FORMKRAV_AVVIST`() {
