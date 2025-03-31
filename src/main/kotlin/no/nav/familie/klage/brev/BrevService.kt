@@ -140,11 +140,11 @@ class BrevService(
                     "Kan ikke opprette brev til klageinstansen når det ikke er valgt et påklaget vedtak"
                 }
                 if (fagsak.fagsystem == Fagsystem.EF) {
-                    val instillingKlageinstans = vurdering?.innstillingKlageinstans
-                        ?: throw Feil("Behandling med resultat $behandlingResultat mangler instillingKlageinstans for generering av brev")
+                    val innstillingKlageinstans = vurdering?.innstillingKlageinstans
+                        ?: throw Feil("Behandling med resultat $behandlingResultat mangler innstillingKlageinstans for generering av brev")
                     brevInnholdUtleder.lagOpprettholdelseBrev(
                         ident = fagsak.hentAktivIdent(),
-                        instillingKlageinstans = instillingKlageinstans,
+                        innstillingKlageinstans = innstillingKlageinstans,
                         navn = navn,
                         stønadstype = fagsak.stønadstype,
                         påklagetVedtakDetaljer = påklagetVedtakDetaljer,

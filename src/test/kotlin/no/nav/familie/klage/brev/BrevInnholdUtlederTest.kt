@@ -67,7 +67,7 @@ internal class BrevInnholdUtlederTest {
             // Arrange
             val ident = "12345678903"
             val navn = "Navn Navnesen"
-            val instillingKlageinstans = "Innhold for innstilling klageinstans"
+            val innstillingKlageinstans = "Innhold for innstilling klageinstans"
 
             val påklagetVedtakDetaljer = påklagetVedtakDetaljer(
                 eksternFagsystemBehandlingId = "123",
@@ -78,7 +78,7 @@ internal class BrevInnholdUtlederTest {
             val opprettholdelsesbrev =
                 brevInnholdUtleder.lagOpprettholdelseBrev(
                     ident = ident,
-                    instillingKlageinstans = instillingKlageinstans,
+                    innstillingKlageinstans = innstillingKlageinstans,
                     navn = navn,
                     stønadstype = stønadstype,
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
@@ -103,7 +103,7 @@ internal class BrevInnholdUtlederTest {
             })
             assertThat(opprettholdelsesbrev.avsnitt.elementAt(2)).satisfies({
                 assertThat(it.deloverskrift).isEqualTo("Dette er vurderingen vi har sendt til Nav Klageinstans")
-                assertThat(it.innhold).isEqualTo(instillingKlageinstans)
+                assertThat(it.innhold).isEqualTo(innstillingKlageinstans)
             })
             assertThat(opprettholdelsesbrev.avsnitt.elementAt(3)).satisfies({
                 assertThat(it.deloverskrift).isEqualTo("Har du nye opplysninger?")
@@ -131,7 +131,7 @@ internal class BrevInnholdUtlederTest {
             // Arrange
             val ident = "12345678903"
             val navn = "Navn Navnesen"
-            val instillingKlageinstans = "Innhold for innstilling klageinstans"
+            val innstillingKlageinstans = "Innhold for innstilling klageinstans"
 
             val påklagetVedtakDetaljer =
                 påklagetVedtakDetaljer(
@@ -144,7 +144,7 @@ internal class BrevInnholdUtlederTest {
             val opprettholdelsesbrev =
                 brevInnholdUtleder.lagOpprettholdelseBrev(
                     ident = ident,
-                    instillingKlageinstans = instillingKlageinstans,
+                    innstillingKlageinstans = innstillingKlageinstans,
                     navn = navn,
                     stønadstype = stønadstype,
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
@@ -169,7 +169,7 @@ internal class BrevInnholdUtlederTest {
             })
             assertThat(opprettholdelsesbrev.avsnitt.elementAt(2)).satisfies({
                 assertThat(it.deloverskrift).isEqualTo("Dette er vurderingen vi har sendt til Nav Klageinstans")
-                assertThat(it.innhold).isEqualTo(instillingKlageinstans)
+                assertThat(it.innhold).isEqualTo(innstillingKlageinstans)
             })
             assertThat(opprettholdelsesbrev.avsnitt.elementAt(3)).satisfies({
                 assertThat(it.deloverskrift).isEqualTo("Har du nye opplysninger?")
@@ -197,7 +197,7 @@ internal class BrevInnholdUtlederTest {
             // Arrange
             val ident = "12345678903"
             val navn = "Navn Navnesen"
-            val instillingKlageinstans = "Innhold for innstilling klageinstans"
+            val innstillingKlageinstans = "Innhold for innstilling klageinstans"
 
             val påklagetVedtakDetaljer =
                 påklagetVedtakDetaljer(
@@ -210,7 +210,7 @@ internal class BrevInnholdUtlederTest {
             val opprettholdelsesbrev =
                 brevInnholdUtleder.lagOpprettholdelseBrev(
                     ident = ident,
-                    instillingKlageinstans = instillingKlageinstans,
+                    innstillingKlageinstans = innstillingKlageinstans,
                     navn = navn,
                     stønadstype = stønadstype,
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
@@ -235,7 +235,7 @@ internal class BrevInnholdUtlederTest {
             })
             assertThat(opprettholdelsesbrev.avsnitt.elementAt(2)).satisfies({
                 assertThat(it.deloverskrift).isEqualTo("Dette er vurderingen vi har sendt til Nav Klageinstans")
-                assertThat(it.innhold).isEqualTo(instillingKlageinstans)
+                assertThat(it.innhold).isEqualTo(innstillingKlageinstans)
             })
             assertThat(opprettholdelsesbrev.avsnitt.elementAt(3)).satisfies({
                 assertThat(it.deloverskrift).isEqualTo("Har du nye opplysninger?")
