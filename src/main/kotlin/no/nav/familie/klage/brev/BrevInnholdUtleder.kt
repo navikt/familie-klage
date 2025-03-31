@@ -60,7 +60,7 @@ class BrevInnholdUtleder(
 
     fun lagOpprettholdelseBrev(
         ident: String,
-        saksbehandlerFritekst: String?,
+        klagefristUnntakBegrunnelse: String?,
         dokumentasjonOgUtredning: String,
         spørsmåletISaken: String,
         aktuelleRettskilder: String,
@@ -99,11 +99,11 @@ class BrevInnholdUtleder(
                         deloverskriftHeading = Heading.H3,
                         innhold = dokumentasjonOgUtredning,
                     ),
-                    saksbehandlerFritekst?.let {
+                    klagefristUnntakBegrunnelse?.let {
                         AvsnittDto(
                             deloverskrift = "Unntak for klagefristen er oppfylt",
                             deloverskriftHeading = Heading.H4,
-                            innhold = saksbehandlerFritekst,
+                            innhold = klagefristUnntakBegrunnelse,
                         )
                     },
                     AvsnittDto(

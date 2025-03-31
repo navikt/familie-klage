@@ -189,7 +189,7 @@ class BrevService(
 
                     brevInnholdUtleder.lagOpprettholdelseBrev(
                         ident = fagsak.hentAktivIdent(),
-                        saksbehandlerFritekst = if (klagefristUnntakOppfylt) formkrav.brevtekst else null,
+                        klagefristUnntakBegrunnelse = if (klagefristUnntakOppfylt) formkrav.brevtekst else null,
                         dokumentasjonOgUtredning = dokumentasjonOgUtredning,
                         spørsmåletISaken = spørsmåletISaken,
                         aktuelleRettskilder = aktuelleRettskilder,
