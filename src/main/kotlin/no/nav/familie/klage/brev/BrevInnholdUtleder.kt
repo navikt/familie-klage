@@ -21,7 +21,7 @@ class BrevInnholdUtleder(
 ) {
     fun lagOpprettholdelseBrev(
         ident: String,
-        instillingKlageinstans: String,
+        innstillingKlageinstans: String,
         navn: String,
         stønadstype: Stønadstype,
         påklagetVedtakDetaljer: PåklagetVedtakDetaljer,
@@ -47,7 +47,7 @@ class BrevInnholdUtleder(
                     ),
                     AvsnittDto(
                         deloverskrift = "Dette er vurderingen vi har sendt til Nav Klageinstans",
-                        innhold = instillingKlageinstans,
+                        innhold = innstillingKlageinstans,
                     ),
                     AvsnittDto(
                         deloverskrift = "Har du nye opplysninger?",

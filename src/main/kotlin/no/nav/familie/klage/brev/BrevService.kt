@@ -155,7 +155,7 @@ class BrevService(
                             )
                     brevInnholdUtleder.lagOpprettholdelseBrev(
                         ident = fagsak.hentAktivIdent(),
-                        instillingKlageinstans = innstillingKlageinstans,
+                        innstillingKlageinstans = innstillingKlageinstans,
                         navn = navn,
                         stønadstype = fagsak.stønadstype,
                         påklagetVedtakDetaljer = påklagetVedtakDetaljer,
