@@ -94,18 +94,27 @@ class BrevInnholdUtleder(
                         deloverskriftHeading = Heading.H2,
                         innhold = "",
                     ),
-                    AvsnittDto(
-                        deloverskrift = "Dokumentasjon og utredning",
-                        deloverskriftHeading = Heading.H3,
-                        innhold = dokumentasjonOgUtredning,
+                    *(
+                        klagefristUnntakBegrunnelse?.let {
+                            listOf(
+                                AvsnittDto(
+                                    deloverskrift = "Dokumentasjon og utredning",
+                                    deloverskriftHeading = Heading.H3,
+                                    innhold = klagefristUnntakBegrunnelse,
+                                ),
+                                AvsnittDto(
+                                    deloverskrift = "",
+                                    innhold = dokumentasjonOgUtredning,
+                                ),
+                            ).toTypedArray()
+                        } ?: listOf(
+                            AvsnittDto(
+                                deloverskrift = "Dokumentasjon og utredning",
+                                deloverskriftHeading = Heading.H3,
+                                innhold = dokumentasjonOgUtredning,
+                            ),
+                        ).toTypedArray()
                     ),
-                    klagefristUnntakBegrunnelse?.let {
-                        AvsnittDto(
-                            deloverskrift = "Unntak for klagefristen er oppfylt",
-                            deloverskriftHeading = Heading.H4,
-                            innhold = klagefristUnntakBegrunnelse,
-                        )
-                    },
                     AvsnittDto(
                         deloverskrift = "Spørsmålet i saken",
                         deloverskriftHeading = Heading.H3,
