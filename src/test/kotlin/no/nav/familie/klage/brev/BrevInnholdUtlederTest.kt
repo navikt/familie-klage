@@ -496,8 +496,8 @@ internal class BrevInnholdUtlederTest {
                 assertThat(it.deloverskriftHeading).isEqualTo(Heading.H2)
                 assertThat(it.innhold).isEmpty()
             })
-            assertThat(opprettholdelsesbrev.avsnitt.elementAt(3)).isEqualTo(forventetDokumentasjonOgUtredning)
-            assertThat(opprettholdelsesbrev.avsnitt.elementAt(4)).isEqualTo(forventetKlagefristUnntakBegrunnelse)
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(3)).isEqualTo(forventetKlagefristUnntakBegrunnelse)
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(4)).isEqualTo(forventetDokumentasjonOgUtredningVedKlagefristUnntak)
             assertThat(opprettholdelsesbrev.avsnitt.elementAt(5)).isEqualTo(forventetSpørsmåletISaken)
             assertThat(opprettholdelsesbrev.avsnitt.elementAt(6)).isEqualTo(forventetAktuelleRettskilder)
             assertThat(opprettholdelsesbrev.avsnitt.elementAt(7)).isEqualTo(forventetKlagersAnførsler)
@@ -1273,9 +1273,15 @@ internal class BrevInnholdUtlederTest {
 
     private val forventetKlagefristUnntakBegrunnelse =
         AvsnittDto(
-            deloverskrift = "Unntak for klagefristen er oppfylt",
-            deloverskriftHeading = Heading.H4,
+            deloverskrift = "Dokumentasjon og utredning",
+            deloverskriftHeading = Heading.H3,
             innhold = klagefristUnntakBegrunnelse,
+        )
+
+    private val forventetDokumentasjonOgUtredningVedKlagefristUnntak =
+        AvsnittDto(
+            deloverskrift = "",
+            innhold = dokumentasjonOgUtredning,
         )
 
     private fun forventetHarDuSpørsmålEf(stønadstype: Stønadstype) =
