@@ -82,7 +82,7 @@ class OpprettKabalEventOppgaveTask(
                 properties = Properties().apply {
                     this["eksternFagsakId"] = eksternFagsakId
                     this["fagsystem"] = fagsystem.name
-                }
+                },
             )
         }
     }
