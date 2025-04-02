@@ -54,7 +54,7 @@ class HenleggBehandlingService(
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(
             behandlingId = behandling.id,
             eksternFagsakId = fagsak.eksternId,
-            fagsystem = fagsak.fagsystem
+            fagsystem = fagsak.fagsystem,
         )
         behandlingRepository.update(henlagtBehandling)
         taskService.save(
@@ -62,9 +62,9 @@ class HenleggBehandlingService(
                 BehandlingsstatistikkTask.opprettFerdigTask(
                     behandlingId = behandlingId,
                     eksternFagsakId = fagsak.eksternId,
-                    fagsak.fagsystem
-                )
-            )
+                    fagsak.fagsystem,
+                ),
+            ),
         )
     }
 

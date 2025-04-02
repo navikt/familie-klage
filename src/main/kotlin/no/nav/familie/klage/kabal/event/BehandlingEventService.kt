@@ -58,11 +58,11 @@ class BehandlingEventService(
                 BehandlingEventType.ANKEBEHANDLING_AVSLUTTET,
                 BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET,
                 BehandlingEventType.OMGJOERINGSKRAVBEHANDLING_AVSLUTTET,
-                    -> opprettOppgaveTask(behandling, behandlingEvent)
+                -> opprettOppgaveTask(behandling, behandlingEvent)
 
                 BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
                 BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
-                    -> {
+                -> {
                     // Skal ikke gjøre noe dersom eventtype er ANKEBEHANDLING_OPPRETTET eller ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET
                 }
 
@@ -127,7 +127,7 @@ class BehandlingEventService(
         val opprettOppgaveTask = OpprettKabalEventOppgaveTask.opprettTask(
             opprettOppgavePayload,
             fagsakDomain.eksternId,
-            fagsakDomain.fagsystem
+            fagsakDomain.fagsystem,
         )
         taskService.save(opprettOppgaveTask)
     }
@@ -139,12 +139,12 @@ class BehandlingEventService(
         return when (stønadstype) {
             Stønadstype.BARNETRYGD,
             Stønadstype.KONTANTSTØTTE,
-                -> Behandlingstype.Klage
+            -> Behandlingstype.Klage
 
             Stønadstype.OVERGANGSSTØNAD,
             Stønadstype.BARNETILSYN,
             Stønadstype.SKOLEPENGER,
-                -> null
+            -> null
         }
     }
 

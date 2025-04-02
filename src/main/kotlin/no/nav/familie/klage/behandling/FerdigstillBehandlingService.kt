@@ -75,7 +75,7 @@ class FerdigstillBehandlingService(
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(
             behandlingId = behandling.id,
             eksternFagsakId = fagsak.eksternId,
-            fagsystem = fagsak.fagsystem
+            fagsystem = fagsak.fagsystem,
         )
 
         val opprettetRevurdering = opprettRevurderingHvisMedhold(behandling, behandlingsresultat)
@@ -91,24 +91,24 @@ class FerdigstillBehandlingService(
             LagSaksbehandlingsblankettTask.opprettTask(
                 behandlingId = behandlingId,
                 eksternFagsakId = fagsak.eksternId,
-                fagsystem = fagsak.fagsystem
-            )
+                fagsystem = fagsak.fagsystem,
+            ),
         )
         if (behandlingsresultat == IKKE_MEDHOLD) {
             taskService.save(
                 BehandlingsstatistikkTask.opprettSendtTilKATask(
                     behandlingId = behandlingId,
                     eksternFagsakId = fagsak.eksternId,
-                    fagsystem = fagsak.fagsystem
-                )
+                    fagsystem = fagsak.fagsystem,
+                ),
             )
         }
         taskService.save(
             BehandlingsstatistikkTask.opprettFerdigTask(
                 behandlingId = behandlingId,
                 eksternFagsakId = fagsak.eksternId,
-                fagsak.fagsystem
-            )
+                fagsak.fagsystem,
+            ),
         )
     }
 

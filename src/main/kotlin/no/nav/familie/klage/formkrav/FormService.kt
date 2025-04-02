@@ -78,7 +78,7 @@ class FormService(
     private fun opprettBehandlingsstatistikk(
         behandlingId: UUID,
         eksternFagsakId: String,
-        fagsystem: Fagsystem
+        fagsystem: Fagsystem,
     ) {
         behandlingshistorikkService.hentBehandlingshistorikk(behandlingId).find { it.steg == StegType.FORMKRAV }
             ?: run {
@@ -86,8 +86,8 @@ class FormService(
                     BehandlingsstatistikkTask.opprettPåbegyntTask(
                         behandlingId = behandlingId,
                         eksternFagsakId = eksternFagsakId,
-                        fagsystem = fagsystem
-                    )
+                        fagsystem = fagsystem,
+                    ),
                 )
             }
     }
