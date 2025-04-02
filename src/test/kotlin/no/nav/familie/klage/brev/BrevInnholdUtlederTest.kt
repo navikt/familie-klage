@@ -1233,12 +1233,12 @@ internal class BrevInnholdUtlederTest {
     private fun forventetHarDuNyeOpplysninger(stønadstype: Stønadstype) = AvsnittDto(
         deloverskrift = "Har du nye opplysninger?",
         deloverskriftHeading =
-            when (stønadstype) {
-                Stønadstype.BARNETRYGD,
-                Stønadstype.KONTANTSTØTTE,
-                -> Heading.H2
-                else -> null
-            },
+        when (stønadstype) {
+            Stønadstype.BARNETRYGD,
+            Stønadstype.KONTANTSTØTTE,
+            -> Heading.H2
+            else -> null
+        },
         innhold = "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via \n${klageUrls[stønadstype]}.",
     )
 
@@ -1259,12 +1259,12 @@ internal class BrevInnholdUtlederTest {
     private fun forventetDuHarRettTilÅKlage(stønadstype: Stønadstype) = AvsnittDto(
         deloverskrift = "Du har rett til å klage",
         deloverskriftHeading =
-            when (stønadstype) {
-                Stønadstype.BARNETRYGD,
-                Stønadstype.KONTANTSTØTTE,
-                -> Heading.H2
-                else -> null
-            },
+        when (stønadstype) {
+            Stønadstype.BARNETRYGD,
+            Stønadstype.KONTANTSTØTTE,
+            -> Heading.H2
+            else -> null
+        },
         innhold = "Hvis du vil klage, må du gjøre dette innen 6 uker fra den datoen du fikk dette brevet. " +
             "Du finner skjema og informasjon på ${klageUrls[stønadstype]}.",
     )

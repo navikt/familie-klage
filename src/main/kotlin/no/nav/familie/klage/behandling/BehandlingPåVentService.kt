@@ -60,9 +60,9 @@ class BehandlingPåVentService(
                 BehandlingsstatistikkTask.opprettVenterTask(
                     behandlingId,
                     fagsak.eksternId,
-                    fagsak.fagsystem
-                )
-            )
+                    fagsak.fagsystem,
+                ),
+            ),
         )
     }
 
@@ -87,8 +87,8 @@ class BehandlingPåVentService(
             BehandlingsstatistikkTask.opprettPåbegyntTask(
                 behandlingId,
                 fagsak.eksternId,
-                fagsak.fagsystem
-            )
+                fagsak.fagsystem,
+            ),
         )
     }
 
