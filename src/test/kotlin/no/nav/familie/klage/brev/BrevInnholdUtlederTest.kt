@@ -1115,10 +1115,7 @@ internal class BrevInnholdUtlederTest {
             names = ["BARNETRYGD", "KONTANTSTØTTE"],
             mode = EnumSource.Mode.INCLUDE,
         )
-        fun `skal utlede brevinnhold for henleggelsesbrev for BA og KS`(
-            stønadstype: Stønadstype,
-        ) {
-            // Arrange
+        fun `skal utlede brevinnhold for henleggelsesbrev for BA og KS`(stønadstype: Stønadstype) {
             // Act
             val henleggelsesbrevBaksInnhold = brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(
                 ident = ident,
@@ -1133,41 +1130,11 @@ internal class BrevInnholdUtlederTest {
             assertThat(henleggelsesbrevBaksInnhold.avsnitt).hasSize(3)
             assertAvsnittUtenDeloverskrift(
                 henleggelsesbrevBaksInnhold.avsnitt.elementAt(0),
-                "Du har gitt oss beskjed om at du trekker klagen din på vedtaket om " +
+                "Du har trukket klagen din på vedtaket om " +
                     "${stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din.",
             )
             assertThat(henleggelsesbrevBaksInnhold.avsnitt.elementAt(1)).isEqualTo(forventetDuHarRettTilInnsynBaKs)
             assertThat(henleggelsesbrevBaksInnhold.avsnitt.elementAt(2)).isEqualTo(forventetHarDuSpørsmålBaKs(stønadstype))
-        }
-
-        @ParameterizedTest
-        @EnumSource(
-            value = Stønadstype::class,
-            names = ["BARNETRYGD", "KONTANTSTØTTE"],
-            mode = EnumSource.Mode.EXCLUDE,
-        )
-        fun `skal utlede brevinnhold for henleggelsesbrev for EF`(
-            stønadstype: Stønadstype,
-        ) {
-            // Arrange
-            // Act
-            val henleggelsesbrevBaksInnhold = brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(
-                ident = ident,
-                navn = navn,
-                stønadstype = stønadstype,
-            )
-
-            // Assert
-            assertThat(henleggelsesbrevBaksInnhold.overskrift).isEqualTo("Saken din er avsluttet")
-            assertThat(henleggelsesbrevBaksInnhold.personIdent).isEqualTo(ident)
-            assertThat(henleggelsesbrevBaksInnhold.navn).isEqualTo(navn)
-            assertThat(henleggelsesbrevBaksInnhold.avsnitt).hasSize(2)
-            assertAvsnittUtenDeloverskrift(
-                henleggelsesbrevBaksInnhold.avsnitt.elementAt(0),
-                "Du har gitt oss beskjed om at du trekker klagen din på vedtaket om " +
-                    "${stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din.",
-            )
-            assertThat(henleggelsesbrevBaksInnhold.avsnitt.elementAt(1)).isEqualTo(forventetHarDuSpørsmålEf(stønadstype))
         }
     }
 
