@@ -242,9 +242,15 @@ class BrevInnholdUtleder(
             deloverskrift = "Du har rett til å klage",
             deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
             innhold =
-            "Hvis du vil klage, må du gjøre dette innen 6 uker fra den datoen du fikk dette brevet. " +
-                "Du finner skjema og informasjon på ${stønadstype.klageUrl()}.",
+                "Hvis du vil klage, må du gjøre dette innen ${utledKlagefrist(stønadstype)} uker fra den datoen du fikk dette brevet. " +
+                    "Du finner skjema og informasjon på ${stønadstype.klageUrl()}.",
         )
+
+    private fun utledKlagefrist(stønadstype: Stønadstype): Int =
+        when (stønadstype) {
+            Stønadstype.KONTANTSTØTTE -> 3
+            else -> 6
+        }
 
     private fun harDuSpørsmålAvsnitt(stønadstype: Stønadstype) =
         AvsnittDto(
