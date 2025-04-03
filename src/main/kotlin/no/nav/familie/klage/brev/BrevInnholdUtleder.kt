@@ -228,7 +228,7 @@ class BrevInnholdUtleder(
             listOfNotNull(
                 AvsnittDto(
                     deloverskrift = "",
-                    innhold = "Du har gitt oss beskjed om at du trekker klagen din på vedtaket om " +
+                    innhold = "Du har trukket klagen din på vedtaket om " +
                         "${stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din.",
                 ),
                 if (stønadstype.erBarnetrygdEllerKontantstøtte()) duHarRettTilInnsynAvsnitt(stønadstype) else null,
