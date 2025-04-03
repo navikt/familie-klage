@@ -954,14 +954,15 @@ internal class BrevInnholdUtlederTest {
             val stønadstype = Stønadstype.KONTANTSTØTTE
 
             // Act
-            val formkravAvvistBrev = brevInnholdUtleder.lagFormkravAvvistBrev(
-                ident = ident,
-                navn = navn,
-                form = ikkeOppfyltForm(),
-                stønadstype = stønadstype,
-                påklagetVedtakDetaljer = null,
-                fagsystem = Fagsystem.KS,
-            )
+            val formkravAvvistBrev =
+                brevInnholdUtleder.lagFormkravAvvistBrev(
+                    ident = ident,
+                    navn = navn,
+                    form = ikkeOppfyltForm(),
+                    stønadstype = stønadstype,
+                    påklagetVedtakDetaljer = null,
+                    fagsystem = Fagsystem.KS,
+                )
 
             // Assert
             assertThat(formkravAvvistBrev.overskrift).isEqualTo("Vi har avvist klagen din på vedtaket om kontantstøtte")
@@ -1223,18 +1224,26 @@ internal class BrevInnholdUtlederTest {
         innhold = "På nav.no/dittnav kan du se dokumentene i saken din.",
     )
 
-    private fun forventetDuHarRettTilÅKlage(stønadstype: Stønadstype) = AvsnittDto(
-        deloverskrift = "Du har rett til å klage",
-        deloverskriftHeading =
-        when (stønadstype) {
-            Stønadstype.BARNETRYGD,
-            Stønadstype.KONTANTSTØTTE,
-            -> Heading.H2
-            else -> null
-        },
-        innhold = "Hvis du vil klage, må du gjøre dette innen 6 uker fra den datoen du fikk dette brevet. " +
-            "Du finner skjema og informasjon på ${klageUrls[stønadstype]}.",
-    )
+    private fun forventetDuHarRettTilÅKlage(stønadstype: Stønadstype) =
+        AvsnittDto(
+            deloverskrift = "Du har rett til å klage",
+            deloverskriftHeading =
+                when (stønadstype) {
+                    Stønadstype.BARNETRYGD,
+                    Stønadstype.KONTANTSTØTTE,
+                    -> Heading.H2
+                    else -> null
+                },
+            innhold =
+                when (stønadstype) {
+                    Stønadstype.KONTANTSTØTTE ->
+                        "Hvis du vil klage, må du gjøre dette innen 3 uker fra den datoen du fikk dette brevet. " +
+                            "Du finner skjema og informasjon på ${klageUrls[stønadstype]}."
+                    else ->
+                        "Hvis du vil klage, må du gjøre dette innen 6 uker fra den datoen du fikk dette brevet. " +
+                            "Du finner skjema og informasjon på ${klageUrls[stønadstype]}."
+                },
+        )
 
     private fun assertAvsnittUtenDeloverskrift(avsnittDto: AvsnittDto, forventetTekst: String) {
         assertThat(avsnittDto.deloverskrift).isEmpty()
