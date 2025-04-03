@@ -44,6 +44,7 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
             PåklagetVedtakDetaljer(
                 fagsystemType = FagsystemType.ORDNIÆR,
                 eksternFagsystemBehandlingId = "1234",
+                internKlagebehandlingId = null,
                 behandlingstype = "type",
                 resultat = "resultat",
                 vedtakstidspunkt = LocalDateTime.now(),
