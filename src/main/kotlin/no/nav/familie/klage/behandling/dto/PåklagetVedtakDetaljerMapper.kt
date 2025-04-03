@@ -8,6 +8,7 @@ import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 fun FagsystemVedtak.tilPåklagetVedtakDetaljer() = PåklagetVedtakDetaljer(
     behandlingstype = this.behandlingstype,
     eksternFagsystemBehandlingId = this.eksternBehandlingId,
+    internKlagebehandlingId = null,
     fagsystemType = this.fagsystemType,
     resultat = this.resultat,
     vedtakstidspunkt = this.vedtakstidspunkt,
@@ -26,6 +27,7 @@ fun PåklagetVedtakDetaljer.tilFagsystemVedtak() = FagsystemVedtak(
 fun PåklagetVedtak.tilDto(): PåklagetVedtakDto =
     PåklagetVedtakDto(
         eksternFagsystemBehandlingId = this.påklagetVedtakDetaljer?.eksternFagsystemBehandlingId,
+        internKlagebehandlingId = this.påklagetVedtakDetaljer?.internKlagebehandlingId,
         påklagetVedtakstype = this.påklagetVedtakstype,
         fagsystemVedtak = this.påklagetVedtakDetaljer?.tilFagsystemVedtak(),
         manuellVedtaksdato = if (påklagetVedtakstype.harManuellVedtaksdato()) this.påklagetVedtakDetaljer?.vedtakstidspunkt?.toLocalDate() else null,

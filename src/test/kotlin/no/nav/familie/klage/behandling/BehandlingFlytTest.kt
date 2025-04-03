@@ -174,7 +174,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
         }
     }
 
-    private val påklagetVedtakDto = PåklagetVedtakDto(eksternFagsystemBehandlingId = "123", VEDTAK)
+    private val påklagetVedtakDto = PåklagetVedtakDto(eksternFagsystemBehandlingId = "123", internKlagebehandlingId = null, påklagetVedtakstype = VEDTAK)
 
     private val opprettKlagebehandlingRequest =
         OpprettKlagebehandlingRequest(
