@@ -231,7 +231,7 @@ class BrevInnholdUtleder(
                     innhold = "Du har trukket klagen din på vedtaket om " +
                         "${stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din.",
                 ),
-                if (stønadstype.erBarnetrygdEllerKontantstøtte()) duHarRettTilInnsynAvsnitt(stønadstype) else null,
+                duHarRettTilInnsynAvsnitt(stønadstype),
                 harDuSpørsmålAvsnitt(stønadstype),
             ),
         )
