@@ -50,7 +50,7 @@ internal class FormServiceTest {
         behandlingshistorikkService,
         vurderingService,
         taskService,
-        fagsakService
+        fagsakService,
     )
 
     private val behandlingId = UUID.randomUUID()
