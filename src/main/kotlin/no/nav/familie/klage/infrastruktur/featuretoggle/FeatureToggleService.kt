@@ -27,6 +27,10 @@ enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
         "Release",
     ),
     BRUK_NYTT_BREV_BA_KS("familie-klage.bruk-nytt-brev-ba-ks", "Release"),
+    SEND_BEHANDLING_ID_VED_OPPRETTING_AV_REVURDERING_KLAGE(
+        "familie-klage.send-behandlingid-ved-oppretting-av-revurdering-klage",
+        "Release"
+    )
     ;
 
     companion object {
