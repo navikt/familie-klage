@@ -15,13 +15,9 @@ import no.nav.familie.klage.brev.dto.Flettefelter
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.brev.dto.Henleggelsesbrev
 import no.nav.familie.klage.brev.dto.SignaturDto
-import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerMinimumEnMottaker
-import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerUnikeBrevmottakere
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
-import no.nav.familie.klage.brevmottaker.dto.BrevmottakereDto
-import no.nav.familie.klage.brevmottaker.dto.tilDomene
 import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
@@ -71,27 +67,6 @@ class BrevService(
     private val taskService: TaskService,
 ) {
     fun hentBrev(behandlingId: UUID): Brev = brevRepository.findByIdOrThrow(behandlingId)
-
-    fun hentBrevmottakere(behandlingId: UUID): Brevmottakere {
-        val brev = brevRepository.findByIdOrThrow(behandlingId)
-        return brev.mottakere ?: Brevmottakere()
-    }
-
-    fun settBrevmottakere(
-        behandlingId: UUID,
-        brevmottakere: BrevmottakereDto,
-    ) {
-        val behandling = behandlingService.hentBehandling(behandlingId)
-        validerKanLageBrev(behandling)
-
-        val mottakere = brevmottakere.tilDomene()
-
-        validerUnikeBrevmottakere(mottakere)
-        validerMinimumEnMottaker(mottakere)
-
-        val brev = brevRepository.findByIdOrThrow(behandlingId)
-        brevRepository.update(brev.copy(mottakere = mottakere))
-    }
 
     fun lagBrev(behandlingId: UUID): ByteArray {
         val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
