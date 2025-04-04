@@ -134,7 +134,8 @@ class BehandlingController(
     }
 
     @PostMapping("{behandlingId}/oppdater-behandlende-enhet")
-    fun oppdaterBehandlendeEnhet(@PathVariable behandlingId: UUID, oppdaterBehandlendeEnhetRequest: OppdaterBehandlendeEnhetRequest) {
+    fun oppdaterBehandlendeEnhet(@PathVariable behandlingId: UUID, oppdaterBehandlendeEnhetRequest: OppdaterBehandlendeEnhetRequest
+    ): Ressurs<UUID> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
             behandlingId = behandlingId,
             event = AuditLoggerEvent.UPDATE,
@@ -145,6 +146,7 @@ class BehandlingController(
             behandlingId = behandlingId,
             oppdaterBehandlendeEnhetRequest = oppdaterBehandlendeEnhetRequest
         )
+        return Ressurs.success(data = behandlingId)
     }
 
     @GetMapping("{behandlingId}/hent-klager-ikke-medhold-formkrav-avvist")
