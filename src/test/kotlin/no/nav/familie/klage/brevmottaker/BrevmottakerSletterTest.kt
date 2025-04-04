@@ -1,11 +1,13 @@
 package no.nav.familie.klage.brevmottaker
 
+import io.mockk.called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.slot
 import io.mockk.unmockkObject
 import io.mockk.verify
+import java.util.UUID
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.brev.BrevRepository
@@ -33,7 +35,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
-import java.util.UUID
 
 class BrevmottakerSletterTest {
     private val behandlingService: BehandlingService = mockk()
@@ -174,7 +175,46 @@ class BrevmottakerSletterTest {
         }
 
         @Test
-        fun `skal kaste slette brevmottakeren`() {
+        fun `skal kaste exception om man prøver å slette slik at ingen brevmottakere er igjen`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
+
+            val slettbarBrevmottaker = SlettbarBrevmottakerPersonUtenIdent(UUID.randomUUID())
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                fagsakService.hentFagsak(behandling.fagsakId)
+            } returns DomainUtil.fagsak(
+                identer = setOf(PersonIdent("123")),
+            )
+
+            every {
+                brevService.hentBrev(behandling.id)
+            } returns DomainUtil.lagBrev(
+                behandlingId = behandling.id,
+                mottakere = Brevmottakere(
+                    personer = listOf(
+                        DomainUtil.lagBrevmottakerPersonUtenIdent(
+                            id = slettbarBrevmottaker.id,
+                            mottakerRolle = MottakerRolle.FULLMAKT,
+                        ),
+                    ),
+                ),
+            )
+
+            // Act & assert
+            val exception = assertThrows<Feil> {
+                brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
+            }
+            assertThat(exception.message).isEqualTo("Må ha minimum en brevmottaker for behandling ${behandling.id}.")
+            verify { brevRepository wasNot called }
+        }
+
+        @Test
+        fun `skal slette brevmottakeren`() {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
@@ -258,7 +298,7 @@ class BrevmottakerSletterTest {
             mode = EnumSource.Mode.EXCLUDE,
         )
         @ParameterizedTest
-        fun `skal kaste slette brevmottakeren og ikke legge til bruker selv om bruker ikke allerede eksisterer for visse mottaker roller`(
+        fun `skal slette brevmottakeren og ikke legge til bruker selv om bruker ikke allerede eksisterer for visse mottaker roller`(
             mottakerRolle: MottakerRolle,
         ) {
             // Arrange
@@ -338,7 +378,7 @@ class BrevmottakerSletterTest {
             mode = EnumSource.Mode.INCLUDE,
         )
         @ParameterizedTest
-        fun `skal kaste slette brevmottakeren og legge til bruker som ikke allerede eksisterer for visse mottaker roller`(
+        fun `skal slette brevmottakeren og legge til bruker som ikke allerede eksisterer for visse mottaker roller`(
             mottakerRolle: MottakerRolle,
         ) {
             // Arrange
@@ -420,7 +460,7 @@ class BrevmottakerSletterTest {
             mode = EnumSource.Mode.INCLUDE,
         )
         @ParameterizedTest
-        fun `skal kaste slette brevmottakeren men legge til bruker som allerede eksisterer for visse mottaker roller`(
+        fun `skal slette brevmottakeren men legge til bruker som allerede eksisterer for visse mottaker roller`(
             mottakerRolle: MottakerRolle,
         ) {
             // Arrange
