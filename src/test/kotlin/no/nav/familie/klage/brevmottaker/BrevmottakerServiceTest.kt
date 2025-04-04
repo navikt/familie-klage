@@ -141,7 +141,7 @@ class BrevmottakerServiceTest {
     @Nested
     inner class SlettBrevmottakerTest {
         @Test
-        fun `skal opprette brevmottaker`() {
+        fun `skal slette brevmottaker`() {
             // Arrange
             val behandlingId = UUID.randomUUID()
             val slettbarBrevmottaker = SlettbarBrevmottakerPersonUtenIdent(UUID.randomUUID())

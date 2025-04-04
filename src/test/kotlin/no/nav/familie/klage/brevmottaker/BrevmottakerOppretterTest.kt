@@ -161,7 +161,7 @@ class BrevmottakerOppretterTest {
             val exception = assertThrows<Feil> {
                 brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
             }
-            assertThat(exception.message).isEqualTo("Kan ikke ha duplikate MottakerRolle. FULLMAKT finnes allerede.")
+            assertThat(exception.message).isEqualTo("Kan ikke ha duplikate MottakerRolle. FULLMAKT finnes allerede for ${behandling.id}.")
         }
 
         @Test
@@ -199,7 +199,7 @@ class BrevmottakerOppretterTest {
             val exception = assertThrows<Feil> {
                 brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
             }
-            assertThat(exception.message).isEqualTo("Ved bruker med utenlandsk adresse skal brevmottakerens navn være brukerens navn.")
+            assertThat(exception.message).isEqualTo("Ved bruker med utenlandsk adresse skal brevmottakerens navn være brukerens navn for ${behandling.id}.")
         }
 
         @Test
@@ -237,7 +237,7 @@ class BrevmottakerOppretterTest {
             val exception = assertThrows<Feil> {
                 brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
             }
-            assertThat(exception.message).isEqualTo("Ved dødsbo skal brevmottakerens navn inneholde brukerens navn.")
+            assertThat(exception.message).isEqualTo("Ved dødsbo skal brevmottakerens navn inneholde brukerens navn for ${behandling.id}.")
         }
 
         @Test
@@ -278,7 +278,7 @@ class BrevmottakerOppretterTest {
             val exception = assertThrows<Feil> {
                 brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
             }
-            assertThat(exception.message).isEqualTo("Kan ikke legge til dødsbo når det allerede finnes brevmottakere.")
+            assertThat(exception.message).isEqualTo("Kan ikke legge til dødsbo når det allerede finnes brevmottakere for ${behandling.id}.")
         }
 
         @Test
@@ -321,7 +321,7 @@ class BrevmottakerOppretterTest {
             val exception = assertThrows<Feil> {
                 brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
             }
-            assertThat(exception.message).isEqualTo("Kan ikke legge til flere brevmottakere når det allerede finnes et dødsbo.")
+            assertThat(exception.message).isEqualTo("Kan ikke legge til flere brevmottakere når det allerede finnes et dødsbo for ${behandling.id}.")
         }
 
         @Test
@@ -364,7 +364,7 @@ class BrevmottakerOppretterTest {
             val exception = assertThrows<Feil> {
                 brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
             }
-            assertThat(exception.message).isEqualTo("Bruker med utenlandsk adresse kan kun kombineres med verge eller fullmektig.")
+            assertThat(exception.message).isEqualTo("Bruker med utenlandsk adresse kan kun kombineres med verge eller fullmektig for ${behandling.id}.")
         }
 
         @Test
@@ -408,7 +408,7 @@ class BrevmottakerOppretterTest {
                 brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
             }
             assertThat(exception.message).isEqualTo(
-                "Kan kun legge til bruker med utenlandsk adresse om det finnes en brevmottaker allerede.",
+                "Kan kun legge til bruker med utenlandsk adresse om det finnes en brevmottaker allerede for ${behandling.id}.",
             )
         }
 
