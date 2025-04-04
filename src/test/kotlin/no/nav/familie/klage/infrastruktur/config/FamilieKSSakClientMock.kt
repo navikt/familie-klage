@@ -73,7 +73,7 @@ class FamilieKSSakClientMock {
 
             // mocker annen hver
             var opprettet = true
-            every { mock.opprettRevurdering(any()) } answers {
+            every { mock.opprettRevurdering(any(), any()) } answers {
                 opprettet = !opprettet
                 if (opprettet) {
                     OpprettRevurderingResponse(Opprettet(eksternBehandlingId = UUID.randomUUID().toString()))
