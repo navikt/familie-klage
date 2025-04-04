@@ -9,9 +9,11 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandling.domain.harManuellVedtaksdato
 import no.nav.familie.klage.behandling.dto.BehandlingDto
+import no.nav.familie.klage.behandling.dto.OppdaterBehandlendeEnhetRequest
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.behandling.dto.tilPåklagetVedtakDetaljer
+import no.nav.familie.klage.behandling.enhet.EnhetValidator
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
@@ -87,6 +89,17 @@ class BehandlingService(
             vedtakDato = LocalDateTime.now(),
             fagsystemRevurdering = opprettetRevurdering,
         )
+        behandlingRepository.update(oppdatertBehandling)
+    }
+
+    @Transactional
+    fun oppdaterBehandlendeEnhet(behandlingId: UUID, behandlendeEnhet: String) {
+        val behandling = hentBehandling(behandlingId)
+
+        val oppdatertBehandling = behandling.copy(
+            behandlendeEnhet = behandlendeEnhet
+        )
+
         behandlingRepository.update(oppdatertBehandling)
     }
 
