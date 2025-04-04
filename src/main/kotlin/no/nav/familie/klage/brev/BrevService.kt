@@ -172,13 +172,8 @@ class BrevService(
                         formkrav.klagefristOverholdtUnntak in
                             listOf(FormkravFristUnntak.UNNTAK_SÆRLIG_GRUNN, FormkravFristUnntak.UNNTAK_KAN_IKKE_LASTES)
 
-                    if (klagefristUnntakOppfylt &&
-                        formkrav.brevtekst == null
-                    ) {
-                        throw ApiFeil(
-                            "Fritekst må fylles ut.",
-                            httpStatus = HttpStatus.BAD_REQUEST,
-                        )
+                    brukerfeilHvis(klagefristUnntakOppfylt && formkrav.brevtekst == null) {
+                        "Hvis unntak for klagefrist er oppfylt, må begrunnelse fylles ut i fritekstfelt"
                     }
 
                     val dokumentasjonOgUtredning = getOrThrow(vurdering?.dokumentasjonOgUtredning, "dokumentasjonOgUtredning")
