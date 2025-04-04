@@ -94,27 +94,17 @@ class BrevInnholdUtleder(
                         deloverskriftHeading = Heading.H2,
                         innhold = "",
                     ),
-                    *(
-                        klagefristUnntakBegrunnelse?.let {
-                            listOf(
-                                AvsnittDto(
-                                    deloverskrift = "Dokumentasjon og utredning",
-                                    deloverskriftHeading = Heading.H3,
-                                    innhold = klagefristUnntakBegrunnelse,
-                                ),
-                                AvsnittDto(
-                                    deloverskrift = "",
-                                    innhold = dokumentasjonOgUtredning,
-                                ),
-                            ).toTypedArray()
-                        } ?: listOf(
-                            AvsnittDto(
-                                deloverskrift = "Dokumentasjon og utredning",
-                                deloverskriftHeading = Heading.H3,
-                                innhold = dokumentasjonOgUtredning,
-                            ),
-                        ).toTypedArray()
+                    AvsnittDto(
+                        deloverskrift = "Dokumentasjon og utredning",
+                        deloverskriftHeading = Heading.H3,
+                        innhold = klagefristUnntakBegrunnelse ?: dokumentasjonOgUtredning,
                     ),
+                    klagefristUnntakBegrunnelse?.let {
+                        AvsnittDto(
+                            deloverskrift = "",
+                            innhold = dokumentasjonOgUtredning,
+                        )
+                    },
                     AvsnittDto(
                         deloverskrift = "Spørsmålet i saken",
                         deloverskriftHeading = Heading.H3,
@@ -243,16 +233,15 @@ class BrevInnholdUtleder(
             personIdent = ident,
             navn = navn,
             avsnitt =
-                listOfNotNull(
-                    AvsnittDto(
-                        deloverskrift = "",
-                        innhold =
-                            "Du har gitt oss beskjed om at du trekker klagen din på vedtaket om " +
-                                "${stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din.",
-                    ),
-                    if (stønadstype.erBarnetrygdEllerKontantstøtte()) duHarRettTilInnsynAvsnitt(stønadstype) else null,
-                    harDuSpørsmålAvsnitt(stønadstype),
+            listOfNotNull(
+                AvsnittDto(
+                    deloverskrift = "",
+                    innhold = "Du har trukket klagen din på vedtaket om " +
+                        "${stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din.",
                 ),
+                duHarRettTilInnsynAvsnitt(stønadstype),
+                harDuSpørsmålAvsnitt(stønadstype),
+            ),
         )
 
     private fun duHarRettTilÅKlageAvsnitt(stønadstype: Stønadstype) =
@@ -260,9 +249,15 @@ class BrevInnholdUtleder(
             deloverskrift = "Du har rett til å klage",
             deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
             innhold =
-                "Hvis du vil klage, må du gjøre dette innen 6 uker fra den datoen du fikk dette brevet. " +
+                "Hvis du vil klage, må du gjøre dette innen ${utledKlagefrist(stønadstype)} uker fra den datoen du fikk dette brevet. " +
                     "Du finner skjema og informasjon på ${stønadstype.klageUrl()}.",
         )
+
+    private fun utledKlagefrist(stønadstype: Stønadstype): Int =
+        when (stønadstype) {
+            Stønadstype.KONTANTSTØTTE -> 3
+            else -> 6
+        }
 
     private fun harDuSpørsmålAvsnitt(stønadstype: Stønadstype) =
         AvsnittDto(

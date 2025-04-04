@@ -1168,7 +1168,6 @@ internal class BrevInnholdUtlederTest {
             mode = EnumSource.Mode.INCLUDE,
         )
         fun `skal utlede brevinnhold for henleggelsesbrev for BA og KS`(stønadstype: Stønadstype) {
-            // Arrange
             // Act
             val henleggelsesbrevBaksInnhold =
                 brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(
@@ -1184,40 +1183,11 @@ internal class BrevInnholdUtlederTest {
             assertThat(henleggelsesbrevBaksInnhold.avsnitt).hasSize(3)
             assertAvsnittUtenDeloverskrift(
                 henleggelsesbrevBaksInnhold.avsnitt.elementAt(0),
-                "Du har gitt oss beskjed om at du trekker klagen din på vedtaket om " +
+                "Du har trukket klagen din på vedtaket om " +
                     "${stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din.",
             )
             assertThat(henleggelsesbrevBaksInnhold.avsnitt.elementAt(1)).isEqualTo(forventetDuHarRettTilInnsynBaKs)
             assertThat(henleggelsesbrevBaksInnhold.avsnitt.elementAt(2)).isEqualTo(forventetHarDuSpørsmålBaKs(stønadstype))
-        }
-
-        @ParameterizedTest
-        @EnumSource(
-            value = Stønadstype::class,
-            names = ["BARNETRYGD", "KONTANTSTØTTE"],
-            mode = EnumSource.Mode.EXCLUDE,
-        )
-        fun `skal utlede brevinnhold for henleggelsesbrev for EF`(stønadstype: Stønadstype) {
-            // Arrange
-            // Act
-            val henleggelsesbrevBaksInnhold =
-                brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(
-                    ident = ident,
-                    navn = navn,
-                    stønadstype = stønadstype,
-                )
-
-            // Assert
-            assertThat(henleggelsesbrevBaksInnhold.overskrift).isEqualTo("Saken din er avsluttet")
-            assertThat(henleggelsesbrevBaksInnhold.personIdent).isEqualTo(ident)
-            assertThat(henleggelsesbrevBaksInnhold.navn).isEqualTo(navn)
-            assertThat(henleggelsesbrevBaksInnhold.avsnitt).hasSize(2)
-            assertAvsnittUtenDeloverskrift(
-                henleggelsesbrevBaksInnhold.avsnitt.elementAt(0),
-                "Du har gitt oss beskjed om at du trekker klagen din på vedtaket om " +
-                    "${stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din.",
-            )
-            assertThat(henleggelsesbrevBaksInnhold.avsnitt.elementAt(1)).isEqualTo(forventetHarDuSpørsmålEf(stønadstype))
         }
     }
 
@@ -1321,10 +1291,9 @@ internal class BrevInnholdUtlederTest {
         AvsnittDto(
             deloverskrift = "Du har rett til innsyn i saken din",
             deloverskriftHeading = Heading.H2,
-            innhold =
-                "Du har rett til å se dokumentene i saken din. Dette følger av forvaltningsloven § 18. " +
-                    "Kontakt oss om du vil se dokumentene i saken din. Ta kontakt på nav.no/kontakt eller på " +
-                    "telefon 55 55 33 33 <34>. Du kan lese mer om innsynsretten på nav.no/personvernerklaering.",
+            innhold = "Du har rett til å se dokumentene i saken din. Dette følger av forvaltningsloven § 18. " +
+                "Kontakt oss om du vil se dokumentene i saken din. Ta kontakt på nav.no/kontakt eller på " +
+                "telefon 55 55 33 33 <34>. Du kan lese mer om innsynsretten på nav.no/personvernerklaering.",
         )
 
     private val forventetDuHarRettTilInnsynEf =
@@ -1345,8 +1314,14 @@ internal class BrevInnholdUtlederTest {
                     else -> null
                 },
             innhold =
-                "Hvis du vil klage, må du gjøre dette innen 6 uker fra den datoen du fikk dette brevet. " +
-                    "Du finner skjema og informasjon på ${klageUrls[stønadstype]}.",
+                when (stønadstype) {
+                    Stønadstype.KONTANTSTØTTE ->
+                        "Hvis du vil klage, må du gjøre dette innen 3 uker fra den datoen du fikk dette brevet. " +
+                            "Du finner skjema og informasjon på ${klageUrls[stønadstype]}."
+                    else ->
+                        "Hvis du vil klage, må du gjøre dette innen 6 uker fra den datoen du fikk dette brevet. " +
+                            "Du finner skjema og informasjon på ${klageUrls[stønadstype]}."
+                },
         )
 
     private fun assertAvsnittUtenDeloverskrift(
