@@ -126,38 +126,38 @@ class BrevmottakerOppretter(
         val eksisterendeMottakerRoller = eksisterendeBrevmottakerePersonerUtenIdent.map { it.mottakerRolle }
         when {
             eksisterendeMottakerRoller.any { it == nyBrevmottakerPersonUtenIdent.mottakerRolle } -> {
-                throw Feil("Kan ikke ha duplikate MottakerRolle. ${nyBrevmottakerPersonUtenIdent.mottakerRolle} finnes allerede.")
+                throw Feil("Kan ikke ha duplikate MottakerRolle. ${nyBrevmottakerPersonUtenIdent.mottakerRolle} finnes allerede for $behandlingId.")
             }
 
             nyBrevmottakerPersonUtenIdent.mottakerRolle == MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE &&
                 nyBrevmottakerPersonUtenIdent.navn != brukerensNavn -> {
-                throw Feil("Ved bruker med utenlandsk adresse skal brevmottakerens navn være brukerens navn.")
+                throw Feil("Ved bruker med utenlandsk adresse skal brevmottakerens navn være brukerens navn for $behandlingId.")
             }
 
             nyBrevmottakerPersonUtenIdent.mottakerRolle == MottakerRolle.DØDSBO &&
                 !nyBrevmottakerPersonUtenIdent.navn.contains(brukerensNavn) -> {
-                throw Feil("Ved dødsbo skal brevmottakerens navn inneholde brukerens navn.")
+                throw Feil("Ved dødsbo skal brevmottakerens navn inneholde brukerens navn for $behandlingId.")
             }
 
             nyBrevmottakerPersonUtenIdent.mottakerRolle == MottakerRolle.DØDSBO &&
                 eksisterendeBrevmottakerePersonerUtenIdent.isNotEmpty() -> {
-                throw Feil("Kan ikke legge til dødsbo når det allerede finnes brevmottakere.")
+                throw Feil("Kan ikke legge til dødsbo når det allerede finnes brevmottakere for $behandlingId.")
             }
 
             eksisterendeMottakerRoller.any { it == MottakerRolle.DØDSBO } -> {
-                throw Feil("Kan ikke legge til flere brevmottakere når det allerede finnes et dødsbo.")
+                throw Feil("Kan ikke legge til flere brevmottakere når det allerede finnes et dødsbo for $behandlingId.")
             }
 
             MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE in eksisterendeMottakerRoller &&
                 nyBrevmottakerPersonUtenIdent.mottakerRolle !== MottakerRolle.VERGE &&
                 nyBrevmottakerPersonUtenIdent.mottakerRolle !== MottakerRolle.FULLMAKT -> {
-                throw Feil("Bruker med utenlandsk adresse kan kun kombineres med verge eller fullmektig.")
+                throw Feil("Bruker med utenlandsk adresse kan kun kombineres med verge eller fullmektig for $behandlingId.")
             }
 
             eksisterendeMottakerRoller.isNotEmpty() &&
                 MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE !in eksisterendeMottakerRoller &&
                 nyBrevmottakerPersonUtenIdent.mottakerRolle !== MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE -> {
-                throw Feil("Kan kun legge til bruker med utenlandsk adresse om det finnes en brevmottaker allerede.")
+                throw Feil("Kan kun legge til bruker med utenlandsk adresse om det finnes en brevmottaker allerede for $behandlingId.")
             }
         }
     }
