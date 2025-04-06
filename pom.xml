@@ -36,10 +36,10 @@
         <prosessering.version>2.20250311132904_6ee7728</prosessering.version>
         <springdoc.version>2.8.6</springdoc.version>
         <mockk-jvm.version>1.13.17</mockk-jvm.version>
-        <felles.version>3.20250320122046_7ca9dae</felles.version>
-        <prosessering.version>2.20250324083707_24007c5</prosessering.version>
+        <felles.version>3.20250330150138_0502cea</felles.version>
+        <prosessering.version>2.20250331103528_ed988de</prosessering.version>
         <start-class>no.nav.familie.klage.ApplicationKt</start-class>
-        <kontrakter.version>3.0_20250328102435_154d3a4</kontrakter.version>
+        <kontrakter.version>3.0_20250401151544_aae9e33</kontrakter.version>
         <saksstatistikk-klage.version>2.0_20230214104704_706e9c0</saksstatistikk-klage.version>
         <nav.security.version>5.0.24</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskriver spring sin versjon, blir brukt av mock-oauth2-server -->
@@ -93,7 +93,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>11.5.0</version>
+            <version>11.6.0</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -278,7 +278,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.2</version>
+                <version>3.5.3</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
