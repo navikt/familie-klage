@@ -29,7 +29,7 @@ class VurderingService(
         hentVurdering(behandlingId)?.tilDto()
 
     @Transactional
-    fun opprettEllerOppdaterVurdering(vurdering: VurderingDto): VurderingDto {
+    fun lagreVurderingOgOppdaterSteg(vurdering: VurderingDto): VurderingDto {
         val fagsystem = fagsakService.hentFagsakForBehandling(vurdering.behandlingId).fagsystem
         validerVurdering(vurdering, fagsystem)
         if (vurdering.vedtak === Vedtak.OMGJØR_VEDTAK) {
@@ -38,6 +38,16 @@ class VurderingService(
 
         stegService.oppdaterSteg(vurdering.behandlingId, StegType.VURDERING, StegType.BREV)
 
+        val eksisterendeVurdering = vurderingRepository.findByIdOrNull(vurdering.behandlingId)
+        return if (eksisterendeVurdering != null) {
+            oppdaterVurdering(vurdering, eksisterendeVurdering).tilDto()
+        } else {
+            opprettNyVurdering(vurdering).tilDto()
+        }
+    }
+
+    @Transactional
+    fun lagreVurdering(vurdering: VurderingDto): VurderingDto {
         val eksisterendeVurdering = vurderingRepository.findByIdOrNull(vurdering.behandlingId)
         return if (eksisterendeVurdering != null) {
             oppdaterVurdering(vurdering, eksisterendeVurdering).tilDto()
