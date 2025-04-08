@@ -56,13 +56,11 @@ class BehandlingPåVentService(
         )
 
         taskService.save(
-            taskService.save(
-                BehandlingsstatistikkTask.opprettVenterTask(
-                    behandlingId,
-                    fagsak.eksternId,
-                    fagsak.fagsystem,
-                ),
-            ),
+            BehandlingsstatistikkTask.opprettVenterTask(
+                behandlingId,
+                fagsak.eksternId,
+                fagsak.fagsystem,
+            )
         )
     }
 
