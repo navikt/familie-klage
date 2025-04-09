@@ -1,7 +1,7 @@
 package no.nav.familie.klage.distribusjon
 
 import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brevmottaker.BrevmottakerService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.util.TaskMetadata
 import no.nav.familie.klage.kabal.KabalService
@@ -26,7 +26,7 @@ class SendTilKabalTask(
     private val behandlingService: BehandlingService,
     private val kabalService: KabalService,
     private val vurderingService: VurderingService,
-    private val brevService: BrevService,
+    private val brevmottakerService: BrevmottakerService,
 ) : AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -43,7 +43,7 @@ class SendTilKabalTask(
 
         val brevmottakere =
             if (behandling.årsak != Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL) {
-                brevService.hentBrevmottakere(behandlingId)
+                brevmottakerService.hentBrevmottakere(behandlingId)
             } else {
                 null
             }
