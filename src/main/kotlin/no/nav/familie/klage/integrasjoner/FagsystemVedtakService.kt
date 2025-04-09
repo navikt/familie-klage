@@ -66,8 +66,8 @@ class FagsystemVedtakService(
         return try {
             when (fagsak.fagsystem) {
                 Fagsystem.EF -> familieEFSakClient.opprettRevurdering(fagsak.eksternId)
-                Fagsystem.KS -> familieKSSakClient.opprettRevurdering(fagsak.eksternId)
-                Fagsystem.BA -> familieBASakClient.opprettRevurdering(fagsak.eksternId)
+                Fagsystem.KS -> familieKSSakClient.opprettRevurdering(fagsak.eksternId, behandlingId)
+                Fagsystem.BA -> familieBASakClient.opprettRevurdering(fagsak.eksternId, behandlingId)
             }
         } catch (e: Exception) {
             val errorSuffix = "Feilet opprettelse av revurdering for behandling=$behandlingId eksternFagsakId=${fagsak.eksternId}"
