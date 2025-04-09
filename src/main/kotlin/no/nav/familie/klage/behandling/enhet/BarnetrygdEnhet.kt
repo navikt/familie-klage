@@ -1,9 +1,9 @@
 package no.nav.familie.klage.behandling.enhet
 
 enum class BarnetrygdEnhet(
-    val enhetsnummer: String,
-    val enhetsnavn: String,
-) {
+    override val enhetsnummer: String,
+    override val enhetsnavn: String,
+): Enhet {
     VIKAFOSSEN("2103", "NAV Vikafossen"),
     DRAMMEN("4806", "NAV Familie- og pensjonsytelser Drammen"),
     VADSØ("4820", "NAV Familie- og pensjonsytelser Vadsø"),
