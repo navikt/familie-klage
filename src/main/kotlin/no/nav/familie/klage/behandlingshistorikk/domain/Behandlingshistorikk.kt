@@ -14,8 +14,9 @@ data class Behandlingshistorikk(
     val steg: StegType,
     val opprettetAv: String = SikkerhetContext.hentSaksbehandler(),
     val endretTid: LocalDateTime? = LocalDateTime.now(),
+    val beskrivelse: String? = null,
 )
 
 enum class HistorikkHendelse {
-    SATT_PÅ_VENT, TATT_AV_VENT
+    SATT_PÅ_VENT, TATT_AV_VENT, BEHANDLENDE_ENHET_ENDRET
 }

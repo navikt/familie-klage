@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.RestController
 class FeatureToggleController(
     private val featureToggleService: FeatureToggleService,
 ) {
-    private val featureTogglesIBruk: Set<Toggle> = setOf(
-        Toggle.VIS_BREVMOTTAKER_BAKS,
-        Toggle.LEGG_TIL_BREVMOTTAKER_BAKS,
-    )
+    private val featureTogglesIBruk: Set<Toggle> =
+        setOf(
+            Toggle.VIS_BREVMOTTAKER_BAKS,
+            Toggle.LEGG_TIL_BREVMOTTAKER_BAKS,
+            Toggle.SKAL_KUNNE_ENDRE_BEHANDLENDE_ENHET_BAKS,
+        )
 
     @GetMapping
-    fun sjekkAlle(): Map<String, Boolean> {
-        return featureTogglesIBruk.associate { it.toggleId to featureToggleService.isEnabled(it) }
-    }
+    fun sjekkAlle(): Map<String, Boolean> = featureTogglesIBruk.associate { it.toggleId to featureToggleService.isEnabled(it) }
 
     @GetMapping("/{toggleId}")
     fun sjekkFunksjonsbryter(

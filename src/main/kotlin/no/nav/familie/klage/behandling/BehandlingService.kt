@@ -12,6 +12,8 @@ import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.behandling.dto.tilPåklagetVedtakDetaljer
+import no.nav.familie.klage.behandling.enhet.Enhet
+import no.nav.familie.klage.behandling.enhet.EnhetValidator
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
@@ -23,7 +25,6 @@ import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.tilDto
 import no.nav.familie.klage.personopplysninger.pdl.secureLogger
 import no.nav.familie.klage.repository.findByIdOrThrow
-import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
@@ -43,29 +44,28 @@ class BehandlingService(
     private val klageresultatRepository: KlageresultatRepository,
     private val fagsystemVedtakService: FagsystemVedtakService,
 ) {
-
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     fun hentBehandling(behandlingId: UUID): Behandling = behandlingRepository.findByIdOrThrow(behandlingId)
 
     fun hentBehandlingDto(behandlingId: UUID): BehandlingDto {
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
-        return behandlingRepository.findByIdOrThrow(behandlingId)
+        return behandlingRepository
+            .findByIdOrThrow(behandlingId)
             .tilDto(fagsak, hentKlageresultatDto(behandlingId))
     }
 
-    fun opprettBehandling(behandling: Behandling): Behandling {
-        return behandlingRepository.insert(behandling)
-    }
+    fun opprettBehandling(behandling: Behandling): Behandling = behandlingRepository.insert(behandling)
 
     fun hentKlageresultatDto(behandlingId: UUID): List<KlageinstansResultatDto> {
         val klageresultater = klageresultatRepository.findByBehandlingId(behandlingId)
         return klageresultater.tilDto()
     }
 
-    fun finnKlagebehandlingsresultat(eksternFagsakId: String, fagsystem: Fagsystem): List<Klagebehandlingsresultat> {
-        return behandlingRepository.finnKlagebehandlingsresultat(eksternFagsakId, fagsystem)
-    }
+    fun finnKlagebehandlingsresultat(
+        eksternFagsakId: String,
+        fagsystem: Fagsystem,
+    ): List<Klagebehandlingsresultat> = behandlingRepository.finnKlagebehandlingsresultat(eksternFagsakId, fagsystem)
 
     fun hentAktivIdent(behandlingId: UUID): Pair<String, Fagsak> {
         val behandling = hentBehandling(behandlingId)
@@ -82,16 +82,43 @@ class BehandlingService(
         if (behandling.resultat != BehandlingResultat.IKKE_SATT) {
             error("Kan ikke endre på et resultat som allerede er satt")
         }
-        val oppdatertBehandling = behandling.copy(
-            resultat = behandlingsresultat,
-            vedtakDato = LocalDateTime.now(),
-            fagsystemRevurdering = opprettetRevurdering,
-        )
+        val oppdatertBehandling =
+            behandling.copy(
+                resultat = behandlingsresultat,
+                vedtakDato = LocalDateTime.now(),
+                fagsystemRevurdering = opprettetRevurdering,
+            )
         behandlingRepository.update(oppdatertBehandling)
     }
 
     @Transactional
-    fun oppdaterPåklagetVedtak(behandlingId: UUID, påklagetVedtakDto: PåklagetVedtakDto) {
+    fun oppdaterBehandlendeEnhet(
+        behandlingId: UUID,
+        behandlendeEnhet: Enhet,
+        fagsystem: Fagsystem,
+    ) {
+        val behandling = hentBehandling(behandlingId)
+
+        feilHvis(behandling.status == BehandlingStatus.FERDIGSTILT) { "Kan ikke endre behandlende enhet på en ferdigstilt behandling" }
+
+        EnhetValidator.validerEnhetForFagsystem(
+            enhetsnummer = behandlendeEnhet.enhetsnummer,
+            fagsystem = fagsystem,
+        )
+
+        val oppdatertBehandling =
+            behandling.copy(
+                behandlendeEnhet = behandlendeEnhet.enhetsnummer,
+            )
+
+        behandlingRepository.update(oppdatertBehandling)
+    }
+
+    @Transactional
+    fun oppdaterPåklagetVedtak(
+        behandlingId: UUID,
+        påklagetVedtakDto: PåklagetVedtakDto,
+    ) {
         val behandling = hentBehandling(behandlingId)
         brukerfeilHvis(behandling.status.erLåstForVidereBehandling()) {
             "Kan ikke oppdatere påklaget vedtak siden behandlingen er låst for videre saksbehandling"
@@ -106,12 +133,14 @@ class BehandlingService(
 
         val påklagetVedtakDetaljer = påklagetVedtakDetaljer(behandlingId, påklagetVedtakDto)
 
-        val behandlingMedPåklagetVedtak = behandling.copy(
-            påklagetVedtak = PåklagetVedtak(
-                påklagetVedtakstype = påklagetVedtakDto.påklagetVedtakstype,
-                påklagetVedtakDetaljer = påklagetVedtakDetaljer,
-            ),
-        )
+        val behandlingMedPåklagetVedtak =
+            behandling.copy(
+                påklagetVedtak =
+                    PåklagetVedtak(
+                        påklagetVedtakstype = påklagetVedtakDto.påklagetVedtakstype,
+                        påklagetVedtakDetaljer = påklagetVedtakDetaljer,
+                    ),
+            )
         behandlingRepository.update(behandlingMedPåklagetVedtak)
     }
 
@@ -126,7 +155,8 @@ class BehandlingService(
             return tilPåklagetKlageAvvistVedtak(påklagetVedtakDto)
         }
         return påklagetVedtakDto.eksternFagsystemBehandlingId?.let {
-            fagsystemVedtakService.hentFagsystemVedtakForPåklagetBehandlingId(behandlingId, it)
+            fagsystemVedtakService
+                .hentFagsystemVedtakForPåklagetBehandlingId(behandlingId, it)
                 .tilPåklagetVedtakDetaljer()
         }
     }
@@ -149,19 +179,19 @@ class BehandlingService(
             internKlagebehandlingId = påklagetVedtakDto.internKlagebehandlingId,
             behandlingstype = "Klage",
             resultat = "Ikke medhold formkrav avvist",
-            vedtakstidspunkt = hentBehandling(UUID.fromString(påklagetVedtakDto.internKlagebehandlingId)).vedtakDato ?: error("Mangler vedtaksdato"),
+            vedtakstidspunkt =
+                hentBehandling(UUID.fromString(påklagetVedtakDto.internKlagebehandlingId)).vedtakDato ?: error("Mangler vedtaksdato"),
             regelverk = påklagetVedtakDto.regelverk,
         )
 
-    private fun utledFagsystemType(påklagetVedtakDto: PåklagetVedtakDto): FagsystemType {
-        return when (påklagetVedtakDto.påklagetVedtakstype) {
+    private fun utledFagsystemType(påklagetVedtakDto: PåklagetVedtakDto): FagsystemType =
+        when (påklagetVedtakDto.påklagetVedtakstype) {
             PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING -> FagsystemType.TILBAKEKREVING
             PåklagetVedtakstype.UTESTENGELSE -> FagsystemType.UTESTENGELSE
             PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK -> FagsystemType.ORDNIÆR
             PåklagetVedtakstype.AVVIST_KLAGE -> FagsystemType.ORDNIÆR
             else -> error("Kan ikke utlede fagsystemType for påklagetVedtakType ${påklagetVedtakDto.påklagetVedtakstype}")
         }
-    }
 
     fun oppdaterStatusPåBehandling(
         behandlingId: UUID,
@@ -177,6 +207,9 @@ class BehandlingService(
 
     fun hentKlagerIkkeMedholdFormkravAvvist(behandlingId: UUID): List<Klagebehandlingsresultat> {
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
-        return finnKlagebehandlingsresultat(fagsak.eksternId, fagsak.fagsystem).filter { klage -> klage.resultat == BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST }
+        return finnKlagebehandlingsresultat(fagsak.eksternId, fagsak.fagsystem).filter { klage ->
+            klage.resultat ==
+                BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST
+        }
     }
 }
