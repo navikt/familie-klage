@@ -13,7 +13,7 @@ object EnhetValidator {
                 "Kan ikke oppdatere behandlende enhet til $enhetsnummer. Dette er ikke et gyldig enhetsnummer for barnetrygd."
             }
             Fagsystem.KS -> brukerfeilHvis(!KontantstøtteEnhet.erGyldigBehandlendeKontantstøtteEnhet(enhetsnummer = enhetsnummer)) {
-                "Kan ikke oppdatere behandlende enhet til $enhetsnummer. Dette er ikke et gyldig enhetsnummer for barnetrygd."
+                "Kan ikke oppdatere behandlende enhet til $enhetsnummer. Dette er ikke et gyldig enhetsnummer for kontantstøtte."
             }
             else -> throw ApiFeil("Støtter ikke oppdatering av behandlende enhet for fagsystem $fagsystem", HttpStatus.BAD_REQUEST)
         }

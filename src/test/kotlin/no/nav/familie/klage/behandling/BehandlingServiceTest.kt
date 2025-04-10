@@ -8,6 +8,7 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.Klagebehandlingsresultat
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
+import no.nav.familie.klage.behandling.enhet.BarnetrygdEnhet
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.fagsak.FagsakService
@@ -24,6 +25,7 @@ import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.klage.testutil.DomainUtil.fagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.junit.jupiter.api.AfterEach
@@ -178,6 +180,27 @@ internal class BehandlingServiceTest {
             val filtrertListeKlager = behandlingService.hentKlagerIkkeMedholdFormkravAvvist(behandling.id)
 
             assertEquals(0, filtrertListeKlager.size)
+        }
+    }
+
+    @Nested
+    inner class OppdaterBehandlendeEnhet {
+        @Test
+        fun `skal oppdatere behandlende enhet på behandling`() {
+            // Arrange
+            val behandling = behandling(
+                fagsak = fagsak(stønadstype = Stønadstype.BARNETRYGD),
+                behandlendeEnhet = BarnetrygdEnhet.DRAMMEN.enhetsnummer
+            )
+
+            every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
+
+            // Act
+            behandlingService.oppdaterBehandlendeEnhet(behandling.id, BarnetrygdEnhet.OSLO)
+
+            // Assert
+            assertEquals(behandlingSlot.captured.behandlendeEnhet, BarnetrygdEnhet.OSLO.enhetsnummer)
+
         }
     }
 

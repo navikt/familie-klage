@@ -2,10 +2,13 @@ package no.nav.familie.klage.oppgave
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.erUnderArbeidAvSaksbehandler
+import no.nav.familie.klage.behandling.enhet.Enhet
 import no.nav.familie.klage.infrastruktur.config.getValue
+import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.oppgave.MappeDto
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
+import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import org.slf4j.LoggerFactory
 import org.springframework.cache.CacheManager
 import org.springframework.stereotype.Service
@@ -79,6 +82,25 @@ class OppgaveService(
 
             mappeRespons.mapper
         }
+
+    fun oppdaterEnhetPåBehandleSakOppgave(behandlingId: UUID, behandlendeEnhet: Enhet) {
+        val behandleSakOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId)?.let { hentOppgave(it.oppgaveId) }
+
+        if (behandleSakOppgave == null) {
+            throw Feil("Finner ingen BehandleSak-Oppgave tilknyttet behandling $behandlingId")
+        }
+
+        if (behandleSakOppgave.status !in listOf(StatusEnum.FERDIGSTILT, StatusEnum.FEILREGISTRERT)) {
+            oppdaterOppgave(
+                Oppgave(
+                id = behandleSakOppgave.id,
+                tildeltEnhetsnr = behandlendeEnhet.enhetsnummer,
+                mappeId = null,
+                tilordnetRessurs = null
+                )
+            )
+        }
+    }
 
     companion object {
         const val MAPPE_CACHE_NAVN = "oppgave-mappe"

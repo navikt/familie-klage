@@ -9,11 +9,10 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandling.domain.harManuellVedtaksdato
 import no.nav.familie.klage.behandling.dto.BehandlingDto
-import no.nav.familie.klage.behandling.dto.OppdaterBehandlendeEnhetRequest
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.behandling.dto.tilPåklagetVedtakDetaljer
-import no.nav.familie.klage.behandling.enhet.EnhetValidator
+import no.nav.familie.klage.behandling.enhet.Enhet
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
@@ -25,7 +24,6 @@ import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.domain.tilDto
 import no.nav.familie.klage.personopplysninger.pdl.secureLogger
 import no.nav.familie.klage.repository.findByIdOrThrow
-import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
@@ -93,11 +91,11 @@ class BehandlingService(
     }
 
     @Transactional
-    fun oppdaterBehandlendeEnhet(behandlingId: UUID, behandlendeEnhet: String) {
+    fun oppdaterBehandlendeEnhet(behandlingId: UUID, behandlendeEnhet: Enhet) {
         val behandling = hentBehandling(behandlingId)
 
         val oppdatertBehandling = behandling.copy(
-            behandlendeEnhet = behandlendeEnhet
+            behandlendeEnhet = behandlendeEnhet.enhetsnummer
         )
 
         behandlingRepository.update(oppdatertBehandling)
