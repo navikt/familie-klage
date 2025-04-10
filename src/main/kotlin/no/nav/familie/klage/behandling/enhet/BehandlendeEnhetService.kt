@@ -19,41 +19,54 @@ class BehandlendeEnhetService(
     private val behandlingshistorikkService: BehandlingshistorikkService,
     private val oppgaveService: OppgaveService,
 ) {
-
     @Transactional
-    fun oppdaterBehandlendeEnhet(behandlingId: UUID, oppdaterBehandlendeEnhetRequest: OppdaterBehandlendeEnhetRequest) {
+    fun oppdaterBehandlendeEnhet(
+        behandlingId: UUID,
+        oppdaterBehandlendeEnhetRequest: OppdaterBehandlendeEnhetRequest,
+    ) {
         val behandling = behandlingService.hentBehandling(behandlingId)
-        val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
+        val fagsystem = fagsakService.hentFagsak(behandling.fagsakId).fagsystem
 
-        EnhetValidator.validerEnhetForFagsystem(
-            enhetsnummer = oppdaterBehandlendeEnhetRequest.enhetsnummer,
-            fagsystem = fagsak.fagsystem
+        val eksisterendeBehandlendeEnhet =
+            utledEnhetForFagsystem(
+                fagsystem = fagsystem,
+                enhetsnummer = behandling.behandlendeEnhet,
+            )
+        val nyBehandlendeEnhet =
+            utledEnhetForFagsystem(
+                fagsystem = fagsystem,
+                enhetsnummer = oppdaterBehandlendeEnhetRequest.enhetsnummer,
+            )
+
+        behandlingService.oppdaterBehandlendeEnhet(
+            behandlingId = behandlingId,
+            behandlendeEnhet = nyBehandlendeEnhet,
+            fagsystem = fagsystem,
         )
 
-        val behandlendeEnhet = utledEnhetForFagsystem(fagsak.fagsystem, behandling.behandlendeEnhet)
-        val nyBehandlendeEnhet = utledEnhetForFagsystem(fagsak.fagsystem, oppdaterBehandlendeEnhetRequest.enhetsnummer)
-
-        behandlingService.oppdaterBehandlendeEnhet(behandlingId, nyBehandlendeEnhet)
-
-        oppgaveService.oppdaterEnhetPåBehandleSakOppgave(behandling.id, nyBehandlendeEnhet)
-
-
+        oppgaveService.oppdaterEnhetPåBehandleSakOppgave(
+            behandlingId = behandling.id,
+            behandlendeEnhet = nyBehandlendeEnhet,
+        )
 
         behandlingshistorikkService.opprettBehandlingshistorikk(
             behandlingId = behandlingId,
             steg = behandling.steg,
             historikkHendelse = HistorikkHendelse.BEHANDLENDE_ENHET_ENDRET,
-            beskrivelse = "Behandlende enhet endret fra ${behandlendeEnhet.enhetsnummer} (${behandlendeEnhet.enhetsnavn}) til " +
-                    "${nyBehandlendeEnhet.enhetsnummer} (${nyBehandlendeEnhet.enhetsnavn})."
-                    + "\n\n${oppdaterBehandlendeEnhetRequest.begrunnelse}"
+            beskrivelse =
+                "Behandlende enhet endret fra ${eksisterendeBehandlendeEnhet.enhetsnummer} (${eksisterendeBehandlendeEnhet.enhetsnavn}) til " +
+                    "${nyBehandlendeEnhet.enhetsnummer} (${nyBehandlendeEnhet.enhetsnavn})." +
+                    "\n\n${oppdaterBehandlendeEnhetRequest.begrunnelse}",
         )
     }
 
-    private fun utledEnhetForFagsystem(fagsystem: Fagsystem, enhetsnummer: String): Enhet =
+    private fun utledEnhetForFagsystem(
+        fagsystem: Fagsystem,
+        enhetsnummer: String,
+    ): Enhet =
         when (fagsystem) {
             Fagsystem.BA -> BarnetrygdEnhet.values().single { it.enhetsnummer == enhetsnummer }
             Fagsystem.KS -> KontantstøtteEnhet.values().single { it.enhetsnummer == enhetsnummer }
             else -> throw Feil("Støtter ikke endring av enhet for fagsystem $fagsystem")
         }
-
 }

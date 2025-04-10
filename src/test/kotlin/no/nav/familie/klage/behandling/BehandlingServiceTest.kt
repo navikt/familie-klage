@@ -9,6 +9,7 @@ import no.nav.familie.klage.behandling.domain.Klagebehandlingsresultat
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandling.enhet.BarnetrygdEnhet
+import no.nav.familie.klage.behandling.enhet.KontantstøtteEnhet
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.fagsak.FagsakService
@@ -28,6 +29,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -35,13 +37,14 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 internal class BehandlingServiceTest {
-
     val klageresultatRepository = mockk<KlageresultatRepository>()
     val fagsakService = mockk<FagsakService>()
     val behandlingRepository = mockk<BehandlingRepository>()
@@ -51,12 +54,13 @@ internal class BehandlingServiceTest {
     val fagsystemVedtakService = mockk<FagsystemVedtakService>()
     val brevService = mockk<BrevService>()
 
-    val behandlingService = BehandlingService(
-        behandlingRepository,
-        fagsakService,
-        klageresultatRepository,
-        fagsystemVedtakService,
-    )
+    val behandlingService =
+        BehandlingService(
+            behandlingRepository,
+            fagsakService,
+            klageresultatRepository,
+            fagsystemVedtakService,
+        )
 
     val behandlingSlot = slot<Behandling>()
 
@@ -80,7 +84,6 @@ internal class BehandlingServiceTest {
 
     @Nested
     inner class PåklagetVedtak {
-
         @Test
         internal fun `skal ikke kunne oppdatere påklaget vedtak dersom behandlingen er låst`() {
             val behandling = behandling(fagsak(), status = BehandlingStatus.VENTER)
@@ -100,7 +103,8 @@ internal class BehandlingServiceTest {
             val ugyldigManglerBehandlingId = PåklagetVedtakDto(null, null, PåklagetVedtakstype.VEDTAK)
             val ugyldigManglerVedtaksdatoInfotrygd = PåklagetVedtakDto(null, null, PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING)
             val ugyldigManglerVedtaksdatoUtestengelse = PåklagetVedtakDto(null, null, PåklagetVedtakstype.UTESTENGELSE)
-            val ugyldigManglerVedtaksdatoInfotrygdOrdinærtVedtak = PåklagetVedtakDto(null, null, PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK)
+            val ugyldigManglerVedtaksdatoInfotrygdOrdinærtVedtak =
+                PåklagetVedtakDto(null, null, PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK)
             val ugyldigUtenVedtakMedBehandlingId = PåklagetVedtakDto("123", null, PåklagetVedtakstype.UTEN_VEDTAK)
             val ugyldigIkkeValgtMedBehandlingId = PåklagetVedtakDto("123", null, PåklagetVedtakstype.IKKE_VALGT)
 
@@ -121,7 +125,8 @@ internal class BehandlingServiceTest {
             val medVedtak = PåklagetVedtakDto("123", null, PåklagetVedtakstype.VEDTAK)
             val utenVedtak = PåklagetVedtakDto(null, null, PåklagetVedtakstype.UTEN_VEDTAK)
             val ikkeValgt = PåklagetVedtakDto(null, null, PåklagetVedtakstype.IKKE_VALGT)
-            val gjelderInfotrygd = PåklagetVedtakDto(null, null, PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING, manuellVedtaksdato = LocalDate.now())
+            val gjelderInfotrygd =
+                PåklagetVedtakDto(null, null, PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING, manuellVedtaksdato = LocalDate.now())
             val utestengelse = PåklagetVedtakDto(null, null, PåklagetVedtakstype.UTESTENGELSE, manuellVedtaksdato = LocalDate.now())
 
             behandlingService.oppdaterPåklagetVedtak(behandling.id, ikkeValgt)
@@ -143,14 +148,14 @@ internal class BehandlingServiceTest {
 
     @Nested
     inner class Hentklagebehandlingsresultat {
-
         @Test
         fun `Skal ikke filtrere bort Klagebehandlingsresultat hvis behandlingResultat er IKKE_MEDHOLD_FORMKRAV_AVVIST`() {
             val behandlingId = UUID.randomUUID()
             val fagsak = fagsak()
-            val klagebehandlingsresultat = listOf(
-                lagKlageBehandlingsresultat(BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST),
-            )
+            val klagebehandlingsresultat =
+                listOf(
+                    lagKlageBehandlingsresultat(BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST),
+                )
 
             val behandling = behandling(id = behandlingId, fagsak = fagsak, status = BehandlingStatus.UTREDES)
             every { fagsakService.hentFagsakForBehandling(behandlingId) } returns fagsak
@@ -166,12 +171,13 @@ internal class BehandlingServiceTest {
         fun `Skal filtrere bort Klagebehandlingsresultat hvis behandlingResultat ikke er IKKE_MEDHOLD_FORMKRAV_AVVIST`() {
             val behandlingId = UUID.randomUUID()
             val fagsak = fagsak()
-            val klagebehandlingsresultat = listOf(
-                lagKlageBehandlingsresultat(BehandlingResultat.MEDHOLD),
-                lagKlageBehandlingsresultat(BehandlingResultat.IKKE_SATT),
-                lagKlageBehandlingsresultat(BehandlingResultat.IKKE_MEDHOLD),
-                lagKlageBehandlingsresultat(BehandlingResultat.HENLAGT),
-            )
+            val klagebehandlingsresultat =
+                listOf(
+                    lagKlageBehandlingsresultat(BehandlingResultat.MEDHOLD),
+                    lagKlageBehandlingsresultat(BehandlingResultat.IKKE_SATT),
+                    lagKlageBehandlingsresultat(BehandlingResultat.IKKE_MEDHOLD),
+                    lagKlageBehandlingsresultat(BehandlingResultat.HENLAGT),
+                )
 
             val behandling = behandling(id = behandlingId, fagsak = fagsak, status = BehandlingStatus.UTREDES)
             every { fagsakService.hentFagsakForBehandling(behandlingId) } returns fagsak
@@ -188,19 +194,85 @@ internal class BehandlingServiceTest {
         @Test
         fun `skal oppdatere behandlende enhet på behandling`() {
             // Arrange
-            val behandling = behandling(
-                fagsak = fagsak(stønadstype = Stønadstype.BARNETRYGD),
-                behandlendeEnhet = BarnetrygdEnhet.DRAMMEN.enhetsnummer
-            )
+            val fagsak = fagsak(stønadstype = Stønadstype.BARNETRYGD)
+            val behandling =
+                behandling(
+                    fagsak = fagsak,
+                    behandlendeEnhet = BarnetrygdEnhet.DRAMMEN.enhetsnummer,
+                )
 
             every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
 
             // Act
-            behandlingService.oppdaterBehandlendeEnhet(behandling.id, BarnetrygdEnhet.OSLO)
+            behandlingService.oppdaterBehandlendeEnhet(behandling.id, BarnetrygdEnhet.OSLO, fagsak.fagsystem)
 
             // Assert
             assertEquals(behandlingSlot.captured.behandlendeEnhet, BarnetrygdEnhet.OSLO.enhetsnummer)
+        }
 
+        @ParameterizedTest
+        @EnumSource(BarnetrygdEnhet::class, names = ["MIDLERTIDIG_ENHET"], mode = EnumSource.Mode.INCLUDE)
+        fun `skal kaste feil dersom ny behandlende enhet ikke er gyldig`(barnetrygdEnhet: BarnetrygdEnhet) {
+            // Arrange
+            val fagsak = fagsak(stønadstype = Stønadstype.BARNETRYGD)
+            val behandling =
+                behandling(
+                    fagsak = fagsak,
+                    behandlendeEnhet = BarnetrygdEnhet.DRAMMEN.enhetsnummer,
+                )
+
+            every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
+
+            // Act & Assert
+            val apiFeil =
+                assertThrows<ApiFeil> { behandlingService.oppdaterBehandlendeEnhet(behandling.id, barnetrygdEnhet, fagsak.fagsystem) }
+            assertThat(
+                apiFeil.feilmelding,
+            ).isEqualTo(
+                "Kan ikke oppdatere behandlende enhet til ${barnetrygdEnhet.enhetsnummer}. Dette er ikke et gyldig enhetsnummer for barnetrygd.",
+            )
+        }
+
+        @ParameterizedTest
+        @EnumSource(KontantstøtteEnhet::class, names = ["MIDLERTIDIG_ENHET"], mode = EnumSource.Mode.INCLUDE)
+        fun `skal kaste feil dersom ny behandlende enhet ikke er gyldig`(kontantstøtteEnhet: KontantstøtteEnhet) {
+            // Arrange
+            val fagsak = fagsak(stønadstype = Stønadstype.KONTANTSTØTTE)
+            val behandling =
+                behandling(
+                    fagsak = fagsak,
+                    behandlendeEnhet = KontantstøtteEnhet.DRAMMEN.enhetsnummer,
+                )
+
+            every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
+
+            // Act & Assert
+            val apiFeil =
+                assertThrows<ApiFeil> { behandlingService.oppdaterBehandlendeEnhet(behandling.id, kontantstøtteEnhet, fagsak.fagsystem) }
+            assertThat(
+                apiFeil.feilmelding,
+            ).isEqualTo(
+                "Kan ikke oppdatere behandlende enhet til ${kontantstøtteEnhet.enhetsnummer}. Dette er ikke et gyldig enhetsnummer for kontantstøtte.",
+            )
+        }
+
+        @ParameterizedTest
+        @EnumSource(Stønadstype::class, names = ["OVERGANGSSTØNAD", "BARNETILSYN", "SKOLEPENGER"])
+        fun `skal kaste feil dersom fagsystem er EF`(stønadstype: Stønadstype) {
+            // Arrange
+            val fagsak = fagsak(stønadstype = stønadstype)
+            val behandling =
+                behandling(
+                    fagsak = fagsak,
+                    behandlendeEnhet = "1234",
+                )
+
+            every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
+
+            // Act & Assert
+            val apiFeil =
+                assertThrows<ApiFeil> { behandlingService.oppdaterBehandlendeEnhet(behandling.id, BarnetrygdEnhet.OSLO, fagsak.fagsystem) }
+            assertThat(apiFeil.feilmelding).isEqualTo("Støtter ikke endring av enhet for fagsystem EF")
         }
     }
 
@@ -214,8 +286,8 @@ internal class BehandlingServiceTest {
         } returns fagsystemVedtak
     }
 
-    fun lagKlageBehandlingsresultat(resultat: BehandlingResultat): Klagebehandlingsresultat {
-        return Klagebehandlingsresultat(
+    fun lagKlageBehandlingsresultat(resultat: BehandlingResultat): Klagebehandlingsresultat =
+        Klagebehandlingsresultat(
             id = UUID.randomUUID(),
             fagsakId = UUID.randomUUID(),
             fagsakPersonId = UUID.randomUUID(),
@@ -227,5 +299,4 @@ internal class BehandlingServiceTest {
             vedtaksdato = null,
             henlagtÅrsak = null,
         )
-    }
 }
