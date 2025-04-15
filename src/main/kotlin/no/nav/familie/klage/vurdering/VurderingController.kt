@@ -32,11 +32,24 @@ class VurderingController(
         return Ressurs.success(vurderingService.hentVurderingDto(behandlingId))
     }
 
+    @Deprecated(message = "Bruk /lagre-og-oppdater-steg i stedet")
+    @PostMapping
+    fun lagreVurderingOgOppdaterStegDeprekert(
+        @RequestBody vurdering: VurderingDto,
+    ): Ressurs<VurderingDto> {
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(vurdering.behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(vurdering.behandlingId)
+        return Ressurs.success(vurderingService.lagreVurderingOgOppdaterSteg(vurdering))
+    }
+
     @PostMapping(path = ["/lagre-og-oppdater-steg"])
     fun lagreVurderingOgOppdaterSteg(
         @RequestBody vurdering: VurderingDto,
     ): Ressurs<VurderingDto> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(vurdering.behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
+            vurdering.behandlingId,
+            AuditLoggerEvent.UPDATE,
+        )
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(vurdering.behandlingId)
         return Ressurs.success(vurderingService.lagreVurderingOgOppdaterSteg(vurdering))
     }
