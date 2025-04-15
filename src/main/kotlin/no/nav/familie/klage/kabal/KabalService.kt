@@ -6,7 +6,6 @@ import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
-import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle.SKAL_BRUKE_KABAL_API_V4
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
@@ -45,11 +44,7 @@ class KabalService(
         saksbehandlersEnhet: String,
         brevmottakere: Brevmottakere?,
     ): OversendtKlageAnke =
-        if (behandlingInneholderBrevmottakerUtenIdent(brevmottakere)) {
-            if (!featureToggleService.isEnabled(SKAL_BRUKE_KABAL_API_V4)) {
-                throw Feil("V4 av oversendelse til Kabal er foreløpig ikke støttet.")
-            }
-
+        if (featureToggleService.isEnabled(SKAL_BRUKE_KABAL_API_V4)) {
             OversendtKlageAnkeV4.lagKlageOversendelse(
                 fagsak = fagsak,
                 behandling = behandling,
@@ -58,6 +53,9 @@ class KabalService(
                 brevmottakere = brevmottakere,
             )
         } else {
+            if (behandlingInneholderBrevmottakerUtenIdent(brevmottakere)) {
+                throw IllegalStateException("Kan ikke sende til Kabal med brevmottaker uten ident")
+            }
             OversendtKlageAnkeV3.lagKlageOversendelse(
                 fagsak = fagsak,
                 behandling = behandling,
@@ -68,8 +66,8 @@ class KabalService(
             )
         }
 
-    private fun behandlingInneholderBrevmottakerUtenIdent(brevmottakere: Brevmottakere): Boolean =
-        brevmottakere.personer.any { it is BrevmottakerPersonUtenIdent }
+    private fun behandlingInneholderBrevmottakerUtenIdent(brevmottakere: Brevmottakere?): Boolean =
+        brevmottakere?.personer?.any { it is BrevmottakerPersonUtenIdent } ?: false
 
     private fun lagInnsynUrl(
         fagsak: Fagsak,

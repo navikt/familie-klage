@@ -39,7 +39,7 @@ data class OversendtKlageAnkeV3(
             behandling: Behandling,
             vurdering: Vurdering,
             saksbehandlersEnhet: String,
-            brevmottakere: Brevmottakere,
+            brevmottakere: Brevmottakere?,
             innsynUrl: String?,
         ): OversendtKlageAnkeV3 =
             OversendtKlageAnkeV3(
@@ -51,7 +51,7 @@ data class OversendtKlageAnkeV3(
                                 type = OversendtPartIdType.PERSON,
                                 verdi = fagsak.hentAktivIdent(),
                             ),
-                        klagersProsessfullmektig = utledFullmektigFraBrevmottakere(brevmottakere),
+                        klagersProsessfullmektig = brevmottakere?.let { utledFullmektigFraBrevmottakere(brevmottakere) },
                     ),
                 fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem.tilFellesFagsystem()),
                 kildeReferanse = behandling.eksternBehandlingId.toString(),
