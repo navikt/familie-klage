@@ -32,7 +32,7 @@ class VurderingController(
         return Ressurs.success(vurderingService.hentVurderingDto(behandlingId))
     }
 
-    @PostMapping
+    @PostMapping(path = ["/lagre-og-oppdater-steg"])
     fun lagreVurderingOgOppdaterSteg(
         @RequestBody vurdering: VurderingDto,
     ): Ressurs<VurderingDto> {
