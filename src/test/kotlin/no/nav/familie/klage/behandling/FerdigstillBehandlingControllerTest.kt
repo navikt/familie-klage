@@ -69,7 +69,7 @@ internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
 
         formService.opprettInitielleFormkrav(behandling.id)
         formService.oppdaterFormkrav(oppfyltForm(behandling.id).tilDto(PåklagetVedtakDto("123", null, VEDTAK)))
-        vurderingService.opprettEllerOppdaterVurdering(vurdering)
+        vurderingService.lagreVurderingOgOppdaterSteg(vurdering)
 
         brevService.lagBrev(behandling.id)
         behandleSakOppgaveRepository.insert(

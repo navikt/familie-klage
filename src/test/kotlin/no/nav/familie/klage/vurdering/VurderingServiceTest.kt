@@ -52,25 +52,25 @@ class VurderingServiceTest {
 
     @Test
     internal fun `skal slette brev ved omgjøring`() {
-        vurderingService.opprettEllerOppdaterVurdering(omgjørVedtakVurdering.tilDto())
+        vurderingService.lagreVurderingOgOppdaterSteg(omgjørVedtakVurdering.tilDto())
         verify(exactly = 1) { brevRepository.deleteById(any()) }
     }
 
     @Test
     internal fun `skal ikke slette brev ved opprettholdelse`() {
-        vurderingService.opprettEllerOppdaterVurdering(opprettholdVedtakVurdering.tilDto())
+        vurderingService.lagreVurderingOgOppdaterSteg(opprettholdVedtakVurdering.tilDto())
         verify(exactly = 0) { brevRepository.deleteById(any()) }
     }
 
     @Test
     fun `skal oppdatere steg ved omgjøring`() {
-        vurderingService.opprettEllerOppdaterVurdering(omgjørVedtakVurdering.tilDto())
+        vurderingService.lagreVurderingOgOppdaterSteg(omgjørVedtakVurdering.tilDto())
         verify(exactly = 1) { stegService.oppdaterSteg(any(), any(), StegType.BREV) }
     }
 
     @Test
     fun `skal oppdatere steg ved opprettholdelse av klage`() {
-        vurderingService.opprettEllerOppdaterVurdering(opprettholdVedtakVurdering.tilDto())
+        vurderingService.lagreVurderingOgOppdaterSteg(opprettholdVedtakVurdering.tilDto())
         verify(exactly = 1) { stegService.oppdaterSteg(any(), any(), StegType.BREV) }
     }
 }
