@@ -30,7 +30,7 @@ class KabalService(
         behandling: Behandling,
         vurdering: Vurdering,
         saksbehandlerIdent: String,
-        brevmottakere: Brevmottakere,
+        brevmottakere: Brevmottakere?,
     ) {
         val saksbehandler = integrasjonerClient.hentSaksbehandlerInfo(saksbehandlerIdent)
         val oversendtKlageAnke =
@@ -43,7 +43,7 @@ class KabalService(
         behandling: Behandling,
         vurdering: Vurdering,
         saksbehandlersEnhet: String,
-        brevmottakere: Brevmottakere,
+        brevmottakere: Brevmottakere?,
     ): OversendtKlageAnke =
         if (behandlingInneholderBrevmottakerUtenIdent(brevmottakere)) {
             if (!featureToggleService.isEnabled(SKAL_BRUKE_KABAL_API_V4)) {

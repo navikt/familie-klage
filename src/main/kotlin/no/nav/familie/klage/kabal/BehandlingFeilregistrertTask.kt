@@ -6,7 +6,7 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.oppgave.OpprettKabalEventOppgaveTask
 import no.nav.familie.klage.oppgave.OpprettOppgavePayload
-import no.nav.familie.kontrakter.felles.Behandlingstema
+import no.nav.familie.kontrakter.felles.oppgave.Behandlingstype
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
@@ -53,8 +53,10 @@ class BehandlingFeilregistrertTask(
                 oppgaveTekst = lagOppgavebeskrivelse(årsakFeilregistrert),
                 fagsystem = fagsak.fagsystem,
                 klageinstansUtfall = null,
-                behandlingstype = Behandlingstema.Klage.value,
+                behandlingstype = Behandlingstype.Klage.value,
             ),
+            eksternFagsakId = fagsak.eksternId,
+            fagsystem = fagsak.fagsystem,
         )
     }
 

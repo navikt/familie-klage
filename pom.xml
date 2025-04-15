@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.2</version>
+        <version>3.4.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <repositories>
@@ -29,15 +29,19 @@
         <sha1/>
         <changelist>-SNAPSHOT</changelist>
         <java.version>21</java.version>
-        <kotlin.version>2.1.10</kotlin.version>
-        <springdoc.version>2.8.4</springdoc.version>
-        <mockk-jvm.version>1.13.16</mockk-jvm.version>
-        <felles.version>3.20250122103549_5bcb4dc</felles.version>
-        <prosessering.version>2.20250114104710_d9ad759</prosessering.version>
+        <kotlin.version>2.1.20</kotlin.version>
+        <springdoc.version>2.8.6</springdoc.version>
+        <mockk-jvm.version>1.13.17</mockk-jvm.version>
+        <felles.version>3.20250330150138_0502cea</felles.version>
+        <prosessering.version>2.20250311132904_6ee7728</prosessering.version>
+        <springdoc.version>2.8.6</springdoc.version>
+        <mockk-jvm.version>1.13.17</mockk-jvm.version>
+        <felles.version>3.20250330150138_0502cea</felles.version>
+        <prosessering.version>2.20250331103528_ed988de</prosessering.version>
         <start-class>no.nav.familie.klage.ApplicationKt</start-class>
-        <kontrakter.version>3.0_20250121154645_1b256a5</kontrakter.version>
+        <kontrakter.version>3.0_20250401151544_aae9e33</kontrakter.version>
         <saksstatistikk-klage.version>2.0_20230214104704_706e9c0</saksstatistikk-klage.version>
-        <nav.security.version>5.0.15</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
+        <nav.security.version>5.0.24</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskriver spring sin versjon, blir brukt av mock-oauth2-server -->
     </properties>
 
@@ -89,7 +93,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>11.2.0</version>
+            <version>11.6.0</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -226,7 +230,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.20.4</version>
+            <version>1.20.6</version>
             <scope>test</scope>
         </dependency>
 
@@ -274,7 +278,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.2</version>
+                <version>3.5.3</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

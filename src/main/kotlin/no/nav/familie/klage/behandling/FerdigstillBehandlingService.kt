@@ -11,6 +11,7 @@ import no.nav.familie.klage.blankett.LagSaksbehandlingsblankettTask
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.distribusjon.SendTilKabalTask
+import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
@@ -25,6 +26,7 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_MEDHOLD
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.IKKE_SATT
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat.MEDHOLD
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL
 import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak.ORDINÆR
 import no.nav.familie.prosessering.domene.Task
@@ -45,6 +47,7 @@ class FerdigstillBehandlingService(
     private val brevService: BrevService,
     private val fagsystemVedtakService: FagsystemVedtakService,
     private val featureToggleService: FeatureToggleService,
+    private val fagsakService: FagsakService,
 ) {
 
     /**
@@ -54,20 +57,26 @@ class FerdigstillBehandlingService(
     fun ferdigstillKlagebehandling(behandlingId: UUID) {
         val behandling = behandlingService.hentBehandling(behandlingId)
         val behandlingsresultat = utledBehandlingResultat(behandlingId)
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
 
         validerKanFerdigstille(behandling)
         if (behandlingsresultat == IKKE_MEDHOLD || behandlingsresultat == IKKE_MEDHOLD_FORMKRAV_AVVIST) {
             when (behandling.årsak) {
                 ORDINÆR -> {
                     brevService.lagBrevPdf(behandlingId)
-                    opprettJournalførBrevTask(behandlingId)
+                    opprettJournalførBrevTask(behandlingId, fagsak.eksternId, fagsak.fagsystem)
                 }
+
                 HENVENDELSE_FRA_KABAL -> {
-                    opprettSendTilKabalTask(behandlingId)
+                    opprettSendTilKabalTask(behandlingId, fagsak.eksternId, fagsak.fagsystem)
                 }
             }
         }
-        oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id)
+        oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(
+            behandlingId = behandling.id,
+            eksternFagsakId = fagsak.eksternId,
+            fagsystem = fagsak.fagsystem,
+        )
 
         val opprettetRevurdering = opprettRevurderingHvisMedhold(behandling, behandlingsresultat)
 
@@ -78,11 +87,29 @@ class FerdigstillBehandlingService(
             stegForResultat(behandlingsresultat),
             behandlingsresultat,
         )
-        taskService.save(LagSaksbehandlingsblankettTask.opprettTask(behandlingId))
+        taskService.save(
+            LagSaksbehandlingsblankettTask.opprettTask(
+                behandlingId = behandlingId,
+                eksternFagsakId = fagsak.eksternId,
+                fagsystem = fagsak.fagsystem,
+            ),
+        )
         if (behandlingsresultat == IKKE_MEDHOLD) {
-            taskService.save(BehandlingsstatistikkTask.opprettSendtTilKATask(behandlingId = behandlingId))
+            taskService.save(
+                BehandlingsstatistikkTask.opprettSendtTilKATask(
+                    behandlingId = behandlingId,
+                    eksternFagsakId = fagsak.eksternId,
+                    fagsystem = fagsak.fagsystem,
+                ),
+            )
         }
-        taskService.save(BehandlingsstatistikkTask.opprettFerdigTask(behandlingId = behandlingId))
+        taskService.save(
+            BehandlingsstatistikkTask.opprettFerdigTask(
+                behandlingId = behandlingId,
+                eksternFagsakId = fagsak.eksternId,
+                fagsak.fagsystem,
+            ),
+        )
     }
 
     /**
@@ -102,23 +129,27 @@ class FerdigstillBehandlingService(
         }
     }
 
-    private fun opprettJournalførBrevTask(behandlingId: UUID) {
+    private fun opprettJournalførBrevTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem) {
         val journalførBrevTask = Task(
             type = JournalførBrevTask.TYPE,
             payload = behandlingId.toString(),
             properties = Properties().apply {
                 this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
+                this["eksternFagsakId"] = eksternFagsakId
+                this["fagsystem"] = fagsystem.name
             },
         )
         taskService.save(journalførBrevTask)
     }
 
-    private fun opprettSendTilKabalTask(behandlingId: UUID) {
+    private fun opprettSendTilKabalTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem) {
         val sendTilKabalTask = Task(
             type = SendTilKabalTask.TYPE,
             payload = behandlingId.toString(),
             properties = Properties().apply {
                 this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
+                this["eksternFagsakId"] = eksternFagsakId
+                this["fagsystem"] = fagsystem.name
             },
         )
         taskService.save(sendTilKabalTask)

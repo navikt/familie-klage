@@ -1,17 +1,13 @@
 package no.nav.familie.klage.infrastruktur.featuretoggle
 
-import no.nav.familie.unleash.UnleashService
 import org.springframework.stereotype.Service
 
 @Service
-class FeatureToggleService(val unleashService: UnleashService) {
-
+class FeatureToggleService(
+    val unleashNextService: UnleashNextService,
+) {
     fun isEnabled(toggle: Toggle): Boolean {
-        return unleashService.isEnabled(toggle.toggleId, false)
-    }
-
-    fun isEnabled(toggle: Toggle, defaultVerdi: Boolean): Boolean {
-        return unleashService.isEnabled(toggle.toggleId, defaultVerdi)
+        return unleashNextService.isEnabled(toggle)
     }
 }
 
@@ -24,7 +20,14 @@ enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
     VELG_SIGNATUR_BASERT_PÅ_FAGSAK("familie-klage.velg-signatur-basert-paa-fagsak", "Permission"),
 
     // Release
-    SETT_PÅ_VENT("familie.klage.sett-pa-vent", "Release"),
+    VIS_BREVMOTTAKER_BAKS("familie-klage.vis-brevmottaker-baks", "Release"),
+    LEGG_TIL_BREVMOTTAKER_BAKS("familie-klage.legg-til-brevmottaker-baks", "Release"),
+    SETT_BEHANDLINGSTEMA_OG_BEHANDLINGSTYPE_FOR_BAKS(
+        "familie-klage.nav-24445-sett-behandlingstema-til-klage",
+        "Release",
+    ),
+    BRUK_NYTT_BREV_BA_KS("familie-klage.bruk-nytt-brev-ba-ks", "Release"),
+    KAN_MELLOMLAGRE_VURDERING("familie-klage.kan-mellomlagre-vurdering", "Release"),
     SKAL_BRUKE_KABAL_API_V4("familie-klage.skal-bruke-kabal-api-v4", "Release"),
     ;
 

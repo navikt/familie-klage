@@ -7,6 +7,8 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration.StringListWrapper
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.kabal.BehandlingEvent
 import no.nav.familie.klage.kabal.BehandlingFeilregistrertTask
@@ -19,6 +21,7 @@ import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
+import no.nav.familie.kontrakter.felles.oppgave.Behandlingstype
 import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -33,6 +36,7 @@ class BehandlingEventService(
     private val klageresultatRepository: KlageresultatRepository,
     private val stegService: StegService,
     private val integrasjonerClient: FamilieIntegrasjonerClient,
+    private val featureToggleService: FeatureToggleService,
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -55,11 +59,13 @@ class BehandlingEventService(
                 BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET,
                 BehandlingEventType.OMGJOERINGSKRAVBEHANDLING_AVSLUTTET,
                 -> opprettOppgaveTask(behandling, behandlingEvent)
+
                 BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
                 BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
                 -> {
                     // Skal ikke gjøre noe dersom eventtype er ANKEBEHANDLING_OPPRETTET eller ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET
                 }
+
                 BehandlingEventType.BEHANDLING_FEILREGISTRERT -> opprettBehandlingFeilregistrertTask(behandling.id)
             }
         }
@@ -102,12 +108,13 @@ class BehandlingEventService(
         }
     }
 
-    fun opprettOppgaveTask(behandling: Behandling, behandlingEvent: BehandlingEvent) {
+    private fun opprettOppgaveTask(behandling: Behandling, behandlingEvent: BehandlingEvent) {
         val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
             ?: error("Finner ikke fagsak for behandlingId: ${behandling.id}")
         val saksbehandlerIdent = behandling.sporbar.endret.endretAv
         val saksbehandlerEnhet = utledSaksbehandlerEnhet(saksbehandlerIdent)
-        val oppgaveTekst = "${behandlingEvent.detaljer.oppgaveTekst(saksbehandlerEnhet)} Gjelder: ${fagsakDomain.stønadstype}"
+        val oppgaveTekst =
+            "${behandlingEvent.detaljer.oppgaveTekst(saksbehandlerEnhet)} Gjelder: ${fagsakDomain.stønadstype}"
         val klageBehandlingEksternId = UUID.fromString(behandlingEvent.kildeReferanse)
         val opprettOppgavePayload = OpprettOppgavePayload(
             klagebehandlingEksternId = klageBehandlingEksternId,
@@ -115,9 +122,30 @@ class BehandlingEventService(
             fagsystem = fagsakDomain.fagsystem,
             klageinstansUtfall = behandlingEvent.utfall(),
             behandlingstema = finnBehandlingstema(fagsakDomain.stønadstype),
+            behandlingstype = finnBehandlingstype(fagsakDomain.stønadstype)?.value,
         )
-        val opprettOppgaveTask = OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload)
+        val opprettOppgaveTask = OpprettKabalEventOppgaveTask.opprettTask(
+            opprettOppgavePayload,
+            fagsakDomain.eksternId,
+            fagsakDomain.fagsystem,
+        )
         taskService.save(opprettOppgaveTask)
+    }
+
+    private fun finnBehandlingstype(stønadstype: Stønadstype): Behandlingstype? {
+        if (!featureToggleService.isEnabled(Toggle.SETT_BEHANDLINGSTEMA_OG_BEHANDLINGSTYPE_FOR_BAKS)) {
+            return null
+        }
+        return when (stønadstype) {
+            Stønadstype.BARNETRYGD,
+            Stønadstype.KONTANTSTØTTE,
+            -> Behandlingstype.Klage
+
+            Stønadstype.OVERGANGSSTØNAD,
+            Stønadstype.BARNETILSYN,
+            Stønadstype.SKOLEPENGER,
+            -> null
+        }
     }
 
     private fun utledSaksbehandlerEnhet(saksbehandlerIdent: String) =
@@ -129,13 +157,25 @@ class BehandlingEventService(
             "Ukjent"
         }
 
-    private fun finnBehandlingstema(stønadstype: Stønadstype): Behandlingstema {
+    private fun finnBehandlingstema(stønadstype: Stønadstype): Behandlingstema? {
+        val skalSetteBehandlingstemaOgBehandlingstypeForBaks = featureToggleService.isEnabled(
+            Toggle.SETT_BEHANDLINGSTEMA_OG_BEHANDLINGSTYPE_FOR_BAKS,
+        )
         return when (stønadstype) {
-            Stønadstype.BARNETRYGD -> Behandlingstema.Barnetrygd
+            Stønadstype.BARNETRYGD -> if (skalSetteBehandlingstemaOgBehandlingstypeForBaks) {
+                null
+            } else {
+                Behandlingstema.Barnetrygd
+            }
+
             Stønadstype.OVERGANGSSTØNAD -> Behandlingstema.Overgangsstønad
             Stønadstype.BARNETILSYN -> Behandlingstema.Barnetilsyn
             Stønadstype.SKOLEPENGER -> Behandlingstema.Skolepenger
-            Stønadstype.KONTANTSTØTTE -> Behandlingstema.Kontantstøtte
+            Stønadstype.KONTANTSTØTTE -> if (skalSetteBehandlingstemaOgBehandlingstypeForBaks) {
+                null
+            } else {
+                Behandlingstema.Kontantstøtte
+            }
         }
     }
 

@@ -42,11 +42,34 @@ class BrevmottakerErstatterTest {
     @Nested
     inner class ErstattBrevmottakereTest {
         @Test
+        fun `skal kaste exception om man prøver å lagre ned tom brevmottakere`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.OPPRETTET)
+
+            val nyeBrevmottakere = DomainUtil.lagBrevmottakere()
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            // Act & assert
+            val exception = assertThrows<Feil> {
+                brevmottakerErstatter.erstattBrevmottakere(behandling.id, nyeBrevmottakere)
+            }
+            assertThat(exception.message).isEqualTo("Må ha minimum en brevmottaker for behandling ${behandling.id}.")
+        }
+
+        @Test
         fun `skal kaste exception om behandling er låst for videre redigering`() {
             // Arrange
             val behandling = DomainUtil.behandling(status = BehandlingStatus.FERDIGSTILT)
 
-            val nyeBrevmottakere = DomainUtil.lagBrevmottakere()
+            val nyeBrevmottakere = DomainUtil.lagBrevmottakere(
+                personer = listOf(
+                    DomainUtil.lagBrevmottakerPersonMedIdent(personIdent = "1"),
+                    DomainUtil.lagBrevmottakerPersonMedIdent(personIdent = "2"),
+                )
+            )
 
             every {
                 behandlingService.hentBehandling(behandling.id)
@@ -64,7 +87,12 @@ class BrevmottakerErstatterTest {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.OPPRETTET)
 
-            val nyeBrevmottakere = DomainUtil.lagBrevmottakere()
+            val nyeBrevmottakere = DomainUtil.lagBrevmottakere(
+                personer = listOf(
+                    DomainUtil.lagBrevmottakerPersonMedIdent(personIdent = "1"),
+                    DomainUtil.lagBrevmottakerPersonMedIdent(personIdent = "2"),
+                )
+            )
 
             every {
                 behandlingService.hentBehandling(behandling.id)
@@ -97,7 +125,7 @@ class BrevmottakerErstatterTest {
             val exception = assertThrows<Feil> {
                 brevmottakerErstatter.erstattBrevmottakere(behandling.id, nyeBrevmottakere)
             }
-            assertThat(exception.message).isEqualTo("En person kan bare legges til en gang som brevmottaker.")
+            assertThat(exception.message).isEqualTo("En person kan bare legges til en gang som brevmottaker for behandling ${behandling.id}.")
         }
 
         @Test
@@ -122,7 +150,7 @@ class BrevmottakerErstatterTest {
             val exception = assertThrows<Feil> {
                 brevmottakerErstatter.erstattBrevmottakere(behandling.id, nyeBrevmottakere)
             }
-            assertThat(exception.message).isEqualTo("En person kan bare legges til en gang som brevmottaker.")
+            assertThat(exception.message).isEqualTo("En person kan bare legges til en gang som brevmottaker for behandling ${behandling.id}.")
         }
 
         @Test
@@ -145,7 +173,7 @@ class BrevmottakerErstatterTest {
             val exception = assertThrows<Feil> {
                 brevmottakerErstatter.erstattBrevmottakere(behandling.id, nyeBrevmottakere)
             }
-            assertThat(exception.message).isEqualTo("En organisasjon kan bare legges til en gang som brevmottaker.")
+            assertThat(exception.message).isEqualTo("En organisasjon kan bare legges til en gang som brevmottaker for behandling ${behandling.id}.")
         }
 
         @Test
@@ -153,7 +181,12 @@ class BrevmottakerErstatterTest {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
-            val nyeBrevmottakere = DomainUtil.lagBrevmottakere()
+            val nyeBrevmottakere = DomainUtil.lagBrevmottakere(
+                personer = listOf(
+                    DomainUtil.lagBrevmottakerPersonMedIdent(personIdent = "1"),
+                    DomainUtil.lagBrevmottakerPersonMedIdent(personIdent = "2"),
+                )
+            )
 
             every {
                 behandlingService.hentBehandling(behandling.id)
@@ -175,7 +208,12 @@ class BrevmottakerErstatterTest {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
-            val nyeBrevmottakere = DomainUtil.lagBrevmottakere()
+            val nyeBrevmottakere = DomainUtil.lagBrevmottakere(
+                personer = listOf(
+                    DomainUtil.lagBrevmottakerPersonMedIdent(personIdent = "1"),
+                    DomainUtil.lagBrevmottakerPersonMedIdent(personIdent = "2"),
+                )
+            )
 
             every {
                 behandlingService.hentBehandling(behandling.id)
@@ -199,11 +237,16 @@ class BrevmottakerErstatterTest {
         }
 
         @Test
-        fun `skal kaste erstatte brevmottakere`() {
+        fun `skal erstatte brevmottakere`() {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
-            val nyeBrevmottakere = DomainUtil.lagBrevmottakere()
+            val nyeBrevmottakere = DomainUtil.lagBrevmottakere(
+                personer = listOf(
+                    DomainUtil.lagBrevmottakerPersonMedIdent(personIdent = "1"),
+                    DomainUtil.lagBrevmottakerPersonMedIdent(personIdent = "2"),
+                )
+            )
 
             every {
                 behandlingService.hentBehandling(behandling.id)

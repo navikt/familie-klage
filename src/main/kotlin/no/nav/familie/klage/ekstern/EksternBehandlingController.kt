@@ -69,6 +69,11 @@ class EksternBehandlingController(
         opprettBehandlingService.opprettBehandling(opprettKlageBehandlingDto)
     }
 
+    @PostMapping("/v2/opprett")
+    fun opprettBehandlingV2(@RequestBody opprettKlageBehandlingDto: OpprettKlagebehandlingRequest): Ressurs<UUID> {
+        return Ressurs.success(opprettBehandlingService.opprettBehandling(opprettKlageBehandlingDto))
+    }
+
     @PatchMapping("{behandlingId}/gjelder-tilbakekreving")
     fun oppdaterOppgaveTilÅGjeldeTilbakekreving(@PathVariable behandlingId: UUID) {
         oppgaveService.oppdaterOppgaveTilÅGjeldeTilbakekreving(behandlingId)

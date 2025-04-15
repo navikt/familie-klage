@@ -1,9 +1,10 @@
 package no.nav.familie.klage.behandling
 
+import no.nav.familie.klage.behandling.domain.Klagebehandlingsresultat
 import no.nav.familie.klage.behandling.dto.BehandlingDto
-import no.nav.familie.klage.behandling.dto.HenlagtDto
 import no.nav.familie.klage.behandling.dto.OppgaveDto
 import no.nav.familie.klage.behandling.dto.SettPåVentRequest
+import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
@@ -13,6 +14,7 @@ import no.nav.familie.klage.oppgave.OppgaveUtil.ENHET_NR_NAY
 import no.nav.familie.klage.oppgave.TilordnetRessursService
 import no.nav.familie.klage.oppgave.dto.SaksbehandlerDto
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.KanOppretteRevurderingResponse
 import no.nav.familie.kontrakter.felles.oppgave.MappeDto
@@ -53,13 +55,6 @@ class BehandlingController(
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.CREATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId))
-    }
-
-    @PostMapping("{behandlingId}/henlegg")
-    fun henleggBehandling(@PathVariable behandlingId: UUID, @RequestBody henlegg: HenlagtDto): Ressurs<Unit> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
-        tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        return Ressurs.success(behandlingService.henleggBehandling(behandlingId, henlegg))
     }
 
     @GetMapping("{behandlingId}/fagsystem-vedtak")
@@ -135,5 +130,10 @@ class BehandlingController(
         behandlingPåVentService.taAvVent(behandlingId = behandlingId)
 
         return Ressurs.success(data = behandlingId)
+    }
+
+    @GetMapping("{behandlingId}/hent-klager-ikke-medhold-formkrav-avvist")
+    fun hentKlager(@PathVariable behandlingId: UUID): Ressurs<List<Klagebehandlingsresultat>> {
+        return Ressurs.success(behandlingService.hentKlagerIkkeMedholdFormkravAvvist(behandlingId))
     }
 }

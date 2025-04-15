@@ -6,6 +6,7 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
+import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormUtil.alleVilkårOppfylt
 import no.nav.familie.klage.formkrav.FormUtil.utledFormresultat
 import no.nav.familie.klage.formkrav.domain.Form
@@ -14,6 +15,7 @@ import no.nav.familie.klage.formkrav.dto.FormkravDto
 import no.nav.familie.klage.formkrav.dto.tilDto
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -27,6 +29,7 @@ class FormService(
     private val behandlingshistorikkService: BehandlingshistorikkService,
     private val vurderingService: VurderingService,
     private val taskService: TaskService,
+    private val fagsakService: FagsakService,
 ) {
 
     fun hentForm(behandlingId: UUID): Form = formRepository.findByIdOrThrow(behandlingId)
@@ -51,16 +54,19 @@ class FormService(
             brevtekst = formkrav.brevtekst,
         )
         behandlingService.oppdaterPåklagetVedtak(behandlingId, nyttPåklagetVedtak)
-        opprettBehandlingsstatistikk(behandlingId)
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
+        opprettBehandlingsstatistikk(behandlingId, fagsak.eksternId, fagsak.fagsystem)
         val formresultat = utledFormresultat(oppdaterteFormkrav, nyttPåklagetVedtak)
         when (formresultat) {
             FormVilkår.OPPFYLT -> {
                 stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.VURDERING)
             }
+
             FormVilkår.IKKE_OPPFYLT -> {
                 vurderingService.slettVurderingForBehandling(behandlingId)
                 stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.BREV)
             }
+
             FormVilkår.IKKE_SATT -> {
                 vurderingService.slettVurderingForBehandling(behandlingId)
                 stegService.oppdaterSteg(behandlingId, StegType.FORMKRAV, StegType.FORMKRAV)
@@ -69,10 +75,20 @@ class FormService(
         return formRepository.update(oppdaterteFormkrav).tilDto(nyttPåklagetVedtak)
     }
 
-    private fun opprettBehandlingsstatistikk(behandlingId: UUID) {
+    private fun opprettBehandlingsstatistikk(
+        behandlingId: UUID,
+        eksternFagsakId: String,
+        fagsystem: Fagsystem,
+    ) {
         behandlingshistorikkService.hentBehandlingshistorikk(behandlingId).find { it.steg == StegType.FORMKRAV }
             ?: run {
-                taskService.save(BehandlingsstatistikkTask.opprettPåbegyntTask(behandlingId = behandlingId))
+                taskService.save(
+                    BehandlingsstatistikkTask.opprettPåbegyntTask(
+                        behandlingId = behandlingId,
+                        eksternFagsakId = eksternFagsakId,
+                        fagsystem = fagsystem,
+                    ),
+                )
             }
     }
 

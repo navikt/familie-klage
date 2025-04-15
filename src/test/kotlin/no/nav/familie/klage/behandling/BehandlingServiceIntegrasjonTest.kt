@@ -4,9 +4,13 @@ import io.mockk.every
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandling.dto.tilPåklagetVedtakDetaljer
+import no.nav.familie.klage.infrastruktur.config.FamilieBASakClientMock
 import no.nav.familie.klage.infrastruktur.config.FamilieEFSakClientMock
+import no.nav.familie.klage.infrastruktur.config.FamilieKSSakClientMock
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
+import no.nav.familie.klage.integrasjoner.FamilieBASakClient
 import no.nav.familie.klage.integrasjoner.FamilieEFSakClient
+import no.nav.familie.klage.integrasjoner.FamilieKSSakClient
 import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
@@ -31,6 +35,12 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
     @Autowired
     private lateinit var efSakClientMock: FamilieEFSakClient
 
+    @Autowired
+    private lateinit var baSakClientMock: FamilieBASakClient
+
+    @Autowired
+    private lateinit var ksSakClientMock: FamilieKSSakClient
+
     private val fagsak = fagsak()
     private val behandling = behandling(fagsak)
 
@@ -44,6 +54,8 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
     @AfterEach
     internal fun tearDown() {
         FamilieEFSakClientMock.resetMock(efSakClientMock)
+        FamilieBASakClientMock.resetMock(baSakClientMock)
+        FamilieKSSakClientMock.resetMock(ksSakClientMock)
         BrukerContextUtil.clearBrukerContext()
     }
 
@@ -71,6 +83,7 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
             val påklagetVedtak = PåklagetVedtakDto(
                 eksternFagsystemBehandlingId = påklagetBehandlingId,
                 påklagetVedtakstype = PåklagetVedtakstype.VEDTAK,
+                internKlagebehandlingId = null,
             )
             behandlingService.oppdaterPåklagetVedtak(behandlingId = behandling.id, påklagetVedtakDto = påklagetVedtak)
             val oppdatertBehandling = behandlingService.hentBehandling(behandling.id)
@@ -89,6 +102,7 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
             val vedtaksdatoInfotrygd = LocalDate.now()
             val påklagetVedtak = PåklagetVedtakDto(
                 eksternFagsystemBehandlingId = null,
+                internKlagebehandlingId = null,
                 manuellVedtaksdato = vedtaksdatoInfotrygd,
                 påklagetVedtakstype = PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING,
             )
@@ -110,6 +124,7 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
             val vedtaksdato = LocalDate.now()
             val påklagetVedtak = PåklagetVedtakDto(
                 eksternFagsystemBehandlingId = null,
+                internKlagebehandlingId = null,
                 manuellVedtaksdato = vedtaksdato,
                 påklagetVedtakstype = PåklagetVedtakstype.UTESTENGELSE,
             )
@@ -126,7 +141,7 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
         internal fun `skal feile hvis påklaget vedtak ikke finnes`() {
             every { efSakClientMock.hentVedtak(fagsak.eksternId) } returns emptyList()
             val påklagetVedtak =
-                PåklagetVedtakDto(eksternFagsystemBehandlingId = "finner ikke", påklagetVedtakstype = PåklagetVedtakstype.VEDTAK)
+                PåklagetVedtakDto(eksternFagsystemBehandlingId = "finner ikke", internKlagebehandlingId = null, påklagetVedtakstype = PåklagetVedtakstype.VEDTAK)
             assertThatThrownBy {
                 behandlingService.oppdaterPåklagetVedtak(behandlingId = behandling.id, påklagetVedtakDto = påklagetVedtak)
             }.hasMessageContaining("Finner ikke vedtak for behandling")

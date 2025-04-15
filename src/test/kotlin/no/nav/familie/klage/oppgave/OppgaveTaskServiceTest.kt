@@ -4,6 +4,7 @@ import io.mockk.CapturingSlot
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.verify
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.util.TaskMetadata.klageGjelderTilbakekrevingMetadataKey
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 import java.util.Properties
 import kotlin.math.absoluteValue
@@ -119,5 +121,24 @@ internal class OppgaveTaskServiceTest {
 
         assertThat(behandleSakOppgaveSlot.captured.oppgaveId).isEqualTo(oppgaveId)
         assertThat(behandleSakOppgaveSlot.captured.behandlingId).isEqualTo(behandling.id)
+    }
+
+    @Test
+    internal fun `skal forsøke å opprette behandleSakOppgave uten tilordnet ressurs ved tilgangsfeil`() {
+        val behandleSakOppgaveSlot = slot<BehandleSakOppgave>()
+        val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
+
+        every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) } throws IllegalStateException("En uventet feil oppstod: Mottatt navIdent har ikke tilgang til enheten")
+        every { behandleSakOppgaveRepository.insert(capture(behandleSakOppgaveSlot)) } answers { firstArg() }
+        val behandleSakOppgaveTask = Task(
+            type = OpprettBehandleSakOppgaveTask.TYPE,
+            payload = behandling.id.toString(),
+        )
+
+        val exception = assertThrows<IllegalStateException> { opprettBehandleSakOppgaveTask.doTask(behandleSakOppgaveTask) }
+
+        assertThat(exception.message).contains("navIdent har ikke tilgang til enheten")
+        verify(exactly = 2) { oppgaveClient.opprettOppgave(any()) }
+        assertThat(oppgaveRequestSlot.captured.tilordnetRessurs).isNull()
     }
 }

@@ -27,7 +27,7 @@ class FamilieEFSakClientMock {
 
     @Bean
     @Primary
-    fun hentVedtak(): FamilieEFSakClient {
+    fun familieEFSakClient(): FamilieEFSakClient {
         return resetMock(mockk())
     }
 
