@@ -64,9 +64,9 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
                 val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
                 formService.oppdaterFormkrav(oppfyltFormDto(behandlingId, påklagetVedtakDto))
-                vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
+                vurderingService.lagreVurderingOgOppdaterSteg(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
                 formService.oppdaterFormkrav(oppfyltFormDto(behandlingId, påklagetVedtakDto))
-                vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
+                vurderingService.lagreVurderingOgOppdaterSteg(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
                 lagEllerOppdaterBrev(behandlingId)
                 ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
                 behandlingId
@@ -91,12 +91,12 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
                 val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
                 formService.oppdaterFormkrav(oppfyltFormDto(behandlingId, påklagetVedtakDto))
-                vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
+                vurderingService.lagreVurderingOgOppdaterSteg(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
 
                 lagEllerOppdaterBrev(behandlingId)
 
                 formService.oppdaterFormkrav(oppfyltFormDto(behandlingId, påklagetVedtakDto))
-                vurderingService.opprettEllerOppdaterVurdering(vurderingDto(behandlingId))
+                vurderingService.lagreVurderingOgOppdaterSteg(vurderingDto(behandlingId))
 
                 lagEllerOppdaterBrev(behandlingId)
                 ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
@@ -126,7 +126,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
                 val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
                 formService.oppdaterFormkrav(oppfyltFormDto(behandlingId))
-                vurderingService.opprettEllerOppdaterVurdering(
+                vurderingService.lagreVurderingOgOppdaterSteg(
                     vurderingDto(
                         behandlingId = behandlingId,
                         vedtak = Vedtak.OMGJØR_VEDTAK,
@@ -174,7 +174,7 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
         }
     }
 
-    private val påklagetVedtakDto = PåklagetVedtakDto(eksternFagsystemBehandlingId = "123", VEDTAK)
+    private val påklagetVedtakDto = PåklagetVedtakDto(eksternFagsystemBehandlingId = "123", internKlagebehandlingId = null, påklagetVedtakstype = VEDTAK)
 
     private val opprettKlagebehandlingRequest =
         OpprettKlagebehandlingRequest(

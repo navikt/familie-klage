@@ -32,21 +32,23 @@ internal class BrevInnholdUtlederTest {
     private val avvistBrevInnholdUtlederLookup = mockk<AvvistBrevInnholdUtleder.Lookup>()
     private val brevInnholdUtleder = BrevInnholdUtleder(avvistBrevInnholdUtlederLookup)
 
-    private val lesMerUrls = mapOf(
-        Stønadstype.OVERGANGSSTØNAD to "nav.no/alene-med-barn",
-        Stønadstype.BARNETILSYN to "nav.no/alene-med-barn",
-        Stønadstype.SKOLEPENGER to "nav.no/alene-med-barn",
-        Stønadstype.BARNETRYGD to "nav.no/barnetrygd",
-        Stønadstype.KONTANTSTØTTE to "nav.no/kontantstotte",
-    )
+    private val lesMerUrls =
+        mapOf(
+            Stønadstype.OVERGANGSSTØNAD to "nav.no/alene-med-barn",
+            Stønadstype.BARNETILSYN to "nav.no/alene-med-barn",
+            Stønadstype.SKOLEPENGER to "nav.no/alene-med-barn",
+            Stønadstype.BARNETRYGD to "nav.no/barnetrygd",
+            Stønadstype.KONTANTSTØTTE to "nav.no/kontantstotte",
+        )
 
-    private val klageUrls = mapOf(
-        Stønadstype.OVERGANGSSTØNAD to "nav.no/klage#overgangsstonad-til-enslig-mor-eller-far",
-        Stønadstype.BARNETILSYN to "nav.no/klage#stonad-til-barnetilsyn-for-enslig-mor-eller-far",
-        Stønadstype.SKOLEPENGER to "nav.no/klage#stonad-til-skolepenger-for-enslig-mor-eller-far",
-        Stønadstype.BARNETRYGD to "nav.no/klage#barnetrygd",
-        Stønadstype.KONTANTSTØTTE to "nav.no/klage#kontantstotte",
-    )
+    private val klageUrls =
+        mapOf(
+            Stønadstype.OVERGANGSSTØNAD to "nav.no/klage#overgangsstonad-til-enslig-mor-eller-far",
+            Stønadstype.BARNETILSYN to "nav.no/klage#stonad-til-barnetilsyn-for-enslig-mor-eller-far",
+            Stønadstype.SKOLEPENGER to "nav.no/klage#stonad-til-skolepenger-for-enslig-mor-eller-far",
+            Stønadstype.BARNETRYGD to "nav.no/klage#barnetrygd",
+            Stønadstype.KONTANTSTØTTE to "nav.no/klage#kontantstotte",
+        )
 
     private val innstillingKlageinstans = "innhold for innstilling klageinstans"
     private val dokumentasjonOgUtredning = "innhold for dokumentasjon og utredning"
@@ -54,6 +56,7 @@ internal class BrevInnholdUtlederTest {
     private val aktuelleRettskilder = "innhold i aktuelle rettskilder"
     private val klagersAnførsler = "innhold i klagers anførsler"
     private val vurderingAvKlagen = "innhold i vurdering av klagen"
+    private val klagefristUnntakBegrunnelse = "innhold i saksbehandlers begrunnelse for at klagefrist unntak er oppfylt"
 
     @BeforeEach
     fun oppsett() {
@@ -72,14 +75,13 @@ internal class BrevInnholdUtlederTest {
             names = ["BARNETRYGD", "KONTANTSTØTTE"],
             mode = EnumSource.Mode.EXCLUDE,
         )
-        fun `brev for opprettholdelse skal inneholde blant annat dato og stønadstype`(
-            stønadstype: Stønadstype,
-        ) {
+        fun `brev for opprettholdelse skal inneholde blant annat dato og stønadstype`(stønadstype: Stønadstype) {
             // Arrange
-            val påklagetVedtakDetaljer = påklagetVedtakDetaljer(
-                eksternFagsystemBehandlingId = "123",
-                vedtakstidspunkt = vedtakstidspunkt,
-            )
+            val påklagetVedtakDetaljer =
+                påklagetVedtakDetaljer(
+                    eksternFagsystemBehandlingId = "123",
+                    vedtakstidspunkt = vedtakstidspunkt,
+                )
 
             // Act
             val opprettholdelsesbrev =
@@ -117,9 +119,7 @@ internal class BrevInnholdUtlederTest {
             names = ["BARNETRYGD", "KONTANTSTØTTE"],
             mode = EnumSource.Mode.EXCLUDE,
         )
-        fun `brev for opprettholdelse skal ha med info om tilbakebetaling`(
-            stønadstype: Stønadstype,
-        ) {
+        fun `brev for opprettholdelse skal ha med info om tilbakebetaling`(stønadstype: Stønadstype) {
             // Arrange
             val påklagetVedtakDetaljer =
                 påklagetVedtakDetaljer(
@@ -165,9 +165,7 @@ internal class BrevInnholdUtlederTest {
             names = ["BARNETRYGD", "KONTANTSTØTTE"],
             mode = EnumSource.Mode.EXCLUDE,
         )
-        fun `skal utlede brev for opprettholdelse for EF og skal ha med info om sanksjon`(
-            stønadstype: Stønadstype,
-        ) {
+        fun `skal utlede brev for opprettholdelse for EF og skal ha med info om sanksjon`(stønadstype: Stønadstype) {
             // Arrange
             val påklagetVedtakDetaljer =
                 påklagetVedtakDetaljer(
@@ -212,9 +210,7 @@ internal class BrevInnholdUtlederTest {
             names = ["BARNETRYGD", "KONTANTSTØTTE"],
             mode = EnumSource.Mode.INCLUDE,
         )
-        fun `skal utlede opprettholdselesbrev for BA og KS sanksjon`(
-            stønadstype: Stønadstype,
-        ) {
+        fun `skal utlede opprettholdselesbrev for BA og KS sanksjon`(stønadstype: Stønadstype) {
             // Arrange
             val påklagetVedtakDetaljer =
                 påklagetVedtakDetaljer(
@@ -227,6 +223,7 @@ internal class BrevInnholdUtlederTest {
             val opprettholdelsesbrev =
                 brevInnholdUtleder.lagOpprettholdelseBrev(
                     ident = ident,
+                    klagefristUnntakBegrunnelse = null,
                     dokumentasjonOgUtredning = dokumentasjonOgUtredning,
                     spørsmåletISaken = spørsmåletISaken,
                     aktuelleRettskilder = aktuelleRettskilder,
@@ -273,9 +270,7 @@ internal class BrevInnholdUtlederTest {
             names = ["BARNETRYGD", "KONTANTSTØTTE"],
             mode = EnumSource.Mode.INCLUDE,
         )
-        fun `skal utlede opprettholdselesbrev for BA og KS tilbakekreving`(
-            stønadstype: Stønadstype,
-        ) {
+        fun `skal utlede opprettholdselesbrev for BA og KS tilbakekreving`(stønadstype: Stønadstype) {
             // Arrange
             val påklagetVedtakDetaljer =
                 påklagetVedtakDetaljer(
@@ -288,6 +283,7 @@ internal class BrevInnholdUtlederTest {
             val opprettholdelsesbrev =
                 brevInnholdUtleder.lagOpprettholdelseBrev(
                     ident = ident,
+                    klagefristUnntakBegrunnelse = null,
                     dokumentasjonOgUtredning = dokumentasjonOgUtredning,
                     spørsmåletISaken = spørsmåletISaken,
                     aktuelleRettskilder = aktuelleRettskilder,
@@ -335,9 +331,7 @@ internal class BrevInnholdUtlederTest {
             names = ["BARNETRYGD", "KONTANTSTØTTE"],
             mode = EnumSource.Mode.INCLUDE,
         )
-        fun `skal utlede opprettholdselesbrev for BA og KS utestengelse`(
-            stønadstype: Stønadstype,
-        ) {
+        fun `skal utlede opprettholdselesbrev for BA og KS utestengelse`(stønadstype: Stønadstype) {
             // Arrange
 
             val påklagetVedtakDetaljer =
@@ -351,6 +345,7 @@ internal class BrevInnholdUtlederTest {
             val opprettholdelsesbrev =
                 brevInnholdUtleder.lagOpprettholdelseBrev(
                     ident = ident,
+                    klagefristUnntakBegrunnelse = null,
                     dokumentasjonOgUtredning = dokumentasjonOgUtredning,
                     spørsmåletISaken = spørsmåletISaken,
                     aktuelleRettskilder = aktuelleRettskilder,
@@ -397,9 +392,7 @@ internal class BrevInnholdUtlederTest {
             names = ["BARNETRYGD", "KONTANTSTØTTE"],
             mode = EnumSource.Mode.INCLUDE,
         )
-        fun `skal utlede opprettholdselesbrev for BA og KS ordinær`(
-            stønadstype: Stønadstype,
-        ) {
+        fun `skal utlede opprettholdselesbrev for BA og KS ordinær`(stønadstype: Stønadstype) {
             // Arrange
             val påklagetVedtakDetaljer =
                 påklagetVedtakDetaljer(
@@ -412,6 +405,7 @@ internal class BrevInnholdUtlederTest {
             val opprettholdelsesbrev =
                 brevInnholdUtleder.lagOpprettholdelseBrev(
                     ident = ident,
+                    klagefristUnntakBegrunnelse = null,
                     dokumentasjonOgUtredning = dokumentasjonOgUtredning,
                     spørsmåletISaken = spørsmåletISaken,
                     aktuelleRettskilder = aktuelleRettskilder,
@@ -451,6 +445,67 @@ internal class BrevInnholdUtlederTest {
             assertThat(opprettholdelsesbrev.avsnitt.elementAt(9)).isEqualTo(forventetDuHarRettTilInnsynBaKs)
             assertThat(opprettholdelsesbrev.avsnitt.elementAt(10)).isEqualTo(forventetHarDuSpørsmålBaKs(stønadstype))
         }
+
+        @ParameterizedTest
+        @EnumSource(
+            value = Stønadstype::class,
+            names = ["BARNETRYGD", "KONTANTSTØTTE"],
+            mode = EnumSource.Mode.INCLUDE,
+        )
+        fun `skal utlede opprettholdselesbrev for BA og KS klagefristunntak oppfylt`(stønadstype: Stønadstype) {
+            // Arrange
+            val påklagetVedtakDetaljer =
+                påklagetVedtakDetaljer(
+                    "123",
+                    vedtakstidspunkt = vedtakstidspunkt,
+                    fagsystemType = FagsystemType.ORDNIÆR,
+                )
+
+            // Act
+            val opprettholdelsesbrev =
+                brevInnholdUtleder.lagOpprettholdelseBrev(
+                    ident = ident,
+                    klagefristUnntakBegrunnelse = klagefristUnntakBegrunnelse,
+                    dokumentasjonOgUtredning = dokumentasjonOgUtredning,
+                    spørsmåletISaken = spørsmåletISaken,
+                    aktuelleRettskilder = aktuelleRettskilder,
+                    klagersAnførsler = klagersAnførsler,
+                    vurderingAvKlagen = vurderingAvKlagen,
+                    navn = navn,
+                    stønadstype = stønadstype,
+                    påklagetVedtakDetaljer = påklagetVedtakDetaljer,
+                    klageMottatt = klageMottatt,
+                )
+
+            // Assert
+            assertThat(opprettholdelsesbrev.overskrift).isEqualTo("Vi har sendt klagen din til Nav Klageinstans Nord")
+            assertThat(opprettholdelsesbrev.personIdent).isEqualTo(ident)
+            assertThat(opprettholdelsesbrev.navn).isEqualTo(navn)
+            assertThat(opprettholdelsesbrev.avsnitt).hasSize(12)
+            assertAvsnittUtenDeloverskrift(
+                opprettholdelsesbrev.avsnitt.elementAt(0),
+                "Vi har 6. november 2021 fått klagen din på vedtaket om ${stønadstype.visningsnavn()} som ble gjort 5. november 2021," +
+                    " og kommet frem til at vi ikke endrer vedtaket. Nav Klageinstans skal derfor vurdere saken din på nytt.",
+            )
+            assertAvsnittUtenDeloverskrift(
+                opprettholdelsesbrev.avsnitt.elementAt(1),
+                "Saksbehandlingstidene finner du på nav.no/saksbehandlingstider.",
+            )
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(2)).satisfies({
+                assertThat(it.deloverskrift).isEqualTo("Dette er vurderingen vi har sendt til Nav Klageinstans")
+                assertThat(it.deloverskriftHeading).isEqualTo(Heading.H2)
+                assertThat(it.innhold).isEmpty()
+            })
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(3)).isEqualTo(forventetKlagefristUnntakBegrunnelse)
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(4)).isEqualTo(forventetDokumentasjonOgUtredningVedKlagefristUnntak)
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(5)).isEqualTo(forventetSpørsmåletISaken)
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(6)).isEqualTo(forventetAktuelleRettskilder)
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(7)).isEqualTo(forventetKlagersAnførsler)
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(8)).isEqualTo(forventetVurderingAvKlagen)
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(9)).isEqualTo(forventetHarDuNyeOpplysninger(stønadstype))
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(10)).isEqualTo(forventetDuHarRettTilInnsynBaKs)
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(11)).isEqualTo(forventetHarDuSpørsmålBaKs(stønadstype))
+        }
     }
 
     @Nested
@@ -461,9 +516,7 @@ internal class BrevInnholdUtlederTest {
             names = ["BARNETRYGD", "KONTANTSTØTTE"],
             mode = EnumSource.Mode.EXCLUDE,
         )
-        fun `brev for avvist formkrav skal ha med info om tilbakebetaling for EF`(
-            stønadstype: Stønadstype,
-        ) {
+        fun `brev for avvist formkrav skal ha med info om tilbakebetaling for EF`(stønadstype: Stønadstype) {
             // Arrange
             val påklagetVedtakDetaljer =
                 påklagetVedtakDetaljer(
@@ -845,14 +898,15 @@ internal class BrevInnholdUtlederTest {
                 )
 
             // Act
-            val formkravAvvistBrev = brevInnholdUtleder.lagFormkravAvvistBrev(
-                ident = ident,
-                navn = navn,
-                form = ikkeOppfyltForm(),
-                stønadstype = stønadstype,
-                påklagetVedtakDetaljer = påklagetVedtakDetaljer,
-                fagsystem = Fagsystem.BA,
-            )
+            val formkravAvvistBrev =
+                brevInnholdUtleder.lagFormkravAvvistBrev(
+                    ident = ident,
+                    navn = navn,
+                    form = ikkeOppfyltForm(),
+                    stønadstype = stønadstype,
+                    påklagetVedtakDetaljer = påklagetVedtakDetaljer,
+                    fagsystem = Fagsystem.BA,
+                )
 
             // Assert
             assertThat(formkravAvvistBrev.overskrift).isEqualTo("Vi har avvist klagen din på vedtaket om barnetrygd")
@@ -879,14 +933,15 @@ internal class BrevInnholdUtlederTest {
             val stønadstype = Stønadstype.BARNETRYGD
 
             // Act
-            val formkravAvvistBrev = brevInnholdUtleder.lagFormkravAvvistBrev(
-                ident = ident,
-                navn = navn,
-                form = ikkeOppfyltForm(),
-                stønadstype = stønadstype,
-                påklagetVedtakDetaljer = null,
-                fagsystem = Fagsystem.BA,
-            )
+            val formkravAvvistBrev =
+                brevInnholdUtleder.lagFormkravAvvistBrev(
+                    ident = ident,
+                    navn = navn,
+                    form = ikkeOppfyltForm(),
+                    stønadstype = stønadstype,
+                    påklagetVedtakDetaljer = null,
+                    fagsystem = Fagsystem.BA,
+                )
 
             // Assert
             assertThat(formkravAvvistBrev.overskrift).isEqualTo("Vi har avvist klagen din på vedtaket om barnetrygd")
@@ -920,14 +975,15 @@ internal class BrevInnholdUtlederTest {
                 )
 
             // Act
-            val formkravAvvistBrev = brevInnholdUtleder.lagFormkravAvvistBrev(
-                ident = ident,
-                navn = navn,
-                form = ikkeOppfyltForm(),
-                stønadstype = stønadstype,
-                påklagetVedtakDetaljer = påklagetVedtakDetaljer,
-                fagsystem = Fagsystem.KS,
-            )
+            val formkravAvvistBrev =
+                brevInnholdUtleder.lagFormkravAvvistBrev(
+                    ident = ident,
+                    navn = navn,
+                    form = ikkeOppfyltForm(),
+                    stønadstype = stønadstype,
+                    påklagetVedtakDetaljer = påklagetVedtakDetaljer,
+                    fagsystem = Fagsystem.KS,
+                )
 
             // Assert
             assertThat(formkravAvvistBrev.overskrift).isEqualTo("Vi har avvist klagen din på vedtaket om kontantstøtte")
@@ -954,14 +1010,15 @@ internal class BrevInnholdUtlederTest {
             val stønadstype = Stønadstype.KONTANTSTØTTE
 
             // Act
-            val formkravAvvistBrev = brevInnholdUtleder.lagFormkravAvvistBrev(
-                ident = ident,
-                navn = navn,
-                form = ikkeOppfyltForm(),
-                stønadstype = stønadstype,
-                påklagetVedtakDetaljer = null,
-                fagsystem = Fagsystem.KS,
-            )
+            val formkravAvvistBrev =
+                brevInnholdUtleder.lagFormkravAvvistBrev(
+                    ident = ident,
+                    navn = navn,
+                    form = ikkeOppfyltForm(),
+                    stønadstype = stønadstype,
+                    påklagetVedtakDetaljer = null,
+                    fagsystem = Fagsystem.KS,
+                )
 
             // Assert
             assertThat(formkravAvvistBrev.overskrift).isEqualTo("Vi har avvist klagen din på vedtaket om kontantstøtte")
@@ -988,9 +1045,7 @@ internal class BrevInnholdUtlederTest {
             names = ["BARNETRYGD", "KONTANTSTØTTE"],
             mode = EnumSource.Mode.EXCLUDE,
         )
-        fun `skal utlede avvist brev om vedtak for EF`(
-            stønadstype: Stønadstype,
-        ) {
+        fun `skal utlede avvist brev om vedtak for EF`(stønadstype: Stønadstype) {
             // Arrange
             val påklagetVedtakDetaljer =
                 påklagetVedtakDetaljer(
@@ -999,14 +1054,15 @@ internal class BrevInnholdUtlederTest {
                 )
 
             // Act
-            val formkravAvvistBrev = brevInnholdUtleder.lagFormkravAvvistBrev(
-                ident = ident,
-                navn = navn,
-                form = ikkeOppfyltForm(),
-                stønadstype = stønadstype,
-                påklagetVedtakDetaljer = påklagetVedtakDetaljer,
-                fagsystem = Fagsystem.EF,
-            )
+            val formkravAvvistBrev =
+                brevInnholdUtleder.lagFormkravAvvistBrev(
+                    ident = ident,
+                    navn = navn,
+                    form = ikkeOppfyltForm(),
+                    stønadstype = stønadstype,
+                    påklagetVedtakDetaljer = påklagetVedtakDetaljer,
+                    fagsystem = Fagsystem.EF,
+                )
 
             // Assert
             assertThat(formkravAvvistBrev.overskrift).isEqualTo("Vi har avvist klagen din på vedtaket om ${stønadstype.visningsnavn()}")
@@ -1034,14 +1090,15 @@ internal class BrevInnholdUtlederTest {
         fun `skal kaste feil om brevtekst mangler i formkrav`() {
             // Arrange
             // Act & assert
-            val exception = assertThrows<IllegalStateException> {
-                brevInnholdUtleder.lagFormkravAvvistBrevIkkePåklagetVedtak(
-                    ident = ident,
-                    navn = navn,
-                    formkrav = ikkeOppfyltForm().copy(brevtekst = null),
-                    stønadstype = Stønadstype.BARNETRYGD,
-                )
-            }
+            val exception =
+                assertThrows<IllegalStateException> {
+                    brevInnholdUtleder.lagFormkravAvvistBrevIkkePåklagetVedtak(
+                        ident = ident,
+                        navn = navn,
+                        formkrav = ikkeOppfyltForm().copy(brevtekst = null),
+                        stønadstype = Stønadstype.BARNETRYGD,
+                    )
+                }
             assertThat(exception.message).isEqualTo("Må ha brevtekst fra saksbehandler for å generere brev ved formkrav ikke oppfylt")
         }
 
@@ -1051,9 +1108,7 @@ internal class BrevInnholdUtlederTest {
             names = ["BARNETRYGD", "KONTANTSTØTTE"],
             mode = EnumSource.Mode.EXCLUDE,
         )
-        fun `skal utlede brev for avvist formkrav uten påklaget vedtak for EF`(
-            stønadstype: Stønadstype,
-        ) {
+        fun `skal utlede brev for avvist formkrav uten påklaget vedtak for EF`(stønadstype: Stønadstype) {
             // Arrange
             // Act
             val brev =
@@ -1081,9 +1136,7 @@ internal class BrevInnholdUtlederTest {
             names = ["BARNETRYGD", "KONTANTSTØTTE"],
             mode = EnumSource.Mode.INCLUDE,
         )
-        fun `skal utlede brev for avvist formkrav uten påklaget vedtak for BA og KS`(
-            stønadstype: Stønadstype,
-        ) {
+        fun `skal utlede brev for avvist formkrav uten påklaget vedtak for BA og KS`(stønadstype: Stønadstype) {
             // Arrange
             // Act
             val brev =
@@ -1114,16 +1167,14 @@ internal class BrevInnholdUtlederTest {
             names = ["BARNETRYGD", "KONTANTSTØTTE"],
             mode = EnumSource.Mode.INCLUDE,
         )
-        fun `skal utlede brevinnhold for henleggelsesbrev for BA og KS`(
-            stønadstype: Stønadstype,
-        ) {
-            // Arrange
+        fun `skal utlede brevinnhold for henleggelsesbrev for BA og KS`(stønadstype: Stønadstype) {
             // Act
-            val henleggelsesbrevBaksInnhold = brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(
-                ident = ident,
-                navn = navn,
-                stønadstype = stønadstype,
-            )
+            val henleggelsesbrevBaksInnhold =
+                brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(
+                    ident = ident,
+                    navn = navn,
+                    stønadstype = stønadstype,
+                )
 
             // Assert
             assertThat(henleggelsesbrevBaksInnhold.overskrift).isEqualTo("Saken din er avsluttet")
@@ -1132,41 +1183,11 @@ internal class BrevInnholdUtlederTest {
             assertThat(henleggelsesbrevBaksInnhold.avsnitt).hasSize(3)
             assertAvsnittUtenDeloverskrift(
                 henleggelsesbrevBaksInnhold.avsnitt.elementAt(0),
-                "Du har gitt oss beskjed om at du trekker klagen din på vedtaket om " +
+                "Du har trukket klagen din på vedtaket om " +
                     "${stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din.",
             )
             assertThat(henleggelsesbrevBaksInnhold.avsnitt.elementAt(1)).isEqualTo(forventetDuHarRettTilInnsynBaKs)
             assertThat(henleggelsesbrevBaksInnhold.avsnitt.elementAt(2)).isEqualTo(forventetHarDuSpørsmålBaKs(stønadstype))
-        }
-
-        @ParameterizedTest
-        @EnumSource(
-            value = Stønadstype::class,
-            names = ["BARNETRYGD", "KONTANTSTØTTE"],
-            mode = EnumSource.Mode.EXCLUDE,
-        )
-        fun `skal utlede brevinnhold for henleggelsesbrev for EF`(
-            stønadstype: Stønadstype,
-        ) {
-            // Arrange
-            // Act
-            val henleggelsesbrevBaksInnhold = brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(
-                ident = ident,
-                navn = navn,
-                stønadstype = stønadstype,
-            )
-
-            // Assert
-            assertThat(henleggelsesbrevBaksInnhold.overskrift).isEqualTo("Saken din er avsluttet")
-            assertThat(henleggelsesbrevBaksInnhold.personIdent).isEqualTo(ident)
-            assertThat(henleggelsesbrevBaksInnhold.navn).isEqualTo(navn)
-            assertThat(henleggelsesbrevBaksInnhold.avsnitt).hasSize(2)
-            assertAvsnittUtenDeloverskrift(
-                henleggelsesbrevBaksInnhold.avsnitt.elementAt(0),
-                "Du har gitt oss beskjed om at du trekker klagen din på vedtaket om " +
-                    "${stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din.",
-            )
-            assertThat(henleggelsesbrevBaksInnhold.avsnitt.elementAt(1)).isEqualTo(forventetHarDuSpørsmålEf(stønadstype))
         }
     }
 
@@ -1178,98 +1199,135 @@ internal class BrevInnholdUtlederTest {
             brevtekst = "brevtekst",
         )
 
-    private val forventetInnstillingKlageinstans = AvsnittDto(
-        deloverskrift = "Dette er vurderingen vi har sendt til Nav Klageinstans",
-        deloverskriftHeading = null,
-        innhold = innstillingKlageinstans,
-    )
+    private val forventetInnstillingKlageinstans =
+        AvsnittDto(
+            deloverskrift = "Dette er vurderingen vi har sendt til Nav Klageinstans",
+            deloverskriftHeading = null,
+            innhold = innstillingKlageinstans,
+        )
 
-    private val forventetDokumentasjonOgUtredning = AvsnittDto(
-        deloverskrift = "Dokumentasjon og utredning",
-        deloverskriftHeading = Heading.H3,
-        innhold = dokumentasjonOgUtredning,
-    )
+    private val forventetDokumentasjonOgUtredning =
+        AvsnittDto(
+            deloverskrift = "Dokumentasjon og utredning",
+            deloverskriftHeading = Heading.H3,
+            innhold = dokumentasjonOgUtredning,
+        )
 
-    private val forventetSpørsmåletISaken = AvsnittDto(
-        deloverskrift = "Spørsmålet i saken",
-        deloverskriftHeading = Heading.H3,
-        innhold = spørsmåletISaken,
-    )
+    private val forventetSpørsmåletISaken =
+        AvsnittDto(
+            deloverskrift = "Spørsmålet i saken",
+            deloverskriftHeading = Heading.H3,
+            innhold = spørsmåletISaken,
+        )
 
-    private val forventetAktuelleRettskilder = AvsnittDto(
-        deloverskrift = "Aktuelle rettskilder",
-        deloverskriftHeading = Heading.H3,
-        innhold = aktuelleRettskilder,
-    )
+    private val forventetAktuelleRettskilder =
+        AvsnittDto(
+            deloverskrift = "Aktuelle rettskilder",
+            deloverskriftHeading = Heading.H3,
+            innhold = aktuelleRettskilder,
+        )
 
-    private val forventetKlagersAnførsler = AvsnittDto(
-        deloverskrift = "Klagers anførsler",
-        deloverskriftHeading = Heading.H3,
-        innhold = klagersAnførsler,
-    )
+    private val forventetKlagersAnførsler =
+        AvsnittDto(
+            deloverskrift = "Klagers anførsler",
+            deloverskriftHeading = Heading.H3,
+            innhold = klagersAnførsler,
+        )
 
-    private val forventetVurderingAvKlagen = AvsnittDto(
-        deloverskrift = "Vurdering av klagen",
-        deloverskriftHeading = Heading.H3,
-        innhold = vurderingAvKlagen,
-    )
+    private val forventetVurderingAvKlagen =
+        AvsnittDto(
+            deloverskrift = "Vurdering av klagen",
+            deloverskriftHeading = Heading.H3,
+            innhold = vurderingAvKlagen,
+        )
 
-    private fun forventetHarDuSpørsmålEf(stønadstype: Stønadstype) = AvsnittDto(
-        deloverskrift = "Har du spørsmål?",
-        deloverskriftHeading = null,
-        innhold = "Du finner mer informasjon på ${lesMerUrls[stønadstype]}.\n\n" +
-            "På nav.no/kontakt kan du chatte eller skrive til oss.\n\n" +
-            "Hvis du ikke finner svar på nav.no kan du ringe oss på telefon 55 55 33 33, hverdager 09.00-15.00.",
-    )
+    private val forventetKlagefristUnntakBegrunnelse =
+        AvsnittDto(
+            deloverskrift = "Dokumentasjon og utredning",
+            deloverskriftHeading = Heading.H3,
+            innhold = klagefristUnntakBegrunnelse,
+        )
 
-    private fun forventetHarDuSpørsmålBaKs(stønadstype: Stønadstype) = AvsnittDto(
-        deloverskrift = "Har du spørsmål?",
-        deloverskriftHeading = Heading.H2,
-        innhold = "Du finner mer informasjon på ${lesMerUrls[stønadstype]}. " +
-            "På nav.no/kontakt kan du chatte eller skrive til oss. " +
-            "Hvis du ikke finner svar på nav.no kan du ringe oss på telefon 55 55 33 33, hverdager 09.00-15.00.",
-    )
+    private val forventetDokumentasjonOgUtredningVedKlagefristUnntak =
+        AvsnittDto(
+            deloverskrift = "",
+            innhold = dokumentasjonOgUtredning,
+        )
 
-    private fun forventetHarDuNyeOpplysninger(stønadstype: Stønadstype) = AvsnittDto(
-        deloverskrift = "Har du nye opplysninger?",
-        deloverskriftHeading =
-            when (stønadstype) {
-                Stønadstype.BARNETRYGD,
-                Stønadstype.KONTANTSTØTTE,
-                -> Heading.H2
-                else -> null
-            },
-        innhold = "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via \n${klageUrls[stønadstype]}.",
-    )
+    private fun forventetHarDuSpørsmålEf(stønadstype: Stønadstype) =
+        AvsnittDto(
+            deloverskrift = "Har du spørsmål?",
+            deloverskriftHeading = null,
+            innhold =
+                "Du finner mer informasjon på ${lesMerUrls[stønadstype]}.\n\n" +
+                    "På nav.no/kontakt kan du chatte eller skrive til oss.\n\n" +
+                    "Hvis du ikke finner svar på nav.no kan du ringe oss på telefon 55 55 33 33, hverdager 09.00-15.00.",
+        )
 
-    private val forventetDuHarRettTilInnsynBaKs = AvsnittDto(
-        deloverskrift = "Du har rett til innsyn i saken din",
-        deloverskriftHeading = Heading.H2,
-        innhold = "Du har rett til å se dokumentene i saken din. Dette følger av forvaltningsloven § 18. " +
-            "Kontakt oss om du vil se dokumentene i saken din. Ta kontakt på nav.no/kontakt eller på " +
-            "telefon 55 55 33 33 <34>. Du kan lese mer om innsynsretten på nav.no/personvernerklaering.",
-    )
+    private fun forventetHarDuSpørsmålBaKs(stønadstype: Stønadstype) =
+        AvsnittDto(
+            deloverskrift = "Har du spørsmål?",
+            deloverskriftHeading = Heading.H2,
+            innhold =
+                "Du finner mer informasjon på ${lesMerUrls[stønadstype]}. " +
+                    "På nav.no/kontakt kan du chatte eller skrive til oss. " +
+                    "Hvis du ikke finner svar på nav.no kan du ringe oss på telefon 55 55 33 33, hverdager 09.00-15.00.",
+        )
 
-    private val forventetDuHarRettTilInnsynEf = AvsnittDto(
-        deloverskrift = "Du har rett til innsyn",
-        deloverskriftHeading = null,
-        innhold = "På nav.no/dittnav kan du se dokumentene i saken din.",
-    )
+    private fun forventetHarDuNyeOpplysninger(stønadstype: Stønadstype) =
+        AvsnittDto(
+            deloverskrift = "Har du nye opplysninger?",
+            deloverskriftHeading =
+                when (stønadstype) {
+                    Stønadstype.BARNETRYGD,
+                    Stønadstype.KONTANTSTØTTE,
+                    -> Heading.H2
+                    else -> null
+                },
+            innhold = "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via \n${klageUrls[stønadstype]}.",
+        )
 
-    private fun forventetDuHarRettTilÅKlage(stønadstype: Stønadstype) = AvsnittDto(
-        deloverskrift = "Du har rett til å klage",
-        deloverskriftHeading =
-            when (stønadstype) {
-                Stønadstype.BARNETRYGD,
-                Stønadstype.KONTANTSTØTTE,
-                -> Heading.H2
-                else -> null
-            },
-        innhold = "Hvis du vil klage, må du gjøre dette innen 6 uker fra den datoen du fikk dette brevet. " +
-            "Du finner skjema og informasjon på ${klageUrls[stønadstype]}.",
-    )
+    private val forventetDuHarRettTilInnsynBaKs =
+        AvsnittDto(
+            deloverskrift = "Du har rett til innsyn i saken din",
+            deloverskriftHeading = Heading.H2,
+            innhold = "Du har rett til å se dokumentene i saken din. Dette følger av forvaltningsloven § 18. " +
+                "Kontakt oss om du vil se dokumentene i saken din. Ta kontakt på nav.no/kontakt eller på " +
+                "telefon 55 55 33 33 <34>. Du kan lese mer om innsynsretten på nav.no/personvernerklaering.",
+        )
 
-    private fun assertAvsnittUtenDeloverskrift(avsnittDto: AvsnittDto, forventetTekst: String) {
+    private val forventetDuHarRettTilInnsynEf =
+        AvsnittDto(
+            deloverskrift = "Du har rett til innsyn",
+            deloverskriftHeading = null,
+            innhold = "På nav.no/dittnav kan du se dokumentene i saken din.",
+        )
+
+    private fun forventetDuHarRettTilÅKlage(stønadstype: Stønadstype) =
+        AvsnittDto(
+            deloverskrift = "Du har rett til å klage",
+            deloverskriftHeading =
+                when (stønadstype) {
+                    Stønadstype.BARNETRYGD,
+                    Stønadstype.KONTANTSTØTTE,
+                    -> Heading.H2
+                    else -> null
+                },
+            innhold =
+                when (stønadstype) {
+                    Stønadstype.KONTANTSTØTTE ->
+                        "Hvis du vil klage, må du gjøre dette innen 3 uker fra den datoen du fikk dette brevet. " +
+                            "Du finner skjema og informasjon på ${klageUrls[stønadstype]}."
+                    else ->
+                        "Hvis du vil klage, må du gjøre dette innen 6 uker fra den datoen du fikk dette brevet. " +
+                            "Du finner skjema og informasjon på ${klageUrls[stønadstype]}."
+                },
+        )
+
+    private fun assertAvsnittUtenDeloverskrift(
+        avsnittDto: AvsnittDto,
+        forventetTekst: String,
+    ) {
         assertThat(avsnittDto.deloverskrift).isEmpty()
         assertThat(avsnittDto.deloverskriftHeading).isNull()
         assertThat(avsnittDto.innhold).isEqualTo(forventetTekst)

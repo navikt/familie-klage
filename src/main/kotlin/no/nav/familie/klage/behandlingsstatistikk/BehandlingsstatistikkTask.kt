@@ -45,7 +45,7 @@ class BehandlingsstatistikkTask(
                 hendelseTidspunkt = LocalDateTime.now(),
                 gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(),
                 eksternFagsakId = eksternFagsakId,
-                fagsystem = fagsystem
+                fagsystem = fagsystem,
             )
 
         fun opprettPåbegyntTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem): Task =
@@ -55,7 +55,7 @@ class BehandlingsstatistikkTask(
                 hendelseTidspunkt = LocalDateTime.now(),
                 gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true),
                 eksternFagsakId = eksternFagsakId,
-                fagsystem = fagsystem
+                fagsystem = fagsystem,
             )
 
         fun opprettVenterTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem): Task =
@@ -65,7 +65,7 @@ class BehandlingsstatistikkTask(
                 hendelseTidspunkt = LocalDateTime.now(),
                 gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(),
                 eksternFagsakId = eksternFagsakId,
-                fagsystem = fagsystem
+                fagsystem = fagsystem,
             )
 
         fun opprettFerdigTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem): Task =
@@ -75,7 +75,7 @@ class BehandlingsstatistikkTask(
                 hendelseTidspunkt = LocalDateTime.now(),
                 gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true),
                 eksternFagsakId = eksternFagsakId,
-                fagsystem = fagsystem
+                fagsystem = fagsystem,
             )
 
         fun opprettSendtTilKATask(
@@ -83,7 +83,7 @@ class BehandlingsstatistikkTask(
             hendelseTidspunkt: LocalDateTime = LocalDateTime.now(),
             gjeldendeSaksbehandler: String = SikkerhetContext.hentSaksbehandler(true),
             eksternFagsakId: String,
-            fagsystem: Fagsystem
+            fagsystem: Fagsystem,
         ): Task =
             opprettTask(
                 behandlingId = behandlingId,
@@ -91,7 +91,7 @@ class BehandlingsstatistikkTask(
                 hendelseTidspunkt = hendelseTidspunkt,
                 gjeldendeSaksbehandler = gjeldendeSaksbehandler,
                 eksternFagsakId = eksternFagsakId,
-                fagsystem = fagsystem
+                fagsystem = fagsystem,
             )
 
         private fun opprettTask(

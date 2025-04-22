@@ -72,7 +72,7 @@ class OpprettBehandlingService(
             behandlingId = behandlingId,
             klageGjelderTilbakekreving = request.klageGjelderTilbakekreving,
             eksternFagsakId = eksternFagsakId,
-            fagsystem = fagsak.fagsystem
+            fagsystem = fagsak.fagsystem,
         )
         taskService.save(
             BehandlingsstatistikkTask.opprettMottattTask(
@@ -84,7 +84,7 @@ class OpprettBehandlingService(
         )
         logger.info(
             "Opprettet behandling=$behandlingId for stønadstype=$stønadstype " +
-                    "eksternFagsakId=$eksternFagsakId klageMottatt=$klageMottatt",
+                "eksternFagsakId=$eksternFagsakId klageMottatt=$klageMottatt",
         )
         return behandlingId
     }

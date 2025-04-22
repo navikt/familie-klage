@@ -60,6 +60,7 @@ class BrevInnholdUtleder(
 
     fun lagOpprettholdelseBrev(
         ident: String,
+        klagefristUnntakBegrunnelse: String?,
         dokumentasjonOgUtredning: String,
         spørsmåletISaken: String,
         aktuelleRettskilder: String,
@@ -75,7 +76,7 @@ class BrevInnholdUtleder(
             navn = navn,
             personIdent = ident,
             avsnitt =
-                listOf(
+                listOfNotNull(
                     AvsnittDto(
                         deloverskrift = "",
                         innhold =
@@ -96,8 +97,14 @@ class BrevInnholdUtleder(
                     AvsnittDto(
                         deloverskrift = "Dokumentasjon og utredning",
                         deloverskriftHeading = Heading.H3,
-                        innhold = dokumentasjonOgUtredning,
+                        innhold = klagefristUnntakBegrunnelse ?: dokumentasjonOgUtredning,
                     ),
+                    klagefristUnntakBegrunnelse?.let {
+                        AvsnittDto(
+                            deloverskrift = "",
+                            innhold = dokumentasjonOgUtredning,
+                        )
+                    },
                     AvsnittDto(
                         deloverskrift = "Spørsmålet i saken",
                         deloverskriftHeading = Heading.H3,
@@ -204,9 +211,10 @@ class BrevInnholdUtleder(
             AvsnittDto(
                 deloverskrift = "Du har rett til innsyn i saken din",
                 deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
-                innhold = "Du har rett til å se dokumentene i saken din. Dette følger av forvaltningsloven § 18. " +
-                    "Kontakt oss om du vil se dokumentene i saken din. Ta kontakt på nav.no/kontakt eller på telefon " +
-                    "55 55 33 33 <34>. Du kan lese mer om innsynsretten på nav.no/personvernerklaering.",
+                innhold =
+                    "Du har rett til å se dokumentene i saken din. Dette følger av forvaltningsloven § 18. " +
+                        "Kontakt oss om du vil se dokumentene i saken din. Ta kontakt på nav.no/kontakt eller på telefon " +
+                        "55 55 33 33 <34>. Du kan lese mer om innsynsretten på nav.no/personvernerklaering.",
             )
         } else {
             AvsnittDto(
@@ -219,32 +227,37 @@ class BrevInnholdUtleder(
         ident: String,
         navn: String,
         stønadstype: Stønadstype,
-    ): FritekstBrevRequestDto {
-        return FritekstBrevRequestDto(
+    ): FritekstBrevRequestDto =
+        FritekstBrevRequestDto(
             overskrift = "Saken din er avsluttet",
             personIdent = ident,
             navn = navn,
             avsnitt =
-                listOfNotNull(
-                    AvsnittDto(
-                        deloverskrift = "",
-                        innhold = "Du har gitt oss beskjed om at du trekker klagen din på vedtaket om " +
-                            "${stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din.",
-                    ),
-                    if (stønadstype.erBarnetrygdEllerKontantstøtte()) duHarRettTilInnsynAvsnitt(stønadstype) else null,
-                    harDuSpørsmålAvsnitt(stønadstype),
+            listOfNotNull(
+                AvsnittDto(
+                    deloverskrift = "",
+                    innhold = "Du har trukket klagen din på vedtaket om " +
+                        "${stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din.",
                 ),
+                duHarRettTilInnsynAvsnitt(stønadstype),
+                harDuSpørsmålAvsnitt(stønadstype),
+            ),
         )
-    }
 
     private fun duHarRettTilÅKlageAvsnitt(stønadstype: Stønadstype) =
         AvsnittDto(
             deloverskrift = "Du har rett til å klage",
             deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
             innhold =
-                "Hvis du vil klage, må du gjøre dette innen 6 uker fra den datoen du fikk dette brevet. " +
+                "Hvis du vil klage, må du gjøre dette innen ${utledKlagefrist(stønadstype)} uker fra den datoen du fikk dette brevet. " +
                     "Du finner skjema og informasjon på ${stønadstype.klageUrl()}.",
         )
+
+    private fun utledKlagefrist(stønadstype: Stønadstype): Int =
+        when (stønadstype) {
+            Stønadstype.KONTANTSTØTTE -> 3
+            else -> 6
+        }
 
     private fun harDuSpørsmålAvsnitt(stønadstype: Stønadstype) =
         AvsnittDto(

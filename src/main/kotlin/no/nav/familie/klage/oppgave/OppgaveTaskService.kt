@@ -33,7 +33,7 @@ class OppgaveTaskService(private val taskService: TaskService) {
             properties = Properties().apply {
                 this["eksternFagsakId"] = eksternFagsakId
                 this["fagsystem"] = fagsystem.name
-            }
+            },
         )
         taskService.save(ferdigstillbehandlesakOppgave)
     }

@@ -24,16 +24,42 @@ class VurderingController(
 ) {
 
     @GetMapping("{behandlingId}")
-    fun hentVurdering(@PathVariable behandlingId: UUID): Ressurs<VurderingDto?> {
+    fun hentVurdering(
+        @PathVariable behandlingId: UUID,
+    ): Ressurs<VurderingDto?> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(vurderingService.hentVurderingDto(behandlingId))
     }
 
+    @Deprecated(message = "Bruk /lagre-og-oppdater-steg i stedet")
     @PostMapping
-    fun opprettEllerOppdaterVurdering(@RequestBody vurdering: VurderingDto): Ressurs<VurderingDto> {
+    fun lagreVurderingOgOppdaterStegDeprekert(
+        @RequestBody vurdering: VurderingDto,
+    ): Ressurs<VurderingDto> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(vurdering.behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(vurdering.behandlingId)
-        return Ressurs.success(vurderingService.opprettEllerOppdaterVurdering(vurdering))
+        return Ressurs.success(vurderingService.lagreVurderingOgOppdaterSteg(vurdering))
+    }
+
+    @PostMapping(path = ["/lagre-og-oppdater-steg"])
+    fun lagreVurderingOgOppdaterSteg(
+        @RequestBody vurdering: VurderingDto,
+    ): Ressurs<VurderingDto> {
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
+            vurdering.behandlingId,
+            AuditLoggerEvent.UPDATE,
+        )
+        tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(vurdering.behandlingId)
+        return Ressurs.success(vurderingService.lagreVurderingOgOppdaterSteg(vurdering))
+    }
+
+    @PostMapping(path = ["/lagre"])
+    fun lagreVurdering(
+        @RequestBody vurdering: VurderingDto,
+    ): Ressurs<VurderingDto> {
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(vurdering.behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(vurdering.behandlingId)
+        return Ressurs.success(vurderingService.lagreVurdering(vurdering))
     }
 }
