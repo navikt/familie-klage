@@ -97,6 +97,8 @@ class BrevmottakerSletter(
             },
         )
 
+        validerMinimumEnMottaker(behandling, nyeBrevmottakere)
+
         brevRepository.update(
             brev.copy(
                 mottakere = nyeBrevmottakere,
@@ -113,6 +115,12 @@ class BrevmottakerSletter(
     private fun validerKorrektBehandlingssteg(behandling: Behandling) {
         if (behandling.steg != StegType.BREV) {
             throw Feil("Behandlingen er i steg ${behandling.steg}, forventet steg ${StegType.BREV}.")
+        }
+    }
+
+    private fun validerMinimumEnMottaker(behandling: Behandling, brevmottakere: Brevmottakere) {
+        if (brevmottakere.personer.isEmpty() && brevmottakere.organisasjoner.isEmpty()) {
+            throw Feil("Må ha minimum en brevmottaker for behandling ${behandling.id}.")
         }
     }
 }

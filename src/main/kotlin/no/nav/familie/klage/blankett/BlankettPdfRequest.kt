@@ -54,5 +54,10 @@ data class BlankettVurderingDto(
     val begrunnelseOmgjøring: String?,
     val hjemmel: Hjemmel?,
     val innstillingKlageinstans: String?,
+    val dokumentasjonOgUtredning: String?,
+    val spørsmåletISaken: String?,
+    val aktuelleRettskilder: String?,
+    val klagersAnførsler: String?,
+    val vurderingAvKlagen: String?,
     val interntNotat: String?,
 )

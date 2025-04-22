@@ -5,6 +5,7 @@ import no.nav.familie.klage.behandling.dto.SettPåVentRequest
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingshistorikk.domain.HistorikkHendelse
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
+import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.util.dagensDatoMedNorskFormat
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
@@ -27,6 +28,7 @@ class BehandlingPåVentService(
     private val behandlinghistorikkService: BehandlingshistorikkService,
     private val taskService: TaskService,
     private val tilordnetRessursService: TilordnetRessursService,
+    private val fagsakService: FagsakService,
 ) {
     val logger: Logger = LoggerFactory.getLogger(javaClass)
 
@@ -36,6 +38,7 @@ class BehandlingPåVentService(
         settPåVentRequest: SettPåVentRequest,
     ) {
         val behandling = behandlingService.hentBehandling(behandlingId = behandlingId)
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
 
         validerKanSettePåVent(behandlingStatus = behandling.status)
 
@@ -52,12 +55,19 @@ class BehandlingPåVentService(
             historikkHendelse = HistorikkHendelse.SATT_PÅ_VENT,
         )
 
-        taskService.save(taskService.save(BehandlingsstatistikkTask.opprettVenterTask(behandlingId)))
+        taskService.save(
+            BehandlingsstatistikkTask.opprettVenterTask(
+                behandlingId,
+                fagsak.eksternId,
+                fagsak.fagsystem,
+            )
+        )
     }
 
     @Transactional
     fun taAvVent(behandlingId: UUID) {
         val behandling = behandlingService.hentBehandling(behandlingId = behandlingId)
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
 
         validerKanTaAvVent(behandlingStatus = behandling.status)
 
@@ -71,7 +81,13 @@ class BehandlingPåVentService(
 
         fordelOppgaveTilSaksbehandler(behandlingId = behandling.id)
 
-        taskService.save(BehandlingsstatistikkTask.opprettPåbegyntTask(behandlingId))
+        taskService.save(
+            BehandlingsstatistikkTask.opprettPåbegyntTask(
+                behandlingId,
+                fagsak.eksternId,
+                fagsak.fagsystem,
+            ),
+        )
     }
 
     private fun oppdaterVerdierPåOppgave(settPåVentRequest: SettPåVentRequest) {

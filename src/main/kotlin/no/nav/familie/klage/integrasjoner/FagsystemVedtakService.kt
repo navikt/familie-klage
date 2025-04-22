@@ -2,6 +2,7 @@ package no.nav.familie.klage.integrasjoner
 
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
+import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.IkkeOpprettet
@@ -13,12 +14,13 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.util.UUID
 
-private val ukjentFeilVedOpprettRevurdering = OpprettRevurderingResponse(
-    IkkeOpprettet(
-        IkkeOpprettetÅrsak.FEIL,
-        "Ukjent feil ved opprettelse av revurdering",
-    ),
-)
+private val ukjentFeilVedOpprettRevurdering =
+    OpprettRevurderingResponse(
+        IkkeOpprettet(
+            IkkeOpprettetÅrsak.FEIL,
+            "Ukjent feil ved opprettelse av revurdering",
+        ),
+    )
 
 @Service
 class FagsystemVedtakService(
@@ -27,7 +29,6 @@ class FagsystemVedtakService(
     private val familieBASakClient: FamilieBASakClient,
     private val fagsakService: FagsakService,
 ) {
-
     private val logger = LoggerFactory.getLogger(javaClass)
     private val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
@@ -36,11 +37,12 @@ class FagsystemVedtakService(
         return hentFagsystemVedtak(fagsak)
     }
 
-    private fun hentFagsystemVedtak(fagsak: Fagsak): List<FagsystemVedtak> = when (fagsak.fagsystem) {
-        Fagsystem.EF -> familieEFSakClient.hentVedtak(fagsak.eksternId)
-        Fagsystem.KS -> familieKSSakClient.hentVedtak(fagsak.eksternId)
-        Fagsystem.BA -> familieBASakClient.hentVedtak(fagsak.eksternId)
-    }
+    private fun hentFagsystemVedtak(fagsak: Fagsak): List<FagsystemVedtak> =
+        when (fagsak.fagsystem) {
+            Fagsystem.EF -> familieEFSakClient.hentVedtak(fagsak.eksternId)
+            Fagsystem.KS -> familieKSSakClient.hentVedtak(fagsak.eksternId)
+            Fagsystem.BA -> familieBASakClient.hentVedtak(fagsak.eksternId)
+        }
 
     fun hentFagsystemVedtakForPåklagetBehandlingId(
         behandlingId: UUID,
@@ -71,8 +73,16 @@ class FagsystemVedtakService(
             val errorSuffix = "Feilet opprettelse av revurdering for behandling=$behandlingId eksternFagsakId=${fagsak.eksternId}"
             logger.warn("$errorSuffix, se detaljer i secureLogs")
             secureLogger.warn(errorSuffix, e)
-
-            ukjentFeilVedOpprettRevurdering
+            when (fagsak.fagsystem) {
+                Fagsystem.EF -> ukjentFeilVedOpprettRevurdering
+                Fagsystem.KS,
+                Fagsystem.BA,
+                -> throw Feil(
+                    message = errorSuffix,
+                    frontendFeilmelding = "Opprettelse av revurderingsbehandling feilet. Prøv igjen senere.",
+                    throwable = e,
+                )
+            }
         }
     }
 }
