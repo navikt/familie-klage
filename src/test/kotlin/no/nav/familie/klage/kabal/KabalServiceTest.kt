@@ -66,12 +66,12 @@ internal class KabalServiceTest {
         private val fagsak = fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent("1")))
         private val hjemmel = Hjemmel.FT_FEMTEN_FIRE
 
-        private val oversendelseSlotV3 = slot<OversendtKlageAnkeV3>()
+        private val oversendelseSlot = slot<OversendtKlageAnkeV3>()
 
         @BeforeEach
         internal fun setUp() {
             every { featureToggleService.isEnabled(any()) } returns false
-            justRun { kabalClient.sendTilKabal(capture(oversendelseSlotV3)) }
+            justRun { kabalClient.sendTilKabal(capture(oversendelseSlot)) }
         }
 
         @Test
@@ -83,7 +83,7 @@ internal class KabalServiceTest {
 
             kabalService.sendTilKabal(fagsak, behandling, vurdering, saksbehandler.navIdent, ingenBrevmottaker)
 
-            val oversendelse = oversendelseSlotV3.captured
+            val oversendelse = oversendelseSlot.captured
             assertThat(oversendelse.fagsak?.fagsakId).isEqualTo(fagsak.eksternId)
             assertThat(oversendelse.fagsak?.fagsystem).isEqualTo(Fagsystem.EF)
             assertThat(oversendelse.hjemler).containsAll(listOf(hjemmel.kabalHjemmel))
@@ -112,9 +112,9 @@ internal class KabalServiceTest {
 
             kabalService.sendTilKabal(fagsak, behandling, vurdering, saksbehandler.navIdent, ingenBrevmottaker)
 
-            assertThat(oversendelseSlotV3.captured.innsynUrl)
+            assertThat(oversendelseSlot.captured.innsynUrl)
                 .isEqualTo("${lenkeConfig.efSakLenke}/fagsak/${fagsak.eksternId}/saksoversikt")
-            assertThat(oversendelseSlotV3.captured.forrigeBehandlendeEnhet).isEqualTo(saksbehandler.enhet)
+            assertThat(oversendelseSlot.captured.forrigeBehandlendeEnhet).isEqualTo(saksbehandler.enhet)
         }
 
         @Test
@@ -130,7 +130,7 @@ internal class KabalServiceTest {
 
             kabalService.sendTilKabal(fagsak, behandling, vurdering, saksbehandler.navIdent, ingenBrevmottaker)
 
-            assertThat(oversendelseSlotV3.captured.hindreAutomatiskSvarbrev).isTrue()
+            assertThat(oversendelseSlot.captured.hindreAutomatiskSvarbrev).isTrue()
         }
 
         @Test
@@ -140,9 +140,9 @@ internal class KabalServiceTest {
 
             kabalService.sendTilKabal(fagsak, behandling, vurdering, saksbehandler.navIdent, ingenBrevmottaker)
 
-            assertThat(oversendelseSlotV3.captured.innsynUrl)
+            assertThat(oversendelseSlot.captured.innsynUrl)
                 .isEqualTo("${lenkeConfig.efSakLenke}/fagsak/${fagsak.eksternId}/saksoversikt")
-            assertThat(oversendelseSlotV3.captured.forrigeBehandlendeEnhet).isEqualTo(saksbehandler.enhet)
+            assertThat(oversendelseSlot.captured.forrigeBehandlendeEnhet).isEqualTo(saksbehandler.enhet)
         }
 
         @Test
@@ -176,7 +176,7 @@ internal class KabalServiceTest {
                     Brevmottakere(personer = listOf(verge, bruker)),
                 )
 
-                val oversendelse = oversendelseSlotV3.captured
+                val oversendelse = oversendelseSlot.captured
                 assertThat(
                     oversendelse.klager.klagersProsessfullmektig
                         ?.id
@@ -208,7 +208,7 @@ internal class KabalServiceTest {
                     Brevmottakere(personer = listOf(verge)),
                 )
 
-                val oversendelse = oversendelseSlotV3.captured
+                val oversendelse = oversendelseSlot.captured
                 assertThat(
                     oversendelse.klager.klagersProsessfullmektig
                         ?.id
@@ -240,7 +240,7 @@ internal class KabalServiceTest {
                     Brevmottakere(personer = listOf(fullmektig)),
                 )
 
-                val oversendelse = oversendelseSlotV3.captured
+                val oversendelse = oversendelseSlot.captured
                 assertThat(
                     oversendelse.klager.klagersProsessfullmektig
                         ?.id
@@ -272,7 +272,7 @@ internal class KabalServiceTest {
                     Brevmottakere(organisasjoner = listOf(fullmektig)),
                 )
 
-                val oversendelse = oversendelseSlotV3.captured
+                val oversendelse = oversendelseSlot.captured
                 assertThat(
                     oversendelse.klager.klagersProsessfullmektig
                         ?.id
@@ -309,7 +309,7 @@ internal class KabalServiceTest {
                     ),
                 )
 
-                val oversendelse = oversendelseSlotV3.captured
+                val oversendelse = oversendelseSlot.captured
                 assertThat(
                     oversendelse.klager.klagersProsessfullmektig
                         ?.id
@@ -363,12 +363,12 @@ internal class KabalServiceTest {
             navn = "Verge Vergesen",
         )
 
-        private val oversendelseSlotV4 = slot<OversendtKlageAnkeV4>()
+        private val oversendelseSlot = slot<OversendtKlageAnkeV4>()
 
         @BeforeEach
         internal fun setUp() {
             every { featureToggleService.isEnabled(any()) } returns true
-            justRun { kabalClient.sendTilKabal(capture(oversendelseSlotV4)) }
+            justRun { kabalClient.sendTilKabal(capture(oversendelseSlot)) }
         }
 
         @Test
@@ -383,7 +383,7 @@ internal class KabalServiceTest {
             )
 
             // Assert
-            val oversendelse = oversendelseSlotV4.captured
+            val oversendelse = oversendelseSlot.captured
             assertThat(oversendelse.type).isEqualTo(OversendtType.KLAGE)
             assertThat(oversendelse.sakenGjelder.id.type).isEqualTo(OversendtPartIdType.PERSON)
             assertThat(oversendelse.sakenGjelder.id.verdi).isEqualTo(fagsak.hentAktivIdent())
@@ -415,7 +415,7 @@ internal class KabalServiceTest {
             kabalService.sendTilKabal(fagsak, behandling, vurdering, saksbehandler.navIdent, ingenBrevmottaker)
 
             // Assert
-            assertThat(oversendelseSlotV4.captured.hindreAutomatiskSvarbrev).isTrue()
+            assertThat(oversendelseSlot.captured.hindreAutomatiskSvarbrev).isTrue()
         }
 
         @Test
@@ -440,7 +440,7 @@ internal class KabalServiceTest {
                 )
 
                 // Assert
-                val prosessfullmektig = oversendelseSlotV4.captured.prosessfullmektig!!
+                val prosessfullmektig = oversendelseSlot.captured.prosessfullmektig!!
                 assertThat(prosessfullmektig.id?.verdi).isEqualTo(verge.personIdent)
                 assertThat(prosessfullmektig.id?.type).isEqualTo(OversendtPartIdType.PERSON)
                 assertThat(prosessfullmektig.navn).isEqualTo(verge.navn)
@@ -459,7 +459,7 @@ internal class KabalServiceTest {
                 )
 
                 // Assert
-                val prosessfullmektig = oversendelseSlotV4.captured.prosessfullmektig!!
+                val prosessfullmektig = oversendelseSlot.captured.prosessfullmektig!!
                 assertThat(prosessfullmektig.id?.verdi).isEqualTo(fullmektigMedIdent.personIdent)
                 assertThat(prosessfullmektig.id?.type).isEqualTo(OversendtPartIdType.PERSON)
                 assertThat(prosessfullmektig.navn).isEqualTo(fullmektigMedIdent.navn)
@@ -478,7 +478,7 @@ internal class KabalServiceTest {
                 )
 
                 // Assert
-                val prosessfullmektig = oversendelseSlotV4.captured.prosessfullmektig!!
+                val prosessfullmektig = oversendelseSlot.captured.prosessfullmektig!!
                 assertThat(prosessfullmektig.id).isNull()
                 assertThat(prosessfullmektig.navn).isEqualTo(fullmektigUtenIdent.navn)
                 assertThat(prosessfullmektig.adresse?.adresselinje1).isEqualTo(fullmektigUtenIdent.adresselinje1)
@@ -503,7 +503,7 @@ internal class KabalServiceTest {
                 )
 
                 // Assert
-                val prosessfullmektig = oversendelseSlotV4.captured.prosessfullmektig!!
+                val prosessfullmektig = oversendelseSlot.captured.prosessfullmektig!!
                 assertThat(prosessfullmektig.id?.verdi).isEqualTo(fullmektigOrganisasjon.organisasjonsnummer)
                 assertThat(prosessfullmektig.id?.type).isEqualTo(OversendtPartIdType.VIRKSOMHET)
                 assertThat(prosessfullmektig.navn).isEqualTo(fullmektigOrganisasjon.organisasjonsnavn)
@@ -524,7 +524,7 @@ internal class KabalServiceTest {
                     ),
                 )
 
-                val prosessfullmektig = oversendelseSlotV4.captured.prosessfullmektig!!
+                val prosessfullmektig = oversendelseSlot.captured.prosessfullmektig!!
                 assertThat(prosessfullmektig.id?.verdi).isEqualTo(fullmektigMedIdent.personIdent)
                 assertThat(prosessfullmektig.id?.type).isEqualTo(OversendtPartIdType.PERSON)
                 assertThat(prosessfullmektig.navn).isEqualTo(fullmektigMedIdent.navn)
