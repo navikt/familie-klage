@@ -14,6 +14,8 @@ import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV3
 import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV4
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.Fagsystem.BA
+import no.nav.familie.kontrakter.felles.klage.Fagsystem.KS
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import org.springframework.stereotype.Service
 
@@ -44,7 +46,7 @@ class KabalService(
         saksbehandlersEnhet: String,
         brevmottakere: Brevmottakere?,
     ): OversendtKlageAnke =
-        if (featureToggleService.isEnabled(SKAL_BRUKE_KABAL_API_V4)) {
+        if (fagsak.fagsystem in setOf(BA, KS) && featureToggleService.isEnabled(SKAL_BRUKE_KABAL_API_V4)) {
             OversendtKlageAnkeV4.lagKlageOversendelse(
                 fagsak = fagsak,
                 behandling = behandling,
@@ -53,9 +55,6 @@ class KabalService(
                 brevmottakere = brevmottakere,
             )
         } else {
-            if (behandlingInneholderBrevmottakerUtenIdent(brevmottakere)) {
-                throw IllegalStateException("Kan ikke sende til Kabal med brevmottaker uten ident")
-            }
             OversendtKlageAnkeV3.lagKlageOversendelse(
                 fagsak = fagsak,
                 behandling = behandling,
