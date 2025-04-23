@@ -52,7 +52,7 @@ object JournalføringUtil {
             is BrevmottakerPersonUtenIdent -> AvsenderMottaker(
                 id = null,
                 navn = brevmottaker.navn,
-                idType = AvsenderMottakerIdType.NULL,
+                idType = null,
             )
         }
 

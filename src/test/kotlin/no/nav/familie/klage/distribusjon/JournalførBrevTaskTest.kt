@@ -100,7 +100,7 @@ internal class JournalførBrevTaskTest {
         val avsenderMottaker1 = AvsenderMottaker("1", AvsenderMottakerIdType.FNR, "1navn")
         val avsenderMottaker2 = AvsenderMottaker("2", AvsenderMottakerIdType.FNR, "2navn")
         val avsenderMottakerOrganisasjon = AvsenderMottaker("org1", AvsenderMottakerIdType.ORGNR, "mottaker")
-        val avsenderMottakerUtenIdent = AvsenderMottaker(null, AvsenderMottakerIdType.NULL, "3navn")
+        val avsenderMottakerUtenIdent = AvsenderMottaker(null, null, "3navn")
 
         val brevmottakerUtenIdent =
             BrevmottakerPersonUtenIdent(
