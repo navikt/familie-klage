@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Profile
 @Configuration
 @Profile("mock-brev")
 class BrevClientMock {
-
     @Bean
     @Primary
     fun brevClient(): BrevClient {

@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
 internal class BrevServiceIntegrasjonsTest : OppslagSpringRunnerTest() {
-
     @Autowired
     lateinit var brevService: BrevService
 
@@ -43,14 +42,19 @@ internal class BrevServiceIntegrasjonsTest : OppslagSpringRunnerTest() {
         fagsak(stønadstype = Stønadstype.SKOLEPENGER, fagsakPersonId = fagsak.fagsakPersonId)
     private val påklagetVedtak = PåklagetVedtak(VEDTAK, påklagetVedtakDetaljer("123"))
     private val behandlingPåklagetVedtak = behandling(fagsak, steg = StegType.BREV, påklagetVedtak = påklagetVedtak)
-    private val ferdigstiltBehandling = behandling(
-        fagsakFerdigstiltBehandling,
-        status = BehandlingStatus.FERDIGSTILT,
-        påklagetVedtak = påklagetVedtak,
-    )
+    private val ferdigstiltBehandling =
+        behandling(
+            fagsakFerdigstiltBehandling,
+            status = BehandlingStatus.FERDIGSTILT,
+            påklagetVedtak = påklagetVedtak,
+        )
     private val fagsakBehandlingUtenPåklagetVedtak = fagsak(identer = setOf(PersonIdent("11010199999")))
     private val behandlingUtenPåklagetVedtak =
-        behandling(fagsakBehandlingUtenPåklagetVedtak, steg = StegType.BREV, påklagetVedtak = påklagetVedtak.copy(påklagetVedtakstype = UTEN_VEDTAK))
+        behandling(
+            fagsakBehandlingUtenPåklagetVedtak,
+            steg = StegType.BREV,
+            påklagetVedtak = påklagetVedtak.copy(påklagetVedtakstype = UTEN_VEDTAK),
+        )
 
     @BeforeEach
     internal fun setUp() {
@@ -78,7 +82,6 @@ internal class BrevServiceIntegrasjonsTest : OppslagSpringRunnerTest() {
 
     @Nested
     inner class LagEllerOppdaterBrev {
-
         @Test
         internal fun `skal ikke kunne lage eller oppdatere når behandlingen er låst`() {
             assertThatThrownBy { brevService.lagBrev(ferdigstiltBehandling.id) }
@@ -100,7 +103,6 @@ internal class BrevServiceIntegrasjonsTest : OppslagSpringRunnerTest() {
 
     @Nested
     inner class LagBrevSomPdf {
-
         @Test
         internal fun `kan ikke lage pdf 2 ganger`() {
             brevService.lagBrev(behandlingPåklagetVedtak.id)

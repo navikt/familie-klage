@@ -15,7 +15,6 @@ import org.springframework.data.repository.findByIdOrNull
 import kotlin.random.Random
 
 internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
-
     @Autowired
     private lateinit var fagsakRepository: FagsakRepository
 
@@ -24,14 +23,15 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
 
     @Test
     internal fun findByFagsakId() {
-        val fagsakPersistert = testoppsettService.lagreFagsak(
-            fagsakDomain().tilFagsakMedPerson(
-                setOf(
-                    PersonIdent("12345678901"),
-                    PersonIdent("98765432109"),
+        val fagsakPersistert =
+            testoppsettService.lagreFagsak(
+                fagsakDomain().tilFagsakMedPerson(
+                    setOf(
+                        PersonIdent("12345678901"),
+                        PersonIdent("98765432109"),
+                    ),
                 ),
-            ),
-        )
+            )
         val fagsak = fagsakRepository.findByIdOrNull(fagsakPersistert.id) ?: error("Finner ikke fagsak med id")
 
         assertThat(fagsak).isNotNull
@@ -57,19 +57,21 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
         val fagsystem = Fagsystem.EF
         val stønadstype = Stønadstype.BARNETILSYN
 
-        val lagretFagsak = testoppsettService.lagreFagsak(
-            fagsakDomain(
+        val lagretFagsak =
+            testoppsettService.lagreFagsak(
+                fagsakDomain(
+                    eksternId = eksternId,
+                    fagsystem = fagsystem,
+                    stønadstype = stønadstype,
+                ).tilFagsakMedPerson(setOf(PersonIdent("1"))),
+            )
+
+        val fagsak =
+            fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(
                 eksternId = eksternId,
                 fagsystem = fagsystem,
                 stønadstype = stønadstype,
-            ).tilFagsakMedPerson(setOf(PersonIdent("1"))),
-        )
-
-        val fagsak = fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(
-            eksternId = eksternId,
-            fagsystem = fagsystem,
-            stønadstype = stønadstype,
-        )!!
+            )!!
 
         assertThat(lagretFagsak.id).isEqualTo(fagsak.id)
         assertThat(lagretFagsak.eksternId).isEqualTo(fagsak.eksternId)

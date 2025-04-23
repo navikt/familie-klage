@@ -38,7 +38,6 @@ class BehandlingEventService(
     private val integrasjonerClient: FamilieIntegrasjonerClient,
     private val featureToggleService: FeatureToggleService,
 ) {
-
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @Transactional
@@ -75,17 +74,21 @@ class BehandlingEventService(
         taskService.save(BehandlingFeilregistrertTask.opprettTask(behandlingId))
     }
 
-    private fun lagreKlageresultat(behandlingEvent: BehandlingEvent, behandling: Behandling) {
-        val klageinstansResultat = KlageinstansResultat(
-            eventId = behandlingEvent.eventId,
-            type = behandlingEvent.type,
-            utfall = behandlingEvent.utfall(),
-            mottattEllerAvsluttetTidspunkt = behandlingEvent.mottattEllerAvsluttetTidspunkt(),
-            kildereferanse = UUID.fromString(behandlingEvent.kildeReferanse),
-            journalpostReferanser = StringListWrapper(behandlingEvent.journalpostReferanser()),
-            behandlingId = behandling.id,
-            årsakFeilregistrert = utledÅrsakFeilregistrert(behandlingEvent),
-        )
+    private fun lagreKlageresultat(
+        behandlingEvent: BehandlingEvent,
+        behandling: Behandling,
+    ) {
+        val klageinstansResultat =
+            KlageinstansResultat(
+                eventId = behandlingEvent.eventId,
+                type = behandlingEvent.type,
+                utfall = behandlingEvent.utfall(),
+                mottattEllerAvsluttetTidspunkt = behandlingEvent.mottattEllerAvsluttetTidspunkt(),
+                kildereferanse = UUID.fromString(behandlingEvent.kildeReferanse),
+                journalpostReferanser = StringListWrapper(behandlingEvent.journalpostReferanser()),
+                behandlingId = behandling.id,
+                årsakFeilregistrert = utledÅrsakFeilregistrert(behandlingEvent),
+            )
 
         klageresultatRepository.insert(klageinstansResultat)
     }
@@ -98,9 +101,15 @@ class BehandlingEventService(
             null
         }
 
-    private fun behandleKlageAvsluttet(behandling: Behandling, behandlingEvent: BehandlingEvent) {
+    private fun behandleKlageAvsluttet(
+        behandling: Behandling,
+        behandlingEvent: BehandlingEvent,
+    ) {
         when (behandling.status) {
-            BehandlingStatus.FERDIGSTILT -> logger.error("Mottatt event på ferdigstilt behandling $behandlingEvent - event kan være lest fra før")
+            BehandlingStatus.FERDIGSTILT ->
+                logger.error(
+                    "Mottatt event på ferdigstilt behandling $behandlingEvent - event kan være lest fra før",
+                )
             else -> {
                 opprettOppgaveTask(behandling, behandlingEvent)
                 ferdigstillKlagebehandling(behandling)
@@ -108,27 +117,33 @@ class BehandlingEventService(
         }
     }
 
-    private fun opprettOppgaveTask(behandling: Behandling, behandlingEvent: BehandlingEvent) {
-        val fagsakDomain = fagsakRepository.finnFagsakForBehandlingId(behandling.id)
-            ?: error("Finner ikke fagsak for behandlingId: ${behandling.id}")
+    private fun opprettOppgaveTask(
+        behandling: Behandling,
+        behandlingEvent: BehandlingEvent,
+    ) {
+        val fagsakDomain =
+            fagsakRepository.finnFagsakForBehandlingId(behandling.id)
+                ?: error("Finner ikke fagsak for behandlingId: ${behandling.id}")
         val saksbehandlerIdent = behandling.sporbar.endret.endretAv
         val saksbehandlerEnhet = utledSaksbehandlerEnhet(saksbehandlerIdent)
         val oppgaveTekst =
             "${behandlingEvent.detaljer.oppgaveTekst(saksbehandlerEnhet)} Gjelder: ${fagsakDomain.stønadstype}"
         val klageBehandlingEksternId = UUID.fromString(behandlingEvent.kildeReferanse)
-        val opprettOppgavePayload = OpprettOppgavePayload(
-            klagebehandlingEksternId = klageBehandlingEksternId,
-            oppgaveTekst = oppgaveTekst,
-            fagsystem = fagsakDomain.fagsystem,
-            klageinstansUtfall = behandlingEvent.utfall(),
-            behandlingstema = finnBehandlingstema(fagsakDomain.stønadstype),
-            behandlingstype = finnBehandlingstype(fagsakDomain.stønadstype)?.value,
-        )
-        val opprettOppgaveTask = OpprettKabalEventOppgaveTask.opprettTask(
-            opprettOppgavePayload,
-            fagsakDomain.eksternId,
-            fagsakDomain.fagsystem,
-        )
+        val opprettOppgavePayload =
+            OpprettOppgavePayload(
+                klagebehandlingEksternId = klageBehandlingEksternId,
+                oppgaveTekst = oppgaveTekst,
+                fagsystem = fagsakDomain.fagsystem,
+                klageinstansUtfall = behandlingEvent.utfall(),
+                behandlingstema = finnBehandlingstema(fagsakDomain.stønadstype),
+                behandlingstype = finnBehandlingstype(fagsakDomain.stønadstype)?.value,
+            )
+        val opprettOppgaveTask =
+            OpprettKabalEventOppgaveTask.opprettTask(
+                opprettOppgavePayload,
+                fagsakDomain.eksternId,
+                fagsakDomain.fagsystem,
+            )
         taskService.save(opprettOppgaveTask)
     }
 
@@ -158,24 +173,27 @@ class BehandlingEventService(
         }
 
     private fun finnBehandlingstema(stønadstype: Stønadstype): Behandlingstema? {
-        val skalSetteBehandlingstemaOgBehandlingstypeForBaks = featureToggleService.isEnabled(
-            Toggle.SETT_BEHANDLINGSTEMA_OG_BEHANDLINGSTYPE_FOR_BAKS,
-        )
+        val skalSetteBehandlingstemaOgBehandlingstypeForBaks =
+            featureToggleService.isEnabled(
+                Toggle.SETT_BEHANDLINGSTEMA_OG_BEHANDLINGSTYPE_FOR_BAKS,
+            )
         return when (stønadstype) {
-            Stønadstype.BARNETRYGD -> if (skalSetteBehandlingstemaOgBehandlingstypeForBaks) {
-                null
-            } else {
-                Behandlingstema.Barnetrygd
-            }
+            Stønadstype.BARNETRYGD ->
+                if (skalSetteBehandlingstemaOgBehandlingstypeForBaks) {
+                    null
+                } else {
+                    Behandlingstema.Barnetrygd
+                }
 
             Stønadstype.OVERGANGSSTØNAD -> Behandlingstema.Overgangsstønad
             Stønadstype.BARNETILSYN -> Behandlingstema.Barnetilsyn
             Stønadstype.SKOLEPENGER -> Behandlingstema.Skolepenger
-            Stønadstype.KONTANTSTØTTE -> if (skalSetteBehandlingstemaOgBehandlingstypeForBaks) {
-                null
-            } else {
-                Behandlingstema.Kontantstøtte
-            }
+            Stønadstype.KONTANTSTØTTE ->
+                if (skalSetteBehandlingstemaOgBehandlingstypeForBaks) {
+                    null
+                } else {
+                    Behandlingstema.Kontantstøtte
+                }
         }
     }
 

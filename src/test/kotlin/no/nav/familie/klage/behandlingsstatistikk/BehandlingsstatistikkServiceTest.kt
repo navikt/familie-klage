@@ -30,32 +30,33 @@ import java.time.ZoneId
 import java.util.UUID
 
 internal class BehandlingsstatistikkServiceTest {
-
     private val behandlingsstatistikkProducer = mockk<BehandlingsstatistikkProducer>()
     private val behandlingService = mockk<BehandlingService>()
     private val vurderingService = mockk<VurderingService>()
     private val fagsakService = mockk<FagsakService>()
     private val personopplysningerService = mockk<PersonopplysningerService>()
 
-    private val service = BehandlingsstatistikkService(
-        behandlingsstatistikkProducer = behandlingsstatistikkProducer,
-        behandlingService = behandlingService,
-        vurderingService = vurderingService,
-        fagsakService = fagsakService,
-        personopplysningerService = personopplysningerService,
-    )
+    private val service =
+        BehandlingsstatistikkService(
+            behandlingsstatistikkProducer = behandlingsstatistikkProducer,
+            behandlingService = behandlingService,
+            vurderingService = vurderingService,
+            fagsakService = fagsakService,
+            personopplysningerService = personopplysningerService,
+        )
 
     private val behandlingsstatistikkKlageSlot = slot<BehandlingsstatistikkKlage>()
 
     private val personIdent = UUID.randomUUID().toString()
     private val fagsak = fagsak(setOf(PersonIdent(personIdent)))
     private val påklagetBehandlingId = UUID.randomUUID().toString()
-    private val behandling = behandling(
-        fagsak,
-        påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer(påklagetBehandlingId)),
-        resultat = BehandlingResultat.MEDHOLD,
-        sporbar = Sporbar(opprettetAv = "Sakbeh"),
-    )
+    private val behandling =
+        behandling(
+            fagsak,
+            påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer(påklagetBehandlingId)),
+            resultat = BehandlingResultat.MEDHOLD,
+            sporbar = Sporbar(opprettetAv = "Sakbeh"),
+        )
     private val vurdering = vurdering(behandling.id, årsak = Årsak.FEIL_I_LOVANDVENDELSE)
 
     private val zoneId = ZoneId.of("Europe/Oslo")
@@ -111,7 +112,8 @@ internal class BehandlingsstatistikkServiceTest {
         val gjeldendeSaksbehandler = "gjeldendeSaksbehandler"
         val hendelse = BehandlingsstatistikkHendelse.FERDIG
 
-        every { personopplysningerService.hentPersonopplysninger(behandling.id) } returns personopplysningerDto(adressebeskyttelse = Adressebeskyttelse.STRENGT_FORTROLIG)
+        every { personopplysningerService.hentPersonopplysninger(behandling.id) } returns
+            personopplysningerDto(adressebeskyttelse = Adressebeskyttelse.STRENGT_FORTROLIG)
 
         service.sendBehandlingstatistikk(behandling.id, hendelse, hendelseTidspunkt, gjeldendeSaksbehandler)
 

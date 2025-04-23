@@ -17,7 +17,7 @@ interface AvvistBrevInnholdUtleder<T : FormkravVilkår> {
         return AvvistBrevInnhold(
             årsakTilAvvisning = utledÅrsakTilAvvisningstekst(ikkeOppfylteFormkrav),
             brevtekstFraSaksbehandler =
-            form.brevtekst ?: error("Må ha brevtekst fra saksbehandler for å generere brev ved formkrav ikke oppfylt"),
+                form.brevtekst ?: error("Må ha brevtekst fra saksbehandler for å generere brev ved formkrav ikke oppfylt"),
             lovtekst = utledLovtekst(ikkeOppfylteFormkrav.tilFormkravVilkår()),
         )
     }

@@ -20,7 +20,6 @@ class TilordnetRessursService(
     private val featureToggleService: FeatureToggleService,
     private val behandleSakOppgaveRepository: BehandleSakOppgaveRepository,
 ) {
-
     fun hentAnsvarligSaksbehandlerForBehandlingsId(behandlingId: UUID): SaksbehandlerDto {
         val behandleSakOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId)
         val oppgave = behandleSakOppgave?.let { oppgaveClient.finnOppgaveMedId(it.oppgaveId) }
@@ -79,6 +78,5 @@ class TilordnetRessursService(
         }
     }
 
-    private fun erUtviklerMedVeilederrolle(): Boolean =
-        featureToggleService.isEnabled(Toggle.UTVIKLER_MED_VEILEDERRROLLE)
+    private fun erUtviklerMedVeilederrolle(): Boolean = featureToggleService.isEnabled(Toggle.UTVIKLER_MED_VEILEDERRROLLE)
 }

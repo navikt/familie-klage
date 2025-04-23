@@ -15,7 +15,6 @@ import java.time.LocalDate
 import java.time.temporal.IsoFields
 
 internal class MålerRepositoryTest : OppslagSpringRunnerTest() {
-
     @Autowired
     lateinit var målerRepository: MålerRepository
 

@@ -8,12 +8,13 @@ import no.nav.familie.klage.infrastruktur.exception.feilHvis
 
 object BrevmottakerUtil {
     fun validerUnikeBrevmottakere(mottakere: Brevmottakere) {
-        val personmottakerIdentifikatorer = mottakere.personer.map {
-            when (it) {
-                is BrevmottakerPersonMedIdent -> it.personIdent
-                is BrevmottakerPersonUtenIdent -> it.id.toString()
+        val personmottakerIdentifikatorer =
+            mottakere.personer.map {
+                when (it) {
+                    is BrevmottakerPersonMedIdent -> it.personIdent
+                    is BrevmottakerPersonUtenIdent -> it.id.toString()
+                }
             }
-        }
         brukerfeilHvisIkke(personmottakerIdentifikatorer.distinct().size == personmottakerIdentifikatorer.size) {
             "En person kan bare legges til en gang som brevmottaker"
         }

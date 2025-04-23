@@ -18,9 +18,11 @@ import org.springframework.kafka.support.LoggingProducerListener
     KafkaErrorHandler::class,
 )
 class KafkaConfig {
-
     @Bean
-    fun klageEventListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler): ConcurrentKafkaListenerContainerFactory<String, String> {
+    fun klageEventListenerContainerFactory(
+        properties: KafkaProperties,
+        kafkaErrorHandler: KafkaErrorHandler,
+    ): ConcurrentKafkaListenerContainerFactory<String, String> {
         val factory = ConcurrentKafkaListenerContainerFactory<String, String>()
         factory.consumerFactory = DefaultKafkaConsumerFactory(properties.buildConsumerProperties())
         factory.setCommonErrorHandler(kafkaErrorHandler)

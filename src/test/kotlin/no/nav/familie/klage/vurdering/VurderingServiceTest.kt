@@ -20,26 +20,27 @@ import org.springframework.data.repository.findByIdOrNull
 import java.util.UUID
 
 class VurderingServiceTest {
-
     val vurderingRepository = mockk<VurderingRepository>()
     val stegService = mockk<StegService>()
     val brevRepository = mockk<BrevRepository>()
     val fagsakService = mockk<FagsakService>()
     val vurderingService = VurderingService(vurderingRepository, stegService, brevRepository, fagsakService)
 
-    val omgjørVedtakVurdering = vurdering(
-        behandlingId = UUID.randomUUID(),
-        vedtak = Vedtak.OMGJØR_VEDTAK,
-        hjemmel = null,
-        årsak = Årsak.FEIL_I_LOVANDVENDELSE,
-        begrunnelseOmgjøring = "begrunnelse",
-    )
+    val omgjørVedtakVurdering =
+        vurdering(
+            behandlingId = UUID.randomUUID(),
+            vedtak = Vedtak.OMGJØR_VEDTAK,
+            hjemmel = null,
+            årsak = Årsak.FEIL_I_LOVANDVENDELSE,
+            begrunnelseOmgjøring = "begrunnelse",
+        )
 
-    val opprettholdVedtakVurdering = vurdering(
-        behandlingId = UUID.randomUUID(),
-        vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
-        hjemmel = Hjemmel.FT_FEMTEN_FEM,
-    )
+    val opprettholdVedtakVurdering =
+        vurdering(
+            behandlingId = UUID.randomUUID(),
+            vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
+            hjemmel = Hjemmel.FT_FEMTEN_FEM,
+        )
 
     @BeforeEach
     fun setup() {

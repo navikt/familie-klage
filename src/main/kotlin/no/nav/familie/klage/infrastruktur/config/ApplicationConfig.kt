@@ -43,7 +43,6 @@ import java.time.temporal.ChronoUnit
 @EnableOAuth2Client(cacheEnabled = true)
 @EnableScheduling
 class ApplicationConfig {
-
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Bean
@@ -78,7 +77,8 @@ class ApplicationConfig {
     @Primary
     fun restTemplateBuilder(objectMapper: ObjectMapper): RestTemplateBuilder {
         val jackson2HttpMessageConverter = MappingJackson2HttpMessageConverter(objectMapper)
-        return RestTemplateBuilder().connectTimeout(Duration.of(2, ChronoUnit.SECONDS))
+        return RestTemplateBuilder()
+            .connectTimeout(Duration.of(2, ChronoUnit.SECONDS))
             .readTimeout(Duration.of(30, ChronoUnit.SECONDS))
             .additionalMessageConverters(listOf(jackson2HttpMessageConverter) + RestTemplate().messageConverters)
     }
@@ -87,26 +87,27 @@ class ApplicationConfig {
     fun restTemplate(
         restTemplateBuilder: RestTemplateBuilder,
         consumerIdClientInterceptor: ConsumerIdClientInterceptor,
-    ): RestOperations {
-        return restTemplateBuilder.additionalInterceptors(
-            consumerIdClientInterceptor,
-            MdcValuesPropagatingClientInterceptor(),
-        ).build()
-    }
+    ): RestOperations =
+        restTemplateBuilder
+            .additionalInterceptors(
+                consumerIdClientInterceptor,
+                MdcValuesPropagatingClientInterceptor(),
+            ).build()
 
     @Bean
-    fun prosesseringInfoProvider(@Value("\${prosessering.rolle}") prosesseringRolle: String) =
-        object : ProsesseringInfoProvider {
-
-            override fun hentBrukernavn(): String = try {
-                SpringTokenValidationContextHolder().getTokenValidationContext().getClaims("azuread")
+    fun prosesseringInfoProvider(
+        @Value("\${prosessering.rolle}") prosesseringRolle: String,
+    ) = object : ProsesseringInfoProvider {
+        override fun hentBrukernavn(): String =
+            try {
+                SpringTokenValidationContextHolder()
+                    .getTokenValidationContext()
+                    .getClaims("azuread")
                     .getStringClaim("preferred_username")
             } catch (e: Exception) {
                 throw e
             }
 
-            override fun harTilgang(): Boolean {
-                return SikkerhetContext.harRolle(prosesseringRolle)
-            }
-        }
+        override fun harTilgang(): Boolean = SikkerhetContext.harRolle(prosesseringRolle)
+    }
 }

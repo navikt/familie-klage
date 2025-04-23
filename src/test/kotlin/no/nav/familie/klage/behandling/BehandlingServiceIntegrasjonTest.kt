@@ -28,7 +28,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime.now
 
 internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
-
     @Autowired
     private lateinit var behandlingService: BehandlingService
 
@@ -73,18 +72,18 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
 
     @Nested
     inner class OppdaterPåklagetVedtak {
-
         @Test
         internal fun `skal oppdatere påklaget vedtak`() {
             val påklagetBehandlingId = "påklagetBehandlingId"
             val fagsystemVedtak = fagsystemVedtak(eksternBehandlingId = påklagetBehandlingId)
             every { efSakClientMock.hentVedtak(fagsak.eksternId) } returns listOf(fagsystemVedtak)
 
-            val påklagetVedtak = PåklagetVedtakDto(
-                eksternFagsystemBehandlingId = påklagetBehandlingId,
-                påklagetVedtakstype = PåklagetVedtakstype.VEDTAK,
-                internKlagebehandlingId = null,
-            )
+            val påklagetVedtak =
+                PåklagetVedtakDto(
+                    eksternFagsystemBehandlingId = påklagetBehandlingId,
+                    påklagetVedtakstype = PåklagetVedtakstype.VEDTAK,
+                    internKlagebehandlingId = null,
+                )
             behandlingService.oppdaterPåklagetVedtak(behandlingId = behandling.id, påklagetVedtakDto = påklagetVedtak)
             val oppdatertBehandling = behandlingService.hentBehandling(behandling.id)
             val oppdatertPåklagetVedtak = oppdatertBehandling.påklagetVedtak
@@ -100,12 +99,13 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
             every { efSakClientMock.hentVedtak(fagsak.eksternId) } returns listOf(fagsystemVedtak)
 
             val vedtaksdatoInfotrygd = LocalDate.now()
-            val påklagetVedtak = PåklagetVedtakDto(
-                eksternFagsystemBehandlingId = null,
-                internKlagebehandlingId = null,
-                manuellVedtaksdato = vedtaksdatoInfotrygd,
-                påklagetVedtakstype = PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING,
-            )
+            val påklagetVedtak =
+                PåklagetVedtakDto(
+                    eksternFagsystemBehandlingId = null,
+                    internKlagebehandlingId = null,
+                    manuellVedtaksdato = vedtaksdatoInfotrygd,
+                    påklagetVedtakstype = PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING,
+                )
             behandlingService.oppdaterPåklagetVedtak(behandlingId = behandling.id, påklagetVedtakDto = påklagetVedtak)
             val oppdatertBehandling = behandlingService.hentBehandling(behandling.id)
             val oppdatertPåklagetVedtak = oppdatertBehandling.påklagetVedtak
@@ -122,12 +122,13 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
             every { efSakClientMock.hentVedtak(fagsak.eksternId) } returns listOf(fagsystemVedtak)
 
             val vedtaksdato = LocalDate.now()
-            val påklagetVedtak = PåklagetVedtakDto(
-                eksternFagsystemBehandlingId = null,
-                internKlagebehandlingId = null,
-                manuellVedtaksdato = vedtaksdato,
-                påklagetVedtakstype = PåklagetVedtakstype.UTESTENGELSE,
-            )
+            val påklagetVedtak =
+                PåklagetVedtakDto(
+                    eksternFagsystemBehandlingId = null,
+                    internKlagebehandlingId = null,
+                    manuellVedtaksdato = vedtaksdato,
+                    påklagetVedtakstype = PåklagetVedtakstype.UTESTENGELSE,
+                )
             behandlingService.oppdaterPåklagetVedtak(behandlingId = behandling.id, påklagetVedtakDto = påklagetVedtak)
             val oppdatertBehandling = behandlingService.hentBehandling(behandling.id)
             val oppdatertPåklagetVedtak = oppdatertBehandling.påklagetVedtak
@@ -141,7 +142,11 @@ internal class BehandlingServiceIntegrasjonTest : OppslagSpringRunnerTest() {
         internal fun `skal feile hvis påklaget vedtak ikke finnes`() {
             every { efSakClientMock.hentVedtak(fagsak.eksternId) } returns emptyList()
             val påklagetVedtak =
-                PåklagetVedtakDto(eksternFagsystemBehandlingId = "finner ikke", internKlagebehandlingId = null, påklagetVedtakstype = PåklagetVedtakstype.VEDTAK)
+                PåklagetVedtakDto(
+                    eksternFagsystemBehandlingId = "finner ikke",
+                    internKlagebehandlingId = null,
+                    påklagetVedtakstype = PåklagetVedtakstype.VEDTAK,
+                )
             assertThatThrownBy {
                 behandlingService.oppdaterPåklagetVedtak(behandlingId = behandling.id, påklagetVedtakDto = påklagetVedtak)
             }.hasMessageContaining("Finner ikke vedtak for behandling")

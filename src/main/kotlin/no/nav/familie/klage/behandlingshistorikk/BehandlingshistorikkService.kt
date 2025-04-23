@@ -7,22 +7,21 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class BehandlingshistorikkService(private val behandlingshistorikkRepository: BehandlingshistorikkRepository) {
-
-    fun hentBehandlingshistorikk(id: UUID): List<Behandlingshistorikk> =
-        behandlingshistorikkRepository.findByBehandlingIdOrderByEndretTidDesc(id)
+class BehandlingshistorikkService(
+    private val behandlingshistorikkRepository: BehandlingshistorikkRepository,
+) {
+    fun hentBehandlingshistorikk(id: UUID): List<Behandlingshistorikk> = behandlingshistorikkRepository.findByBehandlingIdOrderByEndretTidDesc(id)
 
     fun opprettBehandlingshistorikk(
         behandlingId: UUID,
         steg: StegType,
         historikkHendelse: HistorikkHendelse? = null,
-    ): Behandlingshistorikk {
-        return behandlingshistorikkRepository.insert(
+    ): Behandlingshistorikk =
+        behandlingshistorikkRepository.insert(
             Behandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = steg,
                 historikkHendelse = historikkHendelse,
             ),
         )
-    }
 }

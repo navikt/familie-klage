@@ -20,9 +20,10 @@ class PersonopplysningerController(
     private val personopplysningerService: PersonopplysningerService,
     private val tilgangService: TilgangService,
 ) {
-
     @GetMapping("{behandlingId}")
-    fun hentPersonopplysninger(@PathVariable behandlingId: UUID): Ressurs<PersonopplysningerDto> {
+    fun hentPersonopplysninger(
+        @PathVariable behandlingId: UUID,
+    ): Ressurs<PersonopplysningerDto> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(personopplysningerService.hentPersonopplysninger(behandlingId))

@@ -25,7 +25,6 @@ class OppgaveClient(
     @Qualifier("azure") restOperations: RestOperations,
     private val integrasjonerConfig: IntegrasjonerConfig,
 ) : AbstractPingableRestClient(restOperations, "oppgave") {
-
     override val pingUri: URI = integrasjonerConfig.pingUri
     private val oppgaveUri: URI = integrasjonerConfig.oppgaveUri
     private val saksbehandlerUri: URI = integrasjonerConfig.saksbehandlerUri
@@ -53,11 +52,12 @@ class OppgaveClient(
 
     fun oppdaterOppgave(oppgave: Oppgave): Long {
         val uri = URI.create("$oppgaveUri/${oppgave.id!!}/oppdater")
-        val respons = patchForEntity<Ressurs<OppgaveResponse>>(
-            uri,
-            oppgave,
-            HttpHeaders().medContentTypeJsonUTF8(),
-        )
+        val respons =
+            patchForEntity<Ressurs<OppgaveResponse>>(
+                uri,
+                oppgave,
+                HttpHeaders().medContentTypeJsonUTF8(),
+            )
         return pakkUtRespons(respons, uri, "oppdaterOppgave").oppgaveId
     }
 

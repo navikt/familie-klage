@@ -28,7 +28,6 @@ class SendTilKabalTask(
     private val vurderingService: VurderingService,
     private val brevService: BrevService,
 ) : AsyncTaskStep {
-
     private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun doTask(task: Task) {

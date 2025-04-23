@@ -24,7 +24,6 @@ class DistribusjonService(
     private val fagsakService: FagsakService,
     private val behandlingService: BehandlingService,
 ) {
-
     fun journalførBrev(
         behandlingId: UUID,
         brev: ByteArray,
@@ -76,56 +75,57 @@ class DistribusjonService(
     ): String {
         val behandling = behandlingService.hentBehandling(behandlingId)
 
-        val dokument = lagDokument(
-            pdf = pdf,
-            dokumenttype = dokumenttype,
-            tittel = tittel,
-        )
-        val arkiverDokumentRequest = ArkiverDokumentRequest(
-            fnr = fagsak.hentAktivIdent(),
-            forsøkFerdigstill = true,
-            hoveddokumentvarianter = listOf(dokument),
-            vedleggsdokumenter = listOf(),
-            fagsakId = fagsak.eksternId,
-            journalførendeEnhet = behandling.behandlendeEnhet,
-            eksternReferanseId = "${behandling.eksternBehandlingId}$suffixEksternReferanseId",
-            avsenderMottaker = avsenderMottaker,
-        )
+        val dokument =
+            lagDokument(
+                pdf = pdf,
+                dokumenttype = dokumenttype,
+                tittel = tittel,
+            )
+        val arkiverDokumentRequest =
+            ArkiverDokumentRequest(
+                fnr = fagsak.hentAktivIdent(),
+                forsøkFerdigstill = true,
+                hoveddokumentvarianter = listOf(dokument),
+                vedleggsdokumenter = listOf(),
+                fagsakId = fagsak.eksternId,
+                journalførendeEnhet = behandling.behandlendeEnhet,
+                eksternReferanseId = "${behandling.eksternBehandlingId}$suffixEksternReferanseId",
+                avsenderMottaker = avsenderMottaker,
+            )
 
-        return familieIntegrasjonerClient.arkiverDokument(
-            arkiverDokumentRequest,
-            saksbehandler,
-        ).journalpostId
+        return familieIntegrasjonerClient
+            .arkiverDokument(
+                arkiverDokumentRequest,
+                saksbehandler,
+            ).journalpostId
     }
 
-    fun distribuerBrev(journalpostId: String): String {
-        return familieIntegrasjonerClient.distribuerBrev(journalpostId, Distribusjonstype.ANNET)
-    }
+    fun distribuerBrev(journalpostId: String): String = familieIntegrasjonerClient.distribuerBrev(journalpostId, Distribusjonstype.ANNET)
 
     private fun lagDokument(
         pdf: ByteArray,
         dokumenttype: Dokumenttype,
         tittel: String,
-    ): Dokument {
-        return Dokument(
+    ): Dokument =
+        Dokument(
             dokument = pdf,
             filtype = Filtype.PDFA,
             filnavn = null,
             tittel = tittel,
             dokumenttype = dokumenttype,
         )
-    }
 
     private fun utledBrevtittel(behandlingId: UUID): String {
         val behandling = behandlingService.hentBehandling(behandlingId)
         val stønadstype = fagsakService.hentFagsakForBehandling(behandlingId).stønadstype
 
-        val tittelPrefix = when (behandling.resultat) {
-            BehandlingResultat.IKKE_MEDHOLD -> "Brev om oversendelse til Nav Klageinstans"
-            BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> "Vedtak om avvist klage"
-            BehandlingResultat.HENLAGT -> return "Informasjonsbrev - trukket klage"
-            else -> error("Kan ikke utlede brevtittel for behandlingsresultat ${behandling.resultat}")
-        }
+        val tittelPrefix =
+            when (behandling.resultat) {
+                BehandlingResultat.IKKE_MEDHOLD -> "Brev om oversendelse til Nav Klageinstans"
+                BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> "Vedtak om avvist klage"
+                BehandlingResultat.HENLAGT -> return "Informasjonsbrev - trukket klage"
+                else -> error("Kan ikke utlede brevtittel for behandlingsresultat ${behandling.resultat}")
+            }
 
         return "$tittelPrefix - ${stønadstype.visningsnavn()}"
     }

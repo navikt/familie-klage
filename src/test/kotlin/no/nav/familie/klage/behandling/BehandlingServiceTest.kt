@@ -39,7 +39,6 @@ import java.util.UUID
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 internal class BehandlingServiceTest {
-
     val klageresultatRepository = mockk<KlageresultatRepository>()
     val fagsakService = mockk<FagsakService>()
     val behandlingRepository = mockk<BehandlingRepository>()
@@ -49,12 +48,13 @@ internal class BehandlingServiceTest {
     val fagsystemVedtakService = mockk<FagsystemVedtakService>()
     val brevService = mockk<BrevService>()
 
-    val behandlingService = BehandlingService(
-        behandlingRepository,
-        fagsakService,
-        klageresultatRepository,
-        fagsystemVedtakService,
-    )
+    val behandlingService =
+        BehandlingService(
+            behandlingRepository,
+            fagsakService,
+            klageresultatRepository,
+            fagsystemVedtakService,
+        )
 
     val behandlingSlot = slot<Behandling>()
 
@@ -78,7 +78,6 @@ internal class BehandlingServiceTest {
 
     @Nested
     inner class PåklagetVedtak {
-
         @Test
         internal fun `skal ikke kunne oppdatere påklaget vedtak dersom behandlingen er låst`() {
             val behandling = behandling(fagsak(), status = BehandlingStatus.VENTER)
@@ -98,7 +97,8 @@ internal class BehandlingServiceTest {
             val ugyldigManglerBehandlingId = PåklagetVedtakDto(null, null, PåklagetVedtakstype.VEDTAK)
             val ugyldigManglerVedtaksdatoInfotrygd = PåklagetVedtakDto(null, null, PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING)
             val ugyldigManglerVedtaksdatoUtestengelse = PåklagetVedtakDto(null, null, PåklagetVedtakstype.UTESTENGELSE)
-            val ugyldigManglerVedtaksdatoInfotrygdOrdinærtVedtak = PåklagetVedtakDto(null, null, PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK)
+            val ugyldigManglerVedtaksdatoInfotrygdOrdinærtVedtak =
+                PåklagetVedtakDto(null, null, PåklagetVedtakstype.INFOTRYGD_ORDINÆRT_VEDTAK)
             val ugyldigUtenVedtakMedBehandlingId = PåklagetVedtakDto("123", null, PåklagetVedtakstype.UTEN_VEDTAK)
             val ugyldigIkkeValgtMedBehandlingId = PåklagetVedtakDto("123", null, PåklagetVedtakstype.IKKE_VALGT)
 
@@ -119,7 +119,8 @@ internal class BehandlingServiceTest {
             val medVedtak = PåklagetVedtakDto("123", null, PåklagetVedtakstype.VEDTAK)
             val utenVedtak = PåklagetVedtakDto(null, null, PåklagetVedtakstype.UTEN_VEDTAK)
             val ikkeValgt = PåklagetVedtakDto(null, null, PåklagetVedtakstype.IKKE_VALGT)
-            val gjelderInfotrygd = PåklagetVedtakDto(null, null, PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING, manuellVedtaksdato = LocalDate.now())
+            val gjelderInfotrygd =
+                PåklagetVedtakDto(null, null, PåklagetVedtakstype.INFOTRYGD_TILBAKEKREVING, manuellVedtaksdato = LocalDate.now())
             val utestengelse = PåklagetVedtakDto(null, null, PåklagetVedtakstype.UTESTENGELSE, manuellVedtaksdato = LocalDate.now())
 
             behandlingService.oppdaterPåklagetVedtak(behandling.id, ikkeValgt)
@@ -141,14 +142,14 @@ internal class BehandlingServiceTest {
 
     @Nested
     inner class Hentklagebehandlingsresultat {
-
         @Test
         fun `Skal ikke filtrere bort Klagebehandlingsresultat hvis behandlingResultat er IKKE_MEDHOLD_FORMKRAV_AVVIST`() {
             val behandlingId = UUID.randomUUID()
             val fagsak = fagsak()
-            val klagebehandlingsresultat = listOf(
-                lagKlageBehandlingsresultat(BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST),
-            )
+            val klagebehandlingsresultat =
+                listOf(
+                    lagKlageBehandlingsresultat(BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST),
+                )
 
             val behandling = behandling(id = behandlingId, fagsak = fagsak, status = BehandlingStatus.UTREDES)
             every { fagsakService.hentFagsakForBehandling(behandlingId) } returns fagsak
@@ -164,12 +165,13 @@ internal class BehandlingServiceTest {
         fun `Skal filtrere bort Klagebehandlingsresultat hvis behandlingResultat ikke er IKKE_MEDHOLD_FORMKRAV_AVVIST`() {
             val behandlingId = UUID.randomUUID()
             val fagsak = fagsak()
-            val klagebehandlingsresultat = listOf(
-                lagKlageBehandlingsresultat(BehandlingResultat.MEDHOLD),
-                lagKlageBehandlingsresultat(BehandlingResultat.IKKE_SATT),
-                lagKlageBehandlingsresultat(BehandlingResultat.IKKE_MEDHOLD),
-                lagKlageBehandlingsresultat(BehandlingResultat.HENLAGT),
-            )
+            val klagebehandlingsresultat =
+                listOf(
+                    lagKlageBehandlingsresultat(BehandlingResultat.MEDHOLD),
+                    lagKlageBehandlingsresultat(BehandlingResultat.IKKE_SATT),
+                    lagKlageBehandlingsresultat(BehandlingResultat.IKKE_MEDHOLD),
+                    lagKlageBehandlingsresultat(BehandlingResultat.HENLAGT),
+                )
 
             val behandling = behandling(id = behandlingId, fagsak = fagsak, status = BehandlingStatus.UTREDES)
             every { fagsakService.hentFagsakForBehandling(behandlingId) } returns fagsak
@@ -191,8 +193,8 @@ internal class BehandlingServiceTest {
         } returns fagsystemVedtak
     }
 
-    fun lagKlageBehandlingsresultat(resultat: BehandlingResultat): Klagebehandlingsresultat {
-        return Klagebehandlingsresultat(
+    fun lagKlageBehandlingsresultat(resultat: BehandlingResultat): Klagebehandlingsresultat =
+        Klagebehandlingsresultat(
             id = UUID.randomUUID(),
             fagsakId = UUID.randomUUID(),
             fagsakPersonId = UUID.randomUUID(),
@@ -204,5 +206,4 @@ internal class BehandlingServiceTest {
             vedtaksdato = null,
             henlagtÅrsak = null,
         )
-    }
 }

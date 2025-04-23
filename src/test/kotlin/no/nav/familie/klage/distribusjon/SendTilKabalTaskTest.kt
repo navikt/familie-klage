@@ -26,28 +26,29 @@ import java.util.Properties
 import kotlin.test.Test
 
 internal class SendTilKabalTaskTest {
-
     private val fagsakService: FagsakService = mockk()
     private val behandlingService: BehandlingService = mockk()
     private val kabalService: KabalService = mockk()
     private val vurderingService: VurderingService = mockk()
     private val brevService: BrevService = mockk()
 
-    private val sendTilKabalTask = SendTilKabalTask(
-        fagsakService = fagsakService,
-        behandlingService = behandlingService,
-        kabalService = kabalService,
-        vurderingService = vurderingService,
-        brevService = brevService,
-    )
+    private val sendTilKabalTask =
+        SendTilKabalTask(
+            fagsakService = fagsakService,
+            behandlingService = behandlingService,
+            kabalService = kabalService,
+            vurderingService = vurderingService,
+            brevService = brevService,
+        )
 
     @Test
     internal fun `skal ikke kaste unntak ved 409 fra Kabal`() {
         val behandling = behandling(årsak = Klagebehandlingsårsak.ORDINÆR)
-        val task = Task(
-            type = SendTilKabalTask.TYPE,
-            payload = behandling.id.toString(),
-        )
+        val task =
+            Task(
+                type = SendTilKabalTask.TYPE,
+                payload = behandling.id.toString(),
+            )
 
         every { behandlingService.hentBehandling(behandling.id) } returns behandling
         every { fagsakService.hentFagsakForBehandling(behandling.id) } returns mockk()
@@ -65,13 +66,15 @@ internal class SendTilKabalTaskTest {
         val saksbehandlerIdent = "1"
         val vurdering = vurdering(behandlingId = behandling.id)
         val brevmottakere = lagBrevmottakere()
-        val task = Task(
-            type = SendTilKabalTask.TYPE,
-            payload = behandling.id.toString(),
-            properties = Properties().apply {
-                this[saksbehandlerMetadataKey] = saksbehandlerIdent
-            },
-        )
+        val task =
+            Task(
+                type = SendTilKabalTask.TYPE,
+                payload = behandling.id.toString(),
+                properties =
+                    Properties().apply {
+                        this[saksbehandlerMetadataKey] = saksbehandlerIdent
+                    },
+            )
 
         every { behandlingService.hentBehandling(behandling.id) } returns behandling
         every { fagsakService.hentFagsakForBehandling(behandling.id) } returns fagsak
@@ -90,13 +93,15 @@ internal class SendTilKabalTaskTest {
         val behandling = behandling(fagsak = fagsak, årsak = Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL)
         val saksbehandlerIdent = "1"
         val vurdering = vurdering(behandlingId = behandling.id)
-        val task = Task(
-            type = SendTilKabalTask.TYPE,
-            payload = behandling.id.toString(),
-            properties = Properties().apply {
-                this[saksbehandlerMetadataKey] = saksbehandlerIdent
-            },
-        )
+        val task =
+            Task(
+                type = SendTilKabalTask.TYPE,
+                payload = behandling.id.toString(),
+                properties =
+                    Properties().apply {
+                        this[saksbehandlerMetadataKey] = saksbehandlerIdent
+                    },
+            )
 
         every { behandlingService.hentBehandling(behandling.id) } returns behandling
         every { fagsakService.hentFagsakForBehandling(behandling.id) } returns fagsak

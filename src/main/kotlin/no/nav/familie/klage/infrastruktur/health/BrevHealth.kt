@@ -7,5 +7,6 @@ import org.springframework.stereotype.Component
 
 @Component
 @Profile("!local")
-class BrevHealth(client: BrevClient) :
-    AbstractHealthIndicator(client, "familie.brev")
+class BrevHealth(
+    client: BrevClient,
+) : AbstractHealthIndicator(client, "familie.brev")

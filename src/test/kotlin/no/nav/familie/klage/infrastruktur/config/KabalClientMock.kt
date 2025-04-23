@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Profile
 @Configuration
 @Profile("mock-kabal")
 class KabalClientMock {
-
     @Bean
     @Primary
     fun kabalClient(): KabalClient {

@@ -4,7 +4,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 object PdlTestdata {
-
     private val metadataGjeldende = Metadata(false)
 
     val ident = "2"
@@ -18,17 +17,20 @@ object PdlTestdata {
 
     private val dødsfall = listOf(Dødsfall(LocalDate.now()))
 
-    val pdlNavnBolk = PersonBolk(
-        personBolk = listOf(
-            PersonDataBolk(
-                ident = ident,
-                code = "ok",
-                person = PdlNavn(
-                    navn = navn,
+    val pdlNavnBolk =
+        PersonBolk(
+            personBolk =
+                listOf(
+                    PersonDataBolk(
+                        ident = ident,
+                        code = "ok",
+                        person =
+                            PdlNavn(
+                                navn = navn,
+                            ),
+                    ),
                 ),
-            ),
-        ),
-    )
+        )
 
     val pdlSøkerData =
         PdlSøkerData(

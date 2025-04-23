@@ -18,15 +18,20 @@ class FagsakService(
     private val fagsakPersonService: FagsakPersonService,
     private val pdlClient: PdlClient,
 ) {
-
     @Transactional
-    fun hentEllerOpprettFagsak(ident: String, eksternId: String, fagsystem: Fagsystem, stønadstype: Stønadstype): Fagsak {
+    fun hentEllerOpprettFagsak(
+        ident: String,
+        eksternId: String,
+        fagsystem: Fagsystem,
+        stønadstype: Stønadstype,
+    ): Fagsak {
         val personIdenter = pdlClient.hentPersonidenter(ident, stønadstype, true)
         val gjeldendePersonIdent = personIdenter.gjeldende()
         val person = fagsakPersonService.hentEllerOpprettPerson(personIdenter.identer(), gjeldendePersonIdent.ident)
         val oppdatertPerson = fagsakPersonService.oppdaterIdent(person, gjeldendePersonIdent.ident)
-        val fagsak = fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(eksternId, fagsystem, stønadstype)
-            ?: opprettFagsak(stønadstype, eksternId, fagsystem, oppdatertPerson)
+        val fagsak =
+            fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(eksternId, fagsystem, stønadstype)
+                ?: opprettFagsak(stønadstype, eksternId, fagsystem, oppdatertPerson)
 
         return fagsak.tilFagsakMedPerson(oppdatertPerson.identer)
     }
@@ -47,8 +52,8 @@ class FagsakService(
         eksternId: String,
         fagsystem: Fagsystem,
         fagsakPerson: FagsakPerson,
-    ): FagsakDomain {
-        return fagsakRepository.insert(
+    ): FagsakDomain =
+        fagsakRepository.insert(
             FagsakDomain(
                 fagsakPersonId = fagsakPerson.id,
                 stønadstype = stønadstype,
@@ -56,5 +61,4 @@ class FagsakService(
                 fagsystem = fagsystem,
             ),
         )
-    }
 }

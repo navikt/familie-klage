@@ -5,7 +5,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class KlageinstansResultatDtoMapperTest {
-
     @Test
     fun `map klageresultater til dto`() {
         val klageresultat = klageresultat()

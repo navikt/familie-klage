@@ -13,13 +13,10 @@ import org.springframework.web.context.request.async.AsyncRequestNotUsableExcept
 @Suppress("unused")
 @ControllerAdvice
 class ApiExceptionHandler {
-
     private val logger = LoggerFactory.getLogger(ApiExceptionHandler::class.java)
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
-    private fun rootCause(throwable: Throwable): String {
-        return NestedExceptionUtils.getMostSpecificCause(throwable).javaClass.simpleName
-    }
+    private fun rootCause(throwable: Throwable): String = NestedExceptionUtils.getMostSpecificCause(throwable).javaClass.simpleName
 
     @ExceptionHandler(Throwable::class)
     fun handleThrowable(throwable: Throwable): ResponseEntity<Ressurs<Nothing>> {
@@ -33,8 +30,8 @@ class ApiExceptionHandler {
     }
 
     @ExceptionHandler(JwtTokenMissingException::class)
-    fun handleJwtTokenMissingException(jwtTokenMissingException: JwtTokenMissingException): ResponseEntity<Ressurs<Nothing>> {
-        return ResponseEntity
+    fun handleJwtTokenMissingException(jwtTokenMissingException: JwtTokenMissingException): ResponseEntity<Ressurs<Nothing>> =
+        ResponseEntity
             .status(HttpStatus.UNAUTHORIZED)
             .body(
                 Ressurs.failure(
@@ -42,7 +39,6 @@ class ApiExceptionHandler {
                     frontendFeilmelding = "En uventet feil oppstod: Kall ikke autorisert",
                 ),
             )
-    }
 
     @ExceptionHandler(ApiFeil::class)
     fun handleThrowable(feil: ApiFeil): ResponseEntity<Ressurs<Nothing>> {
@@ -79,7 +75,8 @@ class ApiExceptionHandler {
     fun handleThrowable(manglerTilgang: ManglerTilgang): ResponseEntity<Ressurs<Nothing>> {
         secureLogger.warn("En håndtert tilgangsfeil har oppstått - ${manglerTilgang.melding}", manglerTilgang)
         logger.warn("En håndtert tilgangsfeil har oppstått")
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+        return ResponseEntity
+            .status(HttpStatus.FORBIDDEN)
             .body(
                 Ressurs(
                     data = null,
@@ -95,16 +92,18 @@ class ApiExceptionHandler {
     fun handleThrowable(feil: IntegrasjonException): ResponseEntity<Ressurs<Nothing>> {
         secureLogger.error("Feil mot integrasjonsclienten har oppstått: uri={} data={}", feil.uri, feil.data, feil)
         logger.error("Feil mot integrasjonsclienten har oppstått exception=${rootCause(feil)}")
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(Ressurs.failure(frontendFeilmelding = feil.message))
     }
 
     fun finnMetodeSomFeiler(e: Throwable): String {
-        val firstElement = e.stackTrace.firstOrNull {
-            it.className.startsWith("no.nav.familie.klage") &&
-                !it.className.contains("$") &&
-                !it.className.contains("InsertUpdateRepositoryImpl")
-        }
+        val firstElement =
+            e.stackTrace.firstOrNull {
+                it.className.startsWith("no.nav.familie.klage") &&
+                    !it.className.contains("$") &&
+                    !it.className.contains("InsertUpdateRepositoryImpl")
+            }
         if (firstElement != null) {
             val className = firstElement.className.split(".").lastOrNull()
             return "$className::${firstElement.methodName}(${firstElement.lineNumber})"

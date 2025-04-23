@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.util.UUID
 
 class KlageinstansResultatRepositoryTest : OppslagSpringRunnerTest() {
-
     @Autowired
     private lateinit var klageresultatRepository: KlageresultatRepository
 
@@ -23,15 +22,16 @@ class KlageinstansResultatRepositoryTest : OppslagSpringRunnerTest() {
     internal fun `skal kunne lagre og hente klageresultat`() {
         val fagsak = testoppsettService.lagreFagsak(fagsak())
         val behandling = testoppsettService.lagreBehandling(behandling(fagsak))
-        val klageinstansResultat = KlageinstansResultat(
-            eventId = UUID.randomUUID(),
-            type = BehandlingEventType.ANKEBEHANDLING_AVSLUTTET,
-            utfall = KlageinstansUtfall.OPPHEVET,
-            mottattEllerAvsluttetTidspunkt = SporbarUtils.now(),
-            kildereferanse = UUID.randomUUID(),
-            journalpostReferanser = StringListWrapper(listOf("ref1", "ref2")),
-            behandlingId = behandling.id,
-        )
+        val klageinstansResultat =
+            KlageinstansResultat(
+                eventId = UUID.randomUUID(),
+                type = BehandlingEventType.ANKEBEHANDLING_AVSLUTTET,
+                utfall = KlageinstansUtfall.OPPHEVET,
+                mottattEllerAvsluttetTidspunkt = SporbarUtils.now(),
+                kildereferanse = UUID.randomUUID(),
+                journalpostReferanser = StringListWrapper(listOf("ref1", "ref2")),
+                behandlingId = behandling.id,
+            )
         klageresultatRepository.insert(klageinstansResultat)
 
         val hentetKlageresultat = klageresultatRepository.findByIdOrThrow(klageinstansResultat.eventId)

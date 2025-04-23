@@ -32,7 +32,6 @@ import no.nav.familie.klage.felles.util.isEqualOrAfter
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
 import no.nav.familie.klage.henlegg.HenlagtDto
-import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
@@ -48,7 +47,6 @@ import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional

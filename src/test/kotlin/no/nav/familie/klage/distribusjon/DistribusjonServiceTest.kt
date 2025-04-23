@@ -22,7 +22,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class DistribusjonServiceTest {
-
     val behandlingService = mockk<BehandlingService>()
     val fagsakService = mockk<FagsakService>()
     val familieIntegrasjonerClient = mockk<FamilieIntegrasjonerClient>()

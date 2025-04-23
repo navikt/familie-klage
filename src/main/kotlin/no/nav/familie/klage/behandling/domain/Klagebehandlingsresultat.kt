@@ -29,15 +29,16 @@ data class Klagebehandlingsresultat(
     val henlagtÅrsak: HenlagtÅrsak?,
 )
 
-fun Klagebehandlingsresultat.tilEksternKlagebehandlingDto(klageinstansResultat: List<KlageinstansResultatDto>) = KlagebehandlingDto(
-    id = this.id,
-    fagsakId = this.fagsakId,
-    status = this.status,
-    opprettet = this.opprettet,
-    mottattDato = this.mottattDato,
-    resultat = this.resultat,
-    årsak = this.årsak,
-    vedtaksdato = this.vedtaksdato,
-    klageinstansResultat = klageinstansResultat,
-    henlagtÅrsak = this.henlagtÅrsak,
-)
+fun Klagebehandlingsresultat.tilEksternKlagebehandlingDto(klageinstansResultat: List<KlageinstansResultatDto>) =
+    KlagebehandlingDto(
+        id = this.id,
+        fagsakId = this.fagsakId,
+        status = this.status,
+        opprettet = this.opprettet,
+        mottattDato = this.mottattDato,
+        resultat = this.resultat,
+        årsak = this.årsak,
+        vedtaksdato = this.vedtaksdato,
+        klageinstansResultat = klageinstansResultat,
+        henlagtÅrsak = this.henlagtÅrsak,
+    )

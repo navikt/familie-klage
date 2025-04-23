@@ -36,27 +36,21 @@ import javax.sql.DataSource
 @EnableJdbcAuditing
 @EnableJdbcRepositories("no.nav.familie")
 class DatabaseConfiguration : AbstractJdbcConfiguration() {
+    @Bean
+    fun operations(dataSource: DataSource): NamedParameterJdbcOperations = NamedParameterJdbcTemplate(dataSource)
 
     @Bean
-    fun operations(dataSource: DataSource): NamedParameterJdbcOperations {
-        return NamedParameterJdbcTemplate(dataSource)
-    }
+    fun transactionManager(dataSource: DataSource): PlatformTransactionManager = DataSourceTransactionManager(dataSource)
 
     @Bean
-    fun transactionManager(dataSource: DataSource): PlatformTransactionManager {
-        return DataSourceTransactionManager(dataSource)
-    }
-
-    @Bean
-    fun auditSporbarEndret(): AuditorAware<Endret> {
-        return AuditorAware {
+    fun auditSporbarEndret(): AuditorAware<Endret> =
+        AuditorAware {
             Optional.of(Endret())
         }
-    }
 
     @Bean
-    override fun jdbcCustomConversions(): JdbcCustomConversions {
-        return JdbcCustomConversions(
+    override fun jdbcCustomConversions(): JdbcCustomConversions =
+        JdbcCustomConversions(
             listOf(
                 PropertiesWrapperTilStringConverter(),
                 StringTilPropertiesWrapperConverter(),
@@ -74,7 +68,6 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
                 BytearrayTilOpprettetRevurderingConverter(),
             ),
         )
-    }
 
     @Bean
     fun verifyIgnoreIfProd(
@@ -93,105 +86,83 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
         }
     }
 
-    data class StringListWrapper(val verdier: List<String>)
+    data class StringListWrapper(
+        val verdier: List<String>,
+    )
 
     @WritingConverter
     class StringListTilStringConverter : Converter<StringListWrapper, String> {
-
-        override fun convert(wrapper: StringListWrapper): String {
-            return StringUtils.join(wrapper.verdier, ";")
-        }
+        override fun convert(wrapper: StringListWrapper): String = StringUtils.join(wrapper.verdier, ";")
     }
 
     @ReadingConverter
     class StringTilStringList : Converter<String, StringListWrapper> {
-
-        override fun convert(verdi: String): StringListWrapper {
-            return StringListWrapper(verdi.split(";"))
-        }
+        override fun convert(verdi: String): StringListWrapper = StringListWrapper(verdi.split(";"))
     }
 
     @WritingConverter
     class FilTilBytearrayConverter : Converter<Fil, ByteArray> {
-
-        override fun convert(fil: Fil): ByteArray {
-            return fil.bytes
-        }
+        override fun convert(fil: Fil): ByteArray = fil.bytes
     }
 
     @ReadingConverter
     class BytearrayTilFilConverter : Converter<ByteArray, Fil> {
-
-        override fun convert(bytes: ByteArray): Fil {
-            return Fil(bytes)
-        }
+        override fun convert(bytes: ByteArray): Fil = Fil(bytes)
     }
 
     @WritingConverter
     class BrevmottakereTilBytearrayConverter : Converter<Brevmottakere, PGobject> {
-
-        override fun convert(o: Brevmottakere): PGobject = PGobject().apply {
-            type = "json"
-            value = objectMapper.writeValueAsString(o)
-        }
+        override fun convert(o: Brevmottakere): PGobject =
+            PGobject().apply {
+                type = "json"
+                value = objectMapper.writeValueAsString(o)
+            }
     }
 
     @ReadingConverter
     class BytearrayTilBrevmottakereConverter : Converter<PGobject, Brevmottakere> {
-
-        override fun convert(pGobject: PGobject): Brevmottakere {
-            return objectMapper.readValue(pGobject.value!!)
-        }
+        override fun convert(pGobject: PGobject): Brevmottakere = objectMapper.readValue(pGobject.value!!)
     }
 
     @WritingConverter
     class BrevmottakereJournalposterTilBytearrayConverter : Converter<BrevmottakereJournalposter, PGobject> {
-
-        override fun convert(o: BrevmottakereJournalposter): PGobject = PGobject().apply {
-            type = "json"
-            value = objectMapper.writeValueAsString(o)
-        }
+        override fun convert(o: BrevmottakereJournalposter): PGobject =
+            PGobject().apply {
+                type = "json"
+                value = objectMapper.writeValueAsString(o)
+            }
     }
 
     @ReadingConverter
     class BytearrayTilBrevmottakereJournalposterConverter : Converter<PGobject, BrevmottakereJournalposter> {
-
-        override fun convert(pGobject: PGobject): BrevmottakereJournalposter {
-            return objectMapper.readValue(pGobject.value!!)
-        }
+        override fun convert(pGobject: PGobject): BrevmottakereJournalposter = objectMapper.readValue(pGobject.value!!)
     }
 
     @WritingConverter
     class PåklagetVedtakDetaljerTilBytearrayConverter : Converter<PåklagetVedtakDetaljer, PGobject> {
-
-        override fun convert(o: PåklagetVedtakDetaljer): PGobject = PGobject().apply {
-            type = "json"
-            value = objectMapper.writeValueAsString(o)
-        }
+        override fun convert(o: PåklagetVedtakDetaljer): PGobject =
+            PGobject().apply {
+                type = "json"
+                value = objectMapper.writeValueAsString(o)
+            }
     }
 
     @ReadingConverter
     class BytearrayTilPåklagetVedtakDetaljerConverter : Converter<PGobject, PåklagetVedtakDetaljer> {
-
-        override fun convert(pGobject: PGobject): PåklagetVedtakDetaljer {
-            return objectMapper.readValue(pGobject.value!!)
-        }
+        override fun convert(pGobject: PGobject): PåklagetVedtakDetaljer = objectMapper.readValue(pGobject.value!!)
     }
 
     @WritingConverter
     class OpprettetRevurderingTilBytearrayConverter : Converter<FagsystemRevurdering, PGobject> {
-
-        override fun convert(o: FagsystemRevurdering): PGobject = PGobject().apply {
-            type = "json"
-            value = objectMapper.writeValueAsString(o)
-        }
+        override fun convert(o: FagsystemRevurdering): PGobject =
+            PGobject().apply {
+                type = "json"
+                value = objectMapper.writeValueAsString(o)
+            }
     }
 
     @ReadingConverter
     class BytearrayTilOpprettetRevurderingConverter : Converter<PGobject, FagsystemRevurdering> {
-
-        override fun convert(pGobject: PGobject): FagsystemRevurdering {
-            return objectMapper.readValue(pGobject.value!!)
-        }
+        override fun convert(pGobject: PGobject): FagsystemRevurdering = objectMapper.readValue(pGobject.value!!)
     }
 }

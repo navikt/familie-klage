@@ -39,7 +39,6 @@ class JournalførBrevTask(
     private val brevService: BrevService,
     private val featureToggleService: FeatureToggleService,
 ) : AsyncTaskStep {
-
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
         val saksbehandler = task.metadata[saksbehandlerMetadataKey].toString()
@@ -88,10 +87,11 @@ class JournalførBrevTask(
             if (mottakereMedIdent.none { it.ident == avsenderMottaker.id }) {
                 val journalpostId =
                     distribusjonService.journalførBrev(behandlingId, brevPdf, saksbehandler, index, avsenderMottaker)
-                val resultat = BrevmottakerJournalpostMedIdent(
-                    ident = avsenderMottaker.id ?: error("Mangler id for mottaker=$avsenderMottaker"),
-                    journalpostId = journalpostId,
-                )
+                val resultat =
+                    BrevmottakerJournalpostMedIdent(
+                        ident = avsenderMottaker.id ?: error("Mangler id for mottaker=$avsenderMottaker"),
+                        journalpostId = journalpostId,
+                    )
                 val nyeMottakere = acc + resultat
                 brevService.oppdaterMottakerJournalpost(behandlingId, BrevmottakereJournalposter(nyeMottakere))
                 nyeMottakere
@@ -126,19 +126,21 @@ class JournalførBrevTask(
         val avsenderMottaker = mapAvsenderMottaker(brevmottaker)
         val brevPdf = brev.brevPdf()
         return if (eksisterendeMottakere.none { harLikId(it, brevmottaker) }) {
-            val journalpostId = distribusjonService.journalførBrev(
-                behandlingId = behandlingId,
-                brev = brevPdf,
-                saksbehandler = saksbehandler,
-                index = eksisterendeMottakere.size,
-                mottaker = avsenderMottaker,
-            )
+            val journalpostId =
+                distribusjonService.journalførBrev(
+                    behandlingId = behandlingId,
+                    brev = brevPdf,
+                    saksbehandler = saksbehandler,
+                    index = eksisterendeMottakere.size,
+                    mottaker = avsenderMottaker,
+                )
 
-            val nyMottaker = mapBrevmottakerJournalpost(
-                brevmottaker = brevmottaker,
-                avsenderMottaker = avsenderMottaker,
-                journalpostId = journalpostId,
-            )
+            val nyMottaker =
+                mapBrevmottakerJournalpost(
+                    brevmottaker = brevmottaker,
+                    avsenderMottaker = avsenderMottaker,
+                    journalpostId = journalpostId,
+                )
 
             val nyeMottakere = eksisterendeMottakere + nyMottaker
             brevService.oppdaterMottakerJournalpost(
@@ -155,19 +157,18 @@ class JournalførBrevTask(
     private fun harLikId(
         brevmottakerJournalpost: BrevmottakerJournalpost,
         brevmottaker: Brevmottaker,
-    ) =
-        when (brevmottakerJournalpost) {
-            is BrevmottakerJournalpostMedIdent -> {
-                when (brevmottaker) {
-                    is BrevmottakerOrganisasjon -> brevmottakerJournalpost.ident == brevmottaker.organisasjonsnummer
-                    is BrevmottakerPersonMedIdent -> brevmottakerJournalpost.ident == brevmottaker.personIdent
-                    is BrevmottakerPersonUtenIdent -> false
-                }
+    ) = when (brevmottakerJournalpost) {
+        is BrevmottakerJournalpostMedIdent -> {
+            when (brevmottaker) {
+                is BrevmottakerOrganisasjon -> brevmottakerJournalpost.ident == brevmottaker.organisasjonsnummer
+                is BrevmottakerPersonMedIdent -> brevmottakerJournalpost.ident == brevmottaker.personIdent
+                is BrevmottakerPersonUtenIdent -> false
             }
-
-            is BrevmottakerJournalpostUtenIdent ->
-                brevmottaker is BrevmottakerPersonUtenIdent && brevmottakerJournalpost.id == brevmottaker.id
         }
+
+        is BrevmottakerJournalpostUtenIdent ->
+            brevmottaker is BrevmottakerPersonUtenIdent && brevmottakerJournalpost.id == brevmottaker.id
+    }
 
     override fun onCompletion(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
@@ -181,25 +182,26 @@ class JournalførBrevTask(
     }
 
     private fun opprettDistribuerBrevTask(task: Task) {
-        val sendTilKabalTask = Task(
-            type = DistribuerBrevTask.TYPE,
-            payload = task.payload,
-            properties = task.metadata,
-        )
+        val sendTilKabalTask =
+            Task(
+                type = DistribuerBrevTask.TYPE,
+                payload = task.payload,
+                properties = task.metadata,
+            )
         taskService.save(sendTilKabalTask)
     }
 
     private fun opprettSendTilKabalTask(task: Task) {
-        val sendTilKabalTask = Task(
-            type = SendTilKabalTask.TYPE,
-            payload = task.payload,
-            properties = task.metadata,
-        )
+        val sendTilKabalTask =
+            Task(
+                type = SendTilKabalTask.TYPE,
+                payload = task.payload,
+                properties = task.metadata,
+            )
         taskService.save(sendTilKabalTask)
     }
 
     companion object {
-
         const val TYPE = "journalførBrevTask"
     }
 }

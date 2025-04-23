@@ -31,19 +31,22 @@ class TestHendelseController(
     private val behandlingRepository: BehandlingRepository,
     private val behandlingEventService: BehandlingEventService,
 ) {
-
     @GetMapping("{behandlingId}")
-    fun hentBehandling(@PathVariable behandlingId: UUID): Behandling {
-        return behandlingRepository.findByIdOrThrow(behandlingId)
-    }
+    fun hentBehandling(
+        @PathVariable behandlingId: UUID,
+    ): Behandling = behandlingRepository.findByIdOrThrow(behandlingId)
 
     @PostMapping
-    fun opprettKabalEvent(@RequestBody behandlingEvent: BehandlingEvent) {
+    fun opprettKabalEvent(
+        @RequestBody behandlingEvent: BehandlingEvent,
+    ) {
         behandlingEventService.handleEvent(behandlingEvent)
     }
 
     @PostMapping("{behandlingId}/dummy")
-    fun opprettDummyKabalEvent(@PathVariable behandlingId: UUID) {
+    fun opprettDummyKabalEvent(
+        @PathVariable behandlingId: UUID,
+    ) {
         val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
         behandlingEventService.handleEvent(
             BehandlingEvent(
@@ -52,19 +55,22 @@ class TestHendelseController(
                 kilde = Fagsystem.EF.name,
                 kabalReferanse = UUID.randomUUID().toString(),
                 type = BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET,
-                detaljer = BehandlingDetaljer(
-                    KlagebehandlingAvsluttetDetaljer(
-                        avsluttet = LocalDateTime.now(),
-                        utfall = KlageinstansUtfall.AVVIST,
-                        journalpostReferanser = listOf("journalpost1"),
+                detaljer =
+                    BehandlingDetaljer(
+                        KlagebehandlingAvsluttetDetaljer(
+                            avsluttet = LocalDateTime.now(),
+                            utfall = KlageinstansUtfall.AVVIST,
+                            journalpostReferanser = listOf("journalpost1"),
+                        ),
                     ),
-                ),
             ),
         )
     }
 
     @PostMapping("{behandlingId}/startanke")
-    fun opprettDummyKabalAnkeEvent(@PathVariable behandlingId: UUID) {
+    fun opprettDummyKabalAnkeEvent(
+        @PathVariable behandlingId: UUID,
+    ) {
         val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
         behandlingEventService.handleEvent(
             BehandlingEvent(
@@ -73,17 +79,21 @@ class TestHendelseController(
                 kilde = Fagsystem.EF.name,
                 kabalReferanse = UUID.randomUUID().toString(),
                 type = BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
-                detaljer = BehandlingDetaljer(
-                    ankebehandlingOpprettet = AnkebehandlingOpprettetDetaljer(
-                        mottattKlageinstans = LocalDateTime.now(),
+                detaljer =
+                    BehandlingDetaljer(
+                        ankebehandlingOpprettet =
+                            AnkebehandlingOpprettetDetaljer(
+                                mottattKlageinstans = LocalDateTime.now(),
+                            ),
                     ),
-                ),
             ),
         )
     }
 
     @PostMapping("{behandlingId}/avsluttanke")
-    fun opprettDummyKabalAvsluttAnkeEvent(@PathVariable behandlingId: UUID) {
+    fun opprettDummyKabalAvsluttAnkeEvent(
+        @PathVariable behandlingId: UUID,
+    ) {
         val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
         behandlingEventService.handleEvent(
             BehandlingEvent(
@@ -92,13 +102,15 @@ class TestHendelseController(
                 kilde = Fagsystem.EF.name,
                 kabalReferanse = UUID.randomUUID().toString(),
                 type = BehandlingEventType.ANKEBEHANDLING_AVSLUTTET,
-                detaljer = BehandlingDetaljer(
-                    ankebehandlingAvsluttet = AnkebehandlingAvsluttetDetaljer(
-                        avsluttet = LocalDateTime.now(),
-                        utfall = KlageinstansUtfall.DELVIS_MEDHOLD,
-                        journalpostReferanser = listOf("1", "2", "3"),
+                detaljer =
+                    BehandlingDetaljer(
+                        ankebehandlingAvsluttet =
+                            AnkebehandlingAvsluttetDetaljer(
+                                avsluttet = LocalDateTime.now(),
+                                utfall = KlageinstansUtfall.DELVIS_MEDHOLD,
+                                journalpostReferanser = listOf("1", "2", "3"),
+                            ),
                     ),
-                ),
             ),
         )
     }

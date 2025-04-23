@@ -11,30 +11,45 @@ import java.util.Properties
 import java.util.UUID
 
 @Service
-class OppgaveTaskService(private val taskService: TaskService) {
-    fun opprettBehandleSakOppgave(behandlingId: UUID, klageGjelderTilbakekreving: Boolean, eksternFagsakId: String, fagsystem: Fagsystem) {
-        val behandleSakOppgaveTask = Task(
-            type = OpprettBehandleSakOppgaveTask.TYPE,
-            payload = behandlingId.toString(),
-            properties = Properties().apply {
-                this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
-                this[klageGjelderTilbakekrevingMetadataKey] = klageGjelderTilbakekreving.toString()
-                this["eksternFagsakId"] = eksternFagsakId
-                this["fagsystem"] = fagsystem.name
-            },
-        )
+class OppgaveTaskService(
+    private val taskService: TaskService,
+) {
+    fun opprettBehandleSakOppgave(
+        behandlingId: UUID,
+        klageGjelderTilbakekreving: Boolean,
+        eksternFagsakId: String,
+        fagsystem: Fagsystem,
+    ) {
+        val behandleSakOppgaveTask =
+            Task(
+                type = OpprettBehandleSakOppgaveTask.TYPE,
+                payload = behandlingId.toString(),
+                properties =
+                    Properties().apply {
+                        this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
+                        this[klageGjelderTilbakekrevingMetadataKey] = klageGjelderTilbakekreving.toString()
+                        this["eksternFagsakId"] = eksternFagsakId
+                        this["fagsystem"] = fagsystem.name
+                    },
+            )
         taskService.save(behandleSakOppgaveTask)
     }
 
-    fun lagFerdigstillOppgaveForBehandlingTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem) {
-        val ferdigstillbehandlesakOppgave = Task(
-            type = OpprettFerdigstillOppgaveTask.TYPE,
-            payload = behandlingId.toString(),
-            properties = Properties().apply {
-                this["eksternFagsakId"] = eksternFagsakId
-                this["fagsystem"] = fagsystem.name
-            },
-        )
+    fun lagFerdigstillOppgaveForBehandlingTask(
+        behandlingId: UUID,
+        eksternFagsakId: String,
+        fagsystem: Fagsystem,
+    ) {
+        val ferdigstillbehandlesakOppgave =
+            Task(
+                type = OpprettFerdigstillOppgaveTask.TYPE,
+                payload = behandlingId.toString(),
+                properties =
+                    Properties().apply {
+                        this["eksternFagsakId"] = eksternFagsakId
+                        this["fagsystem"] = fagsystem.name
+                    },
+            )
         taskService.save(ferdigstillbehandlesakOppgave)
     }
 }

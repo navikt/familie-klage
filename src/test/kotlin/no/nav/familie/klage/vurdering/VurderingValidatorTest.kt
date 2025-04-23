@@ -13,20 +13,19 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 
 internal class VurderingValidatorTest {
-
     @Nested
     inner class OmgjørVedtak {
-
         @ParameterizedTest
         @EnumSource(value = Fagsystem::class)
         internal fun `skal validere når man har med årsak, men hjemmel er null`(fagsystem: Fagsystem) {
             validerVurdering(
-                vurdering = vurderingDto(
-                    vedtak = Vedtak.OMGJØR_VEDTAK,
-                    hjemmel = null,
-                    årsak = Årsak.FEIL_I_LOVANDVENDELSE,
-                    begrunnelseOmgjøring = "begrunnelse",
-                ),
+                vurdering =
+                    vurderingDto(
+                        vedtak = Vedtak.OMGJØR_VEDTAK,
+                        hjemmel = null,
+                        årsak = Årsak.FEIL_I_LOVANDVENDELSE,
+                        begrunnelseOmgjøring = "begrunnelse",
+                    ),
                 fagsystem = fagsystem,
             )
         }
@@ -47,12 +46,13 @@ internal class VurderingValidatorTest {
         internal fun `skal feile når hjemmel ikke er null`(fagsystem: Fagsystem) {
             assertThatThrownBy {
                 validerVurdering(
-                    vurdering = vurderingDto(
-                        vedtak = Vedtak.OMGJØR_VEDTAK,
-                        hjemmel = Hjemmel.BT_FEM,
-                        årsak = Årsak.ANNET,
-                        begrunnelseOmgjøring = "begrunnelse",
-                    ),
+                    vurdering =
+                        vurderingDto(
+                            vedtak = Vedtak.OMGJØR_VEDTAK,
+                            hjemmel = Hjemmel.BT_FEM,
+                            årsak = Årsak.ANNET,
+                            begrunnelseOmgjøring = "begrunnelse",
+                        ),
                     fagsystem = fagsystem,
                 )
             }.hasMessage("Kan ikke lagre hjemmel på omgjør vedtak")
@@ -63,11 +63,12 @@ internal class VurderingValidatorTest {
         internal fun `skal feile når begrunnelse for omgjøring er null`(fagsystem: Fagsystem) {
             assertThatThrownBy {
                 validerVurdering(
-                    vurdering = vurderingDto(
-                        vedtak = Vedtak.OMGJØR_VEDTAK,
-                        årsak = Årsak.ANNET,
-                        begrunnelseOmgjøring = null,
-                    ),
+                    vurdering =
+                        vurderingDto(
+                            vedtak = Vedtak.OMGJØR_VEDTAK,
+                            årsak = Årsak.ANNET,
+                            begrunnelseOmgjøring = null,
+                        ),
                     fagsystem = fagsystem,
                 )
             }.hasMessage("Mangler begrunnelse for omgjøring på omgjør vedtak")
@@ -76,16 +77,16 @@ internal class VurderingValidatorTest {
 
     @Nested
     inner class OpprettholdVedtak {
-
         @ParameterizedTest
         @EnumSource(value = Fagsystem::class)
         internal fun `skal validere når man har med hjemmel, men årsak er null`(fagsystem: Fagsystem) {
             validerVurdering(
-                vurdering = vurderingDto(
-                    vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
-                    hjemmel = Hjemmel.BT_FEM,
-                    årsak = null,
-                ),
+                vurdering =
+                    vurderingDto(
+                        vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
+                        hjemmel = Hjemmel.BT_FEM,
+                        årsak = null,
+                    ),
                 fagsystem = fagsystem,
             )
         }
@@ -95,11 +96,12 @@ internal class VurderingValidatorTest {
         internal fun `skal feile når hjemmel er null`(fagsystem: Fagsystem) {
             assertThatThrownBy {
                 validerVurdering(
-                    vurdering = vurderingDto(
-                        vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
-                        hjemmel = null,
-                        årsak = null,
-                    ),
+                    vurdering =
+                        vurderingDto(
+                            vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
+                            hjemmel = null,
+                            årsak = null,
+                        ),
                     fagsystem = fagsystem,
                 )
             }.hasMessage("Mangler hjemmel på oppretthold vedtak")
@@ -110,11 +112,12 @@ internal class VurderingValidatorTest {
         internal fun `skal feile når årsak ikke er null`(fagsystem: Fagsystem) {
             assertThatThrownBy {
                 validerVurdering(
-                    vurdering = vurderingDto(
-                        vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
-                        hjemmel = Hjemmel.BT_FEM,
-                        årsak = Årsak.ANNET,
-                    ),
+                    vurdering =
+                        vurderingDto(
+                            vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
+                            hjemmel = Hjemmel.BT_FEM,
+                            årsak = Årsak.ANNET,
+                        ),
                     fagsystem = fagsystem,
                 )
             }.hasMessage("Kan ikke lagre årsak på oppretthold vedtak")
@@ -125,11 +128,12 @@ internal class VurderingValidatorTest {
         internal fun `skal feile når begrunnelse for omgjøring ikke er null`(fagsystem: Fagsystem) {
             assertThatThrownBy {
                 validerVurdering(
-                    vurdering = vurderingDto(
-                        vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
-                        hjemmel = Hjemmel.BT_FEM,
-                        begrunnelseOmgjøring = "begrunnelse",
-                    ),
+                    vurdering =
+                        vurderingDto(
+                            vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
+                            hjemmel = Hjemmel.BT_FEM,
+                            begrunnelseOmgjøring = "begrunnelse",
+                        ),
                     fagsystem = fagsystem,
                 )
             }.hasMessage("Kan ikke lagre begrunnelse på oppretthold vedtak")
@@ -139,11 +143,12 @@ internal class VurderingValidatorTest {
         internal fun `skal feile når innstillingKlageinstans ikke er satt når fagsystem er EF`() {
             assertThatThrownBy {
                 validerVurdering(
-                    vurdering = vurderingDto(
-                        vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
-                        hjemmel = Hjemmel.BT_FEM,
-                        innstillingKlageinstans = null,
-                    ),
+                    vurdering =
+                        vurderingDto(
+                            vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
+                            hjemmel = Hjemmel.BT_FEM,
+                            innstillingKlageinstans = null,
+                        ),
                     fagsystem = Fagsystem.EF,
                 )
             }.hasMessage("Må skrive innstilling til klageinstans ved opprettholdelse av vedtak")
@@ -154,11 +159,12 @@ internal class VurderingValidatorTest {
         internal fun `skal feile når dokumentasjonOgUtredning ikke er satt når fagsystem er BA og KS`(fagsystem: Fagsystem) {
             assertThatThrownBy {
                 validerVurdering(
-                    vurdering = vurderingDto(
-                        vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
-                        hjemmel = Hjemmel.BT_FEM,
-                        dokumentasjonOgUtredning = null,
-                    ),
+                    vurdering =
+                        vurderingDto(
+                            vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
+                            hjemmel = Hjemmel.BT_FEM,
+                            dokumentasjonOgUtredning = null,
+                        ),
                     fagsystem = fagsystem,
                 )
             }.hasMessage("Feltet 'Dokumentasjon og utredning' må fylles ut ved opprettholdelse av vedtak.")
@@ -169,15 +175,16 @@ internal class VurderingValidatorTest {
         internal fun `skal slå sammen felter i feilmelding om innstilling når fagsystem er BA og KS`(fagsystem: Fagsystem) {
             assertThatThrownBy {
                 validerVurdering(
-                    vurdering = vurderingDto(
-                        vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
-                        hjemmel = Hjemmel.BT_FEM,
-                        dokumentasjonOgUtredning = null,
-                        spørsmåletISaken = null,
-                        aktuelleRettskilder = null,
-                        klagersAnførsler = null,
-                        vurderingAvKlagen = null,
-                    ),
+                    vurdering =
+                        vurderingDto(
+                            vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
+                            hjemmel = Hjemmel.BT_FEM,
+                            dokumentasjonOgUtredning = null,
+                            spørsmåletISaken = null,
+                            aktuelleRettskilder = null,
+                            klagersAnførsler = null,
+                            vurderingAvKlagen = null,
+                        ),
                     fagsystem = fagsystem,
                 )
             }.hasMessage(

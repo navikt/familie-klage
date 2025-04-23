@@ -1,6 +1,8 @@
 package no.nav.familie.klage.personopplysninger.pdl
 
-data class PdlPersonRequestVariables(val ident: String)
+data class PdlPersonRequestVariables(
+    val ident: String,
+)
 
 data class PdlIdentRequestVariables(
     val ident: String,
@@ -8,4 +10,6 @@ data class PdlIdentRequestVariables(
     val historikk: Boolean = false,
 )
 
-data class PdlPersonBolkRequestVariables(val identer: List<String>)
+data class PdlPersonBolkRequestVariables(
+    val identer: List<String>,
+)

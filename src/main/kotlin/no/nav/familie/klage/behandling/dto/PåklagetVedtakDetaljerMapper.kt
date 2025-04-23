@@ -5,24 +5,26 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.harManuellVedtaksdato
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 
-fun FagsystemVedtak.tilPåklagetVedtakDetaljer() = PåklagetVedtakDetaljer(
-    behandlingstype = this.behandlingstype,
-    eksternFagsystemBehandlingId = this.eksternBehandlingId,
-    internKlagebehandlingId = null,
-    fagsystemType = this.fagsystemType,
-    resultat = this.resultat,
-    vedtakstidspunkt = this.vedtakstidspunkt,
-    regelverk = this.regelverk,
-)
+fun FagsystemVedtak.tilPåklagetVedtakDetaljer() =
+    PåklagetVedtakDetaljer(
+        behandlingstype = this.behandlingstype,
+        eksternFagsystemBehandlingId = this.eksternBehandlingId,
+        internKlagebehandlingId = null,
+        fagsystemType = this.fagsystemType,
+        resultat = this.resultat,
+        vedtakstidspunkt = this.vedtakstidspunkt,
+        regelverk = this.regelverk,
+    )
 
-fun PåklagetVedtakDetaljer.tilFagsystemVedtak() = FagsystemVedtak(
-    behandlingstype = this.behandlingstype,
-    eksternBehandlingId = this.eksternFagsystemBehandlingId ?: "",
-    fagsystemType = this.fagsystemType,
-    resultat = this.resultat,
-    vedtakstidspunkt = this.vedtakstidspunkt,
-    regelverk = this.regelverk,
-)
+fun PåklagetVedtakDetaljer.tilFagsystemVedtak() =
+    FagsystemVedtak(
+        behandlingstype = this.behandlingstype,
+        eksternBehandlingId = this.eksternFagsystemBehandlingId ?: "",
+        fagsystemType = this.fagsystemType,
+        resultat = this.resultat,
+        vedtakstidspunkt = this.vedtakstidspunkt,
+        regelverk = this.regelverk,
+    )
 
 fun PåklagetVedtak.tilDto(): PåklagetVedtakDto =
     PåklagetVedtakDto(

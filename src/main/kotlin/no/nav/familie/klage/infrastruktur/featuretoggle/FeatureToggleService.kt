@@ -6,12 +6,13 @@ import org.springframework.stereotype.Service
 class FeatureToggleService(
     val unleashNextService: UnleashNextService,
 ) {
-    fun isEnabled(toggle: Toggle): Boolean {
-        return unleashNextService.isEnabled(toggle)
-    }
+    fun isEnabled(toggle: Toggle): Boolean = unleashNextService.isEnabled(toggle)
 }
 
-enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
+enum class Toggle(
+    val toggleId: String,
+    val beskrivelse: String? = null,
+) {
     PLACEHOLDER("ktlint-liker-ikke-tomme-enums"),
 
     // Permission
@@ -32,15 +33,13 @@ enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
     SKAL_BRUKE_NY_LØYPE_FOR_JOURNALFØRING("familie-klage.skal-bruke-ny-loype-for-journalforing", "Release"),
     SEND_BEHANDLING_ID_VED_OPPRETTING_AV_REVURDERING_KLAGE(
         "familie-klage.send-behandlingid-ved-oppretting-av-revurdering-klage",
-        "Release"
-    )
+        "Release",
+    ),
     ;
 
     companion object {
         private val toggles: Map<String, Toggle> = values().associateBy { it.name }
 
-        fun byToggleId(toggleId: String): Toggle {
-            return toggles[toggleId] ?: error("Finner ikke toggle for $toggleId")
-        }
+        fun byToggleId(toggleId: String): Toggle = toggles[toggleId] ?: error("Finner ikke toggle for $toggleId")
     }
 }

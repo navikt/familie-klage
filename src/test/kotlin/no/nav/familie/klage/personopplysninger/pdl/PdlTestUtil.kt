@@ -6,7 +6,6 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
 
 object PdlTestUtil {
-
     fun parseSpørring(filnavn: String): Map<String, *> {
         val query = this::class.java.getResource(filnavn).readText()
         val readLines = query.reader().readLines()
@@ -28,13 +27,13 @@ object PdlTestUtil {
                     val annotation = it.annotations.firstOrNull()
                     val annotationClass = annotation?.annotationClass
                     val annotationValue =
-                        annotationClass?.declaredMemberProperties
+                        annotationClass
+                            ?.declaredMemberProperties
                             ?.firstOrNull { kProperty1 -> kProperty1.name == "value" }
                             ?.getter
                             ?.call(annotation) as String?
                     (annotationValue ?: it.name) to finnSøknadsfelt(entitet, it)
-                }
-                .associateBy({ it.first!! }, {
+                }.associateBy({ it.first!! }, {
                     finnFeltStruktur(getFeltverdi(it.second, entitet))
                 })
 
@@ -69,20 +68,28 @@ object PdlTestUtil {
         if (line.trim().startsWith("personBolk: hentPersonBolk")) {
             return "personBolk"
         }
-        return line.trim().substringBefore("{").substringBefore("(").trim()
+        return line
+            .trim()
+            .substringBefore("{")
+            .substringBefore("(")
+            .trim()
     }
 
     /**
      * Henter ut verdien for felt på entitet.
      */
-    private fun getFeltverdi(felt: KProperty1<out Any, Any?>, entitet: Any) =
-        felt.getter.call(entitet)
+    private fun getFeltverdi(
+        felt: KProperty1<out Any, Any?>,
+        entitet: Any,
+    ) = felt.getter.call(entitet)
 
     /**
      * Finn første (og eneste) felt på entiteten som har samme navn som konstruktørparameter.
      */
-    private fun finnSøknadsfelt(entity: Any, konstruktørparameter: KParameter) =
-        entity::class.declaredMemberProperties.first { it.name == konstruktørparameter.name }
+    private fun finnSøknadsfelt(
+        entity: Any,
+        konstruktørparameter: KParameter,
+    ) = entity::class.declaredMemberProperties.first { it.name == konstruktørparameter.name }
 
     /**
      * Konstruktørparametere er det eneste som gir oss en garantert rekkefølge for feltene, så vi henter disse først.

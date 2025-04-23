@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.util.UUID
 
 internal class BrevRepositoryTest : OppslagSpringRunnerTest() {
-
     @Autowired
     lateinit var brevRepository: BrevRepository
 
@@ -56,32 +55,36 @@ internal class BrevRepositoryTest : OppslagSpringRunnerTest() {
         assertThat(oppdatertBrev.mottakereJournalposter).isEqualTo(oppdatertJournalposter)
     }
 
-    private fun brev() = Brev(
-        behandlingId = behandling.id,
-        saksbehandlerHtml = "html",
-        pdf = Fil("123".toByteArray()),
-        mottakere = Brevmottakere(
-            personer = listOf(
-                BrevmottakerPersonMedIdent("ident", MottakerRolle.BRUKER, "navn"),
-                BrevmottakerPersonUtenIdent(
-                    id = UUID.randomUUID(),
-                    mottakerRolle = MottakerRolle.BRUKER,
-                    navn = "navn",
-                    adresselinje1 = "Adresselinje 1",
-                    adresselinje2 = "Adresselinje 2",
-                    postnummer = "1234",
-                    poststed = "Oslo",
-                    landkode = "NO",
+    private fun brev() =
+        Brev(
+            behandlingId = behandling.id,
+            saksbehandlerHtml = "html",
+            pdf = Fil("123".toByteArray()),
+            mottakere =
+                Brevmottakere(
+                    personer =
+                        listOf(
+                            BrevmottakerPersonMedIdent("ident", MottakerRolle.BRUKER, "navn"),
+                            BrevmottakerPersonUtenIdent(
+                                id = UUID.randomUUID(),
+                                mottakerRolle = MottakerRolle.BRUKER,
+                                navn = "navn",
+                                adresselinje1 = "Adresselinje 1",
+                                adresselinje2 = "Adresselinje 2",
+                                postnummer = "1234",
+                                poststed = "Oslo",
+                                landkode = "NO",
+                            ),
+                        ),
+                    organisasjoner = listOf(BrevmottakerOrganisasjon("orgnr", "navn", "mottaker")),
                 ),
-            ),
-            organisasjoner = listOf(BrevmottakerOrganisasjon("orgnr", "navn", "mottaker")),
-        ),
-        mottakereJournalposter = BrevmottakereJournalposter(listOf(brevmottakereJournalpost("distId"))),
-    )
+            mottakereJournalposter = BrevmottakereJournalposter(listOf(brevmottakereJournalpost("distId"))),
+        )
 
-    private fun brevmottakereJournalpost(distribusjonId: String? = null) = BrevmottakerJournalpostMedIdent(
-        "ident",
-        "journalpostId",
-        distribusjonId,
-    )
+    private fun brevmottakereJournalpost(distribusjonId: String? = null) =
+        BrevmottakerJournalpostMedIdent(
+            "ident",
+            "journalpostId",
+            distribusjonId,
+        )
 }

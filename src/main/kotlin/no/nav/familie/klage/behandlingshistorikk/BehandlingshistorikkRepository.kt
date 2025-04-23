@@ -7,7 +7,8 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface BehandlingshistorikkRepository : RepositoryInterface<Behandlingshistorikk, UUID>, InsertUpdateRepository<Behandlingshistorikk> {
-
+interface BehandlingshistorikkRepository :
+    RepositoryInterface<Behandlingshistorikk, UUID>,
+    InsertUpdateRepository<Behandlingshistorikk> {
     fun findByBehandlingIdOrderByEndretTidDesc(behandlingId: UUID): List<Behandlingshistorikk>
 }

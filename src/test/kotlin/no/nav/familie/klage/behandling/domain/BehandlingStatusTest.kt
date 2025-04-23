@@ -13,7 +13,6 @@ import org.junit.jupiter.api.TestInstance
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class BehandlingStatusTest {
-
     @BeforeAll
     fun setUp() {
         mockkObject(SikkerhetContext)

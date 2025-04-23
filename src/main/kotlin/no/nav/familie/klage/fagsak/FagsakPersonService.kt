@@ -9,8 +9,9 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
-class FagsakPersonService(private val fagsakPersonRepository: FagsakPersonRepository) {
-
+class FagsakPersonService(
+    private val fagsakPersonRepository: FagsakPersonRepository,
+) {
     fun hentIdenter(personId: UUID): Set<PersonIdent> {
         val personIdenter = fagsakPersonRepository.findPersonIdenter(personId)
         feilHvis(personIdenter.isEmpty()) { "Finner ikke personidenter til person=$personId" }
@@ -20,22 +21,27 @@ class FagsakPersonService(private val fagsakPersonRepository: FagsakPersonReposi
     fun hentAktivIdent(personId: UUID): String = fagsakPersonRepository.hentAktivIdent(personId)
 
     @Transactional
-    fun hentEllerOpprettPerson(personIdenter: Set<String>, gjeldendePersonIdent: String): FagsakPerson {
+    fun hentEllerOpprettPerson(
+        personIdenter: Set<String>,
+        gjeldendePersonIdent: String,
+    ): FagsakPerson {
         feilHvisIkke(personIdenter.contains(gjeldendePersonIdent)) {
             "Liste med personidenter inneholder ikke gjeldende personident"
         }
         return (
             fagsakPersonRepository.findByIdent(personIdenter)
                 ?: fagsakPersonRepository.insert(FagsakPerson(identer = setOf(PersonIdent(gjeldendePersonIdent))))
-            )
+        )
     }
 
     @Transactional
-    fun oppdaterIdent(fagsakPerson: FagsakPerson, gjeldendePersonIdent: String): FagsakPerson {
-        return if (fagsakPerson.hentAktivIdent() != gjeldendePersonIdent) {
+    fun oppdaterIdent(
+        fagsakPerson: FagsakPerson,
+        gjeldendePersonIdent: String,
+    ): FagsakPerson =
+        if (fagsakPerson.hentAktivIdent() != gjeldendePersonIdent) {
             fagsakPersonRepository.update(fagsakPerson.medOppdatertGjeldendeIdent(gjeldendePersonIdent))
         } else {
             fagsakPerson
         }
-    }
 }

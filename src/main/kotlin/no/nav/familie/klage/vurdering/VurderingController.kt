@@ -22,7 +22,6 @@ class VurderingController(
     private val vurderingService: VurderingService,
     private val tilgangService: TilgangService,
 ) {
-
     @GetMapping("{behandlingId}")
     fun hentVurdering(
         @PathVariable behandlingId: UUID,

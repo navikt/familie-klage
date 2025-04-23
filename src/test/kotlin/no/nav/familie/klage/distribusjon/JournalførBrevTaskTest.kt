@@ -34,26 +34,27 @@ import java.util.Properties
 import java.util.UUID
 
 internal class JournalførBrevTaskTest {
-
     val behandlingService = mockk<BehandlingService>()
     val taskService = mockk<TaskService>()
     val distribusjonService = mockk<DistribusjonService>()
     val brevService = mockk<BrevService>()
     val featureToggleService = mockk<FeatureToggleService>()
 
-    val journalførBrevTask = JournalførBrevTask(
-        distribusjonService = distribusjonService,
-        taskService = taskService,
-        behandlingService = behandlingService,
-        brevService = brevService,
-        featureToggleService = featureToggleService,
-    )
+    val journalførBrevTask =
+        JournalførBrevTask(
+            distribusjonService = distribusjonService,
+            taskService = taskService,
+            behandlingService = behandlingService,
+            brevService = brevService,
+            featureToggleService = featureToggleService,
+        )
 
     val behandlingId = UUID.randomUUID()
     val journalpostId = "12345678"
-    val propertiesMedJournalpostId = Properties().apply {
-        this["journalpostId"] = journalpostId
-    }
+    val propertiesMedJournalpostId =
+        Properties().apply {
+            this["journalpostId"] = journalpostId
+        }
 
     val slotBrevmottakereJournalposter = mutableListOf<BrevmottakereJournalposter>()
     val slotSaveTask = mutableListOf<Task>()
@@ -73,7 +74,8 @@ internal class JournalførBrevTaskTest {
     internal fun `skal ikke opprette sendTilKabalTask hvis behandlingen har annen status enn IKKE_MEDHOLD`() {
         val taskSlots = mutableListOf<Task>()
         every { taskService.save(capture(taskSlots)) } answers { firstArg() }
-        every { behandlingService.hentBehandling(any()) } returns DomainUtil.behandling(resultat = BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST)
+        every { behandlingService.hentBehandling(any()) } returns
+            DomainUtil.behandling(resultat = BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST)
 
         journalførBrevTask.onCompletion(Task(JournalførBrevTask.TYPE, behandlingId.toString(), propertiesMedJournalpostId))
 
@@ -96,7 +98,6 @@ internal class JournalførBrevTaskTest {
 
     @Nested
     inner class JournalførMottakere {
-
         val avsenderMottaker1 = AvsenderMottaker("1", AvsenderMottakerIdType.FNR, "1navn")
         val avsenderMottaker2 = AvsenderMottaker("2", AvsenderMottakerIdType.FNR, "2navn")
         val avsenderMottakerOrganisasjon = AvsenderMottaker("org1", AvsenderMottakerIdType.ORGNR, "mottaker")
@@ -114,14 +115,15 @@ internal class JournalførBrevTaskTest {
                 landkode = "ES",
             )
 
-        val brevmottakere = Brevmottakere(
-            listOf(
-                BrevmottakerPersonMedIdent("1", MottakerRolle.BRUKER, "1navn"),
-                BrevmottakerPersonMedIdent("2", MottakerRolle.FULLMAKT, "2navn"),
-                brevmottakerUtenIdent,
-            ),
-            listOf(BrevmottakerOrganisasjon("org1", "orgnavn", "mottaker")),
-        )
+        val brevmottakere =
+            Brevmottakere(
+                listOf(
+                    BrevmottakerPersonMedIdent("1", MottakerRolle.BRUKER, "1navn"),
+                    BrevmottakerPersonMedIdent("2", MottakerRolle.FULLMAKT, "2navn"),
+                    brevmottakerUtenIdent,
+                ),
+                listOf(BrevmottakerOrganisasjon("org1", "orgnavn", "mottaker")),
+            )
 
         @Test
         internal fun `skal lagre hver person i listen over mottakere`() {
@@ -142,10 +144,11 @@ internal class JournalførBrevTaskTest {
 
         @Test
         internal fun `skal fortsette fra forrige state`() {
-            val journalposter = listOf(
-                BrevmottakerJournalpostMedIdent(avsenderMottaker1.id!!, "journalpostId-0"),
-                BrevmottakerJournalpostMedIdent(avsenderMottaker2.id!!, "journalpostId-1"),
-            )
+            val journalposter =
+                listOf(
+                    BrevmottakerJournalpostMedIdent(avsenderMottaker1.id!!, "journalpostId-0"),
+                    BrevmottakerJournalpostMedIdent(avsenderMottaker2.id!!, "journalpostId-1"),
+                )
             mockHentBrev(mottakere = brevmottakere, BrevmottakereJournalposter(journalposter))
 
             runTask()
@@ -161,11 +164,12 @@ internal class JournalførBrevTaskTest {
 
         @Test
         internal fun `skal fortsette fra forrige state når organisasjon har mottatt`() {
-            val journalposter = listOf(
-                BrevmottakerJournalpostMedIdent(avsenderMottaker1.id!!, "journalpostId-0"),
-                BrevmottakerJournalpostMedIdent(avsenderMottaker2.id!!, "journalpostId-1"),
-                BrevmottakerJournalpostMedIdent(avsenderMottakerOrganisasjon.id!!, "journalpostId-2"),
-            )
+            val journalposter =
+                listOf(
+                    BrevmottakerJournalpostMedIdent(avsenderMottaker1.id!!, "journalpostId-0"),
+                    BrevmottakerJournalpostMedIdent(avsenderMottaker2.id!!, "journalpostId-1"),
+                    BrevmottakerJournalpostMedIdent(avsenderMottakerOrganisasjon.id!!, "journalpostId-2"),
+                )
             mockHentBrev(mottakere = brevmottakere, BrevmottakereJournalposter(journalposter))
 
             runTask()
@@ -177,12 +181,13 @@ internal class JournalførBrevTaskTest {
 
             validerLagringAvBrevmottakereJournalposter(
                 journalposter = slotBrevmottakereJournalposter.single().journalposter,
-                mottakere = listOf(
-                    avsenderMottaker1,
-                    avsenderMottaker2,
-                    avsenderMottakerOrganisasjon,
-                    avsenderMottakerUtenIdent,
-                ),
+                mottakere =
+                    listOf(
+                        avsenderMottaker1,
+                        avsenderMottaker2,
+                        avsenderMottakerOrganisasjon,
+                        avsenderMottakerUtenIdent,
+                    ),
             )
         }
 
@@ -194,12 +199,13 @@ internal class JournalførBrevTaskTest {
 
         private fun validerLagringAvBrevmottakereJournalposter(
             journalposter: List<BrevmottakerJournalpost>,
-            mottakere: List<AvsenderMottaker> = listOf(
-                avsenderMottaker1,
-                avsenderMottaker2,
-                avsenderMottakerUtenIdent,
-                avsenderMottakerOrganisasjon,
-            ),
+            mottakere: List<AvsenderMottaker> =
+                listOf(
+                    avsenderMottaker1,
+                    avsenderMottaker2,
+                    avsenderMottakerUtenIdent,
+                    avsenderMottakerOrganisasjon,
+                ),
         ) {
             assertThat(journalposter).hasSize(mottakere.size)
             mottakere.forEachIndexed { index, avsenderMottaker ->
@@ -218,7 +224,10 @@ internal class JournalførBrevTaskTest {
         return task
     }
 
-    private fun mockHentBrev(mottakere: Brevmottakere? = null, mottakereJournalpost: BrevmottakereJournalposter? = null) {
+    private fun mockHentBrev(
+        mottakere: Brevmottakere? = null,
+        mottakereJournalpost: BrevmottakereJournalposter? = null,
+    ) {
         every { brevService.hentBrev(behandlingId) } returns
             Brev(
                 behandlingId = behandlingId,

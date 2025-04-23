@@ -33,42 +33,51 @@ class FamilieIntegrasjonerClient(
     @Value("\${FAMILIE_INTEGRASJONER_URL}")
     private val integrasjonUri: URI,
     private val integrasjonerConfig: IntegrasjonerConfig,
-
 ) : AbstractPingableRestClient(restOperations, "journalpost") {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     override val pingUri: URI = URI.create("/api/ping")
 
-    private val dokuarkivUri: URI = UriComponentsBuilder.fromUri(integrasjonUri).pathSegment("api/arkiv").build().toUri()
+    private val dokuarkivUri: URI =
+        UriComponentsBuilder
+            .fromUri(integrasjonUri)
+            .pathSegment("api/arkiv")
+            .build()
+            .toUri()
     private val journalpostURI: URI = integrasjonerConfig.journalPostUri
     private val saksbehandlerUri: URI = integrasjonerConfig.saksbehandlerUri
 
     // lagre brev
-    fun arkiverDokument(arkiverDokumentRequest: ArkiverDokumentRequest, saksbehandler: String?): ArkiverDokumentResponse {
-        return postForEntity<Ressurs<ArkiverDokumentResponse>>(
+    fun arkiverDokument(
+        arkiverDokumentRequest: ArkiverDokumentRequest,
+        saksbehandler: String?,
+    ): ArkiverDokumentResponse =
+        postForEntity<Ressurs<ArkiverDokumentResponse>>(
             URI.create("$dokuarkivUri/v4"),
             arkiverDokumentRequest,
             headerMedSaksbehandler(saksbehandler),
         ).data
             ?: error("Kunne ikke arkivere dokument med fagsakid ${arkiverDokumentRequest.fagsakId}")
-    }
 
-    fun hentSaksbehandlerInfo(navIdent: String): Saksbehandler {
-        return getForEntity<Ressurs<Saksbehandler>>(
+    fun hentSaksbehandlerInfo(navIdent: String): Saksbehandler =
+        getForEntity<Ressurs<Saksbehandler>>(
             URI.create("$saksbehandlerUri/$navIdent"),
             HttpHeaders().medContentTypeJsonUTF8(),
         ).data
             ?: error("Kunne ikke hente saksbehandlerinfo for saksbehandler med ident=$navIdent")
-    }
 
     // sende brev til bruker
-    fun distribuerBrev(journalpostId: String, distribusjonstype: Distribusjonstype): String {
-        val journalpostRequest = DistribuerJournalpostRequest(
-            journalpostId = journalpostId,
-            bestillendeFagsystem = no.nav.familie.kontrakter.felles.Fagsystem.EF,
-            dokumentProdApp = "FAMILIE_KLAGE",
-            distribusjonstype = distribusjonstype,
-        )
+    fun distribuerBrev(
+        journalpostId: String,
+        distribusjonstype: Distribusjonstype,
+    ): String {
+        val journalpostRequest =
+            DistribuerJournalpostRequest(
+                journalpostId = journalpostId,
+                bestillendeFagsystem = no.nav.familie.kontrakter.felles.Fagsystem.EF,
+                dokumentProdApp = "FAMILIE_KLAGE",
+                distribusjonstype = distribusjonstype,
+            )
 
         return postForEntity<Ressurs<String>>(
             integrasjonerConfig.distribuerDokumentUri,
@@ -77,37 +86,37 @@ class FamilieIntegrasjonerClient(
         ).getDataOrThrow()
     }
 
-    fun finnJournalposter(journalposterForBrukerRequest: JournalposterForBrukerRequest): List<Journalpost> {
-        return postForEntity<Ressurs<List<Journalpost>>>(journalpostURI, journalposterForBrukerRequest).data
+    fun finnJournalposter(journalposterForBrukerRequest: JournalposterForBrukerRequest): List<Journalpost> =
+        postForEntity<Ressurs<List<Journalpost>>>(journalpostURI, journalposterForBrukerRequest).data
             ?: error("Kunne ikke hente vedlegg for ${journalposterForBrukerRequest.brukerId.id}")
-    }
 
     fun hentJournalpost(journalpostId: String): Journalpost {
-        val ressurs = try {
-            getForEntity<Ressurs<Journalpost>>(URI.create("$journalpostURI?journalpostId=$journalpostId"))
-        } catch (e: RessursException) {
-            if (e.message?.contains("Fant ikke journalpost i fagarkivet") == true) {
-                throw ApiFeil("Finner ikke journalpost i fagarkivet", HttpStatus.BAD_REQUEST)
-            } else {
-                throw e
+        val ressurs =
+            try {
+                getForEntity<Ressurs<Journalpost>>(URI.create("$journalpostURI?journalpostId=$journalpostId"))
+            } catch (e: RessursException) {
+                if (e.message?.contains("Fant ikke journalpost i fagarkivet") == true) {
+                    throw ApiFeil("Finner ikke journalpost i fagarkivet", HttpStatus.BAD_REQUEST)
+                } else {
+                    throw e
+                }
             }
-        }
         return ressurs.getDataOrThrow()
     }
 
-    fun hentDokument(journalpostId: String, dokumentInfoId: String): ByteArray {
-        return getForEntity<Ressurs<ByteArray>>(
+    fun hentDokument(
+        journalpostId: String,
+        dokumentInfoId: String,
+    ): ByteArray =
+        getForEntity<Ressurs<ByteArray>>(
             UriComponentsBuilder
                 .fromUriString(
                     "$journalpostURI/hentdokument/" +
                         "$journalpostId/$dokumentInfoId",
-                )
-                .queryParam("variantFormat", Dokumentvariantformat.ARKIV)
+                ).queryParam("variantFormat", Dokumentvariantformat.ARKIV)
                 .build()
                 .toUri(),
-        )
-            .getDataOrThrow()
-    }
+        ).getDataOrThrow()
 
     private fun headerMedSaksbehandler(saksbehandler: String?): HttpHeaders {
         val httpHeaders = HttpHeaders()

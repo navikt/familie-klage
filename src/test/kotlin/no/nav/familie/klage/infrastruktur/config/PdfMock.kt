@@ -1,7 +1,6 @@
 package no.nav.familie.klage.infrastruktur.config
 
 object PdfMock {
-
     const val pdfAsBase64String =
         "JVBERi0xLjQKJdPr6eEKMSAwIG9iago8PC9UaXRsZSAoRG9rdW1lbnQgdXRlbiBuYXZuKQovUHJvZHVjZXIgKFNraWEvUERGIG05NiBHb29nbGUgRG9jcy" +
             "BSZW5kZXJlcik+PgplbmRvYmoKMyAwIG9iago8PC9jYSAxCi9CTSAvTm9ybWFsPj4KZW5kb2JqCjUgMCBvYmoKPDwvRmlsdGVyIC9GbGF0ZURlY29kZQov" +

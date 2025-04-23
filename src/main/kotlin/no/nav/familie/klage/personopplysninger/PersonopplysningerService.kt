@@ -39,10 +39,17 @@ class PersonopplysningerService(
         return PersonopplysningerDto(
             personIdent = fagsak.hentAktivIdent(),
             navn = pdlSøker.navn.gjeldende().visningsnavn(),
-            kjønn = Kjønn.valueOf(pdlSøker.kjønn.gjelende().kjønn.name),
+            kjønn =
+                Kjønn.valueOf(
+                    pdlSøker.kjønn
+                        .gjelende()
+                        .kjønn.name,
+                ),
             adressebeskyttelse = pdlSøker.adressebeskyttelse.gjeldende()?.let { Adressebeskyttelse.valueOf(it.gradering.name) },
-            folkeregisterpersonstatus = pdlSøker.folkeregisterpersonstatus.gjeldende()
-                ?.let { Folkeregisterpersonstatus.fraPdl(it) },
+            folkeregisterpersonstatus =
+                pdlSøker.folkeregisterpersonstatus
+                    .gjeldende()
+                    ?.let { Folkeregisterpersonstatus.fraPdl(it) },
             dødsdato = pdlSøker.dødsfall.gjeldende()?.dødsdato,
             fullmakt = mapFullmakt(fullmakt),
             egenAnsatt = egenAnsatt,
@@ -50,15 +57,17 @@ class PersonopplysningerService(
         )
     }
 
-    private fun mapFullmakt(fullmakt: List<Fullmakt>) = fullmakt.map {
-        FullmaktDto(
-            gyldigFraOgMed = it.gyldigFraOgMed,
-            gyldigTilOgMed = it.gyldigTilOgMed,
-            motpartsPersonident = it.motpartsPersonident,
-            navn = it.fullmektigsNavn,
-            områder = it.omraader.map { område -> mapOmråde(område) },
-        )
-    }.sortedByDescending(FullmaktDto::gyldigFraOgMed)
+    private fun mapFullmakt(fullmakt: List<Fullmakt>) =
+        fullmakt
+            .map {
+                FullmaktDto(
+                    gyldigFraOgMed = it.gyldigFraOgMed,
+                    gyldigTilOgMed = it.gyldigTilOgMed,
+                    motpartsPersonident = it.motpartsPersonident,
+                    navn = it.fullmektigsNavn,
+                    områder = it.omraader.map { område -> mapOmråde(område) },
+                )
+            }.sortedByDescending(FullmaktDto::gyldigFraOgMed)
 
     private fun mapVergemål(søker: PdlSøker) =
         søker.vergemaalEllerFremtidsfullmakt.filter { it.type != "stadfestetFremtidsfullmakt" }.map {
@@ -71,10 +80,9 @@ class PersonopplysningerService(
             )
         }
 
-    private fun mapOmråde(område: String): String {
-        return when (område) {
+    private fun mapOmråde(område: String): String =
+        when (område) {
             "*" -> "ALLE"
             else -> område
         }
-    }
 }

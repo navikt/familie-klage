@@ -23,10 +23,11 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.util.UUID
 
-private val MOTTAKER_ROLLER_HVOR_BRUKER_SKAL_SLETTES_VED_OPPRETTELSE = setOf(
-    MottakerRolle.DØDSBO,
-    MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
-)
+private val MOTTAKER_ROLLER_HVOR_BRUKER_SKAL_SLETTES_VED_OPPRETTELSE =
+    setOf(
+        MottakerRolle.DØDSBO,
+        MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+    )
 
 @Component
 class BrevmottakerOppretter(
@@ -42,13 +43,12 @@ class BrevmottakerOppretter(
     fun opprettBrevmottaker(
         behandlingId: UUID,
         nyBrevmottaker: NyBrevmottaker,
-    ): Brevmottaker {
-        return when (nyBrevmottaker) {
+    ): Brevmottaker =
+        when (nyBrevmottaker) {
             is NyBrevmottakerOrganisasjon -> throw UnsupportedOperationException("${nyBrevmottaker::class.simpleName} er ikke støttet.")
             is NyBrevmottakerPersonMedIdent -> throw UnsupportedOperationException("${nyBrevmottaker::class.simpleName} er ikke støttet.")
             is NyBrevmottakerPersonUtenIdent -> opprettBrevmottakerPersonUtenIdent(behandlingId, nyBrevmottaker)
         }
-    }
 
     private fun opprettBrevmottakerPersonUtenIdent(
         behandlingId: UUID,
@@ -71,34 +71,40 @@ class BrevmottakerOppretter(
 
         val aktivIdentForFagsak = fagsakService.hentFagsak(behandling.fagsakId).hentAktivIdent()
 
-        val harBrevmottakerPersonBruker = brevmottakerPersoner
-            .filterIsInstance<BrevmottakerPersonMedIdent>()
-            .filter { it.mottakerRolle == MottakerRolle.BRUKER }
-            .any { it.personIdent == aktivIdentForFagsak }
+        val harBrevmottakerPersonBruker =
+            brevmottakerPersoner
+                .filterIsInstance<BrevmottakerPersonMedIdent>()
+                .filter { it.mottakerRolle == MottakerRolle.BRUKER }
+                .any { it.personIdent == aktivIdentForFagsak }
 
-        val skalSletteBrevmottakerPersonBruker = harBrevmottakerPersonBruker &&
-            nyBrevmottakerPersonUtenIdent.mottakerRolle in MOTTAKER_ROLLER_HVOR_BRUKER_SKAL_SLETTES_VED_OPPRETTELSE
+        val skalSletteBrevmottakerPersonBruker =
+            harBrevmottakerPersonBruker &&
+                nyBrevmottakerPersonUtenIdent.mottakerRolle in MOTTAKER_ROLLER_HVOR_BRUKER_SKAL_SLETTES_VED_OPPRETTELSE
 
-        val brevmottakerPersonUtenIdentSomSkalOpprettes = BrevmottakerPersonUtenIdent.opprettFra(
-            id = UUID.randomUUID(),
-            nyBrevmottakerPersonUtenIdent = nyBrevmottakerPersonUtenIdent,
-        )
+        val brevmottakerPersonUtenIdentSomSkalOpprettes =
+            BrevmottakerPersonUtenIdent.opprettFra(
+                id = UUID.randomUUID(),
+                nyBrevmottakerPersonUtenIdent = nyBrevmottakerPersonUtenIdent,
+            )
 
         brevRepository.update(
             brev.copy(
-                mottakere = Brevmottakere(
-                    personer = if (skalSletteBrevmottakerPersonBruker) {
-                        val filtrerteBrevmottakerPersoner = brevmottakerPersoner.filter {
-                            when (it) {
-                                is BrevmottakerPersonMedIdent -> it.personIdent != aktivIdentForFagsak
-                                is BrevmottakerPersonUtenIdent -> true
-                            }
-                        }
-                        filtrerteBrevmottakerPersoner + brevmottakerPersonUtenIdentSomSkalOpprettes
-                    } else {
-                        brevmottakerPersoner + brevmottakerPersonUtenIdentSomSkalOpprettes
-                    },
-                ),
+                mottakere =
+                    Brevmottakere(
+                        personer =
+                            if (skalSletteBrevmottakerPersonBruker) {
+                                val filtrerteBrevmottakerPersoner =
+                                    brevmottakerPersoner.filter {
+                                        when (it) {
+                                            is BrevmottakerPersonMedIdent -> it.personIdent != aktivIdentForFagsak
+                                            is BrevmottakerPersonUtenIdent -> true
+                                        }
+                                    }
+                                filtrerteBrevmottakerPersoner + brevmottakerPersonUtenIdentSomSkalOpprettes
+                            } else {
+                                brevmottakerPersoner + brevmottakerPersonUtenIdentSomSkalOpprettes
+                            },
+                    ),
             ),
         )
 
@@ -126,7 +132,9 @@ class BrevmottakerOppretter(
         val eksisterendeMottakerRoller = eksisterendeBrevmottakerePersonerUtenIdent.map { it.mottakerRolle }
         when {
             eksisterendeMottakerRoller.any { it == nyBrevmottakerPersonUtenIdent.mottakerRolle } -> {
-                throw Feil("Kan ikke ha duplikate MottakerRolle. ${nyBrevmottakerPersonUtenIdent.mottakerRolle} finnes allerede for $behandlingId.")
+                throw Feil(
+                    "Kan ikke ha duplikate MottakerRolle. ${nyBrevmottakerPersonUtenIdent.mottakerRolle} finnes allerede for $behandlingId.",
+                )
             }
 
             nyBrevmottakerPersonUtenIdent.mottakerRolle == MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE &&

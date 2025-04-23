@@ -14,7 +14,6 @@ import org.junit.jupiter.api.assertThrows
 import java.util.UUID
 
 internal class JournalpostServiceTest {
-
     val familieIntegrasjonerClientMock = mockk<FamilieIntegrasjonerClient>()
     val journalpostService = JournalpostService(familieIntegrasjonerClientMock)
     val dokumentSomPdf = "123".toByteArray()

@@ -49,7 +49,6 @@ class FerdigstillBehandlingService(
     private val featureToggleService: FeatureToggleService,
     private val fagsakService: FagsakService,
 ) {
-
     /**
      * Skal ikke være @transactional fordi det er mulig å komme delvis igjennom løypa
      */
@@ -119,47 +118,59 @@ class FerdigstillBehandlingService(
     private fun opprettRevurderingHvisMedhold(
         behandling: Behandling,
         behandlingsresultat: BehandlingResultat,
-    ): FagsystemRevurdering? {
-        return if (behandlingsresultat == MEDHOLD &&
+    ): FagsystemRevurdering? =
+        if (behandlingsresultat == MEDHOLD &&
             skalOppretteRevurderingAutomatisk(behandling.påklagetVedtak)
         ) {
             fagsystemVedtakService.opprettRevurdering(behandling.id).tilFagsystemRevurdering()
         } else {
             null
         }
-    }
 
-    private fun opprettJournalførBrevTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem) {
-        val journalførBrevTask = Task(
-            type = JournalførBrevTask.TYPE,
-            payload = behandlingId.toString(),
-            properties = Properties().apply {
-                this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
-                this["eksternFagsakId"] = eksternFagsakId
-                this["fagsystem"] = fagsystem.name
-            },
-        )
+    private fun opprettJournalførBrevTask(
+        behandlingId: UUID,
+        eksternFagsakId: String,
+        fagsystem: Fagsystem,
+    ) {
+        val journalførBrevTask =
+            Task(
+                type = JournalførBrevTask.TYPE,
+                payload = behandlingId.toString(),
+                properties =
+                    Properties().apply {
+                        this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
+                        this["eksternFagsakId"] = eksternFagsakId
+                        this["fagsystem"] = fagsystem.name
+                    },
+            )
         taskService.save(journalførBrevTask)
     }
 
-    private fun opprettSendTilKabalTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem) {
-        val sendTilKabalTask = Task(
-            type = SendTilKabalTask.TYPE,
-            payload = behandlingId.toString(),
-            properties = Properties().apply {
-                this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
-                this["eksternFagsakId"] = eksternFagsakId
-                this["fagsystem"] = fagsystem.name
-            },
-        )
+    private fun opprettSendTilKabalTask(
+        behandlingId: UUID,
+        eksternFagsakId: String,
+        fagsystem: Fagsystem,
+    ) {
+        val sendTilKabalTask =
+            Task(
+                type = SendTilKabalTask.TYPE,
+                payload = behandlingId.toString(),
+                properties =
+                    Properties().apply {
+                        this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
+                        this["eksternFagsakId"] = eksternFagsakId
+                        this["fagsystem"] = fagsystem.name
+                    },
+            )
         taskService.save(sendTilKabalTask)
     }
 
-    private fun stegForResultat(resultat: BehandlingResultat): StegType = when (resultat) {
-        IKKE_MEDHOLD -> StegType.KABAL_VENTER_SVAR
-        MEDHOLD, IKKE_MEDHOLD_FORMKRAV_AVVIST, HENLAGT -> StegType.BEHANDLING_FERDIGSTILT
-        IKKE_SATT -> error("Kan ikke utlede neste steg når behandlingsresultatet er IKKE_SATT")
-    }
+    private fun stegForResultat(resultat: BehandlingResultat): StegType =
+        when (resultat) {
+            IKKE_MEDHOLD -> StegType.KABAL_VENTER_SVAR
+            MEDHOLD, IKKE_MEDHOLD_FORMKRAV_AVVIST, HENLAGT -> StegType.BEHANDLING_FERDIGSTILT
+            IKKE_SATT -> error("Kan ikke utlede neste steg når behandlingsresultatet er IKKE_SATT")
+        }
 
     private fun validerKanFerdigstille(behandling: Behandling) {
         if (behandling.status.erLåstForVidereBehandling()) {
@@ -170,12 +181,11 @@ class FerdigstillBehandlingService(
         }
     }
 
-    private fun utledBehandlingResultat(behandlingId: UUID): BehandlingResultat {
-        return if (formService.formkravErOppfyltForBehandling(behandlingId)) {
+    private fun utledBehandlingResultat(behandlingId: UUID): BehandlingResultat =
+        if (formService.formkravErOppfyltForBehandling(behandlingId)) {
             vurderingService.hentVurdering(behandlingId)?.vedtak?.tilBehandlingResultat()
                 ?: throw Feil("Burde funnet behandling $behandlingId")
         } else {
             IKKE_MEDHOLD_FORMKRAV_AVVIST
         }
-    }
 }
