@@ -9,7 +9,7 @@ import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
+import no.nav.familie.klage.felles.util.TaskMetadata.SAKSBEHANDLER_METADATA_KEY
 import no.nav.familie.klage.kabal.KabalService
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
@@ -72,7 +72,7 @@ internal class SendTilKabalTaskTest {
                 payload = behandling.id.toString(),
                 properties =
                     Properties().apply {
-                        this[saksbehandlerMetadataKey] = saksbehandlerIdent
+                        this[SAKSBEHANDLER_METADATA_KEY] = saksbehandlerIdent
                     },
             )
 
@@ -99,7 +99,7 @@ internal class SendTilKabalTaskTest {
                 payload = behandling.id.toString(),
                 properties =
                     Properties().apply {
-                        this[saksbehandlerMetadataKey] = saksbehandlerIdent
+                        this[SAKSBEHANDLER_METADATA_KEY] = saksbehandlerIdent
                     },
             )
 

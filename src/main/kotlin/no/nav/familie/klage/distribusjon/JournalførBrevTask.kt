@@ -15,7 +15,7 @@ import no.nav.familie.klage.distribusjon.JournalføringUtil.mapBrevmottakerJourn
 import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpost
 import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpostMedIdent
 import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpostUtenIdent
-import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
+import no.nav.familie.klage.felles.util.TaskMetadata.SAKSBEHANDLER_METADATA_KEY
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle.SKAL_BRUKE_NY_LØYPE_FOR_JOURNALFØRING
 import no.nav.familie.klage.personopplysninger.pdl.logger
@@ -41,7 +41,7 @@ class JournalførBrevTask(
 ) : AsyncTaskStep {
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
-        val saksbehandler = task.metadata[saksbehandlerMetadataKey].toString()
+        val saksbehandler = task.metadata[SAKSBEHANDLER_METADATA_KEY].toString()
 
         val brev = brevService.hentBrev(behandlingId)
 

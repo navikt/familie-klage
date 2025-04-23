@@ -2,8 +2,8 @@ package no.nav.familie.klage.oppgave
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.felles.util.TaskMetadata.klageGjelderTilbakekrevingMetadataKey
-import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
+import no.nav.familie.klage.felles.util.TaskMetadata.KLAGE_GJELDER_TILBAKEKREBING_METADATA_KEY
+import no.nav.familie.klage.felles.util.TaskMetadata.SAKSBEHANDLER_METADATA_KEY
 import no.nav.familie.klage.oppgave.OppgaveUtil.lagFristForOppgave
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.oppgave.Behandlingstype
@@ -34,7 +34,7 @@ class OpprettBehandleSakOppgaveTask(
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         val behandling = behandlingService.hentBehandling(behandlingId)
         val klageGjelderTilbakekreving: Boolean =
-            task.metadata.getProperty(klageGjelderTilbakekrevingMetadataKey).toBoolean()
+            task.metadata.getProperty(KLAGE_GJELDER_TILBAKEKREBING_METADATA_KEY).toBoolean()
 
         val oppgaveRequest =
             OpprettOppgaveRequest(
@@ -47,7 +47,7 @@ class OpprettBehandleSakOppgaveTask(
                 enhetsnummer = behandling.behandlendeEnhet,
                 behandlingstype = Behandlingstype.Klage.value,
                 behandlesAvApplikasjon = "familie-klage",
-                tilordnetRessurs = task.metadata.getProperty(saksbehandlerMetadataKey),
+                tilordnetRessurs = task.metadata.getProperty(SAKSBEHANDLER_METADATA_KEY),
                 behandlingstema = if (klageGjelderTilbakekreving) Behandlingstema.Tilbakebetaling.value else null,
             )
         try {

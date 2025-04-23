@@ -1,7 +1,7 @@
 package no.nav.familie.klage.oppgave
 
-import no.nav.familie.klage.felles.util.TaskMetadata.klageGjelderTilbakekrevingMetadataKey
-import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
+import no.nav.familie.klage.felles.util.TaskMetadata.KLAGE_GJELDER_TILBAKEKREBING_METADATA_KEY
+import no.nav.familie.klage.felles.util.TaskMetadata.SAKSBEHANDLER_METADATA_KEY
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.prosessering.domene.Task
@@ -26,8 +26,8 @@ class OppgaveTaskService(
                 payload = behandlingId.toString(),
                 properties =
                     Properties().apply {
-                        this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
-                        this[klageGjelderTilbakekrevingMetadataKey] = klageGjelderTilbakekreving.toString()
+                        this[SAKSBEHANDLER_METADATA_KEY] = SikkerhetContext.hentSaksbehandler(strict = true)
+                        this[KLAGE_GJELDER_TILBAKEKREBING_METADATA_KEY] = klageGjelderTilbakekreving.toString()
                         this["eksternFagsakId"] = eksternFagsakId
                         this["fagsystem"] = fagsystem.name
                     },

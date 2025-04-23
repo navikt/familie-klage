@@ -20,7 +20,7 @@ class KabalKafkaListener(
     val behandlingEventService: BehandlingEventService,
 ) : ConsumerSeekAware {
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
-    val STØTTEDE_FAGSYSTEMER = listOf(Fagsystem.BA.name, Fagsystem.EF.name, Fagsystem.KONT.name)
+    val støttedeFagsystemer = listOf(Fagsystem.BA.name, Fagsystem.EF.name, Fagsystem.KONT.name)
 
     @KafkaListener(
         id = "familie-klage",
@@ -31,7 +31,7 @@ class KabalKafkaListener(
         secureLogger.info("Klage-kabal-event: $behandlingEventJson")
         val behandlingEvent = objectMapper.readValue<BehandlingEvent>(behandlingEventJson)
 
-        if (STØTTEDE_FAGSYSTEMER.contains(behandlingEvent.kilde)) {
+        if (støttedeFagsystemer.contains(behandlingEvent.kilde)) {
             behandlingEventService.handleEvent(behandlingEvent)
         }
         secureLogger.info("Deserialisert behandlingEvent: $behandlingEvent")

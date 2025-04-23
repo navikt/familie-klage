@@ -1,7 +1,7 @@
 package no.nav.familie.klage.blankett
 
 import no.nav.familie.klage.distribusjon.DistribusjonService
-import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
+import no.nav.familie.klage.felles.util.TaskMetadata.SAKSBEHANDLER_METADATA_KEY
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.prosessering.AsyncTaskStep
@@ -30,7 +30,7 @@ class LagSaksbehandlingsblankettTask(
             distribusjonService.journalførSaksbehandlingsblankett(
                 behandlingId,
                 blankettPdf,
-                task.metadata.getProperty(saksbehandlerMetadataKey),
+                task.metadata.getProperty(SAKSBEHANDLER_METADATA_KEY),
             )
 
         logger.info("Lagret saksbehandlingsblankett for behandling=$behandlingId på journapost=$journalpostId")
@@ -49,7 +49,7 @@ class LagSaksbehandlingsblankettTask(
                 payload = behandlingId.toString(),
                 properties =
                     Properties().apply {
-                        this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
+                        this[SAKSBEHANDLER_METADATA_KEY] = SikkerhetContext.hentSaksbehandler(strict = true)
                         this["eksternFagsakId"] = eksternFagsakId
                         this["fagsystem"] = fagsystem.name
                     },

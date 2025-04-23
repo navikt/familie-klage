@@ -16,7 +16,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching
 import no.nav.familie.klage.arbeidsfordeling.Arbeidsfordelingsenhet
 import no.nav.familie.klage.felles.dto.EgenAnsattResponse
 import no.nav.familie.klage.felles.dto.Tilgang
-import no.nav.familie.klage.infrastruktur.config.PdfMock.pdfAsBase64String
+import no.nav.familie.klage.infrastruktur.config.PdfMock.PDFA_AS_BASE64_STRING
 import no.nav.familie.klage.mappe.statiskDummyMapper
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.ef.søknad.Testsøknad
@@ -99,7 +99,7 @@ class FamilieIntegrasjonerMock(
                 ),
             get(urlPathMatching("${integrasjonerConfig.journalPostUri.path}/hentdokument/([0-9]*)/([0-9]*)"))
                 .withQueryParam("variantFormat", equalTo("ARKIV"))
-                .willReturn(okJson(objectMapper.writeValueAsString(Ressurs.success(pdfAsBase64String)))),
+                .willReturn(okJson(objectMapper.writeValueAsString(Ressurs.success(PDFA_AS_BASE64_STRING)))),
             get(urlPathMatching("${integrasjonerConfig.oppgaveUri.path}/([0-9]*)"))
                 .willReturn(
                     okJson(

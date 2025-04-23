@@ -12,7 +12,7 @@ import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.distribusjon.SendTilKabalTask
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
+import no.nav.familie.klage.felles.util.TaskMetadata.SAKSBEHANDLER_METADATA_KEY
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
@@ -138,7 +138,7 @@ class FerdigstillBehandlingService(
                 payload = behandlingId.toString(),
                 properties =
                     Properties().apply {
-                        this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
+                        this[SAKSBEHANDLER_METADATA_KEY] = SikkerhetContext.hentSaksbehandler(strict = true)
                         this["eksternFagsakId"] = eksternFagsakId
                         this["fagsystem"] = fagsystem.name
                     },
@@ -157,7 +157,7 @@ class FerdigstillBehandlingService(
                 payload = behandlingId.toString(),
                 properties =
                     Properties().apply {
-                        this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
+                        this[SAKSBEHANDLER_METADATA_KEY] = SikkerhetContext.hentSaksbehandler(strict = true)
                         this["eksternFagsakId"] = eksternFagsakId
                         this["fagsystem"] = fagsystem.name
                     },

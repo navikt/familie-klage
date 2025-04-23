@@ -7,8 +7,8 @@ import io.mockk.slot
 import io.mockk.verify
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.felles.util.TaskMetadata.klageGjelderTilbakekrevingMetadataKey
-import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
+import no.nav.familie.klage.felles.util.TaskMetadata.KLAGE_GJELDER_TILBAKEKREBING_METADATA_KEY
+import no.nav.familie.klage.felles.util.TaskMetadata.SAKSBEHANDLER_METADATA_KEY
 import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.kontrakter.felles.Tema
@@ -75,7 +75,7 @@ internal class OppgaveTaskServiceTest {
                     payload = behandling.id.toString(),
                     properties =
                         Properties().apply {
-                            this[saksbehandlerMetadataKey] = ""
+                            this[SAKSBEHANDLER_METADATA_KEY] = ""
                         },
                 )
 
@@ -100,7 +100,7 @@ internal class OppgaveTaskServiceTest {
                     payload = behandling.id.toString(),
                     properties =
                         Properties().apply {
-                            this[klageGjelderTilbakekrevingMetadataKey] = true.toString()
+                            this[KLAGE_GJELDER_TILBAKEKREBING_METADATA_KEY] = true.toString()
                         },
                 )
 
