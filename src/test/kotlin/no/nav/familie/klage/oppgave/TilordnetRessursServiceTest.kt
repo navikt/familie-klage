@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.http.HttpStatus
-import java.util.*
+import java.util.UUID
 
 internal class TilordnetRessursServiceTest {
     private val oppgaveClient = mockk<OppgaveClient>()
