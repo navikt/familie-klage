@@ -221,7 +221,7 @@ class FamilieIntegrasjonerMock(
         private val arbeidsfordeling =
             Ressurs.success(listOf(Arbeidsfordelingsenhet("4489", "nerd-enhet")))
 
-        private const val fnr = "23097825289"
+        private val fnr = "23097825289"
 
         private val oppdatertJournalpostResponse =
             Ressurs.success(OppdaterJournalpostResponse(journalpostId = "1234"))

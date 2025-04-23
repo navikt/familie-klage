@@ -67,7 +67,7 @@ class PdlClientMock {
     companion object {
         private val startdato = LocalDate.of(2020, 1, 1)
         private val sluttdato = LocalDate.of(2021, 1, 1)
-        private const val annenForelderFnr = "17097926735"
+        private val annenForelderFnr = "17097926735"
 
         fun opprettPdlSøker() =
             pdlSøker(
