@@ -29,6 +29,7 @@ enum class Toggle(val toggleId: String, val beskrivelse: String? = null) {
     BRUK_NYTT_BREV_BA_KS("familie-klage.bruk-nytt-brev-ba-ks", "Release"),
     KAN_MELLOMLAGRE_VURDERING("familie-klage.kan-mellomlagre-vurdering", "Release"),
     SKAL_BRUKE_KABAL_API_V4("familie-klage.skal-bruke-kabal-api-v4", "Release"),
+    SKAL_BRUKE_NY_LØYPE_FOR_JOURNALFØRING("familie-klage.skal-bruke-ny-loype-for-journalforing", "Release"),
     ;
 
     companion object {
