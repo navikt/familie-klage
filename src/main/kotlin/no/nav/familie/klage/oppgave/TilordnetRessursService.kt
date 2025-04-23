@@ -2,6 +2,7 @@ package no.nav.familie.klage.oppgave
 
 import no.nav.familie.klage.behandling.dto.OppgaveDto
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
+import no.nav.familie.klage.infrastruktur.exception.ManglerTilgang
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
@@ -12,6 +13,7 @@ import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.web.client.HttpClientErrorException
 import java.util.*
 
 @Service
@@ -23,7 +25,18 @@ class TilordnetRessursService(
 
     fun hentAnsvarligSaksbehandlerForBehandlingsId(behandlingId: UUID): SaksbehandlerDto {
         val behandleSakOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId)
-        val oppgave = behandleSakOppgave?.let { oppgaveClient.finnOppgaveMedId(it.oppgaveId) }
+        val oppgave = try {
+            behandleSakOppgave?.let { oppgaveClient.finnOppgaveMedId(it.oppgaveId) }
+        } catch (exception: HttpClientErrorException) {
+            if (exception.statusCode == HttpStatus.FORBIDDEN) {
+                throw ManglerTilgang(
+                    melding = "Bruker mangler tilgang til etterspurt oppgave",
+                    frontendFeilmelding = "Behandlingen er koblet til en oppgave du ikke har tilgang til. Visning av ansvarlig saksbehandler er derfor ikke mulig",
+                )
+            } else {
+                throw exception
+            }
+        }
 
         val rolle = utledSaksbehandlerRolle(oppgave)
         val saksbehandler = oppgave?.tilordnetRessurs?.let { oppgaveClient.hentSaksbehandlerInfo(it) }
