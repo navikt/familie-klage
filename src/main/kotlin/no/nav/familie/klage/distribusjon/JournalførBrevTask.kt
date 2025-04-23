@@ -49,8 +49,8 @@ class JournalførBrevTask(
 
         val journalposterMedNyePersoner =
             journalførBrevmottakere(
-                mottakere = mottakere.personer,
                 brev = brev,
+                mottakere = mottakere.personer,
                 saksbehandler = saksbehandler,
                 journalposter = journalposter,
             )
