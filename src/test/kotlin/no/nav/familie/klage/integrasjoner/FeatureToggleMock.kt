@@ -18,7 +18,6 @@ class FeatureToggleMock {
         val mock = mockk<FeatureToggleService>()
         every { mock.isEnabled(any()) } returns true
         every { mock.isEnabled(Toggle.LEGG_TIL_BREVMOTTAKER_BAKS) } returns false
-        every { mock.isEnabled(Toggle.VIS_BREVMOTTAKER_BAKS) } returns true
         return mock
     }
 }
