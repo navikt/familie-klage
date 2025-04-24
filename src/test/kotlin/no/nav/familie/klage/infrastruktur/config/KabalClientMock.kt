@@ -1,6 +1,6 @@
 package no.nav.familie.klage.infrastruktur.config
 
-import io.mockk.Runs
+import io.mockk.Awaits
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -17,7 +17,7 @@ class KabalClientMock {
     @Primary
     fun kabalClient(): KabalClient {
         val kabalClient: KabalClient = mockk()
-        every { kabalClient.sendTilKabal(any()) } just Runs
+        every { kabalClient.sendTilKabal(any()) } just Awaits
         return kabalClient
     }
 }
