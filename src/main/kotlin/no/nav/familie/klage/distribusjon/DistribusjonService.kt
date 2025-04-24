@@ -8,12 +8,14 @@ import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.felles.util.StønadstypeVisningsnavn.visningsnavn
 import no.nav.familie.klage.felles.util.TekstUtil.storForbokstav
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
+import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.Dokument
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.Filtype
 import no.nav.familie.kontrakter.felles.dokdist.Distribusjonstype
+import no.nav.familie.kontrakter.felles.dokdist.ManuellAdresse
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -101,6 +103,14 @@ class DistribusjonService(
     }
 
     fun distribuerBrev(journalpostId: String): String = familieIntegrasjonerClient.distribuerBrev(journalpostId, Distribusjonstype.ANNET)
+
+    fun distribuerBrev(journalpostId: String, adresse: ManuellAdresse?, fagsystem: Fagsystem): String =
+        familieIntegrasjonerClient.distribuerBrev(
+            journalpostId = journalpostId,
+            distribusjonstype = Distribusjonstype.ANNET,
+            adresse = adresse,
+            fagsystem = fagsystem,
+        )
 
     private fun lagDokument(
         pdf: ByteArray,

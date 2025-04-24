@@ -11,10 +11,13 @@ import no.nav.familie.klage.testutil.BrukerContextUtil.clearBrukerContext
 import no.nav.familie.klage.testutil.BrukerContextUtil.mockBrukerContext
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
+import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
+import no.nav.familie.kontrakter.felles.dokdist.AdresseType
 import no.nav.familie.kontrakter.felles.dokdist.Distribusjonstype
+import no.nav.familie.kontrakter.felles.dokdist.ManuellAdresse
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -85,18 +88,30 @@ internal class DistribusjonServiceTest {
     fun distribuerBrev() {
         val journalpostSlot = slot<String>()
         val distribusjonstypeSlot = slot<Distribusjonstype>()
+        val adresseSlot = slot<ManuellAdresse>()
+        val fagsystemSlot = slot<Fagsystem>()
         val journalpostId = "journalpostId"
+        val manuellAdresse = ManuellAdresse(
+            adresseType = AdresseType.norskPostadresse,
+            adresselinje1 = "Adresseveien 1",
+            postnummer = "0123",
+            poststed = "Oslo",
+        )
 
         every {
             familieIntegrasjonerClient.distribuerBrev(
                 capture(journalpostSlot),
                 capture(distribusjonstypeSlot),
+                capture(adresseSlot),
+                capture(fagsystemSlot),
             )
         } returns "distribusjonsnummer"
 
-        distribusjonService.distribuerBrev(journalpostId)
+        distribusjonService.distribuerBrev(journalpostId, manuellAdresse, Fagsystem.EF)
 
         assertThat(journalpostSlot.captured).isEqualTo(journalpostId)
         assertThat(distribusjonstypeSlot.captured).isEqualTo(Distribusjonstype.ANNET)
+        assertThat(adresseSlot.captured).isEqualTo(manuellAdresse)
+        assertThat(fagsystemSlot.captured).isEqualTo(Fagsystem.EF)
     }
 }
