@@ -43,7 +43,6 @@ internal class BehandlingEventServiceTest {
     private val stegService = mockk<StegService>(relaxed = true)
     private val klageresultatRepository = mockk<KlageresultatRepository>(relaxed = true)
     private val integrasjonerClient = mockk<FamilieIntegrasjonerClient>(relaxed = true)
-    private val featureToggleService = mockk<FeatureToggleService>(relaxed = true)
 
     val behandlingEventService =
         BehandlingEventService(
@@ -53,7 +52,6 @@ internal class BehandlingEventServiceTest {
             taskService = taskService,
             klageresultatRepository = klageresultatRepository,
             integrasjonerClient = integrasjonerClient,
-            featureToggleService = featureToggleService,
         )
 
     val behandlingMedStatusVenter = DomainUtil.behandling(status = BehandlingStatus.VENTER)
@@ -65,7 +63,6 @@ internal class BehandlingEventServiceTest {
         every { klageresultatRepository.insert(any()) } answers { firstArg() }
         every { klageresultatRepository.existsById(any()) } returns false
         every { integrasjonerClient.hentSaksbehandlerInfo(any()) } returns saksbehandler
-        every { featureToggleService.isEnabled(any()) } returns false
     }
 
     @Test
