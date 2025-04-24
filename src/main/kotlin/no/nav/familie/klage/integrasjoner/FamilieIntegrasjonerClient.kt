@@ -5,11 +5,13 @@ import no.nav.familie.http.client.RessursException
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import no.nav.familie.klage.infrastruktur.config.IntegrasjonerConfig
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
+import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokdist.DistribuerJournalpostRequest
 import no.nav.familie.kontrakter.felles.dokdist.Distribusjonstype
+import no.nav.familie.kontrakter.felles.dokdist.ManuellAdresse
 import no.nav.familie.kontrakter.felles.getDataOrThrow
 import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariantformat
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
@@ -78,6 +80,28 @@ class FamilieIntegrasjonerClient(
                 dokumentProdApp = "FAMILIE_KLAGE",
                 distribusjonstype = distribusjonstype,
             )
+
+        return postForEntity<Ressurs<String>>(
+            integrasjonerConfig.distribuerDokumentUri,
+            journalpostRequest,
+            HttpHeaders().medContentTypeJsonUTF8(),
+        ).getDataOrThrow()
+    }
+
+    // sende brev til bruker
+    fun distribuerBrev(
+        journalpostId: String,
+        distribusjonstype: Distribusjonstype,
+        adresse: ManuellAdresse?,
+        fagsystem: Fagsystem,
+    ): String {
+        val journalpostRequest = DistribuerJournalpostRequest(
+            journalpostId = journalpostId,
+            bestillendeFagsystem = fagsystem,
+            dokumentProdApp = "FAMILIE_KLAGE",
+            distribusjonstype = distribusjonstype,
+            adresse = adresse,
+        )
 
         return postForEntity<Ressurs<String>>(
             integrasjonerConfig.distribuerDokumentUri,
