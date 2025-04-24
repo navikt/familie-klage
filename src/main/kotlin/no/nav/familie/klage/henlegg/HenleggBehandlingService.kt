@@ -29,23 +29,26 @@ class HenleggBehandlingService(
     private val taskService: TaskService,
     private val fagsakService: FagsakService,
 ) {
-
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional
-    fun henleggBehandling(behandlingId: UUID, henlagt: HenlagtDto) {
+    fun henleggBehandling(
+        behandlingId: UUID,
+        henlagt: HenlagtDto,
+    ) {
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
 
         validerKanHenleggeBehandling(behandling)
 
-        val henlagtBehandling = behandling.copy(
-            henlagtÅrsak = henlagt.årsak,
-            resultat = BehandlingResultat.HENLAGT,
-            steg = BEHANDLING_FERDIGSTILT,
-            status = FERDIGSTILT,
-            vedtakDato = SporbarUtils.now(),
-        )
+        val henlagtBehandling =
+            behandling.copy(
+                henlagtÅrsak = henlagt.årsak,
+                resultat = BehandlingResultat.HENLAGT,
+                steg = BEHANDLING_FERDIGSTILT,
+                status = FERDIGSTILT,
+                vedtakDato = SporbarUtils.now(),
+            )
 
         behandlinghistorikkService.opprettBehandlingshistorikk(
             behandlingId = behandlingId,

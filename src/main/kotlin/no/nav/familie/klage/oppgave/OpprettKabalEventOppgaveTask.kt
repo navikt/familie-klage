@@ -35,7 +35,6 @@ class OpprettKabalEventOppgaveTask(
     private val personRepository: FagsakPersonRepository,
     private val oppgaveClient: OppgaveClient,
 ) : AsyncTaskStep {
-
     private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun doTask(task: Task) {
@@ -51,21 +50,23 @@ class OpprettKabalEventOppgaveTask(
 
         val aktivIdent = personRepository.hentAktivIdent(fagsakDomain.fagsakPersonId)
 
-        val opprettOppgaveRequest = OpprettOppgaveRequest(
-            ident = OppgaveIdentV2(
-                ident = aktivIdent,
-                gruppe = IdentGruppe.FOLKEREGISTERIDENT,
-            ),
-            saksId = fagsakDomain.eksternId,
-            tema = fagsakDomain.stønadstype.tilTema(),
-            oppgavetype = Oppgavetype.VurderKonsekvensForYtelse,
-            fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
-            beskrivelse = opprettOppgavePayload.oppgaveTekst,
-            enhetsnummer = behandling.behandlendeEnhet,
-            behandlingstema = opprettOppgavePayload.behandlingstema?.value,
-            behandlingstype = opprettOppgavePayload.behandlingstype,
-            prioritet = utledOppgavePrioritet(opprettOppgavePayload.klageinstansUtfall),
-        )
+        val opprettOppgaveRequest =
+            OpprettOppgaveRequest(
+                ident =
+                    OppgaveIdentV2(
+                        ident = aktivIdent,
+                        gruppe = IdentGruppe.FOLKEREGISTERIDENT,
+                    ),
+                saksId = fagsakDomain.eksternId,
+                tema = fagsakDomain.stønadstype.tilTema(),
+                oppgavetype = Oppgavetype.VurderKonsekvensForYtelse,
+                fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
+                beskrivelse = opprettOppgavePayload.oppgaveTekst,
+                enhetsnummer = behandling.behandlendeEnhet,
+                behandlingstema = opprettOppgavePayload.behandlingstema?.value,
+                behandlingstype = opprettOppgavePayload.behandlingstype,
+                prioritet = utledOppgavePrioritet(opprettOppgavePayload.klageinstansUtfall),
+            )
 
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
 
@@ -75,24 +76,27 @@ class OpprettKabalEventOppgaveTask(
     companion object {
         const val TYPE = "opprettOppgaveForKlagehendelse"
 
-        fun opprettTask(opprettOppgavePayload: OpprettOppgavePayload, eksternFagsakId: String, fagsystem: Fagsystem): Task {
-            return Task(
+        fun opprettTask(
+            opprettOppgavePayload: OpprettOppgavePayload,
+            eksternFagsakId: String,
+            fagsystem: Fagsystem,
+        ): Task =
+            Task(
                 type = TYPE,
                 payload = objectMapper.writeValueAsString(opprettOppgavePayload),
-                properties = Properties().apply {
-                    this["eksternFagsakId"] = eksternFagsakId
-                    this["fagsystem"] = fagsystem.name
-                },
+                properties =
+                    Properties().apply {
+                        this["eksternFagsakId"] = eksternFagsakId
+                        this["fagsystem"] = fagsystem.name
+                    },
             )
-        }
     }
 
-    private fun utledOppgavePrioritet(klageinstansUtfall: KlageinstansUtfall?): OppgavePrioritet {
-        return when (klageinstansUtfall) {
+    private fun utledOppgavePrioritet(klageinstansUtfall: KlageinstansUtfall?): OppgavePrioritet =
+        when (klageinstansUtfall) {
             KlageinstansUtfall.OPPHEVET -> OppgavePrioritet.HOY
             else -> OppgavePrioritet.NORM
         }
-    }
 }
 
 data class OpprettOppgavePayload(

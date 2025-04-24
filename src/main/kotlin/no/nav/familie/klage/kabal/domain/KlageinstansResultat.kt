@@ -24,8 +24,8 @@ class KlageinstansResultat(
     val årsakFeilregistrert: String? = null,
 )
 
-fun List<KlageinstansResultat>.tilDto(): List<KlageinstansResultatDto> {
-    return this.map {
+fun List<KlageinstansResultat>.tilDto(): List<KlageinstansResultatDto> =
+    this.map {
         KlageinstansResultatDto(
             type = it.type,
             utfall = it.utfall,
@@ -34,4 +34,3 @@ fun List<KlageinstansResultat>.tilDto(): List<KlageinstansResultatDto> {
             årsakFeilregistrert = it.årsakFeilregistrert,
         )
     }
-}

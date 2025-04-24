@@ -68,7 +68,10 @@ data class PåklagetVedtakDto(
     }
 }
 
-fun Behandling.tilDto(fagsak: Fagsak, klageinstansResultat: List<KlageinstansResultatDto>): BehandlingDto =
+fun Behandling.tilDto(
+    fagsak: Fagsak,
+    klageinstansResultat: List<KlageinstansResultatDto>,
+): BehandlingDto =
     BehandlingDto(
         id = this.id,
         fagsakId = this.fagsakId,

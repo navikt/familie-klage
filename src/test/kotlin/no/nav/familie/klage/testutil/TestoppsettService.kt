@@ -19,28 +19,26 @@ class TestoppsettService(
     private val fagsakRepository: FagsakRepository,
     private val behandlingRepository: BehandlingRepository,
 ) {
-
     fun opprettPerson(ident: String) = fagsakPersonRepository.insert(FagsakPerson(identer = setOf(PersonIdent(ident))))
 
     fun opprettPerson(person: FagsakPerson) = fagsakPersonRepository.insert(person)
 
     fun lagreFagsak(fagsak: Fagsak): Fagsak {
         val person = hentEllerOpprettPerson(fagsak)
-        return fagsakRepository.insert(
-            FagsakDomain(
-                id = fagsak.id,
-                fagsakPersonId = person.id,
-                stønadstype = fagsak.stønadstype,
-                fagsystem = fagsak.fagsystem,
-                eksternId = fagsak.eksternId,
-                sporbar = fagsak.sporbar,
-            ),
-        ).tilFagsakMedPerson(person.identer)
+        return fagsakRepository
+            .insert(
+                FagsakDomain(
+                    id = fagsak.id,
+                    fagsakPersonId = person.id,
+                    stønadstype = fagsak.stønadstype,
+                    fagsystem = fagsak.fagsystem,
+                    eksternId = fagsak.eksternId,
+                    sporbar = fagsak.sporbar,
+                ),
+            ).tilFagsakMedPerson(person.identer)
     }
 
-    fun lagreBehandling(behandling: Behandling): Behandling {
-        return behandlingRepository.insert(behandling)
-    }
+    fun lagreBehandling(behandling: Behandling): Behandling = behandlingRepository.insert(behandling)
 
     private fun hentEllerOpprettPerson(fagsak: Fagsak): FagsakPerson {
         val person = fagsakPersonRepository.findByIdOrNull(fagsak.fagsakPersonId)

@@ -6,8 +6,10 @@ import no.nav.familie.klage.vurdering.dto.VurderingDto
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 
 object VurderingValidator {
-
-    fun validerVurdering(vurdering: VurderingDto, fagsystem: Fagsystem) {
+    fun validerVurdering(
+        vurdering: VurderingDto,
+        fagsystem: Fagsystem,
+    ) {
         when (vurdering.vedtak) {
             Vedtak.OMGJØR_VEDTAK -> {
                 feilHvis(vurdering.årsak == null) {

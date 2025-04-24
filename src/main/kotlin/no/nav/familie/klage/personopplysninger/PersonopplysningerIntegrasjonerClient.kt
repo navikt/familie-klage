@@ -17,30 +17,25 @@ import java.net.URI
 class PersonopplysningerIntegrasjonerClient(
     @Qualifier("azure") restOperations: RestOperations,
     private val integrasjonerConfig: IntegrasjonerConfig,
-) :
-    AbstractPingableRestClient(restOperations, "familie.integrasjoner") {
-
+) : AbstractPingableRestClient(restOperations, "familie.integrasjoner") {
     override val pingUri: URI = integrasjonerConfig.pingUri
 
-    fun sjekkTilgangTilPersonMedRelasjoner(personIdent: String): Tilgang {
-        return postForEntity(
+    fun sjekkTilgangTilPersonMedRelasjoner(personIdent: String): Tilgang =
+        postForEntity(
             integrasjonerConfig.tilgangRelasjonerUri,
             PersonIdent(personIdent),
             HttpHeaders().also {
                 it.set(HEADER_NAV_TEMA, HEADER_NAV_TEMA_ENF)
             },
         )
-    }
 
-    fun egenAnsatt(ident: String): Boolean {
-        return postForEntity<Ressurs<EgenAnsattResponse>>(
+    fun egenAnsatt(ident: String): Boolean =
+        postForEntity<Ressurs<EgenAnsattResponse>>(
             integrasjonerConfig.egenAnsattUri,
             EgenAnsattRequest(ident),
         ).data!!.erEgenAnsatt
-    }
 
     companion object {
-
         const val HEADER_NAV_TEMA = "Nav-Tema"
         const val HEADER_NAV_TEMA_ENF = "ENF"
     }

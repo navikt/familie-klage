@@ -28,7 +28,6 @@ import java.time.LocalDate
 import java.util.UUID
 
 class BehandlingFlytTest : OppslagSpringRunnerTest() {
-
     @Autowired
     private lateinit var opprettBehandlingService: OpprettBehandlingService
 
@@ -58,19 +57,19 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
 
     @Nested
     inner class Historikk {
-
         @Test
         internal fun `OPPRETTHOLD_VEDTAK - når man har sendt brev skal man vente på svar`() {
-            val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
-                val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
-                formService.oppdaterFormkrav(oppfyltFormDto(behandlingId, påklagetVedtakDto))
-                vurderingService.lagreVurderingOgOppdaterSteg(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
-                formService.oppdaterFormkrav(oppfyltFormDto(behandlingId, påklagetVedtakDto))
-                vurderingService.lagreVurderingOgOppdaterSteg(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
-                lagEllerOppdaterBrev(behandlingId)
-                ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
-                behandlingId
-            }
+            val behandlingId =
+                testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
+                    val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
+                    formService.oppdaterFormkrav(oppfyltFormDto(behandlingId, påklagetVedtakDto))
+                    vurderingService.lagreVurderingOgOppdaterSteg(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
+                    formService.oppdaterFormkrav(oppfyltFormDto(behandlingId, påklagetVedtakDto))
+                    vurderingService.lagreVurderingOgOppdaterSteg(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
+                    lagEllerOppdaterBrev(behandlingId)
+                    ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
+                    behandlingId
+                }
 
             val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
 
@@ -88,20 +87,21 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
 
         @Test
         internal fun `OPPRETTHOLD_VEDTAK - skal kunne hoppe mellom steg`() {
-            val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
-                val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
-                formService.oppdaterFormkrav(oppfyltFormDto(behandlingId, påklagetVedtakDto))
-                vurderingService.lagreVurderingOgOppdaterSteg(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
+            val behandlingId =
+                testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
+                    val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
+                    formService.oppdaterFormkrav(oppfyltFormDto(behandlingId, påklagetVedtakDto))
+                    vurderingService.lagreVurderingOgOppdaterSteg(vurderingDto(behandlingId, Vedtak.OPPRETTHOLD_VEDTAK))
 
-                lagEllerOppdaterBrev(behandlingId)
+                    lagEllerOppdaterBrev(behandlingId)
 
-                formService.oppdaterFormkrav(oppfyltFormDto(behandlingId, påklagetVedtakDto))
-                vurderingService.lagreVurderingOgOppdaterSteg(vurderingDto(behandlingId))
+                    formService.oppdaterFormkrav(oppfyltFormDto(behandlingId, påklagetVedtakDto))
+                    vurderingService.lagreVurderingOgOppdaterSteg(vurderingDto(behandlingId))
 
-                lagEllerOppdaterBrev(behandlingId)
-                ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
-                behandlingId
-            }
+                    lagEllerOppdaterBrev(behandlingId)
+                    ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
+                    behandlingId
+                }
 
             testHendelseController.opprettDummyKabalEvent(behandlingId)
 
@@ -123,19 +123,20 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
 
         @Test
         internal fun `OMGJØR_VEDTAK - når man har ferdigstilt klagebehandling skal man vente på svar`() {
-            val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
-                val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
-                formService.oppdaterFormkrav(oppfyltFormDto(behandlingId))
-                vurderingService.lagreVurderingOgOppdaterSteg(
-                    vurderingDto(
-                        behandlingId = behandlingId,
-                        vedtak = Vedtak.OMGJØR_VEDTAK,
-                        begrunnelseOmgjøring = "begrunnelse",
-                    ),
-                )
-                ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
-                behandlingId
-            }
+            val behandlingId =
+                testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
+                    val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
+                    formService.oppdaterFormkrav(oppfyltFormDto(behandlingId))
+                    vurderingService.lagreVurderingOgOppdaterSteg(
+                        vurderingDto(
+                            behandlingId = behandlingId,
+                            vedtak = Vedtak.OMGJØR_VEDTAK,
+                            begrunnelseOmgjøring = "begrunnelse",
+                        ),
+                    )
+                    ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
+                    behandlingId
+                }
 
             val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
 
@@ -150,13 +151,14 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
 
         @Test
         internal fun `Ikke oppfylt formkrav skal ikke vurderes`() {
-            val behandlingId = testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
-                val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
-                formService.oppdaterFormkrav(ikkeOppfyltFormDto(behandlingId))
-                lagEllerOppdaterBrev(behandlingId)
-                ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
-                behandlingId
-            }
+            val behandlingId =
+                testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
+                    val behandlingId = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
+                    formService.oppdaterFormkrav(ikkeOppfyltFormDto(behandlingId))
+                    lagEllerOppdaterBrev(behandlingId)
+                    ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId)
+                    behandlingId
+                }
 
             val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
 
@@ -174,7 +176,8 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
         }
     }
 
-    private val påklagetVedtakDto = PåklagetVedtakDto(eksternFagsystemBehandlingId = "123", internKlagebehandlingId = null, påklagetVedtakstype = VEDTAK)
+    private val påklagetVedtakDto =
+        PåklagetVedtakDto(eksternFagsystemBehandlingId = "123", internKlagebehandlingId = null, påklagetVedtakstype = VEDTAK)
 
     private val opprettKlagebehandlingRequest =
         OpprettKlagebehandlingRequest(
@@ -187,8 +190,10 @@ class BehandlingFlytTest : OppslagSpringRunnerTest() {
             behandlingsårsak = Klagebehandlingsårsak.ORDINÆR,
         )
 
-    private fun oppfyltFormDto(behandlingId: UUID, påklagetVedtakDto: PåklagetVedtakDto = DomainUtil.påklagetVedtakDto()) =
-        DomainUtil.oppfyltForm(behandlingId).tilDto(påklagetVedtakDto)
+    private fun oppfyltFormDto(
+        behandlingId: UUID,
+        påklagetVedtakDto: PåklagetVedtakDto = DomainUtil.påklagetVedtakDto(),
+    ) = DomainUtil.oppfyltForm(behandlingId).tilDto(påklagetVedtakDto)
 
     private fun ikkeOppfyltFormDto(behandlingId: UUID) =
         DomainUtil.oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto()).copy(

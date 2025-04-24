@@ -15,11 +15,12 @@ class EregClient(
     @Qualifier("azure")
     private val restOperations: RestOperations,
 ) : AbstractPingableRestClient(restOperations, "familie.proxy.ereg") {
-
     fun hentOrganisasjoner(organisasjonsnumre: List<String>): List<OrganisasjonDto> {
-        val uriBuilder = UriComponentsBuilder.fromUri(familieEfProxyUri)
-            .pathSegment("api/ereg")
-            .queryParam("organisasjonsnumre", organisasjonsnumre)
+        val uriBuilder =
+            UriComponentsBuilder
+                .fromUri(familieEfProxyUri)
+                .pathSegment("api/ereg")
+                .queryParam("organisasjonsnumre", organisasjonsnumre)
 
         return getForEntity(uriBuilder.build().toUri())
     }

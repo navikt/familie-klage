@@ -10,8 +10,9 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface FagsakRepository : RepositoryInterface<FagsakDomain, UUID>, InsertUpdateRepository<FagsakDomain> {
-
+interface FagsakRepository :
+    RepositoryInterface<FagsakDomain, UUID>,
+    InsertUpdateRepository<FagsakDomain> {
     fun findByEksternIdAndFagsystemAndStønadstype(
         eksternId: String,
         fagsystem: Fagsystem,

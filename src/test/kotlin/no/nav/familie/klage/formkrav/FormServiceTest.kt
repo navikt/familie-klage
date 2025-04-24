@@ -33,7 +33,6 @@ import org.springframework.data.repository.findByIdOrNull
 import java.util.UUID
 
 internal class FormServiceTest {
-
     private val formRepository = mockk<FormRepository>()
     private val stegService = mockk<StegService>()
     private val behandlingService = mockk<BehandlingService>()
@@ -43,15 +42,16 @@ internal class FormServiceTest {
     private val fagsakService = mockk<FagsakService>()
     private val fagsakMock = mockk<Fagsak>()
 
-    private val service = FormService(
-        formRepository,
-        stegService,
-        behandlingService,
-        behandlingshistorikkService,
-        vurderingService,
-        taskService,
-        fagsakService,
-    )
+    private val service =
+        FormService(
+            formRepository,
+            stegService,
+            behandlingService,
+            behandlingshistorikkService,
+            vurderingService,
+            taskService,
+            fagsakService,
+        )
 
     private val behandlingId = UUID.randomUUID()
 
@@ -80,7 +80,6 @@ internal class FormServiceTest {
 
     @Nested
     inner class OppdaterForm {
-
         @Test
         internal fun `ikke alle vilkår besvart skal gå til steget formKrav`() {
             service.oppdaterFormkrav(ikkeFerdigutfylt())
@@ -93,8 +92,10 @@ internal class FormServiceTest {
         internal fun `ikke valgt påklaget vedtak skal gå til steget formKrav`() {
             service.oppdaterFormkrav(
                 oppfyltFormDto().copy(
-                    påklagetVedtak = DomainUtil.påklagetVedtakDto()
-                        .copy(påklagetVedtakstype = PåklagetVedtakstype.IKKE_VALGT),
+                    påklagetVedtak =
+                        DomainUtil
+                            .påklagetVedtakDto()
+                            .copy(påklagetVedtakstype = PåklagetVedtakstype.IKKE_VALGT),
                 ),
             )
 
@@ -138,15 +139,17 @@ internal class FormServiceTest {
 
         @Test
         internal fun `ingen behandlingshistorikk av StegType FORMKRAV, skal opprette task for statistikk`() {
-            val behandlingshistorikk = Behandlingshistorikk(
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-                null,
-                StegType.OPPRETTET,
-            )
-            every { behandlingshistorikkService.hentBehandlingshistorikk(any()) } returns listOf(
-                behandlingshistorikk,
-            )
+            val behandlingshistorikk =
+                Behandlingshistorikk(
+                    UUID.randomUUID(),
+                    UUID.randomUUID(),
+                    null,
+                    StegType.OPPRETTET,
+                )
+            every { behandlingshistorikkService.hentBehandlingshistorikk(any()) } returns
+                listOf(
+                    behandlingshistorikk,
+                )
             every { taskService.save(any()) } returns mockk<Task>()
             service.oppdaterFormkrav(oppfyltFormDto())
             verify { taskService.save(any()) }
@@ -154,16 +157,18 @@ internal class FormServiceTest {
 
         @Test
         internal fun `finnes behandlingshistorikk av StegType FORMKRAV, skal ikke opprette task for statistikk`() {
-            val behandlingshistorikk = Behandlingshistorikk(
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-                null,
-                StegType.FORMKRAV,
-            )
+            val behandlingshistorikk =
+                Behandlingshistorikk(
+                    UUID.randomUUID(),
+                    UUID.randomUUID(),
+                    null,
+                    StegType.FORMKRAV,
+                )
             every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler"
-            every { behandlingshistorikkService.hentBehandlingshistorikk(any()) } returns listOf(
-                behandlingshistorikk,
-            )
+            every { behandlingshistorikkService.hentBehandlingshistorikk(any()) } returns
+                listOf(
+                    behandlingshistorikk,
+                )
             every { taskService.save(any()) } returns mockk<Task>()
             service.oppdaterFormkrav(oppfyltFormDto())
             verify(exactly = 0) { taskService.save(any()) }
@@ -172,12 +177,12 @@ internal class FormServiceTest {
 
     private fun oppfyltFormDto() = oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto())
 
-    private fun ikkeOppfyltFormDto() = oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto()).copy(
-        klagePart = FormVilkår.IKKE_OPPFYLT,
-        saksbehandlerBegrunnelse = "Ok",
-        brevtekst = "brevtekst",
-    )
+    private fun ikkeOppfyltFormDto() =
+        oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto()).copy(
+            klagePart = FormVilkår.IKKE_OPPFYLT,
+            saksbehandlerBegrunnelse = "Ok",
+            brevtekst = "brevtekst",
+        )
 
-    private fun ikkeFerdigutfylt() =
-        oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto()).copy(klagePart = FormVilkår.IKKE_SATT)
+    private fun ikkeFerdigutfylt() = oppfyltForm(behandlingId).tilDto(DomainUtil.påklagetVedtakDto()).copy(klagePart = FormVilkår.IKKE_SATT)
 }

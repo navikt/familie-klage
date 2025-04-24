@@ -8,7 +8,6 @@ data class FagsystemRevurdering(
     val opprettet: Opprettet? = null,
     val ikkeOpprettet: IkkeOpprettet? = null,
 ) {
-
     init {
         if (opprettetBehandling) {
             require(opprettet != null) { "opprettet mangler" }
@@ -20,7 +19,11 @@ data class FagsystemRevurdering(
     }
 }
 
-data class Opprettet(val eksternBehandlingId: String, val opprettetTid: LocalDateTime)
+data class Opprettet(
+    val eksternBehandlingId: String,
+    val opprettetTid: LocalDateTime,
+)
+
 data class IkkeOpprettet(
     val årsak: IkkeOpprettetÅrsak,
     val detaljer: String? = null,
@@ -34,12 +37,13 @@ enum class IkkeOpprettetÅrsak {
 
 fun OpprettRevurderingResponse.tilFagsystemRevurdering(): FagsystemRevurdering {
     val opprettet = this.opprettet?.let { Opprettet(it.eksternBehandlingId, opprettetTid = LocalDateTime.now()) }
-    val ikkeOpprettet = this.ikkeOpprettet?.let {
-        IkkeOpprettet(
-            IkkeOpprettetÅrsak.valueOf(it.årsak.name),
-            it.detaljer,
-        )
-    }
+    val ikkeOpprettet =
+        this.ikkeOpprettet?.let {
+            IkkeOpprettet(
+                IkkeOpprettetÅrsak.valueOf(it.årsak.name),
+                it.detaljer,
+            )
+        }
     return FagsystemRevurdering(
         opprettetBehandling = this.opprettetBehandling,
         opprettet = opprettet,

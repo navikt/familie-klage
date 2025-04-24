@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service
 class FullmaktService(
     val fullmaktClient: FullmaktClient,
 ) {
-
     fun hentFullmakt(ident: String): List<Fullmakt> {
         val fullmaktResponse = fullmaktClient.hentFullmakt(ident)
         return fullmaktResponse.map {

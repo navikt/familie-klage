@@ -32,7 +32,6 @@ class BehandlingsstatistikkService(
     private val fagsakService: FagsakService,
     private val personopplysningerService: PersonopplysningerService,
 ) {
-
     private val zoneIdOslo = ZoneId.of("Europe/Oslo")
 
     @Transactional
@@ -60,10 +59,11 @@ class BehandlingsstatistikkService(
             personopplysningerService.hentPersonopplysninger(behandlingId).adressebeskyttelse?.erStrengtFortrolig()
                 ?: false
 
-        val behandlendeEnhet = maskerVerdiHvisStrengtFortrolig(
-            erStrengtFortrolig,
-            behandling.behandlendeEnhet,
-        )
+        val behandlendeEnhet =
+            maskerVerdiHvisStrengtFortrolig(
+                erStrengtFortrolig,
+                behandling.behandlendeEnhet,
+            )
 
         val påklagetVedtakDetaljer = behandling.påklagetVedtak.påklagetVedtakDetaljer
 
@@ -84,14 +84,18 @@ class BehandlingsstatistikkService(
             ansvarligEnhet = behandlendeEnhet,
             mottattTid = behandling.klageMottatt.atStartOfDay(zoneIdOslo),
             ferdigBehandletTid = ferdigBehandletTid(hendelse, hendelseTidspunkt),
-            sakUtland = behandling.påklagetVedtak.påklagetVedtakDetaljer?.regelverk.tilDVHSakNasjonalitet(),
+            sakUtland =
+                behandling.påklagetVedtak.påklagetVedtakDetaljer
+                    ?.regelverk
+                    .tilDVHSakNasjonalitet(),
             behandlingResultat = behandlingResultat(hendelse, behandling),
             resultatBegrunnelse = resultatBegrunnelse(behandling, vurdering),
             behandlingMetode = "MANUELL",
-            saksbehandler = maskerVerdiHvisStrengtFortrolig(
-                erStrengtFortrolig,
-                gjeldendeSaksbehandler ?: behandling.sporbar.endret.endretAv,
-            ),
+            saksbehandler =
+                maskerVerdiHvisStrengtFortrolig(
+                    erStrengtFortrolig,
+                    gjeldendeSaksbehandler ?: behandling.sporbar.endret.endretAv,
+                ),
             avsender = "Klage familie",
             saksnummer = fagsak.eksternId,
         )
@@ -134,9 +138,10 @@ class BehandlingsstatistikkService(
         return verdi
     }
 
-    private fun Regelverk?.tilDVHSakNasjonalitet(): String? = when (this) {
-        Regelverk.NASJONAL -> "Nasjonal"
-        Regelverk.EØS -> "Utland"
-        null -> null
-    }
+    private fun Regelverk?.tilDVHSakNasjonalitet(): String? =
+        when (this) {
+            Regelverk.NASJONAL -> "Nasjonal"
+            Regelverk.EØS -> "Utland"
+            null -> null
+        }
 }

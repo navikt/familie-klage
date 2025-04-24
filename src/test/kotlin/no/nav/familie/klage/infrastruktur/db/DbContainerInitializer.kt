@@ -6,18 +6,17 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.testcontainers.containers.PostgreSQLContainer
 
 class DbContainerInitializer : ApplicationContextInitializer<ConfigurableApplicationContext> {
-
     override fun initialize(applicationContext: ConfigurableApplicationContext) {
         postgres.start()
-        TestPropertyValues.of(
-            "spring.datasource.url=${postgres.jdbcUrl}",
-            "spring.datasource.username=${postgres.username}",
-            "spring.datasource.password=${postgres.password}",
-        ).applyTo(applicationContext.environment)
+        TestPropertyValues
+            .of(
+                "spring.datasource.url=${postgres.jdbcUrl}",
+                "spring.datasource.username=${postgres.username}",
+                "spring.datasource.password=${postgres.password}",
+            ).applyTo(applicationContext.environment)
     }
 
     companion object {
-
         // Lazy because we only want it to be initialized when accessed
         private val postgres: KPostgreSQLContainer by lazy {
             KPostgreSQLContainer("postgres:14.6")
@@ -29,4 +28,6 @@ class DbContainerInitializer : ApplicationContextInitializer<ConfigurableApplica
 }
 
 // Hack needed because testcontainers use of generics confuses Kotlin
-class KPostgreSQLContainer(imageName: String) : PostgreSQLContainer<KPostgreSQLContainer>(imageName)
+class KPostgreSQLContainer(
+    imageName: String,
+) : PostgreSQLContainer<KPostgreSQLContainer>(imageName)

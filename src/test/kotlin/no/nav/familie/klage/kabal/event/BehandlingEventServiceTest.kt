@@ -37,7 +37,6 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal class BehandlingEventServiceTest {
-
     private val behandlingRepository = mockk<BehandlingRepository>(relaxed = true)
     private val fagsakRepository = mockk<FagsakRepository>(relaxed = true)
     private val taskService = mockk<TaskService>(relaxed = true)
@@ -46,15 +45,16 @@ internal class BehandlingEventServiceTest {
     private val integrasjonerClient = mockk<FamilieIntegrasjonerClient>(relaxed = true)
     private val featureToggleService = mockk<FeatureToggleService>(relaxed = true)
 
-    val behandlingEventService = BehandlingEventService(
-        behandlingRepository = behandlingRepository,
-        fagsakRepository = fagsakRepository,
-        stegService = stegService,
-        taskService = taskService,
-        klageresultatRepository = klageresultatRepository,
-        integrasjonerClient = integrasjonerClient,
-        featureToggleService = featureToggleService,
-    )
+    val behandlingEventService =
+        BehandlingEventService(
+            behandlingRepository = behandlingRepository,
+            fagsakRepository = fagsakRepository,
+            stegService = stegService,
+            taskService = taskService,
+            klageresultatRepository = klageresultatRepository,
+            integrasjonerClient = integrasjonerClient,
+            featureToggleService = featureToggleService,
+        )
 
     val behandlingMedStatusVenter = DomainUtil.behandling(status = BehandlingStatus.VENTER)
 
@@ -86,12 +86,14 @@ internal class BehandlingEventServiceTest {
 
     @Test
     fun `Skal ikke ferdigstille behandling, og ikke lage oppgave, når event er av type anke`() {
-        val behandlingEvent = lagBehandlingEvent(
-            behandlingEventType = BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
-            behandlingDetaljer = BehandlingDetaljer(
-                ankebehandlingOpprettet = AnkebehandlingOpprettetDetaljer(LocalDateTime.now()),
-            ),
-        )
+        val behandlingEvent =
+            lagBehandlingEvent(
+                behandlingEventType = BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
+                behandlingDetaljer =
+                    BehandlingDetaljer(
+                        ankebehandlingOpprettet = AnkebehandlingOpprettetDetaljer(LocalDateTime.now()),
+                    ),
+            )
 
         behandlingEventService.handleEvent(behandlingEvent)
 
@@ -136,10 +138,11 @@ internal class BehandlingEventServiceTest {
             lagBehandlingEvent(
                 BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
                 BehandlingDetaljer(
-                    ankeITrygderettenbehandlingOpprettet = AnkeITrygderettenbehandlingOpprettetDetaljer(
-                        LocalDateTime.of(2023, 6, 21, 1, 1),
-                        null,
-                    ),
+                    ankeITrygderettenbehandlingOpprettet =
+                        AnkeITrygderettenbehandlingOpprettetDetaljer(
+                            LocalDateTime.of(2023, 6, 21, 1, 1),
+                            null,
+                        ),
                 ),
             ),
         )
@@ -158,11 +161,12 @@ internal class BehandlingEventServiceTest {
             lagBehandlingEvent(
                 BehandlingEventType.OMGJOERINGSKRAVBEHANDLING_AVSLUTTET,
                 BehandlingDetaljer(
-                    omgjoeringskravbehandlingAvsluttet = OmgjoeringskravbehandlingAvsluttetDetaljer(
-                        LocalDateTime.of(2023, 6, 21, 1, 1),
-                        KlageinstansUtfall.MEDHOLD_ETTER_FVL_35,
-                        emptyList(),
-                    ),
+                    omgjoeringskravbehandlingAvsluttet =
+                        OmgjoeringskravbehandlingAvsluttetDetaljer(
+                            LocalDateTime.of(2023, 6, 21, 1, 1),
+                            KlageinstansUtfall.MEDHOLD_ETTER_FVL_35,
+                            emptyList(),
+                        ),
                 ),
             ),
         )
@@ -181,11 +185,12 @@ internal class BehandlingEventServiceTest {
             lagBehandlingEvent(
                 BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET,
                 BehandlingDetaljer(
-                    behandlingEtterTrygderettenOpphevetAvsluttet = BehandlingEtterTrygderettenOpphevetAvsluttetDetaljer(
-                        LocalDateTime.of(2023, 6, 21, 1, 1),
-                        KlageinstansUtfall.HEVET,
-                        emptyList(),
-                    ),
+                    behandlingEtterTrygderettenOpphevetAvsluttet =
+                        BehandlingEtterTrygderettenOpphevetAvsluttetDetaljer(
+                            LocalDateTime.of(2023, 6, 21, 1, 1),
+                            KlageinstansUtfall.HEVET,
+                            emptyList(),
+                        ),
                 ),
             ),
         )
@@ -204,10 +209,11 @@ internal class BehandlingEventServiceTest {
             lagBehandlingEvent(
                 BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
                 BehandlingDetaljer(
-                    ankeITrygderettenbehandlingOpprettet = AnkeITrygderettenbehandlingOpprettetDetaljer(
-                        LocalDateTime.of(2023, 6, 21, 1, 1),
-                        null,
-                    ),
+                    ankeITrygderettenbehandlingOpprettet =
+                        AnkeITrygderettenbehandlingOpprettetDetaljer(
+                            LocalDateTime.of(2023, 6, 21, 1, 1),
+                            null,
+                        ),
                 ),
             ),
         )
@@ -260,22 +266,22 @@ internal class BehandlingEventServiceTest {
     private fun lagBehandlingEvent(
         behandlingEventType: BehandlingEventType = BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET,
         behandlingDetaljer: BehandlingDetaljer? = null,
-    ): BehandlingEvent {
-        return BehandlingEvent(
+    ): BehandlingEvent =
+        BehandlingEvent(
             eventId = UUID.randomUUID(),
             kildeReferanse = UUID.randomUUID().toString(),
             kilde = "EF",
             kabalReferanse = "kabalReferanse",
             type = behandlingEventType,
-            detaljer = behandlingDetaljer ?: BehandlingDetaljer(
-                KlagebehandlingAvsluttetDetaljer(
-                    LocalDateTime.now().minusDays(1),
-                    KlageinstansUtfall.MEDHOLD,
-                    listOf("journalpostReferanse1", "journalpostReferanse2"),
+            detaljer =
+                behandlingDetaljer ?: BehandlingDetaljer(
+                    KlagebehandlingAvsluttetDetaljer(
+                        LocalDateTime.now().minusDays(1),
+                        KlageinstansUtfall.MEDHOLD,
+                        listOf("journalpostReferanse1", "journalpostReferanse2"),
+                    ),
                 ),
-            ),
         )
-    }
 
     private val saksbehandler = Saksbehandler(UUID.randomUUID(), "A123456", "Alfa", "Omega", "4415")
 }

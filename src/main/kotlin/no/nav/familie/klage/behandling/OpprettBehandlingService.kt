@@ -27,13 +27,10 @@ class OpprettBehandlingService(
     private val behandlingshistorikkService: BehandlingshistorikkService,
     private val taskService: TaskService,
 ) {
-
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @Transactional
-    fun opprettBehandling(
-        request: OpprettKlagebehandlingRequest,
-    ): UUID {
+    fun opprettBehandling(request: OpprettKlagebehandlingRequest): UUID {
         val klageMottatt = request.klageMottatt
         val stønadstype = request.stønadstype
         val eksternFagsakId = request.eksternFagsakId
@@ -42,24 +39,28 @@ class OpprettBehandlingService(
             "Kan ikke opprette klage med krav mottatt frem i tid for eksternFagsakId=$eksternFagsakId"
         }
 
-        val fagsak = fagsakService.hentEllerOpprettFagsak(
-            ident = request.ident,
-            eksternId = eksternFagsakId,
-            fagsystem = request.fagsystem,
-            stønadstype = stønadstype,
-        )
+        val fagsak =
+            fagsakService.hentEllerOpprettFagsak(
+                ident = request.ident,
+                eksternId = eksternFagsakId,
+                fagsystem = request.fagsystem,
+                stønadstype = stønadstype,
+            )
 
-        val behandlingId = behandlingService.opprettBehandling(
-            Behandling(
-                fagsakId = fagsak.id,
-                påklagetVedtak = PåklagetVedtak(
-                    påklagetVedtakstype = PåklagetVedtakstype.IKKE_VALGT,
-                ),
-                klageMottatt = klageMottatt,
-                behandlendeEnhet = request.behandlendeEnhet,
-                årsak = request.behandlingsårsak,
-            ),
-        ).id
+        val behandlingId =
+            behandlingService
+                .opprettBehandling(
+                    Behandling(
+                        fagsakId = fagsak.id,
+                        påklagetVedtak =
+                            PåklagetVedtak(
+                                påklagetVedtakstype = PåklagetVedtakstype.IKKE_VALGT,
+                            ),
+                        klageMottatt = klageMottatt,
+                        behandlendeEnhet = request.behandlendeEnhet,
+                        årsak = request.behandlingsårsak,
+                    ),
+                ).id
 
         behandlingshistorikkService.opprettBehandlingshistorikk(
             behandlingId = behandlingId,
@@ -79,7 +80,6 @@ class OpprettBehandlingService(
                 behandlingId = behandlingId,
                 eksternFagsakId = eksternFagsakId,
                 fagsystem = fagsak.fagsystem,
-
             ),
         )
         logger.info(

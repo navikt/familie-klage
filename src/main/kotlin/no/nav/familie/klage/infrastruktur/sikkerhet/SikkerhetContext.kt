@@ -3,7 +3,6 @@ package no.nav.familie.klage.infrastruktur.sikkerhet
 import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
 
 object SikkerhetContext {
-
     private const val SYSTEM_NAVN = "System"
     const val SYSTEM_FORKORTELSE = "VL"
 
@@ -22,21 +21,24 @@ object SikkerhetContext {
      * @param strict hvis true - skal kaste feil hvis token ikke inneholder NAVident
      */
     fun hentSaksbehandler(strict: Boolean = false): String {
-        val result = Result.runCatching { SpringTokenValidationContextHolder().getTokenValidationContext() }
-            .fold(
-                onSuccess = {
-                    it.getClaims("azuread")?.get("NAVident")?.toString() ?: SYSTEM_FORKORTELSE
-                },
-                onFailure = { SYSTEM_FORKORTELSE },
-            )
+        val result =
+            Result
+                .runCatching { SpringTokenValidationContextHolder().getTokenValidationContext() }
+                .fold(
+                    onSuccess = {
+                        it.getClaims("azuread")?.get("NAVident")?.toString() ?: SYSTEM_FORKORTELSE
+                    },
+                    onFailure = { SYSTEM_FORKORTELSE },
+                )
         if (strict && result == SYSTEM_FORKORTELSE) {
             error("Finner ikke NAVident i token")
         }
         return result
     }
 
-    fun hentSaksbehandlerNavn(strict: Boolean = false): String {
-        return Result.runCatching { SpringTokenValidationContextHolder().getTokenValidationContext() }
+    fun hentSaksbehandlerNavn(strict: Boolean = false): String =
+        Result
+            .runCatching { SpringTokenValidationContextHolder().getTokenValidationContext() }
             .fold(
                 onSuccess = {
                     it.getClaims("azuread")?.get("name")?.toString()
@@ -44,10 +46,10 @@ object SikkerhetContext {
                 },
                 onFailure = { if (strict) error("Finner ikke navn på innlogget bruker") else SYSTEM_NAVN },
             )
-    }
 
-    fun hentGrupperFraToken(): List<String> {
-        return Result.runCatching { SpringTokenValidationContextHolder().getTokenValidationContext() }
+    fun hentGrupperFraToken(): List<String> =
+        Result
+            .runCatching { SpringTokenValidationContextHolder().getTokenValidationContext() }
             .fold(
                 onSuccess = {
                     @Suppress("UNCHECKED_CAST")
@@ -55,9 +57,6 @@ object SikkerhetContext {
                 },
                 onFailure = { emptyList() },
             )
-    }
 
-    fun harRolle(rolle: String): Boolean {
-        return hentGrupperFraToken().contains(rolle)
-    }
+    fun harRolle(rolle: String): Boolean = hentGrupperFraToken().contains(rolle)
 }

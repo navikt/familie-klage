@@ -23,9 +23,11 @@ class HenleggBehandlingController(
     private val henleggBehandlingService: HenleggBehandlingService,
     private val brevService: BrevService,
 ) {
-
     @PostMapping("{behandlingId}/henlegg")
-    fun henleggBehandling(@PathVariable behandlingId: UUID, @RequestBody henlegg: HenlagtDto): Ressurs<Unit> {
+    fun henleggBehandling(
+        @PathVariable behandlingId: UUID,
+        @RequestBody henlegg: HenlagtDto,
+    ): Ressurs<Unit> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         if (henlegg.skalSendeHenleggelsesbrev) {
@@ -43,7 +45,5 @@ class HenleggBehandlingController(
         return henleggBrevRessurs(behandlingId)
     }
 
-    private fun henleggBrevRessurs(
-        behandlingId: UUID,
-    ) = Ressurs.success(brevService.genererHenleggelsesbrev(behandlingId))
+    private fun henleggBrevRessurs(behandlingId: UUID) = Ressurs.success(brevService.genererHenleggelsesbrev(behandlingId))
 }

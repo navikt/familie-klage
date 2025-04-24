@@ -21,7 +21,6 @@ class StegService(
     private val behandlingshistorikkService: BehandlingshistorikkService,
     private val tilgangService: TilgangService,
 ) {
-
     @Transactional
     fun oppdaterSteg(
         behandlingId: UUID,
@@ -69,8 +68,8 @@ class StegService(
         nesteSteg: StegType,
         behandlingsresultat: BehandlingResultat? = null,
         behandlingsårsak: Klagebehandlingsårsak,
-    ): Boolean {
-        return if (nåværendeSteg == StegType.BREV) {
+    ): Boolean =
+        if (nåværendeSteg == StegType.BREV) {
             when (nesteSteg) {
                 StegType.BEHANDLING_FERDIGSTILT -> behandlingsresultat != BehandlingResultat.MEDHOLD
                 StegType.KABAL_VENTER_SVAR -> behandlingsårsak != Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL
@@ -79,7 +78,6 @@ class StegService(
         } else {
             true
         }
-    }
 
     private fun validerGyldigNesteSteg(behandling: Behandling) =
         feilHvis(behandling.status.erLåstForVidereBehandling()) {

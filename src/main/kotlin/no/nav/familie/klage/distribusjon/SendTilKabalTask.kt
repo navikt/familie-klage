@@ -28,12 +28,11 @@ class SendTilKabalTask(
     private val vurderingService: VurderingService,
     private val brevService: BrevService,
 ) : AsyncTaskStep {
-
     private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
-        val saksbehandlerIdent = task.metadata[TaskMetadata.saksbehandlerMetadataKey].toString()
+        val saksbehandlerIdent = task.metadata[TaskMetadata.SAKSBEHANDLER_METADATA_KEY].toString()
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
 

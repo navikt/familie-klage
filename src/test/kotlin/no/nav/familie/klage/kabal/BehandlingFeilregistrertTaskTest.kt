@@ -32,7 +32,6 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class BehandlingFeilregistrertTaskTest : OppslagSpringRunnerTest() {
-
     @Autowired lateinit var behandlingRepository: BehandlingRepository
 
     @Autowired lateinit var stegService: StegService
@@ -59,19 +58,21 @@ class BehandlingFeilregistrertTaskTest : OppslagSpringRunnerTest() {
         behandlingFeilregistrertTask =
             BehandlingFeilregistrertTask(stegService, taskService, behandlingService, fagsakService)
 
-        fagsak = testoppsettService.lagreFagsak(
-            DomainUtil.fagsakDomain().tilFagsakMedPerson(
-                setOf(
-                    PersonIdent(personIdent),
+        fagsak =
+            testoppsettService.lagreFagsak(
+                DomainUtil.fagsakDomain().tilFagsakMedPerson(
+                    setOf(
+                        PersonIdent(personIdent),
+                    ),
                 ),
-            ),
-        )
-        behandling = DomainUtil.behandling(
-            fagsak = fagsak,
-            resultat = BehandlingResultat.IKKE_MEDHOLD,
-            status = BehandlingStatus.VENTER,
-            steg = StegType.KABAL_VENTER_SVAR,
-        )
+            )
+        behandling =
+            DomainUtil.behandling(
+                fagsak = fagsak,
+                resultat = BehandlingResultat.IKKE_MEDHOLD,
+                status = BehandlingStatus.VENTER,
+                steg = StegType.KABAL_VENTER_SVAR,
+            )
 
         behandlingRepository.insert(behandling)
 
@@ -102,7 +103,9 @@ class BehandlingFeilregistrertTaskTest : OppslagSpringRunnerTest() {
 
         val opprettOppgaveTask = taskService.findAll().single { it.type == OpprettKabalEventOppgaveTask.TYPE }
         val opprettOppgavePayload = objectMapper.readValue<OpprettOppgavePayload>(opprettOppgaveTask.payload)
-        assertThat(opprettOppgavePayload.oppgaveTekst).isEqualTo("Klagebehandlingen er sendt tilbake fra KA med status feilregistrert.\n\nBegrunnelse fra KA: \"fordi det var feil\"")
+        assertThat(
+            opprettOppgavePayload.oppgaveTekst,
+        ).isEqualTo("Klagebehandlingen er sendt tilbake fra KA med status feilregistrert.\n\nBegrunnelse fra KA: \"fordi det var feil\"")
 
         assertThat(opprettOppgavePayload.klagebehandlingEksternId).isEqualTo(behandling.eksternBehandlingId)
         assertThat(opprettOppgavePayload.fagsystem).isEqualTo(fagsak.fagsystem)

@@ -15,10 +15,10 @@ class OpprettFerdigstillOppgaveTask(
     private val oppgaveClient: OppgaveClient,
     private val behandleSakOppgaveRepository: BehandleSakOppgaveRepository,
 ) : AsyncTaskStep {
-
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
-        val behandleSakOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId) ?: error("Fant ikke oppgave for behandling $behandlingId")
+        val behandleSakOppgave =
+            behandleSakOppgaveRepository.findByBehandlingId(behandlingId) ?: error("Fant ikke oppgave for behandling $behandlingId")
         oppgaveClient.ferdigstillOppgave(behandleSakOppgave.oppgaveId)
     }
 

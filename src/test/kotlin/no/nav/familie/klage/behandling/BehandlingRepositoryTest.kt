@@ -26,7 +26,6 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
-
     @Autowired private lateinit var behandlingRepository: BehandlingRepository
 
     val fagsak = fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent("1")))
@@ -51,16 +50,17 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
                 regelverk = Regelverk.NASJONAL,
             )
         val fagsystemRevurdering = FagsystemRevurdering(true, Opprettet("id", LocalDateTime.now()), null)
-        val behandling = behandlingRepository.insert(
-            behandling(
-                fagsak = fagsak,
-                id = id,
-                klageMottatt = LocalDate.now(),
-                påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer),
-                henlagtÅrsak = HenlagtÅrsak.TRUKKET_TILBAKE,
-                fagsystemRevurdering = fagsystemRevurdering,
-            ),
-        )
+        val behandling =
+            behandlingRepository.insert(
+                behandling(
+                    fagsak = fagsak,
+                    id = id,
+                    klageMottatt = LocalDate.now(),
+                    påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer),
+                    henlagtÅrsak = HenlagtÅrsak.TRUKKET_TILBAKE,
+                    fagsystemRevurdering = fagsystemRevurdering,
+                ),
+            )
 
         val hentetBehandling = behandlingRepository.findByIdOrThrow(id)
 
@@ -109,17 +109,19 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
 
     @Test
     internal fun `findByEksternBehandlingIdAndFagsystem - forvent treff`() {
-        val fagsakPersistert = testoppsettService.lagreFagsak(
-            fagsakDomain().tilFagsakMedPerson(
-                setOf(PersonIdent("12345678901")),
-            ),
-        )
+        val fagsakPersistert =
+            testoppsettService.lagreFagsak(
+                fagsakDomain().tilFagsakMedPerson(
+                    setOf(PersonIdent("12345678901")),
+                ),
+            )
 
-        val fagsakPersistert2 = testoppsettService.lagreFagsak(
-            fagsakDomain().tilFagsakMedPerson(
-                setOf(PersonIdent("12345678902")),
-            ),
-        )
+        val fagsakPersistert2 =
+            testoppsettService.lagreFagsak(
+                fagsakDomain().tilFagsakMedPerson(
+                    setOf(PersonIdent("12345678902")),
+                ),
+            )
 
         val behandlingPersistert = behandlingRepository.insert(behandling(fagsakPersistert))
         behandlingRepository.insert(behandling(fagsakPersistert2))
@@ -132,7 +134,6 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
 
     @Nested
     inner class FinnKlagebehandlingsresultat {
-
         @Test
         internal fun `skal returnere tom liste når det ikke finnes noen behandlinger`() {
             assertThat(behandlingRepository.finnKlagebehandlingsresultat(fagsak.eksternId, Fagsystem.EF))

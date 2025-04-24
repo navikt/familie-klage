@@ -44,8 +44,8 @@ data class BrevmottakerPersonUtenIdent(
         fun opprettFra(
             id: UUID = UUID.randomUUID(),
             nyBrevmottakerPersonUtenIdent: NyBrevmottakerPersonUtenIdent,
-        ): BrevmottakerPersonUtenIdent {
-            return BrevmottakerPersonUtenIdent(
+        ): BrevmottakerPersonUtenIdent =
+            BrevmottakerPersonUtenIdent(
                 id = id,
                 mottakerRolle = nyBrevmottakerPersonUtenIdent.mottakerRolle,
                 navn = nyBrevmottakerPersonUtenIdent.navn,
@@ -55,12 +55,14 @@ data class BrevmottakerPersonUtenIdent(
                 poststed = nyBrevmottakerPersonUtenIdent.poststed,
                 landkode = nyBrevmottakerPersonUtenIdent.landkode,
             )
-        }
     }
 }
 
 class BrevmottakerPersonDeserializer : JsonDeserializer<BrevmottakerPerson>() {
-    override fun deserialize(jsonParser: JsonParser, context: DeserializationContext): BrevmottakerPerson {
+    override fun deserialize(
+        jsonParser: JsonParser,
+        context: DeserializationContext,
+    ): BrevmottakerPerson {
         val tree = jsonParser.readValueAsTree<JsonNode>()
         return if (tree.has("personIdent")) {
             objectMapper.treeToValue(tree, BrevmottakerPersonMedIdent::class.java)

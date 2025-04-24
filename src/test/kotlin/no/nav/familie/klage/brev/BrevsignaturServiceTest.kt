@@ -31,9 +31,10 @@ internal class BrevsignaturServiceTest {
         val personopplysningerDto = mockk<PersonopplysningerDto>()
         every { personopplysningerDto.adressebeskyttelse } returns null
 
-        val signaturMedEnhet = testWithBrukerContext(preferredUsername = "Julenissen") {
-            brevsignaturService.lagSignatur(personopplysningerDto, Fagsystem.EF)
-        }
+        val signaturMedEnhet =
+            testWithBrukerContext(preferredUsername = "Julenissen") {
+                brevsignaturService.lagSignatur(personopplysningerDto, Fagsystem.EF)
+            }
 
         assertThat(signaturMedEnhet.enhet).isEqualTo(BrevsignaturService.ENHET_NAY)
         assertThat(signaturMedEnhet.navn).isEqualTo("Julenissen")

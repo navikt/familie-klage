@@ -2,8 +2,8 @@ package no.nav.familie.klage.oppgave
 
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.felles.util.TaskMetadata.klageGjelderTilbakekrevingMetadataKey
-import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
+import no.nav.familie.klage.felles.util.TaskMetadata.KLAGE_GJELDER_TILBAKEKREBING_METADATA_KEY
+import no.nav.familie.klage.felles.util.TaskMetadata.SAKSBEHANDLER_METADATA_KEY
 import no.nav.familie.klage.oppgave.OppgaveUtil.lagFristForOppgave
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.oppgave.Behandlingstype
@@ -29,27 +29,27 @@ class OpprettBehandleSakOppgaveTask(
     private val oppgaveClient: OppgaveClient,
     private val behandleSakOppgaveRepository: BehandleSakOppgaveRepository,
 ) : AsyncTaskStep {
-
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         val behandling = behandlingService.hentBehandling(behandlingId)
         val klageGjelderTilbakekreving: Boolean =
-            task.metadata.getProperty(klageGjelderTilbakekrevingMetadataKey).toBoolean()
+            task.metadata.getProperty(KLAGE_GJELDER_TILBAKEKREBING_METADATA_KEY).toBoolean()
 
-        val oppgaveRequest = OpprettOppgaveRequest(
-            ident = OppgaveIdentV2(ident = fagsak.hentAktivIdent(), gruppe = IdentGruppe.FOLKEREGISTERIDENT),
-            saksId = fagsak.eksternId, // fagsakId fra fagsystem
-            tema = fagsak.stønadstype.tilTema(), //
-            oppgavetype = Oppgavetype.BehandleSak,
-            fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
-            beskrivelse = "Klagebehandling i ny løsning",
-            enhetsnummer = behandling.behandlendeEnhet,
-            behandlingstype = Behandlingstype.Klage.value,
-            behandlesAvApplikasjon = "familie-klage",
-            tilordnetRessurs = task.metadata.getProperty(saksbehandlerMetadataKey),
-            behandlingstema = if (klageGjelderTilbakekreving) Behandlingstema.Tilbakebetaling.value else null,
-        )
+        val oppgaveRequest =
+            OpprettOppgaveRequest(
+                ident = OppgaveIdentV2(ident = fagsak.hentAktivIdent(), gruppe = IdentGruppe.FOLKEREGISTERIDENT),
+                saksId = fagsak.eksternId, // fagsakId fra fagsystem
+                tema = fagsak.stønadstype.tilTema(), //
+                oppgavetype = Oppgavetype.BehandleSak,
+                fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
+                beskrivelse = "Klagebehandling i ny løsning",
+                enhetsnummer = behandling.behandlendeEnhet,
+                behandlingstype = Behandlingstype.Klage.value,
+                behandlesAvApplikasjon = "familie-klage",
+                tilordnetRessurs = task.metadata.getProperty(SAKSBEHANDLER_METADATA_KEY),
+                behandlingstema = if (klageGjelderTilbakekreving) Behandlingstema.Tilbakebetaling.value else null,
+            )
         try {
             opprettOppgaveOgLagre(oppgaveRequest, behandlingId)
         } catch (e: Exception) {
@@ -61,15 +61,17 @@ class OpprettBehandleSakOppgaveTask(
         }
     }
 
-    private fun opprettOppgaveOgLagre(request: OpprettOppgaveRequest, behandlingId: UUID) {
+    private fun opprettOppgaveOgLagre(
+        request: OpprettOppgaveRequest,
+        behandlingId: UUID,
+    ) {
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest = request)
         behandleSakOppgaveRepository.insert(
             BehandleSakOppgave(behandlingId = behandlingId, oppgaveId = oppgaveId),
         )
     }
 
-    private fun navIdentHarIkkeTilgangTilEnheten(e: Exception): Boolean =
-        e.message?.contains("navIdent har ikke tilgang til enheten") ?: false
+    private fun navIdentHarIkkeTilgangTilEnheten(e: Exception): Boolean = e.message?.contains("navIdent har ikke tilgang til enheten") ?: false
 
     companion object {
         const val TYPE = "opprettBehandleSakoppgave"

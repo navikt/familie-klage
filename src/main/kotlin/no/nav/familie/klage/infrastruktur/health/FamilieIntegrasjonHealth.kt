@@ -7,5 +7,6 @@ import org.springframework.stereotype.Component
 
 @Component
 @Profile("!local")
-class FamilieIntegrasjonHealth(personopplysningerIntegrasjonerClient: PersonopplysningerIntegrasjonerClient) :
-    AbstractHealthIndicator(personopplysningerIntegrasjonerClient, "familie.integrasjoner")
+class FamilieIntegrasjonHealth(
+    personopplysningerIntegrasjonerClient: PersonopplysningerIntegrasjonerClient,
+) : AbstractHealthIndicator(personopplysningerIntegrasjonerClient, "familie.integrasjoner")

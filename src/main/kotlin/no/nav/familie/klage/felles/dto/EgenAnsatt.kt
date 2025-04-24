@@ -1,5 +1,9 @@
 package no.nav.familie.klage.felles.dto
 
-data class EgenAnsattRequest(val ident: String)
+data class EgenAnsattRequest(
+    val ident: String,
+)
 
-data class EgenAnsattResponse(val erEgenAnsatt: Boolean)
+data class EgenAnsattResponse(
+    val erEgenAnsatt: Boolean,
+)

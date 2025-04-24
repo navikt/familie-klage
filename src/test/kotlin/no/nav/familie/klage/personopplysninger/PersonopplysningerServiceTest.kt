@@ -35,7 +35,6 @@ import no.nav.familie.klage.personopplysninger.pdl.Folkeregisterpersonstatus as 
 import no.nav.familie.klage.personopplysninger.pdl.Kjønn as PdlKjønn
 
 internal class PersonopplysningerServiceTest {
-
     private val behandlingService = mockk<BehandlingService>()
     private val fagsakService = mockk<FagsakService>()
     private val pdlClient = mockk<PdlClient>()
@@ -58,8 +57,7 @@ internal class PersonopplysningerServiceTest {
         every { fullmaktService.hentFullmakt(any()) } returns listOf(fullmakt())
     }
 
-    private fun fullmakt() =
-        Fullmakt(LocalDate.now(), null, "01010199999", "fullmakt etternavn", MotpartsRolle.FULLMEKTIG, listOf("område"))
+    private fun fullmakt() = Fullmakt(LocalDate.now(), null, "01010199999", "fullmakt etternavn", MotpartsRolle.FULLMEKTIG, listOf("område"))
 
     @Test
     internal fun `skal mappe til dto`() {
@@ -87,23 +85,25 @@ internal class PersonopplysningerServiceTest {
         verify(exactly = 1) { fullmaktService.hentFullmakt(personopplysninger.personIdent) }
     }
 
-    private fun navnBolkResponse() = mapOf(
-        "fullmaktIdent" to PdlNavn(listOf(Navn("fullmakt", null, "etternavn", metadataGjeldende))),
-    )
+    private fun navnBolkResponse() =
+        mapOf(
+            "fullmaktIdent" to PdlNavn(listOf(Navn("fullmakt", null, "etternavn", metadataGjeldende))),
+        )
 
-    private fun lagPdlSøker() = pdlSøker(
-        listOf(PdlAdressebeskyttelse(PdlAdressebeskyttelseGradering1.FORTROLIG, metadataGjeldende)),
-        listOf(Dødsfall(LocalDate.now())),
-        listOf(PdlFolkeregisterpersonstatus1("doed", "d", metadataGjeldende)),
-        PdlKjønn(KjønnType.KVINNE),
-        listOf(lagNavn()),
-        listOf(
-            VergemaalEllerFremtidsfullmakt(
-                "embete",
-                null,
-                "type",
-                VergeEllerFullmektig("vergeIdent", Personnavn("", "", null), "omfang", true),
+    private fun lagPdlSøker() =
+        pdlSøker(
+            listOf(PdlAdressebeskyttelse(PdlAdressebeskyttelseGradering1.FORTROLIG, metadataGjeldende)),
+            listOf(Dødsfall(LocalDate.now())),
+            listOf(PdlFolkeregisterpersonstatus1("doed", "d", metadataGjeldende)),
+            PdlKjønn(KjønnType.KVINNE),
+            listOf(lagNavn()),
+            listOf(
+                VergemaalEllerFremtidsfullmakt(
+                    "embete",
+                    null,
+                    "type",
+                    VergeEllerFullmektig("vergeIdent", Personnavn("", "", null), "omfang", true),
+                ),
             ),
-        ),
-    )
+        )
 }

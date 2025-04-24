@@ -10,22 +10,20 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class SwaggerDocumentationConfig {
-
     private val bearer = "Bearer"
 
     @Bean
-    fun openApi(): OpenAPI {
-        return OpenAPI().info(Info().title("Familie klage api"))
+    fun openApi(): OpenAPI =
+        OpenAPI()
+            .info(Info().title("Familie klage api"))
             .components(Components().addSecuritySchemes(bearer, bearerTokenSecurityScheme()))
             .addSecurityItem(SecurityRequirement().addList(bearer, listOf("read", "write")))
-    }
 
-    private fun bearerTokenSecurityScheme(): SecurityScheme {
-        return SecurityScheme()
+    private fun bearerTokenSecurityScheme(): SecurityScheme =
+        SecurityScheme()
             .type(SecurityScheme.Type.APIKEY)
             .scheme(bearer)
             .bearerFormat("JWT")
             .`in`(SecurityScheme.In.HEADER)
             .name("Authorization")
-    }
 }

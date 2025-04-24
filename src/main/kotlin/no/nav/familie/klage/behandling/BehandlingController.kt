@@ -4,7 +4,6 @@ import no.nav.familie.klage.behandling.domain.Klagebehandlingsresultat
 import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.OppgaveDto
 import no.nav.familie.klage.behandling.dto.SettPåVentRequest
-import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
@@ -14,7 +13,6 @@ import no.nav.familie.klage.oppgave.OppgaveUtil.ENHET_NR_NAY
 import no.nav.familie.klage.oppgave.TilordnetRessursService
 import no.nav.familie.klage.oppgave.dto.SaksbehandlerDto
 import no.nav.familie.kontrakter.felles.Ressurs
-import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.KanOppretteRevurderingResponse
 import no.nav.familie.kontrakter.felles.oppgave.MappeDto
@@ -42,37 +40,46 @@ class BehandlingController(
     private val behandlingPåVentService: BehandlingPåVentService,
     private val oppgaveService: OppgaveService,
 ) {
-
     @GetMapping("{behandlingId}")
-    fun hentBehandling(@PathVariable behandlingId: UUID): Ressurs<BehandlingDto> {
+    fun hentBehandling(
+        @PathVariable behandlingId: UUID,
+    ): Ressurs<BehandlingDto> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(behandlingService.hentBehandlingDto(behandlingId))
     }
 
     @PostMapping("{behandlingId}/ferdigstill")
-    fun ferdigstillBehandling(@PathVariable behandlingId: UUID): Ressurs<Unit> {
+    fun ferdigstillBehandling(
+        @PathVariable behandlingId: UUID,
+    ): Ressurs<Unit> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.CREATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId))
     }
 
     @GetMapping("{behandlingId}/fagsystem-vedtak")
-    fun hentFagsystemVedtak(@PathVariable behandlingId: UUID): Ressurs<List<FagsystemVedtak>> {
+    fun hentFagsystemVedtak(
+        @PathVariable behandlingId: UUID,
+    ): Ressurs<List<FagsystemVedtak>> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(fagsystemVedtakService.hentFagsystemVedtak(behandlingId))
     }
 
     @GetMapping("{behandlingId}/kan-opprette-revurdering")
-    fun kanOppretteRevurdering(@PathVariable behandlingId: UUID): Ressurs<KanOppretteRevurderingResponse> {
+    fun kanOppretteRevurdering(
+        @PathVariable behandlingId: UUID,
+    ): Ressurs<KanOppretteRevurderingResponse> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(opprettRevurderingService.kanOppretteRevurdering(behandlingId))
     }
 
     @GetMapping("{behandlingId}/ansvarlig-saksbehandler")
-    fun hentAnsvarligSaksbehandlerForBehandling(@PathVariable behandlingId: UUID): Ressurs<SaksbehandlerDto> {
+    fun hentAnsvarligSaksbehandlerForBehandling(
+        @PathVariable behandlingId: UUID,
+    ): Ressurs<SaksbehandlerDto> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
             behandlingId = behandlingId,
             event = AuditLoggerEvent.ACCESS,
@@ -83,7 +90,9 @@ class BehandlingController(
     }
 
     @GetMapping("{behandlingId}/oppgave")
-    fun hentOppgave(@PathVariable behandlingId: UUID): Ressurs<OppgaveDto?> {
+    fun hentOppgave(
+        @PathVariable behandlingId: UUID,
+    ): Ressurs<OppgaveDto?> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
             behandlingId = behandlingId,
             event = AuditLoggerEvent.ACCESS,
@@ -133,7 +142,7 @@ class BehandlingController(
     }
 
     @GetMapping("{behandlingId}/hent-klager-ikke-medhold-formkrav-avvist")
-    fun hentKlager(@PathVariable behandlingId: UUID): Ressurs<List<Klagebehandlingsresultat>> {
-        return Ressurs.success(behandlingService.hentKlagerIkkeMedholdFormkravAvvist(behandlingId))
-    }
+    fun hentKlager(
+        @PathVariable behandlingId: UUID,
+    ): Ressurs<List<Klagebehandlingsresultat>> = Ressurs.success(behandlingService.hentKlagerIkkeMedholdFormkravAvvist(behandlingId))
 }

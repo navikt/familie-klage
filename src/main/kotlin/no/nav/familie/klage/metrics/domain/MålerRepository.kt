@@ -8,7 +8,6 @@ import java.util.UUID
 
 @Repository
 interface MålerRepository : CrudRepository<Behandling, UUID> {
-
     // language=PostgreSQL
     @Query(
         """SELECT 

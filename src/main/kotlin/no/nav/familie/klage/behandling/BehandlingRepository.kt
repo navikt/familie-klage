@@ -15,19 +15,26 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface BehandlingRepository : RepositoryInterface<Behandling, UUID>, InsertUpdateRepository<Behandling> {
-
+interface BehandlingRepository :
+    RepositoryInterface<Behandling, UUID>,
+    InsertUpdateRepository<Behandling> {
     @Modifying
     @Query(
         """UPDATE behandling SET steg = :steg WHERE id = :behandling_id""",
     )
-    fun updateSteg(behandling_id: UUID, steg: StegType)
+    fun updateSteg(
+        behandling_id: UUID,
+        steg: StegType,
+    )
 
     @Modifying
     @Query(
         """UPDATE behandling SET status = :nyStatus WHERE id = :behandling_id""",
     )
-    fun updateStatus(@Param("behandling_id") behandlingId: UUID, nyStatus: BehandlingStatus)
+    fun updateStatus(
+        @Param("behandling_id") behandlingId: UUID,
+        nyStatus: BehandlingStatus,
+    )
 
     fun findByEksternBehandlingId(eksternBehandlingId: UUID): Behandling
 
@@ -59,5 +66,8 @@ interface BehandlingRepository : RepositoryInterface<Behandling, UUID>, InsertUp
 
     @Modifying
     @Query("UPDATE behandling SET paklaget_vedtak_detaljer=:detaljer WHERE id=:id")
-    fun oppdaterPåklagetVedtakDetaljer(detaljer: PåklagetVedtakDetaljer, id: UUID)
+    fun oppdaterPåklagetVedtakDetaljer(
+        detaljer: PåklagetVedtakDetaljer,
+        id: UUID,
+    )
 }

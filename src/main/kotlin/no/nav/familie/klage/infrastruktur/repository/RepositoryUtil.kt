@@ -3,11 +3,12 @@ package no.nav.familie.klage.repository
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.findByIdOrNull
 
-inline fun <reified T, ID> CrudRepository<T, ID>.findByIdOrThrow(id: ID): T {
-    return findByIdOrNull(id) ?: throw IllegalStateException("Finner ikke ${T::class.simpleName} med id=$id")
-}
+inline fun <reified T, ID> CrudRepository<T, ID>.findByIdOrThrow(id: ID): T = findByIdOrNull(id) ?: throw IllegalStateException("Finner ikke ${T::class.simpleName} med id=$id")
 
-inline fun <reified T, ID> CrudRepository<T, ID>.findAllByIdOrThrow(ids: Set<ID>, getId: (T) -> ID): List<T> {
+inline fun <reified T, ID> CrudRepository<T, ID>.findAllByIdOrThrow(
+    ids: Set<ID>,
+    getId: (T) -> ID,
+): List<T> {
     val result = findAllById(ids).toList()
     val resultPerId = result.map(getId)
     require(resultPerId.containsAll(ids)) {

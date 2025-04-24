@@ -36,13 +36,14 @@ class BrevmottakerOppretterTest {
     private val brevRepository: BrevRepository = mockk()
     private val personopplysningerService: PersonopplysningerService = mockk()
 
-    private val brevmottakerOppretter: BrevmottakerOppretter = BrevmottakerOppretter(
-        behandlingService = behandlingService,
-        fagsakService = fagsakService,
-        brevService = brevService,
-        brevRepository = brevRepository,
-        personopplysningerService = personopplysningerService,
-    )
+    private val brevmottakerOppretter: BrevmottakerOppretter =
+        BrevmottakerOppretter(
+            behandlingService = behandlingService,
+            fagsakService = fagsakService,
+            brevService = brevService,
+            brevRepository = brevRepository,
+            personopplysningerService = personopplysningerService,
+        )
 
     @BeforeEach
     fun setUp() {
@@ -65,9 +66,10 @@ class BrevmottakerOppretterTest {
             val nyBrevmottakerOrganisasjon = DomainUtil.lagNyBrevmottakerOrganisasjon()
 
             // Act & assert
-            val exception = assertThrows<UnsupportedOperationException> {
-                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerOrganisasjon)
-            }
+            val exception =
+                assertThrows<UnsupportedOperationException> {
+                    brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerOrganisasjon)
+                }
             assertThat(exception.message).isEqualTo("NyBrevmottakerOrganisasjon er ikke støttet.")
         }
 
@@ -79,9 +81,10 @@ class BrevmottakerOppretterTest {
             val nyBrevmottakerPersonMedIdent = DomainUtil.lagNyBrevmottakerPersonMedIdent()
 
             // Act & assert
-            val exception = assertThrows<UnsupportedOperationException> {
-                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonMedIdent)
-            }
+            val exception =
+                assertThrows<UnsupportedOperationException> {
+                    brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonMedIdent)
+                }
             assertThat(exception.message).isEqualTo("NyBrevmottakerPersonMedIdent er ikke støttet.")
         }
 
@@ -97,9 +100,10 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             // Act & assert
-            val exception = assertThrows<Feil> {
-                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
-            }
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
+                }
             assertThat(exception.message).isEqualTo("Behandling ${behandling.id} er låst for videre behandling.")
         }
 
@@ -115,9 +119,10 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             // Act & assert
-            val exception = assertThrows<Feil> {
-                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
-            }
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
+                }
             assertThat(exception.message).isEqualTo("Behandlingen er i steg ${StegType.OPPRETTET}, forventet steg ${StegType.BREV}.")
         }
 
@@ -126,23 +131,26 @@ class BrevmottakerOppretterTest {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
-            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                mottakerRolle = MottakerRolle.FULLMAKT,
-                navn = "navn",
-                adresselinje1 = "adresse1",
-                adresselinje2 = "adresse2",
-                postnummer = "0010",
-                poststed = "Oslo",
-                landkode = "NO",
-            )
+            val nyBrevmottakerPersonUtenIdent =
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                    mottakerRolle = MottakerRolle.FULLMAKT,
+                    navn = "navn",
+                    adresselinje1 = "adresse1",
+                    adresselinje2 = "adresse2",
+                    postnummer = "0010",
+                    poststed = "Oslo",
+                    landkode = "NO",
+                )
 
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
-            val brevmottakerPersonUtenIdent = DomainUtil.lagBrevmottakerPersonUtenIdent(
-                mottakerRolle = MottakerRolle.FULLMAKT,
-            )
-            val brevmottakere = DomainUtil.lagBrevmottakere(
-                personer = listOf(brevmottakerPersonMedIdent, brevmottakerPersonUtenIdent),
-            )
+            val brevmottakerPersonUtenIdent =
+                DomainUtil.lagBrevmottakerPersonUtenIdent(
+                    mottakerRolle = MottakerRolle.FULLMAKT,
+                )
+            val brevmottakere =
+                DomainUtil.lagBrevmottakere(
+                    personer = listOf(brevmottakerPersonMedIdent, brevmottakerPersonUtenIdent),
+                )
             val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
 
             every {
@@ -158,9 +166,10 @@ class BrevmottakerOppretterTest {
             } returns brev
 
             // Act & assert
-            val exception = assertThrows<Feil> {
-                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
-            }
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
+                }
             assertThat(exception.message).isEqualTo("Kan ikke ha duplikate MottakerRolle. FULLMAKT finnes allerede for ${behandling.id}.")
         }
 
@@ -169,15 +178,16 @@ class BrevmottakerOppretterTest {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
-            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
-                navn = "navn",
-                adresselinje1 = "Adresse 1, Mars, 1337",
-                adresselinje2 = null,
-                postnummer = null,
-                poststed = null,
-                landkode = "DK",
-            )
+            val nyBrevmottakerPersonUtenIdent =
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                    mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+                    navn = "navn",
+                    adresselinje1 = "Adresse 1, Mars, 1337",
+                    adresselinje2 = null,
+                    postnummer = null,
+                    poststed = null,
+                    landkode = "DK",
+                )
 
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
             val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonMedIdent))
@@ -196,10 +206,13 @@ class BrevmottakerOppretterTest {
             } returns brev
 
             // Act & assert
-            val exception = assertThrows<Feil> {
-                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
-            }
-            assertThat(exception.message).isEqualTo("Ved bruker med utenlandsk adresse skal brevmottakerens navn være brukerens navn for ${behandling.id}.")
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
+                }
+            assertThat(
+                exception.message,
+            ).isEqualTo("Ved bruker med utenlandsk adresse skal brevmottakerens navn være brukerens navn for ${behandling.id}.")
         }
 
         @Test
@@ -207,15 +220,16 @@ class BrevmottakerOppretterTest {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
-            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                mottakerRolle = MottakerRolle.DØDSBO,
-                navn = "navn",
-                adresselinje1 = "Adresse 1, Mars, 1337",
-                adresselinje2 = null,
-                postnummer = null,
-                poststed = null,
-                landkode = "DK",
-            )
+            val nyBrevmottakerPersonUtenIdent =
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                    mottakerRolle = MottakerRolle.DØDSBO,
+                    navn = "navn",
+                    adresselinje1 = "Adresse 1, Mars, 1337",
+                    adresselinje2 = null,
+                    postnummer = null,
+                    poststed = null,
+                    landkode = "DK",
+                )
 
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
             val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonMedIdent))
@@ -234,9 +248,10 @@ class BrevmottakerOppretterTest {
             } returns brev
 
             // Act & assert
-            val exception = assertThrows<Feil> {
-                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
-            }
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
+                }
             assertThat(exception.message).isEqualTo("Ved dødsbo skal brevmottakerens navn inneholde brukerens navn for ${behandling.id}.")
         }
 
@@ -245,21 +260,23 @@ class BrevmottakerOppretterTest {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
-            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                mottakerRolle = MottakerRolle.DØDSBO,
-                navn = "navn",
-                adresselinje1 = "Adresse 1, Mars, 1337",
-                adresselinje2 = null,
-                postnummer = null,
-                poststed = null,
-                landkode = "DK",
-            )
+            val nyBrevmottakerPersonUtenIdent =
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                    mottakerRolle = MottakerRolle.DØDSBO,
+                    navn = "navn",
+                    adresselinje1 = "Adresse 1, Mars, 1337",
+                    adresselinje2 = null,
+                    postnummer = null,
+                    poststed = null,
+                    landkode = "DK",
+                )
 
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
             val brevmottakerPersonUtenIdent = DomainUtil.lagBrevmottakerPersonUtenIdent()
-            val brevmottakere = DomainUtil.lagBrevmottakere(
-                personer = listOf(brevmottakerPersonMedIdent, brevmottakerPersonUtenIdent),
-            )
+            val brevmottakere =
+                DomainUtil.lagBrevmottakere(
+                    personer = listOf(brevmottakerPersonMedIdent, brevmottakerPersonUtenIdent),
+                )
             val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
 
             every {
@@ -275,9 +292,10 @@ class BrevmottakerOppretterTest {
             } returns brev
 
             // Act & assert
-            val exception = assertThrows<Feil> {
-                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
-            }
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
+                }
             assertThat(exception.message).isEqualTo("Kan ikke legge til dødsbo når det allerede finnes brevmottakere for ${behandling.id}.")
         }
 
@@ -286,23 +304,26 @@ class BrevmottakerOppretterTest {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
-            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
-                navn = "navn",
-                adresselinje1 = "Adresse 1, Mars, 1337",
-                adresselinje2 = null,
-                postnummer = null,
-                poststed = null,
-                landkode = "DK",
-            )
+            val nyBrevmottakerPersonUtenIdent =
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                    mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+                    navn = "navn",
+                    adresselinje1 = "Adresse 1, Mars, 1337",
+                    adresselinje2 = null,
+                    postnummer = null,
+                    poststed = null,
+                    landkode = "DK",
+                )
 
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
-            val brevmottakerPersonUtenIdent = DomainUtil.lagBrevmottakerPersonUtenIdent(
-                mottakerRolle = MottakerRolle.DØDSBO,
-            )
-            val brevmottakere = DomainUtil.lagBrevmottakere(
-                personer = listOf(brevmottakerPersonMedIdent, brevmottakerPersonUtenIdent),
-            )
+            val brevmottakerPersonUtenIdent =
+                DomainUtil.lagBrevmottakerPersonUtenIdent(
+                    mottakerRolle = MottakerRolle.DØDSBO,
+                )
+            val brevmottakere =
+                DomainUtil.lagBrevmottakere(
+                    personer = listOf(brevmottakerPersonMedIdent, brevmottakerPersonUtenIdent),
+                )
             val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
 
             every {
@@ -318,10 +339,13 @@ class BrevmottakerOppretterTest {
             } returns brev
 
             // Act & assert
-            val exception = assertThrows<Feil> {
-                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
-            }
-            assertThat(exception.message).isEqualTo("Kan ikke legge til flere brevmottakere når det allerede finnes et dødsbo for ${behandling.id}.")
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
+                }
+            assertThat(
+                exception.message,
+            ).isEqualTo("Kan ikke legge til flere brevmottakere når det allerede finnes et dødsbo for ${behandling.id}.")
         }
 
         @Test
@@ -329,23 +353,26 @@ class BrevmottakerOppretterTest {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
-            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                mottakerRolle = MottakerRolle.BRUKER,
-                navn = "navn",
-                adresselinje1 = "Adresse 1, Mars, 1337",
-                adresselinje2 = null,
-                postnummer = null,
-                poststed = null,
-                landkode = "DK",
-            )
+            val nyBrevmottakerPersonUtenIdent =
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                    mottakerRolle = MottakerRolle.BRUKER,
+                    navn = "navn",
+                    adresselinje1 = "Adresse 1, Mars, 1337",
+                    adresselinje2 = null,
+                    postnummer = null,
+                    poststed = null,
+                    landkode = "DK",
+                )
 
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
-            val brevmottakerPersonUtenIdent = DomainUtil.lagBrevmottakerPersonUtenIdent(
-                mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
-            )
-            val brevmottakere = DomainUtil.lagBrevmottakere(
-                personer = listOf(brevmottakerPersonMedIdent, brevmottakerPersonUtenIdent),
-            )
+            val brevmottakerPersonUtenIdent =
+                DomainUtil.lagBrevmottakerPersonUtenIdent(
+                    mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+                )
+            val brevmottakere =
+                DomainUtil.lagBrevmottakere(
+                    personer = listOf(brevmottakerPersonMedIdent, brevmottakerPersonUtenIdent),
+                )
             val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
 
             every {
@@ -361,10 +388,13 @@ class BrevmottakerOppretterTest {
             } returns brev
 
             // Act & assert
-            val exception = assertThrows<Feil> {
-                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
-            }
-            assertThat(exception.message).isEqualTo("Bruker med utenlandsk adresse kan kun kombineres med verge eller fullmektig for ${behandling.id}.")
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
+                }
+            assertThat(
+                exception.message,
+            ).isEqualTo("Bruker med utenlandsk adresse kan kun kombineres med verge eller fullmektig for ${behandling.id}.")
         }
 
         @Test
@@ -372,23 +402,26 @@ class BrevmottakerOppretterTest {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
-            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                mottakerRolle = MottakerRolle.BRUKER,
-                navn = "navn",
-                adresselinje1 = "Adresse 1, Mars, 1337",
-                adresselinje2 = null,
-                postnummer = null,
-                poststed = null,
-                landkode = "DK",
-            )
+            val nyBrevmottakerPersonUtenIdent =
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                    mottakerRolle = MottakerRolle.BRUKER,
+                    navn = "navn",
+                    adresselinje1 = "Adresse 1, Mars, 1337",
+                    adresselinje2 = null,
+                    postnummer = null,
+                    poststed = null,
+                    landkode = "DK",
+                )
 
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
-            val brevmottakerPersonUtenIdent = DomainUtil.lagBrevmottakerPersonUtenIdent(
-                mottakerRolle = MottakerRolle.FULLMAKT,
-            )
-            val brevmottakere = DomainUtil.lagBrevmottakere(
-                personer = listOf(brevmottakerPersonMedIdent, brevmottakerPersonUtenIdent),
-            )
+            val brevmottakerPersonUtenIdent =
+                DomainUtil.lagBrevmottakerPersonUtenIdent(
+                    mottakerRolle = MottakerRolle.FULLMAKT,
+                )
+            val brevmottakere =
+                DomainUtil.lagBrevmottakere(
+                    personer = listOf(brevmottakerPersonMedIdent, brevmottakerPersonUtenIdent),
+                )
             val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
 
             every {
@@ -404,9 +437,10 @@ class BrevmottakerOppretterTest {
             } returns brev
 
             // Act & assert
-            val exception = assertThrows<Feil> {
-                brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
-            }
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
+                }
             assertThat(exception.message).isEqualTo(
                 "Kan kun legge til bruker med utenlandsk adresse om det finnes en brevmottaker allerede for ${behandling.id}.",
             )
@@ -414,21 +448,20 @@ class BrevmottakerOppretterTest {
 
         @EnumSource(value = MottakerRolle::class)
         @ParameterizedTest
-        fun `skal opprette brevmottaker når det allerede finnes brevmottakere`(
-            mottakerRolle: MottakerRolle,
-        ) {
+        fun `skal opprette brevmottaker når det allerede finnes brevmottakere`(mottakerRolle: MottakerRolle) {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
-            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                mottakerRolle = mottakerRolle,
-                navn = "navn",
-                adresselinje1 = "Adresse 1, Mars, 1337",
-                adresselinje2 = null,
-                postnummer = null,
-                poststed = null,
-                landkode = "DK",
-            )
+            val nyBrevmottakerPersonUtenIdent =
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                    mottakerRolle = mottakerRolle,
+                    navn = "navn",
+                    adresselinje1 = "Adresse 1, Mars, 1337",
+                    adresselinje2 = null,
+                    postnummer = null,
+                    poststed = null,
+                    landkode = "DK",
+                )
 
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
             val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonMedIdent))
@@ -455,10 +488,11 @@ class BrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val brevmottaker = brevmottakerOppretter.opprettBrevmottaker(
-                behandling.id,
-                nyBrevmottakerPersonUtenIdent,
-            )
+            val brevmottaker =
+                brevmottakerOppretter.opprettBrevmottaker(
+                    behandling.id,
+                    nyBrevmottakerPersonUtenIdent,
+                )
 
             // Act & assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
@@ -475,21 +509,20 @@ class BrevmottakerOppretterTest {
 
         @EnumSource(value = MottakerRolle::class)
         @ParameterizedTest
-        fun `skal opprette brevmottaker når brevmottakere i brev er null`(
-            mottakerRolle: MottakerRolle,
-        ) {
+        fun `skal opprette brevmottaker når brevmottakere i brev er null`(mottakerRolle: MottakerRolle) {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
-            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                mottakerRolle = mottakerRolle,
-                navn = "navn",
-                adresselinje1 = "Adresse 1, Mars, 1337",
-                adresselinje2 = null,
-                postnummer = null,
-                poststed = null,
-                landkode = "DK",
-            )
+            val nyBrevmottakerPersonUtenIdent =
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                    mottakerRolle = mottakerRolle,
+                    navn = "navn",
+                    adresselinje1 = "Adresse 1, Mars, 1337",
+                    adresselinje2 = null,
+                    postnummer = null,
+                    poststed = null,
+                    landkode = "DK",
+                )
 
             val brev = DomainUtil.lagBrev(mottakere = null)
 
@@ -514,10 +547,11 @@ class BrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val brevmottaker = brevmottakerOppretter.opprettBrevmottaker(
-                behandling.id,
-                nyBrevmottakerPersonUtenIdent,
-            )
+            val brevmottaker =
+                brevmottakerOppretter.opprettBrevmottaker(
+                    behandling.id,
+                    nyBrevmottakerPersonUtenIdent,
+                )
 
             // Act & assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
@@ -534,21 +568,20 @@ class BrevmottakerOppretterTest {
 
         @EnumSource(value = MottakerRolle::class)
         @ParameterizedTest
-        fun `skal opprette brevmottaker når brevmottakere i brev er tom`(
-            mottakerRolle: MottakerRolle,
-        ) {
+        fun `skal opprette brevmottaker når brevmottakere i brev er tom`(mottakerRolle: MottakerRolle) {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
-            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                mottakerRolle = mottakerRolle,
-                navn = "navn",
-                adresselinje1 = "Adresse 1, Mars, 1337",
-                adresselinje2 = null,
-                postnummer = null,
-                poststed = null,
-                landkode = "DK",
-            )
+            val nyBrevmottakerPersonUtenIdent =
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                    mottakerRolle = mottakerRolle,
+                    navn = "navn",
+                    adresselinje1 = "Adresse 1, Mars, 1337",
+                    adresselinje2 = null,
+                    postnummer = null,
+                    poststed = null,
+                    landkode = "DK",
+                )
 
             val brev = DomainUtil.lagBrev(mottakere = DomainUtil.lagBrevmottakere(personer = emptyList()))
 
@@ -573,10 +606,11 @@ class BrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val brevmottaker = brevmottakerOppretter.opprettBrevmottaker(
-                behandling.id,
-                nyBrevmottakerPersonUtenIdent,
-            )
+            val brevmottaker =
+                brevmottakerOppretter.opprettBrevmottaker(
+                    behandling.id,
+                    nyBrevmottakerPersonUtenIdent,
+                )
 
             // Act & assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
@@ -603,15 +637,16 @@ class BrevmottakerOppretterTest {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
-            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                mottakerRolle = mottakerRolle,
-                navn = "navn",
-                adresselinje1 = "Adresse 1, Mars, 1337",
-                adresselinje2 = null,
-                postnummer = null,
-                poststed = null,
-                landkode = "DK",
-            )
+            val nyBrevmottakerPersonUtenIdent =
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                    mottakerRolle = mottakerRolle,
+                    navn = "navn",
+                    adresselinje1 = "Adresse 1, Mars, 1337",
+                    adresselinje2 = null,
+                    postnummer = null,
+                    poststed = null,
+                    landkode = "DK",
+                )
 
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
             val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonMedIdent))
@@ -638,10 +673,11 @@ class BrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val brevmottaker = brevmottakerOppretter.opprettBrevmottaker(
-                behandling.id,
-                nyBrevmottakerPersonUtenIdent,
-            )
+            val brevmottaker =
+                brevmottakerOppretter.opprettBrevmottaker(
+                    behandling.id,
+                    nyBrevmottakerPersonUtenIdent,
+                )
 
             // Act & assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
@@ -668,23 +704,26 @@ class BrevmottakerOppretterTest {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
-            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                mottakerRolle = mottakerRolle,
-                navn = "navn",
-                adresselinje1 = "Adresse 1, Mars, 1337",
-                adresselinje2 = null,
-                postnummer = null,
-                poststed = null,
-                landkode = "DK",
-            )
+            val nyBrevmottakerPersonUtenIdent =
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                    mottakerRolle = mottakerRolle,
+                    navn = "navn",
+                    adresselinje1 = "Adresse 1, Mars, 1337",
+                    adresselinje2 = null,
+                    postnummer = null,
+                    poststed = null,
+                    landkode = "DK",
+                )
 
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
-            val brevmottakerPersonUtenIdent = DomainUtil.lagBrevmottakerPersonUtenIdent(
-                mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
-            )
-            val brevmottakere = DomainUtil.lagBrevmottakere(
-                personer = listOf(brevmottakerPersonMedIdent, brevmottakerPersonUtenIdent),
-            )
+            val brevmottakerPersonUtenIdent =
+                DomainUtil.lagBrevmottakerPersonUtenIdent(
+                    mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+                )
+            val brevmottakere =
+                DomainUtil.lagBrevmottakere(
+                    personer = listOf(brevmottakerPersonMedIdent, brevmottakerPersonUtenIdent),
+                )
             val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
 
             every {
@@ -708,10 +747,11 @@ class BrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val brevmottaker = brevmottakerOppretter.opprettBrevmottaker(
-                behandling.id,
-                nyBrevmottakerPersonUtenIdent,
-            )
+            val brevmottaker =
+                brevmottakerOppretter.opprettBrevmottaker(
+                    behandling.id,
+                    nyBrevmottakerPersonUtenIdent,
+                )
 
             // Act & assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
@@ -738,23 +778,26 @@ class BrevmottakerOppretterTest {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
-            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
-                navn = "navn",
-                adresselinje1 = "Adresse 1, Mars, 1337",
-                adresselinje2 = null,
-                postnummer = null,
-                poststed = null,
-                landkode = "DK",
-            )
+            val nyBrevmottakerPersonUtenIdent =
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                    mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+                    navn = "navn",
+                    adresselinje1 = "Adresse 1, Mars, 1337",
+                    adresselinje2 = null,
+                    postnummer = null,
+                    poststed = null,
+                    landkode = "DK",
+                )
 
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
-            val brevmottakerPersonUtenIdent = DomainUtil.lagBrevmottakerPersonUtenIdent(
-                mottakerRolle = mottakerRolle,
-            )
-            val brevmottakere = DomainUtil.lagBrevmottakere(
-                personer = listOf(brevmottakerPersonMedIdent, brevmottakerPersonUtenIdent),
-            )
+            val brevmottakerPersonUtenIdent =
+                DomainUtil.lagBrevmottakerPersonUtenIdent(
+                    mottakerRolle = mottakerRolle,
+                )
+            val brevmottakere =
+                DomainUtil.lagBrevmottakere(
+                    personer = listOf(brevmottakerPersonMedIdent, brevmottakerPersonUtenIdent),
+                )
             val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
 
             every {
@@ -778,10 +821,11 @@ class BrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val brevmottaker = brevmottakerOppretter.opprettBrevmottaker(
-                behandling.id,
-                nyBrevmottakerPersonUtenIdent,
-            )
+            val brevmottaker =
+                brevmottakerOppretter.opprettBrevmottaker(
+                    behandling.id,
+                    nyBrevmottakerPersonUtenIdent,
+                )
 
             // Act & assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
@@ -802,27 +846,27 @@ class BrevmottakerOppretterTest {
             mode = EnumSource.Mode.INCLUDE,
         )
         @ParameterizedTest
-        fun `skal slette bruker ved enkelte MottakerRoller`(
-            mottakerRolle: MottakerRolle,
-        ) {
+        fun `skal slette bruker ved enkelte MottakerRoller`(mottakerRolle: MottakerRolle) {
             // Arrange
             val personIdent = PersonIdent("01010199999")
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
-            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                mottakerRolle = mottakerRolle,
-                navn = "navn",
-                adresselinje1 = "Adresse 1, Mars, 1337",
-                adresselinje2 = null,
-                postnummer = null,
-                poststed = null,
-                landkode = "DK",
-            )
+            val nyBrevmottakerPersonUtenIdent =
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                    mottakerRolle = mottakerRolle,
+                    navn = "navn",
+                    adresselinje1 = "Adresse 1, Mars, 1337",
+                    adresselinje2 = null,
+                    postnummer = null,
+                    poststed = null,
+                    landkode = "DK",
+                )
 
-            val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent(
-                mottakerRolle = MottakerRolle.BRUKER,
-                personIdent = personIdent.ident,
-            )
+            val brevmottakerPersonMedIdent =
+                DomainUtil.lagBrevmottakerPersonMedIdent(
+                    mottakerRolle = MottakerRolle.BRUKER,
+                    personIdent = personIdent.ident,
+                )
             val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonMedIdent))
             val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
 
@@ -849,10 +893,11 @@ class BrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val brevmottaker = brevmottakerOppretter.opprettBrevmottaker(
-                behandling.id,
-                nyBrevmottakerPersonUtenIdent,
-            )
+            val brevmottaker =
+                brevmottakerOppretter.opprettBrevmottaker(
+                    behandling.id,
+                    nyBrevmottakerPersonUtenIdent,
+                )
 
             // Act & assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
@@ -887,20 +932,22 @@ class BrevmottakerOppretterTest {
             val personIdent = PersonIdent("01010199999")
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
-            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                mottakerRolle = mottakerRolle,
-                navn = "navn",
-                adresselinje1 = "Adresse 1, Mars, 1337",
-                adresselinje2 = null,
-                postnummer = null,
-                poststed = null,
-                landkode = "DK",
-            )
+            val nyBrevmottakerPersonUtenIdent =
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                    mottakerRolle = mottakerRolle,
+                    navn = "navn",
+                    adresselinje1 = "Adresse 1, Mars, 1337",
+                    adresselinje2 = null,
+                    postnummer = null,
+                    poststed = null,
+                    landkode = "DK",
+                )
 
-            val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent(
-                mottakerRolle = MottakerRolle.BRUKER,
-                personIdent = "11010199999",
-            )
+            val brevmottakerPersonMedIdent =
+                DomainUtil.lagBrevmottakerPersonMedIdent(
+                    mottakerRolle = MottakerRolle.BRUKER,
+                    personIdent = "11010199999",
+                )
             val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonMedIdent))
             val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
 
@@ -927,10 +974,11 @@ class BrevmottakerOppretterTest {
             } returnsArgument 0
 
             // Act
-            val brevmottaker = brevmottakerOppretter.opprettBrevmottaker(
-                behandling.id,
-                nyBrevmottakerPersonUtenIdent,
-            )
+            val brevmottaker =
+                brevmottakerOppretter.opprettBrevmottaker(
+                    behandling.id,
+                    nyBrevmottakerPersonUtenIdent,
+                )
 
             // Act & assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {

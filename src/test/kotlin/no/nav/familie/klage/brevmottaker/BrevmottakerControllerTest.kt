@@ -41,25 +41,29 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
         @Test
         fun `skal returnere 403 forbidden når man ikke har tilgang til personen med relasjoner for behandlingen`() {
             // Arrange
-            val fagsak = testoppsettService.lagreFagsak(
-                DomainUtil.fagsak(
-                    stønadstype = Stønadstype.BARNETRYGD,
-                    person = FagsakPerson(
-                        identer = setOf(
-                            PersonIdent(".*ikkeTilgang.*"),
-                        ),
+            val fagsak =
+                testoppsettService.lagreFagsak(
+                    DomainUtil.fagsak(
+                        stønadstype = Stønadstype.BARNETRYGD,
+                        person =
+                            FagsakPerson(
+                                identer =
+                                    setOf(
+                                        PersonIdent(".*ikkeTilgang.*"),
+                                    ),
+                            ),
                     ),
-                ),
-            )
+                )
             val behandling = testoppsettService.lagreBehandling(behandling(fagsak))
             headers.setBearerAuth(onBehalfOfToken(role = rolleConfig.ba.veileder))
 
             // Act
-            val exchange = restTemplate.exchange<Ressurs<BrevmottakereDto>>(
-                localhost("$baseUrl/${behandling.id}"),
-                HttpMethod.GET,
-                HttpEntity<Void>(null, headers),
-            )
+            val exchange =
+                restTemplate.exchange<Ressurs<BrevmottakereDto>>(
+                    localhost("$baseUrl/${behandling.id}"),
+                    HttpMethod.GET,
+                    HttpEntity<Void>(null, headers),
+                )
 
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
@@ -81,11 +85,12 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             headers.setBearerAuth(onBehalfOfToken(role = "ukjent"))
 
             // Act
-            val exchange = restTemplate.exchange<Ressurs<BrevmottakereDto>>(
-                localhost("$baseUrl/${behandling.id}"),
-                HttpMethod.GET,
-                HttpEntity<Void>(null, headers),
-            )
+            val exchange =
+                restTemplate.exchange<Ressurs<BrevmottakereDto>>(
+                    localhost("$baseUrl/${behandling.id}"),
+                    HttpMethod.GET,
+                    HttpEntity<Void>(null, headers),
+                )
 
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
@@ -104,21 +109,24 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
 
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
             val brevmottakerPersonUtenIdent = DomainUtil.lagBrevmottakerPersonUtenIdent()
-            val brevmottakere = DomainUtil.lagBrevmottakere(
-                personer = listOf(
-                    brevmottakerPersonMedIdent,
-                    brevmottakerPersonUtenIdent,
-                ),
-            )
+            val brevmottakere =
+                DomainUtil.lagBrevmottakere(
+                    personer =
+                        listOf(
+                            brevmottakerPersonMedIdent,
+                            brevmottakerPersonUtenIdent,
+                        ),
+                )
             val brev = DomainUtil.lagBrev(behandlingId = behandling.id, mottakere = brevmottakere)
             brevRepository.insert(brev)
 
             // Act
-            val exchange = restTemplate.exchange<Ressurs<BrevmottakereDto>>(
-                localhost("$baseUrl/${behandling.id}"),
-                HttpMethod.GET,
-                HttpEntity<Void>(null, headers),
-            )
+            val exchange =
+                restTemplate.exchange<Ressurs<BrevmottakereDto>>(
+                    localhost("$baseUrl/${behandling.id}"),
+                    HttpMethod.GET,
+                    HttpEntity<Void>(null, headers),
+                )
 
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.OK)
@@ -127,12 +135,22 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             assertThat(exchange.body?.frontendFeilmelding).isNull()
             assertThat(exchange.body?.data?.organisasjoner).isEmpty()
             assertThat(exchange.body?.data?.personer).hasSize(2)
-            assertThat(exchange.body?.data?.personer?.filterIsInstance<BrevmottakerPersonMedIdent>()).anySatisfy {
+            assertThat(
+                exchange.body
+                    ?.data
+                    ?.personer
+                    ?.filterIsInstance<BrevmottakerPersonMedIdent>(),
+            ).anySatisfy {
                 assertThat(it.personIdent).isEqualTo(brevmottakerPersonMedIdent.personIdent)
                 assertThat(it.mottakerRolle).isEqualTo(brevmottakerPersonMedIdent.mottakerRolle)
                 assertThat(it.navn).isEqualTo(brevmottakerPersonMedIdent.navn)
             }
-            assertThat(exchange.body?.data?.personer?.filterIsInstance<BrevmottakerPersonUtenIdent>()).anySatisfy {
+            assertThat(
+                exchange.body
+                    ?.data
+                    ?.personer
+                    ?.filterIsInstance<BrevmottakerPersonUtenIdent>(),
+            ).anySatisfy {
                 assertThat(it.id).isEqualTo(brevmottakerPersonUtenIdent.id)
                 assertThat(it.mottakerRolle).isEqualTo(brevmottakerPersonUtenIdent.mottakerRolle)
                 assertThat(it.navn).isEqualTo(brevmottakerPersonUtenIdent.navn)
@@ -150,30 +168,35 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
         @Test
         fun `skal returnere 403 forbidden når man ikke har tilgang til personen med relasjoner for behandlingen`() {
             // Arrange
-            val fagsak = testoppsettService.lagreFagsak(
-                DomainUtil.fagsak(
-                    stønadstype = Stønadstype.BARNETRYGD,
-                    person = FagsakPerson(
-                        identer = setOf(
-                            PersonIdent(".*ikkeTilgang.*"),
-                        ),
+            val fagsak =
+                testoppsettService.lagreFagsak(
+                    DomainUtil.fagsak(
+                        stønadstype = Stønadstype.BARNETRYGD,
+                        person =
+                            FagsakPerson(
+                                identer =
+                                    setOf(
+                                        PersonIdent(".*ikkeTilgang.*"),
+                                    ),
+                            ),
                     ),
-                ),
-            )
+                )
             val behandling = testoppsettService.lagreBehandling(behandling(fagsak))
             headers.setBearerAuth(onBehalfOfToken(role = rolleConfig.ba.veileder))
 
-            val brevmottakereDto = BrevmottakereDto(
-                personer = listOf(DomainUtil.lagBrevmottakerPersonMedIdent()),
-                organisasjoner = emptyList(),
-            )
+            val brevmottakereDto =
+                BrevmottakereDto(
+                    personer = listOf(DomainUtil.lagBrevmottakerPersonMedIdent()),
+                    organisasjoner = emptyList(),
+                )
 
             // Act
-            val exchange = restTemplate.exchange<Ressurs<BrevmottakereDto>>(
-                localhost("$baseUrl/${behandling.id}"),
-                HttpMethod.PUT,
-                HttpEntity<BrevmottakereDto>(brevmottakereDto, headers),
-            )
+            val exchange =
+                restTemplate.exchange<Ressurs<BrevmottakereDto>>(
+                    localhost("$baseUrl/${behandling.id}"),
+                    HttpMethod.PUT,
+                    HttpEntity<BrevmottakereDto>(brevmottakereDto, headers),
+                )
 
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
@@ -194,17 +217,19 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             val behandling = testoppsettService.lagreBehandling(behandling(fagsak))
             headers.setBearerAuth(onBehalfOfToken(role = "ukjent"))
 
-            val brevmottakereDto = BrevmottakereDto(
-                personer = listOf(DomainUtil.lagBrevmottakerPersonMedIdent()),
-                organisasjoner = emptyList(),
-            )
+            val brevmottakereDto =
+                BrevmottakereDto(
+                    personer = listOf(DomainUtil.lagBrevmottakerPersonMedIdent()),
+                    organisasjoner = emptyList(),
+                )
 
             // Act
-            val exchange = restTemplate.exchange<Ressurs<BrevmottakereDto>>(
-                localhost("$baseUrl/${behandling.id}"),
-                HttpMethod.PUT,
-                HttpEntity<BrevmottakereDto>(brevmottakereDto, headers),
-            )
+            val exchange =
+                restTemplate.exchange<Ressurs<BrevmottakereDto>>(
+                    localhost("$baseUrl/${behandling.id}"),
+                    HttpMethod.PUT,
+                    HttpEntity<BrevmottakereDto>(brevmottakereDto, headers),
+                )
 
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
@@ -221,17 +246,19 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             val behandling = testoppsettService.lagreBehandling(behandling(fagsak))
             headers.setBearerAuth(onBehalfOfToken(role = rolleConfig.ba.saksbehandler))
 
-            val brevmottakereDto = BrevmottakereDto(
-                personer = emptyList(),
-                organisasjoner = emptyList(),
-            )
+            val brevmottakereDto =
+                BrevmottakereDto(
+                    personer = emptyList(),
+                    organisasjoner = emptyList(),
+                )
 
             // Act
-            val exchange = restTemplate.exchange<Ressurs<BrevmottakereDto>>(
-                localhost("$baseUrl/${behandling.id}"),
-                HttpMethod.PUT,
-                HttpEntity<BrevmottakereDto>(brevmottakereDto, headers),
-            )
+            val exchange =
+                restTemplate.exchange<Ressurs<BrevmottakereDto>>(
+                    localhost("$baseUrl/${behandling.id}"),
+                    HttpMethod.PUT,
+                    HttpEntity<BrevmottakereDto>(brevmottakereDto, headers),
+                )
 
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
@@ -253,27 +280,31 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             val brev = DomainUtil.lagBrev(behandlingId = behandling.id, mottakere = brevmottakere)
             brevRepository.insert(brev)
 
-            val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent(
-                personIdent = "123",
-                mottakerRolle = MottakerRolle.BRUKER,
-                navn = "Navn Etternavn",
-            )
-            val brevmottakerOrganisasjon = DomainUtil.lagBrevmottakerOrganisasjon(
-                organisasjonsnummer = "321",
-                organisasjonsnavn = "Orgnavn",
-                navnHosOrganisasjon = "OG",
-            )
-            val brevmottakereDto = BrevmottakereDto(
-                personer = listOf(brevmottakerPersonMedIdent),
-                organisasjoner = listOf(brevmottakerOrganisasjon),
-            )
+            val brevmottakerPersonMedIdent =
+                DomainUtil.lagBrevmottakerPersonMedIdent(
+                    personIdent = "123",
+                    mottakerRolle = MottakerRolle.BRUKER,
+                    navn = "Navn Etternavn",
+                )
+            val brevmottakerOrganisasjon =
+                DomainUtil.lagBrevmottakerOrganisasjon(
+                    organisasjonsnummer = "321",
+                    organisasjonsnavn = "Orgnavn",
+                    navnHosOrganisasjon = "OG",
+                )
+            val brevmottakereDto =
+                BrevmottakereDto(
+                    personer = listOf(brevmottakerPersonMedIdent),
+                    organisasjoner = listOf(brevmottakerOrganisasjon),
+                )
 
             // Act
-            val exchange = restTemplate.exchange<Ressurs<BrevmottakereDto>>(
-                localhost("$baseUrl/${behandling.id}"),
-                HttpMethod.PUT,
-                HttpEntity<BrevmottakereDto>(brevmottakereDto, headers),
-            )
+            val exchange =
+                restTemplate.exchange<Ressurs<BrevmottakereDto>>(
+                    localhost("$baseUrl/${behandling.id}"),
+                    HttpMethod.PUT,
+                    HttpEntity<BrevmottakereDto>(brevmottakereDto, headers),
+                )
 
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.OK)
@@ -281,7 +312,12 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             assertThat(exchange.body?.frontendFeilmelding).isNull()
             assertThat(exchange.body?.status).isEqualTo(Ressurs.Status.SUKSESS)
             assertThat(exchange.body?.data?.personer).hasSize(1)
-            assertThat(exchange.body?.data?.personer?.filterIsInstance<BrevmottakerPersonMedIdent>()).anySatisfy {
+            assertThat(
+                exchange.body
+                    ?.data
+                    ?.personer
+                    ?.filterIsInstance<BrevmottakerPersonMedIdent>(),
+            ).anySatisfy {
                 assertThat(it.personIdent).isEqualTo(brevmottakerPersonMedIdent.personIdent)
                 assertThat(it.mottakerRolle).isEqualTo(brevmottakerPersonMedIdent.mottakerRolle)
                 assertThat(it.navn).isEqualTo(brevmottakerPersonMedIdent.navn)
@@ -300,27 +336,31 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
         @Test
         fun `skal returnere 403 forbidden når man ikke har tilgang til personen med relasjoner for behandlingen`() {
             // Arrange
-            val fagsak = testoppsettService.lagreFagsak(
-                DomainUtil.fagsak(
-                    stønadstype = Stønadstype.BARNETRYGD,
-                    person = FagsakPerson(
-                        identer = setOf(
-                            PersonIdent(".*ikkeTilgang.*"),
-                        ),
+            val fagsak =
+                testoppsettService.lagreFagsak(
+                    DomainUtil.fagsak(
+                        stønadstype = Stønadstype.BARNETRYGD,
+                        person =
+                            FagsakPerson(
+                                identer =
+                                    setOf(
+                                        PersonIdent(".*ikkeTilgang.*"),
+                                    ),
+                            ),
                     ),
-                ),
-            )
+                )
             val behandling = testoppsettService.lagreBehandling(behandling(fagsak))
             headers.setBearerAuth(onBehalfOfToken(role = rolleConfig.ba.veileder))
 
             val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto()
 
             // Act
-            val exchange = restTemplate.exchange<Ressurs<BrevmottakereDto>>(
-                localhost("$baseUrl/${behandling.id}"),
-                HttpMethod.POST,
-                HttpEntity<NyBrevmottakerDto>(nyBrevmottakerDto, headers),
-            )
+            val exchange =
+                restTemplate.exchange<Ressurs<BrevmottakereDto>>(
+                    localhost("$baseUrl/${behandling.id}"),
+                    HttpMethod.POST,
+                    HttpEntity<NyBrevmottakerDto>(nyBrevmottakerDto, headers),
+                )
 
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
@@ -342,11 +382,12 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto()
 
             // Act
-            val exchange = restTemplate.exchange<Ressurs<BrevmottakereDto>>(
-                localhost("$baseUrl/${behandling.id}"),
-                HttpMethod.POST,
-                HttpEntity<NyBrevmottakerDto>(nyBrevmottakerDto, headers),
-            )
+            val exchange =
+                restTemplate.exchange<Ressurs<BrevmottakereDto>>(
+                    localhost("$baseUrl/${behandling.id}"),
+                    HttpMethod.POST,
+                    HttpEntity<NyBrevmottakerDto>(nyBrevmottakerDto, headers),
+                )
 
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
@@ -365,21 +406,23 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             val behandling = testoppsettService.lagreBehandling(behandling(fagsak))
             headers.setBearerAuth(onBehalfOfToken(role = rolleConfig.ba.saksbehandler))
 
-            val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(
-                mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
-                navn = "Fornavn mellomnavn Etternavn",
-                adresselinje1 = "Marsveien 1, X771, Mars",
-                postnummer = "10",
-                poststed = "Mars",
-                landkode = "NO",
-            )
+            val nyBrevmottakerDto =
+                DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(
+                    mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+                    navn = "Fornavn mellomnavn Etternavn",
+                    adresselinje1 = "Marsveien 1, X771, Mars",
+                    postnummer = "10",
+                    poststed = "Mars",
+                    landkode = "NO",
+                )
 
             // Act
-            val exchange = restTemplate.exchange<Ressurs<BrevmottakereDto>>(
-                localhost("$baseUrl/${behandling.id}"),
-                HttpMethod.POST,
-                HttpEntity<NyBrevmottakerDto>(nyBrevmottakerDto, headers),
-            )
+            val exchange =
+                restTemplate.exchange<Ressurs<BrevmottakereDto>>(
+                    localhost("$baseUrl/${behandling.id}"),
+                    HttpMethod.POST,
+                    HttpEntity<NyBrevmottakerDto>(nyBrevmottakerDto, headers),
+                )
 
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
@@ -401,21 +444,23 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             val brev = DomainUtil.lagBrev(behandlingId = behandling.id, mottakere = brevmottakere)
             brevRepository.insert(brev)
 
-            val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(
-                mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
-                navn = "Fornavn mellomnavn Etternavn",
-                adresselinje1 = "Marsveien 1, X771, Mars",
-                postnummer = null,
-                poststed = null,
-                landkode = "DK",
-            )
+            val nyBrevmottakerDto =
+                DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(
+                    mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+                    navn = "Fornavn mellomnavn Etternavn",
+                    adresselinje1 = "Marsveien 1, X771, Mars",
+                    postnummer = null,
+                    poststed = null,
+                    landkode = "DK",
+                )
 
             // Act
-            val exchange = restTemplate.exchange<Ressurs<BrevmottakereDto>>(
-                localhost("$baseUrl/${behandling.id}"),
-                HttpMethod.POST,
-                HttpEntity<NyBrevmottakerDto>(nyBrevmottakerDto, headers),
-            )
+            val exchange =
+                restTemplate.exchange<Ressurs<BrevmottakereDto>>(
+                    localhost("$baseUrl/${behandling.id}"),
+                    HttpMethod.POST,
+                    HttpEntity<NyBrevmottakerDto>(nyBrevmottakerDto, headers),
+                )
 
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.OK)
@@ -424,12 +469,22 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             assertThat(exchange.body?.status).isEqualTo(Ressurs.Status.SUKSESS)
             assertThat(exchange.body?.data?.organisasjoner).isEmpty()
             assertThat(exchange.body?.data?.personer).hasSize(2)
-            assertThat(exchange.body?.data?.personer?.filterIsInstance<BrevmottakerPersonMedIdent>()).anySatisfy {
+            assertThat(
+                exchange.body
+                    ?.data
+                    ?.personer
+                    ?.filterIsInstance<BrevmottakerPersonMedIdent>(),
+            ).anySatisfy {
                 assertThat(it.personIdent).isEqualTo(brevmottakerPersonMedIdent.personIdent)
                 assertThat(it.mottakerRolle).isEqualTo(brevmottakerPersonMedIdent.mottakerRolle)
                 assertThat(it.navn).isEqualTo(brevmottakerPersonMedIdent.navn)
             }
-            assertThat(exchange.body?.data?.personer?.filterIsInstance<BrevmottakerPersonUtenIdent>()).anySatisfy {
+            assertThat(
+                exchange.body
+                    ?.data
+                    ?.personer
+                    ?.filterIsInstance<BrevmottakerPersonUtenIdent>(),
+            ).anySatisfy {
                 assertThat(it.id).isNotNull()
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerDto.mottakerRolle)
                 assertThat(it.navn).isEqualTo(nyBrevmottakerDto.navn)
@@ -447,28 +502,32 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
         @Test
         fun `skal returnere 403 forbidden når man ikke har tilgang til personen med relasjoner for behandlingen`() {
             // Arrange
-            val fagsak = testoppsettService.lagreFagsak(
-                DomainUtil.fagsak(
-                    stønadstype = Stønadstype.BARNETRYGD,
-                    person = FagsakPerson(
-                        identer = setOf(
-                            PersonIdent(".*ikkeTilgang.*"),
-                        ),
+            val fagsak =
+                testoppsettService.lagreFagsak(
+                    DomainUtil.fagsak(
+                        stønadstype = Stønadstype.BARNETRYGD,
+                        person =
+                            FagsakPerson(
+                                identer =
+                                    setOf(
+                                        PersonIdent(".*ikkeTilgang.*"),
+                                    ),
+                            ),
                     ),
-                ),
-            )
+                )
             val behandling = testoppsettService.lagreBehandling(behandling(fagsak))
             headers.setBearerAuth(onBehalfOfToken(role = rolleConfig.ba.saksbehandler))
 
             // Act
-            val exchange = restTemplate.exchange<Ressurs<BrevmottakereDto>>(
-                localhost("$baseUrl/${behandling.id}"),
-                HttpMethod.DELETE,
-                HttpEntity<SlettbarBrevmottakerDto>(
-                    DtoTestUtil.lagSlettbarBrevmottakerPersonUtenIdentDto(UUID.randomUUID()),
-                    headers,
-                ),
-            )
+            val exchange =
+                restTemplate.exchange<Ressurs<BrevmottakereDto>>(
+                    localhost("$baseUrl/${behandling.id}"),
+                    HttpMethod.DELETE,
+                    HttpEntity<SlettbarBrevmottakerDto>(
+                        DtoTestUtil.lagSlettbarBrevmottakerPersonUtenIdentDto(UUID.randomUUID()),
+                        headers,
+                    ),
+                )
 
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
@@ -490,14 +549,15 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             headers.setBearerAuth(onBehalfOfToken(role = "ukjent"))
 
             // Act
-            val exchange = restTemplate.exchange<Ressurs<BrevmottakereDto>>(
-                localhost("$baseUrl/${behandling.id}"),
-                HttpMethod.DELETE,
-                HttpEntity<SlettbarBrevmottakerDto>(
-                    DtoTestUtil.lagSlettbarBrevmottakerPersonUtenIdentDto(UUID.randomUUID()),
-                    headers,
-                ),
-            )
+            val exchange =
+                restTemplate.exchange<Ressurs<BrevmottakereDto>>(
+                    localhost("$baseUrl/${behandling.id}"),
+                    HttpMethod.DELETE,
+                    HttpEntity<SlettbarBrevmottakerDto>(
+                        DtoTestUtil.lagSlettbarBrevmottakerPersonUtenIdentDto(UUID.randomUUID()),
+                        headers,
+                    ),
+                )
 
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
@@ -516,24 +576,27 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
 
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
             val brevmottakerPersonUtenIdent = DomainUtil.lagBrevmottakerPersonUtenIdent()
-            val brevmottakere = DomainUtil.lagBrevmottakere(
-                personer = listOf(
-                    brevmottakerPersonMedIdent,
-                    brevmottakerPersonUtenIdent,
-                ),
-            )
+            val brevmottakere =
+                DomainUtil.lagBrevmottakere(
+                    personer =
+                        listOf(
+                            brevmottakerPersonMedIdent,
+                            brevmottakerPersonUtenIdent,
+                        ),
+                )
             val brev = DomainUtil.lagBrev(behandlingId = behandling.id, mottakere = brevmottakere)
             brevRepository.insert(brev)
 
             // Act
-            val exchange = restTemplate.exchange<Ressurs<BrevmottakereDto>>(
-                localhost("$baseUrl/${behandling.id}"),
-                HttpMethod.DELETE,
-                HttpEntity<SlettbarBrevmottakerDto>(
-                    DtoTestUtil.lagSlettbarBrevmottakerPersonUtenIdentDto(brevmottakerPersonUtenIdent.id),
-                    headers,
-                ),
-            )
+            val exchange =
+                restTemplate.exchange<Ressurs<BrevmottakereDto>>(
+                    localhost("$baseUrl/${behandling.id}"),
+                    HttpMethod.DELETE,
+                    HttpEntity<SlettbarBrevmottakerDto>(
+                        DtoTestUtil.lagSlettbarBrevmottakerPersonUtenIdentDto(brevmottakerPersonUtenIdent.id),
+                        headers,
+                    ),
+                )
 
             // Assert
             assertThat(exchange.statusCode).isEqualTo(HttpStatus.OK)
@@ -542,7 +605,12 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             assertThat(exchange.body?.frontendFeilmelding).isNull()
             assertThat(exchange.body?.data?.organisasjoner).isEmpty()
             assertThat(exchange.body?.data?.personer).hasSize(1)
-            assertThat(exchange.body?.data?.personer?.filterIsInstance<BrevmottakerPersonMedIdent>()).anySatisfy {
+            assertThat(
+                exchange.body
+                    ?.data
+                    ?.personer
+                    ?.filterIsInstance<BrevmottakerPersonMedIdent>(),
+            ).anySatisfy {
                 assertThat(it.personIdent).isEqualTo(brevmottakerPersonMedIdent.personIdent)
                 assertThat(it.mottakerRolle).isEqualTo(brevmottakerPersonMedIdent.mottakerRolle)
                 assertThat(it.navn).isEqualTo(brevmottakerPersonMedIdent.navn)

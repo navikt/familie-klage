@@ -28,8 +28,8 @@ sealed interface NyBrevmottakerDto {
     }
 }
 
-fun NyBrevmottakerDto.tilDomene(): NyBrevmottaker {
-    return when (this) {
+fun NyBrevmottakerDto.tilDomene(): NyBrevmottaker =
+    when (this) {
         is NyBrevmottakerOrganisasjonDto -> {
             NyBrevmottakerOrganisasjon(
                 organisasjonsnummer = organisasjonsnummer,
@@ -58,7 +58,6 @@ fun NyBrevmottakerDto.tilDomene(): NyBrevmottaker {
             )
         }
     }
-}
 
 @JsonDeserialize(`as` = NyBrevmottakerPersonUtenIdentDto::class)
 data class NyBrevmottakerPersonUtenIdentDto(
@@ -141,24 +140,30 @@ data class NyBrevmottakerOrganisasjonDto(
 }
 
 class NyBrevmottakerDtoDeserializer : JsonDeserializer<NyBrevmottakerDto>() {
-    override fun deserialize(jsonParser: JsonParser, context: DeserializationContext): NyBrevmottakerDto {
+    override fun deserialize(
+        jsonParser: JsonParser,
+        context: DeserializationContext,
+    ): NyBrevmottakerDto {
         val tree = jsonParser.readValueAsTree<JsonNode>()
         val type = NyBrevmottakerDto.Type.valueOf(tree.get("type").asText())
         return when (type) {
-            NyBrevmottakerDto.Type.PERSON_MED_IDENT -> objectMapper.treeToValue(
-                tree,
-                NyBrevmottakerPersonMedIdentDto::class.java,
-            )
+            NyBrevmottakerDto.Type.PERSON_MED_IDENT ->
+                objectMapper.treeToValue(
+                    tree,
+                    NyBrevmottakerPersonMedIdentDto::class.java,
+                )
 
-            NyBrevmottakerDto.Type.PERSON_UTEN_IDENT -> objectMapper.treeToValue(
-                tree,
-                NyBrevmottakerPersonUtenIdentDto::class.java,
-            )
+            NyBrevmottakerDto.Type.PERSON_UTEN_IDENT ->
+                objectMapper.treeToValue(
+                    tree,
+                    NyBrevmottakerPersonUtenIdentDto::class.java,
+                )
 
-            NyBrevmottakerDto.Type.ORGANISASJON -> objectMapper.treeToValue(
-                tree,
-                NyBrevmottakerOrganisasjonDto::class.java,
-            )
+            NyBrevmottakerDto.Type.ORGANISASJON ->
+                objectMapper.treeToValue(
+                    tree,
+                    NyBrevmottakerOrganisasjonDto::class.java,
+                )
         }
     }
 }

@@ -19,15 +19,16 @@ class NyBrevmottakerDtoKtTest {
         @Test
         fun `skal mappe til domene for NyBrevmottakerPersonUtenIdentDto`() {
             // Arrange
-            val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(
-                mottakerRolle = MottakerRolle.FULLMAKT,
-                navn = "Navn Navnesen",
-                adresselinje1 = "Adresselinje 1",
-                adresselinje2 = "Adresselinje 2",
-                postnummer = "0010",
-                poststed = "Oslo",
-                landkode = "NO",
-            )
+            val nyBrevmottakerDto =
+                DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(
+                    mottakerRolle = MottakerRolle.FULLMAKT,
+                    navn = "Navn Navnesen",
+                    adresselinje1 = "Adresselinje 1",
+                    adresselinje2 = "Adresselinje 2",
+                    postnummer = "0010",
+                    poststed = "Oslo",
+                    landkode = "NO",
+                )
 
             // Act
             val nyBrevmottaker = nyBrevmottakerDto.tilDomene()
@@ -47,11 +48,12 @@ class NyBrevmottakerDtoKtTest {
         @Test
         fun `skal mappe til domene for NyBrevmottakerPersonMedIdentDto`() {
             // Arrange
-            val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto(
-                personIdent = "123",
-                mottakerRolle = MottakerRolle.FULLMAKT,
-                navn = "Navn Navnesen",
-            )
+            val nyBrevmottakerDto =
+                DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto(
+                    personIdent = "123",
+                    mottakerRolle = MottakerRolle.FULLMAKT,
+                    navn = "Navn Navnesen",
+                )
 
             // Act
             val nyBrevmottaker = nyBrevmottakerDto.tilDomene()
@@ -67,11 +69,12 @@ class NyBrevmottakerDtoKtTest {
         @Test
         fun `skal mappe til domene for NyBrevmottakerOrganisasjonDto`() {
             // Arrange
-            val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerOrganisasjonDto(
-                organisasjonsnummer = "123",
-                organisasjonsnavn = "organisasjonsnavn",
-                navnHosOrganisasjon = "navnHosOrganisasjon",
-            )
+            val nyBrevmottakerDto =
+                DtoTestUtil.lagNyBrevmottakerOrganisasjonDto(
+                    organisasjonsnummer = "123",
+                    organisasjonsnavn = "organisasjonsnavn",
+                    navnHosOrganisasjon = "navnHosOrganisasjon",
+                )
 
             // Act
             val nyBrevmottaker = nyBrevmottakerDto.tilDomene()
@@ -117,14 +120,16 @@ class NyBrevmottakerDtoKtTest {
         @Test
         fun `skal kaste exception om MottakerRolle er BRUKER_MED_UTENLANDSK_ADRESSE`() {
             // Arrange
-            val dto = DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto(
-                mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
-            )
+            val dto =
+                DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto(
+                    mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+                )
 
             // Act & assert
-            val exception = assertThrows<ApiFeil> {
-                dto.valider()
-            }
+            val exception =
+                assertThrows<ApiFeil> {
+                    dto.valider()
+                }
             assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.message).isEqualTo("Person med ident kan ikke være ${MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE}")
         }
@@ -147,14 +152,16 @@ class NyBrevmottakerDtoKtTest {
         @Test
         fun `skal kaste exception om mottakertype er bruker`() {
             // Arrange
-            val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(
-                mottakerRolle = MottakerRolle.BRUKER,
-            )
+            val nyBrevmottakerDto =
+                DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(
+                    mottakerRolle = MottakerRolle.BRUKER,
+                )
 
             // Act & assert
-            val exception = assertThrows<ApiFeil> {
-                nyBrevmottakerDto.valider()
-            }
+            val exception =
+                assertThrows<ApiFeil> {
+                    nyBrevmottakerDto.valider()
+                }
             assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.message).isEqualTo("Det er ikke mulig å sette ${MottakerRolle.BRUKER} for saksbehandler.")
         }
@@ -165,9 +172,10 @@ class NyBrevmottakerDtoKtTest {
             val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(landkode = "N")
 
             // Act & assert
-            val exception = assertThrows<ApiFeil> {
-                nyBrevmottakerDto.valider()
-            }
+            val exception =
+                assertThrows<ApiFeil> {
+                    nyBrevmottakerDto.valider()
+                }
             assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.message).isEqualTo("Ugyldig landkode: N.")
         }
@@ -178,9 +186,10 @@ class NyBrevmottakerDtoKtTest {
             val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(landkode = "NOR")
 
             // Act & assert
-            val exception = assertThrows<ApiFeil> {
-                nyBrevmottakerDto.valider()
-            }
+            val exception =
+                assertThrows<ApiFeil> {
+                    nyBrevmottakerDto.valider()
+                }
             assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.message).isEqualTo("Ugyldig landkode: NOR.")
@@ -192,9 +201,10 @@ class NyBrevmottakerDtoKtTest {
             val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(navn = "")
 
             // Act & assert
-            val exception = assertThrows<ApiFeil> {
-                nyBrevmottakerDto.valider()
-            }
+            val exception =
+                assertThrows<ApiFeil> {
+                    nyBrevmottakerDto.valider()
+                }
             assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.message).isEqualTo("Navn kan ikke være tomt.")
         }
@@ -205,9 +215,10 @@ class NyBrevmottakerDtoKtTest {
             val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(navn = " ")
 
             // Act & assert
-            val exception = assertThrows<ApiFeil> {
-                nyBrevmottakerDto.valider()
-            }
+            val exception =
+                assertThrows<ApiFeil> {
+                    nyBrevmottakerDto.valider()
+                }
             assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.message).isEqualTo("Navn kan ikke være tomt.")
         }
@@ -218,9 +229,10 @@ class NyBrevmottakerDtoKtTest {
             val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(adresselinje1 = "")
 
             // Act & assert
-            val exception = assertThrows<ApiFeil> {
-                nyBrevmottakerDto.valider()
-            }
+            val exception =
+                assertThrows<ApiFeil> {
+                    nyBrevmottakerDto.valider()
+                }
             assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.message).isEqualTo("Adresselinje 1 kan ikke være tomt.")
         }
@@ -231,9 +243,10 @@ class NyBrevmottakerDtoKtTest {
             val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(adresselinje1 = " ")
 
             // Act & assert
-            val exception = assertThrows<ApiFeil> {
-                nyBrevmottakerDto.valider()
-            }
+            val exception =
+                assertThrows<ApiFeil> {
+                    nyBrevmottakerDto.valider()
+                }
             assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.message).isEqualTo("Adresselinje 1 kan ikke være tomt.")
         }
@@ -244,9 +257,10 @@ class NyBrevmottakerDtoKtTest {
             val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(landkode = "NO", postnummer = null)
 
             // Act & assert
-            val exception = assertThrows<ApiFeil> {
-                nyBrevmottakerDto.valider()
-            }
+            val exception =
+                assertThrows<ApiFeil> {
+                    nyBrevmottakerDto.valider()
+                }
             assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.message).isEqualTo("Når landkode er NO (Norge) må postnummer være satt.")
         }
@@ -257,9 +271,10 @@ class NyBrevmottakerDtoKtTest {
             val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(landkode = "NO", poststed = null)
 
             // Act & assert
-            val exception = assertThrows<ApiFeil> {
-                nyBrevmottakerDto.valider()
-            }
+            val exception =
+                assertThrows<ApiFeil> {
+                    nyBrevmottakerDto.valider()
+                }
             assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.message).isEqualTo("Når landkode er NO (Norge) må poststed være satt.")
         }
@@ -271,9 +286,10 @@ class NyBrevmottakerDtoKtTest {
                 DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(landkode = "NO", postnummer = "123T")
 
             // Act & assert
-            val exception = assertThrows<ApiFeil> {
-                nyBrevmottakerDto.valider()
-            }
+            val exception =
+                assertThrows<ApiFeil> {
+                    nyBrevmottakerDto.valider()
+                }
             assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.message).isEqualTo("Postnummer må være 4 siffer.")
         }
@@ -284,9 +300,10 @@ class NyBrevmottakerDtoKtTest {
             val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(landkode = "NO", postnummer = "123")
 
             // Act & assert
-            val exception = assertThrows<ApiFeil> {
-                nyBrevmottakerDto.valider()
-            }
+            val exception =
+                assertThrows<ApiFeil> {
+                    nyBrevmottakerDto.valider()
+                }
             assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.message).isEqualTo("Postnummer må være 4 siffer.")
         }
@@ -298,9 +315,10 @@ class NyBrevmottakerDtoKtTest {
                 DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(landkode = "NO", postnummer = "12345")
 
             // Act & assert
-            val exception = assertThrows<ApiFeil> {
-                nyBrevmottakerDto.valider()
-            }
+            val exception =
+                assertThrows<ApiFeil> {
+                    nyBrevmottakerDto.valider()
+                }
             assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.message).isEqualTo("Postnummer må være 4 siffer.")
         }
@@ -308,15 +326,17 @@ class NyBrevmottakerDtoKtTest {
         @Test
         fun `skal kaste exception om MottakerRolle er bruker med utenlandsk adresse og landkode er NO`() {
             // Arrange
-            val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(
-                landkode = "NO",
-                mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
-            )
+            val nyBrevmottakerDto =
+                DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(
+                    landkode = "NO",
+                    mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+                )
 
             // Act & assert
-            val exception = assertThrows<ApiFeil> {
-                nyBrevmottakerDto.valider()
-            }
+            val exception =
+                assertThrows<ApiFeil> {
+                    nyBrevmottakerDto.valider()
+                }
             assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.message).isEqualTo("Bruker med utenlandsk adresse kan ikke ha landkode NO.")
         }
@@ -324,16 +344,18 @@ class NyBrevmottakerDtoKtTest {
         @Test
         fun `skal kaste exception om postnummer ikke er null og landkode ikke er NO`() {
             // Arrange
-            val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(
-                landkode = "BR",
-                postnummer = "1234",
-                poststed = null,
-            )
+            val nyBrevmottakerDto =
+                DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(
+                    landkode = "BR",
+                    postnummer = "1234",
+                    poststed = null,
+                )
 
             // Act & assert
-            val exception = assertThrows<ApiFeil> {
-                nyBrevmottakerDto.valider()
-            }
+            val exception =
+                assertThrows<ApiFeil> {
+                    nyBrevmottakerDto.valider()
+                }
             assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.message).isEqualTo("Ved utenlandsk landkode må postnummer settes i adresselinje 1.")
         }
@@ -341,16 +363,18 @@ class NyBrevmottakerDtoKtTest {
         @Test
         fun `skal kaste exception om poststed ikke er null og landkode ikke er NO`() {
             // Arrange
-            val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(
-                landkode = "BR",
-                postnummer = null,
-                poststed = "Harstad",
-            )
+            val nyBrevmottakerDto =
+                DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(
+                    landkode = "BR",
+                    postnummer = null,
+                    poststed = "Harstad",
+                )
 
             // Act & assert
-            val exception = assertThrows<ApiFeil> {
-                nyBrevmottakerDto.valider()
-            }
+            val exception =
+                assertThrows<ApiFeil> {
+                    nyBrevmottakerDto.valider()
+                }
             assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.message).isEqualTo("Ved utenlandsk landkode må poststed settes i adresselinje 1.")
         }
@@ -358,15 +382,16 @@ class NyBrevmottakerDtoKtTest {
         @Test
         fun `skal opprette ny brevmottaker med utenlandsk landekode`() {
             // Act
-            val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(
-                mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
-                navn = "Navn Navnesen",
-                adresselinje1 = "Adresseveien 1, Danmark, 0010",
-                adresselinje2 = null,
-                landkode = "DK",
-                postnummer = null,
-                poststed = null,
-            )
+            val nyBrevmottakerDto =
+                DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(
+                    mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+                    navn = "Navn Navnesen",
+                    adresselinje1 = "Adresseveien 1, Danmark, 0010",
+                    adresselinje2 = null,
+                    landkode = "DK",
+                    postnummer = null,
+                    poststed = null,
+                )
 
             // Assert
             assertThat(nyBrevmottakerDto.mottakerRolle).isEqualTo(MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE)
@@ -381,15 +406,16 @@ class NyBrevmottakerDtoKtTest {
         @Test
         fun `skal opprette ny brevmottaker med norsk landekode`() {
             // Act
-            val nyBrevmottakerDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(
-                mottakerRolle = MottakerRolle.FULLMAKT,
-                navn = "Navn Navnesen",
-                adresselinje1 = "Adresseveien 1",
-                adresselinje2 = null,
-                landkode = "NO",
-                postnummer = "0010",
-                poststed = "Oslo",
-            )
+            val nyBrevmottakerDto =
+                DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto(
+                    mottakerRolle = MottakerRolle.FULLMAKT,
+                    navn = "Navn Navnesen",
+                    adresselinje1 = "Adresseveien 1",
+                    adresselinje2 = null,
+                    landkode = "NO",
+                    postnummer = "0010",
+                    poststed = "Oslo",
+                )
 
             // Assert
             assertThat(nyBrevmottakerDto.mottakerRolle).isEqualTo(MottakerRolle.FULLMAKT)
@@ -409,12 +435,13 @@ class NyBrevmottakerDtoKtTest {
         @Test
         fun `skal deserialisere NyBrevmottakerOrganisasjon`() {
             // Arrange
-            val json = "{" +
-                "\"type\":\"ORGANISASJON\"," +
-                "\"organisasjonsnummer\":\"123\"," +
-                "\"organisasjonsnavn\":\"Orgnavn\"," +
-                "\"navnHosOrganisasjon\":\"OG\"" +
-                "}"
+            val json =
+                "{" +
+                    "\"type\":\"ORGANISASJON\"," +
+                    "\"organisasjonsnummer\":\"123\"," +
+                    "\"organisasjonsnavn\":\"Orgnavn\"," +
+                    "\"navnHosOrganisasjon\":\"OG\"" +
+                    "}"
 
             val parser = objectMapper.factory.createParser(json)
 
@@ -432,12 +459,13 @@ class NyBrevmottakerDtoKtTest {
         @Test
         fun `skal deserialisere NyBrevmottakerPersonMedIdentDto`() {
             // Arrange
-            val json = "{" +
-                "\"type\":\"PERSON_MED_IDENT\"," +
-                "\"personIdent\":\"01492350318\"," +
-                "\"mottakerRolle\":\"BRUKER\"," +
-                "\"navn\":\"Fornavn mellomnavn Etternavn\"" +
-                "}"
+            val json =
+                "{" +
+                    "\"type\":\"PERSON_MED_IDENT\"," +
+                    "\"personIdent\":\"01492350318\"," +
+                    "\"mottakerRolle\":\"BRUKER\"," +
+                    "\"navn\":\"Fornavn mellomnavn Etternavn\"" +
+                    "}"
 
             val parser = objectMapper.factory.createParser(json)
 
@@ -455,16 +483,17 @@ class NyBrevmottakerDtoKtTest {
         @Test
         fun `skal deserialisere norsk NyBrevmottakerPersonUtenIdentDto`() {
             // Arrange
-            val json = "{" +
-                "\"type\":\"PERSON_UTEN_IDENT\"," +
-                "\"mottakerRolle\":\"FULLMAKT\"," +
-                "\"navn\":\"Fornavn mellomnavn Etternavn\"," +
-                "\"adresselinje1\":\"Adresse 1\"," +
-                "\"adresselinje2\":\"Adresse 2\"," +
-                "\"postnummer\":\"0010\"," +
-                "\"poststed\":\"Oslo\"," +
-                "\"landkode\":\"NO\"" +
-                "}"
+            val json =
+                "{" +
+                    "\"type\":\"PERSON_UTEN_IDENT\"," +
+                    "\"mottakerRolle\":\"FULLMAKT\"," +
+                    "\"navn\":\"Fornavn mellomnavn Etternavn\"," +
+                    "\"adresselinje1\":\"Adresse 1\"," +
+                    "\"adresselinje2\":\"Adresse 2\"," +
+                    "\"postnummer\":\"0010\"," +
+                    "\"poststed\":\"Oslo\"," +
+                    "\"landkode\":\"NO\"" +
+                    "}"
 
             val parser = objectMapper.factory.createParser(json)
 
@@ -486,13 +515,14 @@ class NyBrevmottakerDtoKtTest {
         @Test
         fun `skal deserialisere utenlandsk NyBrevmottakerPersonUtenIdentDto`() {
             // Arrange
-            val json = "{" +
-                "\"type\":\"PERSON_UTEN_IDENT\"," +
-                "\"mottakerRolle\":\"BRUKER_MED_UTENLANDSK_ADRESSE\"," +
-                "\"navn\":\"Fornavn mellomnavn Etternavn\"," +
-                "\"adresselinje1\":\"Adresse 1, Mars, 1337\"," +
-                "\"landkode\":\"DK\"" +
-                "}"
+            val json =
+                "{" +
+                    "\"type\":\"PERSON_UTEN_IDENT\"," +
+                    "\"mottakerRolle\":\"BRUKER_MED_UTENLANDSK_ADRESSE\"," +
+                    "\"navn\":\"Fornavn mellomnavn Etternavn\"," +
+                    "\"adresselinje1\":\"Adresse 1, Mars, 1337\"," +
+                    "\"landkode\":\"DK\"" +
+                    "}"
 
             val parser = objectMapper.factory.createParser(json)
 

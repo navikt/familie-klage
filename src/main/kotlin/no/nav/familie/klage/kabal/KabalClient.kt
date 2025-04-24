@@ -20,19 +20,25 @@ class KabalClient(
     @Qualifier("azure")
     private val restOperations: RestOperations,
 ) : AbstractRestClient(restOperations, "familie.kabal") {
-
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     private val oversendelseUrlV3: URI =
-        UriComponentsBuilder.fromUri(kabalUrl).pathSegment("api/oversendelse/v3/sak").build().toUri()
+        UriComponentsBuilder
+            .fromUri(kabalUrl)
+            .pathSegment("api/oversendelse/v3/sak")
+            .build()
+            .toUri()
 
     private val oversendelseUrlV4: URI =
-        UriComponentsBuilder.fromUri(kabalUrl).pathSegment("api/oversendelse/v4/sak").build().toUri()
+        UriComponentsBuilder
+            .fromUri(kabalUrl)
+            .pathSegment("api/oversendelse/v4/sak")
+            .build()
+            .toUri()
 
-    fun sendTilKabal(oversendtKlage: OversendtKlageAnke) {
-        return when (oversendtKlage) {
-            is OversendtKlageAnkeV3 -> postForEntity(oversendelseUrlV3, oversendtKlage)
-            is OversendtKlageAnkeV4 -> postForEntity(oversendelseUrlV4, oversendtKlage)
+    fun sendTilKabal(oversendtKlage: OversendtKlageAnke) =
+        when (oversendtKlage) {
+            is OversendtKlageAnkeV3 -> postForEntity<Any>(oversendelseUrlV3, oversendtKlage)
+            is OversendtKlageAnkeV4 -> postForEntity<Any>(oversendelseUrlV4, oversendtKlage)
         }
-    }
 }

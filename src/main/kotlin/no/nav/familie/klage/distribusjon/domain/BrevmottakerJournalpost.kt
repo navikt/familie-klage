@@ -12,6 +12,7 @@ import java.util.UUID
 sealed interface BrevmottakerJournalpost {
     val journalpostId: String
     val distribusjonId: String?
+
     fun medDistribusjonsId(distribusjonId: String): BrevmottakerJournalpost
 }
 
@@ -34,7 +35,10 @@ data class BrevmottakerJournalpostUtenIdent(
 }
 
 class BrevmottakerJournalpostDeserializer : JsonDeserializer<BrevmottakerJournalpost>() {
-    override fun deserialize(jsonParser: JsonParser, context: DeserializationContext): BrevmottakerJournalpost {
+    override fun deserialize(
+        jsonParser: JsonParser,
+        context: DeserializationContext,
+    ): BrevmottakerJournalpost {
         val tree = jsonParser.readValueAsTree<JsonNode>()
         return if (tree.has("ident")) {
             objectMapper.treeToValue(tree, BrevmottakerJournalpostMedIdent::class.java)

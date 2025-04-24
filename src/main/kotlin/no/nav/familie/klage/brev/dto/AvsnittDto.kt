@@ -9,11 +9,12 @@ data class AvsnittDto(
     val skalSkjulesIBrevbygger: Boolean? = false,
 )
 
-fun Avsnitt.tilDto(): AvsnittDto = AvsnittDto(
-    deloverskrift = deloverskrift,
-    innhold = innhold,
-    skalSkjulesIBrevbygger = skalSkjulesIBrevbygger,
-)
+fun Avsnitt.tilDto(): AvsnittDto =
+    AvsnittDto(
+        deloverskrift = deloverskrift,
+        innhold = innhold,
+        skalSkjulesIBrevbygger = skalSkjulesIBrevbygger,
+    )
 
 enum class Heading {
     H1,

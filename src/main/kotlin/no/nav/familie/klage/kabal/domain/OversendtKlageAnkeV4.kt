@@ -39,12 +39,14 @@ data class OversendtKlageAnkeV4(
         ): OversendtKlageAnkeV4 =
             OversendtKlageAnkeV4(
                 type = OversendtType.KLAGE,
-                sakenGjelder = OversendtPartV4(
-                    id = OversendtPartId(
-                        type = OversendtPartIdType.PERSON,
-                        verdi = fagsak.hentAktivIdent(),
+                sakenGjelder =
+                    OversendtPartV4(
+                        id =
+                            OversendtPartId(
+                                type = OversendtPartIdType.PERSON,
+                                verdi = fagsak.hentAktivIdent(),
+                            ),
                     ),
-                ),
                 prosessfullmektig = brevmottakere?.let { utledFullmektigFraBrevmottakere(brevmottakere) },
                 fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem.tilFellesFagsystem()),
                 kildeReferanse = behandling.eksternBehandlingId.toString(),

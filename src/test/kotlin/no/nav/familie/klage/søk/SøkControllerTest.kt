@@ -21,12 +21,13 @@ import org.springframework.http.HttpStatus
 import java.util.UUID
 
 class SøkControllerTest : OppslagSpringRunnerTest() {
-
     @Autowired
     private lateinit var behandlingRepository: BehandlingRepository
 
-    private val fagsak = DomainUtil.fagsakDomain(eksternId = "1", stønadstype = Stønadstype.OVERGANGSSTØNAD)
-        .tilFagsakMedPerson(setOf(PersonIdent("1")))
+    private val fagsak =
+        DomainUtil
+            .fagsakDomain(eksternId = "1", stønadstype = Stønadstype.OVERGANGSSTØNAD)
+            .tilFagsakMedPerson(setOf(PersonIdent("1")))
     val behandling = behandling(fagsak, vedtakDato = null, henlagtÅrsak = null)
 
     @BeforeEach
