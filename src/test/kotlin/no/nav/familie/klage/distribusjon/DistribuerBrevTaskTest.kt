@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.util.UUID.randomUUID
 
-internal class DistribuerBrevTaskTest {
+class DistribuerBrevTaskTest {
     private val brevService = mockk<BrevService>()
     private val distribusjonService = mockk<DistribusjonService>()
     private val fagsakService = mockk<FagsakService>()
@@ -45,7 +45,7 @@ internal class DistribuerBrevTaskTest {
     private val idForPersonUtenIdent = randomUUID()
 
     @BeforeEach
-    internal fun setUp() {
+    fun setUp() {
         every { distribusjonService.distribuerBrev(any(), any(), any()) } answers { "distId-${firstArg<String>()}" }
         justRun { brevService.oppdaterMottakerJournalpost(behandlingId, capture(slotJournalposter)) }
         every { fagsakService.hentFagsakForBehandling(behandlingId) } returns fagsak()
@@ -55,7 +55,7 @@ internal class DistribuerBrevTaskTest {
     @Nested
     inner class ManglerJournalposter {
         @Test
-        internal fun `feiler hvis journalposter er null`() {
+        fun `feiler hvis journalposter er null`() {
             // Arrange
             mockHentBrev(journalposter = null)
 
@@ -67,7 +67,7 @@ internal class DistribuerBrevTaskTest {
         }
 
         @Test
-        internal fun `feiler hvis journalposter er tom`() {
+        fun `feiler hvis journalposter er tom`() {
             // Arrange
             mockHentBrev(journalposter = emptyList())
 
@@ -83,7 +83,7 @@ internal class DistribuerBrevTaskTest {
     inner class ManglerBrevmottakere {
 
         @Test
-        internal fun `feiler hvis brevmottakere er null når det finnes journalposter for mottaker uten ident`() {
+        fun `feiler hvis brevmottakere er null når det finnes journalposter for mottaker uten ident`() {
             // Arrange
             val journalposter = listOf(journalpostUtenIdent("1"))
             mockHentBrev(journalposter = journalposter, brevmottakere = null)
@@ -96,7 +96,7 @@ internal class DistribuerBrevTaskTest {
         }
 
         @Test
-        internal fun `feiler hvis brevmottakere er tom når det finnes journalposter for mottaker uten ident`() {
+        fun `feiler hvis brevmottakere er tom når det finnes journalposter for mottaker uten ident`() {
             // Arrange
             val journalposter = listOf(journalpostUtenIdent("1"))
             mockHentBrev(journalposter = journalposter, brevmottakere = Brevmottakere())
@@ -109,7 +109,7 @@ internal class DistribuerBrevTaskTest {
         }
 
         @Test
-        internal fun `feiler ikke hvis brevmottakere er tom når det kun finnes journalposter for mottaker med ident`() {
+        fun `feiler ikke hvis brevmottakere er tom når det kun finnes journalposter for mottaker med ident`() {
             // Arrange
             val journalposter = listOf(journalpostMedIdent("1"))
             mockHentBrev(journalposter = journalposter, brevmottakere = Brevmottakere())
@@ -123,7 +123,7 @@ internal class DistribuerBrevTaskTest {
     }
 
     @Test
-    internal fun `skal distribuere og mellomlagre for hver journalpost`() {
+    fun `skal distribuere og mellomlagre for hver journalpost`() {
         // Arrange
         val journalposter = listOf(journalpostMedIdent("1"), journalpostUtenIdent("2"))
         val brevmottakere = Brevmottakere(personer = listOf(personMedIdent, personUtenIdent))
@@ -159,7 +159,7 @@ internal class DistribuerBrevTaskTest {
     }
 
     @Test
-    internal fun `skal fortsette distribuere de journalposter som mangler distribusjonsId`() {
+    fun `skal fortsette distribuere de journalposter som mangler distribusjonsId`() {
         // Arrange
         val journalposter = listOf(journalpostMedIdent("1", "distId-1"), journalpostUtenIdent("2"))
         val brevmottakere = Brevmottakere(personer = listOf(personMedIdent, personUtenIdent))
