@@ -6,7 +6,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
@@ -24,6 +23,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
 import java.util.Properties
 import kotlin.test.Test
+import no.nav.familie.klage.brevmottaker.BrevmottakerService
 
 internal class SendTilKabalTaskTest {
 
@@ -31,14 +31,14 @@ internal class SendTilKabalTaskTest {
     private val behandlingService: BehandlingService = mockk()
     private val kabalService: KabalService = mockk()
     private val vurderingService: VurderingService = mockk()
-    private val brevService: BrevService = mockk()
+    private val brevmottakerService: BrevmottakerService = mockk()
 
     private val sendTilKabalTask = SendTilKabalTask(
         fagsakService = fagsakService,
         behandlingService = behandlingService,
         kabalService = kabalService,
         vurderingService = vurderingService,
-        brevService = brevService,
+        brevmottakerService = brevmottakerService,
     )
 
     @Test
@@ -52,7 +52,7 @@ internal class SendTilKabalTaskTest {
         every { behandlingService.hentBehandling(behandling.id) } returns behandling
         every { fagsakService.hentFagsakForBehandling(behandling.id) } returns mockk()
         every { vurderingService.hentVurdering(behandling.id) } returns mockk()
-        every { brevService.hentBrevmottakere(behandling.id) } returns Brevmottakere()
+        every { brevmottakerService.hentBrevmottakere(behandling.id) } returns Brevmottakere()
 
         every { kabalService.sendTilKabal(any(), any(), any(), any(), any()) } throws HttpClientErrorException(HttpStatus.CONFLICT)
         assertDoesNotThrow { sendTilKabalTask.doTask(task) }
@@ -76,7 +76,7 @@ internal class SendTilKabalTaskTest {
         every { behandlingService.hentBehandling(behandling.id) } returns behandling
         every { fagsakService.hentFagsakForBehandling(behandling.id) } returns fagsak
         every { vurderingService.hentVurdering(behandling.id) } returns vurdering
-        every { brevService.hentBrevmottakere(behandling.id) } returns brevmottakere
+        every { brevmottakerService.hentBrevmottakere(behandling.id) } returns brevmottakere
         every { kabalService.sendTilKabal(any(), any(), any(), any(), any()) } just Runs
 
         sendTilKabalTask.doTask(task)
@@ -105,7 +105,7 @@ internal class SendTilKabalTaskTest {
 
         sendTilKabalTask.doTask(task)
 
-        verify(exactly = 0) { brevService.hentBrevmottakere(any()) }
+        verify(exactly = 0) { brevmottakerService.hentBrevmottakere(any()) }
         verify(exactly = 1) { kabalService.sendTilKabal(fagsak, behandling, vurdering, saksbehandlerIdent, null) }
     }
 }
