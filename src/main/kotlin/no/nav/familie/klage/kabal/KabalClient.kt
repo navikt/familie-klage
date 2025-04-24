@@ -38,7 +38,7 @@ class KabalClient(
 
     fun sendTilKabal(oversendtKlage: OversendtKlageAnke) =
         when (oversendtKlage) {
-            is OversendtKlageAnkeV3 -> postForEntity(oversendelseUrlV3, oversendtKlage)
-            is OversendtKlageAnkeV4 -> postForEntity(oversendelseUrlV4, oversendtKlage)
+            is OversendtKlageAnkeV3 -> postForEntity<Any>(oversendelseUrlV3, oversendtKlage)
+            is OversendtKlageAnkeV4 -> postForEntity<Any>(oversendelseUrlV4, oversendtKlage)
         }
 }
