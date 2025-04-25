@@ -38,7 +38,6 @@ import org.springframework.http.HttpStatus
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 internal class HenleggBehandlingServiceTest {
-
     val fagsakService = mockk<FagsakService>()
     val behandlingRepository = mockk<BehandlingRepository>()
     val behandlinghistorikkService = mockk<BehandlingshistorikkService>()
@@ -49,21 +48,23 @@ internal class HenleggBehandlingServiceTest {
     val fagsystemVedtakService = mockk<FagsystemVedtakService>()
     val fagsakMock = mockk<Fagsak>()
 
-    val behandlingService = BehandlingService(
-        behandlingRepository,
-        fagsakService,
-        klageresultatRepository,
-        fagsystemVedtakService,
-    )
+    val behandlingService =
+        BehandlingService(
+            behandlingRepository,
+            fagsakService,
+            klageresultatRepository,
+            fagsystemVedtakService,
+        )
 
-    val henleggBehandlingService = HenleggBehandlingService(
-        behandlingRepository,
-        behandlingService,
-        behandlinghistorikkService,
-        oppgaveTaskService,
-        taskService,
-        fagsakService,
-    )
+    val henleggBehandlingService =
+        HenleggBehandlingService(
+            behandlingRepository,
+            behandlingService,
+            behandlinghistorikkService,
+            oppgaveTaskService,
+            taskService,
+            fagsakService,
+        )
 
     val behandlingSlot = slot<Behandling>()
 
@@ -90,8 +91,10 @@ internal class HenleggBehandlingServiceTest {
 
     @Nested
     inner class HenleggBehandling {
-
-        private fun henleggOgForventOk(behandling: Behandling, henlagtÅrsak: HenlagtÅrsak) {
+        private fun henleggOgForventOk(
+            behandling: Behandling,
+            henlagtÅrsak: HenlagtÅrsak,
+        ) {
             every {
                 behandlingRepository.findByIdOrThrow(any())
             } returns behandling
@@ -103,14 +106,18 @@ internal class HenleggBehandlingServiceTest {
             assertThat(behandlingSlot.captured.vedtakDato).isNotNull
         }
 
-        private fun henleggOgForventApiFeilmelding(behandling: Behandling, henlagtÅrsak: HenlagtÅrsak) {
+        private fun henleggOgForventApiFeilmelding(
+            behandling: Behandling,
+            henlagtÅrsak: HenlagtÅrsak,
+        ) {
             every {
                 behandlingRepository.findByIdOrThrow(any())
             } returns behandling
 
-            val feil: ApiFeil = org.junit.jupiter.api.assertThrows {
-                henleggBehandlingService.henleggBehandling(behandling.id, HenlagtDto(henlagtÅrsak))
-            }
+            val feil: ApiFeil =
+                org.junit.jupiter.api.assertThrows {
+                    henleggBehandlingService.henleggBehandling(behandling.id, HenlagtDto(henlagtÅrsak))
+                }
 
             assertThat(feil.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
         }

@@ -33,7 +33,6 @@ import org.springframework.http.HttpStatus
 import java.util.UUID
 
 internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
-
     private val baseUrl = "/api/ekstern/behandling"
 
     @Autowired
@@ -45,8 +44,10 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
     @Autowired
     private lateinit var klageresultatRepository: KlageresultatRepository
 
-    private val fagsak = DomainUtil.fagsakDomain(eksternId = "1", stønadstype = Stønadstype.OVERGANGSSTØNAD)
-        .tilFagsakMedPerson(setOf(PersonIdent("1")))
+    private val fagsak =
+        DomainUtil
+            .fagsakDomain(eksternId = "1", stønadstype = Stønadstype.OVERGANGSSTØNAD)
+            .tilFagsakMedPerson(setOf(PersonIdent("1")))
 
     @BeforeEach
     internal fun setUp() {
@@ -56,7 +57,6 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
 
     @Nested
     inner class FinnKlagebehandlingsresultat {
-
         private val hentBehandlingUrl: String = localhost("/api/ekstern/behandling/${Fagsystem.EF}")
 
         @Test
@@ -75,9 +75,10 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
         internal fun `skal returnere behandling når man spør etter eksternFagsakId`() {
             val vedtakDato = SporbarUtils.now()
             val henlagtÅrsak = HenlagtÅrsak.TRUKKET_TILBAKE
-            val behandling = behandlingRepository.insert(
-                behandling(fagsak, vedtakDato = vedtakDato, henlagtÅrsak = henlagtÅrsak),
-            )
+            val behandling =
+                behandlingRepository.insert(
+                    behandling(fagsak, vedtakDato = vedtakDato, henlagtÅrsak = henlagtÅrsak),
+                )
             vurderingRepository.insert(vurdering(behandling.id, årsak = Årsak.FEIL_PROSESSUELL))
             val klageresultat = klageresultatRepository.insert(klageresultat(behandlingId = behandling.id))
 
@@ -117,11 +118,13 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
         @Test
         internal fun `skal returnere behandlinger til flere eksternFagsakId for samme person`() {
             val fagsak3EksternId = "999"
-            val fagsak2 = DomainUtil.fagsakDomain(
-                personId = fagsak.fagsakPersonId,
-                eksternId = "2",
-                stønadstype = Stønadstype.BARNETILSYN,
-            ).tilFagsakMedPerson(fagsak.personIdenter)
+            val fagsak2 =
+                DomainUtil
+                    .fagsakDomain(
+                        personId = fagsak.fagsakPersonId,
+                        eksternId = "2",
+                        stønadstype = Stønadstype.BARNETILSYN,
+                    ).tilFagsakMedPerson(fagsak.personIdenter)
 
             testoppsettService.lagreFagsak(fagsak2)
             behandlingRepository.insert(behandling(fagsak))
@@ -148,11 +151,13 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
         @Disabled
         @Test
         internal fun `skal feile når man spør etter fagsakIder till ulike personer`() {
-            val fagsakAnnenPerson = DomainUtil.fagsakDomain(
-                personId = fagsak.fagsakPersonId,
-                eksternId = "2",
-                stønadstype = Stønadstype.BARNETILSYN,
-            ).tilFagsakMedPerson(setOf(PersonIdent("2")))
+            val fagsakAnnenPerson =
+                DomainUtil
+                    .fagsakDomain(
+                        personId = fagsak.fagsakPersonId,
+                        eksternId = "2",
+                        stønadstype = Stønadstype.BARNETILSYN,
+                    ).tilFagsakMedPerson(setOf(PersonIdent("2")))
 
             testoppsettService.lagreFagsak(fagsakAnnenPerson)
 
@@ -178,14 +183,15 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
             val opprettKlagebehandlingRequest = lagOpprettKlagebehandlingRequest()
 
             // Act
-            val response = restTemplate.exchange<Ressurs<UUID>>(
-                localhost("$baseUrl/v2/opprett"),
-                HttpMethod.POST,
-                HttpEntity<OpprettKlagebehandlingRequest>(
-                    opprettKlagebehandlingRequest,
-                    headers,
-                ),
-            )
+            val response =
+                restTemplate.exchange<Ressurs<UUID>>(
+                    localhost("$baseUrl/v2/opprett"),
+                    HttpMethod.POST,
+                    HttpEntity<OpprettKlagebehandlingRequest>(
+                        opprettKlagebehandlingRequest,
+                        headers,
+                    ),
+                )
 
             // Arrange
             assertThat(response.statusCode).isEqualTo(HttpStatus.OK)

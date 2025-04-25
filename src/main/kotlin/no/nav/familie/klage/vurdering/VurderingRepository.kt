@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface VurderingRepository : RepositoryInterface<Vurdering, UUID>, InsertUpdateRepository<Vurdering>
+interface VurderingRepository :
+    RepositoryInterface<Vurdering, UUID>,
+    InsertUpdateRepository<Vurdering>

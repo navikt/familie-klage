@@ -14,7 +14,6 @@ class VedleggService(
     private val behandlingService: BehandlingService,
     private val journalpostService: JournalpostService,
 ) {
-
     fun finnVedleggPåBehandling(behandlingId: UUID): List<DokumentinfoDto> {
         val (personIdent, fagsak) = behandlingService.hentAktivIdent(behandlingId)
         val journalposter = journalpostService.finnJournalposter(personIdent, fagsak.stønadstype)
@@ -26,8 +25,8 @@ class VedleggService(
     private fun tilDokumentInfoDto(
         dokumentInfo: DokumentInfo,
         journalpost: Journalpost,
-    ): DokumentinfoDto {
-        return DokumentinfoDto(
+    ): DokumentinfoDto =
+        DokumentinfoDto(
             dokumentinfoId = dokumentInfo.dokumentInfoId,
             filnavn = dokumentInfo.dokumentvarianter?.find { it.variantformat == Dokumentvariantformat.ARKIV }?.filnavn,
             tittel = dokumentInfo.tittel ?: "Tittel mangler",
@@ -37,17 +36,19 @@ class VedleggService(
             journalposttype = journalpost.journalposttype,
             logiskeVedlegg = dokumentInfo.logiskeVedlegg?.map { LogiskVedleggDto(tittel = it.tittel) } ?: emptyList(),
         )
-    }
 
-    fun mestRelevanteDato(journalpost: Journalpost): LocalDateTime? {
-        return journalpost.datoMottatt ?: journalpost.relevanteDatoer?.maxByOrNull { datoTyperSortert(it.datotype) }?.dato
-    }
+    fun mestRelevanteDato(journalpost: Journalpost): LocalDateTime? =
+        journalpost.datoMottatt ?: journalpost.relevanteDatoer
+            ?.maxByOrNull {
+                datoTyperSortert(it.datotype)
+            }?.dato
 
-    private fun datoTyperSortert(datoType: String) = when (datoType) {
-        "DATO_REGISTRERT" -> 4
-        "DATO_JOURNALFOERT" -> 3
-        "DATO_DOKUMENT" -> 2
-        "DATO_OPPRETTET" -> 1
-        else -> 0
-    }
+    private fun datoTyperSortert(datoType: String) =
+        when (datoType) {
+            "DATO_REGISTRERT" -> 4
+            "DATO_JOURNALFOERT" -> 3
+            "DATO_DOKUMENT" -> 2
+            "DATO_OPPRETTET" -> 1
+            else -> 0
+        }
 }

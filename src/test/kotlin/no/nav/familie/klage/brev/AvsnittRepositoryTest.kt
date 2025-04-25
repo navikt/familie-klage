@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
 internal class AvsnittRepositoryTest : OppslagSpringRunnerTest() {
-
     @Autowired
     lateinit var avsnittRepository: AvsnittRepository
 

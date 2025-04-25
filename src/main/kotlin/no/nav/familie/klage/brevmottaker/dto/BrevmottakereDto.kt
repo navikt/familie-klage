@@ -16,12 +16,13 @@ data class BrevmottakereDto(
             throw ApiFeil.badRequest("Må ha minimum en brevmottaker.")
         }
 
-        val personmottakerIdentifikatorer = personer.map {
-            when (it) {
-                is BrevmottakerPersonMedIdent -> it.personIdent
-                is BrevmottakerPersonUtenIdent -> it.id.toString()
+        val personmottakerIdentifikatorer =
+            personer.map {
+                when (it) {
+                    is BrevmottakerPersonMedIdent -> it.personIdent
+                    is BrevmottakerPersonUtenIdent -> it.id.toString()
+                }
             }
-        }
         if (personmottakerIdentifikatorer.distinct().size != personmottakerIdentifikatorer.size) {
             throw ApiFeil.badRequest("En person kan bare legges til en gang som brevmottaker.")
         }
@@ -33,12 +34,14 @@ data class BrevmottakereDto(
     }
 }
 
-fun Brevmottakere.tilDto() = BrevmottakereDto(
-    personer = this.personer,
-    organisasjoner = this.organisasjoner,
-)
+fun Brevmottakere.tilDto() =
+    BrevmottakereDto(
+        personer = this.personer,
+        organisasjoner = this.organisasjoner,
+    )
 
-fun BrevmottakereDto.tilDomene() = Brevmottakere(
-    personer = this.personer,
-    organisasjoner = this.organisasjoner,
-)
+fun BrevmottakereDto.tilDomene() =
+    Brevmottakere(
+        personer = this.personer,
+        organisasjoner = this.organisasjoner,
+    )

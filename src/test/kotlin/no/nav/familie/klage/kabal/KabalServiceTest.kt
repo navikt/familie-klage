@@ -334,34 +334,38 @@ internal class KabalServiceTest {
 
         private val bruker = BrevmottakerPersonMedIdent(defaultIdent, MottakerRolle.BRUKER, "Bruker Brukersen")
 
-        private val fullmektigOrganisasjon = BrevmottakerOrganisasjon(
-            organisasjonsnummer = "987654321",
-            organisasjonsnavn = "Fullmektig AS",
-            navnHosOrganisasjon = bruker.navn,
-        )
+        private val fullmektigOrganisasjon =
+            BrevmottakerOrganisasjon(
+                organisasjonsnummer = "987654321",
+                organisasjonsnavn = "Fullmektig AS",
+                navnHosOrganisasjon = bruker.navn,
+            )
 
-        private val fullmektigMedIdent = BrevmottakerPersonMedIdent(
-            personIdent = "12345678910",
-            mottakerRolle = MottakerRolle.FULLMAKT,
-            navn = "Fullmektig Fullmektigsen",
-        )
+        private val fullmektigMedIdent =
+            BrevmottakerPersonMedIdent(
+                personIdent = "12345678910",
+                mottakerRolle = MottakerRolle.FULLMAKT,
+                navn = "Fullmektig Fullmektigsen",
+            )
 
-        private val fullmektigUtenIdent = BrevmottakerPersonUtenIdent(
-            id = UUID.randomUUID(),
-            mottakerRolle = MottakerRolle.FULLMAKT,
-            navn = "Fullmektig Fullmektigsen",
-            adresselinje1 = "Adresselinje 1",
-            adresselinje2 = "Adresselinje 2",
-            postnummer = "1234",
-            poststed = "Poststed",
-            landkode = "NO",
-        )
+        private val fullmektigUtenIdent =
+            BrevmottakerPersonUtenIdent(
+                id = UUID.randomUUID(),
+                mottakerRolle = MottakerRolle.FULLMAKT,
+                navn = "Fullmektig Fullmektigsen",
+                adresselinje1 = "Adresselinje 1",
+                adresselinje2 = "Adresselinje 2",
+                postnummer = "1234",
+                poststed = "Poststed",
+                landkode = "NO",
+            )
 
-        private val verge = BrevmottakerPersonMedIdent(
-            personIdent = "10987654321",
-            mottakerRolle = MottakerRolle.VERGE,
-            navn = "Verge Vergesen",
-        )
+        private val verge =
+            BrevmottakerPersonMedIdent(
+                personIdent = "10987654321",
+                mottakerRolle = MottakerRolle.VERGE,
+                navn = "Verge Vergesen",
+            )
 
         private val oversendelseSlot = slot<OversendtKlageAnkeV4>()
 
@@ -404,11 +408,12 @@ internal class KabalServiceTest {
         @Test
         internal fun `skal sette hindreAutomatiskSvarbrev til true dersom årsaken til behandlingen er henvendelse fra kabal`() {
             // Arrange
-            val behandling = behandling(
-                fagsak = fagsak,
-                påklagetVedtak = påklagetVedtak,
-                årsak = Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL,
-            )
+            val behandling =
+                behandling(
+                    fagsak = fagsak,
+                    påklagetVedtak = påklagetVedtak,
+                    årsak = Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL,
+                )
             val vurdering = vurdering(behandlingId = behandling.id, hjemmel = Hjemmel.BT_TO)
 
             // Act
@@ -496,10 +501,11 @@ internal class KabalServiceTest {
                     behandling = behandling,
                     vurdering = vurdering,
                     saksbehandlerIdent = saksbehandler.navIdent,
-                    brevmottakere = Brevmottakere(
-                        personer = listOf(bruker),
-                        organisasjoner = listOf(fullmektigOrganisasjon),
-                    ),
+                    brevmottakere =
+                        Brevmottakere(
+                            personer = listOf(bruker),
+                            organisasjoner = listOf(fullmektigOrganisasjon),
+                        ),
                 )
 
                 // Assert
@@ -518,10 +524,11 @@ internal class KabalServiceTest {
                     behandling = behandling,
                     vurdering = vurdering,
                     saksbehandlerIdent = saksbehandler.navIdent,
-                    brevmottakere = Brevmottakere(
-                        personer = listOf(verge, fullmektigMedIdent),
-                        organisasjoner = listOf(fullmektigOrganisasjon),
-                    ),
+                    brevmottakere =
+                        Brevmottakere(
+                            personer = listOf(verge, fullmektigMedIdent),
+                            organisasjoner = listOf(fullmektigOrganisasjon),
+                        ),
                 )
 
                 val prosessfullmektig = oversendelseSlot.captured.prosessfullmektig!!

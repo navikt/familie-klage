@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
 
 internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {
-
     @Autowired
     private lateinit var opprettBehandlingService: OpprettBehandlingService
 
@@ -79,14 +78,13 @@ internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {
     private fun opprettKlagebehandlingRequest(
         fagsak: Fagsak,
         klageMottatt: LocalDate = LocalDate.now().minusDays(1),
-    ) =
-        OpprettKlagebehandlingRequest(
-            ident = "1234",
-            stønadstype = fagsak.stønadstype,
-            eksternFagsakId = fagsak.eksternId,
-            fagsystem = fagsak.fagsystem,
-            klageMottatt = klageMottatt,
-            behandlendeEnhet = "4489",
-            behandlingsårsak = Klagebehandlingsårsak.ORDINÆR,
-        )
+    ) = OpprettKlagebehandlingRequest(
+        ident = "1234",
+        stønadstype = fagsak.stønadstype,
+        eksternFagsakId = fagsak.eksternId,
+        fagsystem = fagsak.fagsystem,
+        klageMottatt = klageMottatt,
+        behandlendeEnhet = "4489",
+        behandlingsårsak = Klagebehandlingsårsak.ORDINÆR,
+    )
 }

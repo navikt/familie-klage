@@ -27,12 +27,11 @@ import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.felles.util.StønadstypeVisningsnavn.visningsnavn
-import no.nav.familie.klage.felles.util.TaskMetadata.saksbehandlerMetadataKey
+import no.nav.familie.klage.felles.util.TaskMetadata.SAKSBEHANDLER_METADATA_KEY
 import no.nav.familie.klage.felles.util.isEqualOrAfter
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
 import no.nav.familie.klage.henlegg.HenlagtDto
-import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
@@ -48,7 +47,6 @@ import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
@@ -315,7 +313,7 @@ class BrevService(
                 payload = behandlingId.toString(),
                 properties =
                     Properties().apply {
-                        this[saksbehandlerMetadataKey] = SikkerhetContext.hentSaksbehandler(strict = true)
+                        this[SAKSBEHANDLER_METADATA_KEY] = SikkerhetContext.hentSaksbehandler(strict = true)
                         this["eksterFagsakId"] = fagsak.eksternId
                         this["fagsystem"] = fagsak.fagsystem.name
                     },

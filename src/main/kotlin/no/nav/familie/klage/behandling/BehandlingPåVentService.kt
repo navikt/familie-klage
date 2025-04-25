@@ -60,7 +60,7 @@ class BehandlingPåVentService(
                 behandlingId,
                 fagsak.eksternId,
                 fagsak.fagsystem,
-            )
+            ),
         )
     }
 
@@ -138,10 +138,11 @@ class BehandlingPåVentService(
         oppgave: Oppgave,
         settPåVentRequest: SettPåVentRequest,
     ): String {
-        val tilordnetSaksbehandler = utledTilordnetSaksbehandlerBeskrivelse(
-            oppgave = oppgave,
-            settPåVentRequest = settPåVentRequest,
-        )
+        val tilordnetSaksbehandler =
+            utledTilordnetSaksbehandlerBeskrivelse(
+                oppgave = oppgave,
+                settPåVentRequest = settPåVentRequest,
+            )
         val prioritet = utledPrioritetBeskrivelse(oppgave = oppgave, settPåVentRequest = settPåVentRequest)
         val frist = utledFristBeskrivelse(oppgave = oppgave, settPåVentRequest = settPåVentRequest)
         val mappe = utledMappeBeskrivelse(oppgave = oppgave, settPåVentRequest = settPåVentRequest)
@@ -150,11 +151,12 @@ class BehandlingPåVentService(
         val beskrivelse = utledNyBeskrivelse(settPåVentRequest = settPåVentRequest)
         val skalOppdatereBeskrivelse = harEndringer || beskrivelse.isNotBlank()
 
-        val tidligereBeskrivelse = if (skalOppdatereBeskrivelse && oppgave.beskrivelse?.isNotBlank() == true) {
-            "\n${oppgave.beskrivelse.orEmpty()}"
-        } else {
-            oppgave.beskrivelse.orEmpty()
-        }
+        val tidligereBeskrivelse =
+            if (skalOppdatereBeskrivelse && oppgave.beskrivelse?.isNotBlank() == true) {
+                "\n${oppgave.beskrivelse.orEmpty()}"
+            } else {
+                oppgave.beskrivelse.orEmpty()
+            }
 
         val prefix = utledBeskrivelsePrefix()
 
@@ -189,13 +191,12 @@ class BehandlingPåVentService(
     private fun utledPrioritetBeskrivelse(
         oppgave: Oppgave,
         settPåVentRequest: SettPåVentRequest,
-    ): String {
-        return if (oppgave.prioritet != settPåVentRequest.prioritet) {
+    ): String =
+        if (oppgave.prioritet != settPåVentRequest.prioritet) {
             "Oppgave endret fra prioritet ${oppgave.prioritet?.name} til ${settPåVentRequest.prioritet}\n"
         } else {
             ""
         }
-    }
 
     private fun utledFristBeskrivelse(
         oppgave: Oppgave,
@@ -214,11 +215,12 @@ class BehandlingPåVentService(
         oppgave: Oppgave,
         settPåVentRequest: SettPåVentRequest,
     ): String {
-        val mapper = oppgaveService.finnMapper(
-            listOf(
-                oppgave.tildeltEnhetsnr ?: throw Feil("Kan ikke finne mapper når oppgave mangler enhet"),
-            ),
-        )
+        val mapper =
+            oppgaveService.finnMapper(
+                listOf(
+                    oppgave.tildeltEnhetsnr ?: throw Feil("Kan ikke finne mapper når oppgave mangler enhet"),
+                ),
+            )
 
         val eksisterendeMappe = mapper.find { it.id.toLong() == oppgave.mappeId }?.navn ?: INGEN_PLACEHOLDER
         val nyMappe = mapper.find { it.id.toLong() == settPåVentRequest.mappe }?.navn ?: INGEN_PLACEHOLDER
@@ -226,15 +228,12 @@ class BehandlingPåVentService(
         return if (eksisterendeMappe == nyMappe) "" else "Oppgave flyttet fra mappe $eksisterendeMappe til $nyMappe\n"
     }
 
-    private fun utledNyBeskrivelse(
-        settPåVentRequest: SettPåVentRequest,
-    ): String {
-        return if (settPåVentRequest.beskrivelse.isNotBlank()) {
+    private fun utledNyBeskrivelse(settPåVentRequest: SettPåVentRequest): String =
+        if (settPåVentRequest.beskrivelse.isNotBlank()) {
             "${settPåVentRequest.beskrivelse}\n"
         } else {
             ""
         }
-    }
 
     companion object {
         const val INGEN_PLACEHOLDER = "<ingen>"

@@ -3,8 +3,6 @@ package no.nav.familie.klage.integrasjoner
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.net.URI
-import java.util.UUID
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -18,16 +16,19 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestOperations
 import org.springframework.web.client.exchange
+import java.net.URI
+import java.util.UUID
 
 class FamilieKSSakClientTest {
     private val restOperations = mockk<RestOperations>()
     private val featureToggleService = mockk<FeatureToggleService>()
 
-    private val familieKSSakClient = FamilieKSSakClient(
-        restOperations = restOperations,
-        familieKsSakUri = URI.create("http://localhost:8080"),
-        featureToggleService = featureToggleService,
-    )
+    private val familieKSSakClient =
+        FamilieKSSakClient(
+            restOperations = restOperations,
+            familieKsSakUri = URI.create("http://localhost:8080"),
+            featureToggleService = featureToggleService,
+        )
 
     @Nested
     inner class OpprettRevurdering {
@@ -37,40 +38,44 @@ class FamilieKSSakClientTest {
             val eksternFagsakId = "1"
             val klagebehandlingId = UUID.randomUUID()
 
-            val fakeOpprettRevurderingResponse = OpprettRevurderingResponse(
-                opprettet = Opprettet(klagebehandlingId.toString())
-            )
+            val fakeOpprettRevurderingResponse =
+                OpprettRevurderingResponse(
+                    opprettet = Opprettet(klagebehandlingId.toString()),
+                )
 
-            val uri = URI.create(
-                "http://localhost:8080/api/ekstern/fagsaker/$eksternFagsakId/opprett-revurdering-klage"
-            )
+            val uri =
+                URI.create(
+                    "http://localhost:8080/api/ekstern/fagsaker/$eksternFagsakId/opprett-revurdering-klage",
+                )
 
             every {
                 restOperations.exchange<Ressurs<OpprettRevurderingResponse>>(
                     url = any<URI>(),
                     method = any<HttpMethod>(),
-                    requestEntity = any<HttpEntity<Void>>()
+                    requestEntity = any<HttpEntity<Void>>(),
                 )
-            } returns ResponseEntity.ok(
-                Ressurs.success(
-                    fakeOpprettRevurderingResponse
+            } returns
+                ResponseEntity.ok(
+                    Ressurs.success(
+                        fakeOpprettRevurderingResponse,
+                    ),
                 )
-            )
 
             every { featureToggleService.isEnabled(Toggle.SEND_BEHANDLING_ID_VED_OPPRETTING_AV_REVURDERING_KLAGE) } returns false
 
             // Act
-            val opprettRevurderingResponse = familieKSSakClient.opprettRevurdering(
-                eksternFagsakId = eksternFagsakId,
-                klagebehandlingId = klagebehandlingId
-            )
+            val opprettRevurderingResponse =
+                familieKSSakClient.opprettRevurdering(
+                    eksternFagsakId = eksternFagsakId,
+                    klagebehandlingId = klagebehandlingId,
+                )
 
             // Assert
             verify(exactly = 1) {
                 restOperations.exchange<Ressurs<OpprettRevurderingResponse>>(
                     eq(uri),
                     eq(HttpMethod.POST),
-                    any<HttpEntity<Void>>()
+                    any<HttpEntity<Void>>(),
                 )
             }
             assertThat(opprettRevurderingResponse).isEqualTo(fakeOpprettRevurderingResponse)
@@ -82,40 +87,44 @@ class FamilieKSSakClientTest {
             val eksternFagsakId = "1"
             val klagebehandlingId = UUID.randomUUID()
 
-            val fakeOpprettRevurderingResponse = OpprettRevurderingResponse(
-                opprettet = Opprettet(klagebehandlingId.toString())
-            )
+            val fakeOpprettRevurderingResponse =
+                OpprettRevurderingResponse(
+                    opprettet = Opprettet(klagebehandlingId.toString()),
+                )
 
-            val uri = URI.create(
-                "http://localhost:8080/api/ekstern/fagsak/$eksternFagsakId/klagebehandling/$klagebehandlingId/opprett-revurdering-klage"
-            )
+            val uri =
+                URI.create(
+                    "http://localhost:8080/api/ekstern/fagsak/$eksternFagsakId/klagebehandling/$klagebehandlingId/opprett-revurdering-klage",
+                )
 
             every {
                 restOperations.exchange<Ressurs<OpprettRevurderingResponse>>(
                     url = any<URI>(),
                     method = any<HttpMethod>(),
-                    requestEntity = any<HttpEntity<Void>>()
+                    requestEntity = any<HttpEntity<Void>>(),
                 )
-            } returns ResponseEntity.ok(
-                Ressurs.success(
-                    fakeOpprettRevurderingResponse
+            } returns
+                ResponseEntity.ok(
+                    Ressurs.success(
+                        fakeOpprettRevurderingResponse,
+                    ),
                 )
-            )
 
             every { featureToggleService.isEnabled(Toggle.SEND_BEHANDLING_ID_VED_OPPRETTING_AV_REVURDERING_KLAGE) } returns true
 
             // Act
-            val opprettRevurderingResponse = familieKSSakClient.opprettRevurdering(
-                eksternFagsakId = eksternFagsakId,
-                klagebehandlingId = klagebehandlingId
-            )
+            val opprettRevurderingResponse =
+                familieKSSakClient.opprettRevurdering(
+                    eksternFagsakId = eksternFagsakId,
+                    klagebehandlingId = klagebehandlingId,
+                )
 
             // Assert
             verify(exactly = 1) {
                 restOperations.exchange<Ressurs<OpprettRevurderingResponse>>(
                     eq(uri),
                     eq(HttpMethod.POST),
-                    any<HttpEntity<Void>>()
+                    any<HttpEntity<Void>>(),
                 )
             }
             assertThat(opprettRevurderingResponse).isEqualTo(fakeOpprettRevurderingResponse)

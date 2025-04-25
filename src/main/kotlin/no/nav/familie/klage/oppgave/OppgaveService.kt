@@ -30,8 +30,9 @@ class OppgaveService(
         // Skal ikke oppdatere tema for oppgaver som alt er ferdigstilt
         if (!behandling.status.erUnderArbeidAvSaksbehandler()) return
 
-        val eksisterendeOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId)
-            ?: error("Fant ikke oppgave for behandling $behandlingId")
+        val eksisterendeOppgave =
+            behandleSakOppgaveRepository.findByBehandlingId(behandlingId)
+                ?: error("Fant ikke oppgave for behandling $behandlingId")
         val oppdatertOppgave =
             Oppgave(id = eksisterendeOppgave.oppgaveId, behandlingstema = Behandlingstema.Tilbakebetaling.value)
 
@@ -65,10 +66,11 @@ class OppgaveService(
         cacheManager.getValue(cache = MAPPE_CACHE_NAVN, key = enhet) {
             logger.info("Henter mapper på nytt")
 
-            val mappeRespons = oppgaveClient.finnMapper(
-                enhetnummer = enhet,
-                limit = 1000,
-            )
+            val mappeRespons =
+                oppgaveClient.finnMapper(
+                    enhetnummer = enhet,
+                    limit = 1000,
+                )
 
             if (mappeRespons.antallTreffTotalt > mappeRespons.mapper.size) {
                 logger.error(

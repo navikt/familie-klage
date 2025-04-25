@@ -34,7 +34,6 @@ class EksternBehandlingController(
     private val opprettBehandlingService: OpprettBehandlingService,
     private val oppgaveService: OppgaveService,
 ) {
-
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @GetMapping("{fagsystem}")
@@ -45,11 +44,12 @@ class EksternBehandlingController(
         feilHvis(eksternFagsakIder.isEmpty()) {
             "Mangler eksternFagsakId i query param"
         }
-        val behandlinger = eksternFagsakIder.associateWith { eksternFagsakId ->
-            behandlingService.finnKlagebehandlingsresultat(eksternFagsakId, fagsystem).map {
-                it.tilEksternKlagebehandlingDto(behandlingService.hentKlageresultatDto(behandlingId = it.id))
+        val behandlinger =
+            eksternFagsakIder.associateWith { eksternFagsakId ->
+                behandlingService.finnKlagebehandlingsresultat(eksternFagsakId, fagsystem).map {
+                    it.tilEksternKlagebehandlingDto(behandlingService.hentKlageresultatDto(behandlingId = it.id))
+                }
             }
-        }
         val antallTreff = behandlinger.entries.associate { it.key to it.value.size }
         logger.info("Henter klagebehandlingsresultat for eksternFagsakIder=$eksternFagsakIder antallTreff=$antallTreff")
         validerTilgang(behandlinger)
@@ -65,17 +65,21 @@ class EksternBehandlingController(
     }
 
     @PostMapping("/opprett")
-    fun opprettBehandling(@RequestBody opprettKlageBehandlingDto: OpprettKlagebehandlingRequest) {
+    fun opprettBehandling(
+        @RequestBody opprettKlageBehandlingDto: OpprettKlagebehandlingRequest,
+    ) {
         opprettBehandlingService.opprettBehandling(opprettKlageBehandlingDto)
     }
 
     @PostMapping("/v2/opprett")
-    fun opprettBehandlingV2(@RequestBody opprettKlageBehandlingDto: OpprettKlagebehandlingRequest): Ressurs<UUID> {
-        return Ressurs.success(opprettBehandlingService.opprettBehandling(opprettKlageBehandlingDto))
-    }
+    fun opprettBehandlingV2(
+        @RequestBody opprettKlageBehandlingDto: OpprettKlagebehandlingRequest,
+    ): Ressurs<UUID> = Ressurs.success(opprettBehandlingService.opprettBehandling(opprettKlageBehandlingDto))
 
     @PatchMapping("{behandlingId}/gjelder-tilbakekreving")
-    fun oppdaterOppgaveTilÅGjeldeTilbakekreving(@PathVariable behandlingId: UUID) {
+    fun oppdaterOppgaveTilÅGjeldeTilbakekreving(
+        @PathVariable behandlingId: UUID,
+    ) {
         oppgaveService.oppdaterOppgaveTilÅGjeldeTilbakekreving(behandlingId)
     }
 }

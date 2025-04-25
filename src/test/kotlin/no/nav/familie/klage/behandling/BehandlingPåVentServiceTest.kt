@@ -43,14 +43,15 @@ class BehandlingPåVentServiceTest {
     private val behandling = behandling(fagsakEf)
     private val behandlingId = behandling.id
 
-    private val behandlingPåVentService = BehandlingPåVentService(
-        behandlingService = behandlingService,
-        oppgaveService = oppgaveService,
-        behandlinghistorikkService = behandlinghistorikkService,
-        taskService = taskService,
-        tilordnetRessursService = tilordnetRessursService,
-        fagsakService = fagsakService,
-    )
+    private val behandlingPåVentService =
+        BehandlingPåVentService(
+            behandlingService = behandlingService,
+            oppgaveService = oppgaveService,
+            behandlinghistorikkService = behandlinghistorikkService,
+            taskService = taskService,
+            tilordnetRessursService = tilordnetRessursService,
+            fagsakService = fagsakService,
+        )
 
     @BeforeEach
     internal fun setUp() {
@@ -157,25 +158,24 @@ class BehandlingPåVentServiceTest {
         }
     }
 
-    private fun mockHentBehandling(
-        behandlingStatus: BehandlingStatus,
-    ) {
+    private fun mockHentBehandling(behandlingStatus: BehandlingStatus) {
         every { behandlingService.hentBehandling(behandlingId = behandlingId) } returns behandling.copy(status = behandlingStatus)
     }
 
     private fun mockSettSaksbehandlerPåOppgave(oppgaveId: Long) {
         val oppgave = oppgave(oppgaveId)
 
-        every { tilordnetRessursService.hentOppgave(behandlingId) } returns OppgaveDto(
-            oppgaveId = oppgave.id,
-            tildeltEnhetsnr = oppgave.tildeltEnhetsnr,
-            beskrivelse = oppgave.beskrivelse,
-            tilordnetRessurs = oppgave.tilordnetRessurs ?: "",
-            prioritet = oppgave.prioritet,
-            fristFerdigstillelse = oppgave.fristFerdigstillelse ?: "",
-            mappeId = oppgave.mappeId,
-            versjon = oppgave.versjon,
-        )
+        every { tilordnetRessursService.hentOppgave(behandlingId) } returns
+            OppgaveDto(
+                oppgaveId = oppgave.id,
+                tildeltEnhetsnr = oppgave.tildeltEnhetsnr,
+                beskrivelse = oppgave.beskrivelse,
+                tilordnetRessurs = oppgave.tilordnetRessurs ?: "",
+                prioritet = oppgave.prioritet,
+                fristFerdigstillelse = oppgave.fristFerdigstillelse ?: "",
+                mappeId = oppgave.mappeId,
+                versjon = oppgave.versjon,
+            )
 
         every { oppgaveService.fordelOppgave(any(), any(), any()) } returns oppgaveId
     }
@@ -191,14 +191,15 @@ class BehandlingPåVentServiceTest {
             prioritet = OppgavePrioritet.NORM,
         )
 
-    private fun settPåVentRequest(oppgaveId: Long): SettPåVentRequest = SettPåVentRequest(
-        oppgaveId = oppgaveId,
-        saksbehandler = "Ny saksbehandler",
-        prioritet = OppgavePrioritet.NORM,
-        frist = LocalDate.now().toString(),
-        mappe = 102,
-        beskrivelse = "Ny beskrivelse, heyo!",
-        oppgaveVersjon = 1,
-        innstillingsoppgaveBeskjed = null,
-    )
+    private fun settPåVentRequest(oppgaveId: Long): SettPåVentRequest =
+        SettPåVentRequest(
+            oppgaveId = oppgaveId,
+            saksbehandler = "Ny saksbehandler",
+            prioritet = OppgavePrioritet.NORM,
+            frist = LocalDate.now().toString(),
+            mappe = 102,
+            beskrivelse = "Ny beskrivelse, heyo!",
+            oppgaveVersjon = 1,
+            innstillingsoppgaveBeskjed = null,
+        )
 }

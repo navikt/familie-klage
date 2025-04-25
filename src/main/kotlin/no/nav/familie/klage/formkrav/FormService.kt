@@ -31,28 +31,26 @@ class FormService(
     private val taskService: TaskService,
     private val fagsakService: FagsakService,
 ) {
-
     fun hentForm(behandlingId: UUID): Form = formRepository.findByIdOrThrow(behandlingId)
 
     @Transactional
-    fun opprettInitielleFormkrav(behandlingId: UUID): Form {
-        return formRepository.insert(Form(behandlingId = behandlingId))
-    }
+    fun opprettInitielleFormkrav(behandlingId: UUID): Form = formRepository.insert(Form(behandlingId = behandlingId))
 
     @Transactional
     fun oppdaterFormkrav(formkrav: FormkravDto): FormkravDto {
         val behandlingId = formkrav.behandlingId
         val nyttPåklagetVedtak = formkrav.påklagetVedtak
 
-        val oppdaterteFormkrav = formRepository.findByIdOrThrow(behandlingId).copy(
-            klagePart = formkrav.klagePart,
-            klagefristOverholdt = formkrav.klagefristOverholdt,
-            klagefristOverholdtUnntak = formkrav.klagefristOverholdtUnntak,
-            klageKonkret = formkrav.klageKonkret,
-            klageSignert = formkrav.klageSignert,
-            saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse,
-            brevtekst = formkrav.brevtekst,
-        )
+        val oppdaterteFormkrav =
+            formRepository.findByIdOrThrow(behandlingId).copy(
+                klagePart = formkrav.klagePart,
+                klagefristOverholdt = formkrav.klagefristOverholdt,
+                klagefristOverholdtUnntak = formkrav.klagefristOverholdtUnntak,
+                klageKonkret = formkrav.klageKonkret,
+                klageSignert = formkrav.klageSignert,
+                saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse,
+                brevtekst = formkrav.brevtekst,
+            )
         behandlingService.oppdaterPåklagetVedtak(behandlingId, nyttPåklagetVedtak)
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         opprettBehandlingsstatistikk(behandlingId, fagsak.eksternId, fagsak.fagsystem)

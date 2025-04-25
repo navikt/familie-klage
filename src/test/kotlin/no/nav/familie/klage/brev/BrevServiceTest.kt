@@ -40,19 +40,20 @@ class BrevServiceTest {
     private val brevInnholdUtleder = mockk<BrevInnholdUtleder>(relaxed = true)
     private val taskService = mockk<TaskService>(relaxed = true)
 
-    private val brevService = BrevService(
-        brevClient = brevClient,
-        brevRepository = brevRepository,
-        behandlingService = behandlingService,
-        familieDokumentClient = familieDokumentClient,
-        brevsignaturService = brevsignaturService,
-        fagsakService = fagsakService,
-        formService = formService,
-        vurderingService = vurderingService,
-        personopplysningerService = personopplysningerService,
-        brevInnholdUtleder = brevInnholdUtleder,
-        taskService = taskService,
-    )
+    private val brevService =
+        BrevService(
+            brevClient = brevClient,
+            brevRepository = brevRepository,
+            behandlingService = behandlingService,
+            familieDokumentClient = familieDokumentClient,
+            brevsignaturService = brevsignaturService,
+            fagsakService = fagsakService,
+            formService = formService,
+            vurderingService = vurderingService,
+            personopplysningerService = personopplysningerService,
+            brevInnholdUtleder = brevInnholdUtleder,
+            taskService = taskService,
+        )
 
     @AfterEach
     internal fun tearDown() {
@@ -92,11 +93,12 @@ class BrevServiceTest {
         val taskSlot = slot<no.nav.familie.prosessering.domene.Task>()
         val behandlingId = randomUUID()
 
-        every { brevRepository.findByIdOrNull(any()) } returns Brev(
-            behandlingId = behandlingId,
-            saksbehandlerHtml = "someHtml",
-            mottakere = null,
-        )
+        every { brevRepository.findByIdOrNull(any()) } returns
+            Brev(
+                behandlingId = behandlingId,
+                saksbehandlerHtml = "someHtml",
+                mottakere = null,
+            )
         every { brevRepository.insert(any()) } answers { firstArg() }
         every { brevRepository.update(any()) } answers { firstArg() }
         every { taskService.save(capture(taskSlot)) } answers { firstArg() }
@@ -128,15 +130,15 @@ class BrevServiceTest {
         every { personopplysningerService.hentPersonopplysninger(any()) } returns
             dto(
                 fullmakt =
-                listOf(
-                    FullmaktDto(
-                        gyldigFraOgMed = LocalDate.now().minusDays(2),
-                        gyldigTilOgMed = LocalDate.now().minusDays(1),
-                        navn = "123",
-                        motpartsPersonident = "123",
-                        områder = emptyList(),
+                    listOf(
+                        FullmaktDto(
+                            gyldigFraOgMed = LocalDate.now().minusDays(2),
+                            gyldigTilOgMed = LocalDate.now().minusDays(1),
+                            navn = "123",
+                            motpartsPersonident = "123",
+                            områder = emptyList(),
+                        ),
                     ),
-                ),
             )
     }
 
@@ -144,15 +146,15 @@ class BrevServiceTest {
         every { personopplysningerService.hentPersonopplysninger(any()) } returns
             dto(
                 fullmakt =
-                listOf(
-                    FullmaktDto(
-                        gyldigFraOgMed = LocalDate.now(),
-                        gyldigTilOgMed = null,
-                        navn = "123",
-                        motpartsPersonident = "123",
-                        områder = emptyList(),
+                    listOf(
+                        FullmaktDto(
+                            gyldigFraOgMed = LocalDate.now(),
+                            gyldigTilOgMed = null,
+                            navn = "123",
+                            motpartsPersonident = "123",
+                            områder = emptyList(),
+                        ),
                     ),
-                ),
             )
     }
 
@@ -160,15 +162,15 @@ class BrevServiceTest {
         every { personopplysningerService.hentPersonopplysninger(any()) } returns
             dto(
                 vergemål =
-                listOf(
-                    VergemålDto(
-                        embete = null,
-                        type = null,
-                        motpartsPersonident = null,
-                        navn = null,
-                        omfang = null,
+                    listOf(
+                        VergemålDto(
+                            embete = null,
+                            type = null,
+                            motpartsPersonident = null,
+                            navn = null,
+                            omfang = null,
+                        ),
                     ),
-                ),
             )
     }
 

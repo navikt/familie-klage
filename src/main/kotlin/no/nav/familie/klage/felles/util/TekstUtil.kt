@@ -6,9 +6,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 object TekstUtil {
-
-    fun String.storForbokstav() =
-        this.lowercase().replaceFirstChar { if (it.isLowerCase()) it.uppercase() else it.toString() }
+    fun String.storForbokstav() = this.lowercase().replaceFirstChar { if (it.isLowerCase()) it.uppercase() else it.toString() }
 
     object DatoFormat {
         val DATE_FORMAT_NORSK = DateTimeFormatter.ofPattern("dd.MM.yyyy")
@@ -17,7 +15,10 @@ object TekstUtil {
     }
 
     fun LocalDate.norskFormat() = this.format(DatoFormat.DATE_FORMAT_NORSK)
+
     fun LocalDate.norskFormatLang() = this.format(DatoFormat.DATE_FORMAT_NORSK_LANG)
+
     fun LocalDateTime.norskFormat() = this.format(DatoFormat.DATE_FORMAT_NORSK)
+
     fun LocalDateTime.norskFormatLang() = this.format(DatoFormat.DATE_FORMAT_NORSK_LANG)
 }

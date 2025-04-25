@@ -22,16 +22,19 @@ class FormController(
     private val formService: FormService,
     private val tilgangService: TilgangService,
 ) {
-
     @GetMapping("vilkar/{behandlingId}")
-    fun hentVilkår(@PathVariable behandlingId: UUID): Ressurs<FormkravDto> {
+    fun hentVilkår(
+        @PathVariable behandlingId: UUID,
+    ): Ressurs<FormkravDto> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(formService.hentFormDto(behandlingId))
     }
 
     @PostMapping
-    fun oppdaterFormkravVilkår(@RequestBody form: FormkravDto): Ressurs<FormkravDto> {
+    fun oppdaterFormkravVilkår(
+        @RequestBody form: FormkravDto,
+    ): Ressurs<FormkravDto> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(form.behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(form.behandlingId)
         return Ressurs.success(formService.oppdaterFormkrav(form))

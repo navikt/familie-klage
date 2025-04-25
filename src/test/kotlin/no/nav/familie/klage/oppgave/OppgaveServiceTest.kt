@@ -15,7 +15,6 @@ import org.springframework.cache.CacheManager
 import java.util.UUID
 
 internal class OppgaveServiceTest {
-
     val behandleSakOppgaveRepository = mockk<BehandleSakOppgaveRepository>()
     val oppgaveClient = mockk<OppgaveClient>()
     val behandlingService = mockk<BehandlingService>()
@@ -28,10 +27,11 @@ internal class OppgaveServiceTest {
     @Test
     internal fun `skal oppdatere oppgave med behandlingstemaet for klage-tilbakekreving`() {
         val oppgaveSlot = slot<Oppgave>()
-        val eksisterendeOppgave = BehandleSakOppgave(
-            behandlingId = behandlingId,
-            oppgaveId = oppgaveId,
-        )
+        val eksisterendeOppgave =
+            BehandleSakOppgave(
+                behandlingId = behandlingId,
+                oppgaveId = oppgaveId,
+            )
         val behandling = behandling(id = behandlingId, status = BehandlingStatus.UTREDES)
 
         every { behandlingService.hentBehandling(behandlingId) } returns behandling

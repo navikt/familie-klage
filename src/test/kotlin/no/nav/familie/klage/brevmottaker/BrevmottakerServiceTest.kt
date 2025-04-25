@@ -20,12 +20,13 @@ class BrevmottakerServiceTest {
     private val brevmottakerOppretter: BrevmottakerOppretter = mockk()
     private val brevmottakerSletter: BrevmottakerSletter = mockk()
 
-    private val brevmottakerService: BrevmottakerService = BrevmottakerService(
-        brevmottakerHenter = brevmottakerHenter,
-        brevmottakerErstatter = brevmottakerErstatter,
-        brevmottakerOppretter = brevmottakerOppretter,
-        brevmottakerSletter = brevmottakerSletter,
-    )
+    private val brevmottakerService: BrevmottakerService =
+        BrevmottakerService(
+            brevmottakerHenter = brevmottakerHenter,
+            brevmottakerErstatter = brevmottakerErstatter,
+            brevmottakerOppretter = brevmottakerOppretter,
+            brevmottakerSletter = brevmottakerSletter,
+        )
 
     @Nested
     inner class HentBrevmottakereTest {
@@ -36,12 +37,14 @@ class BrevmottakerServiceTest {
 
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
             val brevmottakerPersonUtenIdent = DomainUtil.lagBrevmottakerPersonUtenIdent()
-            val brevmottakere = DomainUtil.lagBrevmottakere(
-                personer = listOf(
-                    brevmottakerPersonMedIdent,
-                    brevmottakerPersonUtenIdent,
-                ),
-            )
+            val brevmottakere =
+                DomainUtil.lagBrevmottakere(
+                    personer =
+                        listOf(
+                            brevmottakerPersonMedIdent,
+                            brevmottakerPersonUtenIdent,
+                        ),
+                )
 
             every {
                 brevmottakerService.hentBrevmottakere(behandlingId)
@@ -68,12 +71,14 @@ class BrevmottakerServiceTest {
 
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
             val brevmottakerPersonUtenIdent = DomainUtil.lagBrevmottakerPersonUtenIdent()
-            val brevmottakere = DomainUtil.lagBrevmottakere(
-                personer = listOf(
-                    brevmottakerPersonMedIdent,
-                    brevmottakerPersonUtenIdent,
-                ),
-            )
+            val brevmottakere =
+                DomainUtil.lagBrevmottakere(
+                    personer =
+                        listOf(
+                            brevmottakerPersonMedIdent,
+                            brevmottakerPersonUtenIdent,
+                        ),
+                )
 
             every {
                 brevmottakerService.erstattBrevmottakere(behandlingId, brevmottakere)
@@ -98,28 +103,30 @@ class BrevmottakerServiceTest {
             // Arrange
             val behandlingId = UUID.randomUUID()
 
-            val nyBrevmottaker = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                mottakerRolle = MottakerRolle.BRUKER,
-                navn = "navn",
-                adresselinje1 = "adresse1",
-                adresselinje2 = "adresse2",
-                postnummer = "0010",
-                poststed = "Oslo",
-                landkode = "NO",
-            )
+            val nyBrevmottaker =
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                    mottakerRolle = MottakerRolle.BRUKER,
+                    navn = "navn",
+                    adresselinje1 = "adresse1",
+                    adresselinje2 = "adresse2",
+                    postnummer = "0010",
+                    poststed = "Oslo",
+                    landkode = "NO",
+                )
 
             every {
                 brevmottakerOppretter.opprettBrevmottaker(behandlingId, nyBrevmottaker)
-            } returns DomainUtil.lagBrevmottakerPersonUtenIdent(
-                id = UUID.randomUUID(),
-                mottakerRolle = nyBrevmottaker.mottakerRolle,
-                navn = nyBrevmottaker.navn,
-                adresselinje1 = nyBrevmottaker.adresselinje1,
-                adresselinje2 = nyBrevmottaker.adresselinje2,
-                postnummer = nyBrevmottaker.postnummer,
-                poststed = nyBrevmottaker.poststed,
-                landkode = nyBrevmottaker.landkode,
-            )
+            } returns
+                DomainUtil.lagBrevmottakerPersonUtenIdent(
+                    id = UUID.randomUUID(),
+                    mottakerRolle = nyBrevmottaker.mottakerRolle,
+                    navn = nyBrevmottaker.navn,
+                    adresselinje1 = nyBrevmottaker.adresselinje1,
+                    adresselinje2 = nyBrevmottaker.adresselinje2,
+                    postnummer = nyBrevmottaker.postnummer,
+                    poststed = nyBrevmottaker.poststed,
+                    landkode = nyBrevmottaker.landkode,
+                )
 
             // Act
             val brevmottaker = brevmottakerService.opprettBrevmottaker(behandlingId, nyBrevmottaker)

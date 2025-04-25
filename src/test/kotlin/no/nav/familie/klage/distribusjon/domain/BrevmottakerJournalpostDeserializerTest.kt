@@ -14,11 +14,12 @@ class BrevmottakerJournalpostDeserializerTest {
         @Test
         fun `skal deserialisere BrevmottakerJournalpostMedIdent`() {
             // Arrange
-            val brevmottakerJournalpostMedIdent = BrevmottakerJournalpostMedIdent(
-                ident = "12345678910",
-                journalpostId = "journalpostId",
-                distribusjonId = "distribusjonId",
-            )
+            val brevmottakerJournalpostMedIdent =
+                BrevmottakerJournalpostMedIdent(
+                    ident = "12345678910",
+                    journalpostId = "journalpostId",
+                    distribusjonId = "distribusjonId",
+                )
 
             val json = objectMapper.writeValueAsString(brevmottakerJournalpostMedIdent)
             val parser = objectMapper.factory.createParser(json)
@@ -38,11 +39,12 @@ class BrevmottakerJournalpostDeserializerTest {
         @Test
         fun `skal deserialisere BrevmottakerJournalpostUtenIdent`() {
             // Arrange
-            val brevmottakerJournalpostMedIdent = BrevmottakerJournalpostUtenIdent(
-                id = UUID.randomUUID(),
-                journalpostId = "journalpostId",
-                distribusjonId = "distribusjonId",
-            )
+            val brevmottakerJournalpostMedIdent =
+                BrevmottakerJournalpostUtenIdent(
+                    id = UUID.randomUUID(),
+                    journalpostId = "journalpostId",
+                    distribusjonId = "distribusjonId",
+                )
 
             val json = objectMapper.writeValueAsString(brevmottakerJournalpostMedIdent)
             val parser = objectMapper.factory.createParser(json)

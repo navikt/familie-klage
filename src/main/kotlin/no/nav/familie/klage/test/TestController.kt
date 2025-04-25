@@ -30,31 +30,36 @@ class TestController(
     private val opprettBehandlingService: OpprettBehandlingService,
     private val behandleSakOppgaveRepository: BehandleSakOppgaveRepository,
 ) {
-
     @PostMapping("opprett")
-    fun opprettDummybehandling(@RequestBody request: DummybehandlingRequest): Ressurs<UUID> {
+    fun opprettDummybehandling(
+        @RequestBody request: DummybehandlingRequest,
+    ): Ressurs<UUID> {
         val fagsakPerson = fagsakPersonService.hentEllerOpprettPerson(setOf(request.ident), request.ident)
         // findByEksternIdAndFagsystemAndStønadstype ?
-        val eksternFagsakId = fagsakRepository.findAll()
-            .find { it.fagsakPersonId == fagsakPerson.id && it.stønadstype == request.stønadstype }
-            ?.eksternId ?: UUID.randomUUID().toString()
+        val eksternFagsakId =
+            fagsakRepository
+                .findAll()
+                .find { it.fagsakPersonId == fagsakPerson.id && it.stønadstype == request.stønadstype }
+                ?.eksternId ?: UUID.randomUUID().toString()
 
-        val behandlingId = opprettBehandlingService.opprettBehandling(
-            OpprettKlagebehandlingRequest(
-                ident = request.ident,
-                stønadstype = request.stønadstype,
-                eksternFagsakId = eksternFagsakId,
-                fagsystem = request.fagsystem,
-                klageMottatt = request.klageMottatt,
-                behandlendeEnhet = request.behandlendeEnhet,
-                behandlingsårsak = request.behandlingsårsak,
-            ),
-        )
+        val behandlingId =
+            opprettBehandlingService.opprettBehandling(
+                OpprettKlagebehandlingRequest(
+                    ident = request.ident,
+                    stønadstype = request.stønadstype,
+                    eksternFagsakId = eksternFagsakId,
+                    fagsystem = request.fagsystem,
+                    klageMottatt = request.klageMottatt,
+                    behandlendeEnhet = request.behandlendeEnhet,
+                    behandlingsårsak = request.behandlingsårsak,
+                ),
+            )
 
-        val behandleSakOppgave = BehandleSakOppgave(
-            behandlingId,
-            123,
-        )
+        val behandleSakOppgave =
+            BehandleSakOppgave(
+                behandlingId,
+                123,
+            )
 
         behandleSakOppgaveRepository.insert(behandleSakOppgave)
 

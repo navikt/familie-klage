@@ -83,8 +83,7 @@ object DomainUtil {
             fagsystem = fagsystem,
         )
 
-    fun FagsakDomain.tilFagsak(personIdent: String = "11223344551") =
-        this.tilFagsakMedPerson(setOf(PersonIdent(ident = personIdent)))
+    fun FagsakDomain.tilFagsak(personIdent: String = "11223344551") = this.tilFagsakMedPerson(setOf(PersonIdent(ident = personIdent)))
 
     fun behandling(
         fagsak: Fagsak = fagsak(),
@@ -210,15 +209,15 @@ object DomainUtil {
             sporbar = sporbar,
             eksternId = "1",
             fagsystem =
-            when (stønadstype) {
-                Stønadstype.OVERGANGSSTØNAD,
-                Stønadstype.BARNETILSYN,
-                Stønadstype.SKOLEPENGER,
-                -> Fagsystem.EF
+                when (stønadstype) {
+                    Stønadstype.OVERGANGSSTØNAD,
+                    Stønadstype.BARNETILSYN,
+                    Stønadstype.SKOLEPENGER,
+                    -> Fagsystem.EF
 
-                Stønadstype.BARNETRYGD -> Fagsystem.BA
-                Stønadstype.KONTANTSTØTTE -> Fagsystem.KS
-            },
+                    Stønadstype.BARNETRYGD -> Fagsystem.BA
+                    Stønadstype.KONTANTSTØTTE -> Fagsystem.KS
+                },
         )
 
     fun klageresultat(
@@ -262,12 +261,13 @@ object DomainUtil {
 
     fun journalpostDokument(
         status: Dokumentstatus = Dokumentstatus.FERDIGSTILT,
-        dokumentvarianter: List<Dokumentvariant>? = listOf(
-            Dokumentvariant(
-                Dokumentvariantformat.ARKIV,
-                saksbehandlerHarTilgang = true,
+        dokumentvarianter: List<Dokumentvariant>? =
+            listOf(
+                Dokumentvariant(
+                    Dokumentvariantformat.ARKIV,
+                    saksbehandlerHarTilgang = true,
+                ),
             ),
-        ),
     ) = DokumentInfo(
         dokumentInfoId = UUID.randomUUID().toString(),
         tittel = "Tittel",
@@ -293,7 +293,11 @@ object DomainUtil {
     )
 
     fun påklagetVedtakDto(): PåklagetVedtakDto =
-        PåklagetVedtakDto(eksternFagsystemBehandlingId = null, internKlagebehandlingId = null, påklagetVedtakstype = PåklagetVedtakstype.UTEN_VEDTAK)
+        PåklagetVedtakDto(
+            eksternFagsystemBehandlingId = null,
+            internKlagebehandlingId = null,
+            påklagetVedtakstype = PåklagetVedtakstype.UTEN_VEDTAK,
+        )
 
     fun personopplysningerDto(
         personIdent: String = "123",
@@ -355,8 +359,8 @@ object DomainUtil {
         resultat: String = "resultat",
         vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
         regelverk: Regelverk = Regelverk.NASJONAL,
-    ): PåklagetVedtakDetaljer {
-        return PåklagetVedtakDetaljer(
+    ): PåklagetVedtakDetaljer =
+        PåklagetVedtakDetaljer(
             fagsystemType = fagsystemType,
             eksternFagsystemBehandlingId = eksternFagsystemBehandlingId,
             internKlagebehandlingId = null,
@@ -365,37 +369,35 @@ object DomainUtil {
             vedtakstidspunkt = vedtakstidspunkt,
             regelverk = regelverk,
         )
-    }
 
     fun lagFritekstBrevRequestDto(
         overskrift: String = "overskrift",
-        avsnitt: List<AvsnittDto> = listOf(
-            AvsnittDto(
-                deloverskrift = "deloverskrift",
-                innhold = "innhold",
-                skalSkjulesIBrevbygger = false,
+        avsnitt: List<AvsnittDto> =
+            listOf(
+                AvsnittDto(
+                    deloverskrift = "deloverskrift",
+                    innhold = "innhold",
+                    skalSkjulesIBrevbygger = false,
+                ),
             ),
-        ),
         personIdent: String = "123",
         navn: String = "navn",
-    ): FritekstBrevRequestDto {
-        return FritekstBrevRequestDto(
+    ): FritekstBrevRequestDto =
+        FritekstBrevRequestDto(
             overskrift,
             avsnitt = avsnitt,
             personIdent,
             navn,
         )
-    }
 
     fun lagPåklagetVedtak(
         påklagetVedtakstype: PåklagetVedtakstype = PåklagetVedtakstype.VEDTAK,
         påklagetVedtakDetaljer: PåklagetVedtakDetaljer? = lagPåklagetVedtakDetaljer(),
-    ): PåklagetVedtak {
-        return PåklagetVedtak(
+    ): PåklagetVedtak =
+        PåklagetVedtak(
             påklagetVedtakstype = påklagetVedtakstype,
             påklagetVedtakDetaljer = påklagetVedtakDetaljer,
         )
-    }
 
     fun lagBrevmottakerPersonUtenIdent(
         id: UUID = UUID.randomUUID(),
@@ -406,8 +408,8 @@ object DomainUtil {
         postnummer: String? = "0010",
         poststed: String? = "Oslo",
         landkode: String = "NO",
-    ): BrevmottakerPersonUtenIdent {
-        return BrevmottakerPersonUtenIdent(
+    ): BrevmottakerPersonUtenIdent =
+        BrevmottakerPersonUtenIdent(
             id,
             mottakerRolle,
             navn,
@@ -417,29 +419,26 @@ object DomainUtil {
             poststed,
             landkode,
         )
-    }
 
     fun lagBrevmottakerPersonMedIdent(
         personIdent: String = "23097825289",
         mottakerRolle: MottakerRolle = MottakerRolle.FULLMAKT,
         navn: String = "Navn Navnesen",
-    ): BrevmottakerPersonMedIdent {
-        return BrevmottakerPersonMedIdent(
+    ): BrevmottakerPersonMedIdent =
+        BrevmottakerPersonMedIdent(
             personIdent,
             mottakerRolle,
             navn,
         )
-    }
 
     fun lagBrevmottakere(
         personer: List<BrevmottakerPerson> = emptyList(),
         organisasjoner: List<BrevmottakerOrganisasjon> = emptyList(),
-    ): Brevmottakere {
-        return Brevmottakere(
+    ): Brevmottakere =
+        Brevmottakere(
             personer = personer,
             organisasjoner = organisasjoner,
         )
-    }
 
     fun lagBrev(
         behandlingId: UUID = UUID.randomUUID(),
@@ -448,8 +447,8 @@ object DomainUtil {
         mottakere: Brevmottakere? = null,
         mottakereJournalposter: BrevmottakereJournalposter? = null,
         sporbar: Sporbar = Sporbar(),
-    ): Brev {
-        return Brev(
+    ): Brev =
+        Brev(
             behandlingId = behandlingId,
             saksbehandlerHtml = saksbehandlerHtml,
             pdf = pdf,
@@ -457,7 +456,6 @@ object DomainUtil {
             mottakereJournalposter = mottakereJournalposter,
             sporbar = sporbar,
         )
-    }
 
     fun lagNyBrevmottakerPersonUtenIdent(
         mottakerRolle: MottakerRolle = MottakerRolle.FULLMAKT,
@@ -467,8 +465,8 @@ object DomainUtil {
         postnummer: String? = "0010",
         poststed: String? = "Oslo",
         landkode: String = "NO",
-    ): NyBrevmottakerPersonUtenIdent {
-        return NyBrevmottakerPersonUtenIdent(
+    ): NyBrevmottakerPersonUtenIdent =
+        NyBrevmottakerPersonUtenIdent(
             mottakerRolle = mottakerRolle,
             navn = navn,
             adresselinje1 = adresselinje1,
@@ -477,41 +475,37 @@ object DomainUtil {
             poststed = poststed,
             landkode = landkode,
         )
-    }
 
     fun lagNyBrevmottakerPersonMedIdent(
         personIdent: String = "23097825289",
         mottakerRolle: MottakerRolle = MottakerRolle.FULLMAKT,
         navn: String = "Navn Navnesen",
-    ): NyBrevmottakerPersonMedIdent {
-        return NyBrevmottakerPersonMedIdent(
+    ): NyBrevmottakerPersonMedIdent =
+        NyBrevmottakerPersonMedIdent(
             personIdent,
             mottakerRolle,
             navn,
         )
-    }
 
     fun lagNyBrevmottakerOrganisasjon(
         organisasjonsnummer: String = "123",
         organisasjonsnavn: String = "Orgnavn",
         navnHosOrganisasjon: String = "navnHosOrganisasjon",
-    ): NyBrevmottakerOrganisasjon {
-        return NyBrevmottakerOrganisasjon(
+    ): NyBrevmottakerOrganisasjon =
+        NyBrevmottakerOrganisasjon(
             organisasjonsnummer = organisasjonsnummer,
             organisasjonsnavn = organisasjonsnavn,
             navnHosOrganisasjon = navnHosOrganisasjon,
         )
-    }
 
     fun lagBrevmottakerOrganisasjon(
         organisasjonsnummer: String = "123",
         organisasjonsnavn: String = "Orgnavn",
         navnHosOrganisasjon: String = "navnHosOrganisasjon",
-    ): BrevmottakerOrganisasjon {
-        return BrevmottakerOrganisasjon(
+    ): BrevmottakerOrganisasjon =
+        BrevmottakerOrganisasjon(
             organisasjonsnummer = organisasjonsnummer,
             organisasjonsnavn = organisasjonsnavn,
             navnHosOrganisasjon = navnHosOrganisasjon,
         )
-    }
 }

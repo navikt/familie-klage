@@ -5,7 +5,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 object OppgaveUtil {
-
     val ENHET_NR_NAY = "4489"
     val ENHET_NR_EGEN_ANSATT = "4483"
 

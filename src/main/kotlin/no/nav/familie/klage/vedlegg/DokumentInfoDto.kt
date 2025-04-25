@@ -15,4 +15,6 @@ data class DokumentinfoDto(
     val logiskeVedlegg: List<LogiskVedleggDto>,
 )
 
-data class LogiskVedleggDto(val tittel: String)
+data class LogiskVedleggDto(
+    val tittel: String,
+)

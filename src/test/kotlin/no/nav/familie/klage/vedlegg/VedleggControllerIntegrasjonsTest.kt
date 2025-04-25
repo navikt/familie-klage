@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity
 import java.util.UUID
 
 internal class VedleggControllerIntegrasjonsTest : OppslagSpringRunnerTest() {
-
     val fagsak = DomainUtil.fagsakDomain().tilFagsak()
     val behandling = DomainUtil.behandling(fagsak = fagsak)
 
@@ -45,19 +44,20 @@ internal class VedleggControllerIntegrasjonsTest : OppslagSpringRunnerTest() {
         assertThat(dokumentSomPdfResponse.body).isNotNull
     }
 
-    private fun finnVedlegg(behandlingId: UUID): ResponseEntity<Ressurs<List<DokumentinfoDto>>> {
-        return restTemplate.exchange(
+    private fun finnVedlegg(behandlingId: UUID): ResponseEntity<Ressurs<List<DokumentinfoDto>>> =
+        restTemplate.exchange(
             localhost("/api/vedlegg/$behandlingId"),
             HttpMethod.GET,
             HttpEntity(null, headers),
         )
-    }
 
-    private fun hentDokument(journalpostId: String, dokumentinfoId: String): ResponseEntity<ByteArray> {
-        return restTemplate.exchange(
+    private fun hentDokument(
+        journalpostId: String,
+        dokumentinfoId: String,
+    ): ResponseEntity<ByteArray> =
+        restTemplate.exchange(
             localhost("/api/vedlegg/$journalpostId/dokument-pdf/$dokumentinfoId"),
             HttpMethod.GET,
             HttpEntity(null, headers),
         )
-    }
 }

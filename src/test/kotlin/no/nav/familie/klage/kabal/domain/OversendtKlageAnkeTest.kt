@@ -16,49 +16,52 @@ import org.junit.jupiter.api.assertThrows
 import java.util.UUID
 
 class OversendtKlageAnkeTest {
-
     private val fagsak = fagsak()
     private val behandling = behandling()
     private val vurdering = vurdering(behandling.id)
 
-    private val bruker = BrevmottakerPersonMedIdent(
-        personIdent = "12345678910",
-        navn = "Bruker Brukersen",
-        mottakerRolle = MottakerRolle.BRUKER,
-    )
+    private val bruker =
+        BrevmottakerPersonMedIdent(
+            personIdent = "12345678910",
+            navn = "Bruker Brukersen",
+            mottakerRolle = MottakerRolle.BRUKER,
+        )
 
-    private val fullmektigUtenIdent = BrevmottakerPersonUtenIdent(
-        id = UUID.randomUUID(),
-        navn = "Fullmektig Fullmektigsen",
-        mottakerRolle = MottakerRolle.FULLMAKT,
-        adresselinje1 = "Adresselinje 1",
-        adresselinje2 = "Adresselinje 2",
-        postnummer = "1234",
-        poststed = "Poststed",
-        landkode = "NO",
-    )
+    private val fullmektigUtenIdent =
+        BrevmottakerPersonUtenIdent(
+            id = UUID.randomUUID(),
+            navn = "Fullmektig Fullmektigsen",
+            mottakerRolle = MottakerRolle.FULLMAKT,
+            adresselinje1 = "Adresselinje 1",
+            adresselinje2 = "Adresselinje 2",
+            postnummer = "1234",
+            poststed = "Poststed",
+            landkode = "NO",
+        )
 
-    private val fullmektigMedIdent = BrevmottakerPersonMedIdent(
-        personIdent = "12345678910",
-        navn = "Fullmektig Fullmektigsen",
-        mottakerRolle = MottakerRolle.FULLMAKT,
-    )
+    private val fullmektigMedIdent =
+        BrevmottakerPersonMedIdent(
+            personIdent = "12345678910",
+            navn = "Fullmektig Fullmektigsen",
+            mottakerRolle = MottakerRolle.FULLMAKT,
+        )
 
-    private val verge = BrevmottakerPersonMedIdent(
-        personIdent = "12345678910",
-        navn = "Verge Vergesen",
-        mottakerRolle = MottakerRolle.VERGE,
-    )
+    private val verge =
+        BrevmottakerPersonMedIdent(
+            personIdent = "12345678910",
+            navn = "Verge Vergesen",
+            mottakerRolle = MottakerRolle.VERGE,
+        )
 
-    private val organisasjon = BrevmottakerOrganisasjon(
-        organisasjonsnummer = "123456789",
-        organisasjonsnavn = "Organ Isasjon",
-        navnHosOrganisasjon = "Bruker Brukersen",
-    )
+    private val organisasjon =
+        BrevmottakerOrganisasjon(
+            organisasjonsnummer = "123456789",
+            organisasjonsnavn = "Organ Isasjon",
+            navnHosOrganisasjon = "Bruker Brukersen",
+        )
 
     @Nested
     inner class OversendtKlageAnkeFellesTest {
-
         @Test
         fun `utledFullmektigEllerVerge skal returnere null hvis det ikke er en fullmektig`() {
             // Arrange
@@ -74,10 +77,11 @@ class OversendtKlageAnkeTest {
         @Test
         fun `skal velge organisasjon som fullmektig`() {
             // Arrange
-            val brevmottakere = Brevmottakere(
-                personer = listOf(bruker),
-                organisasjoner = listOf(organisasjon),
-            )
+            val brevmottakere =
+                Brevmottakere(
+                    personer = listOf(bruker),
+                    organisasjoner = listOf(organisasjon),
+                )
 
             // Act
             val fullmektig = utledFullmektigEllerVerge(brevmottakere)
@@ -88,10 +92,11 @@ class OversendtKlageAnkeTest {
 
         @Test
         fun `skal returnere verge før organisasjon`() {
-            val brevmottakere = Brevmottakere(
-                personer = listOf(bruker, verge),
-                organisasjoner = listOf(organisasjon),
-            )
+            val brevmottakere =
+                Brevmottakere(
+                    personer = listOf(bruker, verge),
+                    organisasjoner = listOf(organisasjon),
+                )
 
             val fullmektig = utledFullmektigEllerVerge(brevmottakere)
 
@@ -100,10 +105,11 @@ class OversendtKlageAnkeTest {
 
         @Test
         fun `skal returnere fullmektig før verge og organisasjon`() {
-            val brevmottakere = Brevmottakere(
-                personer = listOf(bruker, verge, fullmektigMedIdent),
-                organisasjoner = listOf(organisasjon),
-            )
+            val brevmottakere =
+                Brevmottakere(
+                    personer = listOf(bruker, verge, fullmektigMedIdent),
+                    organisasjoner = listOf(organisasjon),
+                )
 
             val fullmektig = utledFullmektigEllerVerge(brevmottakere)
 
@@ -116,10 +122,11 @@ class OversendtKlageAnkeTest {
         @Test
         fun `skal lage klageoversendelse`() {
             // Arrange
-            val brevmottakere = Brevmottakere(
-                personer = listOf(bruker, fullmektigMedIdent),
-                organisasjoner = listOf(organisasjon),
-            )
+            val brevmottakere =
+                Brevmottakere(
+                    personer = listOf(bruker, fullmektigMedIdent),
+                    organisasjoner = listOf(organisasjon),
+                )
 
             // Act
             val oversendtKlageAnke = lagKlageOversendelse(brevmottakere = brevmottakere)
@@ -128,8 +135,16 @@ class OversendtKlageAnkeTest {
             assertThat(oversendtKlageAnke.type).isEqualTo(Type.KLAGE)
             assertThat(oversendtKlageAnke.klager.id.type).isEqualTo(OversendtPartIdType.PERSON)
             assertThat(oversendtKlageAnke.klager.id.verdi).isEqualTo(fagsak.hentAktivIdent())
-            assertThat(oversendtKlageAnke.klager.klagersProsessfullmektig?.id?.type).isEqualTo(OversendtPartIdType.PERSON)
-            assertThat(oversendtKlageAnke.klager.klagersProsessfullmektig?.id?.verdi).isEqualTo(fullmektigMedIdent.personIdent)
+            assertThat(
+                oversendtKlageAnke.klager.klagersProsessfullmektig
+                    ?.id
+                    ?.type,
+            ).isEqualTo(OversendtPartIdType.PERSON)
+            assertThat(
+                oversendtKlageAnke.klager.klagersProsessfullmektig
+                    ?.id
+                    ?.verdi,
+            ).isEqualTo(fullmektigMedIdent.personIdent)
             assertThat(oversendtKlageAnke.fagsak?.fagsakId).isEqualTo(fagsak.eksternId)
             assertThat(oversendtKlageAnke.fagsak?.fagsystem).isEqualTo(fagsak.fagsystem.tilFellesFagsystem())
             assertThat(oversendtKlageAnke.kildeReferanse).isEqualTo(behandling.eksternBehandlingId.toString())
@@ -145,10 +160,11 @@ class OversendtKlageAnkeTest {
         @Test
         fun `skal kaste feil dersom en brevmottaker ikke har ident`() {
             // Arrange
-            val brevmottakere = Brevmottakere(
-                personer = listOf(bruker, fullmektigUtenIdent),
-                organisasjoner = listOf(organisasjon),
-            )
+            val brevmottakere =
+                Brevmottakere(
+                    personer = listOf(bruker, fullmektigUtenIdent),
+                    organisasjoner = listOf(organisasjon),
+                )
             // Act
             val exception =
                 assertThrows<IllegalStateException> {
@@ -175,10 +191,11 @@ class OversendtKlageAnkeTest {
         @Test
         fun `skal lage klageoversendelse`() {
             // Arrange
-            val brevmottakere = Brevmottakere(
-                personer = listOf(bruker, fullmektigUtenIdent),
-                organisasjoner = listOf(organisasjon),
-            )
+            val brevmottakere =
+                Brevmottakere(
+                    personer = listOf(bruker, fullmektigUtenIdent),
+                    organisasjoner = listOf(organisasjon),
+                )
 
             // Act
             val oversendtKlageAnke = lagKlageOversendelse(brevmottakere = brevmottakere)

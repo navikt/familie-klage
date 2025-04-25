@@ -16,16 +16,19 @@ class AMeldingInntektClient(
     @Value("\${FAMILIE_EF_PROXY_URL}") private val uri: URI,
     @Qualifier("azure") restOperations: RestOperations,
 ) : AbstractRestClient(restOperations, "inntekt") {
+    private val genererUrlUri =
+        UriComponentsBuilder
+            .fromUri(uri)
+            .pathSegment("api/ainntekt/generer-url")
+            .build()
+            .toUri()
 
-    private val genererUrlUri = UriComponentsBuilder.fromUri(uri).pathSegment("api/ainntekt/generer-url").build().toUri()
-
-    fun genererAInntektUrl(personIdent: String): String {
-        return postForEntity(
+    fun genererAInntektUrl(personIdent: String): String =
+        postForEntity(
             genererUrlUri,
             PersonIdent(personIdent),
             HttpHeaders().apply {
                 accept = listOf(MediaType.TEXT_PLAIN)
             },
         )
-    }
 }

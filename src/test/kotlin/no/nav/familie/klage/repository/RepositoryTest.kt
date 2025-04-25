@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDateTime
 
 internal class RepositoryTest : OppslagSpringRunnerTest() {
-
     @Autowired
     lateinit var fagsakRepository: FagsakRepository
 

@@ -24,52 +24,49 @@ import java.util.UUID
 @Configuration
 @Profile("mock-ba-sak")
 class FamilieBASakClientMock {
-
     @Bean
     @Primary
-    fun familieBASakClient(): FamilieBASakClient {
-        return resetMock(mockk())
-    }
+    fun familieBASakClient(): FamilieBASakClient = resetMock(mockk())
 
     companion object {
-
         fun resetMock(mock: FamilieBASakClient): FamilieBASakClient {
             clearMocks(mock)
 
-            every { mock.hentVedtak(any()) } returns listOf(
-                FagsystemVedtak(
-                    "123",
-                    "Førstegangsbehandling",
-                    "Innvilget",
-                    vedtakstidspunkt = LocalDateTime.of(2022, Month.AUGUST, 1, 8, 0),
-                    fagsystemType = FagsystemType.ORDNIÆR,
-                    regelverk = Regelverk.NASJONAL,
-                ),
-                FagsystemVedtak(
-                    "124",
-                    "Revurdering",
-                    "Opphørt",
-                    vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 0),
-                    fagsystemType = FagsystemType.ORDNIÆR,
-                    regelverk = Regelverk.NASJONAL,
-                ),
-                FagsystemVedtak(
-                    "tilbake-123",
-                    "Tilbakekreving",
-                    "Full tilbakekreving",
-                    vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 10, 2),
-                    fagsystemType = FagsystemType.TILBAKEKREVING,
-                    regelverk = Regelverk.NASJONAL,
-                ),
-                FagsystemVedtak(
-                    "sanksjon-123",
-                    "Revurdering",
-                    "Sanksjon 1 måned",
-                    vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 15, 2),
-                    fagsystemType = FagsystemType.SANKSJON_1_MND,
-                    regelverk = Regelverk.NASJONAL,
-                ),
-            )
+            every { mock.hentVedtak(any()) } returns
+                listOf(
+                    FagsystemVedtak(
+                        "123",
+                        "Førstegangsbehandling",
+                        "Innvilget",
+                        vedtakstidspunkt = LocalDateTime.of(2022, Month.AUGUST, 1, 8, 0),
+                        fagsystemType = FagsystemType.ORDNIÆR,
+                        regelverk = Regelverk.NASJONAL,
+                    ),
+                    FagsystemVedtak(
+                        "124",
+                        "Revurdering",
+                        "Opphørt",
+                        vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 0),
+                        fagsystemType = FagsystemType.ORDNIÆR,
+                        regelverk = Regelverk.NASJONAL,
+                    ),
+                    FagsystemVedtak(
+                        "tilbake-123",
+                        "Tilbakekreving",
+                        "Full tilbakekreving",
+                        vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 10, 2),
+                        fagsystemType = FagsystemType.TILBAKEKREVING,
+                        regelverk = Regelverk.NASJONAL,
+                    ),
+                    FagsystemVedtak(
+                        "sanksjon-123",
+                        "Revurdering",
+                        "Sanksjon 1 måned",
+                        vedtakstidspunkt = LocalDateTime.of(2022, Month.OCTOBER, 1, 8, 15, 2),
+                        fagsystemType = FagsystemType.SANKSJON_1_MND,
+                        regelverk = Regelverk.NASJONAL,
+                    ),
+                )
 
             // mocker annen hver
             var opprettet = true

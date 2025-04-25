@@ -7,7 +7,6 @@ import io.mockk.mockkObject
 import io.mockk.slot
 import io.mockk.unmockkObject
 import io.mockk.verify
-import java.util.UUID
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.brev.BrevRepository
@@ -35,6 +34,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import java.util.UUID
 
 class BrevmottakerSletterTest {
     private val behandlingService: BehandlingService = mockk()
@@ -42,13 +42,14 @@ class BrevmottakerSletterTest {
     private val brevService: BrevService = mockk()
     private val brevRepository: BrevRepository = mockk()
     private val personopplysningerService: PersonopplysningerService = mockk()
-    private val brevmottakerSletter: BrevmottakerSletter = BrevmottakerSletter(
-        behandlingService = behandlingService,
-        brevService = brevService,
-        brevRepository = brevRepository,
-        fagsakService = fagsakService,
-        personopplysningerService = personopplysningerService,
-    )
+    private val brevmottakerSletter: BrevmottakerSletter =
+        BrevmottakerSletter(
+            behandlingService = behandlingService,
+            brevService = brevService,
+            brevRepository = brevRepository,
+            fagsakService = fagsakService,
+            personopplysningerService = personopplysningerService,
+        )
 
     @BeforeEach
     fun setUp() {
@@ -71,9 +72,10 @@ class BrevmottakerSletterTest {
             val slettbarBrevmottaker = SlettbarBrevmottakerOrganisasjon("123")
 
             // Act & assert
-            val exception = assertThrows<UnsupportedOperationException> {
-                brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
-            }
+            val exception =
+                assertThrows<UnsupportedOperationException> {
+                    brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
+                }
             assertThat(exception.message).isEqualTo("Sletting av organisasjon er ikke støttet.")
         }
 
@@ -85,9 +87,10 @@ class BrevmottakerSletterTest {
             val slettbarBrevmottaker = SlettbarBrevmottakerPersonMedIdent("123")
 
             // Act & assert
-            val exception = assertThrows<UnsupportedOperationException> {
-                brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
-            }
+            val exception =
+                assertThrows<UnsupportedOperationException> {
+                    brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
+                }
             assertThat(exception.message).isEqualTo("Sletting av person med ident er ikke støttet.")
         }
 
@@ -103,9 +106,10 @@ class BrevmottakerSletterTest {
             } returns behandling
 
             // Act & assert
-            val exception = assertThrows<Feil> {
-                brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
-            }
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
+                }
             assertThat(exception.message).isEqualTo("Behandling ${behandling.id} er låst for videre behandling.")
         }
 
@@ -121,9 +125,10 @@ class BrevmottakerSletterTest {
             } returns behandling
 
             // Act & assert
-            val exception = assertThrows<Feil> {
-                brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
-            }
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
+                }
             assertThat(exception.message).isEqualTo("Behandlingen er i steg ${behandling.steg}, forventet steg ${StegType.BREV}.")
         }
 
@@ -143,9 +148,10 @@ class BrevmottakerSletterTest {
             } returns DomainUtil.lagBrev(behandlingId = behandling.id, mottakere = null)
 
             // Act & assert
-            val exception = assertThrows<Feil> {
-                brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
-            }
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
+                }
             assertThat(exception.message).isEqualTo("Brevmottaker ${slettbarBrevmottaker.id} kan ikke slettes da den ikke finnes.")
         }
 
@@ -162,15 +168,17 @@ class BrevmottakerSletterTest {
 
             every {
                 brevService.hentBrev(behandling.id)
-            } returns DomainUtil.lagBrev(
-                behandlingId = behandling.id,
-                mottakere = DomainUtil.lagBrevmottakere(personer = emptyList()),
-            )
+            } returns
+                DomainUtil.lagBrev(
+                    behandlingId = behandling.id,
+                    mottakere = DomainUtil.lagBrevmottakere(personer = emptyList()),
+                )
 
             // Act & assert
-            val exception = assertThrows<Feil> {
-                brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
-            }
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
+                }
             assertThat(exception.message).isEqualTo("Brevmottaker ${slettbarBrevmottaker.id} kan ikke slettes da den ikke finnes.")
         }
 
@@ -187,28 +195,33 @@ class BrevmottakerSletterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns DomainUtil.fagsak(
-                identer = setOf(PersonIdent("123")),
-            )
+            } returns
+                DomainUtil.fagsak(
+                    identer = setOf(PersonIdent("123")),
+                )
 
             every {
                 brevService.hentBrev(behandling.id)
-            } returns DomainUtil.lagBrev(
-                behandlingId = behandling.id,
-                mottakere = Brevmottakere(
-                    personer = listOf(
-                        DomainUtil.lagBrevmottakerPersonUtenIdent(
-                            id = slettbarBrevmottaker.id,
-                            mottakerRolle = MottakerRolle.FULLMAKT,
+            } returns
+                DomainUtil.lagBrev(
+                    behandlingId = behandling.id,
+                    mottakere =
+                        Brevmottakere(
+                            personer =
+                                listOf(
+                                    DomainUtil.lagBrevmottakerPersonUtenIdent(
+                                        id = slettbarBrevmottaker.id,
+                                        mottakerRolle = MottakerRolle.FULLMAKT,
+                                    ),
+                                ),
                         ),
-                    ),
-                ),
-            )
+                )
 
             // Act & assert
-            val exception = assertThrows<Feil> {
-                brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
-            }
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
+                }
             assertThat(exception.message).isEqualTo("Må ha minimum en brevmottaker for behandling ${behandling.id}.")
             verify { brevRepository wasNot called }
         }
@@ -228,35 +241,39 @@ class BrevmottakerSletterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns DomainUtil.fagsak(
-                identer = setOf(PersonIdent("123")),
-            )
+            } returns
+                DomainUtil.fagsak(
+                    identer = setOf(PersonIdent("123")),
+                )
 
             every {
                 brevService.hentBrev(behandling.id)
-            } returns DomainUtil.lagBrev(
-                behandlingId = behandling.id,
-                mottakere = Brevmottakere(
-                    personer = listOf(
-                        DomainUtil.lagBrevmottakerPersonMedIdent(
-                            mottakerRolle = MottakerRolle.BRUKER,
+            } returns
+                DomainUtil.lagBrev(
+                    behandlingId = behandling.id,
+                    mottakere =
+                        Brevmottakere(
+                            personer =
+                                listOf(
+                                    DomainUtil.lagBrevmottakerPersonMedIdent(
+                                        mottakerRolle = MottakerRolle.BRUKER,
+                                    ),
+                                    DomainUtil.lagBrevmottakerPersonUtenIdent(
+                                        id = slettbarBrevmottaker.id,
+                                        mottakerRolle = MottakerRolle.FULLMAKT,
+                                    ),
+                                    DomainUtil.lagBrevmottakerPersonUtenIdent(
+                                        id = UUID.randomUUID(),
+                                        mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+                                        adresselinje1 = "Adresse 1, Mars, 1337",
+                                        adresselinje2 = null,
+                                        poststed = null,
+                                        postnummer = null,
+                                        landkode = "DK",
+                                    ),
+                                ),
                         ),
-                        DomainUtil.lagBrevmottakerPersonUtenIdent(
-                            id = slettbarBrevmottaker.id,
-                            mottakerRolle = MottakerRolle.FULLMAKT,
-                        ),
-                        DomainUtil.lagBrevmottakerPersonUtenIdent(
-                            id = UUID.randomUUID(),
-                            mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
-                            adresselinje1 = "Adresse 1, Mars, 1337",
-                            adresselinje2 = null,
-                            poststed = null,
-                            postnummer = null,
-                            landkode = "DK",
-                        ),
-                    ),
-                ),
-            )
+                )
 
             every {
                 brevRepository.update(capture(brevSlot))
@@ -269,21 +286,23 @@ class BrevmottakerSletterTest {
             assertThat(brevSlot.captured.mottakere?.organisasjoner).isEmpty()
             assertThat(brevSlot.captured.mottakere?.personer).hasSize(2)
 
-            val brevmottakerPersonUtenIdent = brevSlot
-                .captured
-                .mottakere
-                ?.personer
-                ?.filterIsInstance(BrevmottakerPersonUtenIdent::class.java)
+            val brevmottakerPersonUtenIdent =
+                brevSlot
+                    .captured
+                    .mottakere
+                    ?.personer
+                    ?.filterIsInstance(BrevmottakerPersonUtenIdent::class.java)
             assertThat(brevmottakerPersonUtenIdent).hasSize(1)
             assertThat(brevmottakerPersonUtenIdent).allSatisfy {
                 assertThat(it.id).isNotEqualTo(slettbarBrevmottaker.id)
             }
 
-            val brevmottakerPersonMedIdent = brevSlot
-                .captured
-                .mottakere
-                ?.personer
-                ?.filterIsInstance(BrevmottakerPersonMedIdent::class.java)
+            val brevmottakerPersonMedIdent =
+                brevSlot
+                    .captured
+                    .mottakere
+                    ?.personer
+                    ?.filterIsInstance(BrevmottakerPersonMedIdent::class.java)
             assertThat(brevmottakerPersonMedIdent).hasSize(1)
             assertThat(brevmottakerPersonMedIdent).allSatisfy {
                 assertThat(it.personIdent).isNotEqualTo(slettbarBrevmottaker.id.toString())
@@ -314,32 +333,36 @@ class BrevmottakerSletterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns DomainUtil.fagsak(
-                identer = setOf(PersonIdent("123")),
-            )
+            } returns
+                DomainUtil.fagsak(
+                    identer = setOf(PersonIdent("123")),
+                )
 
             every {
                 brevService.hentBrev(behandling.id)
-            } returns DomainUtil.lagBrev(
-                behandlingId = behandling.id,
-                mottakere = Brevmottakere(
-                    personer = listOf(
-                        DomainUtil.lagBrevmottakerPersonUtenIdent(
-                            id = slettbarBrevmottaker.id,
-                            mottakerRolle = mottakerRolle,
+            } returns
+                DomainUtil.lagBrev(
+                    behandlingId = behandling.id,
+                    mottakere =
+                        Brevmottakere(
+                            personer =
+                                listOf(
+                                    DomainUtil.lagBrevmottakerPersonUtenIdent(
+                                        id = slettbarBrevmottaker.id,
+                                        mottakerRolle = mottakerRolle,
+                                    ),
+                                    DomainUtil.lagBrevmottakerPersonUtenIdent(
+                                        id = UUID.randomUUID(),
+                                        mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+                                        adresselinje1 = "Adresse 1, Mars, 1337",
+                                        adresselinje2 = null,
+                                        poststed = null,
+                                        postnummer = null,
+                                        landkode = "DK",
+                                    ),
+                                ),
                         ),
-                        DomainUtil.lagBrevmottakerPersonUtenIdent(
-                            id = UUID.randomUUID(),
-                            mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
-                            adresselinje1 = "Adresse 1, Mars, 1337",
-                            adresselinje2 = null,
-                            poststed = null,
-                            postnummer = null,
-                            landkode = "DK",
-                        ),
-                    ),
-                ),
-            )
+                )
 
             every {
                 brevRepository.update(capture(brevSlot))
@@ -352,21 +375,23 @@ class BrevmottakerSletterTest {
             assertThat(brevSlot.captured.mottakere?.organisasjoner).isEmpty()
             assertThat(brevSlot.captured.mottakere?.personer).hasSize(1)
 
-            val brevmottakerPersonUtenIdent = brevSlot
-                .captured
-                .mottakere
-                ?.personer
-                ?.filterIsInstance(BrevmottakerPersonUtenIdent::class.java)
+            val brevmottakerPersonUtenIdent =
+                brevSlot
+                    .captured
+                    .mottakere
+                    ?.personer
+                    ?.filterIsInstance(BrevmottakerPersonUtenIdent::class.java)
             assertThat(brevmottakerPersonUtenIdent).hasSize(1)
             assertThat(brevmottakerPersonUtenIdent).allSatisfy {
                 assertThat(it.id).isNotEqualTo(slettbarBrevmottaker.id)
             }
 
-            val brevmottakerPersonMedIdent = brevSlot
-                .captured
-                .mottakere
-                ?.personer
-                ?.filterIsInstance(BrevmottakerPersonMedIdent::class.java)
+            val brevmottakerPersonMedIdent =
+                brevSlot
+                    .captured
+                    .mottakere
+                    ?.personer
+                    ?.filterIsInstance(BrevmottakerPersonMedIdent::class.java)
             assertThat(brevmottakerPersonMedIdent).isEmpty()
 
             verify(exactly = 1) { brevRepository.update(any()) }
@@ -393,35 +418,40 @@ class BrevmottakerSletterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns DomainUtil.fagsak(
-                identer = setOf(personIdent),
-            )
+            } returns
+                DomainUtil.fagsak(
+                    identer = setOf(personIdent),
+                )
 
             every {
                 personopplysningerService.hentPersonopplysninger(behandling.id)
-            } returns DomainUtil.lagPersonopplysningerDto(
-                personIdent = personIdent.ident,
-                navn = "Navn Etternavn",
-            )
+            } returns
+                DomainUtil.lagPersonopplysningerDto(
+                    personIdent = personIdent.ident,
+                    navn = "Navn Etternavn",
+                )
 
             every {
                 brevService.hentBrev(behandling.id)
-            } returns DomainUtil.lagBrev(
-                behandlingId = behandling.id,
-                mottakere = Brevmottakere(
-                    personer = listOf(
-                        DomainUtil.lagBrevmottakerPersonUtenIdent(
-                            id = slettbarBrevmottaker.id,
-                            mottakerRolle = mottakerRolle,
-                            adresselinje1 = "Adresse 1, Mars, 1337",
-                            adresselinje2 = null,
-                            poststed = null,
-                            postnummer = null,
-                            landkode = "DK",
+            } returns
+                DomainUtil.lagBrev(
+                    behandlingId = behandling.id,
+                    mottakere =
+                        Brevmottakere(
+                            personer =
+                                listOf(
+                                    DomainUtil.lagBrevmottakerPersonUtenIdent(
+                                        id = slettbarBrevmottaker.id,
+                                        mottakerRolle = mottakerRolle,
+                                        adresselinje1 = "Adresse 1, Mars, 1337",
+                                        adresselinje2 = null,
+                                        poststed = null,
+                                        postnummer = null,
+                                        landkode = "DK",
+                                    ),
+                                ),
                         ),
-                    ),
-                ),
-            )
+                )
 
             every {
                 brevRepository.update(capture(brevSlot))
@@ -434,18 +464,20 @@ class BrevmottakerSletterTest {
             assertThat(brevSlot.captured.mottakere?.organisasjoner).isEmpty()
             assertThat(brevSlot.captured.mottakere?.personer).hasSize(1)
 
-            val brevmottakerPersonUtenIdent = brevSlot
-                .captured
-                .mottakere
-                ?.personer
-                ?.filterIsInstance(BrevmottakerPersonUtenIdent::class.java)
+            val brevmottakerPersonUtenIdent =
+                brevSlot
+                    .captured
+                    .mottakere
+                    ?.personer
+                    ?.filterIsInstance(BrevmottakerPersonUtenIdent::class.java)
             assertThat(brevmottakerPersonUtenIdent).isEmpty()
 
-            val brevmottakerPersonMedIdent = brevSlot
-                .captured
-                .mottakere
-                ?.personer
-                ?.filterIsInstance(BrevmottakerPersonMedIdent::class.java)
+            val brevmottakerPersonMedIdent =
+                brevSlot
+                    .captured
+                    .mottakere
+                    ?.personer
+                    ?.filterIsInstance(BrevmottakerPersonMedIdent::class.java)
             assertThat(brevmottakerPersonMedIdent).hasSize(1)
             assertThat(brevmottakerPersonMedIdent).allSatisfy {
                 assertThat(it.personIdent).isEqualTo(personIdent.ident)
@@ -475,39 +507,44 @@ class BrevmottakerSletterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns DomainUtil.fagsak(
-                identer = setOf(personIdent),
-            )
+            } returns
+                DomainUtil.fagsak(
+                    identer = setOf(personIdent),
+                )
 
             every {
                 personopplysningerService.hentPersonopplysninger(behandling.id)
-            } returns DomainUtil.lagPersonopplysningerDto(
-                personIdent = personIdent.ident,
-                navn = "Navn Etternavn",
-            )
+            } returns
+                DomainUtil.lagPersonopplysningerDto(
+                    personIdent = personIdent.ident,
+                    navn = "Navn Etternavn",
+                )
 
             every {
                 brevService.hentBrev(behandling.id)
-            } returns DomainUtil.lagBrev(
-                behandlingId = behandling.id,
-                mottakere = Brevmottakere(
-                    personer = listOf(
-                        DomainUtil.lagBrevmottakerPersonMedIdent(
-                            personIdent = personIdent.ident,
-                            mottakerRolle = MottakerRolle.BRUKER,
+            } returns
+                DomainUtil.lagBrev(
+                    behandlingId = behandling.id,
+                    mottakere =
+                        Brevmottakere(
+                            personer =
+                                listOf(
+                                    DomainUtil.lagBrevmottakerPersonMedIdent(
+                                        personIdent = personIdent.ident,
+                                        mottakerRolle = MottakerRolle.BRUKER,
+                                    ),
+                                    DomainUtil.lagBrevmottakerPersonUtenIdent(
+                                        id = slettbarBrevmottaker.id,
+                                        mottakerRolle = mottakerRolle,
+                                        adresselinje1 = "Adresse 1, Mars, 1337",
+                                        adresselinje2 = null,
+                                        poststed = null,
+                                        postnummer = null,
+                                        landkode = "DK",
+                                    ),
+                                ),
                         ),
-                        DomainUtil.lagBrevmottakerPersonUtenIdent(
-                            id = slettbarBrevmottaker.id,
-                            mottakerRolle = mottakerRolle,
-                            adresselinje1 = "Adresse 1, Mars, 1337",
-                            adresselinje2 = null,
-                            poststed = null,
-                            postnummer = null,
-                            landkode = "DK",
-                        ),
-                    ),
-                ),
-            )
+                )
 
             every {
                 brevRepository.update(capture(brevSlot))
@@ -520,18 +557,20 @@ class BrevmottakerSletterTest {
             assertThat(brevSlot.captured.mottakere?.organisasjoner).isEmpty()
             assertThat(brevSlot.captured.mottakere?.personer).hasSize(1)
 
-            val brevmottakerPersonUtenIdent = brevSlot
-                .captured
-                .mottakere
-                ?.personer
-                ?.filterIsInstance(BrevmottakerPersonUtenIdent::class.java)
+            val brevmottakerPersonUtenIdent =
+                brevSlot
+                    .captured
+                    .mottakere
+                    ?.personer
+                    ?.filterIsInstance(BrevmottakerPersonUtenIdent::class.java)
             assertThat(brevmottakerPersonUtenIdent).isEmpty()
 
-            val brevmottakerPersonMedIdent = brevSlot
-                .captured
-                .mottakere
-                ?.personer
-                ?.filterIsInstance(BrevmottakerPersonMedIdent::class.java)
+            val brevmottakerPersonMedIdent =
+                brevSlot
+                    .captured
+                    .mottakere
+                    ?.personer
+                    ?.filterIsInstance(BrevmottakerPersonMedIdent::class.java)
             assertThat(brevmottakerPersonMedIdent).hasSize(1)
             assertThat(brevmottakerPersonMedIdent).allSatisfy {
                 assertThat(it.personIdent).isEqualTo(personIdent.ident)

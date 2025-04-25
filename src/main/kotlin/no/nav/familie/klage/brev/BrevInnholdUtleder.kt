@@ -233,15 +233,16 @@ class BrevInnholdUtleder(
             personIdent = ident,
             navn = navn,
             avsnitt =
-            listOfNotNull(
-                AvsnittDto(
-                    deloverskrift = "",
-                    innhold = "Du har trukket klagen din på vedtaket om " +
-                        "${stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din.",
+                listOfNotNull(
+                    AvsnittDto(
+                        deloverskrift = "",
+                        innhold =
+                            "Du har trukket klagen din på vedtaket om " +
+                                "${stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din.",
+                    ),
+                    duHarRettTilInnsynAvsnitt(stønadstype),
+                    harDuSpørsmålAvsnitt(stønadstype),
                 ),
-                duHarRettTilInnsynAvsnitt(stønadstype),
-                harDuSpørsmålAvsnitt(stønadstype),
-            ),
         )
 
     private fun duHarRettTilÅKlageAvsnitt(stønadstype: Stønadstype) =

@@ -14,7 +14,7 @@ import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.client.HttpClientErrorException
-import java.util.*
+import java.util.UUID
 
 @Service
 class TilordnetRessursService(
@@ -22,21 +22,21 @@ class TilordnetRessursService(
     private val featureToggleService: FeatureToggleService,
     private val behandleSakOppgaveRepository: BehandleSakOppgaveRepository,
 ) {
-
     fun hentAnsvarligSaksbehandlerForBehandlingsId(behandlingId: UUID): SaksbehandlerDto {
         val behandleSakOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId)
-        val oppgave = try {
-            behandleSakOppgave?.let { oppgaveClient.finnOppgaveMedId(it.oppgaveId) }
-        } catch (exception: HttpClientErrorException) {
-            if (exception.statusCode == HttpStatus.FORBIDDEN) {
-                throw ManglerTilgang(
-                    melding = "Bruker mangler tilgang til etterspurt oppgave",
-                    frontendFeilmelding = "Behandlingen er koblet til en oppgave du ikke har tilgang til. Visning av ansvarlig saksbehandler er derfor ikke mulig",
-                )
-            } else {
-                throw exception
+        val oppgave =
+            try {
+                behandleSakOppgave?.let { oppgaveClient.finnOppgaveMedId(it.oppgaveId) }
+            } catch (exception: HttpClientErrorException) {
+                if (exception.statusCode == HttpStatus.FORBIDDEN) {
+                    throw ManglerTilgang(
+                        melding = "Bruker mangler tilgang til etterspurt oppgave",
+                        frontendFeilmelding = "Behandlingen er koblet til en oppgave du ikke har tilgang til. Visning av ansvarlig saksbehandler er derfor ikke mulig",
+                    )
+                } else {
+                    throw exception
+                }
             }
-        }
 
         val rolle = utledSaksbehandlerRolle(oppgave)
         val saksbehandler = oppgave?.tilordnetRessurs?.let { oppgaveClient.hentSaksbehandlerInfo(it) }
@@ -92,6 +92,5 @@ class TilordnetRessursService(
         }
     }
 
-    private fun erUtviklerMedVeilederrolle(): Boolean =
-        featureToggleService.isEnabled(Toggle.UTVIKLER_MED_VEILEDERRROLLE)
+    private fun erUtviklerMedVeilederrolle(): Boolean = featureToggleService.isEnabled(Toggle.UTVIKLER_MED_VEILEDERRROLLE)
 }

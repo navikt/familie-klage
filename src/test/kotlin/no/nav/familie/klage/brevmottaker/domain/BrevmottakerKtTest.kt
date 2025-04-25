@@ -15,21 +15,23 @@ class BrevmottakerKtTest {
             // Arrange
             val id = UUID.randomUUID()
 
-            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                mottakerRolle = MottakerRolle.FULLMAKT,
-                navn = "Navn Navnesen",
-                adresselinje1 = "Adresselinje 1",
-                adresselinje2 = "Adresselinje 2",
-                postnummer = "0010",
-                poststed = "Oslo",
-                landkode = "NO",
-            )
+            val nyBrevmottakerPersonUtenIdent =
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                    mottakerRolle = MottakerRolle.FULLMAKT,
+                    navn = "Navn Navnesen",
+                    adresselinje1 = "Adresselinje 1",
+                    adresselinje2 = "Adresselinje 2",
+                    postnummer = "0010",
+                    poststed = "Oslo",
+                    landkode = "NO",
+                )
 
             // Act
-            val brevmottakerPersonUtenIdent = BrevmottakerPersonUtenIdent.opprettFra(
-                id = id,
-                nyBrevmottakerPersonUtenIdent = nyBrevmottakerPersonUtenIdent,
-            )
+            val brevmottakerPersonUtenIdent =
+                BrevmottakerPersonUtenIdent.opprettFra(
+                    id = id,
+                    nyBrevmottakerPersonUtenIdent = nyBrevmottakerPersonUtenIdent,
+                )
 
             // Assert
             assertThat(brevmottakerPersonUtenIdent.id).isEqualTo(id)
@@ -45,20 +47,22 @@ class BrevmottakerKtTest {
         @Test
         fun `skal opprette BrevmottakerPersonUtenIdent fra NyBrevmottakerPersonUtenIdent med default ID`() {
             // Arrange
-            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                mottakerRolle = MottakerRolle.FULLMAKT,
-                navn = "Navn Navnesen",
-                adresselinje1 = "Adresselinje 1",
-                adresselinje2 = "Adresselinje 2",
-                postnummer = "0010",
-                poststed = "Oslo",
-                landkode = "NO",
-            )
+            val nyBrevmottakerPersonUtenIdent =
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                    mottakerRolle = MottakerRolle.FULLMAKT,
+                    navn = "Navn Navnesen",
+                    adresselinje1 = "Adresselinje 1",
+                    adresselinje2 = "Adresselinje 2",
+                    postnummer = "0010",
+                    poststed = "Oslo",
+                    landkode = "NO",
+                )
 
             // Act
-            val brevmottakerPersonUtenIdent = BrevmottakerPersonUtenIdent.opprettFra(
-                nyBrevmottakerPersonUtenIdent = nyBrevmottakerPersonUtenIdent,
-            )
+            val brevmottakerPersonUtenIdent =
+                BrevmottakerPersonUtenIdent.opprettFra(
+                    nyBrevmottakerPersonUtenIdent = nyBrevmottakerPersonUtenIdent,
+                )
 
             // Assert
             assertThat(brevmottakerPersonUtenIdent.id).isNotNull()
@@ -79,11 +83,12 @@ class BrevmottakerKtTest {
         @Test
         fun `skal deserialisere BrevmottakerPersonMedIdent`() {
             // Arrange
-            val brevmottakerPersonMedIdent = BrevmottakerPersonMedIdent(
-                personIdent = "01492350318",
-                mottakerRolle = MottakerRolle.BRUKER,
-                navn = "Fornavn mellomnavn Etternavn",
-            )
+            val brevmottakerPersonMedIdent =
+                BrevmottakerPersonMedIdent(
+                    personIdent = "01492350318",
+                    mottakerRolle = MottakerRolle.BRUKER,
+                    navn = "Fornavn mellomnavn Etternavn",
+                )
 
             val json = objectMapper.writeValueAsString(brevmottakerPersonMedIdent)
             val parser = objectMapper.factory.createParser(json)
@@ -104,16 +109,17 @@ class BrevmottakerKtTest {
             // Arrange
             val id = UUID.randomUUID()
 
-            val brevmottakerPersonMedIdent = BrevmottakerPersonUtenIdent(
-                id = id,
-                mottakerRolle = MottakerRolle.FULLMAKT,
-                navn = "navn",
-                adresselinje1 = "Adresselinje 1",
-                adresselinje2 = "Adresselinje 2",
-                postnummer = "0010",
-                poststed = "Oslo",
-                landkode = "NO",
-            )
+            val brevmottakerPersonMedIdent =
+                BrevmottakerPersonUtenIdent(
+                    id = id,
+                    mottakerRolle = MottakerRolle.FULLMAKT,
+                    navn = "navn",
+                    adresselinje1 = "Adresselinje 1",
+                    adresselinje2 = "Adresselinje 2",
+                    postnummer = "0010",
+                    poststed = "Oslo",
+                    landkode = "NO",
+                )
 
             val json = objectMapper.writeValueAsString(brevmottakerPersonMedIdent)
             val parser = objectMapper.factory.createParser(json)
@@ -139,16 +145,17 @@ class BrevmottakerKtTest {
             // Arrange
             val id = UUID.randomUUID()
 
-            val brevmottakerPersonMedIdent = BrevmottakerPersonUtenIdent(
-                id = id,
-                mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
-                navn = "navn",
-                adresselinje1 = "Adresselinje 1, København, 999",
-                adresselinje2 = "Adresselinje 1, København, 999",
-                postnummer = null,
-                poststed = null,
-                landkode = "DK",
-            )
+            val brevmottakerPersonMedIdent =
+                BrevmottakerPersonUtenIdent(
+                    id = id,
+                    mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+                    navn = "navn",
+                    adresselinje1 = "Adresselinje 1, København, 999",
+                    adresselinje2 = "Adresselinje 1, København, 999",
+                    postnummer = null,
+                    poststed = null,
+                    landkode = "DK",
+                )
 
             val json = objectMapper.writeValueAsString(brevmottakerPersonMedIdent)
             val parser = objectMapper.factory.createParser(json)

@@ -109,18 +109,20 @@ class SlettbarBrevmottakerDtoKtTest {
         @Test
         fun `skal deserialisere SlettbarBrevmottakerOrganisasjonDto`() {
             // Arrange
-            val json = "{" +
-                "\"type\":\"ORGANISASJON\"," +
-                "\"organisasjonsnummer\":\"321\"" +
-                "}"
+            val json =
+                "{" +
+                    "\"type\":\"ORGANISASJON\"," +
+                    "\"organisasjonsnummer\":\"321\"" +
+                    "}"
 
             val parser = objectMapper.factory.createParser(json)
 
             // Act
-            val deserialize = slettbarBrevmottakerDtoDeserializer.deserialize(
-                parser,
-                objectMapper.deserializationContext,
-            )
+            val deserialize =
+                slettbarBrevmottakerDtoDeserializer.deserialize(
+                    parser,
+                    objectMapper.deserializationContext,
+                )
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(SlettbarBrevmottakerOrganisasjonDto::class.java) {
@@ -131,18 +133,20 @@ class SlettbarBrevmottakerDtoKtTest {
         @Test
         fun `skal deserialisere SlettbarBrevmottakerPersonMedIdentDto`() {
             // Arrange
-            val json = "{" +
-                "\"type\":\"PERSON_MED_IDENT\"," +
-                "\"personIdent\":\"123\"" +
-                "}"
+            val json =
+                "{" +
+                    "\"type\":\"PERSON_MED_IDENT\"," +
+                    "\"personIdent\":\"123\"" +
+                    "}"
 
             val parser = objectMapper.factory.createParser(json)
 
             // Act
-            val deserialize = slettbarBrevmottakerDtoDeserializer.deserialize(
-                parser,
-                objectMapper.deserializationContext,
-            )
+            val deserialize =
+                slettbarBrevmottakerDtoDeserializer.deserialize(
+                    parser,
+                    objectMapper.deserializationContext,
+                )
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(SlettbarBrevmottakerPersonMedIdentDto::class.java) {
@@ -155,18 +159,20 @@ class SlettbarBrevmottakerDtoKtTest {
             // Arrange
             val id = UUID.randomUUID()
 
-            val json = "{" +
-                "\"type\":\"PERSON_UTEN_IDENT\"," +
-                "\"id\":\"${id}\"" +
-                "}"
+            val json =
+                "{" +
+                    "\"type\":\"PERSON_UTEN_IDENT\"," +
+                    "\"id\":\"${id}\"" +
+                    "}"
 
             val parser = objectMapper.factory.createParser(json)
 
             // Act
-            val deserialize = slettbarBrevmottakerDtoDeserializer.deserialize(
-                parser,
-                objectMapper.deserializationContext,
-            )
+            val deserialize =
+                slettbarBrevmottakerDtoDeserializer.deserialize(
+                    parser,
+                    objectMapper.deserializationContext,
+                )
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(SlettbarBrevmottakerPersonUtenIdentDto::class.java) {
