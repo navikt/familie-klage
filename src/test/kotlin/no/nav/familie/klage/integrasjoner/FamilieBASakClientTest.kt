@@ -22,6 +22,7 @@ import java.util.UUID
 class FamilieBASakClientTest {
     private val restOperations = mockk<RestOperations>()
     private val featureToggleService = mockk<FeatureToggleService>()
+    private val baseUrl = "http://localhost:8080/api/klage"
 
     private val familieBASakClient =
         FamilieBASakClient(
@@ -43,10 +44,7 @@ class FamilieBASakClientTest {
                     opprettet = Opprettet(klagebehandlingId.toString()),
                 )
 
-            val uri =
-                URI.create(
-                    "http://localhost:8080/api/ekstern/fagsaker/$eksternFagsakId/opprett-revurdering-klage",
-                )
+            val uri = URI.create("$baseUrl/fagsaker/$eksternFagsakId/opprett-revurdering-klage")
 
             every {
                 restOperations.exchange<Ressurs<OpprettRevurderingResponse>>(
@@ -92,10 +90,7 @@ class FamilieBASakClientTest {
                     opprettet = Opprettet(klagebehandlingId.toString()),
                 )
 
-            val uri =
-                URI.create(
-                    "http://localhost:8080/api/ekstern/fagsak/$eksternFagsakId/klagebehandling/$klagebehandlingId/opprett-revurdering-klage",
-                )
+            val uri = URI.create("$baseUrl/fagsak/$eksternFagsakId/klagebehandling/$klagebehandlingId/opprett-revurdering-klage")
 
             every {
                 restOperations.exchange<Ressurs<OpprettRevurderingResponse>>(

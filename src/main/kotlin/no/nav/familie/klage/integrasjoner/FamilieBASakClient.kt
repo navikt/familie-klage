@@ -48,9 +48,9 @@ class FamilieBASakClient(
     ): OpprettRevurderingResponse {
         val url =
             if (featureToggleService.isEnabled(Toggle.SEND_BEHANDLING_ID_VED_OPPRETTING_AV_REVURDERING_KLAGE)) {
-                "api/ekstern/fagsak/$eksternFagsakId/klagebehandling/$klagebehandlingId/opprett-revurdering-klage"
+                "api/klage/fagsak/$eksternFagsakId/klagebehandling/$klagebehandlingId/opprett-revurdering-klage"
             } else {
-                "api/ekstern/fagsaker/$eksternFagsakId/opprett-revurdering-klage"
+                "api/klage/fagsaker/$eksternFagsakId/opprett-revurdering-klage"
             }
         val hentVedtakUri =
             UriComponentsBuilder
