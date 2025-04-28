@@ -127,6 +127,7 @@ class FamilieIntegrasjonerMock(
                                     "Luke",
                                     "Skywalker",
                                     "4405",
+                                    "Skien",
                                 ),
                             ),
                         ),
@@ -349,6 +350,7 @@ class FamilieIntegrasjonerMock(
                     fornavn = "Darth",
                     etternavn = "Vader",
                     enhet = "4405",
+                    enhetsnavn = "Skien",
                 ),
             )
     }

@@ -7,7 +7,6 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration.StringListWrapper
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.kabal.BehandlingEvent
 import no.nav.familie.klage.kabal.BehandlingFeilregistrertTask

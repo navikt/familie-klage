@@ -8,7 +8,6 @@ import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakRepository
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.kabal.AnkeITrygderettenbehandlingOpprettetDetaljer
 import no.nav.familie.klage.kabal.AnkebehandlingOpprettetDetaljer
@@ -280,5 +279,5 @@ internal class BehandlingEventServiceTest {
                 ),
         )
 
-    private val saksbehandler = Saksbehandler(UUID.randomUUID(), "A123456", "Alfa", "Omega", "4415")
+    private val saksbehandler = Saksbehandler(UUID.randomUUID(), "A123456", "Alfa", "Omega", "4415", "Skien")
 }

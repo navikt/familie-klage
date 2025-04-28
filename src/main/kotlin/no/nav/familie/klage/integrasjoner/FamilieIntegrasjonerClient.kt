@@ -95,13 +95,14 @@ class FamilieIntegrasjonerClient(
         adresse: ManuellAdresse?,
         fagsystem: Fagsystem,
     ): String {
-        val journalpostRequest = DistribuerJournalpostRequest(
-            journalpostId = journalpostId,
-            bestillendeFagsystem = fagsystem,
-            dokumentProdApp = "FAMILIE_KLAGE",
-            distribusjonstype = distribusjonstype,
-            adresse = adresse,
-        )
+        val journalpostRequest =
+            DistribuerJournalpostRequest(
+                journalpostId = journalpostId,
+                bestillendeFagsystem = fagsystem,
+                dokumentProdApp = "FAMILIE_KLAGE",
+                distribusjonstype = distribusjonstype,
+                adresse = adresse,
+            )
 
         return postForEntity<Ressurs<String>>(
             integrasjonerConfig.distribuerDokumentUri,
