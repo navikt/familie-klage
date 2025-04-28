@@ -39,7 +39,7 @@ class BrevsignaturService(
     companion object {
         val NAV_ANONYM_NAVN = "Nav anonym"
         val ENHET_VIKAFOSSEN = "Nav Vikafossen"
-        val ENHET_NAY = "Nav Arbeid og ytelser"
+        val ENHET_NAY = "Nav arbeid og ytelser"
         val ENHET_NFP = "Nav familie- og pensjonsytelser"
     }
 }
