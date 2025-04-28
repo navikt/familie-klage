@@ -104,7 +104,11 @@ class DistribusjonService(
 
     fun distribuerBrev(journalpostId: String): String = familieIntegrasjonerClient.distribuerBrev(journalpostId, Distribusjonstype.ANNET)
 
-    fun distribuerBrev(journalpostId: String, adresse: ManuellAdresse?, fagsystem: Fagsystem): String =
+    fun distribuerBrev(
+        journalpostId: String,
+        adresse: ManuellAdresse?,
+        fagsystem: Fagsystem,
+    ): String =
         familieIntegrasjonerClient.distribuerBrev(
             journalpostId = journalpostId,
             distribusjonstype = Distribusjonstype.ANNET,
