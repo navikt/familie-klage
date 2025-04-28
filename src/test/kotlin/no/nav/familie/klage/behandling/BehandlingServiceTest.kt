@@ -205,9 +205,10 @@ internal class BehandlingServiceTest {
             every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
 
             // Act & assert
-            val exception = assertThrows<Feil> {
-                behandlingService.oppdaterBehandlendeEnhet(behandling.id, BarnetrygdEnhet.OSLO, fagsak.fagsystem)
-            }
+            val exception =
+                assertThrows<Feil> {
+                    behandlingService.oppdaterBehandlendeEnhet(behandling.id, BarnetrygdEnhet.OSLO, fagsak.fagsystem)
+                }
             assertThat(exception.message).isEqualTo("Kan ikke endre behandlende enhet på ferdigstilt behandling=${behandling.id}")
         }
 

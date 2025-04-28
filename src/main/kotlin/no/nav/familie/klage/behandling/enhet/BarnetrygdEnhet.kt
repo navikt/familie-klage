@@ -24,7 +24,6 @@ enum class BarnetrygdEnhet(
                 STEINKJER,
             )
 
-        fun erGyldigBehandlendeBarnetrygdEnhet(enhetsnummer: String): Boolean =
-            GYLDIGE_BEHANDLENDE_BARNETRYGD_ENHETER.any { it.enhetsnummer == enhetsnummer }
+        fun erGyldigBehandlendeBarnetrygdEnhet(enhetsnummer: String): Boolean = GYLDIGE_BEHANDLENDE_BARNETRYGD_ENHETER.any { it.enhetsnummer == enhetsnummer }
     }
 }

@@ -85,7 +85,10 @@ class OppgaveService(
             mappeRespons.mapper
         }
 
-    fun oppdaterEnhetPåBehandleSakOppgave(behandlingId: UUID, behandlendeEnhet: Enhet) {
+    fun oppdaterEnhetPåBehandleSakOppgave(
+        behandlingId: UUID,
+        behandlendeEnhet: Enhet,
+    ) {
         val behandleSakOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId)?.let { hentOppgave(it.oppgaveId) }
 
         if (behandleSakOppgave == null) {

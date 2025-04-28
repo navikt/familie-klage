@@ -99,13 +99,14 @@ internal class OppgaveServiceTest {
             val nyBehandlendeEnhet = BarnetrygdEnhet.STEINKJER
             val oppgaveId = 1L
             val behandleSakOppgave = BehandleSakOppgave(behandlingId = behandling.id, oppgaveId = oppgaveId)
-            val oppgave = Oppgave(
-                id = oppgaveId,
-                tildeltEnhetsnr = behandlendeEnhet.enhetsnummer,
-                tilordnetRessurs = "Saksbehandler",
-                oppgavetype = "BEH_SAK",
-                mappeId = 101,
-            )
+            val oppgave =
+                Oppgave(
+                    id = oppgaveId,
+                    tildeltEnhetsnr = behandlendeEnhet.enhetsnummer,
+                    tilordnetRessurs = "Saksbehandler",
+                    oppgavetype = "BEH_SAK",
+                    mappeId = 101,
+                )
 
             val oppgaveSlot = slot<Oppgave>()
 
@@ -127,19 +128,7 @@ internal class OppgaveServiceTest {
         fun `skal kaste feil dersom det ikke finnes en behandle sak oppgave for behandling`() {
             // Arrange
             val behandling = behandling()
-            val behandlendeEnhet = BarnetrygdEnhet.STORD
             val nyBehandlendeEnhet = BarnetrygdEnhet.STEINKJER
-            val oppgaveId = 1L
-            val behandleSakOppgave = BehandleSakOppgave(behandlingId = behandling.id, oppgaveId = oppgaveId)
-            val oppgave = Oppgave(
-                id = oppgaveId,
-                tildeltEnhetsnr = behandlendeEnhet.enhetsnummer,
-                tilordnetRessurs = "Saksbehandler",
-                oppgavetype = "BEH_SAK",
-                mappeId = 101,
-            )
-
-            val oppgaveSlot = slot<Oppgave>()
 
             every { behandleSakOppgaveRepository.findByBehandlingId(behandling.id) } returns null
 

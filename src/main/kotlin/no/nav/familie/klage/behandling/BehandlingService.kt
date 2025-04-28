@@ -16,6 +16,7 @@ import no.nav.familie.klage.behandling.enhet.Enhet
 import no.nav.familie.klage.behandling.enhet.EnhetValidator
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
+import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
@@ -36,7 +37,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.util.UUID
-import no.nav.familie.klage.infrastruktur.exception.Feil
 
 @Service
 class BehandlingService(

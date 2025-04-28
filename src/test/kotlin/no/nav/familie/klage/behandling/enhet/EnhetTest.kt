@@ -37,9 +37,10 @@ class EnhetTest {
         @EnumSource(Fagsystem::class, names = ["BA", "KS"], mode = EnumSource.Mode.EXCLUDE)
         fun `skal kaste feil om fagsystem ikke er støttet`(fagsystem: Fagsystem) {
             // Act & assert
-            val exception = assertThrows<Feil> {
-                Enhet.finnEnhet(fagsystem, "1234")
-            }
+            val exception =
+                assertThrows<Feil> {
+                    Enhet.finnEnhet(fagsystem, "1234")
+                }
             assertThat(exception.message).isEqualTo("Støtter ikke endring av enhet for fagsystem $fagsystem")
         }
     }
