@@ -91,12 +91,13 @@ internal class DistribusjonServiceTest {
         val adresseSlot = slot<ManuellAdresse>()
         val fagsystemSlot = slot<Fagsystem>()
         val journalpostId = "journalpostId"
-        val manuellAdresse = ManuellAdresse(
-            adresseType = AdresseType.norskPostadresse,
-            adresselinje1 = "Adresseveien 1",
-            postnummer = "0123",
-            poststed = "Oslo",
-        )
+        val manuellAdresse =
+            ManuellAdresse(
+                adresseType = AdresseType.norskPostadresse,
+                adresselinje1 = "Adresseveien 1",
+                postnummer = "0123",
+                poststed = "Oslo",
+            )
 
         every {
             familieIntegrasjonerClient.distribuerBrev(

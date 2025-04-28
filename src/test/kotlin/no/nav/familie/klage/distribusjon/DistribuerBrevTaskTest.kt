@@ -81,7 +81,6 @@ class DistribuerBrevTaskTest {
 
     @Nested
     inner class ManglerBrevmottakere {
-
         @Test
         fun `feiler hvis brevmottakere er null når det finnes journalposter for mottaker uten ident`() {
             // Arrange
@@ -194,8 +193,10 @@ class DistribuerBrevTaskTest {
         distribusjonId: String? = null,
     ) = BrevmottakerJournalpostMedIdent(identForPersonMedIdent, journalpostId, distribusjonId = distribusjonId)
 
-    private fun journalpostUtenIdent(journalpostId: String, distribusjonId: String? = null) =
-        BrevmottakerJournalpostUtenIdent(idForPersonUtenIdent, journalpostId, distribusjonId = distribusjonId)
+    private fun journalpostUtenIdent(
+        journalpostId: String,
+        distribusjonId: String? = null,
+    ) = BrevmottakerJournalpostUtenIdent(idForPersonUtenIdent, journalpostId, distribusjonId = distribusjonId)
 
     private val personMedIdent =
         BrevmottakerPersonMedIdent(identForPersonMedIdent, MottakerRolle.BRUKER, "Navn Navnesen")
