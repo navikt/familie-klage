@@ -11,10 +11,13 @@ import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
+import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.cache.CacheManager
 import java.util.UUID
 
@@ -91,8 +94,13 @@ internal class OppgaveServiceTest {
 
     @Nested
     inner class OppdaterEnhetPåBehandleSakOppgave {
-        @Test
-        fun `skal oppdatere BehandleSak-oppgave med ny enhet samt nullstille tilordnetRessurs og mappe`() {
+        @ParameterizedTest
+        @EnumSource(
+            value = StatusEnum::class,
+            names = ["FERDIGSTILT", "FEILREGISTRERT"],
+            mode = EnumSource.Mode.EXCLUDE,
+        )
+        fun `skal oppdatere BehandleSak-oppgave med ny enhet samt nullstille tilordnetRessurs og mappe`(status: StatusEnum) {
             // Arrange
             val behandling = behandling()
             val behandlendeEnhet = BarnetrygdEnhet.STORD
@@ -106,6 +114,7 @@ internal class OppgaveServiceTest {
                     tilordnetRessurs = "Saksbehandler",
                     oppgavetype = "BEH_SAK",
                     mappeId = 101,
+                    status = status,
                 )
 
             val oppgaveSlot = slot<Oppgave>()
@@ -122,6 +131,39 @@ internal class OppgaveServiceTest {
             assertThat(oppdatertOppgave.tildeltEnhetsnr).isEqualTo(nyBehandlendeEnhet.enhetsnummer)
             assertThat(oppdatertOppgave.mappeId).isNull()
             assertThat(oppdatertOppgave.tilordnetRessurs).isNull()
+        }
+
+        @ParameterizedTest
+        @EnumSource(
+            value = StatusEnum::class,
+            names = ["FERDIGSTILT", "FEILREGISTRERT"],
+            mode = EnumSource.Mode.INCLUDE,
+        )
+        fun `skal ikke oppdatere oppgave om oppgaven allerede er ferdigstilt eller er feilregistrert`(status: StatusEnum) {
+            // Arrange
+            val behandling = behandling()
+            val behandlendeEnhet = BarnetrygdEnhet.STORD
+            val nyBehandlendeEnhet = BarnetrygdEnhet.STEINKJER
+            val oppgaveId = 1L
+            val behandleSakOppgave = BehandleSakOppgave(behandlingId = behandling.id, oppgaveId = oppgaveId)
+            val oppgave =
+                Oppgave(
+                    id = oppgaveId,
+                    tildeltEnhetsnr = behandlendeEnhet.enhetsnummer,
+                    tilordnetRessurs = "Saksbehandler",
+                    oppgavetype = "BEH_SAK",
+                    mappeId = 101,
+                    status = status,
+                )
+
+            every { behandleSakOppgaveRepository.findByBehandlingId(behandling.id) } returns behandleSakOppgave
+            every { oppgaveClient.finnOppgaveMedId(oppgaveId) } returns oppgave
+
+            // Act
+            oppgaveService.oppdaterEnhetPåBehandleSakOppgave(behandlingId = behandling.id, nyBehandlendeEnhet)
+
+            // Assert
+            verify(exactly = 0) { oppgaveClient.oppdaterOppgave(any()) }
         }
 
         @Test
