@@ -93,11 +93,11 @@ class OppgaveService(
         if (behandleSakOppgave.status !in listOf(StatusEnum.FERDIGSTILT, StatusEnum.FEILREGISTRERT)) {
             oppdaterOppgave(
                 Oppgave(
-                id = behandleSakOppgave.id,
-                tildeltEnhetsnr = behandlendeEnhet.enhetsnummer,
-                mappeId = null,
-                tilordnetRessurs = null
-                )
+                    id = behandleSakOppgave.id,
+                    tildeltEnhetsnr = behandlendeEnhet.enhetsnummer,
+                    mappeId = null,
+                    tilordnetRessurs = null,
+                ),
             )
         }
     }

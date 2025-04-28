@@ -23,7 +23,7 @@ class BehandlingshistorikkService(private val behandlingshistorikkRepository: Be
                 behandlingId = behandlingId,
                 steg = steg,
                 historikkHendelse = historikkHendelse,
-                beskrivelse = beskrivelse
+                beskrivelse = beskrivelse,
             ),
         )
     }

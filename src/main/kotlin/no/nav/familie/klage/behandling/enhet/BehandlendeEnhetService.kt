@@ -54,9 +54,9 @@ class BehandlendeEnhetService(
             steg = behandling.steg,
             historikkHendelse = HistorikkHendelse.BEHANDLENDE_ENHET_ENDRET,
             beskrivelse =
-                "Behandlende enhet endret fra ${eksisterendeBehandlendeEnhet.enhetsnummer} (${eksisterendeBehandlendeEnhet.enhetsnavn}) til " +
-                    "${nyBehandlendeEnhet.enhetsnummer} (${nyBehandlendeEnhet.enhetsnavn})." +
-                    "\n\n${oppdaterBehandlendeEnhetRequest.begrunnelse}",
+            "Behandlende enhet endret fra ${eksisterendeBehandlendeEnhet.enhetsnummer} (${eksisterendeBehandlendeEnhet.enhetsnavn}) til " +
+                "${nyBehandlendeEnhet.enhetsnummer} (${nyBehandlendeEnhet.enhetsnavn})." +
+                "\n\n${oppdaterBehandlendeEnhetRequest.begrunnelse}",
         )
     }
 

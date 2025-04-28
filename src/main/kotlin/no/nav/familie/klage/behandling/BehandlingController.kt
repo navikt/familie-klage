@@ -137,7 +137,7 @@ class BehandlingController(
     @PutMapping("{behandlingId}/oppdater-behandlende-enhet")
     fun oppdaterBehandlendeEnhet(
         @PathVariable behandlingId: UUID,
-        @RequestBody oppdaterBehandlendeEnhetRequest: OppdaterBehandlendeEnhetRequest
+        @RequestBody oppdaterBehandlendeEnhetRequest: OppdaterBehandlendeEnhetRequest,
     ): Ressurs<UUID> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
             behandlingId = behandlingId,
@@ -147,7 +147,7 @@ class BehandlingController(
 
         behandlendeEnhetService.oppdaterBehandlendeEnhet(
             behandlingId = behandlingId,
-            oppdaterBehandlendeEnhetRequest = oppdaterBehandlendeEnhetRequest
+            oppdaterBehandlendeEnhetRequest = oppdaterBehandlendeEnhetRequest,
         )
         return Ressurs.success(data = behandlingId)
     }
