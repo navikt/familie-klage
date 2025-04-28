@@ -4,23 +4,19 @@ import io.mockk.every
 import io.mockk.mockk
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.oppgave.OppgaveClient
-import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.personopplysninger.dto.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerDto
-import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.BrukerContextUtil.testWithBrukerContext
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
-import org.assertj.core.api.Assertions
+import no.nav.familie.kontrakter.felles.saksbehandler.Saksbehandler
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.junit.jupiter.params.provider.ValueSource
-import no.nav.familie.kontrakter.felles.saksbehandler.Saksbehandler
 import java.util.UUID
 
 internal class BrevsignaturServiceTest {
-    private val personopplysningerService = mockk<PersonopplysningerService>()
     private val oppgaveClient = mockk<OppgaveClient>()
     val brevsignaturService = BrevsignaturService(mockk<FeatureToggleService>(relaxed = true), oppgaveClient)
 
@@ -39,13 +35,14 @@ internal class BrevsignaturServiceTest {
     internal fun `skal returnere saksehandlers navn og enhet hvis ikke strengt fortrolig`() {
         val personopplysningerDto = mockk<PersonopplysningerDto>()
         every { personopplysningerDto.adressebeskyttelse } returns null
+        every { oppgaveClient.hentSaksbehandlerInfo("Julenissen") } returns saksbehandler()
 
         val signaturMedEnhet =
             testWithBrukerContext(preferredUsername = "Julenissen") {
                 brevsignaturService.lagSignatur(personopplysningerDto, Fagsystem.EF)
             }
 
-        assertThat(signaturMedEnhet.enhet).isEqualTo(BrevsignaturService.ENHET_NAY)
+        assertThat(signaturMedEnhet.enhet).isEqualTo("Nav arbeid og ytelser Skien")
         assertThat(signaturMedEnhet.navn).isEqualTo("Julenissen")
     }
 
@@ -54,35 +51,66 @@ internal class BrevsignaturServiceTest {
     fun `skal sette riktig enhet i brevsignatur basert på fagsystem`(fagsystem: Fagsystem) {
         val personopplysningerDto = mockk<PersonopplysningerDto>()
         every { personopplysningerDto.adressebeskyttelse } returns null
-        every { oppgaveClient.hentSaksbehandlerInfo(any()) } returns saksbehandler(enhetsnavn = "NAV ARBEID OG YTELSER UVENTET ENHET")
+        every { oppgaveClient.hentSaksbehandlerInfo(any()) } returns saksbehandler(enhetsnavn = "NAV ARBEID OG YTELSER SKIEN")
 
-        val signaturForEnsligForsørger =
+        val signatur =
             testWithBrukerContext {
                 brevsignaturService.lagSignatur(personopplysningerDto, fagsystem)
             }
 
         if (fagsystem == Fagsystem.EF) {
-            assertThat(signaturForEnsligForsørger.enhet).isEqualTo(BrevsignaturService.ENHET_NAY)
+            assertThat(signatur.enhet).isEqualTo("Nav arbeid og ytelser Skien")
         } else {
-            assertThat(signaturForEnsligForsørger.enhet).isEqualTo(BrevsignaturService.ENHET_NFP)
+            assertThat(signatur.enhet).isEqualTo(BrevsignaturService.ENHET_NFP)
         }
     }
 
-    @Test
-    fun `skal sende frittstående brev med vanlig nay signatur uten geografisk lokasjon når enhetsnavn er uvanlig`() {
-        val saksbehandlerNavn = "Ole Olsen"
+    @ParameterizedTest
+    @EnumSource(Fagsystem::class)
+    fun `skal sette nay signatur uten geografisk lokasjon når enhetsnavn er uvanlig`(fagsystem: Fagsystem) {
         val personopplysningerDto = mockk<PersonopplysningerDto>()
-        BrukerContextUtil.mockBrukerContext(saksbehandlerNavn)
 
-        every { oppgaveClient.hentSaksbehandlerInfo(saksbehandlerNavn) } returns saksbehandler(enhetsnavn = "NAV ARBEID OG YTELSER UVENTET ENHET")
-        every { personopplysningerDto.adressebeskyttelse?.erStrengtFortrolig()} returns false
-        val signaturMedEnhet = brevsignaturService.lagSignatur(personopplysningerDto, Fagsystem.EF)
+        every { oppgaveClient.hentSaksbehandlerInfo(any()) } returns saksbehandler(enhetsnavn = "NAV ARBEID OG YTELSER UVENTET ENHET")
+        every { personopplysningerDto.adressebeskyttelse } returns null
 
-        println(signaturMedEnhet.enhet)
-        Assertions.assertThat(signaturMedEnhet.enhet).isEqualTo(ENHET_NAY)
-        Assertions.assertThat(signaturMedEnhet.navn).isEqualTo(saksbehandlerNavn)
+        val signatur =
+            testWithBrukerContext {
+                brevsignaturService.lagSignatur(personopplysningerDto, fagsystem)
+            }
 
-        BrukerContextUtil.clearBrukerContext()
+        if (fagsystem == Fagsystem.EF) {
+            assertThat(signatur.enhet).isEqualTo("Nav arbeid og ytelser")
+        } else {
+            assertThat(signatur.enhet).isEqualTo(BrevsignaturService.ENHET_NFP)
+        }
+    }
+
+    @ValueSource(
+        strings = ["NAV ARBEID OG YTELSER SKIEN", "NAV ARBEID OG YTELSER MØRE OG ROMSDAL", "NAV ARBEID OG YTELSER SØRLANDET"],
+    )
+    @ParameterizedTest
+    fun `skal sette vanlig nay signatur med geografisk lokasjon`(enhetsnavn: String) {
+        val personopplysningerDto = mockk<PersonopplysningerDto>()
+
+        every { oppgaveClient.hentSaksbehandlerInfo(any()) } returns saksbehandler(enhetsnavn = enhetsnavn)
+        every { personopplysningerDto.adressebeskyttelse } returns null
+
+        val signaturEF =
+            testWithBrukerContext {
+                brevsignaturService.lagSignatur(personopplysningerDto, Fagsystem.EF)
+            }
+        val signaturBA =
+            testWithBrukerContext {
+                brevsignaturService.lagSignatur(personopplysningerDto, Fagsystem.BA)
+            }
+        val signaturKS =
+            testWithBrukerContext {
+                brevsignaturService.lagSignatur(personopplysningerDto, Fagsystem.KS)
+            }
+
+        assertThat(signaturEF.enhet).isEqualTo(enhetsnavnTilVisningstekst[enhetsnavn])
+        assertThat(signaturBA.enhet).isEqualTo(BrevsignaturService.ENHET_NFP)
+        assertThat(signaturKS.enhet).isEqualTo(BrevsignaturService.ENHET_NFP)
     }
 
     companion object {
@@ -92,10 +120,6 @@ internal class BrevsignaturServiceTest {
                 "NAV ARBEID OG YTELSER MØRE OG ROMSDAL" to "Nav arbeid og ytelser Møre og Romsdal",
                 "NAV ARBEID OG YTELSER SØRLANDET" to "Nav arbeid og ytelser Sørlandet",
             )
-        val NAV_ANONYM_NAVN = "Nav anonym"
-        val ENHET_VIKAFOSSEN = "Nav Vikafossen"
-        val ENHET_NAY = "Nav arbeid og ytelser"
-        val ENHET_NFP = "Nav familie- og pensjonsytelser"
     }
 
     fun saksbehandler(enhetsnavn: String = "NAV ARBEID OG YTELSER SKIEN") =
