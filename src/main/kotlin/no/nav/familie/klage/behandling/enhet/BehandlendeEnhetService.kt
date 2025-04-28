@@ -1,7 +1,6 @@
 package no.nav.familie.klage.behandling.enhet
 
 import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.behandling.dto.OppdaterBehandlendeEnhetRequest
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingshistorikk.domain.HistorikkHendelse
 import no.nav.familie.klage.fagsak.FagsakService
@@ -20,7 +19,8 @@ class BehandlendeEnhetService(
     @Transactional
     fun oppdaterBehandlendeEnhet(
         behandlingId: UUID,
-        oppdaterBehandlendeEnhetRequest: OppdaterBehandlendeEnhetRequest,
+        enhetsnummer: String,
+        begrunnelse: String,
     ) {
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsystem = fagsakService.hentFagsak(behandling.fagsakId).fagsystem
@@ -34,7 +34,7 @@ class BehandlendeEnhetService(
         val nyBehandlendeEnhet =
             Enhet.finnEnhet(
                 fagsystem = fagsystem,
-                enhetsnummer = oppdaterBehandlendeEnhetRequest.enhetsnummer,
+                enhetsnummer = enhetsnummer,
             )
 
         behandlingService.oppdaterBehandlendeEnhet(
@@ -55,7 +55,7 @@ class BehandlendeEnhetService(
             beskrivelse =
                 "Behandlende enhet endret fra ${eksisterendeBehandlendeEnhet.enhetsnummer} (${eksisterendeBehandlendeEnhet.enhetsnavn}) til " +
                     "${nyBehandlendeEnhet.enhetsnummer} (${nyBehandlendeEnhet.enhetsnavn})." +
-                    "\n\n${oppdaterBehandlendeEnhetRequest.begrunnelse}",
+                    "\n\n$begrunnelse",
         )
     }
 }

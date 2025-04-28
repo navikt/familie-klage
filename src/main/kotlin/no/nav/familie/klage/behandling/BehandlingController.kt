@@ -158,7 +158,8 @@ class BehandlingController(
 
         behandlendeEnhetService.oppdaterBehandlendeEnhet(
             behandlingId = behandlingId,
-            oppdaterBehandlendeEnhetRequest = oppdaterBehandlendeEnhetRequest,
+            enhetsnummer = oppdaterBehandlendeEnhetRequest.enhetsnummer,
+            begrunnelse = oppdaterBehandlendeEnhetRequest.begrunnelse,
         )
         return Ressurs.success(data = behandlingId)
     }

@@ -7,7 +7,6 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.behandling.dto.OppdaterBehandlendeEnhetRequest
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingshistorikk.domain.HistorikkHendelse
 import no.nav.familie.klage.fagsak.FagsakService
@@ -47,11 +46,6 @@ class BehandlendeEnhetServiceTest {
             val fagsak = fagsak(stønadstype = Stønadstype.BARNETRYGD)
             val behandling = behandling(fagsak = fagsak, behandlendeEnhet = BarnetrygdEnhet.DRAMMEN.enhetsnummer)
             val begrunnelse = "Behandlende enhet var registrert på feil enhet"
-            val oppdaterBehandlendeEnhetRequest =
-                OppdaterBehandlendeEnhetRequest(
-                    enhetsnummer = nyBehandlendeEnhet.enhetsnummer,
-                    begrunnelse = begrunnelse,
-                )
             val behandlendeEnhetSlot = slot<Enhet>()
             val historikkHendelseSlot = slot<HistorikkHendelse>()
             val beskrivelseSlot = slot<String>()
@@ -59,7 +53,13 @@ class BehandlendeEnhetServiceTest {
 
             every { behandlingService.hentBehandling(behandling.id) } returns behandling
             every { fagsakService.hentFagsak(fagsak.id) } returns fagsak
-            every { behandlingService.oppdaterBehandlendeEnhet(behandling.id, capture(behandlendeEnhetSlot), Fagsystem.BA) } just Runs
+            every {
+                behandlingService.oppdaterBehandlendeEnhet(
+                    behandlingId = behandling.id,
+                    behandlendeEnhet = capture(behandlendeEnhetSlot),
+                    fagsystem = Fagsystem.BA,
+                )
+            } just Runs
             every {
                 behandlingshistorikkService.opprettBehandlingshistorikk(
                     behandlingId = behandling.id,
@@ -69,10 +69,19 @@ class BehandlendeEnhetServiceTest {
                 )
             } returns mockk()
 
-            every { oppgaveService.oppdaterEnhetPåBehandleSakOppgave(behandling.id, capture(behandlendeEnhetOppgaveSlot)) } just Runs
+            every {
+                oppgaveService.oppdaterEnhetPåBehandleSakOppgave(
+                    behandlingId = behandling.id,
+                    behandlendeEnhet = capture(behandlendeEnhetOppgaveSlot),
+                )
+            } just Runs
 
             // Act
-            behandlendeEnhetService.oppdaterBehandlendeEnhet(behandling.id, oppdaterBehandlendeEnhetRequest)
+            behandlendeEnhetService.oppdaterBehandlendeEnhet(
+                behandlingId = behandling.id,
+                enhetsnummer = nyBehandlendeEnhet.enhetsnummer,
+                begrunnelse = begrunnelse,
+            )
 
             // Assert
             verify(exactly = 1) { behandlingService.oppdaterBehandlendeEnhet(any(), any(), any()) }
@@ -94,11 +103,6 @@ class BehandlendeEnhetServiceTest {
             val fagsak = fagsak(stønadstype = Stønadstype.KONTANTSTØTTE)
             val behandling = behandling(fagsak = fagsak, behandlendeEnhet = KontantstøtteEnhet.DRAMMEN.enhetsnummer)
             val begrunnelse = "Behandlende enhet var registrert på feil enhet"
-            val oppdaterBehandlendeEnhetRequest =
-                OppdaterBehandlendeEnhetRequest(
-                    enhetsnummer = nyBehandlendeEnhet.enhetsnummer,
-                    begrunnelse = begrunnelse,
-                )
             val behandlendeEnhetSlot = slot<Enhet>()
             val historikkHendelseSlot = slot<HistorikkHendelse>()
             val beskrivelseSlot = slot<String>()
@@ -106,7 +110,13 @@ class BehandlendeEnhetServiceTest {
 
             every { behandlingService.hentBehandling(behandling.id) } returns behandling
             every { fagsakService.hentFagsak(fagsak.id) } returns fagsak
-            every { behandlingService.oppdaterBehandlendeEnhet(behandling.id, capture(behandlendeEnhetSlot), Fagsystem.KS) } just Runs
+            every {
+                behandlingService.oppdaterBehandlendeEnhet(
+                    behandlingId = behandling.id,
+                    behandlendeEnhet = capture(behandlendeEnhetSlot),
+                    fagsystem = Fagsystem.KS,
+                )
+            } just Runs
             every {
                 behandlingshistorikkService.opprettBehandlingshistorikk(
                     behandlingId = behandling.id,
@@ -116,10 +126,19 @@ class BehandlendeEnhetServiceTest {
                 )
             } returns mockk()
 
-            every { oppgaveService.oppdaterEnhetPåBehandleSakOppgave(behandling.id, capture(behandlendeEnhetOppgaveSlot)) } just Runs
+            every {
+                oppgaveService.oppdaterEnhetPåBehandleSakOppgave(
+                    behandlingId = behandling.id,
+                    behandlendeEnhet = capture(behandlendeEnhetOppgaveSlot),
+                )
+            } just Runs
 
             // Act
-            behandlendeEnhetService.oppdaterBehandlendeEnhet(behandling.id, oppdaterBehandlendeEnhetRequest)
+            behandlendeEnhetService.oppdaterBehandlendeEnhet(
+                behandlingId = behandling.id,
+                enhetsnummer = nyBehandlendeEnhet.enhetsnummer,
+                begrunnelse = begrunnelse,
+            )
 
             // Assert
             verify(exactly = 1) { behandlingService.oppdaterBehandlendeEnhet(any(), any(), any()) }
@@ -133,23 +152,28 @@ class BehandlendeEnhetServiceTest {
         }
 
         @ParameterizedTest
-        @EnumSource(Stønadstype::class, names = ["OVERGANGSSTØNAD", "BARNETILSYN", "SKOLEPENGER"], mode = EnumSource.Mode.INCLUDE)
+        @EnumSource(
+            Stønadstype::class,
+            names = ["OVERGANGSSTØNAD", "BARNETILSYN", "SKOLEPENGER"],
+            mode = EnumSource.Mode.INCLUDE,
+        )
         fun `skal kaste feil dersom fagsystem er EF`(stønadstype: Stønadstype) {
             // Arrange
             val fagsak = fagsak(stønadstype = stønadstype)
             val behandling = behandling(fagsak = fagsak)
-            val oppdaterBehandlendeEnhetRequest =
-                OppdaterBehandlendeEnhetRequest(
-                    enhetsnummer = "1234",
-                    begrunnelse = "Behandlende enhet var registrert på feil enhet",
-                )
 
             every { behandlingService.hentBehandling(behandling.id) } returns behandling
             every { fagsakService.hentFagsak(fagsak.id) } returns fagsak
 
             // Act & Assert
             val feil =
-                assertThrows<Feil> { behandlendeEnhetService.oppdaterBehandlendeEnhet(behandling.id, oppdaterBehandlendeEnhetRequest) }
+                assertThrows<Feil> {
+                    behandlendeEnhetService.oppdaterBehandlendeEnhet(
+                        behandlingId = behandling.id,
+                        enhetsnummer = "1234",
+                        begrunnelse = "Behandlende enhet var registrert på feil enhet",
+                    )
+                }
 
             assertThat(feil.message).isEqualTo("Støtter ikke endring av enhet for fagsystem EF")
         }
