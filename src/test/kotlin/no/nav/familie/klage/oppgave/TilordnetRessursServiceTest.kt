@@ -159,6 +159,7 @@ internal class TilordnetRessursServiceTest {
                     fornavn = "testFornavn",
                     etternavn = "testEtternavn",
                     enhet = "testEnhet",
+                    enhetsnavn = "testEnhetsnavn",
                 )
 
             every { behandleSakOppgaveRepository.findByBehandlingId(behandlingId) } returns behandleSakOppgave

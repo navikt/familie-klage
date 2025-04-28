@@ -88,18 +88,20 @@ class DistribuerBrevTask(
     ): List<BrevmottakerJournalpost> =
         if (journalpost.distribusjonId == null) {
             val adresse = finnAdresseForJournalpost(journalpost, brevmottakere)
-            val distribusjonId = distribusjonService.distribuerBrev(
-                journalpostId = journalpost.journalpostId,
-                adresse = adresse,
-                fagsystem = fagsystem,
-            )
-            val nyeJournalposter = acc.map {
-                if (it.journalpostId == journalpost.journalpostId) {
-                    it.medDistribusjonsId(distribusjonId = distribusjonId)
-                } else {
-                    it
+            val distribusjonId =
+                distribusjonService.distribuerBrev(
+                    journalpostId = journalpost.journalpostId,
+                    adresse = adresse,
+                    fagsystem = fagsystem,
+                )
+            val nyeJournalposter =
+                acc.map {
+                    if (it.journalpostId == journalpost.journalpostId) {
+                        it.medDistribusjonsId(distribusjonId = distribusjonId)
+                    } else {
+                        it
+                    }
                 }
-            }
             brevService.oppdaterMottakerJournalpost(behandlingId, BrevmottakereJournalposter(nyeJournalposter))
             nyeJournalposter
         } else {
@@ -122,13 +124,16 @@ class DistribuerBrevTask(
     private fun finnAdresseForJournalpost(
         journalpost: BrevmottakerJournalpost,
         brevmottakere: Brevmottakere?,
-    ): ManuellAdresse? {
-        return when (journalpost) {
+    ): ManuellAdresse? =
+        when (journalpost) {
             is BrevmottakerJournalpostMedIdent -> null
             is BrevmottakerJournalpostUtenIdent -> {
-                val brevmottaker = brevmottakere?.personer
-                    ?.filterIsInstance<BrevmottakerPersonUtenIdent>()?.find { it.id == journalpost.id }
-                    ?: throw Feil("Mangler brevmottaker for journalpost=${journalpost.journalpostId}")
+                val brevmottaker =
+                    brevmottakere
+                        ?.personer
+                        ?.filterIsInstance<BrevmottakerPersonUtenIdent>()
+                        ?.find { it.id == journalpost.id }
+                        ?: throw Feil("Mangler brevmottaker for journalpost=${journalpost.journalpostId}")
 
                 with(brevmottaker) {
                     ManuellAdresse(
@@ -142,7 +147,6 @@ class DistribuerBrevTask(
                 }
             }
         }
-    }
 
     companion object {
         const val TYPE = "distribuerBrevTask"
