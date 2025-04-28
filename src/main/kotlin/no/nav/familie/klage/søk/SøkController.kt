@@ -32,7 +32,6 @@ class SøkController(
     private val eregService: EregService,
     private val fagsakService: FagsakService,
 ) {
-
     @PostMapping("person")
     fun søkPerson(
         @RequestBody personIdentDto: PersonIdentDto,
@@ -57,7 +56,6 @@ class SøkController(
     }
 
     companion object {
-
         private val ORGNR_REGEX = """\d{9}""".toRegex()
     }
 }

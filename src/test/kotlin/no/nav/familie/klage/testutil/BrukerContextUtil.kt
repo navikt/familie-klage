@@ -13,7 +13,6 @@ import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 
 object BrukerContextUtil {
-
     fun clearBrukerContext() {
         RequestContextHolder.resetRequestAttributes()
     }
@@ -24,14 +23,16 @@ object BrukerContextUtil {
         servletRequest: HttpServletRequest = MockHttpServletRequest(),
     ) {
         val tokenValidationContext = mockk<TokenValidationContext>()
-        val jwtTokenClaims = JwtTokenClaims(
-            JWTClaimsSet.Builder()
-                .claim("preferred_username", preferredUsername)
-                .claim("NAVident", preferredUsername)
-                .claim("name", preferredUsername)
-                .claim("groups", groups)
-                .build(),
-        )
+        val jwtTokenClaims =
+            JwtTokenClaims(
+                JWTClaimsSet
+                    .Builder()
+                    .claim("preferred_username", preferredUsername)
+                    .claim("NAVident", preferredUsername)
+                    .claim("name", preferredUsername)
+                    .claim("groups", groups)
+                    .build(),
+            )
         val requestAttributes = ServletRequestAttributes(servletRequest)
 
         RequestContextHolder.setRequestAttributes(requestAttributes)
@@ -44,7 +45,11 @@ object BrukerContextUtil {
         every { SpringTokenValidationContextHolder().getTokenValidationContext().getClaims("azuread") } returns jwtTokenClaims
     }
 
-    fun <T> testWithBrukerContext(preferredUsername: String = "A", groups: List<String> = emptyList(), fn: () -> T): T {
+    fun <T> testWithBrukerContext(
+        preferredUsername: String = "A",
+        groups: List<String> = emptyList(),
+        fn: () -> T,
+    ): T {
         try {
             mockBrukerContext(preferredUsername, groups)
             return fn()

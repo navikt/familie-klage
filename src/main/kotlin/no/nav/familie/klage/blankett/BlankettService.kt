@@ -22,7 +22,6 @@ class BlankettService(
     private val vurderingService: VurderingService,
     private val brevClient: BrevClient,
 ) {
-
     fun lagBlankett(behandlingId: UUID): ByteArray {
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
@@ -30,34 +29,35 @@ class BlankettService(
         val vurdering = vurderingService.hentVurderingDto(behandlingId)
         val påklagetVedtak = mapPåklagetVedtak(behandling)
 
-        val blankettPdfRequest = BlankettPdfRequest(
-            behandling = BlankettPdfBehandling(
-                eksternFagsakId = fagsak.eksternId,
-                stønadstype = fagsak.stønadstype,
-                klageMottatt = behandling.klageMottatt,
-                resultat = behandling.resultat,
-                påklagetVedtak = påklagetVedtak,
-                årsak = behandling.årsak,
-            ),
-            personopplysninger = lagPersonopplysningerDto(behandling, fagsak),
-            formkrav = mapFormkrav(formkrav),
-            vurdering = mapVurdering(vurdering),
-        )
+        val blankettPdfRequest =
+            BlankettPdfRequest(
+                behandling =
+                    BlankettPdfBehandling(
+                        eksternFagsakId = fagsak.eksternId,
+                        stønadstype = fagsak.stønadstype,
+                        klageMottatt = behandling.klageMottatt,
+                        resultat = behandling.resultat,
+                        påklagetVedtak = påklagetVedtak,
+                        årsak = behandling.årsak,
+                    ),
+                personopplysninger = lagPersonopplysningerDto(behandling, fagsak),
+                formkrav = mapFormkrav(formkrav),
+                vurdering = mapVurdering(vurdering),
+            )
         return brevClient.genererBlankett(blankettPdfRequest)
     }
 
-    private fun mapPåklagetVedtak(behandling: Behandling): BlankettPåklagetVedtakDto? {
-        return behandling.påklagetVedtak.påklagetVedtakDetaljer?.let { påklagetVedtakDetaljer ->
+    private fun mapPåklagetVedtak(behandling: Behandling): BlankettPåklagetVedtakDto? =
+        behandling.påklagetVedtak.påklagetVedtakDetaljer?.let { påklagetVedtakDetaljer ->
             BlankettPåklagetVedtakDto(
                 behandlingstype = påklagetVedtakDetaljer.behandlingstype,
                 resultat = påklagetVedtakDetaljer.resultat,
                 vedtakstidspunkt = påklagetVedtakDetaljer.vedtakstidspunkt,
             )
         }
-    }
 
-    private fun mapVurdering(vurdering: VurderingDto?): BlankettVurderingDto? {
-        return vurdering?.let {
+    private fun mapVurdering(vurdering: VurderingDto?): BlankettVurderingDto? =
+        vurdering?.let {
             BlankettVurderingDto(
                 vedtak = it.vedtak,
                 årsak = it.årsak,
@@ -72,19 +72,22 @@ class BlankettService(
                 interntNotat = it.interntNotat,
             )
         }
-    }
 
-    private fun mapFormkrav(formkrav: FormkravDto) = BlankettFormDto(
-        klagePart = formkrav.klagePart,
-        klageKonkret = formkrav.klageKonkret,
-        klagefristOverholdt = formkrav.klagefristOverholdt,
-        klagefristOverholdtUnntak = formkrav.klagefristOverholdtUnntak,
-        klageSignert = formkrav.klageSignert,
-        saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse,
-        brevtekst = formkrav.brevtekst,
-    )
+    private fun mapFormkrav(formkrav: FormkravDto) =
+        BlankettFormDto(
+            klagePart = formkrav.klagePart,
+            klageKonkret = formkrav.klageKonkret,
+            klagefristOverholdt = formkrav.klagefristOverholdt,
+            klagefristOverholdtUnntak = formkrav.klagefristOverholdtUnntak,
+            klageSignert = formkrav.klageSignert,
+            saksbehandlerBegrunnelse = formkrav.saksbehandlerBegrunnelse,
+            brevtekst = formkrav.brevtekst,
+        )
 
-    private fun lagPersonopplysningerDto(behandling: Behandling, fagsak: Fagsak): PersonopplysningerDto {
+    private fun lagPersonopplysningerDto(
+        behandling: Behandling,
+        fagsak: Fagsak,
+    ): PersonopplysningerDto {
         val personIdent = fagsak.hentAktivIdent()
         val navn = personopplysningerService.hentPersonopplysninger(behandling.id).navn
         return PersonopplysningerDto(navn, personIdent)

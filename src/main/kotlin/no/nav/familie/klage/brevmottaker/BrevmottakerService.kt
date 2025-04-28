@@ -15,22 +15,25 @@ class BrevmottakerService(
     private val brevmottakerOppretter: BrevmottakerOppretter,
     private val brevmottakerSletter: BrevmottakerSletter,
 ) {
-    fun hentBrevmottakere(behandlingId: UUID): Brevmottakere {
-        return brevmottakerHenter.hentBrevmottakere(behandlingId)
-    }
+    fun hentBrevmottakere(behandlingId: UUID): Brevmottakere = brevmottakerHenter.hentBrevmottakere(behandlingId)
 
     @Transactional
-    fun erstattBrevmottakere(behandlingId: UUID, brevmottakere: Brevmottakere): Brevmottakere {
-        return brevmottakerErstatter.erstattBrevmottakere(behandlingId, brevmottakere)
-    }
+    fun erstattBrevmottakere(
+        behandlingId: UUID,
+        brevmottakere: Brevmottakere,
+    ): Brevmottakere = brevmottakerErstatter.erstattBrevmottakere(behandlingId, brevmottakere)
 
     @Transactional
-    fun opprettBrevmottaker(behandlingId: UUID, nyBrevmottaker: NyBrevmottaker): Brevmottaker {
-        return brevmottakerOppretter.opprettBrevmottaker(behandlingId, nyBrevmottaker)
-    }
+    fun opprettBrevmottaker(
+        behandlingId: UUID,
+        nyBrevmottaker: NyBrevmottaker,
+    ): Brevmottaker = brevmottakerOppretter.opprettBrevmottaker(behandlingId, nyBrevmottaker)
 
     @Transactional
-    fun slettBrevmottaker(behandlingId: UUID, slettbarBrevmottaker: SlettbarBrevmottaker) {
+    fun slettBrevmottaker(
+        behandlingId: UUID,
+        slettbarBrevmottaker: SlettbarBrevmottaker,
+    ) {
         brevmottakerSletter.slettBrevmottaker(behandlingId, slettbarBrevmottaker)
     }
 }

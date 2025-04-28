@@ -20,7 +20,6 @@ import org.junit.jupiter.params.provider.EnumSource
 import java.util.UUID
 
 internal class OpprettRevurderingServiceTest {
-
     val behandlingService = mockk<BehandlingService>()
     val fagsystemVedtakService = mockk<FagsystemVedtakService>()
     val service = OpprettRevurderingService(behandlingService, fagsystemVedtakService)
@@ -52,10 +51,11 @@ internal class OpprettRevurderingServiceTest {
     )
     @ParameterizedTest
     internal fun `kan opprette revurdering for vedtak i fagsystem`(fagsystemType: FagsystemType) {
-        val påklagetVedtak = PåklagetVedtak(
-            PåklagetVedtakstype.VEDTAK,
-            påklagetVedtakDetaljer(fagsystemType = fagsystemType),
-        )
+        val påklagetVedtak =
+            PåklagetVedtak(
+                PåklagetVedtakstype.VEDTAK,
+                påklagetVedtakDetaljer(fagsystemType = fagsystemType),
+            )
         every { behandlingService.hentBehandling(behandlingId) } returns
             behandling(fagsak = fagsak, påklagetVedtak = påklagetVedtak)
 
@@ -72,10 +72,11 @@ internal class OpprettRevurderingServiceTest {
     )
     @ParameterizedTest
     internal fun `skal ikke opprette revurdering for annet vedtak enn ordinær og sanksjon`(fagsystemType: FagsystemType) {
-        val påklagetVedtak = PåklagetVedtak(
-            PåklagetVedtakstype.VEDTAK,
-            påklagetVedtakDetaljer(fagsystemType = fagsystemType),
-        )
+        val påklagetVedtak =
+            PåklagetVedtak(
+                PåklagetVedtakstype.VEDTAK,
+                påklagetVedtakDetaljer(fagsystemType = fagsystemType),
+            )
         every { behandlingService.hentBehandling(behandlingId) } returns
             behandling(fagsak = fagsak, påklagetVedtak = påklagetVedtak)
 

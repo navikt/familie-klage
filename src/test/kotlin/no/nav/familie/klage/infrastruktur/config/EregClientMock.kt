@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Profile
 
 @Configuration
 class EregClientMock {
-
     @Profile("mock-ereg")
     @Bean
     @Primary
@@ -50,11 +49,10 @@ class EregClientMock {
     private fun lagOrganisasjonDto(
         navn: Navn,
         organisasjonDetaljer: OrganisasjonDetaljer,
-    ) =
-        OrganisasjonDto(
-            organisasjonsnummer = "123456789",
-            type = "type",
-            navn = navn,
-            organisasjonDetaljer = organisasjonDetaljer,
-        )
+    ) = OrganisasjonDto(
+        organisasjonsnummer = "123456789",
+        type = "type",
+        navn = navn,
+        organisasjonDetaljer = organisasjonDetaljer,
+    )
 }

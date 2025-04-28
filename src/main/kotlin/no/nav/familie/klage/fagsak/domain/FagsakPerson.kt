@@ -18,15 +18,13 @@ data class FagsakPerson(
     val opprettetAv: String = SikkerhetContext.hentSaksbehandler(),
     val opprettetTid: LocalDateTime = SporbarUtils.now(),
 ) {
-
-    fun hentAktivIdent(): String {
-        return identer.maxByOrNull { it.sporbar.endret.endretTid }?.ident ?: error("Fant ingen ident på person $id")
-    }
+    fun hentAktivIdent(): String = identer.maxByOrNull { it.sporbar.endret.endretTid }?.ident ?: error("Fant ingen ident på person $id")
 
     fun medOppdatertGjeldendeIdent(gjeldendePersonIdent: String): FagsakPerson {
-        val personIdentForGjeldendeIdent: PersonIdent = this.identer.find { it.ident == gjeldendePersonIdent }?.let {
-            it.copy(sporbar = it.sporbar.copy(endret = Endret()))
-        } ?: PersonIdent(ident = gjeldendePersonIdent)
+        val personIdentForGjeldendeIdent: PersonIdent =
+            this.identer.find { it.ident == gjeldendePersonIdent }?.let {
+                it.copy(sporbar = it.sporbar.copy(endret = Endret()))
+            } ?: PersonIdent(ident = gjeldendePersonIdent)
         val søkerIdenterUtenGjeldende = this.identer.filter { it.ident != gjeldendePersonIdent }
 
         return this.copy(identer = søkerIdenterUtenGjeldende.toSet() + personIdentForGjeldendeIdent)

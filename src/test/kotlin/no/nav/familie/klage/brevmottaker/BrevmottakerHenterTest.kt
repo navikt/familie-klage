@@ -40,12 +40,14 @@ class BrevmottakerHenterTest {
 
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
             val brevmottakerPersonUtenIdent = DomainUtil.lagBrevmottakerPersonUtenIdent()
-            val brevmottakere = DomainUtil.lagBrevmottakere(
-                personer = listOf(
-                    brevmottakerPersonMedIdent,
-                    brevmottakerPersonUtenIdent,
-                ),
-            )
+            val brevmottakere =
+                DomainUtil.lagBrevmottakere(
+                    personer =
+                        listOf(
+                            brevmottakerPersonMedIdent,
+                            brevmottakerPersonUtenIdent,
+                        ),
+                )
             val brev = DomainUtil.lagBrev(behandlingId = behandlingId, mottakere = brevmottakere)
 
             every { brevService.hentBrev(behandlingId) } returns brev

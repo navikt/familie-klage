@@ -136,10 +136,10 @@ class BehandlingService(
         val behandlingMedPåklagetVedtak =
             behandling.copy(
                 påklagetVedtak =
-                PåklagetVedtak(
-                    påklagetVedtakstype = påklagetVedtakDto.påklagetVedtakstype,
-                    påklagetVedtakDetaljer = påklagetVedtakDetaljer,
-                ),
+                    PåklagetVedtak(
+                        påklagetVedtakstype = påklagetVedtakDto.påklagetVedtakstype,
+                        påklagetVedtakDetaljer = påklagetVedtakDetaljer,
+                    ),
             )
         behandlingRepository.update(behandlingMedPåklagetVedtak)
     }
@@ -180,7 +180,7 @@ class BehandlingService(
             behandlingstype = "Klage",
             resultat = "Ikke medhold formkrav avvist",
             vedtakstidspunkt =
-            hentBehandling(UUID.fromString(påklagetVedtakDto.internKlagebehandlingId)).vedtakDato ?: error("Mangler vedtaksdato"),
+                hentBehandling(UUID.fromString(påklagetVedtakDto.internKlagebehandlingId)).vedtakDato ?: error("Mangler vedtaksdato"),
             regelverk = påklagetVedtakDto.regelverk,
         )
 

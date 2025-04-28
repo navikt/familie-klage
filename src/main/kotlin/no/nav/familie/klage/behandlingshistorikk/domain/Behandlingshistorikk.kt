@@ -18,5 +18,7 @@ data class Behandlingshistorikk(
 )
 
 enum class HistorikkHendelse {
-    SATT_PÅ_VENT, TATT_AV_VENT, BEHANDLENDE_ENHET_ENDRET
+    SATT_PÅ_VENT,
+    TATT_AV_VENT,
+    BEHANDLENDE_ENHET_ENDRET,
 }

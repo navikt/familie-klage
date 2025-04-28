@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager
 
 internal class TilgangServiceTest {
-
     private val personopplysningerIntegrasjonerClient = mockk<PersonopplysningerIntegrasjonerClient>()
     private val rolleConfig = RolleConfigTestUtil.rolleConfig
     private val cacheManager = ConcurrentMapCacheManager()
@@ -29,14 +28,15 @@ internal class TilgangServiceTest {
     private val behandlingService = mockk<BehandlingService>()
     private val fagsakService = mockk<FagsakService>()
 
-    private val tilgangService = TilgangService(
-        personopplysningerIntegrasjonerClient,
-        rolleConfig,
-        cacheManager,
-        auditLogger,
-        behandlingService,
-        fagsakService,
-    )
+    private val tilgangService =
+        TilgangService(
+            personopplysningerIntegrasjonerClient,
+            rolleConfig,
+            cacheManager,
+            auditLogger,
+            behandlingService,
+            fagsakService,
+        )
 
     private val fagsakEf = fagsak()
     private val behandlingEf = behandling(fagsakEf)
@@ -49,14 +49,16 @@ internal class TilgangServiceTest {
         mockFagsakOgBehandling(fagsakBa, behandlingBa)
     }
 
-    private fun mockFagsakOgBehandling(fagsak: Fagsak, behandling: Behandling) {
+    private fun mockFagsakOgBehandling(
+        fagsak: Fagsak,
+        behandling: Behandling,
+    ) {
         every { fagsakService.hentFagsak(fagsak.id) } returns fagsak
         every { behandlingService.hentBehandling(behandling.id) } returns behandling
     }
 
     @Nested
     inner class TilgangGittRolle {
-
         @Test
         internal fun `saksbehandler har tilgang til behandling av fagsystem barnetrygd`() {
             testWithBrukerContext(groups = listOf(rolleConfig.ba.saksbehandler)) {

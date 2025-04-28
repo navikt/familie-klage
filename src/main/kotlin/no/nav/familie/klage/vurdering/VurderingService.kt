@@ -21,15 +21,12 @@ class VurderingService(
     private val brevRepository: BrevRepository,
     private val fagsakService: FagsakService,
 ) {
+    fun hentVurdering(behandlingId: UUID): Vurdering? = vurderingRepository.findByIdOrNull(behandlingId)
 
-    fun hentVurdering(behandlingId: UUID): Vurdering? =
-        vurderingRepository.findByIdOrNull(behandlingId)
-
-    fun hentVurderingDto(behandlingId: UUID): VurderingDto? =
-        hentVurdering(behandlingId)?.tilDto()
+    fun hentVurderingDto(behandlingId: UUID): VurderingDto? = hentVurdering(behandlingId)?.tilDto()
 
     @Transactional
-    fun opprettEllerOppdaterVurdering(vurdering: VurderingDto): VurderingDto {
+    fun lagreVurderingOgOppdaterSteg(vurdering: VurderingDto): VurderingDto {
         val fagsystem = fagsakService.hentFagsakForBehandling(vurdering.behandlingId).fagsystem
         validerVurdering(vurdering, fagsystem)
         if (vurdering.vedtak === Vedtak.OMGJØR_VEDTAK) {
@@ -46,29 +43,43 @@ class VurderingService(
         }
     }
 
+    @Transactional
+    fun lagreVurdering(vurdering: VurderingDto): VurderingDto {
+        val eksisterendeVurdering = vurderingRepository.findByIdOrNull(vurdering.behandlingId)
+        return if (eksisterendeVurdering != null) {
+            oppdaterVurdering(vurdering, eksisterendeVurdering).tilDto()
+        } else {
+            opprettNyVurdering(vurdering).tilDto()
+        }
+    }
+
     fun slettVurderingForBehandling(behandlingId: UUID) {
         vurderingRepository.deleteById(behandlingId)
     }
 
-    private fun opprettNyVurdering(vurdering: VurderingDto) = vurderingRepository.insert(
-        Vurdering(
-            behandlingId = vurdering.behandlingId,
-            vedtak = vurdering.vedtak,
-            årsak = vurdering.årsak,
-            begrunnelseOmgjøring = vurdering.begrunnelseOmgjøring,
-            hjemmel = vurdering.hjemmel,
-            innstillingKlageinstans = vurdering.innstillingKlageinstans,
-            dokumentasjonOgUtredning = vurdering.dokumentasjonOgUtredning,
-            spørsmåletISaken = vurdering.spørsmåletISaken,
-            aktuelleRettskilder = vurdering.aktuelleRettskilder,
-            klagersAnførsler = vurdering.klagersAnførsler,
-            vurderingAvKlagen = vurdering.vurderingAvKlagen,
-            interntNotat = vurdering.interntNotat,
-        ),
-    )
+    private fun opprettNyVurdering(vurdering: VurderingDto) =
+        vurderingRepository.insert(
+            Vurdering(
+                behandlingId = vurdering.behandlingId,
+                vedtak = vurdering.vedtak,
+                årsak = vurdering.årsak,
+                begrunnelseOmgjøring = vurdering.begrunnelseOmgjøring,
+                hjemmel = vurdering.hjemmel,
+                innstillingKlageinstans = vurdering.innstillingKlageinstans,
+                dokumentasjonOgUtredning = vurdering.dokumentasjonOgUtredning,
+                spørsmåletISaken = vurdering.spørsmåletISaken,
+                aktuelleRettskilder = vurdering.aktuelleRettskilder,
+                klagersAnførsler = vurdering.klagersAnførsler,
+                vurderingAvKlagen = vurdering.vurderingAvKlagen,
+                interntNotat = vurdering.interntNotat,
+            ),
+        )
 
-    private fun oppdaterVurdering(vurdering: VurderingDto, eksisterendeVurdering: Vurdering): Vurdering {
-        return vurderingRepository.update(
+    private fun oppdaterVurdering(
+        vurdering: VurderingDto,
+        eksisterendeVurdering: Vurdering,
+    ): Vurdering =
+        vurderingRepository.update(
             eksisterendeVurdering.copy(
                 vedtak = vurdering.vedtak,
                 innstillingKlageinstans = vurdering.innstillingKlageinstans,
@@ -83,5 +94,4 @@ class VurderingService(
                 interntNotat = vurdering.interntNotat,
             ),
         )
-    }
 }

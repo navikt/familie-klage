@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
 internal class BlankettServiceTest {
-
     private val fagsakService = mockk<FagsakService>()
     private val behandlingService = mockk<BehandlingService>()
     private val personopplysningerService = mockk<PersonopplysningerService>()
@@ -41,24 +40,26 @@ internal class BlankettServiceTest {
     private val fagsystemVedtakService = mockk<FagsystemVedtakService>()
     private val brevClient = mockk<BrevClient>()
 
-    private val service = BlankettService(
-        fagsakService,
-        behandlingService,
-        personopplysningerService,
-        formService,
-        vurderingService,
-        brevClient,
-    )
+    private val service =
+        BlankettService(
+            fagsakService,
+            behandlingService,
+            personopplysningerService,
+            formService,
+            vurderingService,
+            brevClient,
+        )
 
     private val eksternFagsystemBehandlingId = "eksternFagsystemBehandlingId"
 
     private val blankettRequestSpot = slot<BlankettPdfRequest>()
     private val fagsak = fagsak(setOf(PersonIdent("ident")))
-    private val behandling = behandling(
-        fagsak = fagsak,
-        påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer(eksternFagsystemBehandlingId)),
-        klageMottatt = LocalDate.of(2022, 10, 26),
-    )
+    private val behandling =
+        behandling(
+            fagsak = fagsak,
+            påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer(eksternFagsystemBehandlingId)),
+            klageMottatt = LocalDate.of(2022, 10, 26),
+        )
 
     @BeforeEach
     internal fun setUp() {
@@ -69,28 +70,31 @@ internal class BlankettServiceTest {
         every { personopplysningerDto.navn } returns "navn"
         every { personopplysningerService.hentPersonopplysninger(behandlingId) } returns personopplysningerDto
         every { formService.hentFormDto(behandlingId) } returns
-            oppfyltForm(behandlingId).copy(
-                saksbehandlerBegrunnelse = "Ok",
-                brevtekst = "Brevtekst",
-                klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_SATT,
-            ).tilDto(mockk())
-        every { vurderingService.hentVurderingDto(behandlingId) } returns vurderingDto(
-            vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
-            årsak = Årsak.FEIL_I_LOVANDVENDELSE,
-            begrunnelseOmgjøring = "begrunnelse",
-            hjemmel = Hjemmel.BT_FEM,
-            interntNotat = "interntNotat",
-            innstillingKlageinstans = "innstillingKlageinstans",
-            dokumentasjonOgUtredning = "dokumentasjonOgUtredning",
-            spørsmåletISaken = "spørsmåletISaken",
-            aktuelleRettskilder = "aktuelleRettskilder",
-            klagersAnførsler = "klagersAnførsler",
-            vurderingAvKlagen = "vurderingAvKlagen",
-        )
+            oppfyltForm(behandlingId)
+                .copy(
+                    saksbehandlerBegrunnelse = "Ok",
+                    brevtekst = "Brevtekst",
+                    klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_SATT,
+                ).tilDto(mockk())
+        every { vurderingService.hentVurderingDto(behandlingId) } returns
+            vurderingDto(
+                vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
+                årsak = Årsak.FEIL_I_LOVANDVENDELSE,
+                begrunnelseOmgjøring = "begrunnelse",
+                hjemmel = Hjemmel.BT_FEM,
+                interntNotat = "interntNotat",
+                innstillingKlageinstans = "innstillingKlageinstans",
+                dokumentasjonOgUtredning = "dokumentasjonOgUtredning",
+                spørsmåletISaken = "spørsmåletISaken",
+                aktuelleRettskilder = "aktuelleRettskilder",
+                klagersAnførsler = "klagersAnførsler",
+                vurderingAvKlagen = "vurderingAvKlagen",
+            )
         every { brevClient.genererBlankett(capture(blankettRequestSpot)) } returns byteArrayOf()
-        every { fagsystemVedtakService.hentFagsystemVedtak(behandlingId) } returns listOf(
-            fagsystemVedtak(eksternBehandlingId = eksternFagsystemBehandlingId),
-        )
+        every { fagsystemVedtakService.hentFagsystemVedtak(behandlingId) } returns
+            listOf(
+                fagsystemVedtak(eksternBehandlingId = eksternFagsystemBehandlingId),
+            )
     }
 
     @Test
@@ -98,7 +102,10 @@ internal class BlankettServiceTest {
         service.lagBlankett(behandling.id)
 
         val blankettRequest = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(blankettRequestSpot.captured)
-        val expected = this::class.java.classLoader.getResource("blankett/request.json")!!.readText()
+        val expected =
+            this::class.java.classLoader
+                .getResource("blankett/request.json")!!
+                .readText()
         assertThat(blankettRequest).isEqualTo(expected)
     }
 }

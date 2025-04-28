@@ -1,6 +1,9 @@
 package no.nav.familie.klage.kabal
 
 import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.klage.kabal.domain.OversendtKlageAnke
+import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV3
+import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV4
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
@@ -17,13 +20,25 @@ class KabalClient(
     @Qualifier("azure")
     private val restOperations: RestOperations,
 ) : AbstractRestClient(restOperations, "familie.kabal") {
-
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    private val oversendelseUrl: URI =
-        UriComponentsBuilder.fromUri(kabalUrl).pathSegment("api/oversendelse/v3/sak").build().toUri()
+    private val oversendelseUrlV3: URI =
+        UriComponentsBuilder
+            .fromUri(kabalUrl)
+            .pathSegment("api/oversendelse/v3/sak")
+            .build()
+            .toUri()
 
-    fun sendTilKabal(oversendtKlage: OversendtKlageAnkeV3) {
-        return postForEntity(oversendelseUrl, oversendtKlage)
-    }
+    private val oversendelseUrlV4: URI =
+        UriComponentsBuilder
+            .fromUri(kabalUrl)
+            .pathSegment("api/oversendelse/v4/sak")
+            .build()
+            .toUri()
+
+    fun sendTilKabal(oversendtKlage: OversendtKlageAnke) =
+        when (oversendtKlage) {
+            is OversendtKlageAnkeV3 -> postForEntity<Any>(oversendelseUrlV3, oversendtKlage)
+            is OversendtKlageAnkeV4 -> postForEntity<Any>(oversendelseUrlV4, oversendtKlage)
+        }
 }

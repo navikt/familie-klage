@@ -15,11 +15,12 @@ class HenleggBehandlingControllerTest {
     val henleggBehandlingService = mockk<HenleggBehandlingService>(relaxed = true)
     val brevService = mockk<BrevService>(relaxed = true)
 
-    val henleggBehandlingController = HenleggBehandlingController(
-        tilgangService = tilgangService,
-        henleggBehandlingService = henleggBehandlingService,
-        brevService = brevService,
-    )
+    val henleggBehandlingController =
+        HenleggBehandlingController(
+            tilgangService = tilgangService,
+            henleggBehandlingService = henleggBehandlingService,
+            brevService = brevService,
+        )
 
     @Test
     internal fun `Skal lage send brev task hvis send brev er true og henlagårsak er trukket`() {

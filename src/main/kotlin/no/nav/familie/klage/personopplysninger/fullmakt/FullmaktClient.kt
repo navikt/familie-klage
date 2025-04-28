@@ -15,7 +15,6 @@ class FullmaktClient(
     @Qualifier("azure")
     private val restOperations: RestOperations,
 ) : AbstractRestClient(restOperations, "fullmakt") {
-
     fun hentFullmakt(ident: String): List<FullmaktResponse> {
         val url = URI.create("$fullmaktUrl/api/internbruker/fullmakt/fullmaktsgiver")
         val fullmaktResponse = postForEntity<List<FullmaktResponse>>(url, FullmaktRequest(ident))

@@ -15,17 +15,17 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 internal class FagsystemVedtakServiceTest {
-
     private val efSakClient = mockk<FamilieEFSakClient>()
     private val ksSakClient = mockk<FamilieKSSakClient>()
     private val baSakClient = mockk<FamilieBASakClient>()
     private val fagsakService = mockk<FagsakService>()
-    private val service = FagsystemVedtakService(
-        familieEFSakClient = efSakClient,
-        familieKSSakClient = ksSakClient,
-        familieBASakClient = baSakClient,
-        fagsakService = fagsakService,
-    )
+    private val service =
+        FagsystemVedtakService(
+            familieEFSakClient = efSakClient,
+            familieKSSakClient = ksSakClient,
+            familieBASakClient = baSakClient,
+            fagsakService = fagsakService,
+        )
 
     private val fagsakEF = fagsak(stønadstype = Stønadstype.OVERGANGSSTØNAD)
     private val fagsakBA = fagsak(stønadstype = Stønadstype.BARNETRYGD)
@@ -52,7 +52,6 @@ internal class FagsystemVedtakServiceTest {
 
     @Nested
     inner class HentFagsystemVedtak {
-
         @Test
         internal fun `skal kalle på ef-klient for ef-behandling`() {
             service.hentFagsystemVedtak(behandlingEF.id)
@@ -77,7 +76,6 @@ internal class FagsystemVedtakServiceTest {
 
     @Nested
     inner class HentFagsystemVedtakForPåklagetBehandlingId {
-
         @Test
         internal fun `skal returnere fagsystemVedtak`() {
             val fagsystemVedtak = service.hentFagsystemVedtakForPåklagetBehandlingId(behandlingEF.id, påklagetBehandlingId)

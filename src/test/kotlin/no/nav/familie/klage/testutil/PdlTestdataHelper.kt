@@ -12,7 +12,6 @@ import no.nav.familie.klage.personopplysninger.pdl.PdlSøker
 import no.nav.familie.klage.personopplysninger.pdl.VergemaalEllerFremtidsfullmakt
 
 object PdlTestdataHelper {
-
     val metadataGjeldende = Metadata(historisk = false)
 
     fun lagKjønn(kjønnType: KjønnType = KjønnType.KVINNE) = Kjønn(kjønnType)
@@ -22,18 +21,15 @@ object PdlTestdataHelper {
         mellomnavn: String? = "mellomnavn",
         etternavn: String = "Etternavn",
         historisk: Boolean = false,
-    ): Navn {
-        return Navn(
+    ): Navn =
+        Navn(
             fornavn,
             mellomnavn,
             etternavn,
             Metadata(historisk = historisk),
         )
-    }
 
-    fun pdlNavn(
-        navn: List<Navn> = emptyList(),
-    ) =
+    fun pdlNavn(navn: List<Navn> = emptyList()) =
         PdlNavn(
             navn,
         )
@@ -45,13 +41,12 @@ object PdlTestdataHelper {
         kjønn: Kjønn? = null,
         navn: List<Navn> = emptyList(),
         vergemaalEllerFremtidsfullmakt: List<VergemaalEllerFremtidsfullmakt> = emptyList(),
-    ) =
-        PdlSøker(
-            adressebeskyttelse,
-            dødsfall,
-            listOfNotNull(kjønn),
-            folkeregisterpersonstatus,
-            navn,
-            vergemaalEllerFremtidsfullmakt,
-        )
+    ) = PdlSøker(
+        adressebeskyttelse,
+        dødsfall,
+        listOfNotNull(kjønn),
+        folkeregisterpersonstatus,
+        navn,
+        vergemaalEllerFremtidsfullmakt,
+    )
 }

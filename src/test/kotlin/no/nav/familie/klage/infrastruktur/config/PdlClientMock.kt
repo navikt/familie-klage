@@ -29,7 +29,6 @@ import java.time.LocalDate
 @Configuration
 @Profile("mock-pdl")
 class PdlClientMock {
-
     @Bean
     @Primary
     fun pdlClient(): PdlClient {
@@ -66,19 +65,19 @@ class PdlClientMock {
     }
 
     companion object {
-
         private val startdato = LocalDate.of(2020, 1, 1)
         private val sluttdato = LocalDate.of(2021, 1, 1)
-        private const val annenForelderFnr = "17097926735"
+        private val annenForelderFnr = "17097926735"
 
         fun opprettPdlSøker() =
             pdlSøker(
-                adressebeskyttelse = listOf(
-                    Adressebeskyttelse(
-                        gradering = AdressebeskyttelseGradering.UGRADERT,
-                        metadata = metadataGjeldende,
+                adressebeskyttelse =
+                    listOf(
+                        Adressebeskyttelse(
+                            gradering = AdressebeskyttelseGradering.UGRADERT,
+                            metadata = metadataGjeldende,
+                        ),
                     ),
-                ),
                 dødsfall = listOf(),
                 kjønn = lagKjønn(KjønnType.KVINNE),
                 navn = listOf(lagNavn()),
@@ -97,33 +96,32 @@ class PdlClientMock {
                 ),
             )
 
-        private fun vergemaalEllerFremtidsfullmakt(): List<VergemaalEllerFremtidsfullmakt> {
-            return listOf(
+        private fun vergemaalEllerFremtidsfullmakt(): List<VergemaalEllerFremtidsfullmakt> =
+            listOf(
                 VergemaalEllerFremtidsfullmakt(
                     embete = null,
                     folkeregistermetadata = null,
                     type = "voksen",
                     vergeEllerFullmektig =
-                    VergeEllerFullmektig(
-                        motpartsPersonident = annenForelderFnr,
-                        navn = null,
-                        omfang = "personligeOgOekonomiskeInteresser",
-                        omfangetErInnenPersonligOmraade = false,
-                    ),
+                        VergeEllerFullmektig(
+                            motpartsPersonident = annenForelderFnr,
+                            navn = null,
+                            omfang = "personligeOgOekonomiskeInteresser",
+                            omfangetErInnenPersonligOmraade = false,
+                        ),
                 ),
                 VergemaalEllerFremtidsfullmakt(
                     embete = null,
                     folkeregistermetadata = null,
                     type = "stadfestetFremtidsfullmakt",
                     vergeEllerFullmektig =
-                    VergeEllerFullmektig(
-                        motpartsPersonident = annenForelderFnr,
-                        navn = null,
-                        omfang = "personligeOgOekonomiskeInteresser",
-                        omfangetErInnenPersonligOmraade = false,
-                    ),
+                        VergeEllerFullmektig(
+                            motpartsPersonident = annenForelderFnr,
+                            navn = null,
+                            omfang = "personligeOgOekonomiskeInteresser",
+                            omfangetErInnenPersonligOmraade = false,
+                        ),
                 ),
             )
-        }
     }
 }

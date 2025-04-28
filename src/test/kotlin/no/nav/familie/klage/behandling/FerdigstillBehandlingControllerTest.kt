@@ -36,7 +36,6 @@ import kotlin.math.absoluteValue
 import kotlin.random.Random
 
 internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
-
     @Autowired
     private lateinit var formService: FormService
 
@@ -69,7 +68,7 @@ internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
 
         formService.opprettInitielleFormkrav(behandling.id)
         formService.oppdaterFormkrav(oppfyltForm(behandling.id).tilDto(PåklagetVedtakDto("123", null, VEDTAK)))
-        vurderingService.opprettEllerOppdaterVurdering(vurdering)
+        vurderingService.lagreVurderingOgOppdaterSteg(vurdering)
 
         brevService.lagBrev(behandling.id)
         behandleSakOppgaveRepository.insert(
@@ -98,11 +97,10 @@ internal class FerdigstillBehandlingControllerTest : OppslagSpringRunnerTest() {
         }
     }
 
-    private fun ferdigstill(behandlingId: UUID): ResponseEntity<Ressurs<Unit>> {
-        return restTemplate.exchange(
+    private fun ferdigstill(behandlingId: UUID): ResponseEntity<Ressurs<Unit>> =
+        restTemplate.exchange(
             localhost("/api/behandling/$behandlingId/ferdigstill"),
             HttpMethod.POST,
             HttpEntity(null, headers),
         )
-    }
 }

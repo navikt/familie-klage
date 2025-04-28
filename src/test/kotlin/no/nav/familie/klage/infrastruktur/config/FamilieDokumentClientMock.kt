@@ -11,12 +11,14 @@ import org.springframework.context.annotation.Profile
 @Configuration
 @Profile("mock-dokument")
 class FamilieDokumentClientMock {
-
     @Bean
     @Primary
     fun familieDokument(): FamilieDokumentClient {
         val familieDokumentClient: FamilieDokumentClient = mockk()
-        val dummyPdf = this::class.java.classLoader.getResource("dummy/pdf_dummy.pdf")!!.readBytes()
+        val dummyPdf =
+            this::class.java.classLoader
+                .getResource("dummy/pdf_dummy.pdf")!!
+                .readBytes()
         every { familieDokumentClient.genererPdfFraHtml(any()) } returns dummyPdf
         return familieDokumentClient
     }

@@ -8,8 +8,9 @@ import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
 
 @Service
-class BehandlingsstatistikkProducer(private val kafkaTemplate: KafkaTemplate<String, String>) {
-
+class BehandlingsstatistikkProducer(
+    private val kafkaTemplate: KafkaTemplate<String, String>,
+) {
     @Value("\${BEHANDLINGSSTATISTIKK_TOPIC}")
     lateinit var topic: String
 

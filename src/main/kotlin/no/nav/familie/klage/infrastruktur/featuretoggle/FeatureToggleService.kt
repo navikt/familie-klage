@@ -21,13 +21,15 @@ enum class Toggle(
     VELG_SIGNATUR_BASERT_PÅ_FAGSAK("familie-klage.velg-signatur-basert-paa-fagsak", "Permission"),
 
     // Release
-    VIS_BREVMOTTAKER_BAKS("familie-klage.vis-brevmottaker-baks", "Release"),
     LEGG_TIL_BREVMOTTAKER_BAKS("familie-klage.legg-til-brevmottaker-baks", "Release"),
-    SETT_BEHANDLINGSTEMA_OG_BEHANDLINGSTYPE_FOR_BAKS(
-        "familie-klage.nav-24445-sett-behandlingstema-til-klage",
+    BRUK_NYTT_BREV_BA_KS("familie-klage.bruk-nytt-brev-ba-ks", "Release"),
+    KAN_MELLOMLAGRE_VURDERING("familie-klage.kan-mellomlagre-vurdering", "Release"),
+    SKAL_BRUKE_KABAL_API_V4("familie-klage.skal-bruke-kabal-api-v4", "Release"),
+    SKAL_BRUKE_NY_LØYPE_FOR_JOURNALFØRING("familie-klage.skal-bruke-ny-loype-for-journalforing", "Release"),
+    SEND_BEHANDLING_ID_VED_OPPRETTING_AV_REVURDERING_KLAGE(
+        "familie-klage.send-behandlingid-ved-oppretting-av-revurdering-klage",
         "Release",
     ),
-    BRUK_NYTT_BREV_BA_KS("familie-klage.bruk-nytt-brev-ba-ks", "Release"),
     SKAL_KUNNE_ENDRE_BEHANDLENDE_ENHET_BAKS("familie-klage.skal-kunne-endre-behandlende-enhet-baks", "Release"),
 
     ;

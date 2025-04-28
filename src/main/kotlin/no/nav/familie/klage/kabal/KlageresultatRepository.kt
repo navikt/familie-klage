@@ -7,7 +7,8 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface KlageresultatRepository : RepositoryInterface<KlageinstansResultat, UUID>, InsertUpdateRepository<KlageinstansResultat> {
-
+interface KlageresultatRepository :
+    RepositoryInterface<KlageinstansResultat, UUID>,
+    InsertUpdateRepository<KlageinstansResultat> {
     fun findByBehandlingId(behandlingId: UUID): List<KlageinstansResultat>
 }

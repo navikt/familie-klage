@@ -12,7 +12,6 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class KabalKafkaListenerTest {
-
     private lateinit var listener: KabalKafkaListener
 
     private val behandlingEventService = mockk<BehandlingEventService>(relaxed = true)
@@ -36,23 +35,22 @@ class KabalKafkaListenerTest {
         verify(exactly = 0) { behandlingEventService.handleEvent(any()) }
     }
 
-    private fun lagBehandlingEvent(
-        kilde: String,
-    ): String {
-        val behandlingEvent = BehandlingEvent(
-            UUID.randomUUID(),
-            "kildeReferanse",
-            kilde,
-            "kabalReferanse",
-            BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET,
-            BehandlingDetaljer(
-                KlagebehandlingAvsluttetDetaljer(
-                    LocalDateTime.now().minusDays(1),
-                    KlageinstansUtfall.MEDHOLD,
-                    listOf("journalpostReferanse1", "journalpostReferanse2"),
+    private fun lagBehandlingEvent(kilde: String): String {
+        val behandlingEvent =
+            BehandlingEvent(
+                UUID.randomUUID(),
+                "kildeReferanse",
+                kilde,
+                "kabalReferanse",
+                BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET,
+                BehandlingDetaljer(
+                    KlagebehandlingAvsluttetDetaljer(
+                        LocalDateTime.now().minusDays(1),
+                        KlageinstansUtfall.MEDHOLD,
+                        listOf("journalpostReferanse1", "journalpostReferanse2"),
+                    ),
                 ),
-            ),
-        )
+            )
         return objectMapper.writeValueAsString(behandlingEvent)
     }
 }

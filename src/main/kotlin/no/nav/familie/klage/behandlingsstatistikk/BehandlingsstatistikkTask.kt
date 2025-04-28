@@ -24,7 +24,6 @@ class BehandlingsstatistikkTask(
     private val behandlingStatistikkService: BehandlingsstatistikkService,
     private val featureToggleService: FeatureToggleService,
 ) : AsyncTaskStep {
-
     override fun doTask(task: Task) {
         val (behandlingId, hendelse, hendelseTidspunkt, gjeldendeSaksbehandler) =
             objectMapper.readValue<BehandlingsstatistikkTaskPayload>(task.payload)
@@ -37,8 +36,11 @@ class BehandlingsstatistikkTask(
     }
 
     companion object {
-
-        fun opprettMottattTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem): Task =
+        fun opprettMottattTask(
+            behandlingId: UUID,
+            eksternFagsakId: String,
+            fagsystem: Fagsystem,
+        ): Task =
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.MOTTATT,
@@ -48,7 +50,11 @@ class BehandlingsstatistikkTask(
                 fagsystem = fagsystem,
             )
 
-        fun opprettPåbegyntTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem): Task =
+        fun opprettPåbegyntTask(
+            behandlingId: UUID,
+            eksternFagsakId: String,
+            fagsystem: Fagsystem,
+        ): Task =
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.PÅBEGYNT,
@@ -58,7 +64,11 @@ class BehandlingsstatistikkTask(
                 fagsystem = fagsystem,
             )
 
-        fun opprettVenterTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem): Task =
+        fun opprettVenterTask(
+            behandlingId: UUID,
+            eksternFagsakId: String,
+            fagsystem: Fagsystem,
+        ): Task =
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.VENTER,
@@ -68,7 +78,11 @@ class BehandlingsstatistikkTask(
                 fagsystem = fagsystem,
             )
 
-        fun opprettFerdigTask(behandlingId: UUID, eksternFagsakId: String, fagsystem: Fagsystem): Task =
+        fun opprettFerdigTask(
+            behandlingId: UUID,
+            eksternFagsakId: String,
+            fagsystem: Fagsystem,
+        ): Task =
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.FERDIG,
@@ -104,22 +118,24 @@ class BehandlingsstatistikkTask(
         ): Task =
             Task(
                 type = TYPE,
-                payload = objectMapper.writeValueAsString(
-                    BehandlingsstatistikkTaskPayload(
-                        behandlingId,
-                        hendelse,
-                        hendelseTidspunkt,
-                        gjeldendeSaksbehandler,
+                payload =
+                    objectMapper.writeValueAsString(
+                        BehandlingsstatistikkTaskPayload(
+                            behandlingId,
+                            hendelse,
+                            hendelseTidspunkt,
+                            gjeldendeSaksbehandler,
+                        ),
                     ),
-                ),
-                properties = Properties().apply {
-                    this["saksbehandler"] = gjeldendeSaksbehandler
-                    this["behandlingId"] = behandlingId.toString()
-                    this["hendelse"] = hendelse.name
-                    this["hendelseTidspunkt"] = hendelseTidspunkt.toString()
-                    this["eksternFagsakId"] = eksternFagsakId
-                    this["fagsystem"] = fagsystem.name
-                },
+                properties =
+                    Properties().apply {
+                        this["saksbehandler"] = gjeldendeSaksbehandler
+                        this["behandlingId"] = behandlingId.toString()
+                        this["hendelse"] = hendelse.name
+                        this["hendelseTidspunkt"] = hendelseTidspunkt.toString()
+                        this["eksternFagsakId"] = eksternFagsakId
+                        this["fagsystem"] = fagsystem.name
+                    },
             )
 
         const val TYPE = "behandlingsstatistikkKlageTask"

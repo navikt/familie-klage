@@ -27,7 +27,6 @@ class BrevClient(
     private val restOperations: RestOperations,
     private val featureToggleService: FeatureToggleService,
 ) : AbstractPingableRestClient(restOperations, "familie.brev") {
-
     override val pingUri: URI = URI.create("$familieBrevUri/api/status")
     private val pdfUri = URI.create("$familieBrevUri/blankett/klage/pdf")
 
@@ -58,9 +57,7 @@ class BrevClient(
         )
     }
 
-    fun genererBlankett(blankettPdfRequest: BlankettPdfRequest): ByteArray {
-        return postForEntity(pdfUri, blankettPdfRequest, HttpHeaders().medContentTypeJsonUTF8())
-    }
+    fun genererBlankett(blankettPdfRequest: BlankettPdfRequest): ByteArray = postForEntity(pdfUri, blankettPdfRequest, HttpHeaders().medContentTypeJsonUTF8())
 
     fun genererHtml(
         brevmal: String,

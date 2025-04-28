@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Profile
 
 @Configuration
 class AInntektMock {
-
     @Profile("mock-inntekt")
     @Bean
     @Primary

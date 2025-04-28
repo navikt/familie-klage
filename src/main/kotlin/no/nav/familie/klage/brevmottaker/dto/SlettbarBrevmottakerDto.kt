@@ -23,51 +23,62 @@ sealed interface SlettbarBrevmottakerDto {
     }
 }
 
-fun SlettbarBrevmottakerDto.tilDomene(): SlettbarBrevmottaker {
-    return when (this) {
+fun SlettbarBrevmottakerDto.tilDomene(): SlettbarBrevmottaker =
+    when (this) {
         is SlettbarBrevmottakerOrganisasjonDto -> SlettbarBrevmottakerOrganisasjon(organisasjonsnummer)
         is SlettbarBrevmottakerPersonMedIdentDto -> SlettbarBrevmottakerPersonMedIdent(personIdent)
         is SlettbarBrevmottakerPersonUtenIdentDto -> SlettbarBrevmottakerPersonUtenIdent(id)
     }
-}
 
 @JsonDeserialize(`as` = SlettbarBrevmottakerPersonUtenIdentDto::class)
-data class SlettbarBrevmottakerPersonUtenIdentDto(val id: UUID) : SlettbarBrevmottakerDto {
+data class SlettbarBrevmottakerPersonUtenIdentDto(
+    val id: UUID,
+) : SlettbarBrevmottakerDto {
     override val type: SlettbarBrevmottakerDto.Type
         get() = SlettbarBrevmottakerDto.Type.PERSON_UTEN_IDENT
 }
 
 @JsonDeserialize(`as` = SlettbarBrevmottakerPersonMedIdentDto::class)
-data class SlettbarBrevmottakerPersonMedIdentDto(val personIdent: String) : SlettbarBrevmottakerDto {
+data class SlettbarBrevmottakerPersonMedIdentDto(
+    val personIdent: String,
+) : SlettbarBrevmottakerDto {
     override val type: SlettbarBrevmottakerDto.Type
         get() = SlettbarBrevmottakerDto.Type.PERSON_MED_IDENT
 }
 
 @JsonDeserialize(`as` = SlettbarBrevmottakerOrganisasjonDto::class)
-data class SlettbarBrevmottakerOrganisasjonDto(val organisasjonsnummer: String) : SlettbarBrevmottakerDto {
+data class SlettbarBrevmottakerOrganisasjonDto(
+    val organisasjonsnummer: String,
+) : SlettbarBrevmottakerDto {
     override val type: SlettbarBrevmottakerDto.Type
         get() = SlettbarBrevmottakerDto.Type.ORGANISASJON
 }
 
 class SlettbarBrevmottakerDtoDeserializer : JsonDeserializer<SlettbarBrevmottakerDto>() {
-    override fun deserialize(jsonParser: JsonParser, context: DeserializationContext): SlettbarBrevmottakerDto {
+    override fun deserialize(
+        jsonParser: JsonParser,
+        context: DeserializationContext,
+    ): SlettbarBrevmottakerDto {
         val tree = jsonParser.readValueAsTree<JsonNode>()
         val type = SlettbarBrevmottakerDto.Type.valueOf(tree.get("type").asText())
         return when (type) {
-            SlettbarBrevmottakerDto.Type.PERSON_MED_IDENT -> objectMapper.treeToValue(
-                tree,
-                SlettbarBrevmottakerPersonMedIdentDto::class.java,
-            )
+            SlettbarBrevmottakerDto.Type.PERSON_MED_IDENT ->
+                objectMapper.treeToValue(
+                    tree,
+                    SlettbarBrevmottakerPersonMedIdentDto::class.java,
+                )
 
-            SlettbarBrevmottakerDto.Type.PERSON_UTEN_IDENT -> objectMapper.treeToValue(
-                tree,
-                SlettbarBrevmottakerPersonUtenIdentDto::class.java,
-            )
+            SlettbarBrevmottakerDto.Type.PERSON_UTEN_IDENT ->
+                objectMapper.treeToValue(
+                    tree,
+                    SlettbarBrevmottakerPersonUtenIdentDto::class.java,
+                )
 
-            SlettbarBrevmottakerDto.Type.ORGANISASJON -> objectMapper.treeToValue(
-                tree,
-                SlettbarBrevmottakerOrganisasjonDto::class.java,
-            )
+            SlettbarBrevmottakerDto.Type.ORGANISASJON ->
+                objectMapper.treeToValue(
+                    tree,
+                    SlettbarBrevmottakerOrganisasjonDto::class.java,
+                )
         }
     }
 }

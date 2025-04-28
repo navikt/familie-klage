@@ -27,17 +27,17 @@ import org.junit.jupiter.api.assertThrows
 import java.util.UUID
 
 internal class StegServiceTest {
-
     val behandlingRepository = mockk<BehandlingRepository>()
     val behandlingshistorikkService = mockk<BehandlingshistorikkService>()
 
     val tilgangService = mockk<TilgangService>()
 
-    val stegService = StegService(
-        behandlingRepository,
-        behandlingshistorikkService,
-        tilgangService,
-    )
+    val stegService =
+        StegService(
+            behandlingRepository,
+            behandlingshistorikkService,
+            tilgangService,
+        )
     val behandlingId = UUID.randomUUID()
     val behandling = behandling(id = behandlingId)
 
@@ -128,13 +128,14 @@ internal class StegServiceTest {
     @Test
     fun `skal feile hvis saksbehandler mangler rolle`() {
         every { tilgangService.harTilgangTilBehandlingGittRolle(any(), any()) } returns false
-        val feil = assertThrows<Feil> {
-            stegService.oppdaterSteg(
-                behandlingId,
-                StegType.FORMKRAV,
-                StegType.VURDERING,
-            )
-        }
+        val feil =
+            assertThrows<Feil> {
+                stegService.oppdaterSteg(
+                    behandlingId,
+                    StegType.FORMKRAV,
+                    StegType.VURDERING,
+                )
+            }
         assertThat(feil.frontendFeilmelding).contains("Saksbehandler har ikke tilgang til å oppdatere behandlingssteg")
     }
 
@@ -142,13 +143,14 @@ internal class StegServiceTest {
     fun `skal feile hvis behandling er låst`() {
         every { behandlingRepository.findByIdOrThrow(any()) } returns behandling(status = BehandlingStatus.FERDIGSTILT)
 
-        val feil = assertThrows<Feil> {
-            stegService.oppdaterSteg(
-                UUID.randomUUID(),
-                StegType.VURDERING,
-                StegType.BREV,
-            )
-        }
+        val feil =
+            assertThrows<Feil> {
+                stegService.oppdaterSteg(
+                    UUID.randomUUID(),
+                    StegType.VURDERING,
+                    StegType.BREV,
+                )
+            }
         assertThat(feil.frontendFeilmelding).contains("Behandlingen er låst for videre behandling")
     }
 
@@ -212,7 +214,8 @@ internal class StegServiceTest {
 
     @Test
     fun `skal ikke lagre behandlingshistorikk om brev dersom behandlingen ferdigstilles og har årsak henvendelse fra KA`() {
-        every { behandlingRepository.findByIdOrThrow(behandlingId) } returns behandling.copy(årsak = Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL)
+        every { behandlingRepository.findByIdOrThrow(behandlingId) } returns
+            behandling.copy(årsak = Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL)
         stegService.oppdaterSteg(
             behandlingId,
             StegType.BREV,

@@ -1,6 +1,7 @@
 package no.nav.familie.klage.brev.domain
 
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
+import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpost
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.felles.domain.Sporbar
 import org.springframework.data.annotation.Id
@@ -17,16 +18,9 @@ data class Brev(
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),
 ) {
-
     fun brevPdf() = this.pdf?.bytes ?: error("Mangler brev-pdf for behandling=$behandlingId")
 }
 
 data class BrevmottakereJournalposter(
-    val journalposter: List<BrevmottakereJournalpost>,
-)
-
-data class BrevmottakereJournalpost(
-    val ident: String,
-    val journalpostId: String,
-    val distribusjonId: String? = null,
+    val journalposter: List<BrevmottakerJournalpost>,
 )

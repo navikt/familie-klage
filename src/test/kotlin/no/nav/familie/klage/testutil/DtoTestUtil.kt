@@ -21,8 +21,8 @@ object DtoTestUtil {
         postnummer: String? = "0010",
         poststed: String? = "Oslo",
         landkode: String = "NO",
-    ): NyBrevmottakerPersonUtenIdentDto {
-        return NyBrevmottakerPersonUtenIdentDto(
+    ): NyBrevmottakerPersonUtenIdentDto =
+        NyBrevmottakerPersonUtenIdentDto(
             mottakerRolle = mottakerRolle,
             navn = navn,
             adresselinje1 = adresselinje1,
@@ -31,39 +31,33 @@ object DtoTestUtil {
             poststed = poststed,
             landkode = landkode,
         )
-    }
 
     fun lagNyBrevmottakerPersonMedIdentDto(
         personIdent: String = "23097825289",
         mottakerRolle: MottakerRolle = MottakerRolle.FULLMAKT,
         navn: String = "Navn Navnesen",
-    ): NyBrevmottakerPersonMedIdentDto {
-        return NyBrevmottakerPersonMedIdentDto(
+    ): NyBrevmottakerPersonMedIdentDto =
+        NyBrevmottakerPersonMedIdentDto(
             personIdent = personIdent,
             mottakerRolle = mottakerRolle,
             navn = navn,
         )
-    }
 
     fun lagNyBrevmottakerOrganisasjonDto(
         organisasjonsnummer: String = "123",
         organisasjonsnavn: String = "Orgnavn",
         navnHosOrganisasjon: String = "navnHosOrganisasjon",
-    ): NyBrevmottakerOrganisasjonDto {
-        return NyBrevmottakerOrganisasjonDto(
+    ): NyBrevmottakerOrganisasjonDto =
+        NyBrevmottakerOrganisasjonDto(
             organisasjonsnummer = organisasjonsnummer,
             organisasjonsnavn = organisasjonsnavn,
             navnHosOrganisasjon = navnHosOrganisasjon,
         )
-    }
 
-    fun lagSlettbarBrevmottakerPersonUtenIdentDto(
-        id: UUID = UUID.randomUUID(),
-    ): SlettbarBrevmottakerPersonUtenIdentDto {
-        return SlettbarBrevmottakerPersonUtenIdentDto(
+    fun lagSlettbarBrevmottakerPersonUtenIdentDto(id: UUID = UUID.randomUUID()): SlettbarBrevmottakerPersonUtenIdentDto =
+        SlettbarBrevmottakerPersonUtenIdentDto(
             id,
         )
-    }
 
     fun lagOpprettKlagebehandlingRequest(
         ident: String = "123",
@@ -74,8 +68,8 @@ object DtoTestUtil {
         behandlendeEnhet: String = "1000",
         klageGjelderTilbakekreving: Boolean = false,
         behandlingsårsak: Klagebehandlingsårsak = Klagebehandlingsårsak.ORDINÆR,
-    ): OpprettKlagebehandlingRequest {
-        return OpprettKlagebehandlingRequest(
+    ): OpprettKlagebehandlingRequest =
+        OpprettKlagebehandlingRequest(
             ident,
             stønadstype,
             eksternFagsakId,
@@ -85,5 +79,4 @@ object DtoTestUtil {
             klageGjelderTilbakekreving,
             behandlingsårsak,
         )
-    }
 }

@@ -13,30 +13,29 @@ import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.stereotype.Service
 
 @Service
-class JournalpostService(private val familieIntegrasjonerClient: FamilieIntegrasjonerClient) {
-
-    fun hentJournalpost(journalpostId: String): Journalpost {
-        return familieIntegrasjonerClient.hentJournalpost(journalpostId)
-    }
+class JournalpostService(
+    private val familieIntegrasjonerClient: FamilieIntegrasjonerClient,
+) {
+    fun hentJournalpost(journalpostId: String): Journalpost = familieIntegrasjonerClient.hentJournalpost(journalpostId)
 
     fun finnJournalposter(
         personIdent: String,
         stønadType: Stønadstype,
         antall: Int = 200,
         typer: List<Journalposttype> = Journalposttype.values().toList(),
-    ): List<Journalpost> {
-        return familieIntegrasjonerClient.finnJournalposter(
+    ): List<Journalpost> =
+        familieIntegrasjonerClient.finnJournalposter(
             JournalposterForBrukerRequest(
-                brukerId = Bruker(
-                    id = personIdent,
-                    type = BrukerIdType.FNR,
-                ),
+                brukerId =
+                    Bruker(
+                        id = personIdent,
+                        type = BrukerIdType.FNR,
+                    ),
                 antall = antall,
                 tema = listOf(stønadType.tilTema()),
                 journalposttype = typer,
             ),
         )
-    }
 
     fun hentDokument(
         journalpost: Journalpost,

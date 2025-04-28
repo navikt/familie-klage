@@ -45,7 +45,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 internal class FerdigstillBehandlingServiceTest {
-
     val fagsakService = mockk<FagsakService>()
     val behandlingService = mockk<BehandlingService>()
     val distribusjonService = mockk<DistribusjonService>()
@@ -60,18 +59,19 @@ internal class FerdigstillBehandlingServiceTest {
     val fagsystemVedtakService = mockk<FagsystemVedtakService>()
     val featureToggleService = FeatureToggleMock().featureToggleService()
 
-    val ferdigstillBehandlingService = FerdigstillBehandlingService(
-        behandlingService = behandlingService,
-        vurderingService = vurderingService,
-        formService = formService,
-        stegService = stegService,
-        taskService = taskService,
-        oppgaveTaskService = oppgaveTaskService,
-        brevService = brevService,
-        fagsystemVedtakService = fagsystemVedtakService,
-        featureToggleService = featureToggleService,
-        fagsakService = fagsakService,
-    )
+    val ferdigstillBehandlingService =
+        FerdigstillBehandlingService(
+            behandlingService = behandlingService,
+            vurderingService = vurderingService,
+            formService = formService,
+            stegService = stegService,
+            taskService = taskService,
+            oppgaveTaskService = oppgaveTaskService,
+            brevService = brevService,
+            fagsystemVedtakService = fagsystemVedtakService,
+            featureToggleService = featureToggleService,
+            fagsakService = fagsakService,
+        )
     val fagsak = DomainUtil.fagsakDomain().tilFagsak()
     val behandling = DomainUtil.behandling(fagsak = fagsak, steg = StegType.BREV, status = BehandlingStatus.UTREDES)
     val vurdering = vurdering(behandlingId = behandling.id)

@@ -48,70 +48,78 @@ class OpprettKabalEventOppgaveTaskTest {
         private val behandlingRepository = mockk<BehandlingRepository>()
         private val fagsakPersonRepository = mockk<FagsakPersonRepository>()
         private val oppgaveClient = mockk<OppgaveClient>()
-        private val opprettKabalEventOppgaveTask = OpprettKabalEventOppgaveTask(
-            fagsakRepository = fagsakRepository,
-            behandlingRepository = behandlingRepository,
-            personRepository = fagsakPersonRepository,
-            oppgaveClient = oppgaveClient,
-        )
+        private val opprettKabalEventOppgaveTask =
+            OpprettKabalEventOppgaveTask(
+                fagsakRepository = fagsakRepository,
+                behandlingRepository = behandlingRepository,
+                personRepository = fagsakPersonRepository,
+                oppgaveClient = oppgaveClient,
+            )
 
         @Test
         fun `skal kaste feil om fagsak ikke finnes for behandling`() {
             // Arrange
-            val opprettOppgavePayload = OpprettOppgavePayload(
-                klagebehandlingEksternId = UUID.fromString("7be8afe5-f3ff-4635-9676-7930fbd4af86"),
-                oppgaveTekst = "Oppgavetekst",
-                fagsystem = Fagsystem.BA,
-                klageinstansUtfall = KlageinstansUtfall.STADFESTELSE,
-                behandlingstema = Behandlingstema.Barnetrygd,
-                behandlingstype = null,
-            )
+            val opprettOppgavePayload =
+                OpprettOppgavePayload(
+                    klagebehandlingEksternId = UUID.fromString("7be8afe5-f3ff-4635-9676-7930fbd4af86"),
+                    oppgaveTekst = "Oppgavetekst",
+                    fagsystem = Fagsystem.BA,
+                    klageinstansUtfall = KlageinstansUtfall.STADFESTELSE,
+                    behandlingstema = Behandlingstema.Barnetrygd,
+                    behandlingstype = null,
+                )
 
-            val task = Task(
-                OpprettKabalEventOppgaveTask.TYPE,
-                objectMapper.writeValueAsString(opprettOppgavePayload),
-            )
+            val task =
+                Task(
+                    OpprettKabalEventOppgaveTask.TYPE,
+                    objectMapper.writeValueAsString(opprettOppgavePayload),
+                )
 
-            val fagsak = fagsak(
-                id = UUID.fromString("5d4a47f1-9d72-4bab-a86d-8f3ed269a8b7"),
-                stønadstype = Stønadstype.BARNETRYGD,
-                fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
-            )
+            val fagsak =
+                fagsak(
+                    id = UUID.fromString("5d4a47f1-9d72-4bab-a86d-8f3ed269a8b7"),
+                    stønadstype = Stønadstype.BARNETRYGD,
+                    fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
+                )
 
-            val behandling = behandling(
-                id = UUID.fromString("d4122035-d9c5-41d1-a424-98ccd3e5c723"),
-                fagsak = fagsak,
-                status = BehandlingStatus.FERDIGSTILT,
-                steg = StegType.BEHANDLING_FERDIGSTILT,
-                resultat = BehandlingResultat.IKKE_MEDHOLD,
-                vedtakDato = LocalDateTime.of(2025, 2, 18, 13, 40, 26),
-                klageMottatt = LocalDate.of(2025, 1, 1),
-                behandlendeEnhet = "4812",
-                eksternBehandlingId = UUID.fromString("7be8afe5-f3ff-4635-9676-7930fbd4af86"),
-                henlagtÅrsak = null,
-                påklagetVedtak = PåklagetVedtak(
-                    påklagetVedtakstype = PåklagetVedtakstype.VEDTAK,
-                    påklagetVedtakDetaljer = PåklagetVedtakDetaljer(
-                        fagsystemType = FagsystemType.ORDNIÆR,
-                        eksternFagsystemBehandlingId = "100224307",
-                        internKlagebehandlingId = null,
-                        behandlingstype = "Førstegangsbehandling",
-                        resultat = "Innvilget",
-                        vedtakstidspunkt = LocalDateTime.of(2025, 2, 18, 8, 40, 23),
-                        regelverk = Regelverk.NASJONAL,
-                    ),
-                ),
-                fagsystemRevurdering = null,
-                årsak = Klagebehandlingsårsak.ORDINÆR,
-            )
+            val behandling =
+                behandling(
+                    id = UUID.fromString("d4122035-d9c5-41d1-a424-98ccd3e5c723"),
+                    fagsak = fagsak,
+                    status = BehandlingStatus.FERDIGSTILT,
+                    steg = StegType.BEHANDLING_FERDIGSTILT,
+                    resultat = BehandlingResultat.IKKE_MEDHOLD,
+                    vedtakDato = LocalDateTime.of(2025, 2, 18, 13, 40, 26),
+                    klageMottatt = LocalDate.of(2025, 1, 1),
+                    behandlendeEnhet = "4812",
+                    eksternBehandlingId = UUID.fromString("7be8afe5-f3ff-4635-9676-7930fbd4af86"),
+                    henlagtÅrsak = null,
+                    påklagetVedtak =
+                        PåklagetVedtak(
+                            påklagetVedtakstype = PåklagetVedtakstype.VEDTAK,
+                            påklagetVedtakDetaljer =
+                                PåklagetVedtakDetaljer(
+                                    fagsystemType = FagsystemType.ORDNIÆR,
+                                    eksternFagsystemBehandlingId = "100224307",
+                                    internKlagebehandlingId = null,
+                                    behandlingstype = "Førstegangsbehandling",
+                                    resultat = "Innvilget",
+                                    vedtakstidspunkt = LocalDateTime.of(2025, 2, 18, 8, 40, 23),
+                                    regelverk = Regelverk.NASJONAL,
+                                ),
+                        ),
+                    fagsystemRevurdering = null,
+                    årsak = Klagebehandlingsårsak.ORDINÆR,
+                )
 
             every { behandlingRepository.findByEksternBehandlingId(opprettOppgavePayload.klagebehandlingEksternId) } returns behandling
             every { fagsakRepository.finnFagsakForBehandlingId(behandling.id) } returns null
 
             // Act & assert
-            val exception = assertThrows<Feil> {
-                opprettKabalEventOppgaveTask.doTask(task)
-            }
+            val exception =
+                assertThrows<Feil> {
+                    opprettKabalEventOppgaveTask.doTask(task)
+                }
             assertThat(exception.message).isEqualTo("Finner ikke fagsak for behandling med ekstern id ${behandling.eksternBehandlingId}.")
         }
 
@@ -121,64 +129,69 @@ class OpprettKabalEventOppgaveTaskTest {
             names = ["OPPHEVET"],
             mode = EnumSource.Mode.EXCLUDE,
         )
-        fun `skal opprette oppgave med normal prioritert`(
-            utfall: KlageinstansUtfall,
-        ) {
+        fun `skal opprette oppgave med normal prioritert`(utfall: KlageinstansUtfall) {
             // Arrange
-            val opprettOppgavePayload = OpprettOppgavePayload(
-                klagebehandlingEksternId = UUID.fromString("7be8afe5-f3ff-4635-9676-7930fbd4af86"),
-                oppgaveTekst = "Oppgavetekst",
-                fagsystem = Fagsystem.BA,
-                klageinstansUtfall = utfall,
-                behandlingstema = Behandlingstema.Barnetrygd,
-                behandlingstype = null,
-            )
+            val opprettOppgavePayload =
+                OpprettOppgavePayload(
+                    klagebehandlingEksternId = UUID.fromString("7be8afe5-f3ff-4635-9676-7930fbd4af86"),
+                    oppgaveTekst = "Oppgavetekst",
+                    fagsystem = Fagsystem.BA,
+                    klageinstansUtfall = utfall,
+                    behandlingstema = Behandlingstema.Barnetrygd,
+                    behandlingstype = null,
+                )
 
-            val task = Task(
-                OpprettKabalEventOppgaveTask.TYPE,
-                objectMapper.writeValueAsString(opprettOppgavePayload),
-            )
+            val task =
+                Task(
+                    OpprettKabalEventOppgaveTask.TYPE,
+                    objectMapper.writeValueAsString(opprettOppgavePayload),
+                )
 
-            val fagsak = fagsak(
-                id = UUID.fromString("5d4a47f1-9d72-4bab-a86d-8f3ed269a8b7"),
-                stønadstype = Stønadstype.BARNETRYGD,
-                fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
-            )
+            val fagsak =
+                fagsak(
+                    id = UUID.fromString("5d4a47f1-9d72-4bab-a86d-8f3ed269a8b7"),
+                    stønadstype = Stønadstype.BARNETRYGD,
+                    fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
+                )
 
-            val fagsakDomain = fagsakDomain(
-                id = fagsak.id,
-                stønadstype = fagsak.stønadstype,
-                personId = fagsak.fagsakPersonId,
-                fagsystem = fagsak.fagsystem,
-                eksternId = fagsak.eksternId,
-            )
+            val fagsakDomain =
+                fagsakDomain(
+                    id = fagsak.id,
+                    stønadstype = fagsak.stønadstype,
+                    personId = fagsak.fagsakPersonId,
+                    fagsystem = fagsak.fagsystem,
+                    eksternId = fagsak.eksternId,
+                )
 
-            val behandling = behandling(
-                id = UUID.fromString("d4122035-d9c5-41d1-a424-98ccd3e5c723"),
-                fagsak = fagsak,
-                status = BehandlingStatus.FERDIGSTILT,
-                steg = StegType.BEHANDLING_FERDIGSTILT,
-                resultat = BehandlingResultat.IKKE_MEDHOLD,
-                vedtakDato = LocalDateTime.of(2025, 2, 18, 13, 40, 26),
-                klageMottatt = LocalDate.of(2025, 1, 1),
-                behandlendeEnhet = "4812",
-                eksternBehandlingId = UUID.fromString("7be8afe5-f3ff-4635-9676-7930fbd4af86"),
-                henlagtÅrsak = null,
-                påklagetVedtak = PåklagetVedtak(
-                    påklagetVedtakstype = PåklagetVedtakstype.VEDTAK,
-                    påklagetVedtakDetaljer = PåklagetVedtakDetaljer(
-                        fagsystemType = FagsystemType.ORDNIÆR,
-                        eksternFagsystemBehandlingId = "100224307",
-                        internKlagebehandlingId = null,
-                        behandlingstype = "Førstegangsbehandling",
-                        resultat = "Innvilget",
-                        vedtakstidspunkt = LocalDateTime.of(2025, 2, 18, 8, 40, 23),
-                        regelverk = Regelverk.NASJONAL,
-                    ),
-                ),
-                fagsystemRevurdering = null,
-                årsak = Klagebehandlingsårsak.ORDINÆR,
-            )
+            val behandling =
+                behandling(
+                    id = UUID.fromString("d4122035-d9c5-41d1-a424-98ccd3e5c723"),
+                    fagsak = fagsak,
+                    status = BehandlingStatus.FERDIGSTILT,
+                    steg = StegType.BEHANDLING_FERDIGSTILT,
+                    resultat = BehandlingResultat.IKKE_MEDHOLD,
+                    vedtakDato = LocalDateTime.of(2025, 2, 18, 13, 40, 26),
+                    klageMottatt = LocalDate.of(2025, 1, 1),
+                    behandlendeEnhet = "4812",
+                    eksternBehandlingId = UUID.fromString("7be8afe5-f3ff-4635-9676-7930fbd4af86"),
+                    henlagtÅrsak = null,
+                    påklagetVedtak =
+                        PåklagetVedtak(
+                            påklagetVedtakstype = PåklagetVedtakstype.VEDTAK,
+                            påklagetVedtakDetaljer =
+                                PåklagetVedtakDetaljer(
+                                    fagsystemType = FagsystemType.ORDNIÆR,
+                                    eksternFagsystemBehandlingId = "100224307",
+                                    internKlagebehandlingId = null,
+                                    behandlingstype = "Førstegangsbehandling",
+                                    resultat = "Innvilget",
+                                    vedtakstidspunkt = LocalDateTime.of(2025, 2, 18, 8, 40, 23),
+                                    regelverk = Regelverk.NASJONAL,
+                                ),
+                        ),
+                    fagsystemRevurdering = null,
+                    årsak = Klagebehandlingsårsak.ORDINÆR,
+                )
 
             val opprettOppgaveRequestSlot = slot<OpprettOppgaveRequest>()
 
@@ -213,60 +226,67 @@ class OpprettKabalEventOppgaveTaskTest {
         @Test
         fun `skal opprette oppgave med høy prioritert`() {
             // Arrange
-            val opprettOppgavePayload = OpprettOppgavePayload(
-                klagebehandlingEksternId = UUID.fromString("7be8afe5-f3ff-4635-9676-7930fbd4af86"),
-                oppgaveTekst = "Oppgavetekst",
-                fagsystem = Fagsystem.BA,
-                klageinstansUtfall = KlageinstansUtfall.OPPHEVET,
-                behandlingstema = Behandlingstema.Barnetrygd,
-                behandlingstype = null,
-            )
+            val opprettOppgavePayload =
+                OpprettOppgavePayload(
+                    klagebehandlingEksternId = UUID.fromString("7be8afe5-f3ff-4635-9676-7930fbd4af86"),
+                    oppgaveTekst = "Oppgavetekst",
+                    fagsystem = Fagsystem.BA,
+                    klageinstansUtfall = KlageinstansUtfall.OPPHEVET,
+                    behandlingstema = Behandlingstema.Barnetrygd,
+                    behandlingstype = null,
+                )
 
-            val task = Task(
-                OpprettKabalEventOppgaveTask.TYPE,
-                objectMapper.writeValueAsString(opprettOppgavePayload),
-            )
+            val task =
+                Task(
+                    OpprettKabalEventOppgaveTask.TYPE,
+                    objectMapper.writeValueAsString(opprettOppgavePayload),
+                )
 
-            val fagsak = fagsak(
-                id = UUID.fromString("5d4a47f1-9d72-4bab-a86d-8f3ed269a8b7"),
-                stønadstype = Stønadstype.BARNETRYGD,
-                fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
-            )
+            val fagsak =
+                fagsak(
+                    id = UUID.fromString("5d4a47f1-9d72-4bab-a86d-8f3ed269a8b7"),
+                    stønadstype = Stønadstype.BARNETRYGD,
+                    fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
+                )
 
-            val fagsakDomain = fagsakDomain(
-                id = fagsak.id,
-                stønadstype = fagsak.stønadstype,
-                personId = fagsak.fagsakPersonId,
-                fagsystem = fagsak.fagsystem,
-                eksternId = fagsak.eksternId,
-            )
+            val fagsakDomain =
+                fagsakDomain(
+                    id = fagsak.id,
+                    stønadstype = fagsak.stønadstype,
+                    personId = fagsak.fagsakPersonId,
+                    fagsystem = fagsak.fagsystem,
+                    eksternId = fagsak.eksternId,
+                )
 
-            val behandling = behandling(
-                id = UUID.fromString("d4122035-d9c5-41d1-a424-98ccd3e5c723"),
-                fagsak = fagsak,
-                status = BehandlingStatus.FERDIGSTILT,
-                steg = StegType.BEHANDLING_FERDIGSTILT,
-                resultat = BehandlingResultat.IKKE_MEDHOLD,
-                vedtakDato = LocalDateTime.of(2025, 2, 18, 13, 40, 26),
-                klageMottatt = LocalDate.of(2025, 1, 1),
-                behandlendeEnhet = "4812",
-                eksternBehandlingId = UUID.fromString("7be8afe5-f3ff-4635-9676-7930fbd4af86"),
-                henlagtÅrsak = null,
-                påklagetVedtak = PåklagetVedtak(
-                    påklagetVedtakstype = PåklagetVedtakstype.VEDTAK,
-                    påklagetVedtakDetaljer = PåklagetVedtakDetaljer(
-                        fagsystemType = FagsystemType.ORDNIÆR,
-                        eksternFagsystemBehandlingId = "100224307",
-                        internKlagebehandlingId = null,
-                        behandlingstype = "Førstegangsbehandling",
-                        resultat = "Innvilget",
-                        vedtakstidspunkt = LocalDateTime.of(2025, 2, 18, 8, 40, 23),
-                        regelverk = Regelverk.NASJONAL,
-                    ),
-                ),
-                fagsystemRevurdering = null,
-                årsak = Klagebehandlingsårsak.ORDINÆR,
-            )
+            val behandling =
+                behandling(
+                    id = UUID.fromString("d4122035-d9c5-41d1-a424-98ccd3e5c723"),
+                    fagsak = fagsak,
+                    status = BehandlingStatus.FERDIGSTILT,
+                    steg = StegType.BEHANDLING_FERDIGSTILT,
+                    resultat = BehandlingResultat.IKKE_MEDHOLD,
+                    vedtakDato = LocalDateTime.of(2025, 2, 18, 13, 40, 26),
+                    klageMottatt = LocalDate.of(2025, 1, 1),
+                    behandlendeEnhet = "4812",
+                    eksternBehandlingId = UUID.fromString("7be8afe5-f3ff-4635-9676-7930fbd4af86"),
+                    henlagtÅrsak = null,
+                    påklagetVedtak =
+                        PåklagetVedtak(
+                            påklagetVedtakstype = PåklagetVedtakstype.VEDTAK,
+                            påklagetVedtakDetaljer =
+                                PåklagetVedtakDetaljer(
+                                    fagsystemType = FagsystemType.ORDNIÆR,
+                                    eksternFagsystemBehandlingId = "100224307",
+                                    internKlagebehandlingId = null,
+                                    behandlingstype = "Førstegangsbehandling",
+                                    resultat = "Innvilget",
+                                    vedtakstidspunkt = LocalDateTime.of(2025, 2, 18, 8, 40, 23),
+                                    regelverk = Regelverk.NASJONAL,
+                                ),
+                        ),
+                    fagsystemRevurdering = null,
+                    årsak = Klagebehandlingsårsak.ORDINÆR,
+                )
 
             val opprettOppgaveRequestSlot = slot<OpprettOppgaveRequest>()
 
@@ -301,60 +321,67 @@ class OpprettKabalEventOppgaveTaskTest {
         @Test
         fun `skal opprette oppgave uten behandlingstema`() {
             // Arrange
-            val opprettOppgavePayload = OpprettOppgavePayload(
-                klagebehandlingEksternId = UUID.fromString("7be8afe5-f3ff-4635-9676-7930fbd4af86"),
-                oppgaveTekst = "Oppgavetekst",
-                fagsystem = Fagsystem.BA,
-                klageinstansUtfall = KlageinstansUtfall.OPPHEVET,
-                behandlingstema = null,
-                behandlingstype = Behandlingstype.NASJONAL.value,
-            )
+            val opprettOppgavePayload =
+                OpprettOppgavePayload(
+                    klagebehandlingEksternId = UUID.fromString("7be8afe5-f3ff-4635-9676-7930fbd4af86"),
+                    oppgaveTekst = "Oppgavetekst",
+                    fagsystem = Fagsystem.BA,
+                    klageinstansUtfall = KlageinstansUtfall.OPPHEVET,
+                    behandlingstema = null,
+                    behandlingstype = Behandlingstype.NASJONAL.value,
+                )
 
-            val task = Task(
-                OpprettKabalEventOppgaveTask.TYPE,
-                objectMapper.writeValueAsString(opprettOppgavePayload),
-            )
+            val task =
+                Task(
+                    OpprettKabalEventOppgaveTask.TYPE,
+                    objectMapper.writeValueAsString(opprettOppgavePayload),
+                )
 
-            val fagsak = fagsak(
-                id = UUID.fromString("5d4a47f1-9d72-4bab-a86d-8f3ed269a8b7"),
-                stønadstype = Stønadstype.BARNETRYGD,
-                fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
-            )
+            val fagsak =
+                fagsak(
+                    id = UUID.fromString("5d4a47f1-9d72-4bab-a86d-8f3ed269a8b7"),
+                    stønadstype = Stønadstype.BARNETRYGD,
+                    fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
+                )
 
-            val fagsakDomain = fagsakDomain(
-                id = fagsak.id,
-                stønadstype = fagsak.stønadstype,
-                personId = fagsak.fagsakPersonId,
-                fagsystem = fagsak.fagsystem,
-                eksternId = fagsak.eksternId,
-            )
+            val fagsakDomain =
+                fagsakDomain(
+                    id = fagsak.id,
+                    stønadstype = fagsak.stønadstype,
+                    personId = fagsak.fagsakPersonId,
+                    fagsystem = fagsak.fagsystem,
+                    eksternId = fagsak.eksternId,
+                )
 
-            val behandling = behandling(
-                id = UUID.fromString("d4122035-d9c5-41d1-a424-98ccd3e5c723"),
-                fagsak = fagsak,
-                status = BehandlingStatus.FERDIGSTILT,
-                steg = StegType.BEHANDLING_FERDIGSTILT,
-                resultat = BehandlingResultat.IKKE_MEDHOLD,
-                vedtakDato = LocalDateTime.of(2025, 2, 18, 13, 40, 26),
-                klageMottatt = LocalDate.of(2025, 1, 1),
-                behandlendeEnhet = "4812",
-                eksternBehandlingId = UUID.fromString("7be8afe5-f3ff-4635-9676-7930fbd4af86"),
-                henlagtÅrsak = null,
-                påklagetVedtak = PåklagetVedtak(
-                    påklagetVedtakstype = PåklagetVedtakstype.VEDTAK,
-                    påklagetVedtakDetaljer = PåklagetVedtakDetaljer(
-                        fagsystemType = FagsystemType.ORDNIÆR,
-                        eksternFagsystemBehandlingId = "100224307",
-                        internKlagebehandlingId = null,
-                        behandlingstype = "Førstegangsbehandling",
-                        resultat = "Innvilget",
-                        vedtakstidspunkt = LocalDateTime.of(2025, 2, 18, 8, 40, 23),
-                        regelverk = Regelverk.NASJONAL,
-                    ),
-                ),
-                fagsystemRevurdering = null,
-                årsak = Klagebehandlingsårsak.ORDINÆR,
-            )
+            val behandling =
+                behandling(
+                    id = UUID.fromString("d4122035-d9c5-41d1-a424-98ccd3e5c723"),
+                    fagsak = fagsak,
+                    status = BehandlingStatus.FERDIGSTILT,
+                    steg = StegType.BEHANDLING_FERDIGSTILT,
+                    resultat = BehandlingResultat.IKKE_MEDHOLD,
+                    vedtakDato = LocalDateTime.of(2025, 2, 18, 13, 40, 26),
+                    klageMottatt = LocalDate.of(2025, 1, 1),
+                    behandlendeEnhet = "4812",
+                    eksternBehandlingId = UUID.fromString("7be8afe5-f3ff-4635-9676-7930fbd4af86"),
+                    henlagtÅrsak = null,
+                    påklagetVedtak =
+                        PåklagetVedtak(
+                            påklagetVedtakstype = PåklagetVedtakstype.VEDTAK,
+                            påklagetVedtakDetaljer =
+                                PåklagetVedtakDetaljer(
+                                    fagsystemType = FagsystemType.ORDNIÆR,
+                                    eksternFagsystemBehandlingId = "100224307",
+                                    internKlagebehandlingId = null,
+                                    behandlingstype = "Førstegangsbehandling",
+                                    resultat = "Innvilget",
+                                    vedtakstidspunkt = LocalDateTime.of(2025, 2, 18, 8, 40, 23),
+                                    regelverk = Regelverk.NASJONAL,
+                                ),
+                        ),
+                    fagsystemRevurdering = null,
+                    årsak = Klagebehandlingsårsak.ORDINÆR,
+                )
 
             val opprettOppgaveRequestSlot = slot<OpprettOppgaveRequest>()
 
@@ -392,14 +419,15 @@ class OpprettKabalEventOppgaveTaskTest {
         @Test
         fun `skal opprette task`() {
             // Arrange
-            val opprettOppgavePayload = OpprettOppgavePayload(
-                klagebehandlingEksternId = UUID.fromString("7be8afe5-f3ff-4635-9676-7930fbd4af86"),
-                oppgaveTekst = "Oppgavetekst",
-                fagsystem = Fagsystem.BA,
-                klageinstansUtfall = KlageinstansUtfall.OPPHEVET,
-                behandlingstema = Behandlingstema.Barnetrygd,
-                behandlingstype = null,
-            )
+            val opprettOppgavePayload =
+                OpprettOppgavePayload(
+                    klagebehandlingEksternId = UUID.fromString("7be8afe5-f3ff-4635-9676-7930fbd4af86"),
+                    oppgaveTekst = "Oppgavetekst",
+                    fagsystem = Fagsystem.BA,
+                    klageinstansUtfall = KlageinstansUtfall.OPPHEVET,
+                    behandlingstema = Behandlingstema.Barnetrygd,
+                    behandlingstype = null,
+                )
 
             // Act
             val task = OpprettKabalEventOppgaveTask.opprettTask(opprettOppgavePayload, "1234", Fagsystem.BA)
