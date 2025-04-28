@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.util.UUID
+import no.nav.familie.klage.infrastruktur.exception.Feil
 
 @Service
 class BehandlingService(
@@ -99,7 +100,9 @@ class BehandlingService(
     ) {
         val behandling = hentBehandling(behandlingId)
 
-        feilHvis(behandling.status == BehandlingStatus.FERDIGSTILT) { "Kan ikke endre behandlende enhet på en ferdigstilt behandling" }
+        if (behandling.status == BehandlingStatus.FERDIGSTILT) {
+            throw Feil("Kan ikke endre behandlende enhet på ferdigstilt behandling=${behandling.id}")
+        }
 
         EnhetValidator.validerEnhetForFagsystem(
             enhetsnummer = behandlendeEnhet.enhetsnummer,

@@ -192,6 +192,26 @@ internal class BehandlingServiceTest {
     @Nested
     inner class OppdaterBehandlendeEnhet {
         @Test
+        fun `skal kaste feil om behandlingen er ferdigstilt`() {
+            // Arrange
+            val fagsak = fagsak(stønadstype = Stønadstype.BARNETRYGD)
+            val behandling =
+                behandling(
+                    fagsak = fagsak,
+                    behandlendeEnhet = BarnetrygdEnhet.DRAMMEN.enhetsnummer,
+                    status = BehandlingStatus.FERDIGSTILT,
+                )
+
+            every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
+
+            // Act & assert
+            val exception = assertThrows<Feil> {
+                behandlingService.oppdaterBehandlendeEnhet(behandling.id, BarnetrygdEnhet.OSLO, fagsak.fagsystem)
+            }
+            assertThat(exception.message).isEqualTo("Kan ikke endre behandlende enhet på ferdigstilt behandling=${behandling.id}")
+        }
+
+        @Test
         fun `skal oppdatere behandlende enhet på behandling`() {
             // Arrange
             val fagsak = fagsak(stønadstype = Stønadstype.BARNETRYGD)
