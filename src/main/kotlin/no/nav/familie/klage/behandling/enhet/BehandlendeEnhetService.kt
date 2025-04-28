@@ -38,7 +38,7 @@ class BehandlendeEnhetService(
             )
 
         behandlingService.oppdaterBehandlendeEnhet(
-            behandlingId = behandlingId,
+            behandlingId = behandling.id,
             behandlendeEnhet = nyBehandlendeEnhet,
             fagsystem = fagsystem,
         )
@@ -49,7 +49,7 @@ class BehandlendeEnhetService(
         )
 
         behandlingshistorikkService.opprettBehandlingshistorikk(
-            behandlingId = behandlingId,
+            behandlingId = behandling.id,
             steg = behandling.steg,
             historikkHendelse = HistorikkHendelse.BEHANDLENDE_ENHET_ENDRET,
             beskrivelse =
