@@ -49,7 +49,7 @@ internal class KabalServiceTest {
     private val kabalService = KabalService(kabalClient, integrasjonerClient, lenkeConfig, featureToggleService)
     private val ingenBrevmottaker = Brevmottakere()
 
-    private val saksbehandler = Saksbehandler(UUID.randomUUID(), "A123456", "Alfa", "Surname", "4415")
+    private val saksbehandler = Saksbehandler(UUID.randomUUID(), "A123456", "Alfa", "Surname", "4415", "Skien")
 
     @BeforeEach
     internal fun setUp() {

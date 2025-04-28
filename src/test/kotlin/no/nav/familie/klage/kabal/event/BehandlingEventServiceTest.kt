@@ -279,5 +279,5 @@ internal class BehandlingEventServiceTest {
                 ),
         )
 
-    private val saksbehandler = Saksbehandler(UUID.randomUUID(), "A123456", "Alfa", "Omega", "4415")
+    private val saksbehandler = Saksbehandler(UUID.randomUUID(), "A123456", "Alfa", "Omega", "4415", "Skien")
 }
