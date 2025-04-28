@@ -44,7 +44,7 @@ class BrevsignaturService(
         }
     }
 
-    private fun utledSignaturEnhet(enhetsnavn: String) =
+    private fun utledSignaturEnhet(enhetsnavn: String?) =
         when (enhetsnavn) {
             "NAV ARBEID OG YTELSER SKIEN" -> "Nav arbeid og ytelser Skien"
             "NAV ARBEID OG YTELSER MØRE OG ROMSDAL" -> "Nav arbeid og ytelser Møre og Romsdal"
