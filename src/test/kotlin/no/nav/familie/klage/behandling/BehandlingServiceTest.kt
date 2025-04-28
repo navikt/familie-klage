@@ -207,12 +207,12 @@ internal class BehandlingServiceTest {
             behandlingService.oppdaterBehandlendeEnhet(behandling.id, BarnetrygdEnhet.OSLO, fagsak.fagsystem)
 
             // Assert
-            assertEquals(behandlingSlot.captured.behandlendeEnhet, BarnetrygdEnhet.OSLO.enhetsnummer)
+            assertThat(behandlingSlot.captured.behandlendeEnhet).isEqualTo(BarnetrygdEnhet.OSLO.enhetsnummer)
         }
 
         @ParameterizedTest
         @EnumSource(BarnetrygdEnhet::class, names = ["MIDLERTIDIG_ENHET"], mode = EnumSource.Mode.INCLUDE)
-        fun `skal kaste feil dersom ny behandlende enhet ikke er gyldig`(barnetrygdEnhet: BarnetrygdEnhet) {
+        fun `skal kaste feil dersom ny behandlende enhet ikke er gyldig for BA`(barnetrygdEnhet: BarnetrygdEnhet) {
             // Arrange
             val fagsak = fagsak(stønadstype = Stønadstype.BARNETRYGD)
             val behandling =
@@ -235,7 +235,7 @@ internal class BehandlingServiceTest {
 
         @ParameterizedTest
         @EnumSource(KontantstøtteEnhet::class, names = ["MIDLERTIDIG_ENHET"], mode = EnumSource.Mode.INCLUDE)
-        fun `skal kaste feil dersom ny behandlende enhet ikke er gyldig`(kontantstøtteEnhet: KontantstøtteEnhet) {
+        fun `skal kaste feil dersom ny behandlende enhet ikke er gyldig for KS`(kontantstøtteEnhet: KontantstøtteEnhet) {
             // Arrange
             val fagsak = fagsak(stønadstype = Stønadstype.KONTANTSTØTTE)
             val behandling =
