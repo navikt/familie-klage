@@ -1,6 +1,21 @@
 package no.nav.familie.klage.behandling.enhet
 
+import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
+
 interface Enhet {
     val enhetsnummer: String
     val enhetsnavn: String
+
+    companion object {
+        fun finnEnhet(
+            fagsystem: Fagsystem,
+            enhetsnummer: String,
+        ): Enhet =
+            when (fagsystem) {
+                Fagsystem.BA -> BarnetrygdEnhet.values().single { it.enhetsnummer == enhetsnummer }
+                Fagsystem.KS -> KontantstøtteEnhet.values().single { it.enhetsnummer == enhetsnummer }
+                else -> throw Feil("Støtter ikke endring av enhet for fagsystem $fagsystem")
+            }
+    }
 }

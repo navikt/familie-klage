@@ -5,9 +5,7 @@ import no.nav.familie.klage.behandling.dto.OppdaterBehandlendeEnhetRequest
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingshistorikk.domain.HistorikkHendelse
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.oppgave.OppgaveService
-import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -28,12 +26,13 @@ class BehandlendeEnhetService(
         val fagsystem = fagsakService.hentFagsak(behandling.fagsakId).fagsystem
 
         val eksisterendeBehandlendeEnhet =
-            utledEnhetForFagsystem(
+            Enhet.finnEnhet(
                 fagsystem = fagsystem,
                 enhetsnummer = behandling.behandlendeEnhet,
             )
+
         val nyBehandlendeEnhet =
-            utledEnhetForFagsystem(
+            Enhet.finnEnhet(
                 fagsystem = fagsystem,
                 enhetsnummer = oppdaterBehandlendeEnhetRequest.enhetsnummer,
             )
@@ -59,14 +58,4 @@ class BehandlendeEnhetService(
                 "\n\n${oppdaterBehandlendeEnhetRequest.begrunnelse}",
         )
     }
-
-    private fun utledEnhetForFagsystem(
-        fagsystem: Fagsystem,
-        enhetsnummer: String,
-    ): Enhet =
-        when (fagsystem) {
-            Fagsystem.BA -> BarnetrygdEnhet.values().single { it.enhetsnummer == enhetsnummer }
-            Fagsystem.KS -> KontantstøtteEnhet.values().single { it.enhetsnummer == enhetsnummer }
-            else -> throw Feil("Støtter ikke endring av enhet for fagsystem $fagsystem")
-        }
 }
