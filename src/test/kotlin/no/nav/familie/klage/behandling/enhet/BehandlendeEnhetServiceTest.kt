@@ -40,7 +40,7 @@ class BehandlendeEnhetServiceTest {
     inner class OppdaterBehandlendeEnhet {
         @ParameterizedTest
         @EnumSource(BarnetrygdEnhet::class, names = ["MIDLERTIDIG_ENHET"], mode = EnumSource.Mode.EXCLUDE)
-        fun `skal oppdatere behandlende enhet på behandling og oppgave samt opprette historikkinnslag`(
+        fun `skal oppdatere behandlende enhet på behandling og oppgave samt opprette historikkinnslag for BA`(
             nyBehandlendeEnhet: BarnetrygdEnhet,
         ) {
             // Arrange
@@ -87,7 +87,7 @@ class BehandlendeEnhetServiceTest {
 
         @ParameterizedTest
         @EnumSource(KontantstøtteEnhet::class, names = ["MIDLERTIDIG_ENHET"], mode = EnumSource.Mode.EXCLUDE)
-        fun `skal oppdatere behandlende enhet på behandling og oppgave samt opprette historikkinnslag`(
+        fun `skal oppdatere behandlende enhet på behandling og oppgave samt opprette historikkinnslag for KS`(
             nyBehandlendeEnhet: KontantstøtteEnhet,
         ) {
             // Arrange
