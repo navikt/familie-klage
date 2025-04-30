@@ -41,7 +41,7 @@ class EnhetTest {
                 assertThrows<Feil> {
                     Enhet.finnEnhet(fagsystem, "1234")
                 }
-            assertThat(exception.message).isEqualTo("Støtter ikke endring av enhet for fagsystem $fagsystem")
+            assertThat(exception.message).isEqualTo("Oppslag av enhet for $fagsystem er ikke støttet.")
         }
     }
 }

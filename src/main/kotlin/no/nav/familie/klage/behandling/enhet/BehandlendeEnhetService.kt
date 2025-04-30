@@ -17,7 +17,7 @@ class BehandlendeEnhetService(
     private val oppgaveService: OppgaveService,
 ) {
     @Transactional
-    fun oppdaterBehandlendeEnhet(
+    fun oppdaterBehandlendeEnhetPåBehandling(
         behandlingId: UUID,
         enhetsnummer: String,
         begrunnelse: String,

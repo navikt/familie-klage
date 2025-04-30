@@ -36,7 +36,7 @@ class BehandlendeEnhetServiceTest {
         )
 
     @Nested
-    inner class OppdaterBehandlendeEnhet {
+    inner class OppdaterBehandlendeEnhetPåBehandling {
         @ParameterizedTest
         @EnumSource(BarnetrygdEnhet::class, names = ["MIDLERTIDIG_ENHET"], mode = EnumSource.Mode.EXCLUDE)
         fun `skal oppdatere behandlende enhet på behandling og oppgave samt opprette historikkinnslag for BA`(
@@ -77,7 +77,7 @@ class BehandlendeEnhetServiceTest {
             } just Runs
 
             // Act
-            behandlendeEnhetService.oppdaterBehandlendeEnhet(
+            behandlendeEnhetService.oppdaterBehandlendeEnhetPåBehandling(
                 behandlingId = behandling.id,
                 enhetsnummer = nyBehandlendeEnhet.enhetsnummer,
                 begrunnelse = begrunnelse,
@@ -134,7 +134,7 @@ class BehandlendeEnhetServiceTest {
             } just Runs
 
             // Act
-            behandlendeEnhetService.oppdaterBehandlendeEnhet(
+            behandlendeEnhetService.oppdaterBehandlendeEnhetPåBehandling(
                 behandlingId = behandling.id,
                 enhetsnummer = nyBehandlendeEnhet.enhetsnummer,
                 begrunnelse = begrunnelse,
@@ -168,7 +168,7 @@ class BehandlendeEnhetServiceTest {
             // Act & Assert
             val feil =
                 assertThrows<Feil> {
-                    behandlendeEnhetService.oppdaterBehandlendeEnhet(
+                    behandlendeEnhetService.oppdaterBehandlendeEnhetPåBehandling(
                         behandlingId = behandling.id,
                         enhetsnummer = "1234",
                         begrunnelse = "Behandlende enhet var registrert på feil enhet",

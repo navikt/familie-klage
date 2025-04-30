@@ -15,7 +15,7 @@ interface Enhet {
             when (fagsystem) {
                 Fagsystem.BA -> BarnetrygdEnhet.values().single { it.enhetsnummer == enhetsnummer }
                 Fagsystem.KS -> KontantstøtteEnhet.values().single { it.enhetsnummer == enhetsnummer }
-                else -> throw Feil("Støtter ikke endring av enhet for fagsystem $fagsystem")
+                Fagsystem.EF -> throw Feil("Oppslag av enhet for EF er ikke støttet.")
             }
     }
 }

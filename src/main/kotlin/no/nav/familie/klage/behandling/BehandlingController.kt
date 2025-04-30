@@ -2,7 +2,7 @@ package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Klagebehandlingsresultat
 import no.nav.familie.klage.behandling.dto.BehandlingDto
-import no.nav.familie.klage.behandling.dto.OppdaterBehandlendeEnhetRequest
+import no.nav.familie.klage.behandling.dto.OppdaterBehandlendeEnhetDto
 import no.nav.familie.klage.behandling.dto.OppgaveDto
 import no.nav.familie.klage.behandling.dto.SettPåVentRequest
 import no.nav.familie.klage.behandling.enhet.BehandlendeEnhetService
@@ -148,7 +148,7 @@ class BehandlingController(
     @PutMapping("{behandlingId}/oppdater-behandlende-enhet")
     fun oppdaterBehandlendeEnhet(
         @PathVariable behandlingId: UUID,
-        @RequestBody oppdaterBehandlendeEnhetRequest: OppdaterBehandlendeEnhetRequest,
+        @RequestBody oppdaterBehandlendeEnhetDto: OppdaterBehandlendeEnhetDto,
     ): Ressurs<UUID> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
             behandlingId = behandlingId,
@@ -156,11 +156,12 @@ class BehandlingController(
         )
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId = behandlingId)
 
-        behandlendeEnhetService.oppdaterBehandlendeEnhet(
+        behandlendeEnhetService.oppdaterBehandlendeEnhetPåBehandling(
             behandlingId = behandlingId,
-            enhetsnummer = oppdaterBehandlendeEnhetRequest.enhetsnummer,
-            begrunnelse = oppdaterBehandlendeEnhetRequest.begrunnelse,
+            enhetsnummer = oppdaterBehandlendeEnhetDto.enhetsnummer,
+            begrunnelse = oppdaterBehandlendeEnhetDto.begrunnelse,
         )
+
         return Ressurs.success(data = behandlingId)
     }
 
