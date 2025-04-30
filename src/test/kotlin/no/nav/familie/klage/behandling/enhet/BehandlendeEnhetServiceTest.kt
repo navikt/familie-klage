@@ -175,7 +175,7 @@ class BehandlendeEnhetServiceTest {
                     )
                 }
 
-            assertThat(feil.message).isEqualTo("Støtter ikke endring av enhet for fagsystem EF")
+            assertThat(feil.message).isEqualTo("Oppslag av enhet for EF er ikke støttet.")
         }
     }
 }
