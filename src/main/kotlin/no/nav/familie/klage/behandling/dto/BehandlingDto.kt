@@ -38,6 +38,7 @@ data class BehandlingDto(
     val klageMottatt: LocalDate,
     val fagsystemRevurdering: FagsystemRevurdering?,
     val årsak: Klagebehandlingsårsak,
+    val behandlendeEnhet: String,
 )
 
 /**
@@ -88,4 +89,5 @@ fun Behandling.tilDto(
         klageMottatt = this.klageMottatt,
         fagsystemRevurdering = this.fagsystemRevurdering,
         årsak = this.årsak,
+        behandlendeEnhet = this.behandlendeEnhet,
     )

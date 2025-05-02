@@ -16,12 +16,14 @@ class BehandlingshistorikkService(
         behandlingId: UUID,
         steg: StegType,
         historikkHendelse: HistorikkHendelse? = null,
+        beskrivelse: String? = null,
     ): Behandlingshistorikk =
         behandlingshistorikkRepository.insert(
             Behandlingshistorikk(
                 behandlingId = behandlingId,
                 steg = steg,
                 historikkHendelse = historikkHendelse,
+                beskrivelse = beskrivelse,
             ),
         )
 }

@@ -8,6 +8,8 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.Klagebehandlingsresultat
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
+import no.nav.familie.klage.behandling.enhet.BarnetrygdEnhet
+import no.nav.familie.klage.behandling.enhet.KontantstøtteEnhet
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.fagsak.FagsakService
@@ -24,8 +26,10 @@ import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.klage.testutil.DomainUtil.fagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -33,6 +37,8 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -180,6 +186,114 @@ internal class BehandlingServiceTest {
             val filtrertListeKlager = behandlingService.hentKlagerIkkeMedholdFormkravAvvist(behandling.id)
 
             assertEquals(0, filtrertListeKlager.size)
+        }
+    }
+
+    @Nested
+    inner class OppdaterBehandlendeEnhet {
+        @Test
+        fun `skal kaste feil om behandlingen er ferdigstilt`() {
+            // Arrange
+            val fagsak = fagsak(stønadstype = Stønadstype.BARNETRYGD)
+            val behandling =
+                behandling(
+                    fagsak = fagsak,
+                    behandlendeEnhet = BarnetrygdEnhet.DRAMMEN.enhetsnummer,
+                    status = BehandlingStatus.FERDIGSTILT,
+                )
+
+            every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
+
+            // Act & assert
+            val exception =
+                assertThrows<Feil> {
+                    behandlingService.oppdaterBehandlendeEnhet(behandling.id, BarnetrygdEnhet.OSLO, fagsak.fagsystem)
+                }
+            assertThat(exception.message).isEqualTo("Kan ikke endre behandlende enhet på ferdigstilt behandling=${behandling.id}")
+        }
+
+        @Test
+        fun `skal oppdatere behandlende enhet på behandling`() {
+            // Arrange
+            val fagsak = fagsak(stønadstype = Stønadstype.BARNETRYGD)
+            val behandling =
+                behandling(
+                    fagsak = fagsak,
+                    behandlendeEnhet = BarnetrygdEnhet.DRAMMEN.enhetsnummer,
+                )
+
+            every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
+
+            // Act
+            behandlingService.oppdaterBehandlendeEnhet(behandling.id, BarnetrygdEnhet.OSLO, fagsak.fagsystem)
+
+            // Assert
+            assertThat(behandlingSlot.captured.behandlendeEnhet).isEqualTo(BarnetrygdEnhet.OSLO.enhetsnummer)
+        }
+
+        @ParameterizedTest
+        @EnumSource(BarnetrygdEnhet::class, names = ["MIDLERTIDIG_ENHET"], mode = EnumSource.Mode.INCLUDE)
+        fun `skal kaste feil dersom ny behandlende enhet ikke er gyldig for BA`(barnetrygdEnhet: BarnetrygdEnhet) {
+            // Arrange
+            val fagsak = fagsak(stønadstype = Stønadstype.BARNETRYGD)
+            val behandling =
+                behandling(
+                    fagsak = fagsak,
+                    behandlendeEnhet = BarnetrygdEnhet.DRAMMEN.enhetsnummer,
+                )
+
+            every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
+
+            // Act & Assert
+            val apiFeil =
+                assertThrows<ApiFeil> { behandlingService.oppdaterBehandlendeEnhet(behandling.id, barnetrygdEnhet, fagsak.fagsystem) }
+            assertThat(
+                apiFeil.feilmelding,
+            ).isEqualTo(
+                "Kan ikke oppdatere behandlende enhet til ${barnetrygdEnhet.enhetsnummer}. Dette er ikke et gyldig enhetsnummer for barnetrygd.",
+            )
+        }
+
+        @ParameterizedTest
+        @EnumSource(KontantstøtteEnhet::class, names = ["MIDLERTIDIG_ENHET"], mode = EnumSource.Mode.INCLUDE)
+        fun `skal kaste feil dersom ny behandlende enhet ikke er gyldig for KS`(kontantstøtteEnhet: KontantstøtteEnhet) {
+            // Arrange
+            val fagsak = fagsak(stønadstype = Stønadstype.KONTANTSTØTTE)
+            val behandling =
+                behandling(
+                    fagsak = fagsak,
+                    behandlendeEnhet = KontantstøtteEnhet.DRAMMEN.enhetsnummer,
+                )
+
+            every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
+
+            // Act & Assert
+            val apiFeil =
+                assertThrows<ApiFeil> { behandlingService.oppdaterBehandlendeEnhet(behandling.id, kontantstøtteEnhet, fagsak.fagsystem) }
+            assertThat(
+                apiFeil.feilmelding,
+            ).isEqualTo(
+                "Kan ikke oppdatere behandlende enhet til ${kontantstøtteEnhet.enhetsnummer}. Dette er ikke et gyldig enhetsnummer for kontantstøtte.",
+            )
+        }
+
+        @ParameterizedTest
+        @EnumSource(Stønadstype::class, names = ["OVERGANGSSTØNAD", "BARNETILSYN", "SKOLEPENGER"])
+        fun `skal kaste feil dersom fagsystem er EF`(stønadstype: Stønadstype) {
+            // Arrange
+            val fagsak = fagsak(stønadstype = stønadstype)
+            val behandling =
+                behandling(
+                    fagsak = fagsak,
+                    behandlendeEnhet = "1234",
+                )
+
+            every { behandlingRepository.findByIdOrThrow(behandling.id) } returns behandling
+
+            // Act & Assert
+            val apiFeil =
+                assertThrows<ApiFeil> { behandlingService.oppdaterBehandlendeEnhet(behandling.id, BarnetrygdEnhet.OSLO, fagsak.fagsystem) }
+            assertThat(apiFeil.feilmelding).isEqualTo("Støtter ikke endring av enhet for fagsystem EF")
         }
     }
 

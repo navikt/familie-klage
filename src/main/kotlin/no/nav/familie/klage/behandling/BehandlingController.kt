@@ -2,8 +2,10 @@ package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Klagebehandlingsresultat
 import no.nav.familie.klage.behandling.dto.BehandlingDto
+import no.nav.familie.klage.behandling.dto.OppdaterBehandlendeEnhetDto
 import no.nav.familie.klage.behandling.dto.OppgaveDto
 import no.nav.familie.klage.behandling.dto.SettPåVentRequest
+import no.nav.familie.klage.behandling.enhet.BehandlendeEnhetService
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
@@ -21,6 +23,7 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -39,6 +42,7 @@ class BehandlingController(
     private val tilordnetRessursService: TilordnetRessursService,
     private val behandlingPåVentService: BehandlingPåVentService,
     private val oppgaveService: OppgaveService,
+    private val behandlendeEnhetService: BehandlendeEnhetService,
 ) {
     @GetMapping("{behandlingId}")
     fun hentBehandling(
@@ -137,6 +141,26 @@ class BehandlingController(
         )
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId = behandlingId)
         behandlingPåVentService.taAvVent(behandlingId = behandlingId)
+
+        return Ressurs.success(data = behandlingId)
+    }
+
+    @PutMapping("{behandlingId}/oppdater-behandlende-enhet")
+    fun oppdaterBehandlendeEnhet(
+        @PathVariable behandlingId: UUID,
+        @RequestBody oppdaterBehandlendeEnhetDto: OppdaterBehandlendeEnhetDto,
+    ): Ressurs<UUID> {
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
+            behandlingId = behandlingId,
+            event = AuditLoggerEvent.UPDATE,
+        )
+        tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId = behandlingId)
+
+        behandlendeEnhetService.oppdaterBehandlendeEnhetPåBehandling(
+            behandlingId = behandlingId,
+            enhetsnummer = oppdaterBehandlendeEnhetDto.enhetsnummer,
+            begrunnelse = oppdaterBehandlendeEnhetDto.begrunnelse,
+        )
 
         return Ressurs.success(data = behandlingId)
     }

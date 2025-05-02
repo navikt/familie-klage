@@ -12,8 +12,11 @@ import no.nav.familie.klage.behandling.dto.BehandlingDto
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.behandling.dto.tilPåklagetVedtakDetaljer
+import no.nav.familie.klage.behandling.enhet.Enhet
+import no.nav.familie.klage.behandling.enhet.EnhetValidator
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
+import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
@@ -86,6 +89,31 @@ class BehandlingService(
                 vedtakDato = LocalDateTime.now(),
                 fagsystemRevurdering = opprettetRevurdering,
             )
+        behandlingRepository.update(oppdatertBehandling)
+    }
+
+    @Transactional
+    fun oppdaterBehandlendeEnhet(
+        behandlingId: UUID,
+        behandlendeEnhet: Enhet,
+        fagsystem: Fagsystem,
+    ) {
+        val behandling = hentBehandling(behandlingId)
+
+        if (behandling.status == BehandlingStatus.FERDIGSTILT) {
+            throw Feil("Kan ikke endre behandlende enhet på ferdigstilt behandling=${behandling.id}")
+        }
+
+        EnhetValidator.validerEnhetForFagsystem(
+            enhetsnummer = behandlendeEnhet.enhetsnummer,
+            fagsystem = fagsystem,
+        )
+
+        val oppdatertBehandling =
+            behandling.copy(
+                behandlendeEnhet = behandlendeEnhet.enhetsnummer,
+            )
+
         behandlingRepository.update(oppdatertBehandling)
     }
 
