@@ -37,6 +37,10 @@ class BehandlendeEnhetService(
                 enhetsnummer = enhetsnummer,
             )
 
+        if (nyBehandlendeEnhet == eksisterendeBehandlendeEnhet) {
+            return
+        }
+
         behandlingService.oppdaterBehandlendeEnhet(
             behandlingId = behandling.id,
             behandlendeEnhet = nyBehandlendeEnhet,

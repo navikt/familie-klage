@@ -18,6 +18,7 @@ import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
@@ -44,7 +45,8 @@ class BehandlendeEnhetServiceTest {
         ) {
             // Arrange
             val fagsak = fagsak(stønadstype = Stønadstype.BARNETRYGD)
-            val behandling = behandling(fagsak = fagsak, behandlendeEnhet = BarnetrygdEnhet.DRAMMEN.enhetsnummer)
+            val behandlendeEnhetPåBehandling = if (nyBehandlendeEnhet == BarnetrygdEnhet.DRAMMEN) BarnetrygdEnhet.OSLO else BarnetrygdEnhet.DRAMMEN
+            val behandling = behandling(fagsak = fagsak, behandlendeEnhet = behandlendeEnhetPåBehandling.enhetsnummer)
             val begrunnelse = "Behandlende enhet var registrert på feil enhet"
             val behandlendeEnhetSlot = slot<Enhet>()
             val historikkHendelseSlot = slot<HistorikkHendelse>()
@@ -101,7 +103,8 @@ class BehandlendeEnhetServiceTest {
         ) {
             // Arrange
             val fagsak = fagsak(stønadstype = Stønadstype.KONTANTSTØTTE)
-            val behandling = behandling(fagsak = fagsak, behandlendeEnhet = KontantstøtteEnhet.DRAMMEN.enhetsnummer)
+            val behandlendeEnhetPåBehandling = if (nyBehandlendeEnhet == KontantstøtteEnhet.DRAMMEN) KontantstøtteEnhet.OSLO else KontantstøtteEnhet.DRAMMEN
+            val behandling = behandling(fagsak = fagsak, behandlendeEnhet = behandlendeEnhetPåBehandling.enhetsnummer)
             val begrunnelse = "Behandlende enhet var registrert på feil enhet"
             val behandlendeEnhetSlot = slot<Enhet>()
             val historikkHendelseSlot = slot<HistorikkHendelse>()
@@ -176,6 +179,29 @@ class BehandlendeEnhetServiceTest {
                 }
 
             assertThat(feil.message).isEqualTo("Oppslag av enhet for EF er ikke støttet.")
+        }
+
+        @Test
+        fun `skal ikke oppdatere enhet på behandlingen hvis den allerede er satt`() {
+            // Arrange
+            val fagsak = fagsak(stønadstype = Stønadstype.BARNETRYGD)
+            val behandling = behandling(fagsak = fagsak, behandlendeEnhet = BarnetrygdEnhet.OSLO.enhetsnummer)
+            val begrunnelse = "Behandlende enhet var registrert på feil enhet"
+
+            every { behandlingService.hentBehandling(behandling.id) } returns behandling
+            every { fagsakService.hentFagsak(fagsak.id) } returns fagsak
+
+            // Act
+            behandlendeEnhetService.oppdaterBehandlendeEnhetPåBehandling(
+                behandlingId = behandling.id,
+                enhetsnummer = BarnetrygdEnhet.OSLO.enhetsnummer,
+                begrunnelse = begrunnelse,
+            )
+
+            // Assert
+            verify(exactly = 0) { behandlingService.oppdaterBehandlendeEnhet(any(), any(), any()) }
+            verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(any(), any(), any(), any()) }
+            verify(exactly = 0) { oppgaveService.oppdaterEnhetPåBehandleSakOppgave(any(), any()) }
         }
     }
 }
