@@ -36,11 +36,11 @@ class FamilieKSSakClientTest {
         fun `skal opprette revurdering uten å sende behandlingId`() {
             // Arrange
             val eksternFagsakId = "1"
-            val klagebehandlingId = UUID.randomUUID()
+            val eksternBehandlingId = UUID.randomUUID()
 
             val fakeOpprettRevurderingResponse =
                 OpprettRevurderingResponse(
-                    opprettet = Opprettet(klagebehandlingId.toString()),
+                    opprettet = Opprettet(eksternBehandlingId.toString()),
                 )
 
             val uri =
@@ -67,7 +67,7 @@ class FamilieKSSakClientTest {
             val opprettRevurderingResponse =
                 familieKSSakClient.opprettRevurdering(
                     eksternFagsakId = eksternFagsakId,
-                    klagebehandlingId = klagebehandlingId,
+                    eksternBehandlingId = eksternBehandlingId,
                 )
 
             // Assert
@@ -85,16 +85,16 @@ class FamilieKSSakClientTest {
         fun `skal opprette revurdering`() {
             // Arrange
             val eksternFagsakId = "1"
-            val klagebehandlingId = UUID.randomUUID()
+            val eksternBehandlingId = UUID.randomUUID()
 
             val fakeOpprettRevurderingResponse =
                 OpprettRevurderingResponse(
-                    opprettet = Opprettet(klagebehandlingId.toString()),
+                    opprettet = Opprettet(eksternBehandlingId.toString()),
                 )
 
             val uri =
                 URI.create(
-                    "http://localhost:8080/api/ekstern/fagsak/$eksternFagsakId/klagebehandling/$klagebehandlingId/opprett-revurdering-klage",
+                    "http://localhost:8080/api/ekstern/fagsak/$eksternFagsakId/klagebehandling/$eksternBehandlingId/opprett-revurdering-klage",
                 )
 
             every {
@@ -116,7 +116,7 @@ class FamilieKSSakClientTest {
             val opprettRevurderingResponse =
                 familieKSSakClient.opprettRevurdering(
                     eksternFagsakId = eksternFagsakId,
-                    klagebehandlingId = klagebehandlingId,
+                    eksternBehandlingId = eksternBehandlingId,
                 )
 
             // Assert

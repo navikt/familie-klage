@@ -43,23 +43,25 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 
-internal class FerdigstillBehandlingServiceTest {
-    val fagsakService = mockk<FagsakService>()
-    val behandlingService = mockk<BehandlingService>()
-    val distribusjonService = mockk<DistribusjonService>()
-    val kabalService = mockk<KabalService>()
-    val vurderingService = mockk<VurderingService>()
+class FerdigstillBehandlingServiceTest {
+    private val fagsakService = mockk<FagsakService>()
+    private val behandlingService = mockk<BehandlingService>()
+    private val distribusjonService = mockk<DistribusjonService>()
+    private val kabalService = mockk<KabalService>()
+    private val vurderingService = mockk<VurderingService>()
 
-    val formService = mockk<FormService>()
-    val stegService = mockk<StegService>()
-    val taskService = mockk<TaskService>()
-    val oppgaveTaskService = mockk<OppgaveTaskService>()
-    val brevService = mockk<BrevService>()
-    val fagsystemVedtakService = mockk<FagsystemVedtakService>()
-    val featureToggleService = FeatureToggleMock().featureToggleService()
+    private val formService = mockk<FormService>()
+    private val stegService = mockk<StegService>()
+    private val taskService = mockk<TaskService>()
+    private val oppgaveTaskService = mockk<OppgaveTaskService>()
+    private val brevService = mockk<BrevService>()
+    private val fagsystemVedtakService = mockk<FagsystemVedtakService>()
+    private val featureToggleService = FeatureToggleMock().featureToggleService()
 
-    val ferdigstillBehandlingService =
+    private val ferdigstillBehandlingService =
         FerdigstillBehandlingService(
             behandlingService = behandlingService,
             vurderingService = vurderingService,
@@ -72,20 +74,20 @@ internal class FerdigstillBehandlingServiceTest {
             featureToggleService = featureToggleService,
             fagsakService = fagsakService,
         )
-    val fagsak = DomainUtil.fagsakDomain().tilFagsak()
-    val behandling = DomainUtil.behandling(fagsak = fagsak, steg = StegType.BREV, status = BehandlingStatus.UTREDES)
-    val vurdering = vurdering(behandlingId = behandling.id)
-    val journalpostId = "1234"
-    val brevDistribusjonId = "9876"
+    private val fagsak = DomainUtil.fagsakDomain().tilFagsak()
+    private val behandling = DomainUtil.behandling(fagsak = fagsak, steg = StegType.BREV, status = BehandlingStatus.UTREDES)
+    private val vurdering = vurdering(behandlingId = behandling.id)
+    private val journalpostId = "1234"
+    private val brevDistribusjonId = "9876"
 
-    val saveTaskSlot = mutableListOf<Task>()
+    private val saveTaskSlot = mutableListOf<Task>()
 
-    val stegSlot = slot<StegType>()
-    val behandlingsresultatSlot = slot<BehandlingResultat>()
-    val fagsystemRevurderingSlot = mutableListOf<FagsystemRevurdering?>()
+    private val stegSlot = slot<StegType>()
+    private val behandlingsresultatSlot = slot<BehandlingResultat>()
+    private val fagsystemRevurderingSlot = mutableListOf<FagsystemRevurdering?>()
 
     @BeforeEach
-    internal fun setUp() {
+    fun setUp() {
         fagsystemRevurderingSlot.clear()
         BrukerContextUtil.mockBrukerContext("halla")
         every { behandlingService.hentBehandling(any()) } returns behandling
@@ -111,14 +113,16 @@ internal class FerdigstillBehandlingServiceTest {
     }
 
     @AfterEach
-    internal fun tearDown() {
+    fun tearDown() {
         BrukerContextUtil.clearBrukerContext()
     }
 
     @Test
-    internal fun `skal ferdigstille behandling, ikke medhold`() {
+    fun `skal ferdigstille behandling, ikke medhold`() {
+        // Act
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
 
+        // Assert
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD)
         assertThat(fagsystemRevurderingSlot.single()).isNull()
         assertThat(stegSlot.captured).isEqualTo(StegType.KABAL_VENTER_SVAR)
@@ -134,10 +138,14 @@ internal class FerdigstillBehandlingServiceTest {
     }
 
     @Test
-    internal fun `skal ikke opprette og distribuere brev ved ferdigstillelse av behandling med årsak henvendelse fra kabal`() {
+    fun `skal ikke opprette og distribuere brev ved ferdigstillelse av behandling med årsak henvendelse fra kabal`() {
+        // Arrange
         every { behandlingService.hentBehandling(any()) } returns behandling.copy(årsak = Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL)
+
+        // Act
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
 
+        // Assert
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD)
         assertThat(fagsystemRevurderingSlot.single()).isNull()
         assertThat(stegSlot.captured).isEqualTo(StegType.KABAL_VENTER_SVAR)
@@ -153,11 +161,14 @@ internal class FerdigstillBehandlingServiceTest {
     }
 
     @Test
-    internal fun `skal ikke sende til kabal hvis formkrav ikke er oppfylt`() {
+    fun `skal ikke sende til kabal hvis formkrav ikke er oppfylt`() {
+        // Arrange
         every { formService.formkravErOppfyltForBehandling(any()) } returns false
 
+        // Act
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
 
+        // Assert
         assertThat(stegSlot.captured).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST)
         assertThat(fagsystemRevurderingSlot.single()).isNull()
@@ -167,60 +178,73 @@ internal class FerdigstillBehandlingServiceTest {
     }
 
     @Test
-    internal fun `skal ikke sende til kabal hvis klage tas til følge`() {
+    fun `skal ikke sende til kabal hvis klage tas til følge`() {
+        // Arrange
         every { vurderingService.hentVurdering(any()) } returns vurdering.copy(vedtak = Vedtak.OMGJØR_VEDTAK)
 
+        // Act
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
 
+        // Assert
         assertThat(stegSlot.captured).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
         assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.MEDHOLD)
         assertThat(fagsystemRevurderingSlot.single()).isNull()
 
         verify(exactly = 2) { taskService.save(any()) }
-        verify(exactly = 0) { fagsystemVedtakService.opprettRevurdering(behandling.id) }
+        verify(exactly = 0) { fagsystemVedtakService.opprettRevurdering(behandling) }
         assertThat(saveTaskSlot.map { it.type }).containsExactly(
             LagSaksbehandlingsblankettTask.TYPE,
             BehandlingsstatistikkTask.TYPE,
         )
     }
 
-    @Test
-    internal fun `skal feile dersom behandlingen er på feil steg`() {
-        listOf(
-            StegType.BEHANDLING_FERDIGSTILT,
-            StegType.FORMKRAV,
-            StegType.OVERFØRING_TIL_KABAL,
-            StegType.VURDERING,
-        ).forEach { steg ->
-            every { behandlingService.hentBehandling(any()) } returns behandling.copy(steg = steg)
-            assertThrows<Feil> {
-                ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
-            }
+    @ParameterizedTest
+    @EnumSource(
+        value = StegType::class,
+        names = ["BEHANDLING_FERDIGSTILT", "FORMKRAV", "OVERFØRING_TIL_KABAL", "VURDERING"],
+        mode = EnumSource.Mode.INCLUDE,
+    )
+    fun `skal feile dersom behandlingen er på feil steg`(
+        stegType: StegType,
+    ) {
+        // Arrange
+        every { behandlingService.hentBehandling(any()) } returns behandling.copy(steg = stegType)
+
+        // Act
+        assertThrows<Feil> {
+            ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+        value = BehandlingStatus::class,
+        names = ["FERDIGSTILT", "VENTER"],
+        mode = EnumSource.Mode.INCLUDE,
+    )
+    fun `skal feile dersom behandlingen har feil status`(status: BehandlingStatus) {
+        // Arrange
+        every { behandlingService.hentBehandling(any()) } returns behandling.copy(status = status)
+
+        // Act & assert
+        assertThrows<Feil> {
+            ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
         }
     }
 
     @Test
-    internal fun `skal feile dersom behandlingen har feil status`() {
-        listOf(
-            BehandlingStatus.FERDIGSTILT,
-            BehandlingStatus.VENTER,
-        ).forEach { status ->
-            every { behandlingService.hentBehandling(any()) } returns behandling.copy(status = status)
-            assertThrows<Feil> {
-                ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
-            }
-        }
-    }
+    fun `skal opprette revurdering automatisk påklaget vedtak er vedtak i fagsystemet`() {
+        // Arrange
+        val behandling = behandling.copy(påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer()))
 
-    @Test
-    internal fun `skal opprette revurdering automatisk påklaget vedtak er vedtak i fagsystemet`() {
         every { vurderingService.hentVurdering(any()) } returns vurdering.copy(vedtak = Vedtak.OMGJØR_VEDTAK)
-        every { behandlingService.hentBehandling(any()) } returns
-            behandling.copy(påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer()))
+        every { behandlingService.hentBehandling(any()) } returns behandling
 
+        // Act
         ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
 
+        // Assert
         assertThat(fagsystemRevurderingSlot.single()).isNotNull
-        verify(exactly = 1) { fagsystemVedtakService.opprettRevurdering(behandling.id) }
+        verify(exactly = 1) { fagsystemVedtakService.opprettRevurdering(behandling) }
     }
 }

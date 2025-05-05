@@ -44,11 +44,11 @@ class FamilieKSSakClient(
 
     fun opprettRevurdering(
         eksternFagsakId: String,
-        klagebehandlingId: UUID,
+        eksternBehandlingId: UUID,
     ): OpprettRevurderingResponse {
         val url =
             if (featureToggleService.isEnabled(Toggle.SEND_BEHANDLING_ID_VED_OPPRETTING_AV_REVURDERING_KLAGE)) {
-                "api/ekstern/fagsak/$eksternFagsakId/klagebehandling/$klagebehandlingId/opprett-revurdering-klage"
+                "api/ekstern/fagsak/$eksternFagsakId/klagebehandling/$eksternBehandlingId/opprett-revurdering-klage"
             } else {
                 "api/ekstern/fagsaker/$eksternFagsakId/opprett-revurdering-klage"
             }
