@@ -73,8 +73,9 @@ class BehandlendeEnhetServiceTest {
 
             every {
                 oppgaveService.oppdaterEnhetPåBehandleSakOppgave(
+                    fagsystem = Fagsystem.BA,
                     behandlingId = behandling.id,
-                    behandlendeEnhet = capture(behandlendeEnhetOppgaveSlot),
+                    enhet = capture(behandlendeEnhetOppgaveSlot),
                 )
             } just Runs
 
@@ -88,7 +89,7 @@ class BehandlendeEnhetServiceTest {
             // Assert
             verify(exactly = 1) { behandlingService.oppdaterBehandlendeEnhet(any(), any(), any()) }
             verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(any(), any(), any(), any()) }
-            verify(exactly = 1) { oppgaveService.oppdaterEnhetPåBehandleSakOppgave(any(), any()) }
+            verify(exactly = 1) { oppgaveService.oppdaterEnhetPåBehandleSakOppgave(any(), any(), any()) }
 
             assertThat(behandlendeEnhetSlot.captured).isEqualTo(nyBehandlendeEnhet)
             assertThat(historikkHendelseSlot.captured).isEqualTo(HistorikkHendelse.BEHANDLENDE_ENHET_ENDRET)
@@ -131,8 +132,9 @@ class BehandlendeEnhetServiceTest {
 
             every {
                 oppgaveService.oppdaterEnhetPåBehandleSakOppgave(
+                    fagsystem = Fagsystem.KS,
                     behandlingId = behandling.id,
-                    behandlendeEnhet = capture(behandlendeEnhetOppgaveSlot),
+                    enhet = capture(behandlendeEnhetOppgaveSlot),
                 )
             } just Runs
 
@@ -146,7 +148,7 @@ class BehandlendeEnhetServiceTest {
             // Assert
             verify(exactly = 1) { behandlingService.oppdaterBehandlendeEnhet(any(), any(), any()) }
             verify(exactly = 1) { behandlingshistorikkService.opprettBehandlingshistorikk(any(), any(), any(), any()) }
-            verify(exactly = 1) { oppgaveService.oppdaterEnhetPåBehandleSakOppgave(any(), any()) }
+            verify(exactly = 1) { oppgaveService.oppdaterEnhetPåBehandleSakOppgave(any(), any(), any()) }
 
             assertThat(behandlendeEnhetSlot.captured).isEqualTo(nyBehandlendeEnhet)
             assertThat(historikkHendelseSlot.captured).isEqualTo(HistorikkHendelse.BEHANDLENDE_ENHET_ENDRET)
@@ -178,7 +180,7 @@ class BehandlendeEnhetServiceTest {
                     )
                 }
 
-            assertThat(feil.message).isEqualTo("Oppslag av enhet for EF er ikke støttet.")
+            assertThat(feil.message).isEqualTo("Fagsystem ${Fagsystem.EF.name} er foreløpig ikke støttet.")
         }
 
         @Test
@@ -201,7 +203,7 @@ class BehandlendeEnhetServiceTest {
             // Assert
             verify(exactly = 0) { behandlingService.oppdaterBehandlendeEnhet(any(), any(), any()) }
             verify(exactly = 0) { behandlingshistorikkService.opprettBehandlingshistorikk(any(), any(), any(), any()) }
-            verify(exactly = 0) { oppgaveService.oppdaterEnhetPåBehandleSakOppgave(any(), any()) }
+            verify(exactly = 0) { oppgaveService.oppdaterEnhetPåBehandleSakOppgave(any(), any(), any()) }
         }
     }
 }

@@ -2,6 +2,7 @@ package no.nav.familie.klage.oppgave
 
 import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.http.client.RessursException
+import no.nav.familie.klage.behandling.enhet.Enhet
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import no.nav.familie.klage.infrastruktur.config.IntegrasjonerConfig
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
@@ -129,6 +130,32 @@ class OppgaveClient(
 
         val respons = getForEntity<Ressurs<Saksbehandler>>(uri)
         return pakkUtRespons(respons, uri, "hentSaksbehandlerInfo")
+    }
+
+    fun patchEnhetPåOppgave(
+        oppgaveId: Long,
+        nyEnhet: Enhet,
+        fjernMappeFraOppgave: Boolean,
+        nullstillTilordnetRessurs: Boolean = true,
+    ): OppgaveResponse {
+        // Lagt til pga. patch-endepunktet i familie-integrasjoner ikke håndterer sletting/tilbakestilling av felt,
+        // se https://favro.com/organization/98c34fb974ce445eac854de0/1844bbac3b6605eacc8f5543?card=NAV-10379.
+        // Det blir dermed vanskelig å sette f.eks. tilordnet ressurs til "null" gjennom patch-endepunktet.
+        val eksisterendeOppgave = finnOppgaveMedId(oppgaveId)
+        val uri =
+            UriComponentsBuilder
+                .fromUri(URI.create("$oppgaveUri/$oppgaveId/enhet/${nyEnhet.enhetsnummer}"))
+                .queryParam("fjernMappeFraOppgave", fjernMappeFraOppgave)
+                .queryParam("nullstillTilordnetRessurs", nullstillTilordnetRessurs)
+                .queryParam("versjon", eksisterendeOppgave.versjon)
+                .build()
+                .toUri()
+        try {
+            val response = patchForEntity<Ressurs<OppgaveResponse>>(uri = uri, payload = HttpHeaders().medContentTypeJsonUTF8())
+            return pakkUtRespons(respons = response, uri = uri, metode = "tilordnetEnhet")
+        } catch (exception: Exception) {
+            throw IntegrasjonException(msg = "Oppdatering av enhet på oppgave feilet.", uri = uri, throwable = exception)
+        }
     }
 
     private fun <T> pakkUtRespons(
