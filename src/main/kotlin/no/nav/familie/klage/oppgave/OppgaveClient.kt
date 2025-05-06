@@ -141,11 +141,13 @@ class OppgaveClient(
         // Lagt til pga. patch-endepunktet i familie-integrasjoner ikke håndterer sletting/tilbakestilling av felt,
         // se https://favro.com/organization/98c34fb974ce445eac854de0/1844bbac3b6605eacc8f5543?card=NAV-10379.
         // Det blir dermed vanskelig å sette f.eks. tilordnet ressurs til "null" gjennom patch-endepunktet.
+        val eksisterendeOppgave = finnOppgaveMedId(oppgaveId)
         val uri =
             UriComponentsBuilder
                 .fromUri(URI.create("$oppgaveUri/$oppgaveId/enhet/${nyEnhet.enhetsnummer}"))
                 .queryParam("fjernMappeFraOppgave", fjernMappeFraOppgave)
                 .queryParam("nullstillTilordnetRessurs", nullstillTilordnetRessurs)
+                .queryParam("versjon", eksisterendeOppgave.versjon)
                 .build()
                 .toUri()
         try {

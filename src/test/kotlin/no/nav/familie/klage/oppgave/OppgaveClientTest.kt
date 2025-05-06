@@ -7,6 +7,7 @@ import no.nav.familie.klage.behandling.enhet.BarnetrygdEnhet
 import no.nav.familie.klage.infrastruktur.config.IntegrasjonerConfig
 import no.nav.familie.klage.infrastruktur.exception.IntegrasjonException
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -35,11 +36,20 @@ class OppgaveClientTest {
             // Arrange
             val oppgaveId = 1L
             val nyEnhet = BarnetrygdEnhet.OSLO
+            val eksisterendeOppgave = Oppgave(id = oppgaveId, versjon = 1)
+
+            every {
+                restOperations.exchange<Ressurs<Oppgave>>(
+                    url = any<URI>(),
+                    method = eq(HttpMethod.GET),
+                    requestEntity = any<HttpEntity<Void>>(),
+                )
+            } returns ResponseEntity.ok(Ressurs.Companion.success(eksisterendeOppgave))
 
             every {
                 restOperations.exchange<Ressurs<OppgaveResponse>>(
                     url = any<URI>(),
-                    method = any<HttpMethod>(),
+                    method = eq(HttpMethod.PATCH),
                     requestEntity = any<HttpEntity<Void>>(),
                 )
             } returns ResponseEntity.ok(Ressurs.Companion.success(OppgaveResponse(oppgaveId)))
@@ -56,7 +66,7 @@ class OppgaveClientTest {
             assertThat(oppgaveResponse.oppgaveId).isEqualTo(oppgaveId)
             verify(exactly = 1) {
                 restOperations.exchange<Ressurs<OppgaveResponse>>(
-                    url = eq(URI.create("$baseUrl/api/oppgave/$oppgaveId/enhet/${nyEnhet.enhetsnummer}?fjernMappeFraOppgave=true&nullstillTilordnetRessurs=true")),
+                    url = eq(URI.create("$baseUrl/api/oppgave/$oppgaveId/enhet/${nyEnhet.enhetsnummer}?fjernMappeFraOppgave=true&nullstillTilordnetRessurs=true&versjon=${eksisterendeOppgave.versjon}")),
                     method = eq(HttpMethod.PATCH),
                     requestEntity = any<HttpEntity<Void>>(),
                 )
@@ -68,11 +78,20 @@ class OppgaveClientTest {
             // Arrange
             val oppgaveId = 1L
             val nyEnhet = BarnetrygdEnhet.OSLO
+            val eksisterendeOppgave = Oppgave(id = oppgaveId, versjon = 1)
+
+            every {
+                restOperations.exchange<Ressurs<Oppgave>>(
+                    url = any<URI>(),
+                    method = eq(HttpMethod.GET),
+                    requestEntity = any<HttpEntity<Void>>(),
+                )
+            } returns ResponseEntity.ok(Ressurs.Companion.success(eksisterendeOppgave))
 
             every {
                 restOperations.exchange<Ressurs<OppgaveResponse>>(
                     url = any<URI>(),
-                    method = any<HttpMethod>(),
+                    method = eq(HttpMethod.PATCH),
                     requestEntity = any<HttpEntity<Void>>(),
                 )
             } returns ResponseEntity.ok(Ressurs.success(OppgaveResponse(oppgaveId)))
@@ -90,7 +109,7 @@ class OppgaveClientTest {
             assertThat(oppgaveResponse.oppgaveId).isEqualTo(oppgaveId)
             verify(exactly = 1) {
                 restOperations.exchange<Ressurs<OppgaveResponse>>(
-                    url = eq(URI.create("$baseUrl/api/oppgave/$oppgaveId/enhet/${nyEnhet.enhetsnummer}?fjernMappeFraOppgave=false&nullstillTilordnetRessurs=false")),
+                    url = eq(URI.create("$baseUrl/api/oppgave/$oppgaveId/enhet/${nyEnhet.enhetsnummer}?fjernMappeFraOppgave=false&nullstillTilordnetRessurs=false&versjon=${eksisterendeOppgave.versjon}")),
                     method = eq(HttpMethod.PATCH),
                     requestEntity = any<HttpEntity<Void>>(),
                 )
@@ -102,11 +121,20 @@ class OppgaveClientTest {
             // Arrange
             val oppgaveId = 1L
             val nyEnhet = BarnetrygdEnhet.OSLO
+            val eksisterendeOppgave = Oppgave(id = oppgaveId, versjon = 1)
+
+            every {
+                restOperations.exchange<Ressurs<Oppgave>>(
+                    url = any<URI>(),
+                    method = eq(HttpMethod.GET),
+                    requestEntity = any<HttpEntity<Void>>(),
+                )
+            } returns ResponseEntity.ok(Ressurs.Companion.success(eksisterendeOppgave))
 
             every {
                 restOperations.exchange<Ressurs<OppgaveResponse>>(
                     url = any<URI>(),
-                    method = any<HttpMethod>(),
+                    method = eq(HttpMethod.PATCH),
                     requestEntity = any<HttpEntity<Void>>(),
                 )
             } returns ResponseEntity.badRequest().body(Ressurs.failure())
@@ -123,7 +151,7 @@ class OppgaveClientTest {
             assertThat(exception.message).isEqualTo("Oppdatering av enhet på oppgave feilet.")
             verify(exactly = 1) {
                 restOperations.exchange<Ressurs<OppgaveResponse>>(
-                    url = eq(URI.create("$baseUrl/api/oppgave/$oppgaveId/enhet/${nyEnhet.enhetsnummer}?fjernMappeFraOppgave=false&nullstillTilordnetRessurs=true")),
+                    url = eq(URI.create("$baseUrl/api/oppgave/$oppgaveId/enhet/${nyEnhet.enhetsnummer}?fjernMappeFraOppgave=false&nullstillTilordnetRessurs=true&versjon=${eksisterendeOppgave.versjon}")),
                     method = eq(HttpMethod.PATCH),
                     requestEntity = any<HttpEntity<Void>>(),
                 )
