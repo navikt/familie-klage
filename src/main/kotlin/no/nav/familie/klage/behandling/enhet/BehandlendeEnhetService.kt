@@ -4,7 +4,9 @@ import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingshistorikk.domain.HistorikkHendelse
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.oppgave.OppgaveService
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -24,6 +26,10 @@ class BehandlendeEnhetService(
     ) {
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsystem = fagsakService.hentFagsak(behandling.fagsakId).fagsystem
+
+        if (fagsystem == Fagsystem.EF) {
+            throw Feil(message = "Fagsystem ${fagsystem.name} er foreløpig ikke støttet.")
+        }
 
         val eksisterendeBehandlendeEnhet =
             Enhet.finnEnhet(
@@ -48,6 +54,7 @@ class BehandlendeEnhetService(
         )
 
         oppgaveService.oppdaterEnhetPåBehandleSakOppgave(
+            fagsystem = fagsystem,
             behandlingId = behandling.id,
             enhet = nyBehandlendeEnhet,
         )

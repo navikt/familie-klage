@@ -49,6 +49,7 @@ class OppgaveClientTest {
                 oppgaveClient.patchEnhetPåOppgave(
                     oppgaveId = oppgaveId,
                     nyEnhet = nyEnhet,
+                    fjernMappeFraOppgave = true,
                 )
 
             // Assert
@@ -116,12 +117,13 @@ class OppgaveClientTest {
                     oppgaveClient.patchEnhetPåOppgave(
                         oppgaveId = oppgaveId,
                         nyEnhet = nyEnhet,
+                        fjernMappeFraOppgave = false,
                     )
                 }
             assertThat(exception.message).isEqualTo("Oppdatering av enhet på oppgave feilet.")
             verify(exactly = 1) {
                 restOperations.exchange<Ressurs<OppgaveResponse>>(
-                    url = eq(URI.create("$baseUrl/api/oppgave/$oppgaveId/enhet/${nyEnhet.enhetsnummer}?fjernMappeFraOppgave=false&nullstillTilordnetRessurs=false")),
+                    url = eq(URI.create("$baseUrl/api/oppgave/$oppgaveId/enhet/${nyEnhet.enhetsnummer}?fjernMappeFraOppgave=false&nullstillTilordnetRessurs=true")),
                     method = eq(HttpMethod.PATCH),
                     requestEntity = any<HttpEntity<Void>>(),
                 )

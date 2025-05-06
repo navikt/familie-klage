@@ -135,7 +135,7 @@ class OppgaveClient(
     fun patchEnhetPåOppgave(
         oppgaveId: Long,
         nyEnhet: Enhet,
-        fjernMappeFraOppgave: Boolean = true,
+        fjernMappeFraOppgave: Boolean,
         nullstillTilordnetRessurs: Boolean = true,
     ): OppgaveResponse {
         // Lagt til pga. patch-endepunktet i familie-integrasjoner ikke håndterer sletting/tilbakestilling av felt,
