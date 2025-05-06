@@ -87,22 +87,22 @@ class OppgaveService(
 
     fun oppdaterEnhetPåBehandleSakOppgave(
         behandlingId: UUID,
-        behandlendeEnhet: Enhet,
+        enhet: Enhet,
     ) {
         val behandleSakOppgave = behandleSakOppgaveRepository.findByBehandlingId(behandlingId)?.let { hentOppgave(it.oppgaveId) }
-
         if (behandleSakOppgave == null) {
             throw Feil("Finner ingen BehandleSak-Oppgave tilknyttet behandling $behandlingId")
         }
 
+        val oppgaveId = behandleSakOppgave.id
+        if (oppgaveId == null) {
+            throw Feil("Finner ikke id på BehandleSak-Oppgave tilknyttet behandling $behandlingId")
+        }
+
         if (behandleSakOppgave.status !in listOf(StatusEnum.FERDIGSTILT, StatusEnum.FEILREGISTRERT)) {
-            oppdaterOppgave(
-                Oppgave(
-                    id = behandleSakOppgave.id,
-                    tildeltEnhetsnr = behandlendeEnhet.enhetsnummer,
-                    mappeId = null,
-                    tilordnetRessurs = null,
-                ),
+            oppgaveClient.patchEnhetPåOppgave(
+                oppgaveId = oppgaveId,
+                nyEnhet = enhet,
             )
         }
     }

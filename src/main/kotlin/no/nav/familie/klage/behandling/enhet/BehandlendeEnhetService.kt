@@ -49,7 +49,7 @@ class BehandlendeEnhetService(
 
         oppgaveService.oppdaterEnhetPåBehandleSakOppgave(
             behandlingId = behandling.id,
-            behandlendeEnhet = nyBehandlendeEnhet,
+            enhet = nyBehandlendeEnhet,
         )
 
         behandlingshistorikkService.opprettBehandlingshistorikk(

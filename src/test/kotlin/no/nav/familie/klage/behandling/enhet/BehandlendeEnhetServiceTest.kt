@@ -74,7 +74,7 @@ class BehandlendeEnhetServiceTest {
             every {
                 oppgaveService.oppdaterEnhetPåBehandleSakOppgave(
                     behandlingId = behandling.id,
-                    behandlendeEnhet = capture(behandlendeEnhetOppgaveSlot),
+                    enhet = capture(behandlendeEnhetOppgaveSlot),
                 )
             } just Runs
 
@@ -132,7 +132,7 @@ class BehandlendeEnhetServiceTest {
             every {
                 oppgaveService.oppdaterEnhetPåBehandleSakOppgave(
                     behandlingId = behandling.id,
-                    behandlendeEnhet = capture(behandlendeEnhetOppgaveSlot),
+                    enhet = capture(behandlendeEnhetOppgaveSlot),
                 )
             } just Runs
 
