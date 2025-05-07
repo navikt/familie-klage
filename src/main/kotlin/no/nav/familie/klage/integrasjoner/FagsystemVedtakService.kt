@@ -1,5 +1,6 @@
 package no.nav.familie.klage.integrasjoner
 
+import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.exception.Feil
@@ -61,18 +62,18 @@ class FagsystemVedtakService(
         }
     }
 
-    fun opprettRevurdering(behandlingId: UUID): OpprettRevurderingResponse {
-        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
+    fun opprettRevurdering(behandling: Behandling): OpprettRevurderingResponse {
+        val fagsak = fagsakService.hentFagsakForBehandling(behandling.id)
         return try {
             when (fagsak.fagsystem) {
                 Fagsystem.EF -> familieEFSakClient.opprettRevurdering(fagsak.eksternId)
-                Fagsystem.KS -> familieKSSakClient.opprettRevurdering(fagsak.eksternId, behandlingId)
-                Fagsystem.BA -> familieBASakClient.opprettRevurdering(fagsak.eksternId, behandlingId)
+                Fagsystem.KS -> familieKSSakClient.opprettRevurdering(fagsak.eksternId, behandling.eksternBehandlingId)
+                Fagsystem.BA -> familieBASakClient.opprettRevurdering(fagsak.eksternId, behandling.eksternBehandlingId)
             }
-        } catch (e: Exception) {
-            val errorSuffix = "Feilet opprettelse av revurdering for behandling=$behandlingId eksternFagsakId=${fagsak.eksternId}"
+        } catch (exception: Exception) {
+            val errorSuffix = "Feilet opprettelse av revurdering for behandling=${behandling.id} eksternFagsakId=${fagsak.eksternId}"
             logger.warn("$errorSuffix, se detaljer i secureLogs")
-            secureLogger.warn(errorSuffix, e)
+            secureLogger.warn(errorSuffix, exception)
             when (fagsak.fagsystem) {
                 Fagsystem.EF -> ukjentFeilVedOpprettRevurdering
                 Fagsystem.KS,
@@ -80,7 +81,7 @@ class FagsystemVedtakService(
                 -> throw Feil(
                     message = errorSuffix,
                     frontendFeilmelding = "Opprettelse av revurderingsbehandling feilet. Prøv igjen senere.",
-                    throwable = e,
+                    throwable = exception,
                 )
             }
         }

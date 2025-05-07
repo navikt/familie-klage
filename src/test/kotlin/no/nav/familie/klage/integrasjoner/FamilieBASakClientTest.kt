@@ -37,11 +37,11 @@ class FamilieBASakClientTest {
         fun `skal opprette revurdering uten å sende behandlingId`() {
             // Arrange
             val eksternFagsakId = "1"
-            val klagebehandlingId = UUID.randomUUID()
+            val eksternBehandlingId = UUID.randomUUID()
 
             val fakeOpprettRevurderingResponse =
                 OpprettRevurderingResponse(
-                    opprettet = Opprettet(klagebehandlingId.toString()),
+                    opprettet = Opprettet(eksternBehandlingId.toString()),
                 )
 
             val uri = URI.create("$baseUrl/fagsaker/$eksternFagsakId/opprett-revurdering-klage")
@@ -65,7 +65,7 @@ class FamilieBASakClientTest {
             val opprettRevurderingResponse =
                 familieBASakClient.opprettRevurdering(
                     eksternFagsakId = eksternFagsakId,
-                    klagebehandlingId = klagebehandlingId,
+                    eksternBehandlingId = eksternBehandlingId,
                 )
 
             // Assert
@@ -83,14 +83,14 @@ class FamilieBASakClientTest {
         fun `skal opprette revurdering`() {
             // Arrange
             val eksternFagsakId = "1"
-            val klagebehandlingId = UUID.randomUUID()
+            val eksternBehandlingId = UUID.randomUUID()
 
             val fakeOpprettRevurderingResponse =
                 OpprettRevurderingResponse(
-                    opprettet = Opprettet(klagebehandlingId.toString()),
+                    opprettet = Opprettet(eksternBehandlingId.toString()),
                 )
 
-            val uri = URI.create("$baseUrl/fagsak/$eksternFagsakId/klagebehandling/$klagebehandlingId/opprett-revurdering-klage")
+            val uri = URI.create("$baseUrl/fagsak/$eksternFagsakId/klagebehandling/$eksternBehandlingId/opprett-revurdering-klage")
 
             every {
                 restOperations.exchange<Ressurs<OpprettRevurderingResponse>>(
@@ -111,7 +111,7 @@ class FamilieBASakClientTest {
             val opprettRevurderingResponse =
                 familieBASakClient.opprettRevurdering(
                     eksternFagsakId = eksternFagsakId,
-                    klagebehandlingId = klagebehandlingId,
+                    eksternBehandlingId = eksternBehandlingId,
                 )
 
             // Assert
