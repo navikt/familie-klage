@@ -234,6 +234,7 @@ class BrevService(
         behandlingId: UUID,
         saksbehandlerHtml: String,
         fagsak: Fagsak,
+        brevmottakere: Brevmottakere? = initialiserBrevmottakere(behandlingId, fagsak),
     ): Brev {
         val brev = brevRepository.findByIdOrNull(behandlingId)
         return if (brev != null) {
@@ -243,7 +244,7 @@ class BrevService(
                 Brev(
                     behandlingId = behandlingId,
                     saksbehandlerHtml = saksbehandlerHtml,
-                    mottakere = initialiserBrevmottakere(behandlingId, fagsak),
+                    mottakere = brevmottakere,
                 ),
             )
         }
@@ -303,6 +304,7 @@ class BrevService(
             behandlingId = behandlingId,
             saksbehandlerHtml = html,
             fagsak = fagsak,
+            brevmottakere = henlagt.brevmottakere
         )
 
         lagBrevPdf(behandlingId)
