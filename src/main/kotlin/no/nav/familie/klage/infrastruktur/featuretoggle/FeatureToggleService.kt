@@ -31,6 +31,7 @@ enum class Toggle(
         "Release",
     ),
     SKAL_KUNNE_ENDRE_BEHANDLENDE_ENHET_BAKS("familie-klage.skal-kunne-endre-behandlende-enhet-baks", "Release"),
+    BRUK_NY_HENLEGG_BEHANDLING_MODAL("familie-klage.bruk-ny-henlegg-behandling-modal", "Release"),
 
     ;
 
