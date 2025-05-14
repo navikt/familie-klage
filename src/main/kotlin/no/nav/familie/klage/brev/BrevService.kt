@@ -250,7 +250,10 @@ class BrevService(
         }
     }
 
-    private fun initialiserBrevmottakere(
+    fun initialiserBrevmottakere(behandlingId: UUID): Brevmottakere =
+        initialiserBrevmottakere(behandlingId, fagsakService.hentFagsak(behandlingId))
+
+    fun initialiserBrevmottakere(
         behandlingId: UUID,
         fagsak: Fagsak,
     ) = Brevmottakere(
