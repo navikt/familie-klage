@@ -1,6 +1,7 @@
 package no.nav.familie.klage.henlegg
 
 import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -34,6 +35,15 @@ class HenleggBehandlingController(
             brevService.opprettJournalførHenleggelsesbrevTask(behandlingId, henlegg)
         }
         return Ressurs.success(henleggBehandlingService.henleggBehandling(behandlingId, henlegg))
+    }
+
+    @GetMapping("/{behandlingId}/henlegg/initiell-brevmottaker")
+    fun hentInitiellBrevmottaker(
+        @PathVariable behandlingId: UUID,
+    ): Ressurs<Brevmottakere> {
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
+        return Ressurs.success(brevService.initialiserBrevmottakere(behandlingId))
     }
 
     @GetMapping("/{behandlingId}/henlegg/brev/forhandsvisning")

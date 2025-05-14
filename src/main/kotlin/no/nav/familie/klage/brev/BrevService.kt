@@ -234,6 +234,7 @@ class BrevService(
         behandlingId: UUID,
         saksbehandlerHtml: String,
         fagsak: Fagsak,
+        brevmottakere: Brevmottakere? = initialiserBrevmottakere(behandlingId, fagsak),
     ): Brev {
         val brev = brevRepository.findByIdOrNull(behandlingId)
         return if (brev != null) {
@@ -243,13 +244,16 @@ class BrevService(
                 Brev(
                     behandlingId = behandlingId,
                     saksbehandlerHtml = saksbehandlerHtml,
-                    mottakere = initialiserBrevmottakere(behandlingId, fagsak),
+                    mottakere = brevmottakere,
                 ),
             )
         }
     }
 
-    private fun initialiserBrevmottakere(
+    fun initialiserBrevmottakere(behandlingId: UUID): Brevmottakere =
+        initialiserBrevmottakere(behandlingId, fagsakService.hentFagsak(behandlingId))
+
+    fun initialiserBrevmottakere(
         behandlingId: UUID,
         fagsak: Fagsak,
     ) = Brevmottakere(
@@ -303,6 +307,7 @@ class BrevService(
             behandlingId = behandlingId,
             saksbehandlerHtml = html,
             fagsak = fagsak,
+            brevmottakere = henlagt.brevmottakere
         )
 
         lagBrevPdf(behandlingId)
