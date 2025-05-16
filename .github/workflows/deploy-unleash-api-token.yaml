@@ -14,7 +14,7 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
-          RESOURCE: .deploy/unleash-apitoken-preprod.yaml
+          RESOURCE: .deploy/unleash-apitoken-dev.yaml
   deploy-prod:
     runs-on: ubuntu-latest
     steps:
