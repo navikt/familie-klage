@@ -9,7 +9,7 @@ metadata:
 spec:
   image: {{ image }}
   ingresses:
-    - https://familie-klage-backend.intern.nav.no
+    - https://familie-klage-backend.intern.dev.nav.no
   liveness:
     path: /internal/status/isAlive
     initialDelay: 30
@@ -19,6 +19,10 @@ spec:
     initialDelay: 30
     failureThreshold: 10
   observability:
+    logging:
+      destinations:
+        - id: elastic
+        - id: loki
     autoInstrumentation:
       enabled: true
       runtime: java
@@ -27,24 +31,24 @@ spec:
     path: /internal/prometheus
   replicas:
     min: 2
-    max: 4
+    max: 2
   resources:
     limits:
-      memory: 2048Mi
+      memory: 1024Mi
     requests:
       memory: 512Mi
       cpu: 200m
   secureLogs:
     enabled: true
   kafka:
-    pool: nav-prod
+    pool: nav-dev
   gcp:
     sqlInstances:
       - type: POSTGRES_14 # IF This is changed, all data will be lost. Read on nais.io how to upgrade
-        tier: db-custom-1-3840
+        tier: db-f1-micro
         diskAutoresize: true
         cascadingDelete: false
-        highAvailability: true
+        highAvailability: false
         pointInTimeRecovery: true
         maintenance:
           day: 7
@@ -56,18 +60,20 @@ spec:
     inbound:
       rules:
         - application: familie-klage-frontend
+        - application: familie-klage-frontend-lokal
         - application: familie-ef-sak
         - application: familie-ks-sak
         - application: familie-ba-sak
         - application: familie-prosessering
+        - application: familie-prosessering-lokal
     outbound:
       rules:
-        - application: familie-tilbake
         - application: familie-ef-sak
         - application: familie-ks-sak
         - application: familie-ba-sak
         - application: familie-ef-proxy
-          cluster: prod-fss
+          cluster: dev-fss
+        - application: familie-tilbake
         - application: familie-brev
         - application: familie-dokument
         - application: kabal-api
@@ -75,34 +81,33 @@ spec:
         - application: repr-api
           namespace: repr
       external:
-        - host: api-gw.oera.no
+        - host: api-gw-q1.oera.no
         - host: teamfamilie-unleash-api.nav.cloud.nais.io
-        - host: familie-oppdrag.prod-fss-pub.nais.io
-        - host: familie-integrasjoner.prod-fss-pub.nais.io
-        - host: familie-ef-infotrygd.prod-fss-pub.nais.io
-        - host: familie-ef-proxy.prod-fss-pub.nais.io
+        - host: familie-oppdrag.dev-fss-pub.nais.io
+        - host: familie-integrasjoner.dev-fss-pub.nais.io
+        - host: familie-ef-infotrygd.dev-fss-pub.nais.io
+        - host: familie-ef-proxy.dev-fss-pub.nais.io
   azure:
     application:
       enabled: true
-      tenant: nav.no
+      tenant: trygdeetaten.no
       claims:
         groups:
-          - id: 847e3d72-9dc1-41c3-80ff-f5d4acdd5d46 # 0000-GA-Barnetrygd
-          - id: 7a271f87-39fb-468b-a9ee-6cf3c070f548 # 0000-GA-Barnetrygd-Beslutter
-          - id: 199c2b39-e535-4ae8-ac59-8ccbee7991ae # 0000-GA-Barnetrygd-Veileder
-          - id: 6406aba2-b930-41d3-a85b-dd13731bc974 # 0000-GA-Enslig-Forsorger-Saksbehandler
-          - id: 5fcc0e1d-a4c2-49f0-93dc-27c9fea41e54 # 0000-GA-Enslig-Forsorger-Beslutter
-          - id: 31778fd8-3b71-4867-8db6-a81235fbe001 # 0000-GA-Enslig-Forsorger-Veileder
-          - id: e40090eb-c2fb-400e-b412-e9084019a73b # 0000-GA-Kontantstotte
-          - id: 4e7f23d9-5db1-45c0-acec-89c86a9ec678 # 0000-GA-Kontantstotte-Beslutter
-          - id: 54cd86b8-2e23-48b2-8852-b05b5827bb0f # 0000-GA-Kontantstotte-Veileder
-          - id: 87190cf3-b278-457d-8ab7-1a5c55a9edd7 # Group_87190cf3-b278-457d-8ab7-1a5c55a9edd7 tilgang til prosessering
-          - id: e750ceb5-b70b-4d94-b4fa-9d22467b786b # 0000-GA-Egne_ansatte
-
+          - id: d21e00a4-969d-4b28-8782-dc818abfae65 # 0000-GA-Barnetrygd
+          - id: 9449c153-5a1e-44a7-84c6-7cc7a8867233 # 0000-GA-Barnetrygd-Beslutter
+          - id: 93a26831-9866-4410-927b-74ff51a9107c # 0000-GA-Barnetrygd-Veileder
+          - id: ee5e0b5e-454c-4612-b931-1fe363df7c2c # 0000-GA-Enslig-Forsorger-Saksbehandler
+          - id: 01166863-22f1-4e16-9785-d7a05a22df74 # 0000-GA-Enslig-Forsorger-Beslutter
+          - id: 19dcbfde-4cdb-4c64-a1ea-ac9802b03339 # 0000-GA-Enslig-Forsorger-Veileder
+          - id: c7e0b108-7ae6-432c-9ab4-946174c240c0 # 0000-GA-Kontantstotte     (saksbehandler)
+          - id: 52fe1bef-224f-49df-a40a-29f92d4520f8 # 0000-GA-Kontantstotte-Beslutter
+          - id: 71f503a2-c28f-4394-a05a-8da263ceca4a # 0000-GA-Kontantstotte-Veileder
+          - id: 928636f4-fd0d-4149-978e-a6fb68bb19de # 0000-GA-STDAPPS - tilgang til prosessering
+          - id: dbe4ad45-320b-4e9a-aaa1-73cca4ee124d # 0000-GA-Egne_ansatte
         extra:
           - "NAVident"
   env:
     - name: SPRING_PROFILES_ACTIVE
-      value: prod
+      value: dev
   envFrom:
     - secret: familie-klage-unleash-api-token
