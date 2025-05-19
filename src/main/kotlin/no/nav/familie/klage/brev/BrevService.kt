@@ -17,9 +17,8 @@ import no.nav.familie.klage.brev.dto.Henleggelsesbrev
 import no.nav.familie.klage.brev.dto.SignaturDto
 import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerMinimumEnMottaker
 import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerUnikeBrevmottakere
-import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
+import no.nav.familie.klage.brevmottaker.BrevmottakerUtleder
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
-import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.brevmottaker.dto.BrevmottakereDto
 import no.nav.familie.klage.brevmottaker.dto.tilDomene
 import no.nav.familie.klage.distribusjon.JournalførBrevTask
@@ -67,6 +66,7 @@ class BrevService(
     private val personopplysningerService: PersonopplysningerService,
     private val brevInnholdUtleder: BrevInnholdUtleder,
     private val taskService: TaskService,
+    private val brevmottakerUtleder: BrevmottakerUtleder,
 ) {
     fun hentBrev(behandlingId: UUID): Brev = brevRepository.findByIdOrThrow(behandlingId)
 
@@ -243,25 +243,11 @@ class BrevService(
                 Brev(
                     behandlingId = behandlingId,
                     saksbehandlerHtml = saksbehandlerHtml,
-                    mottakere = initialiserBrevmottakere(behandlingId, fagsak),
+                    mottakere = brevmottakerUtleder.utledInitielleBrevmottakere(behandlingId),
                 ),
             )
         }
     }
-
-    private fun initialiserBrevmottakere(
-        behandlingId: UUID,
-        fagsak: Fagsak,
-    ) = Brevmottakere(
-        personer =
-            listOf(
-                BrevmottakerPersonMedIdent(
-                    personIdent = fagsak.hentAktivIdent(),
-                    navn = personopplysningerService.hentPersonopplysninger(behandlingId).navn,
-                    mottakerRolle = MottakerRolle.BRUKER,
-                ),
-            ),
-    )
 
     fun lagBrevPdf(behandlingId: UUID) {
         val brev = brevRepository.findByIdOrThrow(behandlingId)

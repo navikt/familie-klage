@@ -14,6 +14,7 @@ class BrevmottakerService(
     private val brevmottakerErstatter: BrevmottakerErstatter,
     private val brevmottakerOppretter: BrevmottakerOppretter,
     private val brevmottakerSletter: BrevmottakerSletter,
+    private val brevmottakerUtleder: BrevmottakerUtleder,
 ) {
     fun hentBrevmottakere(behandlingId: UUID): Brevmottakere = brevmottakerHenter.hentBrevmottakere(behandlingId)
 
@@ -36,4 +37,6 @@ class BrevmottakerService(
     ) {
         brevmottakerSletter.slettBrevmottaker(behandlingId, slettbarBrevmottaker)
     }
+
+    fun utledInitielleBrevmottakere(behandlingId: UUID): Brevmottakere = brevmottakerUtleder.utledInitielleBrevmottakere(behandlingId)
 }

@@ -5,7 +5,9 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.testutil.DomainUtil
@@ -15,10 +17,11 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 class BrevmottakerServiceTest {
-    private val brevmottakerHenter: BrevmottakerHenter = mockk()
-    private val brevmottakerErstatter: BrevmottakerErstatter = mockk()
-    private val brevmottakerOppretter: BrevmottakerOppretter = mockk()
-    private val brevmottakerSletter: BrevmottakerSletter = mockk()
+    private val brevmottakerHenter = mockk<BrevmottakerHenter>()
+    private val brevmottakerErstatter = mockk<BrevmottakerErstatter>()
+    private val brevmottakerOppretter = mockk<BrevmottakerOppretter>()
+    private val brevmottakerSletter = mockk<BrevmottakerSletter>()
+    private val brevmottakerUtleder = mockk<BrevmottakerUtleder>()
 
     private val brevmottakerService: BrevmottakerService =
         BrevmottakerService(
@@ -26,6 +29,7 @@ class BrevmottakerServiceTest {
             brevmottakerErstatter = brevmottakerErstatter,
             brevmottakerOppretter = brevmottakerOppretter,
             brevmottakerSletter = brevmottakerSletter,
+            brevmottakerUtleder = brevmottakerUtleder,
         )
 
     @Nested
@@ -162,6 +166,36 @@ class BrevmottakerServiceTest {
 
             // Assert
             verify(exactly = 1) { brevmottakerSletter.slettBrevmottaker(behandlingId, slettbarBrevmottaker) }
+        }
+    }
+
+    @Nested
+    inner class UtledInitielleBrevmottakere {
+        @Test
+        fun `skal utlede initielle brevmottakere`() {
+            // Arrange
+            val behandlingId = UUID.randomUUID()
+
+            val brevmottakere =
+                Brevmottakere(
+                    personer =
+                        listOf(
+                            BrevmottakerPersonMedIdent(
+                                personIdent = "123",
+                                mottakerRolle = MottakerRolle.BRUKER,
+                                navn = "Navn Navnesen",
+                            ),
+                        ),
+                    organisasjoner = emptyList(),
+                )
+
+            every { brevmottakerUtleder.utledInitielleBrevmottakere(behandlingId) } returns brevmottakere
+
+            // Act
+            val initielleBrevmottakere = brevmottakerService.utledInitielleBrevmottakere(behandlingId)
+
+            // Assert
+            assertThat(initielleBrevmottakere).isEqualTo(brevmottakere)
         }
     }
 }
