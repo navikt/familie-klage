@@ -122,7 +122,7 @@ class FerdigstillBehandlingService(
         if (behandlingsresultat == MEDHOLD &&
             skalOppretteRevurderingAutomatisk(behandling.påklagetVedtak)
         ) {
-            fagsystemVedtakService.opprettRevurdering(behandling.id).tilFagsystemRevurdering()
+            fagsystemVedtakService.opprettRevurdering(behandling).tilFagsystemRevurdering()
         } else {
             null
         }
