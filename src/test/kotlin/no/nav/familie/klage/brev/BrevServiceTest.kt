@@ -5,6 +5,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.domain.Brev
+import no.nav.familie.klage.brevmottaker.BrevmottakerUtleder
 import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
@@ -39,6 +40,7 @@ class BrevServiceTest {
     private val personopplysningerService = mockk<PersonopplysningerService>(relaxed = true)
     private val brevInnholdUtleder = mockk<BrevInnholdUtleder>(relaxed = true)
     private val taskService = mockk<TaskService>(relaxed = true)
+    private val brevmottakerUtleder = mockk<BrevmottakerUtleder>(relaxed = true)
 
     private val brevService =
         BrevService(
@@ -53,6 +55,7 @@ class BrevServiceTest {
             personopplysningerService = personopplysningerService,
             brevInnholdUtleder = brevInnholdUtleder,
             taskService = taskService,
+            brevmottakerUtleder = brevmottakerUtleder,
         )
 
     @AfterEach

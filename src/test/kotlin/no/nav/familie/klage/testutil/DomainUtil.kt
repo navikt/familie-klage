@@ -302,9 +302,10 @@ object DomainUtil {
     fun personopplysningerDto(
         personIdent: String = "123",
         adressebeskyttelse: Adressebeskyttelse? = null,
+        navn: String = "navn",
     ) = PersonopplysningerDto(
         personIdent = personIdent,
-        navn = "navn",
+        navn = navn,
         kjønn = Kjønn.MANN,
         adressebeskyttelse = adressebeskyttelse,
         folkeregisterpersonstatus = Folkeregisterpersonstatus.BOSATT,

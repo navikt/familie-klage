@@ -617,4 +617,104 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             }
         }
     }
+
+    @Nested
+    inner class UtledInitielleBrevmottakereTest {
+        @Test
+        fun `skal returnere 403 forbidden når man ikke har tilgang til personen med relasjoner for behandlingen`() {
+            // Arrange
+            val fagsak =
+                testoppsettService.lagreFagsak(
+                    DomainUtil.fagsak(
+                        stønadstype = Stønadstype.BARNETRYGD,
+                        person =
+                            FagsakPerson(
+                                identer =
+                                    setOf(
+                                        PersonIdent(".*ikkeTilgang.*"),
+                                    ),
+                            ),
+                    ),
+                )
+            val behandling = testoppsettService.lagreBehandling(behandling(fagsak))
+            headers.setBearerAuth(onBehalfOfToken(role = rolleConfig.ba.veileder))
+
+            // Act
+            val exchange =
+                restTemplate.exchange<Ressurs<BrevmottakereDto>>(
+                    localhost("$baseUrl/initielle/${behandling.id}"),
+                    HttpMethod.GET,
+                    HttpEntity<Void>(null, headers),
+                )
+
+            // Assert
+            assertThat(exchange.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
+            assertThat(exchange.body?.status).isEqualTo(Ressurs.Status.IKKE_TILGANG)
+            assertThat(exchange.body?.melding).isEqualTo(
+                "Saksbehandler julenissen har ikke tilgang til behandling=${behandling.id}",
+            )
+            assertThat(exchange.body?.frontendFeilmelding).isEqualTo(
+                "Mangler tilgang til opplysningene. Årsak: Mock sier: Du har ikke tilgang til person ikkeTilgang",
+            )
+            assertThat(exchange.body?.data).isNull()
+        }
+
+        @Test
+        fun `skal returnere 403 forbidden når token ikke har påkrevd role`() {
+            // Arrange
+            val fagsak = testoppsettService.lagreFagsak(DomainUtil.fagsak(stønadstype = Stønadstype.BARNETRYGD))
+            val behandling = testoppsettService.lagreBehandling(behandling(fagsak))
+            headers.setBearerAuth(onBehalfOfToken(role = "ukjent"))
+
+            // Act
+            val exchange =
+                restTemplate.exchange<Ressurs<BrevmottakereDto>>(
+                    localhost("$baseUrl/initielle/${behandling.id}"),
+                    HttpMethod.GET,
+                    HttpEntity<Void>(null, headers),
+                )
+
+            // Assert
+            assertThat(exchange.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
+            assertThat(exchange.body?.status).isEqualTo(Ressurs.Status.IKKE_TILGANG)
+            assertThat(exchange.body?.melding).isEqualTo("Bruker har ikke tilgang til saksbehandlingsløsningen")
+            assertThat(exchange.body?.frontendFeilmelding).isEqualTo("Du mangler tilgang til denne saksbehandlingsløsningen")
+            assertThat(exchange.body?.data).isNull()
+        }
+
+        @Test
+        fun `skal utelde initielle brevmottakere`() {
+            // Arrange
+            val fagsakPerson = testoppsettService.opprettPerson(FagsakPerson(identer = setOf(PersonIdent("12345678903"))))
+            val fagsak = testoppsettService.lagreFagsak(DomainUtil.fagsak(stønadstype = Stønadstype.BARNETRYGD, person = fagsakPerson))
+            val behandling = testoppsettService.lagreBehandling(behandling(fagsak))
+            headers.setBearerAuth(onBehalfOfToken(role = rolleConfig.ba.veileder))
+
+            // Act
+            val exchange =
+                restTemplate.exchange<Ressurs<BrevmottakereDto>>(
+                    localhost("$baseUrl/initielle/${behandling.id}"),
+                    HttpMethod.GET,
+                    HttpEntity<Void>(null, headers),
+                )
+
+            // Assert
+            assertThat(exchange.statusCode).isEqualTo(HttpStatus.OK)
+            assertThat(exchange.body?.status).isEqualTo(Ressurs.Status.SUKSESS)
+            assertThat(exchange.body?.melding).isEqualTo("Innhenting av data var vellykket")
+            assertThat(exchange.body?.frontendFeilmelding).isNull()
+            assertThat(exchange.body?.data?.organisasjoner).isEmpty()
+            assertThat(exchange.body?.data?.personer).hasSize(1)
+            assertThat(
+                exchange.body
+                    ?.data
+                    ?.personer
+                    ?.filterIsInstance<BrevmottakerPersonMedIdent>(),
+            ).anySatisfy {
+                assertThat(it.personIdent).isEqualTo(fagsakPerson.hentAktivIdent())
+                assertThat(it.mottakerRolle).isEqualTo(MottakerRolle.BRUKER)
+                assertThat(it.navn).isEqualTo("Fornavn mellomnavn Etternavn")
+            }
+        }
+    }
 }

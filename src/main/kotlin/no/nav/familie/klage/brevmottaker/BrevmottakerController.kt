@@ -74,4 +74,14 @@ class BrevmottakerController(
         val brevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
         return Ressurs.success(brevmottakere.tilDto())
     }
+
+    @GetMapping("/initielle/{behandlingId}")
+    fun utledInitielleBrevmottakere(
+        @PathVariable behandlingId: UUID,
+    ): Ressurs<BrevmottakereDto> {
+        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
+        val brevmottakere = brevmottakerService.utledInitielleBrevmottakere(behandlingId)
+        return Ressurs.success(brevmottakere.tilDto())
+    }
 }
