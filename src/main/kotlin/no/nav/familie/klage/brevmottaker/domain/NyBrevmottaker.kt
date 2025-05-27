@@ -4,15 +4,20 @@ private const val LANDKODE_NO = "NO"
 
 sealed interface NyBrevmottaker
 
+sealed interface NyBrevmottakerPerson : NyBrevmottaker {
+    val mottakerRolle: MottakerRolle
+    val navn: String
+}
+
 data class NyBrevmottakerPersonUtenIdent(
-    val mottakerRolle: MottakerRolle,
-    val navn: String,
+    override val mottakerRolle: MottakerRolle,
+    override val navn: String,
     val adresselinje1: String,
     val adresselinje2: String? = null,
     val postnummer: String?,
     val poststed: String?,
     val landkode: String,
-) : NyBrevmottaker {
+) : NyBrevmottakerPerson {
     init {
         if (landkode.length != 2) {
             throw IllegalStateException("Ugyldig landkode: $landkode.")
@@ -49,9 +54,18 @@ data class NyBrevmottakerPersonUtenIdent(
 
 data class NyBrevmottakerPersonMedIdent(
     val personIdent: String,
-    val mottakerRolle: MottakerRolle,
-    val navn: String,
-) : NyBrevmottaker
+    override val mottakerRolle: MottakerRolle,
+    override val navn: String,
+) : NyBrevmottakerPerson {
+    init {
+        if (personIdent.isBlank()) {
+            throw IllegalStateException("Personident kan ikke være blank.")
+        }
+        if (navn.isBlank()) {
+            throw IllegalStateException("Navn kan ikke være blank.")
+        }
+    }
+}
 
 data class NyBrevmottakerOrganisasjon(
     val organisasjonsnummer: String,

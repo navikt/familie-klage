@@ -198,4 +198,28 @@ class BrevmottakerServiceTest {
             assertThat(initielleBrevmottakere).isEqualTo(brevmottakere)
         }
     }
+
+    @Nested
+    inner class UtledBrevmottakerBrukerFraBehandling {
+        @Test
+        fun `skal utlede brevmottaker bruker fra behandling`() {
+            // Arrange
+            val behandlingId = UUID.randomUUID()
+
+            val brevmottakerBruker =
+                BrevmottakerPersonMedIdent(
+                    personIdent = "123",
+                    mottakerRolle = MottakerRolle.BRUKER,
+                    navn = "Navn Navnesen",
+                )
+
+            every { brevmottakerUtleder.utledBrevmottakerBrukerFraBehandling(behandlingId) } returns brevmottakerBruker
+
+            // Act
+            val brevmottakerFraBehandling = brevmottakerService.utledBrevmottakerBrukerFraBehandling(behandlingId)
+
+            // Assert
+            assertThat(brevmottakerFraBehandling).isEqualTo(brevmottakerBruker)
+        }
+    }
 }

@@ -2,6 +2,7 @@ package no.nav.familie.klage.brevmottaker
 
 import jakarta.transaction.Transactional
 import no.nav.familie.klage.brevmottaker.domain.Brevmottaker
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottaker
 import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottaker
@@ -39,4 +40,6 @@ class BrevmottakerService(
     }
 
     fun utledInitielleBrevmottakere(behandlingId: UUID): Brevmottakere = brevmottakerUtleder.utledInitielleBrevmottakere(behandlingId)
+
+    fun utledBrevmottakerBrukerFraBehandling(behandlingId: UUID): BrevmottakerPersonMedIdent = brevmottakerUtleder.utledBrevmottakerBrukerFraBehandling(behandlingId)
 }

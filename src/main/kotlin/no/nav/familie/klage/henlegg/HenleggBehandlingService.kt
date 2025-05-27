@@ -13,6 +13,7 @@ import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus.FERDIGSTILT
+import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -34,7 +35,7 @@ class HenleggBehandlingService(
     @Transactional
     fun henleggBehandling(
         behandlingId: UUID,
-        henlagt: HenlagtDto,
+        henlagtÅrsak: HenlagtÅrsak,
     ) {
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
@@ -43,7 +44,7 @@ class HenleggBehandlingService(
 
         val henlagtBehandling =
             behandling.copy(
-                henlagtÅrsak = henlagt.årsak,
+                henlagtÅrsak = henlagtÅrsak,
                 resultat = BehandlingResultat.HENLAGT,
                 steg = BEHANDLING_FERDIGSTILT,
                 status = FERDIGSTILT,

@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottaker
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPerson
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
@@ -28,23 +30,19 @@ sealed interface NyBrevmottakerDto {
     }
 }
 
-fun NyBrevmottakerDto.tilDomene(): NyBrevmottaker =
-    when (this) {
-        is NyBrevmottakerOrganisasjonDto -> {
-            NyBrevmottakerOrganisasjon(
-                organisasjonsnummer = organisasjonsnummer,
-                organisasjonsnavn = organisasjonsnavn,
-                navnHosOrganisasjon = navnHosOrganisasjon,
-            )
-        }
+sealed interface NyBrevmottakerPersonDto : NyBrevmottakerDto {
+    val mottakerRolle: MottakerRolle
+    val navn: String
+}
 
-        is NyBrevmottakerPersonMedIdentDto -> {
+fun NyBrevmottakerPersonDto.tilDomene(): NyBrevmottakerPerson =
+    when (this) {
+        is NyBrevmottakerPersonMedIdentDto ->
             NyBrevmottakerPersonMedIdent(
                 personIdent = personIdent,
                 mottakerRolle = mottakerRolle,
                 navn = navn,
             )
-        }
 
         is NyBrevmottakerPersonUtenIdentDto -> {
             NyBrevmottakerPersonUtenIdent(
@@ -59,16 +57,33 @@ fun NyBrevmottakerDto.tilDomene(): NyBrevmottaker =
         }
     }
 
+fun NyBrevmottakerDto.tilDomene(): NyBrevmottaker =
+    when (this) {
+        is NyBrevmottakerOrganisasjonDto -> {
+            NyBrevmottakerOrganisasjon(
+                organisasjonsnummer = organisasjonsnummer,
+                organisasjonsnavn = organisasjonsnavn,
+                navnHosOrganisasjon = navnHosOrganisasjon,
+            )
+        }
+
+        is NyBrevmottakerPersonMedIdentDto,
+        is NyBrevmottakerPersonUtenIdentDto,
+        -> {
+            this.tilDomene()
+        }
+    }
+
 @JsonDeserialize(`as` = NyBrevmottakerPersonUtenIdentDto::class)
 data class NyBrevmottakerPersonUtenIdentDto(
-    val mottakerRolle: MottakerRolle,
-    val navn: String,
+    override val mottakerRolle: MottakerRolle,
+    override val navn: String,
     val adresselinje1: String,
     val adresselinje2: String?,
     val postnummer: String?,
     val poststed: String?,
     val landkode: String,
-) : NyBrevmottakerDto {
+) : NyBrevmottakerPersonDto {
     override val type: NyBrevmottakerDto.Type
         get() = NyBrevmottakerDto.Type.PERSON_UTEN_IDENT
 
@@ -112,9 +127,9 @@ data class NyBrevmottakerPersonUtenIdentDto(
 @JsonDeserialize(`as` = NyBrevmottakerPersonMedIdentDto::class)
 data class NyBrevmottakerPersonMedIdentDto(
     val personIdent: String,
-    val mottakerRolle: MottakerRolle,
-    val navn: String,
-) : NyBrevmottakerDto {
+    override val mottakerRolle: MottakerRolle,
+    override val navn: String,
+) : NyBrevmottakerPersonDto {
     override val type: NyBrevmottakerDto.Type
         get() = NyBrevmottakerDto.Type.PERSON_MED_IDENT
 
@@ -123,6 +138,11 @@ data class NyBrevmottakerPersonMedIdentDto(
             throw ApiFeil.badRequest("Person med ident kan ikke være ${MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE}")
         }
     }
+
+    fun erLik(brevmottakerPersonMedIdent: BrevmottakerPersonMedIdent): Boolean =
+        brevmottakerPersonMedIdent.personIdent == this.personIdent &&
+            brevmottakerPersonMedIdent.mottakerRolle == this.mottakerRolle &&
+            brevmottakerPersonMedIdent.navn == this.navn
 }
 
 @JsonDeserialize(`as` = NyBrevmottakerOrganisasjonDto::class)

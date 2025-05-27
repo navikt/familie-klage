@@ -3,6 +3,8 @@ package no.nav.familie.klage.distribusjon
 import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.unmockkObject
 import io.mockk.verify
 import io.mockk.verifyOrder
 import no.nav.familie.klage.behandling.BehandlingService
@@ -19,14 +21,15 @@ import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpostMedIdent
 import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpostUtenIdent
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.testutil.DomainUtil
-import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
 import no.nav.familie.kontrakter.felles.journalpost.AvsenderMottakerIdType
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -61,13 +64,20 @@ internal class JournalførBrevTaskTest {
 
     @BeforeEach
     internal fun setUp() {
-        every { behandlingService.hentAktivIdent(behandlingId) } returns Pair("ident", fagsak())
+        mockkObject(SikkerhetContext)
+        every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler"
+        every { behandlingService.hentAktivIdent(behandlingId) } returns Pair("ident", DomainUtil.fagsak())
         justRun { brevService.oppdaterMottakerJournalpost(any(), capture(slotBrevmottakereJournalposter)) }
         every { taskService.save(capture(slotSaveTask)) } answers { firstArg() }
         every {
             distribusjonService.journalførBrev(any(), any(), any(), any(), any())
         } answers { "journalpostId-${(it.invocation.args[3] as Int)}" }
         every { featureToggleService.isEnabled(any()) } returns true
+    }
+
+    @AfterEach
+    fun cleanUp() {
+        unmockkObject(SikkerhetContext)
     }
 
     @Test
@@ -215,6 +225,26 @@ internal class JournalførBrevTaskTest {
                 }
                 assertThat(journalposter[index].journalpostId).isEqualTo("journalpostId-$index")
             }
+        }
+    }
+
+    @Nested
+    inner class OpprettTask {
+        @Test
+        fun `skal opprette task`() {
+            // Arrange
+            val fagsak = DomainUtil.fagsak()
+            val behandling = DomainUtil.behandling(fagsak)
+
+            // Act
+            val task = JournalførBrevTask.opprettTask(fagsak, behandling)
+
+            // Assert
+            assertThat(task.type).isEqualTo(JournalførBrevTask.TYPE)
+            assertThat(task.payload).isEqualTo(behandling.id.toString())
+            assertThat(task.metadata["saksbehandler"]).isEqualTo("saksbehandler")
+            assertThat(task.metadata["eksterFagsakId"]).isEqualTo(fagsak.eksternId)
+            assertThat(task.metadata["fagsystem"]).isEqualTo(fagsak.fagsystem.name)
         }
     }
 

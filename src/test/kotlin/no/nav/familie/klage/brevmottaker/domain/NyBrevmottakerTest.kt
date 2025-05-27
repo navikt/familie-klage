@@ -4,6 +4,7 @@ import no.nav.familie.klage.testutil.DomainUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 
 class NyBrevmottakerTest {
@@ -198,6 +199,49 @@ class NyBrevmottakerTest {
             assertThat(nyBrevmottaker.postnummer).isEqualTo("0010")
             assertThat(nyBrevmottaker.poststed).isEqualTo("Oslo")
             assertThat(nyBrevmottaker.landkode).isEqualTo("NO")
+        }
+    }
+
+    @Nested
+    inner class NyBrevmottakerPersonMedIdentTest {
+        @Test
+        fun `skal kaste exception om person ident er blank`() {
+            // Act & assert
+            val exception =
+                assertThrows<IllegalStateException> {
+                    NyBrevmottakerPersonMedIdent(
+                        personIdent = "",
+                        mottakerRolle = MottakerRolle.BRUKER,
+                        navn = "Navn Navnesen",
+                    )
+                }
+            assertThat(exception.message).isEqualTo("Personident kan ikke være blank.")
+        }
+
+        @Test
+        fun `skal kaste exception om nav er blank`() {
+            // Act & assert
+            val exception =
+                assertThrows<IllegalStateException> {
+                    NyBrevmottakerPersonMedIdent(
+                        personIdent = "12345678903",
+                        mottakerRolle = MottakerRolle.BRUKER,
+                        navn = "",
+                    )
+                }
+            assertThat(exception.message).isEqualTo("Navn kan ikke være blank.")
+        }
+
+        @Test
+        fun `skal ikke kaste exception ved oppretting`() {
+            // Act & assert
+            assertDoesNotThrow {
+                NyBrevmottakerPersonMedIdent(
+                    personIdent = "12345678903",
+                    mottakerRolle = MottakerRolle.BRUKER,
+                    navn = "Navn Navnesen",
+                )
+            }
         }
     }
 }
