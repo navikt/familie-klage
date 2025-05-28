@@ -78,6 +78,8 @@ spec:
           namespace: klage
         - application: repr-api
           namespace: repr
+        - application: logging
+          namespace: nais-system
       external:
         - host: api-gw.oera.no
         - host: teamfamilie-unleash-api.nav.cloud.nais.io
