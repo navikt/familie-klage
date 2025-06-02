@@ -18,7 +18,7 @@ class SlettbarBrevmottakerDtoKtTest {
             val dto = SlettbarBrevmottakerOrganisasjonDto("123")
 
             // Act
-            val domene = dto.tilDomene()
+            val domene = dto.tilSlettbarBrevmottaker()
 
             // Assert
             assertThat(domene).isInstanceOfSatisfying(SlettbarBrevmottakerOrganisasjon::class.java) {
@@ -32,7 +32,7 @@ class SlettbarBrevmottakerDtoKtTest {
             val dto = SlettbarBrevmottakerPersonMedIdentDto("123")
 
             // Act
-            val domene = dto.tilDomene()
+            val domene = dto.tilSlettbarBrevmottaker()
 
             // Assert
             assertThat(domene).isInstanceOfSatisfying(SlettbarBrevmottakerPersonMedIdent::class.java) {
@@ -47,7 +47,7 @@ class SlettbarBrevmottakerDtoKtTest {
             val dto = SlettbarBrevmottakerPersonUtenIdentDto(id)
 
             // Act
-            val domene = dto.tilDomene()
+            val domene = dto.tilSlettbarBrevmottaker()
 
             // Assert
             assertThat(domene).isInstanceOfSatisfying(SlettbarBrevmottakerPersonUtenIdent::class.java) {

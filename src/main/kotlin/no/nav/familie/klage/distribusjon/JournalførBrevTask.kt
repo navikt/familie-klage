@@ -1,6 +1,7 @@
 package no.nav.familie.klage.distribusjon
 
 import no.nav.familie.klage.behandling.BehandlingService
+import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
@@ -15,9 +16,11 @@ import no.nav.familie.klage.distribusjon.JournalføringUtil.mapBrevmottakerJourn
 import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpost
 import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpostMedIdent
 import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpostUtenIdent
+import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.felles.util.TaskMetadata.SAKSBEHANDLER_METADATA_KEY
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle.SKAL_BRUKE_NY_LØYPE_FOR_JOURNALFØRING
+import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.personopplysninger.pdl.logger
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.prosessering.AsyncTaskStep
@@ -25,6 +28,7 @@ import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.stereotype.Service
+import java.util.Properties
 import java.util.UUID
 
 @Service
@@ -203,5 +207,21 @@ class JournalførBrevTask(
 
     companion object {
         const val TYPE = "journalførBrevTask"
+
+        fun opprettTask(
+            fagsak: Fagsak,
+            behandling: Behandling,
+        ): Task =
+            Task(
+                type = TYPE,
+                payload = behandling.id.toString(),
+                properties =
+                    Properties().apply {
+                        this[SAKSBEHANDLER_METADATA_KEY] = SikkerhetContext.hentSaksbehandler(strict = true)
+                        // TODO : Endre "eksterFagsakId" til "eksternFagsakId"
+                        this["eksterFagsakId"] = fagsak.eksternId
+                        this["fagsystem"] = fagsak.fagsystem.name
+                    },
+            )
     }
 }

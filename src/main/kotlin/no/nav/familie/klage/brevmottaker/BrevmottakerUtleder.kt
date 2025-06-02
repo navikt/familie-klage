@@ -13,19 +13,19 @@ class BrevmottakerUtleder(
     private val fagsakService: FagsakService,
     private val personopplysningerService: PersonopplysningerService,
 ) {
-    fun utledInitielleBrevmottakere(behandlingId: UUID): Brevmottakere {
+    fun utledInitielleBrevmottakere(behandlingId: UUID): Brevmottakere =
+        Brevmottakere(
+            personer = listOf(utledBrevmottakerBrukerFraBehandling(behandlingId)),
+            organisasjoner = emptyList(),
+        )
+
+    fun utledBrevmottakerBrukerFraBehandling(behandlingId: UUID): BrevmottakerPersonMedIdent {
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
-        return Brevmottakere(
-            personer =
-                listOf(
-                    BrevmottakerPersonMedIdent(
-                        personIdent = fagsak.hentAktivIdent(),
-                        navn = personopplysninger.navn,
-                        mottakerRolle = MottakerRolle.BRUKER,
-                    ),
-                ),
-            organisasjoner = emptyList(),
+        return BrevmottakerPersonMedIdent(
+            personIdent = fagsak.hentAktivIdent(),
+            navn = personopplysninger.navn,
+            mottakerRolle = MottakerRolle.BRUKER,
         )
     }
 }

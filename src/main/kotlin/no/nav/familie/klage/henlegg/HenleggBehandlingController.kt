@@ -1,10 +1,13 @@
 package no.nav.familie.klage.henlegg
 
 import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brevmottaker.dto.tilNyBrevmottakerPerson
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -21,19 +24,25 @@ import java.util.UUID
 class HenleggBehandlingController(
     private val tilgangService: TilgangService,
     private val henleggBehandlingService: HenleggBehandlingService,
+    private val henleggBehandlingValidator: HenleggBehandlingValidator,
     private val brevService: BrevService,
 ) {
+    private val logger: Logger = LoggerFactory.getLogger(HenleggBehandlingController::class.java)
+
     @PostMapping("{behandlingId}/henlegg")
     fun henleggBehandling(
         @PathVariable behandlingId: UUID,
-        @RequestBody henlegg: HenlagtDto,
+        @RequestBody henleggBehandlingDto: HenleggBehandlingDto,
     ): Ressurs<Unit> {
+        logger.info("Henlegger behandling=$behandlingId")
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        if (henlegg.skalSendeHenleggelsesbrev) {
-            brevService.opprettJournalførHenleggelsesbrevTask(behandlingId, henlegg)
+        henleggBehandlingValidator.validerHenleggBehandlingDto(behandlingId, henleggBehandlingDto)
+        if (henleggBehandlingDto.skalSendeHenleggelsesbrev) {
+            val nyeBrevmottakere = henleggBehandlingDto.nyeBrevmottakere.map { it.tilNyBrevmottakerPerson() }
+            brevService.lagHenleggelsesbrevOgOpprettJournalføringstask(behandlingId, nyeBrevmottakere)
         }
-        return Ressurs.success(henleggBehandlingService.henleggBehandling(behandlingId, henlegg))
+        return Ressurs.success(henleggBehandlingService.henleggBehandling(behandlingId, henleggBehandlingDto.årsak))
     }
 
     @GetMapping("/{behandlingId}/henlegg/brev/forhandsvisning")
@@ -42,8 +51,6 @@ class HenleggBehandlingController(
     ): Ressurs<ByteArray> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        return henleggBrevRessurs(behandlingId)
+        return Ressurs.success(brevService.genererHenleggelsesbrev(behandlingId))
     }
-
-    private fun henleggBrevRessurs(behandlingId: UUID) = Ressurs.success(brevService.genererHenleggelsesbrev(behandlingId))
 }

@@ -18,39 +18,37 @@ import no.nav.familie.klage.brev.dto.SignaturDto
 import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerMinimumEnMottaker
 import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerUnikeBrevmottakere
 import no.nav.familie.klage.brevmottaker.BrevmottakerUtleder
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPerson
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
+import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPerson
 import no.nav.familie.klage.brevmottaker.dto.BrevmottakereDto
-import no.nav.familie.klage.brevmottaker.dto.tilDomene
+import no.nav.familie.klage.brevmottaker.dto.tilBrevmottakere
 import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.felles.util.StønadstypeVisningsnavn.visningsnavn
-import no.nav.familie.klage.felles.util.TaskMetadata.SAKSBEHANDLER_METADATA_KEY
 import no.nav.familie.klage.felles.util.isEqualOrAfter
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
-import no.nav.familie.klage.henlegg.HenlagtDto
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
-import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
-import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.objectMapper
-import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
-import java.util.Properties
 import java.util.UUID
 
 @Service
@@ -67,6 +65,7 @@ class BrevService(
     private val brevInnholdUtleder: BrevInnholdUtleder,
     private val taskService: TaskService,
     private val brevmottakerUtleder: BrevmottakerUtleder,
+    private val featureToggleService: FeatureToggleService,
 ) {
     fun hentBrev(behandlingId: UUID): Brev = brevRepository.findByIdOrThrow(behandlingId)
 
@@ -77,18 +76,18 @@ class BrevService(
 
     fun settBrevmottakere(
         behandlingId: UUID,
-        brevmottakere: BrevmottakereDto,
+        brevmottakereDto: BrevmottakereDto,
     ) {
         val behandling = behandlingService.hentBehandling(behandlingId)
         validerKanLageBrev(behandling)
 
-        val mottakere = brevmottakere.tilDomene()
+        val brevmottakere = brevmottakereDto.tilBrevmottakere()
 
-        validerUnikeBrevmottakere(mottakere)
-        validerMinimumEnMottaker(mottakere)
+        validerUnikeBrevmottakere(brevmottakere)
+        validerMinimumEnMottaker(brevmottakere)
 
         val brev = brevRepository.findByIdOrThrow(behandlingId)
-        brevRepository.update(brev.copy(mottakere = mottakere))
+        brevRepository.update(brev.copy(mottakere = brevmottakere))
     }
 
     fun lagBrev(behandlingId: UUID): ByteArray {
@@ -275,36 +274,47 @@ class BrevService(
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST
         }
 
-    fun opprettJournalførHenleggelsesbrevTask(
+    fun lagHenleggelsesbrevOgOpprettJournalføringstask(
         behandlingId: UUID,
-        henlagt: HenlagtDto,
+        nyeBrevmottakere: List<NyBrevmottakerPerson>,
     ) {
-        validerIkkeSendTrukketKlageBrevPåFeilType(henlagt)
-        validerIkkeSendTrukketKlageBrevHvisVergemålEllerFullmakt(behandlingId)
-        val html = lagHenleggelsesbrevHtml(behandlingId)
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
 
-        lagreEllerOppdaterBrev(
-            behandlingId = behandlingId,
-            saksbehandlerHtml = html,
-            fagsak = fagsak,
-        )
+        if (fagsak.fagsystem == Fagsystem.EF) {
+            validerIkkeSendTrukketKlageBrevHvisVergemålEllerFullmakt(behandlingId)
+        }
 
-        lagBrevPdf(behandlingId)
+        val html = lagHenleggelsesbrevHtml(behandlingId)
+        val pdf = familieDokumentClient.genererPdfFraHtml(html)
+        val brevmottakere =
+            if (featureToggleService.isEnabled(Toggle.BRUK_NY_HENLEGG_BEHANDLING_MODAL)) {
+                Brevmottakere(nyeBrevmottakere.map { BrevmottakerPerson.opprettFra(it) })
+            } else {
+                brevmottakerUtleder.utledInitielleBrevmottakere(behandlingId)
+            }
 
-        val journalførBrevTask =
-            Task(
-                type = JournalførBrevTask.TYPE,
-                payload = behandlingId.toString(),
-                properties =
-                    Properties().apply {
-                        this[SAKSBEHANDLER_METADATA_KEY] = SikkerhetContext.hentSaksbehandler(strict = true)
-                        this["eksterFagsakId"] = fagsak.eksternId
-                        this["fagsystem"] = fagsak.fagsystem.name
-                    },
+        val eksisterendeBrev = brevRepository.findByIdOrNull(behandlingId)
+        if (eksisterendeBrev != null) {
+            brevRepository.update(
+                eksisterendeBrev.copy(
+                    saksbehandlerHtml = html,
+                    pdf = Fil(pdf),
+                    mottakere = brevmottakere,
+                ),
             )
-        taskService.save(journalførBrevTask)
+        } else {
+            brevRepository.insert(
+                Brev(
+                    behandlingId = behandlingId,
+                    saksbehandlerHtml = html,
+                    pdf = Fil(pdf),
+                    mottakere = brevmottakere,
+                ),
+            )
+        }
+
+        taskService.save(JournalførBrevTask.opprettTask(fagsak, behandling))
     }
 
     fun genererHenleggelsesbrev(behandlingId: UUID): ByteArray {
@@ -406,12 +416,6 @@ class BrevService(
                 ),
             ),
         )
-
-    private fun validerIkkeSendTrukketKlageBrevPåFeilType(henlagt: HenlagtDto) {
-        feilHvis(henlagt.skalSendeHenleggelsesbrev && henlagt.årsak == HenlagtÅrsak.FEILREGISTRERT) {
-            "Skal ikke sende brev hvis type er ulik trukket tilbake"
-        }
-    }
 
     private fun validerIkkeSendTrukketKlageBrevHvisVergemålEllerFullmakt(ident: UUID) {
         val personopplysninger = personopplysningerService.hentPersonopplysninger(ident)

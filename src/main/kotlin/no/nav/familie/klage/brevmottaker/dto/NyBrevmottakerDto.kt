@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottaker
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPerson
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
@@ -28,47 +30,34 @@ sealed interface NyBrevmottakerDto {
     }
 }
 
-fun NyBrevmottakerDto.tilDomene(): NyBrevmottaker =
+fun NyBrevmottakerDto.tilNyBrevmottaker(): NyBrevmottaker =
     when (this) {
-        is NyBrevmottakerOrganisasjonDto -> {
-            NyBrevmottakerOrganisasjon(
-                organisasjonsnummer = organisasjonsnummer,
-                organisasjonsnavn = organisasjonsnavn,
-                navnHosOrganisasjon = navnHosOrganisasjon,
-            )
-        }
+        is NyBrevmottakerOrganisasjonDto -> this.tilNyBrevmottakerOrganisasjon()
+        is NyBrevmottakerPersonMedIdentDto -> this.tilNyBrevmottakerPersonMedIdent()
+        is NyBrevmottakerPersonUtenIdentDto -> this.tilNyBrevmottakerPersonUtenIdent()
+    }
 
-        is NyBrevmottakerPersonMedIdentDto -> {
-            NyBrevmottakerPersonMedIdent(
-                personIdent = personIdent,
-                mottakerRolle = mottakerRolle,
-                navn = navn,
-            )
-        }
+sealed interface NyBrevmottakerPersonDto : NyBrevmottakerDto {
+    val mottakerRolle: MottakerRolle
+    val navn: String
+}
 
-        is NyBrevmottakerPersonUtenIdentDto -> {
-            NyBrevmottakerPersonUtenIdent(
-                mottakerRolle = mottakerRolle,
-                navn = navn,
-                adresselinje1 = adresselinje1,
-                adresselinje2 = adresselinje2,
-                postnummer = postnummer,
-                poststed = poststed,
-                landkode = landkode,
-            )
-        }
+fun NyBrevmottakerPersonDto.tilNyBrevmottakerPerson(): NyBrevmottakerPerson =
+    when (this) {
+        is NyBrevmottakerPersonMedIdentDto -> this.tilNyBrevmottakerPersonMedIdent()
+        is NyBrevmottakerPersonUtenIdentDto -> this.tilNyBrevmottakerPersonUtenIdent()
     }
 
 @JsonDeserialize(`as` = NyBrevmottakerPersonUtenIdentDto::class)
 data class NyBrevmottakerPersonUtenIdentDto(
-    val mottakerRolle: MottakerRolle,
-    val navn: String,
+    override val mottakerRolle: MottakerRolle,
+    override val navn: String,
     val adresselinje1: String,
     val adresselinje2: String?,
     val postnummer: String?,
     val poststed: String?,
     val landkode: String,
-) : NyBrevmottakerDto {
+) : NyBrevmottakerPersonDto {
     override val type: NyBrevmottakerDto.Type
         get() = NyBrevmottakerDto.Type.PERSON_UTEN_IDENT
 
@@ -109,12 +98,23 @@ data class NyBrevmottakerPersonUtenIdentDto(
     }
 }
 
+fun NyBrevmottakerPersonUtenIdentDto.tilNyBrevmottakerPersonUtenIdent(): NyBrevmottakerPersonUtenIdent =
+    NyBrevmottakerPersonUtenIdent(
+        mottakerRolle = mottakerRolle,
+        navn = navn,
+        adresselinje1 = adresselinje1,
+        adresselinje2 = adresselinje2,
+        postnummer = postnummer,
+        poststed = poststed,
+        landkode = landkode,
+    )
+
 @JsonDeserialize(`as` = NyBrevmottakerPersonMedIdentDto::class)
 data class NyBrevmottakerPersonMedIdentDto(
     val personIdent: String,
-    val mottakerRolle: MottakerRolle,
-    val navn: String,
-) : NyBrevmottakerDto {
+    override val mottakerRolle: MottakerRolle,
+    override val navn: String,
+) : NyBrevmottakerPersonDto {
     override val type: NyBrevmottakerDto.Type
         get() = NyBrevmottakerDto.Type.PERSON_MED_IDENT
 
@@ -123,7 +123,19 @@ data class NyBrevmottakerPersonMedIdentDto(
             throw ApiFeil.badRequest("Person med ident kan ikke være ${MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE}")
         }
     }
+
+    fun erLik(brevmottakerPersonMedIdent: BrevmottakerPersonMedIdent): Boolean =
+        brevmottakerPersonMedIdent.personIdent == this.personIdent &&
+            brevmottakerPersonMedIdent.mottakerRolle == this.mottakerRolle &&
+            brevmottakerPersonMedIdent.navn == this.navn
 }
+
+fun NyBrevmottakerPersonMedIdentDto.tilNyBrevmottakerPersonMedIdent(): NyBrevmottakerPersonMedIdent =
+    NyBrevmottakerPersonMedIdent(
+        personIdent = personIdent,
+        mottakerRolle = mottakerRolle,
+        navn = navn,
+    )
 
 @JsonDeserialize(`as` = NyBrevmottakerOrganisasjonDto::class)
 data class NyBrevmottakerOrganisasjonDto(
@@ -138,6 +150,13 @@ data class NyBrevmottakerOrganisasjonDto(
         // Do nothing...
     }
 }
+
+fun NyBrevmottakerOrganisasjonDto.tilNyBrevmottakerOrganisasjon(): NyBrevmottakerOrganisasjon =
+    NyBrevmottakerOrganisasjon(
+        organisasjonsnummer = organisasjonsnummer,
+        organisasjonsnavn = organisasjonsnavn,
+        navnHosOrganisasjon = navnHosOrganisasjon,
+    )
 
 class NyBrevmottakerDtoDeserializer : JsonDeserializer<NyBrevmottakerDto>() {
     override fun deserialize(

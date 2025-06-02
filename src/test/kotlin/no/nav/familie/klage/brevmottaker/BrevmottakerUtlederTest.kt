@@ -48,4 +48,27 @@ class BrevmottakerUtlederTest {
             assertThat(brevmottakere.organisasjoner).isEmpty()
         }
     }
+
+    @Nested
+    inner class UtledBrevmottakerBrukerFraBehandling {
+        @Test
+        fun `skal utlede brevmottaker bruker fra behandling`() {
+            // Arrange
+            val personIdent = "123"
+            val behandlingId = UUID.randomUUID()
+            val fagsak = DomainUtil.fagsak(identer = setOf(PersonIdent(personIdent)))
+            val personopplysninger = DomainUtil.personopplysningerDto(navn = "Navn Navnesen")
+
+            every { fagsakService.hentFagsakForBehandling(behandlingId) } returns fagsak
+            every { personopplysningerService.hentPersonopplysninger(behandlingId) } returns personopplysninger
+
+            // Act
+            val brevmottakerBruker = brevmottakerUtleder.utledBrevmottakerBrukerFraBehandling(behandlingId)
+
+            // Assert
+            assertThat(brevmottakerBruker.personIdent).isEqualTo(personIdent)
+            assertThat(brevmottakerBruker.navn).isEqualTo("Navn Navnesen")
+            assertThat(brevmottakerBruker.mottakerRolle).isEqualTo(MottakerRolle.BRUKER)
+        }
+    }
 }

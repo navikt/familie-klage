@@ -9,6 +9,63 @@ import java.util.UUID
 
 class BrevmottakerKtTest {
     @Nested
+    inner class BrevmottakerPersonTest {
+        @Test
+        fun `skal opprette BrevmottakerPerson fra NyBrevmottakerPersonMedIdent`() {
+            // Arrange
+            val nyBrevmottakerPersonMedIdent = DomainUtil.lagNyBrevmottakerPersonMedIdent()
+
+            // Act
+            val brevmottakerPerson = BrevmottakerPerson.opprettFra(nyBrevmottakerPersonMedIdent)
+
+            // Assert
+            assertThat(brevmottakerPerson).isInstanceOfSatisfying(BrevmottakerPersonMedIdent::class.java) {
+                assertThat(it.personIdent).isEqualTo(nyBrevmottakerPersonMedIdent.personIdent)
+                assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonMedIdent.mottakerRolle)
+                assertThat(it.navn).isEqualTo(nyBrevmottakerPersonMedIdent.navn)
+            }
+        }
+
+        @Test
+        fun `skal opprette BrevmottakerPerson fra NyBrevmottakerPersonUtenIdent`() {
+            // Arrange
+            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent()
+
+            // Act
+            val brevmottakerPerson = BrevmottakerPerson.opprettFra(nyBrevmottakerPersonUtenIdent)
+
+            // Assert
+            assertThat(brevmottakerPerson).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
+                assertThat(it.id).isNotNull()
+                assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
+                assertThat(it.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
+                assertThat(it.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
+                assertThat(it.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
+                assertThat(it.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
+                assertThat(it.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
+                assertThat(it.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+            }
+        }
+    }
+
+    @Nested
+    inner class BrevmottakerPersonMedIdentTest {
+        @Test
+        fun `skal opprette BrevmottakerPersonMedIdent fra NyBrevmottakerPersonMedIdent`() {
+            // Arrange
+            val nyBrevmottakerPersonMedIdent = DomainUtil.lagNyBrevmottakerPersonMedIdent()
+
+            // Act
+            val brevmottakerPersonMedIdent = BrevmottakerPersonMedIdent.opprettFra(nyBrevmottakerPersonMedIdent)
+
+            // Assert
+            assertThat(brevmottakerPersonMedIdent.personIdent).isEqualTo(nyBrevmottakerPersonMedIdent.personIdent)
+            assertThat(brevmottakerPersonMedIdent.navn).isEqualTo(nyBrevmottakerPersonMedIdent.navn)
+            assertThat(brevmottakerPersonMedIdent.mottakerRolle).isEqualTo(nyBrevmottakerPersonMedIdent.mottakerRolle)
+        }
+    }
+
+    @Nested
     inner class BrevmottakerPersonUtenIdentTest {
         @Test
         fun `skal opprette BrevmottakerPersonUtenIdent fra NyBrevmottakerPersonUtenIdent med oppgitt ID`() {

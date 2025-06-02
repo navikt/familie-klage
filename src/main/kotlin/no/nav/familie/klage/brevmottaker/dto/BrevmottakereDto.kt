@@ -34,13 +34,13 @@ data class BrevmottakereDto(
     }
 }
 
-fun Brevmottakere.tilDto() =
+fun Brevmottakere.tilBrevmottakereDto() =
     BrevmottakereDto(
         personer = this.personer,
         organisasjoner = this.organisasjoner,
     )
 
-fun BrevmottakereDto.tilDomene() =
+fun BrevmottakereDto.tilBrevmottakere() =
     Brevmottakere(
         personer = this.personer,
         organisasjoner = this.organisasjoner,

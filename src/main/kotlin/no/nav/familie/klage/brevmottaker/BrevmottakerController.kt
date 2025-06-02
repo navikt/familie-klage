@@ -3,8 +3,10 @@ package no.nav.familie.klage.brevmottaker
 import no.nav.familie.klage.brevmottaker.dto.BrevmottakereDto
 import no.nav.familie.klage.brevmottaker.dto.NyBrevmottakerDto
 import no.nav.familie.klage.brevmottaker.dto.SlettbarBrevmottakerDto
-import no.nav.familie.klage.brevmottaker.dto.tilDomene
-import no.nav.familie.klage.brevmottaker.dto.tilDto
+import no.nav.familie.klage.brevmottaker.dto.tilBrevmottakere
+import no.nav.familie.klage.brevmottaker.dto.tilBrevmottakereDto
+import no.nav.familie.klage.brevmottaker.dto.tilNyBrevmottaker
+import no.nav.familie.klage.brevmottaker.dto.tilSlettbarBrevmottaker
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -35,7 +37,7 @@ class BrevmottakerController(
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         val brevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
-        return Ressurs.success(brevmottakere.tilDto())
+        return Ressurs.success(brevmottakere.tilBrevmottakereDto())
     }
 
     @PutMapping("/{behandlingId}")
@@ -46,8 +48,8 @@ class BrevmottakerController(
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         brevmottakereDto.valider()
-        val nyeBrevmottakere = brevmottakerService.erstattBrevmottakere(behandlingId, brevmottakereDto.tilDomene())
-        return Ressurs.success(nyeBrevmottakere.tilDto())
+        val nyeBrevmottakere = brevmottakerService.erstattBrevmottakere(behandlingId, brevmottakereDto.tilBrevmottakere())
+        return Ressurs.success(nyeBrevmottakere.tilBrevmottakereDto())
     }
 
     @PostMapping("/{behandlingId}")
@@ -58,9 +60,9 @@ class BrevmottakerController(
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.CREATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         nyBrevmottakerDto.valider()
-        brevmottakerService.opprettBrevmottaker(behandlingId, nyBrevmottakerDto.tilDomene())
+        brevmottakerService.opprettBrevmottaker(behandlingId, nyBrevmottakerDto.tilNyBrevmottaker())
         val brevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
-        return Ressurs.success(brevmottakere.tilDto())
+        return Ressurs.success(brevmottakere.tilBrevmottakereDto())
     }
 
     @DeleteMapping("/{behandlingId}")
@@ -70,9 +72,9 @@ class BrevmottakerController(
     ): Ressurs<BrevmottakereDto> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.DELETE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        brevmottakerService.slettBrevmottaker(behandlingId, slettbarBrevmottakerDto.tilDomene())
+        brevmottakerService.slettBrevmottaker(behandlingId, slettbarBrevmottakerDto.tilSlettbarBrevmottaker())
         val brevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
-        return Ressurs.success(brevmottakere.tilDto())
+        return Ressurs.success(brevmottakere.tilBrevmottakereDto())
     }
 
     @GetMapping("/initielle/{behandlingId}")
@@ -82,6 +84,6 @@ class BrevmottakerController(
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         val brevmottakere = brevmottakerService.utledInitielleBrevmottakere(behandlingId)
-        return Ressurs.success(brevmottakere.tilDto())
+        return Ressurs.success(brevmottakere.tilBrevmottakereDto())
     }
 }

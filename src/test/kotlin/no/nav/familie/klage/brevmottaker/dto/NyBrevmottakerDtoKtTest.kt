@@ -6,6 +6,7 @@ import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
+import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DtoTestUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -14,6 +15,45 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.http.HttpStatus
 
 class NyBrevmottakerDtoKtTest {
+    @Nested
+    inner class NyBrevmottakerPersonDtoTest {
+        @Test
+        fun `skal mappe NyBrevmottakerPersonMedIdentDto til domene`() {
+            // Arrange
+            val nyBrevmottakerPersonMedIdentDto = DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto()
+
+            // Act
+            val domene = nyBrevmottakerPersonMedIdentDto.tilNyBrevmottakerPerson()
+
+            // Assert
+            assertThat(domene).isInstanceOfSatisfying(NyBrevmottakerPersonMedIdent::class.java) {
+                assertThat(it.personIdent).isEqualTo(nyBrevmottakerPersonMedIdentDto.personIdent)
+                assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonMedIdentDto.mottakerRolle)
+                assertThat(it.navn).isEqualTo(nyBrevmottakerPersonMedIdentDto.navn)
+            }
+        }
+
+        @Test
+        fun `skal mappe NyBrevmottakerPersonUtenIdentDto til domene`() {
+            // Arrange
+            val nyBrevmottakerPersonUtenIdentDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto()
+
+            // Act
+            val domene = nyBrevmottakerPersonUtenIdentDto.tilNyBrevmottakerPerson()
+
+            // Assert
+            assertThat(domene).isInstanceOfSatisfying(NyBrevmottakerPersonUtenIdent::class.java) {
+                assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdentDto.mottakerRolle)
+                assertThat(it.navn).isEqualTo(nyBrevmottakerPersonUtenIdentDto.navn)
+                assertThat(it.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdentDto.adresselinje1)
+                assertThat(it.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdentDto.adresselinje2)
+                assertThat(it.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdentDto.postnummer)
+                assertThat(it.poststed).isEqualTo(nyBrevmottakerPersonUtenIdentDto.poststed)
+                assertThat(it.landkode).isEqualTo(nyBrevmottakerPersonUtenIdentDto.landkode)
+            }
+        }
+    }
+
     @Nested
     inner class NyBrevmottakerDtoTest {
         @Test
@@ -31,7 +71,7 @@ class NyBrevmottakerDtoKtTest {
                 )
 
             // Act
-            val nyBrevmottaker = nyBrevmottakerDto.tilDomene()
+            val nyBrevmottaker = nyBrevmottakerDto.tilNyBrevmottaker()
 
             // Assert
             assertThat(nyBrevmottaker).isInstanceOfSatisfying(NyBrevmottakerPersonUtenIdent::class.java) {
@@ -56,7 +96,7 @@ class NyBrevmottakerDtoKtTest {
                 )
 
             // Act
-            val nyBrevmottaker = nyBrevmottakerDto.tilDomene()
+            val nyBrevmottaker = nyBrevmottakerDto.tilNyBrevmottaker()
 
             // Assert
             assertThat(nyBrevmottaker).isInstanceOfSatisfying(NyBrevmottakerPersonMedIdent::class.java) {
@@ -77,7 +117,7 @@ class NyBrevmottakerDtoKtTest {
                 )
 
             // Act
-            val nyBrevmottaker = nyBrevmottakerDto.tilDomene()
+            val nyBrevmottaker = nyBrevmottakerDto.tilNyBrevmottaker()
 
             // Assert
             assertThat(nyBrevmottaker).isInstanceOfSatisfying(NyBrevmottakerOrganisasjon::class.java) {
@@ -100,6 +140,26 @@ class NyBrevmottakerDtoKtTest {
 
             // Assert
             assertThat(type).isEqualTo(NyBrevmottakerDto.Type.ORGANISASJON)
+        }
+
+        @Test
+        fun `skal mappe dto til domene`() {
+            // Arrange
+            val nyBrevmottakerOrganisasjonDto =
+                DtoTestUtil.lagNyBrevmottakerOrganisasjonDto(
+                    organisasjonsnummer = "123",
+                    organisasjonsnavn = "orgnavn",
+                    navnHosOrganisasjon = "navn hos org",
+                )
+
+            // Act
+            val nyBrevmottakerOrganisasjon =
+                nyBrevmottakerOrganisasjonDto.tilNyBrevmottakerOrganisasjon()
+
+            // Assert
+            assertThat(nyBrevmottakerOrganisasjon.organisasjonsnummer).isEqualTo(nyBrevmottakerOrganisasjonDto.organisasjonsnummer)
+            assertThat(nyBrevmottakerOrganisasjon.organisasjonsnavn).isEqualTo(nyBrevmottakerOrganisasjonDto.organisasjonsnavn)
+            assertThat(nyBrevmottakerOrganisasjon.navnHosOrganisasjon).isEqualTo(nyBrevmottakerOrganisasjonDto.navnHosOrganisasjon)
         }
     }
 
@@ -132,6 +192,116 @@ class NyBrevmottakerDtoKtTest {
                 }
             assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.message).isEqualTo("Person med ident kan ikke være ${MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE}")
+        }
+
+        @Test
+        fun `skal returnere false om person ident er ulik`() {
+            // Arrange
+            val nyBrevmottakerPersonMedIdentDto =
+                DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto(
+                    personIdent = "1",
+                    mottakerRolle = MottakerRolle.BRUKER,
+                    navn = "navn",
+                )
+
+            val brevmottakerPersonMedIdent =
+                DomainUtil.lagBrevmottakerPersonMedIdent(
+                    personIdent = "3",
+                    mottakerRolle = MottakerRolle.BRUKER,
+                    navn = "navn",
+                )
+
+            // Act
+            val erLik = nyBrevmottakerPersonMedIdentDto.erLik(brevmottakerPersonMedIdent)
+
+            // Assert
+            assertThat(erLik).isFalse()
+        }
+
+        @Test
+        fun `skal returnere false om navn er ulik`() {
+            // Arrange
+            val nyBrevmottakerPersonMedIdentDto =
+                DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto(
+                    personIdent = "1",
+                    mottakerRolle = MottakerRolle.BRUKER,
+                    navn = "foo",
+                )
+
+            val brevmottakerPersonMedIdent =
+                DomainUtil.lagBrevmottakerPersonMedIdent(
+                    personIdent = "1",
+                    mottakerRolle = MottakerRolle.BRUKER,
+                    navn = "bar",
+                )
+
+            // Act
+            val erLik = nyBrevmottakerPersonMedIdentDto.erLik(brevmottakerPersonMedIdent)
+
+            // Assert
+            assertThat(erLik).isFalse()
+        }
+
+        @Test
+        fun `skal returnere false om mottaker rolle er ulik`() {
+            // Arrange
+            val nyBrevmottakerPersonMedIdentDto =
+                DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto(
+                    personIdent = "1",
+                    mottakerRolle = MottakerRolle.BRUKER,
+                    navn = "navn",
+                )
+
+            val brevmottakerPersonMedIdent =
+                DomainUtil.lagBrevmottakerPersonMedIdent(
+                    personIdent = "1",
+                    mottakerRolle = MottakerRolle.VERGE,
+                    navn = "navn",
+                )
+
+            // Act
+            val erLik = nyBrevmottakerPersonMedIdentDto.erLik(brevmottakerPersonMedIdent)
+
+            // Assert
+            assertThat(erLik).isFalse()
+        }
+
+        @Test
+        fun `skal returnere true om er like`() {
+            // Arrange
+            val nyBrevmottakerPersonMedIdentDto =
+                DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto(
+                    personIdent = "1",
+                    mottakerRolle = MottakerRolle.BRUKER,
+                    navn = "navn",
+                )
+
+            val brevmottakerPersonMedIdent =
+                DomainUtil.lagBrevmottakerPersonMedIdent(
+                    personIdent = "1",
+                    mottakerRolle = MottakerRolle.BRUKER,
+                    navn = "navn",
+                )
+
+            // Act
+            val erLik = nyBrevmottakerPersonMedIdentDto.erLik(brevmottakerPersonMedIdent)
+
+            // Assert
+            assertThat(erLik).isTrue()
+        }
+
+        @Test
+        fun `skal mappe fra dto til domene`() {
+            // Arrange
+            val nyBrevmottakerPersonMedIdentDto = DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto()
+
+            // Act
+            val nyBrevmottakerPersonMedIdent = nyBrevmottakerPersonMedIdentDto.tilNyBrevmottakerPersonMedIdent()
+
+            // Assert
+            assertThat(nyBrevmottakerPersonMedIdent.personIdent).isEqualTo(nyBrevmottakerPersonMedIdentDto.personIdent)
+            assertThat(nyBrevmottakerPersonMedIdent.mottakerRolle).isEqualTo(nyBrevmottakerPersonMedIdentDto.mottakerRolle)
+            assertThat(nyBrevmottakerPersonMedIdent.navn).isEqualTo(nyBrevmottakerPersonMedIdentDto.navn)
         }
     }
 
@@ -425,6 +595,24 @@ class NyBrevmottakerDtoKtTest {
             assertThat(nyBrevmottakerDto.postnummer).isEqualTo("0010")
             assertThat(nyBrevmottakerDto.poststed).isEqualTo("Oslo")
             assertThat(nyBrevmottakerDto.landkode).isEqualTo("NO")
+        }
+
+        @Test
+        fun `skal mappe fra dto til domene`() {
+            // Arrange
+            val nyBrevmottakerPersonUtenIdentDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto()
+
+            // Act
+            val nyBrevmottakerPersonUtenIdent = nyBrevmottakerPersonUtenIdentDto.tilNyBrevmottakerPersonUtenIdent()
+
+            // Assert
+            assertThat(nyBrevmottakerPersonUtenIdent.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdentDto.mottakerRolle)
+            assertThat(nyBrevmottakerPersonUtenIdent.navn).isEqualTo(nyBrevmottakerPersonUtenIdentDto.navn)
+            assertThat(nyBrevmottakerPersonUtenIdent.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdentDto.adresselinje1)
+            assertThat(nyBrevmottakerPersonUtenIdent.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdentDto.adresselinje2)
+            assertThat(nyBrevmottakerPersonUtenIdent.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdentDto.postnummer)
+            assertThat(nyBrevmottakerPersonUtenIdent.poststed).isEqualTo(nyBrevmottakerPersonUtenIdentDto.poststed)
+            assertThat(nyBrevmottakerPersonUtenIdent.landkode).isEqualTo(nyBrevmottakerPersonUtenIdentDto.landkode)
         }
     }
 

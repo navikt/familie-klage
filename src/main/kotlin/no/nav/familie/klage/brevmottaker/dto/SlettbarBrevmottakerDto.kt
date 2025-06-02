@@ -23,7 +23,7 @@ sealed interface SlettbarBrevmottakerDto {
     }
 }
 
-fun SlettbarBrevmottakerDto.tilDomene(): SlettbarBrevmottaker =
+fun SlettbarBrevmottakerDto.tilSlettbarBrevmottaker(): SlettbarBrevmottaker =
     when (this) {
         is SlettbarBrevmottakerOrganisasjonDto -> SlettbarBrevmottakerOrganisasjon(organisasjonsnummer)
         is SlettbarBrevmottakerPersonMedIdentDto -> SlettbarBrevmottakerPersonMedIdent(personIdent)

@@ -99,7 +99,7 @@ internal class HenleggBehandlingServiceTest {
                 behandlingRepository.findByIdOrThrow(any())
             } returns behandling
 
-            henleggBehandlingService.henleggBehandling(behandling.id, HenlagtDto(henlagtÅrsak))
+            henleggBehandlingService.henleggBehandling(behandling.id, henlagtÅrsak)
             assertThat(behandlingSlot.captured.status).isEqualTo(BehandlingStatus.FERDIGSTILT)
             assertThat(behandlingSlot.captured.resultat).isEqualTo(BehandlingResultat.HENLAGT)
             assertThat(behandlingSlot.captured.steg).isEqualTo(StegType.BEHANDLING_FERDIGSTILT)
@@ -116,7 +116,7 @@ internal class HenleggBehandlingServiceTest {
 
             val feil: ApiFeil =
                 org.junit.jupiter.api.assertThrows {
-                    henleggBehandlingService.henleggBehandling(behandling.id, HenlagtDto(henlagtÅrsak))
+                    henleggBehandlingService.henleggBehandling(behandling.id, henlagtÅrsak)
                 }
 
             assertThat(feil.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)

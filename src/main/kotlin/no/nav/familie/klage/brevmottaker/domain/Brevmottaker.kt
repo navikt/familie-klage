@@ -14,6 +14,14 @@ sealed interface Brevmottaker
 sealed interface BrevmottakerPerson : Brevmottaker {
     val navn: String
     val mottakerRolle: MottakerRolle
+
+    companion object {
+        fun opprettFra(nyBrevmottakerPerson: NyBrevmottakerPerson): BrevmottakerPerson =
+            when (nyBrevmottakerPerson) {
+                is NyBrevmottakerPersonMedIdent -> BrevmottakerPersonMedIdent.opprettFra(nyBrevmottakerPerson)
+                is NyBrevmottakerPersonUtenIdent -> BrevmottakerPersonUtenIdent.opprettFra(UUID.randomUUID(), nyBrevmottakerPerson)
+            }
+    }
 }
 
 data class BrevmottakerOrganisasjon(
@@ -27,7 +35,18 @@ data class BrevmottakerPersonMedIdent(
     val personIdent: String,
     override val mottakerRolle: MottakerRolle,
     override val navn: String,
-) : BrevmottakerPerson
+) : BrevmottakerPerson {
+    companion object {
+        fun opprettFra(
+            nyBrevmottakerPersonMedIdent: NyBrevmottakerPersonMedIdent,
+        ): BrevmottakerPersonMedIdent =
+            BrevmottakerPersonMedIdent(
+                personIdent = nyBrevmottakerPersonMedIdent.personIdent,
+                mottakerRolle = nyBrevmottakerPersonMedIdent.mottakerRolle,
+                navn = nyBrevmottakerPersonMedIdent.navn,
+            )
+    }
+}
 
 @JsonDeserialize(`as` = BrevmottakerPersonUtenIdent::class)
 data class BrevmottakerPersonUtenIdent(
@@ -40,7 +59,7 @@ data class BrevmottakerPersonUtenIdent(
     val poststed: String?,
     val landkode: String,
 ) : BrevmottakerPerson {
-    companion object Fabrikk {
+    companion object {
         fun opprettFra(
             id: UUID = UUID.randomUUID(),
             nyBrevmottakerPersonUtenIdent: NyBrevmottakerPersonUtenIdent,
