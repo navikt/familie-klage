@@ -14,7 +14,7 @@ class NyBrevmottakerTest {
         fun `skal kaste exception om landkode er mindre enn 2 tegn`() {
             // Act & assert
             val exception =
-                assertThrows<IllegalStateException> {
+                assertThrows<IllegalArgumentException> {
                     DomainUtil.lagNyBrevmottakerPersonUtenIdent(landkode = "N")
                 }
             assertThat(exception.message).isEqualTo("Ugyldig landkode: N.")
@@ -24,7 +24,7 @@ class NyBrevmottakerTest {
         fun `skal kaste exception om landkode er mer enn 2 tegn`() {
             // Act & assert
             val exception =
-                assertThrows<IllegalStateException> {
+                assertThrows<IllegalArgumentException> {
                     DomainUtil.lagNyBrevmottakerPersonUtenIdent(landkode = "NOR")
                 }
             assertThat(exception.message).isEqualTo("Ugyldig landkode: NOR.")
@@ -34,7 +34,7 @@ class NyBrevmottakerTest {
         fun `skal kaste exception om navn er en tom string`() {
             // Act & assert
             val exception =
-                assertThrows<IllegalStateException> {
+                assertThrows<IllegalArgumentException> {
                     DomainUtil.lagNyBrevmottakerPersonUtenIdent(navn = "")
                 }
             assertThat(exception.message).isEqualTo("Navn kan ikke være tomt.")
@@ -44,7 +44,7 @@ class NyBrevmottakerTest {
         fun `skal kaste exception om navn er en string med kun mellomrom`() {
             // Act & assert
             val exception =
-                assertThrows<IllegalStateException> {
+                assertThrows<IllegalArgumentException> {
                     DomainUtil.lagNyBrevmottakerPersonUtenIdent(navn = " ")
                 }
             assertThat(exception.message).isEqualTo("Navn kan ikke være tomt.")
@@ -54,7 +54,7 @@ class NyBrevmottakerTest {
         fun `skal kaste exception om adresselinje1 er en tom string`() {
             // Act & assert
             val exception =
-                assertThrows<IllegalStateException> {
+                assertThrows<IllegalArgumentException> {
                     DomainUtil.lagNyBrevmottakerPersonUtenIdent(adresselinje1 = "")
                 }
             assertThat(exception.message).isEqualTo("Adresselinje1 kan ikke være tomt.")
@@ -64,7 +64,7 @@ class NyBrevmottakerTest {
         fun `skal kaste exception om adresselinje1 er en string med kun mellomrom`() {
             // Act & assert
             val exception =
-                assertThrows<IllegalStateException> {
+                assertThrows<IllegalArgumentException> {
                     DomainUtil.lagNyBrevmottakerPersonUtenIdent(adresselinje1 = " ")
                 }
             assertThat(exception.message).isEqualTo("Adresselinje1 kan ikke være tomt.")
@@ -74,7 +74,7 @@ class NyBrevmottakerTest {
         fun `skal kaste exception om postnummer er null og landkode er NO`() {
             // Act & assert
             val exception =
-                assertThrows<IllegalStateException> {
+                assertThrows<IllegalArgumentException> {
                     DomainUtil.lagNyBrevmottakerPersonUtenIdent(landkode = "NO", postnummer = null)
                 }
             assertThat(exception.message).isEqualTo("Når landkode er NO (Norge) må postnummer være satt.")
@@ -84,7 +84,7 @@ class NyBrevmottakerTest {
         fun `skal kaste exception om poststed er null og landkode er NO`() {
             // Act & assert
             val exception =
-                assertThrows<IllegalStateException> {
+                assertThrows<IllegalArgumentException> {
                     DomainUtil.lagNyBrevmottakerPersonUtenIdent(landkode = "NO", poststed = null)
                 }
             assertThat(exception.message).isEqualTo("Når landkode er NO (Norge) må poststed være satt.")
@@ -94,7 +94,7 @@ class NyBrevmottakerTest {
         fun `skal kaste exception om postnummer ikke inneholder kun tall og landkode er NO`() {
             // Act & assert
             val exception =
-                assertThrows<IllegalStateException> {
+                assertThrows<IllegalArgumentException> {
                     DomainUtil.lagNyBrevmottakerPersonUtenIdent(landkode = "NO", postnummer = "123T")
                 }
             assertThat(exception.message).isEqualTo("Postnummer må være 4 siffer.")
@@ -104,7 +104,7 @@ class NyBrevmottakerTest {
         fun `skal kaste exception om postnummer er mindre enn 4 tegn og landkode er NO`() {
             // Act & assert
             val exception =
-                assertThrows<IllegalStateException> {
+                assertThrows<IllegalArgumentException> {
                     DomainUtil.lagNyBrevmottakerPersonUtenIdent(landkode = "NO", postnummer = "123")
                 }
             assertThat(exception.message).isEqualTo("Postnummer må være 4 siffer.")
@@ -114,7 +114,7 @@ class NyBrevmottakerTest {
         fun `skal kaste exception om postnummer er mer enn 4 tegn og landkode er NO`() {
             // Act & assert
             val exception =
-                assertThrows<IllegalStateException> {
+                assertThrows<IllegalArgumentException> {
                     DomainUtil.lagNyBrevmottakerPersonUtenIdent(landkode = "NO", postnummer = "12345")
                 }
             assertThat(exception.message).isEqualTo("Postnummer må være 4 siffer.")
@@ -124,7 +124,7 @@ class NyBrevmottakerTest {
         fun `skal kaste exception om mottakertype er bruker med utenlandsk adresse og landkode er NO`() {
             // Act & assert
             val exception =
-                assertThrows<IllegalStateException> {
+                assertThrows<IllegalArgumentException> {
                     DomainUtil.lagNyBrevmottakerPersonUtenIdent(
                         landkode = "NO",
                         mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
@@ -137,7 +137,7 @@ class NyBrevmottakerTest {
         fun `skal kaste exception om postnummer ikke er null og landkode ikke er NO`() {
             // Act & assert
             val exception =
-                assertThrows<IllegalStateException> {
+                assertThrows<IllegalArgumentException> {
                     DomainUtil.lagNyBrevmottakerPersonUtenIdent(landkode = "BR", postnummer = "1234", poststed = null)
                 }
             assertThat(exception.message).isEqualTo("Ved utenlandsk landkode må postnummer settes i adresselinje 1.")
@@ -147,7 +147,7 @@ class NyBrevmottakerTest {
         fun `skal kaste exception om poststed ikke er null og landkode ikke er NO`() {
             // Act & assert
             val exception =
-                assertThrows<IllegalStateException> {
+                assertThrows<IllegalArgumentException> {
                     DomainUtil.lagNyBrevmottakerPersonUtenIdent(landkode = "BR", postnummer = null, poststed = "Harstad")
                 }
             assertThat(exception.message).isEqualTo("Ved utenlandsk landkode må poststed settes i adresselinje 1.")
@@ -208,7 +208,7 @@ class NyBrevmottakerTest {
         fun `skal kaste exception om person ident er blank`() {
             // Act & assert
             val exception =
-                assertThrows<IllegalStateException> {
+                assertThrows<IllegalArgumentException> {
                     NyBrevmottakerPersonMedIdent(
                         personIdent = "",
                         mottakerRolle = MottakerRolle.BRUKER,
@@ -222,7 +222,7 @@ class NyBrevmottakerTest {
         fun `skal kaste exception om nav er blank`() {
             // Act & assert
             val exception =
-                assertThrows<IllegalStateException> {
+                assertThrows<IllegalArgumentException> {
                     NyBrevmottakerPersonMedIdent(
                         personIdent = "12345678903",
                         mottakerRolle = MottakerRolle.BRUKER,

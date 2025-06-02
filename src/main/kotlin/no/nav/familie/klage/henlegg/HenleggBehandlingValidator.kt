@@ -32,7 +32,7 @@ class HenleggBehandlingValidator(
         val erBrevmottakerBrukerLik = brevmottakerBrukerFraDto != null && brevmottakerBrukerFraDto.erLik(brevmottakerBrukerFraBehandling)
 
         if (brevmottakerBrukerFraDto != null && !erBrevmottakerBrukerLik) {
-            throw ApiFeil.badRequest("Bruker fra dto er ulik bruker utledet fra behandlingen.")
+            throw ApiFeil.badRequest("Innsendt bruker samsvarer ikke med bruker utledet fra behandlingen.")
         }
     }
 }

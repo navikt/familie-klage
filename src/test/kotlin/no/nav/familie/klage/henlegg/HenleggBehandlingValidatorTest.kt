@@ -198,7 +198,7 @@ class HenleggBehandlingValidatorTest {
                 assertThrows<ApiFeil> {
                     henleggBehandlingValidator.validerHenleggBehandlingDto(behandlingId, henleggBehandlingDto)
                 }
-            assertThat(exception.message).isEqualTo("Bruker fra dto er ulik bruker utledet fra behandlingen.")
+            assertThat(exception.message).isEqualTo("Innsendt bruker samsvarer ikke med bruker utledet fra behandlingen.")
         }
     }
 }
