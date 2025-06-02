@@ -1,7 +1,7 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.brevmottaker.dto.BrevmottakereDto
-import no.nav.familie.klage.brevmottaker.dto.tilDto
+import no.nav.familie.klage.brevmottaker.dto.tilBrevmottakereDto
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -47,7 +47,7 @@ class BrevController(
     ): Ressurs<BrevmottakereDto> {
         tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
-        return Ressurs.success(brevService.hentBrevmottakere(behandlingId).tilDto())
+        return Ressurs.success(brevService.hentBrevmottakere(behandlingId).tilBrevmottakereDto())
     }
 
     @PostMapping("/{behandlingId}/mottakere")

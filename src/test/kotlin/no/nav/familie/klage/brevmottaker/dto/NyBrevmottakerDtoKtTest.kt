@@ -23,7 +23,7 @@ class NyBrevmottakerDtoKtTest {
             val nyBrevmottakerPersonMedIdentDto = DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto()
 
             // Act
-            val domene = (nyBrevmottakerPersonMedIdentDto as NyBrevmottakerPersonDto).tilDomene()
+            val domene = nyBrevmottakerPersonMedIdentDto.tilNyBrevmottakerPerson()
 
             // Assert
             assertThat(domene).isInstanceOfSatisfying(NyBrevmottakerPersonMedIdent::class.java) {
@@ -39,7 +39,7 @@ class NyBrevmottakerDtoKtTest {
             val nyBrevmottakerPersonUtenIdentDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto()
 
             // Act
-            val domene = (nyBrevmottakerPersonUtenIdentDto as NyBrevmottakerPersonDto).tilDomene()
+            val domene = nyBrevmottakerPersonUtenIdentDto.tilNyBrevmottakerPerson()
 
             // Assert
             assertThat(domene).isInstanceOfSatisfying(NyBrevmottakerPersonUtenIdent::class.java) {
@@ -71,7 +71,7 @@ class NyBrevmottakerDtoKtTest {
                 )
 
             // Act
-            val nyBrevmottaker = (nyBrevmottakerDto as NyBrevmottakerDto).tilDomene()
+            val nyBrevmottaker = nyBrevmottakerDto.tilNyBrevmottaker()
 
             // Assert
             assertThat(nyBrevmottaker).isInstanceOfSatisfying(NyBrevmottakerPersonUtenIdent::class.java) {
@@ -96,7 +96,7 @@ class NyBrevmottakerDtoKtTest {
                 )
 
             // Act
-            val nyBrevmottaker = (nyBrevmottakerDto as NyBrevmottakerDto).tilDomene()
+            val nyBrevmottaker = nyBrevmottakerDto.tilNyBrevmottaker()
 
             // Assert
             assertThat(nyBrevmottaker).isInstanceOfSatisfying(NyBrevmottakerPersonMedIdent::class.java) {
@@ -117,7 +117,7 @@ class NyBrevmottakerDtoKtTest {
                 )
 
             // Act
-            val nyBrevmottaker = (nyBrevmottakerDto as NyBrevmottakerDto).tilDomene()
+            val nyBrevmottaker = nyBrevmottakerDto.tilNyBrevmottaker()
 
             // Assert
             assertThat(nyBrevmottaker).isInstanceOfSatisfying(NyBrevmottakerOrganisasjon::class.java) {
@@ -140,6 +140,26 @@ class NyBrevmottakerDtoKtTest {
 
             // Assert
             assertThat(type).isEqualTo(NyBrevmottakerDto.Type.ORGANISASJON)
+        }
+
+        @Test
+        fun `skal mappe dto til domene`() {
+            // Arrange
+            val nyBrevmottakerOrganisasjonDto =
+                DtoTestUtil.lagNyBrevmottakerOrganisasjonDto(
+                    organisasjonsnummer = "123",
+                    organisasjonsnavn = "orgnavn",
+                    navnHosOrganisasjon = "navn hos org",
+                )
+
+            // Act
+            val nyBrevmottakerOrganisasjon =
+                nyBrevmottakerOrganisasjonDto.tilNyBrevmottakerOrganisasjon()
+
+            // Assert
+            assertThat(nyBrevmottakerOrganisasjon.organisasjonsnummer).isEqualTo(nyBrevmottakerOrganisasjonDto.organisasjonsnummer)
+            assertThat(nyBrevmottakerOrganisasjon.organisasjonsnavn).isEqualTo(nyBrevmottakerOrganisasjonDto.organisasjonsnavn)
+            assertThat(nyBrevmottakerOrganisasjon.navnHosOrganisasjon).isEqualTo(nyBrevmottakerOrganisasjonDto.navnHosOrganisasjon)
         }
     }
 
@@ -268,6 +288,20 @@ class NyBrevmottakerDtoKtTest {
 
             // Assert
             assertThat(erLik).isTrue()
+        }
+
+        @Test
+        fun `skal mappe fra dto til domene`() {
+            // Arrange
+            val nyBrevmottakerPersonMedIdentDto = DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto()
+
+            // Act
+            val nyBrevmottakerPersonMedIdent = nyBrevmottakerPersonMedIdentDto.tilNyBrevmottakerPersonMedIdent()
+
+            // Assert
+            assertThat(nyBrevmottakerPersonMedIdent.personIdent).isEqualTo(nyBrevmottakerPersonMedIdentDto.personIdent)
+            assertThat(nyBrevmottakerPersonMedIdent.mottakerRolle).isEqualTo(nyBrevmottakerPersonMedIdentDto.mottakerRolle)
+            assertThat(nyBrevmottakerPersonMedIdent.navn).isEqualTo(nyBrevmottakerPersonMedIdentDto.navn)
         }
     }
 
@@ -561,6 +595,24 @@ class NyBrevmottakerDtoKtTest {
             assertThat(nyBrevmottakerDto.postnummer).isEqualTo("0010")
             assertThat(nyBrevmottakerDto.poststed).isEqualTo("Oslo")
             assertThat(nyBrevmottakerDto.landkode).isEqualTo("NO")
+        }
+
+        @Test
+        fun `skal mappe fra dto til domene`() {
+            // Arrange
+            val nyBrevmottakerPersonUtenIdentDto = DtoTestUtil.lagNyBrevmottakerPersonUtenIdentDto()
+
+            // Act
+            val nyBrevmottakerPersonUtenIdent = nyBrevmottakerPersonUtenIdentDto.tilNyBrevmottakerPersonUtenIdent()
+
+            // Assert
+            assertThat(nyBrevmottakerPersonUtenIdent.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdentDto.mottakerRolle)
+            assertThat(nyBrevmottakerPersonUtenIdent.navn).isEqualTo(nyBrevmottakerPersonUtenIdentDto.navn)
+            assertThat(nyBrevmottakerPersonUtenIdent.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdentDto.adresselinje1)
+            assertThat(nyBrevmottakerPersonUtenIdent.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdentDto.adresselinje2)
+            assertThat(nyBrevmottakerPersonUtenIdent.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdentDto.postnummer)
+            assertThat(nyBrevmottakerPersonUtenIdent.poststed).isEqualTo(nyBrevmottakerPersonUtenIdentDto.poststed)
+            assertThat(nyBrevmottakerPersonUtenIdent.landkode).isEqualTo(nyBrevmottakerPersonUtenIdentDto.landkode)
         }
     }
 

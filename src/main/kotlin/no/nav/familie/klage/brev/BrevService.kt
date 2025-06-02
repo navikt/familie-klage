@@ -22,7 +22,7 @@ import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPerson
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPerson
 import no.nav.familie.klage.brevmottaker.dto.BrevmottakereDto
-import no.nav.familie.klage.brevmottaker.dto.tilDomene
+import no.nav.familie.klage.brevmottaker.dto.tilBrevmottakere
 import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
@@ -76,18 +76,18 @@ class BrevService(
 
     fun settBrevmottakere(
         behandlingId: UUID,
-        brevmottakere: BrevmottakereDto,
+        brevmottakereDto: BrevmottakereDto,
     ) {
         val behandling = behandlingService.hentBehandling(behandlingId)
         validerKanLageBrev(behandling)
 
-        val mottakere = brevmottakere.tilDomene()
+        val brevmottakere = brevmottakereDto.tilBrevmottakere()
 
-        validerUnikeBrevmottakere(mottakere)
-        validerMinimumEnMottaker(mottakere)
+        validerUnikeBrevmottakere(brevmottakere)
+        validerMinimumEnMottaker(brevmottakere)
 
         val brev = brevRepository.findByIdOrThrow(behandlingId)
-        brevRepository.update(brev.copy(mottakere = mottakere))
+        brevRepository.update(brev.copy(mottakere = brevmottakere))
     }
 
     fun lagBrev(behandlingId: UUID): ByteArray {
