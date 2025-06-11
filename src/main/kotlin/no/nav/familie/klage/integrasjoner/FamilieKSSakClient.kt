@@ -1,8 +1,6 @@
 package no.nav.familie.klage.integrasjoner
 
 import no.nav.familie.http.client.AbstractRestClient
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.getDataOrThrow
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
@@ -20,7 +18,6 @@ import java.util.UUID
 class FamilieKSSakClient(
     @Qualifier("azure") restOperations: RestOperations,
     @Value("\${FAMILIE_KS_SAK_URL}") private val familieKsSakUri: URI,
-    private val featureToggleService: FeatureToggleService,
 ) : AbstractRestClient(restOperations, "familie.ks.sak") {
     fun hentVedtak(eksternFagsakId: String): List<FagsystemVedtak> {
         val hentVedtakUri =
@@ -46,16 +43,10 @@ class FamilieKSSakClient(
         eksternFagsakId: String,
         eksternBehandlingId: UUID,
     ): OpprettRevurderingResponse {
-        val url =
-            if (featureToggleService.isEnabled(Toggle.SEND_BEHANDLING_ID_VED_OPPRETTING_AV_REVURDERING_KLAGE)) {
-                "api/ekstern/fagsak/$eksternFagsakId/klagebehandling/$eksternBehandlingId/opprett-revurdering-klage"
-            } else {
-                "api/ekstern/fagsaker/$eksternFagsakId/opprett-revurdering-klage"
-            }
         val hentVedtakUri =
             UriComponentsBuilder
                 .fromUri(familieKsSakUri)
-                .pathSegment(url)
+                .pathSegment("api/ekstern/fagsak/$eksternFagsakId/klagebehandling/$eksternBehandlingId/opprett-revurdering-klage")
                 .build()
                 .toUri()
         return postForEntity<Ressurs<OpprettRevurderingResponse>>(hentVedtakUri, emptyMap<String, String>()).getDataOrThrow()
