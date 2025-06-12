@@ -26,10 +26,6 @@ enum class Toggle(
     KAN_MELLOMLAGRE_VURDERING("familie-klage.kan-mellomlagre-vurdering", "Release"),
     SKAL_BRUKE_KABAL_API_V4("familie-klage.skal-bruke-kabal-api-v4", "Release"),
     SKAL_BRUKE_NY_LØYPE_FOR_JOURNALFØRING("familie-klage.skal-bruke-ny-loype-for-journalforing", "Release"),
-    SEND_BEHANDLING_ID_VED_OPPRETTING_AV_REVURDERING_KLAGE(
-        "familie-klage.send-behandlingid-ved-oppretting-av-revurdering-klage",
-        "Release",
-    ),
     BRUK_NY_HENLEGG_BEHANDLING_MODAL("familie-klage.bruk-ny-henlegg-behandling-modal", "Release"),
     ;
 
