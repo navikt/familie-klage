@@ -162,8 +162,10 @@ class BrevService(
                     fun getOrThrow(
                         verdi: String?,
                         felt: String,
-                    ) = verdi
-                        ?: throw Feil("Behandling med resultat $behandlingResultat mangler $felt for generering av brev")
+                    ): String {
+                        brukerfeilHvis(verdi == null) { "Feltet '$felt' er påkrevd og må fylles ut." }
+                        return verdi
+                    }
 
                     val klagefristUnntakOppfylt =
                         formkrav.klagefristOverholdtUnntak in
