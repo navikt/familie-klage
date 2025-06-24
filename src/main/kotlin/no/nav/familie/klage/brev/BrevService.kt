@@ -39,6 +39,8 @@ import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
+import no.nav.familie.klage.vurdering.VurderingValidator.validerVurdering
+import no.nav.familie.klage.vurdering.dto.tilDto
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
@@ -159,12 +161,6 @@ class BrevService(
                         klageMottatt = klageMottatt,
                     )
                 } else {
-                    fun getOrThrow(
-                        verdi: String?,
-                        felt: String,
-                    ) = verdi
-                        ?: throw Feil("Behandling med resultat $behandlingResultat mangler $felt for generering av brev")
-
                     val klagefristUnntakOppfylt =
                         formkrav.klagefristOverholdtUnntak in
                             listOf(FormkravFristUnntak.UNNTAK_SÆRLIG_GRUNN, FormkravFristUnntak.UNNTAK_KAN_IKKE_LASTES)
@@ -173,20 +169,20 @@ class BrevService(
                         "Hvis unntak for klagefrist er oppfylt, må begrunnelse fylles ut i fritekstfelt"
                     }
 
-                    val dokumentasjonOgUtredning = getOrThrow(vurdering?.dokumentasjonOgUtredning, "dokumentasjonOgUtredning")
-                    val spørsmåletISaken = getOrThrow(vurdering?.spørsmåletISaken, "spørsmåletISaken")
-                    val aktuelleRettskilder = getOrThrow(vurdering?.aktuelleRettskilder, "aktuelleRettskilder")
-                    val klagersAnførsler = getOrThrow(vurdering?.klagersAnførsler, "klagersAnførsler")
-                    val vurderingAvKlagen = getOrThrow(vurdering?.vurderingAvKlagen, "vurderingAvKlagen")
+                    feilHvis(vurdering == null) {
+                        "Behandling ${behandling.id} mangler vurdering for generering av brev"
+                    }
+
+                    validerVurdering(vurdering.tilDto(), fagsak.fagsystem)
 
                     brevInnholdUtleder.lagOpprettholdelseBrev(
                         ident = fagsak.hentAktivIdent(),
                         klagefristUnntakBegrunnelse = if (klagefristUnntakOppfylt) formkrav.brevtekst else null,
-                        dokumentasjonOgUtredning = dokumentasjonOgUtredning,
-                        spørsmåletISaken = spørsmåletISaken,
-                        aktuelleRettskilder = aktuelleRettskilder,
-                        klagersAnførsler = klagersAnførsler,
-                        vurderingAvKlagen = vurderingAvKlagen,
+                        dokumentasjonOgUtredning = vurdering.dokumentasjonOgUtredning!!,
+                        spørsmåletISaken = vurdering.spørsmåletISaken!!,
+                        aktuelleRettskilder = vurdering.aktuelleRettskilder!!,
+                        klagersAnførsler = vurdering.klagersAnførsler!!,
+                        vurderingAvKlagen = vurdering.vurderingAvKlagen!!,
                         navn = navn,
                         stønadstype = fagsak.stønadstype,
                         påklagetVedtakDetaljer = påklagetVedtakDetaljer,

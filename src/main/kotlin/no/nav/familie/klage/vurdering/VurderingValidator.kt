@@ -1,5 +1,6 @@
 package no.nav.familie.klage.vurdering
 
+import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.dto.VurderingDto
@@ -65,7 +66,7 @@ object VurderingValidator {
                         felterSomMangler.add("'Vurdering av klagen'")
                     }
 
-                    feilHvis(felterSomMangler.isNotEmpty()) {
+                    brukerfeilHvis(felterSomMangler.isNotEmpty()) {
                         val felterSomManglerFormatert =
                             if (felterSomMangler.size > 1) {
                                 "Feltene ${
