@@ -69,24 +69,18 @@ class EksternBehandlingController(
             "Ugyldig fagsystem: $fagsystem. Endepunkt støtter kun BA og KS."
         }
 
-        val behandlinger = hentBehandlingerBAKS(eksternFagsakId, fagsystem)
-
-        return Ressurs.success(behandlinger)
-    }
-
-    private fun hentBehandlingerBAKS(
-        eksternFagsakId: String,
-        fagsystem: Fagsystem,
-    ): List<KlagebehandlingDto> {
         tilgangService.validerTilgangTilEksternFagsak(eksternFagsakId = eksternFagsakId, fagsystem = fagsystem, event = AuditLoggerEvent.ACCESS)
 
         logger.info("Henter klagebehandlinger for eksternFagsakId=$eksternFagsakId")
 
-        return behandlingService
-            .finnKlagebehandlingsresultat(
-                eksternFagsakId = eksternFagsakId,
-                fagsystem = fagsystem,
-            ).map { it.tilEksternKlagebehandlingDto(behandlingService.hentKlageresultatDto(it.id)) }
+        val behandlinger =
+            behandlingService
+                .finnKlagebehandlingsresultat(
+                    eksternFagsakId = eksternFagsakId,
+                    fagsystem = fagsystem,
+                ).map { it.tilEksternKlagebehandlingDto(behandlingService.hentKlageresultatDto(it.id)) }
+
+        return Ressurs.success(behandlinger)
     }
 
     private fun validerTilgang(behandlinger: Map<String, List<KlagebehandlingDto>>) {
