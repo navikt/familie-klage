@@ -1,6 +1,7 @@
 package no.nav.familie.klage.integrasjoner
 
 import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.klage.felles.dto.Tilgang
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.getDataOrThrow
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
@@ -50,5 +51,15 @@ class FamilieBASakClient(
                 .build()
                 .toUri()
         return postForEntity<Ressurs<OpprettRevurderingResponse>>(hentVedtakUri, emptyMap<String, String>()).getDataOrThrow()
+    }
+
+    fun harTilgangTilFagsak(eksternFagsakId: String): Tilgang {
+        val tilgangUri =
+            UriComponentsBuilder
+                .fromUri(familieBaSakUri)
+                .pathSegment("api/klage/fagsak/$eksternFagsakId/har-tilgang")
+                .build()
+                .toUri()
+        return getForEntity<Ressurs<Tilgang>>(tilgangUri).getDataOrThrow()
     }
 }

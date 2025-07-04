@@ -31,7 +31,7 @@ class VedleggController(
     fun finnVedleggForBehandling(
         @PathVariable behandlingId: UUID,
     ): Ressurs<List<DokumentinfoDto>> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(vedleggService.finnVedleggPåBehandling(behandlingId))
     }

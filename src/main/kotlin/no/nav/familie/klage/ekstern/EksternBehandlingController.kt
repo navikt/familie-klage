@@ -53,14 +53,46 @@ class EksternBehandlingController(
         val antallTreff = behandlinger.entries.associate { it.key to it.value.size }
         logger.info("Henter klagebehandlingsresultat for eksternFagsakIder=$eksternFagsakIder antallTreff=$antallTreff")
         validerTilgang(behandlinger)
+        return Ressurs.success(behandlinger)
+    }
+
+    @GetMapping("/baks/{fagsystem}")
+    fun hentBehandlingerBAKS(
+        @PathVariable fagsystem: Fagsystem,
+        @RequestParam("eksternFagsakId") eksternFagsakId: String,
+    ): Ressurs<List<KlagebehandlingDto>> {
+        feilHvis(eksternFagsakId.isBlank()) {
+            "Mangler eksternFagsakId i query param"
+        }
+
+        feilHvis(fagsystem !in listOf(Fagsystem.BA, Fagsystem.KS)) {
+            "Ugyldig fagsystem: $fagsystem. Endepunkt støtter kun BA og KS."
+        }
+
+        val behandlinger = hentBehandlingerBAKS(eksternFagsakId, fagsystem)
 
         return Ressurs.success(behandlinger)
     }
 
+    private fun hentBehandlingerBAKS(
+        eksternFagsakId: String,
+        fagsystem: Fagsystem,
+    ): List<KlagebehandlingDto> {
+        tilgangService.validerTilgangTilEksternFagsak(eksternFagsakId = eksternFagsakId, fagsystem = fagsystem, event = AuditLoggerEvent.ACCESS)
+
+        logger.info("Henter klagebehandlinger for eksternFagsakId=$eksternFagsakId")
+
+        return behandlingService
+            .finnKlagebehandlingsresultat(
+                eksternFagsakId = eksternFagsakId,
+                fagsystem = fagsystem,
+            ).map { it.tilEksternKlagebehandlingDto(behandlingService.hentKlageresultatDto(it.id)) }
+    }
+
     private fun validerTilgang(behandlinger: Map<String, List<KlagebehandlingDto>>) {
-        behandlinger.entries.flatMap { it.value }.map { it.fagsakId }.distinct().forEach {
-            tilgangService.validerTilgangTilPersonMedRelasjonerForFagsak(it, AuditLoggerEvent.ACCESS)
-            tilgangService.validerHarVeilederrolleTilStønadForFagsak(it)
+        behandlinger.entries.flatMap { it.value }.map { it.fagsakId }.distinct().forEach { fagsakId ->
+            tilgangService.validerTilgangTilFagsak(fagsakId, AuditLoggerEvent.ACCESS)
+            tilgangService.validerHarVeilederrolleTilStønadForFagsak(fagsakId)
         }
     }
 

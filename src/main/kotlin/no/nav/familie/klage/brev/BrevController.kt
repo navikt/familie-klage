@@ -27,7 +27,7 @@ class BrevController(
     fun hentBrevPdf(
         @PathVariable behandlingId: UUID,
     ): Ressurs<ByteArray> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(brevService.hentBrevPdf(behandlingId))
     }
@@ -36,7 +36,7 @@ class BrevController(
     fun lagEllerOppdaterBrev(
         @PathVariable behandlingId: UUID,
     ): Ressurs<ByteArray> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(brevService.lagBrev(behandlingId))
     }
@@ -45,7 +45,7 @@ class BrevController(
     fun hentBrevmottakere(
         @PathVariable behandlingId: UUID,
     ): Ressurs<BrevmottakereDto> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(brevService.hentBrevmottakere(behandlingId).tilBrevmottakereDto())
     }
@@ -55,7 +55,7 @@ class BrevController(
         @PathVariable behandlingId: UUID,
         @RequestBody mottakere: BrevmottakereDto,
     ): Ressurs<BrevmottakereDto> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         brevService.settBrevmottakere(behandlingId, mottakere)
         return Ressurs.success(mottakere)

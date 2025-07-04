@@ -35,7 +35,7 @@ class HenleggBehandlingController(
         @RequestBody henleggBehandlingDto: HenleggBehandlingDto,
     ): Ressurs<Unit> {
         logger.info("Henlegger behandling=$behandlingId")
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         henleggBehandlingValidator.validerHenleggBehandlingDto(behandlingId, henleggBehandlingDto)
         if (henleggBehandlingDto.skalSendeHenleggelsesbrev) {
@@ -49,7 +49,7 @@ class HenleggBehandlingController(
     fun genererHenleggBrev(
         @PathVariable behandlingId: UUID,
     ): Ressurs<ByteArray> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(brevService.genererHenleggelsesbrev(behandlingId))
     }
