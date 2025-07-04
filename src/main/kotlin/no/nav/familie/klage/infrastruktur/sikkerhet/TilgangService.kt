@@ -87,7 +87,7 @@ class TilgangService(
         fagsystem: Fagsystem,
         event: AuditLoggerEvent,
     ) {
-        val fagsak = fagsakService.hentFagsakForEksternIdOgFagsystem(eksternId = eksternFagsakId, fagsystem = fagsystem)
+        val fagsak = hentFagsakForEksternIdOgFagsystem(eksternFagsakId = eksternFagsakId, fagsystem = fagsystem)
         val personIdent = fagsak.hentAktivIdent()
 
         val tilgang =
@@ -219,6 +219,14 @@ class TilgangService(
     private fun hentFagsakForBehandling(behandlingId: UUID): Fagsak =
         cacheManager.getValue("fagsakForBehandling", behandlingId) {
             fagsakService.hentFagsakForBehandling(behandlingId)
+        }
+
+    private fun hentFagsakForEksternIdOgFagsystem(
+        eksternFagsakId: String,
+        fagsystem: Fagsystem,
+    ): Fagsak =
+        cacheManager.getValue("fagsakForEksternIdOgFagsystem", eksternFagsakId) {
+            fagsakService.hentFagsakForEksternIdOgFagsystem(eksternFagsakId, fagsystem)
         }
 
     private fun validerHarRolleForBehandling(
