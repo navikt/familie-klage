@@ -54,6 +54,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
     "mock-ereg",
     "mock-inntekt",
     "mock-fullmakt",
+    "mock-featuretoggle",
 )
 @EnableMockOAuth2Server
 abstract class OppslagSpringRunnerTest {

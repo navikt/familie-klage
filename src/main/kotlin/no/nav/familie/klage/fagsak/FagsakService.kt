@@ -47,6 +47,22 @@ class FagsakService(
             ?: throw Feil("Finner ikke fagsak til behandlingId=$behandlingId")
     }
 
+    fun hentFagsakForEksternIdOgFagsystem(
+        eksternId: String,
+        fagsystem: Fagsystem,
+        stønadstype: Stønadstype? = null,
+    ): Fagsak {
+        val stønadstype =
+            stønadstype ?: when (fagsystem) {
+                Fagsystem.KS -> Stønadstype.KONTANTSTØTTE
+                Fagsystem.BA -> Stønadstype.BARNETRYGD
+                else -> throw Feil("Stønadstype må spesifiseres for fagsystem $fagsystem")
+            }
+        val fagsak = fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(eksternId, fagsystem, stønadstype)
+        return fagsak?.tilFagsakMedPerson(fagsakPersonService.hentIdenter(fagsak.fagsakPersonId))
+            ?: throw Feil("Finner ikke fagsak for eksternId=$eksternId, fagsystem=$fagsystem og stønadstype=$stønadstype")
+    }
+
     private fun opprettFagsak(
         stønadstype: Stønadstype,
         eksternId: String,
