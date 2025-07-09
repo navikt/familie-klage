@@ -48,7 +48,7 @@ class BehandlingController(
     fun hentBehandling(
         @PathVariable behandlingId: UUID,
     ): Ressurs<BehandlingDto> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(behandlingService.hentBehandlingDto(behandlingId))
     }
@@ -57,7 +57,7 @@ class BehandlingController(
     fun ferdigstillBehandling(
         @PathVariable behandlingId: UUID,
     ): Ressurs<Unit> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.CREATE)
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.CREATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId))
     }
@@ -66,7 +66,7 @@ class BehandlingController(
     fun hentFagsystemVedtak(
         @PathVariable behandlingId: UUID,
     ): Ressurs<List<FagsystemVedtak>> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(fagsystemVedtakService.hentFagsystemVedtak(behandlingId))
     }
@@ -75,7 +75,7 @@ class BehandlingController(
     fun kanOppretteRevurdering(
         @PathVariable behandlingId: UUID,
     ): Ressurs<KanOppretteRevurderingResponse> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(opprettRevurderingService.kanOppretteRevurdering(behandlingId))
     }
@@ -84,7 +84,7 @@ class BehandlingController(
     fun hentAnsvarligSaksbehandlerForBehandling(
         @PathVariable behandlingId: UUID,
     ): Ressurs<SaksbehandlerDto> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
+        tilgangService.validerTilgangTilBehandling(
             behandlingId = behandlingId,
             event = AuditLoggerEvent.ACCESS,
         )
@@ -97,7 +97,7 @@ class BehandlingController(
     fun hentOppgave(
         @PathVariable behandlingId: UUID,
     ): Ressurs<OppgaveDto?> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
+        tilgangService.validerTilgangTilBehandling(
             behandlingId = behandlingId,
             event = AuditLoggerEvent.ACCESS,
         )
@@ -121,7 +121,7 @@ class BehandlingController(
         @PathVariable behandlingId: UUID,
         @RequestBody settPåVentRequest: SettPåVentRequest,
     ): Ressurs<UUID> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
+        tilgangService.validerTilgangTilBehandling(
             behandlingId = behandlingId,
             event = AuditLoggerEvent.UPDATE,
         )
@@ -135,7 +135,7 @@ class BehandlingController(
     fun taAvVent(
         @PathVariable behandlingId: UUID,
     ): Ressurs<UUID> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
+        tilgangService.validerTilgangTilBehandling(
             behandlingId = behandlingId,
             event = AuditLoggerEvent.UPDATE,
         )
@@ -150,7 +150,7 @@ class BehandlingController(
         @PathVariable behandlingId: UUID,
         @RequestBody oppdaterBehandlendeEnhetDto: OppdaterBehandlendeEnhetDto,
     ): Ressurs<UUID> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
+        tilgangService.validerTilgangTilBehandling(
             behandlingId = behandlingId,
             event = AuditLoggerEvent.UPDATE,
         )
