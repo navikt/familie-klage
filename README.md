@@ -2,21 +2,24 @@
 App for behandling av klager (team familie)
 
 ## Bygging lokalt
-Appen kjører på JRE 11. Bygging gjøres ved å kjøre `mvn clean install`.
+Se pom.xml for java-versjon. Bygging gjøres ved å kjøre `mvn clean install`.
 
 ### Autentisering lokalt
 Dersom man vil gjøre autentiserte kall mot andre tjenester eller vil kjøre applikasjonen sammen med frontend, må man sette opp følgende miljø-variabler:
 
 #### Client id & client secret
-secret kan hentes fra cluster med
-`kubectl -n teamfamilie get secret azuread-familie-klage-lokal -o json | jq '.data | map_values(@base64d)'`
-`kubectl -n teamfamilie get secret azuread-familie-klage-frontend-lokal -o json | jq '.data | map_values(@base64d)'`
+secret kan hentes fra cluster med (husk `nais login` først:
+```bash
+kubectl -n teamfamilie get secret azuread-familie-klage-lokal -o json | jq '.data | map_values(@base64d)'
+```
+```bash
+kubectl -n teamfamilie get secret azuread-familie-klage-frontend-lokal -o json | jq '.data | map_values(@base64d)'
+```
 
+Variablene under legges inn under ApplicationLocal -> Edit Configurations -> Environment Variables.
 * `AZURE_APP_CLIENT_ID` (fra secret)
 * `AZURE_APP_CLIENT_SECRET` (fra secret)
 * Scope for den aktuelle tjenesten (`FAMILIE_INTEGRASJONER_SCOPE`, `FAMILIE_OPPDRAG_SCOPE`, `EF_INFOTRYGD_FEED_SCOPE`, `EF_INFOTRYGD_REPLIKA_SCOPE`)
-
-Variablene legges inn under ApplicationLocal -> Edit Configurations -> Environment Variables.
 
 ### Kjøring med in-memory-database
 For å kjøre opp appen lokalt, kan en kjøre `ApplicationLocal`.
