@@ -200,6 +200,7 @@ object DomainUtil {
         id: UUID = UUID.randomUUID(),
         person: FagsakPerson,
         sporbar: Sporbar = Sporbar(),
+        eksternId: String = "1",
     ): Fagsak =
         Fagsak(
             id = id,
@@ -207,7 +208,7 @@ object DomainUtil {
             personIdenter = person.identer,
             stønadstype = stønadstype,
             sporbar = sporbar,
-            eksternId = "1",
+            eksternId = eksternId,
             fagsystem =
                 when (stønadstype) {
                     Stønadstype.OVERGANGSSTØNAD,
