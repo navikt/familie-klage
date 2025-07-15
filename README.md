@@ -8,7 +8,7 @@ Se pom.xml for java-versjon. Bygging gjøres ved å kjøre `mvn clean install`.
 Dersom man vil gjøre autentiserte kall mot andre tjenester eller vil kjøre applikasjonen sammen med frontend, må man sette opp følgende miljø-variabler:
 
 #### Client id & client secret
-secret kan hentes fra cluster med (husk `nais login` først:
+secret kan hentes fra cluster med (husk `nais login` først):
 ```bash
 kubectl -n teamfamilie get secret azuread-familie-klage-lokal -o json | jq '.data | map_values(@base64d)'
 ```
