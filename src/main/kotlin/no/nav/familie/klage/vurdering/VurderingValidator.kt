@@ -1,7 +1,6 @@
 package no.nav.familie.klage.vurdering
 
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
-import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.vurdering.domain.Vedtak
 import no.nav.familie.klage.vurdering.dto.VurderingDto
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
@@ -13,16 +12,16 @@ object VurderingValidator {
     ) {
         when (vurdering.vedtak) {
             Vedtak.OMGJØR_VEDTAK -> {
-                feilHvis(vurdering.årsak == null) {
+                brukerfeilHvis(vurdering.årsak == null) {
                     "Mangler årsak på omgjør vedtak"
                 }
-                feilHvis(vurdering.begrunnelseOmgjøring == null) {
+                brukerfeilHvis(vurdering.begrunnelseOmgjøring == null) {
                     "Mangler begrunnelse for omgjøring på omgjør vedtak"
                 }
-                feilHvis(vurdering.hjemmel != null) {
+                brukerfeilHvis(vurdering.hjemmel != null) {
                     "Kan ikke lagre hjemmel på omgjør vedtak"
                 }
-                feilHvis(
+                brukerfeilHvis(
                     vurdering.innstillingKlageinstans != null ||
                         vurdering.dokumentasjonOgUtredning != null ||
                         vurdering.spørsmåletISaken != null ||
@@ -34,17 +33,17 @@ object VurderingValidator {
                 }
             }
             Vedtak.OPPRETTHOLD_VEDTAK -> {
-                feilHvis(vurdering.hjemmel == null) {
+                brukerfeilHvis(vurdering.hjemmel == null) {
                     "Mangler hjemmel på oppretthold vedtak"
                 }
-                feilHvis(vurdering.årsak != null) {
+                brukerfeilHvis(vurdering.årsak != null) {
                     "Kan ikke lagre årsak på oppretthold vedtak"
                 }
-                feilHvis(vurdering.begrunnelseOmgjøring != null) {
+                brukerfeilHvis(vurdering.begrunnelseOmgjøring != null) {
                     "Kan ikke lagre begrunnelse på oppretthold vedtak"
                 }
                 if (fagsystem == Fagsystem.EF) {
-                    feilHvis(vurdering.innstillingKlageinstans.isNullOrBlank()) {
+                    brukerfeilHvis(vurdering.innstillingKlageinstans.isNullOrBlank()) {
                         "Må skrive innstilling til klageinstans ved opprettholdelse av vedtak"
                     }
                 }
