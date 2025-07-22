@@ -3,6 +3,7 @@ package no.nav.familie.klage.infrastruktur.config
 import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
+import no.nav.familie.klage.felles.dto.Tilgang
 import no.nav.familie.klage.integrasjoner.FamilieKSSakClient
 import no.nav.familie.kontrakter.felles.Regelverk
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
@@ -88,6 +89,10 @@ class FamilieKSSakClientMock {
                     KanOppretteRevurderingResponse(false, KanIkkeOppretteRevurderingÅrsak.ÅPEN_BEHANDLING)
                 }
             }
+
+            every { mock.harTilgangTilFagsak(any()) } returns Tilgang(harTilgang = true)
+
+            every { mock.harTilgangTilFagsak(".*ikkeTilgang.*") } returns Tilgang(false, "Fagsaken inneholder personer som krever ytterligere tilganger.")
 
             return mock
         }

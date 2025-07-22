@@ -52,6 +52,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                                         PersonIdent(".*ikkeTilgang.*"),
                                     ),
                             ),
+                        eksternId = ".*ikkeTilgang.*",
                     ),
                 )
             val behandling = testoppsettService.lagreBehandling(behandling(fagsak))
@@ -72,7 +73,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                 "Saksbehandler julenissen har ikke tilgang til behandling=${behandling.id}",
             )
             assertThat(exchange.body?.frontendFeilmelding).isEqualTo(
-                "Mangler tilgang til opplysningene. Årsak: Mock sier: Du har ikke tilgang til person ikkeTilgang",
+                "Mangler tilgang til opplysningene. Årsak: Fagsaken inneholder personer som krever ytterligere tilganger.",
             )
             assertThat(exchange.body?.data).isNull()
         }
@@ -179,6 +180,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                                         PersonIdent(".*ikkeTilgang.*"),
                                     ),
                             ),
+                        eksternId = ".*ikkeTilgang.*",
                     ),
                 )
             val behandling = testoppsettService.lagreBehandling(behandling(fagsak))
@@ -205,7 +207,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                 "Saksbehandler julenissen har ikke tilgang til behandling=${behandling.id}",
             )
             assertThat(exchange.body?.frontendFeilmelding).isEqualTo(
-                "Mangler tilgang til opplysningene. Årsak: Mock sier: Du har ikke tilgang til person ikkeTilgang",
+                "Mangler tilgang til opplysningene. Årsak: Fagsaken inneholder personer som krever ytterligere tilganger.",
             )
             assertThat(exchange.body?.data).isNull()
         }
@@ -347,6 +349,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                                         PersonIdent(".*ikkeTilgang.*"),
                                     ),
                             ),
+                        eksternId = ".*ikkeTilgang.*",
                     ),
                 )
             val behandling = testoppsettService.lagreBehandling(behandling(fagsak))
@@ -367,7 +370,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
             assertThat(exchange.body?.status).isEqualTo(Ressurs.Status.IKKE_TILGANG)
             assertThat(exchange.body?.melding).isEqualTo("Saksbehandler julenissen har ikke tilgang til behandling=${behandling.id}")
             assertThat(exchange.body?.frontendFeilmelding).isEqualTo(
-                "Mangler tilgang til opplysningene. Årsak: Mock sier: Du har ikke tilgang til person ikkeTilgang",
+                "Mangler tilgang til opplysningene. Årsak: Fagsaken inneholder personer som krever ytterligere tilganger.",
             )
             assertThat(exchange.body?.data).isNull()
         }
@@ -513,6 +516,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                                         PersonIdent(".*ikkeTilgang.*"),
                                     ),
                             ),
+                        eksternId = ".*ikkeTilgang.*",
                     ),
                 )
             val behandling = testoppsettService.lagreBehandling(behandling(fagsak))
@@ -536,7 +540,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                 "Saksbehandler julenissen har ikke tilgang til behandling=${behandling.id}",
             )
             assertThat(exchange.body?.frontendFeilmelding).isEqualTo(
-                "Mangler tilgang til opplysningene. Årsak: Mock sier: Du har ikke tilgang til person ikkeTilgang",
+                "Mangler tilgang til opplysningene. Årsak: Fagsaken inneholder personer som krever ytterligere tilganger.",
             )
             assertThat(exchange.body?.data).isNull()
         }
@@ -634,6 +638,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                                         PersonIdent(".*ikkeTilgang.*"),
                                     ),
                             ),
+                        eksternId = ".*ikkeTilgang.*",
                     ),
                 )
             val behandling = testoppsettService.lagreBehandling(behandling(fagsak))
@@ -654,7 +659,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                 "Saksbehandler julenissen har ikke tilgang til behandling=${behandling.id}",
             )
             assertThat(exchange.body?.frontendFeilmelding).isEqualTo(
-                "Mangler tilgang til opplysningene. Årsak: Mock sier: Du har ikke tilgang til person ikkeTilgang",
+                "Mangler tilgang til opplysningene. Årsak: Fagsaken inneholder personer som krever ytterligere tilganger.",
             )
             assertThat(exchange.body?.data).isNull()
         }
