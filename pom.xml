@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.3</version>
+        <version>3.5.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <repositories>
@@ -36,9 +36,9 @@
         <felles.version>3.20250616113100_41d23f2</felles.version>
         <prosessering.version>2.20250718105310_e1cba2a</prosessering.version>
         <start-class>no.nav.familie.klage.ApplicationKt</start-class>
-        <kontrakter.version>3.0_20250703092737_0055ff4</kontrakter.version>
-        <saksstatistikk-klage.version>2.0_20250702091822_699ca50</saksstatistikk-klage.version>
-        <nav.security.version>5.0.30</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
+        <kontrakter.version>3.0_20250724145643_3e1e3e4</kontrakter.version>
+        <saksstatistikk-klage.version>2.0_20250721082943_403d667</saksstatistikk-klage.version>
+        <nav.security.version>5.0.33</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskriver spring sin versjon, blir brukt av mock-oauth2-server -->
     </properties>
 
@@ -90,7 +90,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>11.10.3</version>
+            <version>11.10.4</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -320,7 +320,7 @@
                     <dependency>
                         <groupId>com.pinterest.ktlint</groupId>
                         <artifactId>ktlint-cli</artifactId>
-                        <version>1.7.0</version>
+                        <version>1.7.1</version>
                     </dependency>
                     <!-- additional 3rd party ruleset(s) can be specified here -->
                 </dependencies>
