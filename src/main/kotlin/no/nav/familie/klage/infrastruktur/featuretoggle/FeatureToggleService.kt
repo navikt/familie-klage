@@ -27,6 +27,7 @@ enum class Toggle(
     SKAL_BRUKE_KABAL_API_V4("familie-klage.skal-bruke-kabal-api-v4", "Release"),
     SKAL_BRUKE_NY_LØYPE_FOR_JOURNALFØRING("familie-klage.skal-bruke-ny-loype-for-journalforing", "Release"),
     BRUK_NY_HENLEGG_BEHANDLING_MODAL("familie-klage.bruk-ny-henlegg-behandling-modal", "Release"),
+    BRUK_NY_TILGANG_KONTROLL_BAKS("familie-klage.bruk-ny-tilgang-kontroll-baks", "Release"),
     ;
 
     companion object {

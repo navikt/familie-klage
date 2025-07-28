@@ -26,7 +26,7 @@ class VurderingController(
     fun hentVurdering(
         @PathVariable behandlingId: UUID,
     ): Ressurs<VurderingDto?> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(vurderingService.hentVurderingDto(behandlingId))
     }
@@ -36,7 +36,7 @@ class VurderingController(
     fun lagreVurderingOgOppdaterStegDeprekert(
         @RequestBody vurdering: VurderingDto,
     ): Ressurs<VurderingDto> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(vurdering.behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerTilgangTilBehandling(vurdering.behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(vurdering.behandlingId)
         return Ressurs.success(vurderingService.lagreVurderingOgOppdaterSteg(vurdering))
     }
@@ -45,7 +45,7 @@ class VurderingController(
     fun lagreVurderingOgOppdaterSteg(
         @RequestBody vurdering: VurderingDto,
     ): Ressurs<VurderingDto> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(
+        tilgangService.validerTilgangTilBehandling(
             vurdering.behandlingId,
             AuditLoggerEvent.UPDATE,
         )
@@ -57,7 +57,7 @@ class VurderingController(
     fun lagreVurdering(
         @RequestBody vurdering: VurderingDto,
     ): Ressurs<VurderingDto> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(vurdering.behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerTilgangTilBehandling(vurdering.behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(vurdering.behandlingId)
         return Ressurs.success(vurderingService.lagreVurdering(vurdering))
     }

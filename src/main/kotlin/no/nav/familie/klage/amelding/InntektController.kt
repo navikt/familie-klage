@@ -24,7 +24,7 @@ class InntektController(
     fun genererAInntektUrl(
         @PathVariable("fagsakId") fagsakId: UUID,
     ): Ressurs<String> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForFagsak(fagsakId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerTilgangTilFagsak(fagsakId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForFagsak(fagsakId)
         return success(inntektService.genererAInntektUrlPåFagsak(fagsakId))
     }
