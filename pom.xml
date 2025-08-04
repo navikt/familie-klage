@@ -6,11 +6,11 @@
     <groupId>no.nav</groupId>
     <packaging>jar</packaging>
     <artifactId>familie-klage</artifactId>
-    <version>${revision}${sha1}${changelist}</version>
+    <version>1.0.0</version>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.3</version>
+        <version>3.5.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <repositories>
@@ -25,9 +25,6 @@
     </repositories>
 
     <properties>
-        <revision>1.0</revision>
-        <sha1/>
-        <changelist>-SNAPSHOT</changelist>
         <java.version>21</java.version>
         <kotlin.version>2.2.0</kotlin.version>
         <springdoc.version>2.8.9</springdoc.version>
@@ -35,13 +32,13 @@
         <felles.version>3.20250616113100_41d23f2</felles.version>
         <prosessering.version>2.20250311132904_6ee7728</prosessering.version>
         <springdoc.version>2.8.9</springdoc.version>
-        <mockk-jvm.version>1.14.4</mockk-jvm.version>
+        <mockk-jvm.version>1.14.5</mockk-jvm.version>
         <felles.version>3.20250616113100_41d23f2</felles.version>
-        <prosessering.version>2.20250624093734_e06ed70</prosessering.version>
+        <prosessering.version>2.20250728105838_1f618e2</prosessering.version>
         <start-class>no.nav.familie.klage.ApplicationKt</start-class>
-        <kontrakter.version>3.0_20250626112510_ca46bd8</kontrakter.version>
-        <saksstatistikk-klage.version>2.0_20250617105347_e9c3c8a</saksstatistikk-klage.version>
-        <nav.security.version>5.0.30</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
+        <kontrakter.version>3.0_20250730094742_b263f30</kontrakter.version>
+        <saksstatistikk-klage.version>2.0_20250730094950_2d4dd59</saksstatistikk-klage.version>
+        <nav.security.version>5.0.34</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskriver spring sin versjon, blir brukt av mock-oauth2-server -->
     </properties>
 
@@ -93,7 +90,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>11.10.0</version>
+            <version>11.10.5</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -323,7 +320,7 @@
                     <dependency>
                         <groupId>com.pinterest.ktlint</groupId>
                         <artifactId>ktlint-cli</artifactId>
-                        <version>1.6.0</version>
+                        <version>1.7.1</version>
                     </dependency>
                     <!-- additional 3rd party ruleset(s) can be specified here -->
                 </dependencies>
