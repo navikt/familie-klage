@@ -90,9 +90,9 @@ class FamilieKSSakClientMock {
                 }
             }
 
-            every { mock.harTilgangTilFagsak(any()) } returns Tilgang(harTilgang = true)
+            every { mock.hentTilgangTilFagsak(any()) } returns Tilgang(harTilgang = true)
 
-            every { mock.harTilgangTilFagsak(".*ikkeTilgang.*") } returns Tilgang(false, "Fagsaken inneholder personer som krever ytterligere tilganger.")
+            every { mock.hentTilgangTilFagsak(".*ikkeTilgang.*") } returns Tilgang(false, "Fagsaken inneholder personer som krever ytterligere tilganger.")
 
             return mock
         }

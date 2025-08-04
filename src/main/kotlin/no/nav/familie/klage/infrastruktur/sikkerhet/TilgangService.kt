@@ -62,7 +62,7 @@ class TilgangService(
         val tilgang =
             when (fagsak.fagsystem) {
                 Fagsystem.BA, Fagsystem.KS ->
-                    harTilgangTilEksternFagsak(
+                    hentTilgangTilEksternFagsak(
                         eksternFagsakId = fagsak.eksternId,
                         personIdent = personIdent,
                         fagsystem = fagsak.fagsystem,
@@ -93,7 +93,7 @@ class TilgangService(
         val tilgang =
             when (fagsak.fagsystem) {
                 Fagsystem.BA, Fagsystem.KS ->
-                    harTilgangTilEksternFagsak(
+                    hentTilgangTilEksternFagsak(
                         eksternFagsakId = fagsak.eksternId,
                         personIdent = personIdent,
                         fagsystem = fagsak.fagsystem,
@@ -123,7 +123,7 @@ class TilgangService(
         val tilgang =
             when (fagsak.fagsystem) {
                 Fagsystem.BA, Fagsystem.KS ->
-                    harTilgangTilEksternFagsak(
+                    hentTilgangTilEksternFagsak(
                         eksternFagsakId = fagsak.eksternId,
                         personIdent = personIdent,
                         fagsystem = fagsak.fagsystem,
@@ -174,15 +174,15 @@ class TilgangService(
         minimumsrolle: BehandlerRolle,
     ): Boolean = harTilgangTilFagsakGittRolle(behandlingService.hentBehandling(behandlingId).fagsakId, minimumsrolle)
 
-    private fun harTilgangTilEksternFagsak(
+    private fun hentTilgangTilEksternFagsak(
         eksternFagsakId: String,
         personIdent: String,
         fagsystem: Fagsystem,
     ): Tilgang =
         if (featureToggleService.isEnabled(Toggle.BRUK_NY_TILGANG_KONTROLL_BAKS)) {
             when (fagsystem) {
-                Fagsystem.BA -> familieBASakClient.harTilgangTilFagsak(eksternFagsakId)
-                Fagsystem.KS -> familieKSSakClient.harTilgangTilFagsak(eksternFagsakId)
+                Fagsystem.BA -> familieBASakClient.hentTilgangTilFagsak(eksternFagsakId)
+                Fagsystem.KS -> familieKSSakClient.hentTilgangTilFagsak(eksternFagsakId)
                 else -> throw IllegalArgumentException("Ugyldig fagsystem: $eksternFagsakId. Validering av tilgang til ekstern fagsag støttes kun for BA og KS.")
             }
         } else {

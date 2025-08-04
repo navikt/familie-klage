@@ -53,11 +53,11 @@ class FamilieBASakClient(
         return postForEntity<Ressurs<OpprettRevurderingResponse>>(hentVedtakUri, emptyMap<String, String>()).getDataOrThrow()
     }
 
-    fun harTilgangTilFagsak(eksternFagsakId: String): Tilgang {
+    fun hentTilgangTilFagsak(eksternFagsakId: String): Tilgang {
         val tilgangUri =
             UriComponentsBuilder
                 .fromUri(familieBaSakUri)
-                .pathSegment("api/klage/fagsak/$eksternFagsakId/har-tilgang")
+                .pathSegment("api/klage/fagsak/$eksternFagsakId/tilgang")
                 .build()
                 .toUri()
         return getForEntity<Ressurs<Tilgang>>(tilgangUri).getDataOrThrow()

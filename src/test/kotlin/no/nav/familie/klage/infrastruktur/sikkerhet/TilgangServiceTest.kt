@@ -128,20 +128,20 @@ internal class TilgangServiceTest {
                 val fagsak = fagsak(stønadstype = stønadstype)
                 every { fagsakService.hentFagsak(fagsak.id) } returns fagsak
                 every { featureToggleService.isEnabled(Toggle.BRUK_NY_TILGANG_KONTROLL_BAKS) } returns true
-                every { familieBASakClient.harTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
-                every { familieKSSakClient.harTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
+                every { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
+                every { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
 
                 // Act & Assert
                 val manglerTilgangException = assertThrows<ManglerTilgang> { tilgangService.validerTilgangTilFagsak(fagsak.id, AuditLoggerEvent.ACCESS) }
 
                 when (stønadstype) {
                     Stønadstype.BARNETRYGD -> {
-                        verify(exactly = 1) { familieBASakClient.harTilgangTilFagsak(fagsak.eksternId) }
-                        verify(exactly = 0) { familieKSSakClient.harTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 1) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 0) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
                     Stønadstype.KONTANTSTØTTE -> {
-                        verify(exactly = 1) { familieKSSakClient.harTilgangTilFagsak(fagsak.eksternId) }
-                        verify(exactly = 0) { familieBASakClient.harTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 1) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 0) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
                     else -> return
                 }
@@ -161,20 +161,20 @@ internal class TilgangServiceTest {
                 val fagsak = fagsak(stønadstype = stønadstype)
                 every { fagsakService.hentFagsak(fagsak.id) } returns fagsak
                 every { featureToggleService.isEnabled(Toggle.BRUK_NY_TILGANG_KONTROLL_BAKS) } returns true
-                every { familieBASakClient.harTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = true)
-                every { familieKSSakClient.harTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = true)
+                every { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = true)
+                every { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = true)
 
                 // Act & Assert
                 assertDoesNotThrow { tilgangService.validerTilgangTilFagsak(fagsak.id, AuditLoggerEvent.ACCESS) }
 
                 when (stønadstype) {
                     Stønadstype.BARNETRYGD -> {
-                        verify(exactly = 1) { familieBASakClient.harTilgangTilFagsak(fagsak.eksternId) }
-                        verify(exactly = 0) { familieKSSakClient.harTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 1) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 0) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
                     Stønadstype.KONTANTSTØTTE -> {
-                        verify(exactly = 1) { familieKSSakClient.harTilgangTilFagsak(fagsak.eksternId) }
-                        verify(exactly = 0) { familieBASakClient.harTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 1) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 0) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
                     else -> return
                 }
@@ -229,8 +229,8 @@ internal class TilgangServiceTest {
 
                 every { fagsakService.hentFagsakForEksternIdOgFagsystem(eksternId = fagsak.eksternId, fagsystem = fagsystem) } returns fagsak
                 every { featureToggleService.isEnabled(Toggle.BRUK_NY_TILGANG_KONTROLL_BAKS) } returns true
-                every { familieBASakClient.harTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
-                every { familieKSSakClient.harTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
+                every { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
+                every { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
 
                 // Act & Assert
                 val manglerTilgangException =
@@ -244,12 +244,12 @@ internal class TilgangServiceTest {
 
                 when (stønadstype) {
                     Stønadstype.BARNETRYGD -> {
-                        verify(exactly = 1) { familieBASakClient.harTilgangTilFagsak(fagsak.eksternId) }
-                        verify(exactly = 0) { familieKSSakClient.harTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 1) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 0) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
                     Stønadstype.KONTANTSTØTTE -> {
-                        verify(exactly = 1) { familieKSSakClient.harTilgangTilFagsak(fagsak.eksternId) }
-                        verify(exactly = 0) { familieBASakClient.harTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 1) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 0) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
                     else -> return
                 }
@@ -271,8 +271,8 @@ internal class TilgangServiceTest {
 
                 every { fagsakService.hentFagsakForEksternIdOgFagsystem(fagsak.eksternId, fagsystem) } returns fagsak
                 every { featureToggleService.isEnabled(Toggle.BRUK_NY_TILGANG_KONTROLL_BAKS) } returns true
-                every { familieBASakClient.harTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = true)
-                every { familieKSSakClient.harTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = true)
+                every { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = true)
+                every { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = true)
 
                 // Act & Assert
                 assertDoesNotThrow {
@@ -285,12 +285,12 @@ internal class TilgangServiceTest {
 
                 when (stønadstype) {
                     Stønadstype.BARNETRYGD -> {
-                        verify(exactly = 1) { familieBASakClient.harTilgangTilFagsak(fagsak.eksternId) }
-                        verify(exactly = 0) { familieKSSakClient.harTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 1) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 0) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
                     Stønadstype.KONTANTSTØTTE -> {
-                        verify(exactly = 1) { familieKSSakClient.harTilgangTilFagsak(fagsak.eksternId) }
-                        verify(exactly = 0) { familieBASakClient.harTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 1) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 0) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
                     else -> return
                 }
@@ -308,20 +308,20 @@ internal class TilgangServiceTest {
 
                 every { fagsakService.hentFagsakForBehandling(behandling.id) } returns fagsak
                 every { featureToggleService.isEnabled(Toggle.BRUK_NY_TILGANG_KONTROLL_BAKS) } returns true
-                every { familieBASakClient.harTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
-                every { familieKSSakClient.harTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
+                every { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
+                every { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
 
                 // Act & Assert
                 val manglerTilgangException = assertThrows<ManglerTilgang> { tilgangService.validerTilgangTilBehandling(behandling.id, AuditLoggerEvent.ACCESS) }
 
                 when (stønadstype) {
                     Stønadstype.BARNETRYGD -> {
-                        verify(exactly = 1) { familieBASakClient.harTilgangTilFagsak(fagsak.eksternId) }
-                        verify(exactly = 0) { familieKSSakClient.harTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 1) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 0) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
                     Stønadstype.KONTANTSTØTTE -> {
-                        verify(exactly = 1) { familieKSSakClient.harTilgangTilFagsak(fagsak.eksternId) }
-                        verify(exactly = 0) { familieBASakClient.harTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 1) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 0) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
                     else -> return
                 }
@@ -343,20 +343,20 @@ internal class TilgangServiceTest {
 
                 every { fagsakService.hentFagsakForBehandling(behandling.id) } returns fagsak
                 every { featureToggleService.isEnabled(Toggle.BRUK_NY_TILGANG_KONTROLL_BAKS) } returns true
-                every { familieBASakClient.harTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = true)
-                every { familieKSSakClient.harTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = true)
+                every { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = true)
+                every { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = true)
 
                 // Act & Assert
                 assertDoesNotThrow { tilgangService.validerTilgangTilBehandling(behandling.id, AuditLoggerEvent.ACCESS) }
 
                 when (stønadstype) {
                     Stønadstype.BARNETRYGD -> {
-                        verify(exactly = 1) { familieBASakClient.harTilgangTilFagsak(fagsak.eksternId) }
-                        verify(exactly = 0) { familieKSSakClient.harTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 1) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 0) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
                     Stønadstype.KONTANTSTØTTE -> {
-                        verify(exactly = 1) { familieKSSakClient.harTilgangTilFagsak(fagsak.eksternId) }
-                        verify(exactly = 0) { familieBASakClient.harTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 1) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
+                        verify(exactly = 0) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
                     else -> return
                 }
