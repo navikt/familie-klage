@@ -15,7 +15,6 @@ class FeatureToggleController(
 ) {
     private val featureTogglesIBruk: Set<Toggle> =
         setOf(
-            Toggle.LEGG_TIL_BREVMOTTAKER_BAKS,
             Toggle.KAN_MELLOMLAGRE_VURDERING,
             Toggle.BRUK_NY_HENLEGG_BEHANDLING_MODAL,
         )
