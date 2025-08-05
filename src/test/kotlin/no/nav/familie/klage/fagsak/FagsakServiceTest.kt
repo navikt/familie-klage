@@ -31,8 +31,6 @@ class FagsakServiceTest {
         @ParameterizedTest
         @EnumSource(Fagsystem::class, names = ["BA", "KS"], mode = EnumSource.Mode.EXCLUDE)
         fun `skal kaste feil dersom fagsystem ikke er BA eller KS og støndstype er null`(fagsystem: Fagsystem) {
-            // Arrange
-
             // Act & Assert
             val feil =
                 assertThrows<Feil> {
