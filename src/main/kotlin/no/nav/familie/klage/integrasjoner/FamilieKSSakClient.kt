@@ -7,6 +7,7 @@ import no.nav.familie.kontrakter.felles.getDataOrThrow
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.KanOppretteRevurderingResponse
 import no.nav.familie.kontrakter.felles.klage.OpprettRevurderingResponse
+import no.nav.familie.kontrakter.felles.tilgangskontroll.FagsakTilgang
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -60,6 +61,7 @@ class FamilieKSSakClient(
                 .pathSegment("api/klage/fagsak/$eksternFagsakId/tilgang")
                 .build()
                 .toUri()
-        return getForEntity<Ressurs<Tilgang>>(tilgangUri).getDataOrThrow()
+        val fagsakTilgang = getForEntity<Ressurs<FagsakTilgang>>(tilgangUri).getDataOrThrow()
+        return Tilgang(harTilgang = fagsakTilgang.harTilgang, begrunnelse = fagsakTilgang.begrunnelse)
     }
 }
