@@ -283,12 +283,7 @@ class BrevService(
 
         val html = lagHenleggelsesbrevHtml(behandlingId)
         val pdf = familieDokumentClient.genererPdfFraHtml(html)
-        val brevmottakere =
-            if (featureToggleService.isEnabled(Toggle.BRUK_NY_HENLEGG_BEHANDLING_MODAL)) {
-                Brevmottakere(nyeBrevmottakere.map { BrevmottakerPerson.opprettFra(it) })
-            } else {
-                brevmottakerUtleder.utledInitielleBrevmottakere(behandlingId)
-            }
+        val brevmottakere = Brevmottakere(nyeBrevmottakere.map { BrevmottakerPerson.opprettFra(it) })
 
         val eksisterendeBrev = brevRepository.findByIdOrNull(behandlingId)
         if (eksisterendeBrev != null) {

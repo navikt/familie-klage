@@ -6,13 +6,10 @@ import no.nav.familie.klage.brevmottaker.BrevmottakerService
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.exception.Feil
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DtoTestUtil
 import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -21,17 +18,7 @@ import java.util.UUID
 
 class HenleggBehandlingValidatorTest {
     private val brevmottakerService = mockk<BrevmottakerService>()
-    private val featureToggleService = mockk<FeatureToggleService>()
-    private val henleggBehandlingValidator =
-        HenleggBehandlingValidator(
-            brevmottakerService = brevmottakerService,
-            featureToggleService = featureToggleService,
-        )
-
-    @BeforeEach
-    internal fun setUp() {
-        every { featureToggleService.isEnabled(any()) } returns true
-    }
+    private val henleggBehandlingValidator = HenleggBehandlingValidator(brevmottakerService = brevmottakerService)
 
     @Nested
     inner class ValiderHenleggBehandlingDto {
@@ -54,8 +41,6 @@ class HenleggBehandlingValidatorTest {
                         ),
                 )
 
-            every { featureToggleService.isEnabled(Toggle.BRUK_NY_HENLEGG_BEHANDLING_MODAL) } returns false
-
             // Act & assert
             val exception =
                 assertThrows<Feil> {
@@ -75,8 +60,6 @@ class HenleggBehandlingValidatorTest {
                     skalSendeHenleggelsesbrev = false,
                     nyeBrevmottakere = emptyList(),
                 )
-
-            every { featureToggleService.isEnabled(Toggle.BRUK_NY_HENLEGG_BEHANDLING_MODAL) } returns false
 
             // Act & assert
             assertDoesNotThrow {

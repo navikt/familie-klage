@@ -16,7 +16,6 @@ class FeatureToggleController(
     private val featureTogglesIBruk: Set<Toggle> =
         setOf(
             Toggle.KAN_MELLOMLAGRE_VURDERING,
-            Toggle.BRUK_NY_HENLEGG_BEHANDLING_MODAL,
         )
 
     @GetMapping
