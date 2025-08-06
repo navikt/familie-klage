@@ -5,6 +5,7 @@ import no.nav.familie.klage.behandling.StegService
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.tilDto
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
+import no.nav.familie.klage.behandlingshistorikk.domain.HistorikkHendelse
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormUtil.alleVilkårOppfylt
@@ -78,16 +79,18 @@ class FormService(
         eksternFagsakId: String,
         fagsystem: Fagsystem,
     ) {
-        behandlingshistorikkService.hentBehandlingshistorikk(behandlingId).find { it.steg == StegType.FORMKRAV }
-            ?: run {
-                taskService.save(
-                    BehandlingsstatistikkTask.opprettPåbegyntTask(
-                        behandlingId = behandlingId,
-                        eksternFagsakId = eksternFagsakId,
-                        fagsystem = fagsystem,
-                    ),
-                )
-            }
+        val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
+        val harFormkravHistorikk = behandlingshistorikk.any { it.steg == StegType.FORMKRAV }
+        val harEndretEnhetHistorikk = behandlingshistorikk.any { it.historikkHendelse === HistorikkHendelse.BEHANDLENDE_ENHET_ENDRET }
+        if (!harFormkravHistorikk && !harEndretEnhetHistorikk) {
+            taskService.save(
+                BehandlingsstatistikkTask.opprettPåbegyntTask(
+                    behandlingId = behandlingId,
+                    eksternFagsakId = eksternFagsakId,
+                    fagsystem = fagsystem,
+                ),
+            )
+        }
     }
 
     fun formkravErOppfyltForBehandling(behandlingId: UUID): Boolean {
