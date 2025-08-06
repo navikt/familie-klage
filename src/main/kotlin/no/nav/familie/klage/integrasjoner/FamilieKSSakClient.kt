@@ -1,11 +1,13 @@
 package no.nav.familie.klage.integrasjoner
 
 import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.klage.felles.dto.Tilgang
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.getDataOrThrow
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.KanOppretteRevurderingResponse
 import no.nav.familie.kontrakter.felles.klage.OpprettRevurderingResponse
+import no.nav.familie.kontrakter.felles.tilgangskontroll.FagsakTilgang
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -50,5 +52,16 @@ class FamilieKSSakClient(
                 .build()
                 .toUri()
         return postForEntity<Ressurs<OpprettRevurderingResponse>>(hentVedtakUri, emptyMap<String, String>()).getDataOrThrow()
+    }
+
+    fun hentTilgangTilFagsak(eksternFagsakId: String): Tilgang {
+        val tilgangUri =
+            UriComponentsBuilder
+                .fromUri(familieKsSakUri)
+                .pathSegment("api/klage/fagsak/$eksternFagsakId/tilgang")
+                .build()
+                .toUri()
+        val fagsakTilgang = getForEntity<Ressurs<FagsakTilgang>>(tilgangUri).getDataOrThrow()
+        return Tilgang(harTilgang = fagsakTilgang.harTilgang, begrunnelse = fagsakTilgang.begrunnelse)
     }
 }

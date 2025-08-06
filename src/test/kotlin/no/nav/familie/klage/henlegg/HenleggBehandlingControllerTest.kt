@@ -34,7 +34,7 @@ class HenleggBehandlingControllerTest {
 
     @BeforeEach
     fun setup() {
-        every { tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(any(), any()) } just runs
+        every { tilgangService.validerTilgangTilBehandling(any(), any()) } just runs
         every { tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(any()) } just runs
         every { henleggBehandlingValidator.validerHenleggBehandlingDto(any(), any()) } just runs
     }
@@ -52,7 +52,7 @@ class HenleggBehandlingControllerTest {
                     skalSendeHenleggelsesbrev = false,
                 )
 
-            every { tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(any(), any()) } throws RuntimeException("Ops!")
+            every { tilgangService.validerTilgangTilBehandling(any(), any()) } throws RuntimeException("Ops!")
 
             // Act & assert
             val exception =

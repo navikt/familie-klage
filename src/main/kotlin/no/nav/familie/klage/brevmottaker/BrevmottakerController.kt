@@ -34,7 +34,7 @@ class BrevmottakerController(
     fun hentBrevmottakere(
         @PathVariable behandlingId: UUID,
     ): Ressurs<BrevmottakereDto> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         val brevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
         return Ressurs.success(brevmottakere.tilBrevmottakereDto())
@@ -45,7 +45,7 @@ class BrevmottakerController(
         @PathVariable behandlingId: UUID,
         @RequestBody brevmottakereDto: BrevmottakereDto,
     ): Ressurs<BrevmottakereDto> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         brevmottakereDto.valider()
         val nyeBrevmottakere = brevmottakerService.erstattBrevmottakere(behandlingId, brevmottakereDto.tilBrevmottakere())
@@ -57,7 +57,7 @@ class BrevmottakerController(
         @PathVariable behandlingId: UUID,
         @RequestBody nyBrevmottakerDto: NyBrevmottakerDto,
     ): Ressurs<BrevmottakereDto> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.CREATE)
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.CREATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         nyBrevmottakerDto.valider()
         brevmottakerService.opprettBrevmottaker(behandlingId, nyBrevmottakerDto.tilNyBrevmottaker())
@@ -70,7 +70,7 @@ class BrevmottakerController(
         @PathVariable behandlingId: UUID,
         @RequestBody slettbarBrevmottakerDto: SlettbarBrevmottakerDto,
     ): Ressurs<BrevmottakereDto> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.DELETE)
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.DELETE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         brevmottakerService.slettBrevmottaker(behandlingId, slettbarBrevmottakerDto.tilSlettbarBrevmottaker())
         val brevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
@@ -81,7 +81,7 @@ class BrevmottakerController(
     fun utledInitielleBrevmottakere(
         @PathVariable behandlingId: UUID,
     ): Ressurs<BrevmottakereDto> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         val brevmottakere = brevmottakerService.utledInitielleBrevmottakere(behandlingId)
         return Ressurs.success(brevmottakere.tilBrevmottakereDto())

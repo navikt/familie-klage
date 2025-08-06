@@ -26,7 +26,7 @@ class FormController(
     fun hentVilkår(
         @PathVariable behandlingId: UUID,
     ): Ressurs<FormkravDto> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(formService.hentFormDto(behandlingId))
     }
@@ -35,7 +35,7 @@ class FormController(
     fun oppdaterFormkravVilkår(
         @RequestBody form: FormkravDto,
     ): Ressurs<FormkravDto> {
-        tilgangService.validerTilgangTilPersonMedRelasjonerForBehandling(form.behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerTilgangTilBehandling(form.behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(form.behandlingId)
         return Ressurs.success(formService.oppdaterFormkrav(form))
     }

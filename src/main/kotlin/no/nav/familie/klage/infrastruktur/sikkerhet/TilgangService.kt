@@ -13,7 +13,12 @@ import no.nav.familie.klage.infrastruktur.config.FagsystemRolleConfig
 import no.nav.familie.klage.infrastruktur.config.RolleConfig
 import no.nav.familie.klage.infrastruktur.config.getValue
 import no.nav.familie.klage.infrastruktur.exception.ManglerTilgang
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
+import no.nav.familie.klage.integrasjoner.FamilieBASakClient
+import no.nav.familie.klage.integrasjoner.FamilieKSSakClient
 import no.nav.familie.klage.personopplysninger.PersonopplysningerIntegrasjonerClient
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.cache.CacheManager
 import org.springframework.stereotype.Service
@@ -27,6 +32,9 @@ class TilgangService(
     private val auditLogger: AuditLogger,
     private val behandlingService: BehandlingService,
     private val fagsakService: FagsakService,
+    private val familieBASakClient: FamilieBASakClient,
+    private val familieKSSakClient: FamilieKSSakClient,
+    private val featureToggleService: FeatureToggleService,
 ) {
     fun validerTilgangTilPersonMedRelasjoner(
         personIdent: String,
@@ -44,16 +52,85 @@ class TilgangService(
         }
     }
 
-    fun validerTilgangTilPersonMedRelasjonerForBehandling(
+    fun validerTilgangTilFagsak(
+        fagsakId: UUID,
+        event: AuditLoggerEvent,
+    ) {
+        val fagsak = hentFagsak(fagsakId)
+        val personIdent = fagsak.hentAktivIdent()
+
+        val tilgang =
+            when (fagsak.fagsystem) {
+                Fagsystem.BA, Fagsystem.KS ->
+                    hentTilgangTilEksternFagsak(
+                        eksternFagsakId = fagsak.eksternId,
+                        personIdent = personIdent,
+                        fagsystem = fagsak.fagsystem,
+                    )
+                Fagsystem.EF -> harTilgangTilPersonMedRelasjoner(personIdent)
+            }
+
+        auditLogger.log(Sporingsdata(event, personIdent, tilgang, custom1 = CustomKeyValue("fagsak", fagsakId.toString())))
+
+        if (!tilgang.harTilgang) {
+            throw ManglerTilgang(
+                melding =
+                    "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
+                        "har ikke tilgang til fagsak=$fagsakId",
+                frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}",
+            )
+        }
+    }
+
+    fun validerTilgangTilEksternFagsak(
+        eksternFagsakId: String,
+        fagsystem: Fagsystem,
+        event: AuditLoggerEvent,
+    ) {
+        val fagsak = hentFagsakForEksternIdOgFagsystem(eksternFagsakId = eksternFagsakId, fagsystem = fagsystem)
+        val personIdent = fagsak.hentAktivIdent()
+
+        val tilgang =
+            when (fagsak.fagsystem) {
+                Fagsystem.BA, Fagsystem.KS ->
+                    hentTilgangTilEksternFagsak(
+                        eksternFagsakId = fagsak.eksternId,
+                        personIdent = personIdent,
+                        fagsystem = fagsak.fagsystem,
+                    )
+                Fagsystem.EF -> harTilgangTilPersonMedRelasjoner(personIdent)
+            }
+
+        auditLogger.log(Sporingsdata(event, personIdent, tilgang, custom1 = CustomKeyValue("fagsak", fagsak.id.toString())))
+
+        if (!tilgang.harTilgang) {
+            throw ManglerTilgang(
+                melding =
+                    "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
+                        "har ikke tilgang til fagsak=${fagsak.id}",
+                frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}",
+            )
+        }
+    }
+
+    fun validerTilgangTilBehandling(
         behandlingId: UUID,
         event: AuditLoggerEvent,
     ) {
-        val personIdent =
-            cacheManager.getValue("behandlingPersonIdent", behandlingId) {
-                behandlingService.hentAktivIdent(behandlingId).first
+        val fagsak = hentFagsakForBehandling(behandlingId)
+        val personIdent = fagsak.hentAktivIdent()
+
+        val tilgang =
+            when (fagsak.fagsystem) {
+                Fagsystem.BA, Fagsystem.KS ->
+                    hentTilgangTilEksternFagsak(
+                        eksternFagsakId = fagsak.eksternId,
+                        personIdent = personIdent,
+                        fagsystem = fagsak.fagsystem,
+                    )
+                Fagsystem.EF -> harTilgangTilPersonMedRelasjoner(personIdent)
             }
 
-        val tilgang = harTilgangTilPersonMedRelasjoner(personIdent)
         auditLogger.log(
             Sporingsdata(
                 event,
@@ -72,6 +149,45 @@ class TilgangService(
             )
         }
     }
+
+    fun validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId: UUID) {
+        validerHarRolleForBehandling(behandlingId, BehandlerRolle.SAKSBEHANDLER)
+    }
+
+    fun validerHarVeilederrolleTilStønadForBehandling(behandlingId: UUID) {
+        validerHarRolleForBehandling(behandlingId, BehandlerRolle.VEILEDER)
+    }
+
+    fun validerHarVeilederrolleTilStønadForFagsak(fagsakId: UUID) {
+        harTilgangTilFagsakGittRolle(fagsakId, BehandlerRolle.VEILEDER)
+    }
+
+    fun harEgenAnsattRolle(): Boolean = SikkerhetContext.harRolle(rolleConfig.egenAnsatt)
+
+    fun harMinimumRolleTversFagsystem(minimumsrolle: BehandlerRolle): Boolean =
+        harTilgangTilGittRolleForFagsystem(rolleConfig.ba, minimumsrolle) ||
+            harTilgangTilGittRolleForFagsystem(rolleConfig.ef, minimumsrolle) ||
+            harTilgangTilGittRolleForFagsystem(rolleConfig.ks, minimumsrolle)
+
+    fun harTilgangTilBehandlingGittRolle(
+        behandlingId: UUID,
+        minimumsrolle: BehandlerRolle,
+    ): Boolean = harTilgangTilFagsakGittRolle(behandlingService.hentBehandling(behandlingId).fagsakId, minimumsrolle)
+
+    private fun hentTilgangTilEksternFagsak(
+        eksternFagsakId: String,
+        personIdent: String,
+        fagsystem: Fagsystem,
+    ): Tilgang =
+        if (featureToggleService.isEnabled(Toggle.BRUK_NY_TILGANG_KONTROLL_BAKS)) {
+            when (fagsystem) {
+                Fagsystem.BA -> familieBASakClient.hentTilgangTilFagsak(eksternFagsakId)
+                Fagsystem.KS -> familieKSSakClient.hentTilgangTilFagsak(eksternFagsakId)
+                else -> throw IllegalArgumentException("Ugyldig fagsystem: $eksternFagsakId. Validering av tilgang til ekstern fagsag støttes kun for BA og KS.")
+            }
+        } else {
+            harTilgangTilPersonMedRelasjoner(personIdent)
+        }
 
     private fun harTilgangTilPersonMedRelasjoner(personIdent: String): Tilgang =
         harSaksbehandlerTilgang("validerTilgangTilPersonMedBarn", personIdent) {
@@ -95,40 +211,23 @@ class TilgangService(
         } ?: error("Finner ikke verdi fra cache=$cacheName")
     }
 
-    fun validerTilgangTilPersonMedRelasjonerForFagsak(
-        fagsakId: UUID,
-        event: AuditLoggerEvent,
-    ) {
-        val personIdent = hentFagsak(fagsakId).hentAktivIdent()
-
-        val tilgang = harTilgangTilPersonMedRelasjoner(personIdent)
-        auditLogger.log(Sporingsdata(event, personIdent, tilgang, custom1 = CustomKeyValue("fagsak", fagsakId.toString())))
-        if (!tilgang.harTilgang) {
-            throw ManglerTilgang(
-                melding =
-                    "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
-                        "har ikke tilgang til fagsak=$fagsakId",
-                frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}",
-            )
-        }
-    }
-
     private fun hentFagsak(fagsakId: UUID): Fagsak =
         cacheManager.getValue("fagsak", fagsakId) {
             fagsakService.hentFagsak(fagsakId)
         }
 
-    fun validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId: UUID) {
-        validerHarRolleForBehandling(behandlingId, BehandlerRolle.SAKSBEHANDLER)
-    }
+    private fun hentFagsakForBehandling(behandlingId: UUID): Fagsak =
+        cacheManager.getValue("fagsakForBehandling", behandlingId) {
+            fagsakService.hentFagsakForBehandling(behandlingId)
+        }
 
-    fun validerHarVeilederrolleTilStønadForBehandling(behandlingId: UUID) {
-        validerHarRolleForBehandling(behandlingId, BehandlerRolle.VEILEDER)
-    }
-
-    fun validerHarVeilederrolleTilStønadForFagsak(fagsakId: UUID) {
-        harTilgangTilFagsakGittRolle(fagsakId, BehandlerRolle.VEILEDER)
-    }
+    private fun hentFagsakForEksternIdOgFagsystem(
+        eksternFagsakId: String,
+        fagsystem: Fagsystem,
+    ): Fagsak =
+        cacheManager.getValue("fagsakForEksternIdOgFagsystem", eksternFagsakId) {
+            fagsakService.hentFagsakForEksternIdOgFagsystem(eksternFagsakId, fagsystem)
+        }
 
     private fun validerHarRolleForBehandling(
         behandlingId: UUID,
@@ -144,25 +243,13 @@ class TilgangService(
         }
     }
 
-    fun harMinimumRolleTversFagsystem(minimumsrolle: BehandlerRolle): Boolean =
-        harTilgangTilGittRolleForFagsystem(rolleConfig.ba, minimumsrolle) ||
-            harTilgangTilGittRolleForFagsystem(rolleConfig.ef, minimumsrolle) ||
-            harTilgangTilGittRolleForFagsystem(rolleConfig.ks, minimumsrolle)
-
-    fun harTilgangTilBehandlingGittRolle(
-        behandlingId: UUID,
-        minimumsrolle: BehandlerRolle,
-    ): Boolean = harTilgangTilFagsakGittRolle(behandlingService.hentBehandling(behandlingId).fagsakId, minimumsrolle)
-
-    fun harTilgangTilFagsakGittRolle(
+    private fun harTilgangTilFagsakGittRolle(
         fagsakId: UUID,
         minimumsrolle: BehandlerRolle,
     ): Boolean {
         val stønadstype = hentFagsak(fagsakId).stønadstype
         return harTilgangTilGittRolle(stønadstype, minimumsrolle)
     }
-
-    fun harEgenAnsattRolle(): Boolean = SikkerhetContext.harRolle(rolleConfig.egenAnsatt)
 
     private fun harTilgangTilGittRolle(
         stønadstype: Stønadstype,
