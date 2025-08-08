@@ -74,7 +74,11 @@ class TilgangService(
         fagsystem: Fagsystem,
         event: AuditLoggerEvent,
     ) {
-        val fagsak = hentFagsakForEksternIdOgFagsystem(eksternFagsakId = eksternFagsakId, fagsystem = fagsystem) ?: return
+        val fagsak = hentFagsakForEksternIdOgFagsystem(eksternFagsakId = eksternFagsakId, fagsystem = fagsystem)
+        if (fagsak == null) {
+            return
+        }
+
         val tilgang = hentTilgangTilFagsak(fagsak)
 
         auditLogger.log(Sporingsdata(event, fagsak.hentAktivIdent(), tilgang, custom1 = CustomKeyValue("fagsak", fagsak.id.toString())))
