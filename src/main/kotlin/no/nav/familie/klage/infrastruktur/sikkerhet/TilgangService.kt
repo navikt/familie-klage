@@ -14,8 +14,6 @@ import no.nav.familie.klage.infrastruktur.config.RolleConfig
 import no.nav.familie.klage.infrastruktur.config.getNullable
 import no.nav.familie.klage.infrastruktur.config.getValue
 import no.nav.familie.klage.infrastruktur.exception.ManglerTilgang
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.integrasjoner.FamilieBASakClient
 import no.nav.familie.klage.integrasjoner.FamilieKSSakClient
 import no.nav.familie.klage.personopplysninger.PersonopplysningerIntegrasjonerClient
@@ -35,7 +33,6 @@ class TilgangService(
     private val fagsakService: FagsakService,
     private val familieBASakClient: FamilieBASakClient,
     private val familieKSSakClient: FamilieKSSakClient,
-    private val featureToggleService: FeatureToggleService,
 ) {
     fun validerTilgangTilPersonMedRelasjoner(
         personIdent: String,
@@ -58,20 +55,9 @@ class TilgangService(
         event: AuditLoggerEvent,
     ) {
         val fagsak = hentFagsak(fagsakId)
-        val personIdent = fagsak.hentAktivIdent()
+        val tilgang = hentTilgangTilFagsak(fagsak)
 
-        val tilgang =
-            when (fagsak.fagsystem) {
-                Fagsystem.BA, Fagsystem.KS ->
-                    hentTilgangTilEksternFagsak(
-                        eksternFagsakId = fagsak.eksternId,
-                        personIdent = personIdent,
-                        fagsystem = fagsak.fagsystem,
-                    )
-                Fagsystem.EF -> harTilgangTilPersonMedRelasjoner(personIdent)
-            }
-
-        auditLogger.log(Sporingsdata(event, personIdent, tilgang, custom1 = CustomKeyValue("fagsak", fagsakId.toString())))
+        auditLogger.log(Sporingsdata(event, fagsak.hentAktivIdent(), tilgang, custom1 = CustomKeyValue("fagsak", fagsakId.toString())))
 
         if (!tilgang.harTilgang) {
             throw ManglerTilgang(
@@ -88,24 +74,10 @@ class TilgangService(
         fagsystem: Fagsystem,
         event: AuditLoggerEvent,
     ) {
-        val fagsak = hentFagsakForEksternIdOgFagsystem(eksternFagsakId = eksternFagsakId, fagsystem = fagsystem)
-        if (fagsak == null) {
-            return
-        }
-        val personIdent = fagsak.hentAktivIdent()
+        val fagsak = hentFagsakForEksternIdOgFagsystem(eksternFagsakId = eksternFagsakId, fagsystem = fagsystem) ?: return
+        val tilgang = hentTilgangTilFagsak(fagsak)
 
-        val tilgang =
-            when (fagsak.fagsystem) {
-                Fagsystem.BA, Fagsystem.KS ->
-                    hentTilgangTilEksternFagsak(
-                        eksternFagsakId = fagsak.eksternId,
-                        personIdent = personIdent,
-                        fagsystem = fagsak.fagsystem,
-                    )
-                Fagsystem.EF -> harTilgangTilPersonMedRelasjoner(personIdent)
-            }
-
-        auditLogger.log(Sporingsdata(event, personIdent, tilgang, custom1 = CustomKeyValue("fagsak", fagsak.id.toString())))
+        auditLogger.log(Sporingsdata(event, fagsak.hentAktivIdent(), tilgang, custom1 = CustomKeyValue("fagsak", fagsak.id.toString())))
 
         if (!tilgang.harTilgang) {
             throw ManglerTilgang(
@@ -122,23 +94,12 @@ class TilgangService(
         event: AuditLoggerEvent,
     ) {
         val fagsak = hentFagsakForBehandling(behandlingId)
-        val personIdent = fagsak.hentAktivIdent()
-
-        val tilgang =
-            when (fagsak.fagsystem) {
-                Fagsystem.BA, Fagsystem.KS ->
-                    hentTilgangTilEksternFagsak(
-                        eksternFagsakId = fagsak.eksternId,
-                        personIdent = personIdent,
-                        fagsystem = fagsak.fagsystem,
-                    )
-                Fagsystem.EF -> harTilgangTilPersonMedRelasjoner(personIdent)
-            }
+        val tilgang = hentTilgangTilFagsak(fagsak)
 
         auditLogger.log(
             Sporingsdata(
                 event,
-                personIdent,
+                fagsak.hentAktivIdent(),
                 tilgang,
                 custom1 = CustomKeyValue("behandling", behandlingId.toString()),
             ),
@@ -178,19 +139,25 @@ class TilgangService(
         minimumsrolle: BehandlerRolle,
     ): Boolean = harTilgangTilFagsakGittRolle(behandlingService.hentBehandling(behandlingId).fagsakId, minimumsrolle)
 
+    private fun hentTilgangTilFagsak(
+        fagsak: Fagsak,
+    ) = when (fagsak.fagsystem) {
+        Fagsystem.BA, Fagsystem.KS ->
+            hentTilgangTilEksternFagsak(
+                eksternFagsakId = fagsak.eksternId,
+                fagsystem = fagsak.fagsystem,
+            )
+        Fagsystem.EF -> harTilgangTilPersonMedRelasjoner(fagsak.hentAktivIdent())
+    }
+
     private fun hentTilgangTilEksternFagsak(
         eksternFagsakId: String,
-        personIdent: String,
         fagsystem: Fagsystem,
     ): Tilgang =
-        if (featureToggleService.isEnabled(Toggle.BRUK_NY_TILGANG_KONTROLL_BAKS)) {
-            when (fagsystem) {
-                Fagsystem.BA -> familieBASakClient.hentTilgangTilFagsak(eksternFagsakId)
-                Fagsystem.KS -> familieKSSakClient.hentTilgangTilFagsak(eksternFagsakId)
-                else -> throw IllegalArgumentException("Ugyldig fagsystem: $eksternFagsakId. Validering av tilgang til ekstern fagsag støttes kun for BA og KS.")
-            }
-        } else {
-            harTilgangTilPersonMedRelasjoner(personIdent)
+        when (fagsystem) {
+            Fagsystem.BA -> familieBASakClient.hentTilgangTilFagsak(eksternFagsakId)
+            Fagsystem.KS -> familieKSSakClient.hentTilgangTilFagsak(eksternFagsakId)
+            else -> throw IllegalArgumentException("Ugyldig fagsystem: $eksternFagsakId. Validering av tilgang til ekstern fagsag støttes kun for BA og KS.")
         }
 
     private fun harTilgangTilPersonMedRelasjoner(personIdent: String): Tilgang =
