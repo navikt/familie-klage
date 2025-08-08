@@ -12,19 +12,11 @@ import java.util.UUID
 @Component
 class HenleggBehandlingValidator(
     private val brevmottakerService: BrevmottakerService,
-    private val featureToggleService: FeatureToggleService,
 ) {
     fun validerHenleggBehandlingDto(
         behandlingId: UUID,
         henleggBehandlingDto: HenleggBehandlingDto,
     ) {
-        if (!featureToggleService.isEnabled(Toggle.BRUK_NY_HENLEGG_BEHANDLING_MODAL)) {
-            feilHvis(henleggBehandlingDto.skalSendeHenleggelsesbrev && henleggBehandlingDto.årsak == HenlagtÅrsak.FEILREGISTRERT) {
-                "Skal ikke sende brev hvis type er ulik trukket tilbake"
-            }
-            return
-        }
-
         henleggBehandlingDto.valider()
 
         val brevmottakerBrukerFraDto = henleggBehandlingDto.finnNyBrevmottakerBruker()

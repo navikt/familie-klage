@@ -187,7 +187,6 @@ class BrevServiceTest {
             every { brevRepository.findByIdOrNull(any()) } returns null
             every { brevRepository.insert(capture(brevSlot)) } answers { firstArg() }
             every { taskService.save(capture(taskSlot)) } answers { firstArg() }
-            every { featureToggleService.isEnabled(Toggle.BRUK_NY_HENLEGG_BEHANDLING_MODAL) } returns false
 
             // Act
             brevService.lagHenleggelsesbrevOgOpprettJournalføringstask(
@@ -269,7 +268,6 @@ class BrevServiceTest {
             every { brevRepository.findByIdOrNull(any()) } returns brev
             every { brevRepository.update(capture(brevSlot)) } answers { firstArg() }
             every { taskService.save(capture(taskSlot)) } answers { firstArg() }
-            every { featureToggleService.isEnabled(Toggle.BRUK_NY_HENLEGG_BEHANDLING_MODAL) } returns false
 
             // Act
             brevService.lagHenleggelsesbrevOgOpprettJournalføringstask(

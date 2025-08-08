@@ -5,14 +5,10 @@ import io.mockk.mockk
 import no.nav.familie.klage.brevmottaker.BrevmottakerService
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
-import no.nav.familie.klage.infrastruktur.exception.Feil
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DtoTestUtil
 import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -21,69 +17,10 @@ import java.util.UUID
 
 class HenleggBehandlingValidatorTest {
     private val brevmottakerService = mockk<BrevmottakerService>()
-    private val featureToggleService = mockk<FeatureToggleService>()
-    private val henleggBehandlingValidator =
-        HenleggBehandlingValidator(
-            brevmottakerService = brevmottakerService,
-            featureToggleService = featureToggleService,
-        )
-
-    @BeforeEach
-    internal fun setUp() {
-        every { featureToggleService.isEnabled(any()) } returns true
-    }
+    private val henleggBehandlingValidator = HenleggBehandlingValidator(brevmottakerService = brevmottakerService)
 
     @Nested
     inner class ValiderHenleggBehandlingDto {
-        @Test
-        fun `skal kaste feil om årsak er feilregistrert men skalSendeHenleggelsesbrev er true og toggle er skrudd av`() {
-            // Arrange
-            val behandlingId = UUID.randomUUID()
-
-            val henleggBehandlingDto =
-                HenleggBehandlingDto(
-                    årsak = HenlagtÅrsak.FEILREGISTRERT,
-                    skalSendeHenleggelsesbrev = true,
-                    nyeBrevmottakere =
-                        listOf(
-                            DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto(
-                                personIdent = "1",
-                                mottakerRolle = MottakerRolle.BRUKER,
-                                navn = "navn",
-                            ),
-                        ),
-                )
-
-            every { featureToggleService.isEnabled(Toggle.BRUK_NY_HENLEGG_BEHANDLING_MODAL) } returns false
-
-            // Act & assert
-            val exception =
-                assertThrows<Feil> {
-                    henleggBehandlingValidator.validerHenleggBehandlingDto(behandlingId, henleggBehandlingDto)
-                }
-            assertThat(exception.message).isEqualTo("Skal ikke sende brev hvis type er ulik trukket tilbake")
-        }
-
-        @Test
-        fun `skal ikke kaste feil om dto er OK og toggle er skrudd av`() {
-            // Arrange
-            val behandlingId = UUID.randomUUID()
-
-            val henleggBehandlingDto =
-                HenleggBehandlingDto(
-                    årsak = HenlagtÅrsak.FEILREGISTRERT,
-                    skalSendeHenleggelsesbrev = false,
-                    nyeBrevmottakere = emptyList(),
-                )
-
-            every { featureToggleService.isEnabled(Toggle.BRUK_NY_HENLEGG_BEHANDLING_MODAL) } returns false
-
-            // Act & assert
-            assertDoesNotThrow {
-                henleggBehandlingValidator.validerHenleggBehandlingDto(behandlingId, henleggBehandlingDto)
-            }
-        }
-
         @Test
         fun `skal ikke kaste exception om dto er validert OK og inneholder bruker`() {
             // Arrange
