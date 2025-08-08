@@ -5,7 +5,6 @@ import io.mockk.mockk
 import no.nav.familie.klage.brevmottaker.BrevmottakerService
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
-import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DtoTestUtil
 import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
@@ -22,51 +21,6 @@ class HenleggBehandlingValidatorTest {
 
     @Nested
     inner class ValiderHenleggBehandlingDto {
-        @Test
-        fun `skal kaste feil om årsak er feilregistrert men skalSendeHenleggelsesbrev er true og toggle er skrudd av`() {
-            // Arrange
-            val behandlingId = UUID.randomUUID()
-
-            val henleggBehandlingDto =
-                HenleggBehandlingDto(
-                    årsak = HenlagtÅrsak.FEILREGISTRERT,
-                    skalSendeHenleggelsesbrev = true,
-                    nyeBrevmottakere =
-                        listOf(
-                            DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto(
-                                personIdent = "1",
-                                mottakerRolle = MottakerRolle.BRUKER,
-                                navn = "navn",
-                            ),
-                        ),
-                )
-
-            // Act & assert
-            val exception =
-                assertThrows<Feil> {
-                    henleggBehandlingValidator.validerHenleggBehandlingDto(behandlingId, henleggBehandlingDto)
-                }
-            assertThat(exception.message).isEqualTo("Skal ikke sende brev hvis type er ulik trukket tilbake")
-        }
-
-        @Test
-        fun `skal ikke kaste feil om dto er OK og toggle er skrudd av`() {
-            // Arrange
-            val behandlingId = UUID.randomUUID()
-
-            val henleggBehandlingDto =
-                HenleggBehandlingDto(
-                    årsak = HenlagtÅrsak.FEILREGISTRERT,
-                    skalSendeHenleggelsesbrev = false,
-                    nyeBrevmottakere = emptyList(),
-                )
-
-            // Act & assert
-            assertDoesNotThrow {
-                henleggBehandlingValidator.validerHenleggBehandlingDto(behandlingId, henleggBehandlingDto)
-            }
-        }
-
         @Test
         fun `skal ikke kaste exception om dto er validert OK og inneholder bruker`() {
             // Arrange
