@@ -58,7 +58,7 @@ class FamilieKSSakClient(
         val tilgangUri =
             UriComponentsBuilder
                 .fromUri(familieKsSakUri)
-                .pathSegment("api/klage/fagsak/$eksternFagsakId/tilgang")
+                .pathSegment("api/ekstern/fagsak/$eksternFagsakId/tilgang")
                 .build()
                 .toUri()
         val fagsakTilgang = getForEntity<Ressurs<FagsakTilgang>>(tilgangUri).getDataOrThrow()

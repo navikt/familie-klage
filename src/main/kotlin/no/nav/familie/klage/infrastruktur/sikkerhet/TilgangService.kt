@@ -11,6 +11,7 @@ import no.nav.familie.klage.felles.domain.Sporingsdata
 import no.nav.familie.klage.felles.dto.Tilgang
 import no.nav.familie.klage.infrastruktur.config.FagsystemRolleConfig
 import no.nav.familie.klage.infrastruktur.config.RolleConfig
+import no.nav.familie.klage.infrastruktur.config.getNullable
 import no.nav.familie.klage.infrastruktur.config.getValue
 import no.nav.familie.klage.infrastruktur.exception.ManglerTilgang
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
@@ -88,6 +89,9 @@ class TilgangService(
         event: AuditLoggerEvent,
     ) {
         val fagsak = hentFagsakForEksternIdOgFagsystem(eksternFagsakId = eksternFagsakId, fagsystem = fagsystem)
+        if (fagsak == null) {
+            return
+        }
         val personIdent = fagsak.hentAktivIdent()
 
         val tilgang =
@@ -224,8 +228,8 @@ class TilgangService(
     private fun hentFagsakForEksternIdOgFagsystem(
         eksternFagsakId: String,
         fagsystem: Fagsystem,
-    ): Fagsak =
-        cacheManager.getValue("fagsakForEksternIdOgFagsystem", eksternFagsakId) {
+    ): Fagsak? =
+        cacheManager.getNullable("fagsakForEksternIdOgFagsystem", eksternFagsakId) {
             fagsakService.hentFagsakForEksternIdOgFagsystem(eksternFagsakId, fagsystem)
         }
 

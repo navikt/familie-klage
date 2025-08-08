@@ -45,7 +45,7 @@ class FagsakServiceTest {
 
         @ParameterizedTest
         @EnumSource(Stønadstype::class, names = ["BARNETRYGD", "KONTANTSTØTTE"])
-        fun `skal kaste feil dersom fagsystem er BA eller KS og ekstern fagsak ikke finnes`(stønadstype: Stønadstype) {
+        fun `skal returnere null dersom fagsystem er BA eller KS og ekstern fagsak ikke finnes`(stønadstype: Stønadstype) {
             // Arrange
             val fagsak = fagsak(stønadstype = stønadstype)
             val fagsystem = if (stønadstype == Stønadstype.BARNETRYGD) Fagsystem.BA else Fagsystem.KS
@@ -53,15 +53,14 @@ class FagsakServiceTest {
             every { fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(fagsak.eksternId, fagsystem, stønadstype) } returns null
 
             // Act & Assert
-            val feil =
-                assertThrows<Feil> {
-                    fagsakService.hentFagsakForEksternIdOgFagsystem(
-                        eksternId = fagsak.eksternId,
-                        fagsystem = fagsystem,
-                        stønadstype = null,
-                    )
-                }
-            assertThat(feil.message).isEqualTo("Finner ikke fagsak for eksternId=${fagsak.eksternId}, fagsystem=$fagsystem og stønadstype=$stønadstype")
+            val fagsakForEksternIdOgFagsystem =
+                fagsakService.hentFagsakForEksternIdOgFagsystem(
+                    eksternId = fagsak.eksternId,
+                    fagsystem = fagsystem,
+                    stønadstype = null,
+                )
+
+            assertThat(fagsakForEksternIdOgFagsystem).isNull()
         }
 
         @ParameterizedTest
@@ -88,7 +87,8 @@ class FagsakServiceTest {
                 )
 
             // Assert
-            assertThat(fagsakMedEksternId.id).isEqualTo(fagsak.id)
+            assertThat(fagsakMedEksternId).isNotNull
+            assertThat(fagsakMedEksternId!!.id).isEqualTo(fagsak.id)
             assertThat(fagsakMedEksternId.eksternId).isEqualTo(fagsak.eksternId)
             assertThat(fagsakMedEksternId.fagsystem).isEqualTo(fagsak.fagsystem)
             assertThat(fagsakMedEksternId.stønadstype).isEqualTo(fagsak.stønadstype)

@@ -51,7 +51,7 @@ class FagsakService(
         eksternId: String,
         fagsystem: Fagsystem,
         stønadstype: Stønadstype? = null,
-    ): Fagsak {
+    ): Fagsak? {
         val stønadstype =
             stønadstype ?: when (fagsystem) {
                 Fagsystem.KS -> Stønadstype.KONTANTSTØTTE
@@ -60,7 +60,6 @@ class FagsakService(
             }
         val fagsak = fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(eksternId, fagsystem, stønadstype)
         return fagsak?.tilFagsakMedPerson(fagsakPersonService.hentIdenter(fagsak.fagsakPersonId))
-            ?: throw Feil("Finner ikke fagsak for eksternId=$eksternId, fagsystem=$fagsystem og stønadstype=$stønadstype")
     }
 
     private fun opprettFagsak(
