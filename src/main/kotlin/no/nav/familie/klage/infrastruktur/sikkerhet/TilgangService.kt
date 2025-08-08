@@ -161,7 +161,7 @@ class TilgangService(
         when (fagsystem) {
             Fagsystem.BA -> familieBASakClient.hentTilgangTilFagsak(eksternFagsakId)
             Fagsystem.KS -> familieKSSakClient.hentTilgangTilFagsak(eksternFagsakId)
-            else -> throw IllegalArgumentException("Ugyldig fagsystem: $eksternFagsakId. Validering av tilgang til ekstern fagsag støttes kun for BA og KS.")
+            else -> throw IllegalArgumentException("Ugyldig fagsystem: $eksternFagsakId. Validering av tilgang til ekstern fagsak støttes kun for BA og KS.")
         }
 
     private fun harTilgangTilPersonMedRelasjoner(personIdent: String): Tilgang =
