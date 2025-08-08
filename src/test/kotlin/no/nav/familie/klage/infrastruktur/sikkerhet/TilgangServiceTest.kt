@@ -13,8 +13,6 @@ import no.nav.familie.klage.felles.domain.BehandlerRolle
 import no.nav.familie.klage.felles.dto.Tilgang
 import no.nav.familie.klage.infrastruktur.config.RolleConfigTestUtil
 import no.nav.familie.klage.infrastruktur.exception.ManglerTilgang
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.integrasjoner.FamilieBASakClient
 import no.nav.familie.klage.integrasjoner.FamilieKSSakClient
 import no.nav.familie.klage.personopplysninger.PersonopplysningerIntegrasjonerClient
@@ -42,7 +40,6 @@ internal class TilgangServiceTest {
     private val fagsakService = mockk<FagsakService>()
     private val familieBASakClient = mockk<FamilieBASakClient>()
     private val familieKSSakClient = mockk<FamilieKSSakClient>()
-    private val featureToggleService = mockk<FeatureToggleService>()
 
     private val tilgangService =
         TilgangService(
@@ -54,7 +51,6 @@ internal class TilgangServiceTest {
             fagsakService,
             familieBASakClient,
             familieKSSakClient,
-            featureToggleService,
         )
 
     private val fagsakEf = fagsak()
@@ -127,7 +123,6 @@ internal class TilgangServiceTest {
                 // Arrange
                 val fagsak = fagsak(stønadstype = stønadstype)
                 every { fagsakService.hentFagsak(fagsak.id) } returns fagsak
-                every { featureToggleService.isEnabled(Toggle.BRUK_NY_TILGANG_KONTROLL_BAKS) } returns true
                 every { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
                 every { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
 
@@ -160,7 +155,6 @@ internal class TilgangServiceTest {
                 // Arrange
                 val fagsak = fagsak(stønadstype = stønadstype)
                 every { fagsakService.hentFagsak(fagsak.id) } returns fagsak
-                every { featureToggleService.isEnabled(Toggle.BRUK_NY_TILGANG_KONTROLL_BAKS) } returns true
                 every { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = true)
                 every { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = true)
 
@@ -228,7 +222,6 @@ internal class TilgangServiceTest {
                 val fagsystem = if (stønadstype == Stønadstype.BARNETRYGD) Fagsystem.BA else Fagsystem.KS
 
                 every { fagsakService.hentFagsakForEksternIdOgFagsystem(eksternId = fagsak.eksternId, fagsystem = fagsystem) } returns fagsak
-                every { featureToggleService.isEnabled(Toggle.BRUK_NY_TILGANG_KONTROLL_BAKS) } returns true
                 every { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
                 every { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
 
@@ -270,7 +263,6 @@ internal class TilgangServiceTest {
                 val fagsystem = if (stønadstype == Stønadstype.BARNETRYGD) Fagsystem.BA else Fagsystem.KS
 
                 every { fagsakService.hentFagsakForEksternIdOgFagsystem(fagsak.eksternId, fagsystem) } returns fagsak
-                every { featureToggleService.isEnabled(Toggle.BRUK_NY_TILGANG_KONTROLL_BAKS) } returns true
                 every { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = true)
                 every { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = true)
 
@@ -307,7 +299,6 @@ internal class TilgangServiceTest {
                 val behandling = behandling(fagsak)
 
                 every { fagsakService.hentFagsakForBehandling(behandling.id) } returns fagsak
-                every { featureToggleService.isEnabled(Toggle.BRUK_NY_TILGANG_KONTROLL_BAKS) } returns true
                 every { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
                 every { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
 
@@ -342,7 +333,6 @@ internal class TilgangServiceTest {
                 val behandling = behandling(fagsak)
 
                 every { fagsakService.hentFagsakForBehandling(behandling.id) } returns fagsak
-                every { featureToggleService.isEnabled(Toggle.BRUK_NY_TILGANG_KONTROLL_BAKS) } returns true
                 every { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = true)
                 every { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) } returns Tilgang(harTilgang = true)
 
