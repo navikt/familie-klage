@@ -7,6 +7,8 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.dto.PåklagetVedtakDto
+import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
+import no.nav.familie.klage.behandlingshistorikk.domain.HistorikkHendelse
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.brev.dto.AvsnittDto
@@ -509,5 +511,24 @@ object DomainUtil {
             organisasjonsnummer = organisasjonsnummer,
             organisasjonsnavn = organisasjonsnavn,
             navnHosOrganisasjon = navnHosOrganisasjon,
+        )
+
+    fun lagBehandlingshistorikk(
+        id: UUID = UUID.randomUUID(),
+        behandlingId: UUID = UUID.randomUUID(),
+        historikkHendelse: HistorikkHendelse? = null,
+        steg: StegType = StegType.FORMKRAV,
+        opprettetAv: String = "Saksbehandler",
+        endretTid: LocalDateTime? = LocalDateTime.now(),
+        beskrivelse: String? = "Beskrivelse",
+    ): Behandlingshistorikk =
+        Behandlingshistorikk(
+            id = id,
+            behandlingId = behandlingId,
+            historikkHendelse = historikkHendelse,
+            steg = steg,
+            opprettetAv = opprettetAv,
+            endretTid = endretTid,
+            beskrivelse = beskrivelse,
         )
 }
