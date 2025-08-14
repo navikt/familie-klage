@@ -17,6 +17,8 @@ import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.formkrav.dto.tilDto
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
@@ -42,6 +44,7 @@ class FormServiceTest {
     private val behandlingshistorikkService = mockk<BehandlingshistorikkService>()
     private val fagsakService = mockk<FagsakService>()
     private val fagsakMock = mockk<Fagsak>()
+    private val featureToggleService = mockk<FeatureToggleService>()
 
     private val service =
         FormService(
@@ -52,6 +55,7 @@ class FormServiceTest {
             vurderingService,
             taskService,
             fagsakService,
+            featureToggleService,
         )
 
     private val behandlingId = UUID.randomUUID()
@@ -70,6 +74,7 @@ class FormServiceTest {
         every { fagsakMock.eksternId } returns "123"
         every { fagsakMock.fagsystem } returns Fagsystem.BA
         every { fagsakService.hentFagsakForBehandling(behandlingId) } returns fagsakMock
+        every { featureToggleService.isEnabled(Toggle.SEND_ENDRET_ENHET_TIL_SAK) } returns true
     }
 
     @AfterEach

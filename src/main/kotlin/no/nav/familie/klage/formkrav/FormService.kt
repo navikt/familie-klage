@@ -14,6 +14,8 @@ import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.formkrav.dto.FormkravDto
 import no.nav.familie.klage.formkrav.dto.tilDto
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
@@ -31,6 +33,7 @@ class FormService(
     private val vurderingService: VurderingService,
     private val taskService: TaskService,
     private val fagsakService: FagsakService,
+    private val featureToggleService: FeatureToggleService,
 ) {
     fun hentForm(behandlingId: UUID): Form = formRepository.findByIdOrThrow(behandlingId)
 
@@ -79,17 +82,30 @@ class FormService(
         eksternFagsakId: String,
         fagsystem: Fagsystem,
     ) {
-        val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
-        val harFormkravHistorikk = behandlingshistorikk.any { it.steg == StegType.FORMKRAV }
-        val harEndretEnhetHistorikk = behandlingshistorikk.any { it.historikkHendelse === HistorikkHendelse.BEHANDLENDE_ENHET_ENDRET }
-        if (!harFormkravHistorikk && !harEndretEnhetHistorikk) {
-            taskService.save(
-                BehandlingsstatistikkTask.opprettPåbegyntTask(
-                    behandlingId = behandlingId,
-                    eksternFagsakId = eksternFagsakId,
-                    fagsystem = fagsystem,
-                ),
-            )
+        if (featureToggleService.isEnabled(Toggle.SEND_ENDRET_ENHET_TIL_SAK)) {
+            val behandlingshistorikk = behandlingshistorikkService.hentBehandlingshistorikk(behandlingId)
+            val harFormkravHistorikk = behandlingshistorikk.any { it.steg == StegType.FORMKRAV }
+            val harEndretEnhetHistorikk = behandlingshistorikk.any { it.historikkHendelse === HistorikkHendelse.BEHANDLENDE_ENHET_ENDRET }
+            if (!harFormkravHistorikk && !harEndretEnhetHistorikk) {
+                taskService.save(
+                    BehandlingsstatistikkTask.opprettPåbegyntTask(
+                        behandlingId = behandlingId,
+                        eksternFagsakId = eksternFagsakId,
+                        fagsystem = fagsystem,
+                    ),
+                )
+            }
+        } else {
+            behandlingshistorikkService.hentBehandlingshistorikk(behandlingId).find { it.steg == StegType.FORMKRAV }
+                ?: run {
+                    taskService.save(
+                        BehandlingsstatistikkTask.opprettPåbegyntTask(
+                            behandlingId = behandlingId,
+                            eksternFagsakId = eksternFagsakId,
+                            fagsystem = fagsystem,
+                        ),
+                    )
+                }
         }
     }
 
