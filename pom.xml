@@ -26,7 +26,7 @@
 
     <properties>
         <java.version>21</java.version>
-        <kotlin.version>2.2.0</kotlin.version>
+        <kotlin.version>2.2.10</kotlin.version>
         <springdoc.version>2.8.9</springdoc.version>
         <mockk-jvm.version>1.14.3</mockk-jvm.version>
         <felles.version>3.20250804101327_a0f5fad</felles.version>
@@ -34,7 +34,7 @@
         <springdoc.version>2.8.9</springdoc.version>
         <mockk-jvm.version>1.14.5</mockk-jvm.version>
         <felles.version>3.20250804101327_a0f5fad</felles.version>
-        <prosessering.version>2.20250804113739_6d49ef6</prosessering.version>
+        <prosessering.version>2.20250814122631_d951dfb</prosessering.version>
         <start-class>no.nav.familie.klage.ApplicationKt</start-class>
         <kontrakter.version>3.0_20250805142725_8942276</kontrakter.version>
         <saksstatistikk-klage.version>2.0_20250804093222_2bf44ca</saksstatistikk-klage.version>
@@ -90,7 +90,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>11.11.0</version>
+            <version>11.11.1</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
