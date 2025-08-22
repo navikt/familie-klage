@@ -35,7 +35,6 @@ import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
@@ -350,7 +349,7 @@ class BrevService(
                     brevmal = "informasjonsbrevTrukketKlage",
                     saksbehandlerBrevrequest = objectMapper.valueToTree(henleggelsesbrev),
                     saksbehandlersignatur = signaturMedEnhet.navn,
-                    enhet = signaturMedEnhet.enhet,
+                    saksbehandlerEnhet = signaturMedEnhet.enhet,
                     skjulBeslutterSignatur = true,
                     stønadstype = fagsak.stønadstype,
                 )

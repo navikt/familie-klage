@@ -63,7 +63,7 @@ class BrevClient(
         brevmal: String,
         saksbehandlerBrevrequest: JsonNode,
         saksbehandlersignatur: String,
-        enhet: String?,
+        saksbehandlerEnhet: String?,
         skjulBeslutterSignatur: Boolean,
         stønadstype: Stønadstype,
     ): String {
@@ -79,7 +79,7 @@ class BrevClient(
             BrevRequest(
                 brevFraSaksbehandler = saksbehandlerBrevrequest,
                 saksbehandlersignatur = saksbehandlersignatur,
-                enhet = enhet,
+                saksbehandlerEnhet = saksbehandlerEnhet,
                 skjulBeslutterSignatur = skjulBeslutterSignatur,
                 dato = LocalDate.now().norskFormat(),
             ),
@@ -112,7 +112,9 @@ data class FritekstBrevRequestMedSignatur(
 data class BrevRequest(
     val brevFraSaksbehandler: JsonNode,
     val saksbehandlersignatur: String,
-    val enhet: String?,
+    val saksbehandlerEnhet: String? = null,
+    val besluttersignatur: String? = null,
+    val beslutterEnhet: String? = null,
     val skjulBeslutterSignatur: Boolean,
     val dato: String,
 )
