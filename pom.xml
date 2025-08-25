@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.4</version>
+        <version>3.5.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <repositories>
@@ -27,17 +27,17 @@
     <properties>
         <java.version>21</java.version>
         <kotlin.version>2.2.10</kotlin.version>
-        <springdoc.version>2.8.9</springdoc.version>
+        <springdoc.version>2.8.11</springdoc.version>
         <mockk-jvm.version>1.14.3</mockk-jvm.version>
         <felles.version>3.20250804101327_a0f5fad</felles.version>
         <prosessering.version>2.20250311132904_6ee7728</prosessering.version>
-        <springdoc.version>2.8.9</springdoc.version>
+        <springdoc.version>2.8.11</springdoc.version>
         <mockk-jvm.version>1.14.5</mockk-jvm.version>
         <felles.version>3.20250804101327_a0f5fad</felles.version>
-        <prosessering.version>2.20250814122631_d951dfb</prosessering.version>
+        <prosessering.version>2.20250818131235_94bcc1a</prosessering.version>
         <start-class>no.nav.familie.klage.ApplicationKt</start-class>
-        <kontrakter.version>3.0_20250805142725_8942276</kontrakter.version>
-        <saksstatistikk-klage.version>2.0_20250804093222_2bf44ca</saksstatistikk-klage.version>
+        <kontrakter.version>3.0_20250822084705_acb7066</kontrakter.version>
+        <saksstatistikk-klage.version>2.0_20250819081736_d4884f9</saksstatistikk-klage.version>
         <nav.security.version>5.0.34</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskriver spring sin versjon, blir brukt av mock-oauth2-server -->
     </properties>
@@ -90,7 +90,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>11.11.1</version>
+            <version>11.11.2</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
