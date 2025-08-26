@@ -7,7 +7,6 @@ import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.oppgave.OppgaveService
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.prosessering.internal.TaskService
@@ -76,16 +75,14 @@ class BehandlendeEnhetService(
                     "\n\n$begrunnelse",
         )
 
-        if (featureToggleService.isEnabled(Toggle.SEND_ENDRET_ENHET_TIL_SAK)) {
-            taskService.save(
-                // Sender "påbegynt" hver gang man endrer enhet da "hendelse" blir sendt i sakstatistikkfeltet
-                // "BehandlingStatus" og sak/dvh er ikke interessert i å innføre en "ENDRET_ENHET" hendelse
-                BehandlingsstatistikkTask.opprettPåbegyntTask(
-                    behandlingId = behandlingId,
-                    eksternFagsakId = fagsak.eksternId,
-                    fagsystem = fagsystem,
-                ),
-            )
-        }
+        taskService.save(
+            // Sender "påbegynt" hver gang man endrer enhet da "hendelse" blir sendt i sakstatistikkfeltet
+            // "BehandlingStatus" og sak/dvh er ikke interessert i å innføre en "ENDRET_ENHET" hendelse
+            BehandlingsstatistikkTask.opprettPåbegyntTask(
+                behandlingId = behandlingId,
+                eksternFagsakId = fagsak.eksternId,
+                fagsystem = fagsystem,
+            ),
+        )
     }
 }
