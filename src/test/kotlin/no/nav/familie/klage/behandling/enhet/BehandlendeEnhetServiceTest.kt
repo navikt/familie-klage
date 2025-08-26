@@ -14,7 +14,6 @@ import no.nav.familie.klage.behandlingshistorikk.domain.HistorikkHendelse
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.oppgave.OppgaveService
 import no.nav.familie.klage.testutil.DomainUtil.behandling
@@ -55,7 +54,6 @@ class BehandlendeEnhetServiceTest {
         mockkObject(SikkerhetContext)
         every { taskService.save(any()) } returnsArgument 0
         every { SikkerhetContext.hentSaksbehandler(true) } returns "saksbehandler1"
-        every { featureToggleService.isEnabled(Toggle.SEND_ENDRET_ENHET_TIL_SAK) } returns true
     }
 
     @AfterEach
