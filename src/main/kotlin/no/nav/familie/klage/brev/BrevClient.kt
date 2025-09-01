@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.klage.blankett.BlankettPdfRequest
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.felles.util.TekstUtil.norskFormat
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
@@ -39,6 +40,7 @@ class BrevClient(
         saksbehandlerNavn: String,
         enhet: String,
         fagsystem: Fagsystem,
+        brevmottakere: Brevmottakere?,
     ): String {
         val url =
             if (fagsystem in setOf(Fagsystem.BA, Fagsystem.KS) && featureToggleService.isEnabled(Toggle.BRUK_NYTT_BREV_BA_KS)) {
@@ -49,9 +51,10 @@ class BrevClient(
         return postForEntity(
             url,
             FritekstBrevRequestMedSignatur(
-                fritekstBrev,
-                saksbehandlerNavn,
-                enhet,
+                brevFraSaksbehandler = fritekstBrev,
+                saksbehandlersignatur = saksbehandlerNavn,
+                enhet = enhet,
+                brevmottakere = brevmottakere,
             ),
             HttpHeaders().medContentTypeJsonUTF8(),
         )
@@ -107,6 +110,7 @@ data class FritekstBrevRequestMedSignatur(
     val brevFraSaksbehandler: FritekstBrevRequestDto,
     val saksbehandlersignatur: String,
     val enhet: String,
+    val brevmottakere: Brevmottakere? = null,
 )
 
 data class BrevRequest(
@@ -117,4 +121,8 @@ data class BrevRequest(
     val beslutterEnhet: String? = null,
     val skjulBeslutterSignatur: Boolean,
     val dato: String,
+)
+
+data class BrevmottakereRequest(
+    val brevmottakere: Brevmottakere? = null,
 )

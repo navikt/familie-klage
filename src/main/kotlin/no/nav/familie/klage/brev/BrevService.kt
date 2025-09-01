@@ -34,7 +34,6 @@ import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
@@ -66,7 +65,6 @@ class BrevService(
     private val brevInnholdUtleder: BrevInnholdUtleder,
     private val taskService: TaskService,
     private val brevmottakerUtleder: BrevmottakerUtleder,
-    private val featureToggleService: FeatureToggleService,
 ) {
     fun hentBrev(behandlingId: UUID): Brev = brevRepository.findByIdOrThrow(behandlingId)
 
@@ -97,6 +95,8 @@ class BrevService(
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
         val påklagetVedtakDetaljer = behandling.påklagetVedtak.påklagetVedtakDetaljer
+        val brevmottakere = brevRepository.findByIdOrNull(behandlingId)?.mottakere ?: Brevmottakere()
+
         validerKanLageBrev(behandling)
 
         val brevRequest = lagBrevRequest(behandling, fagsak, navn, påklagetVedtakDetaljer, behandling.klageMottatt)
@@ -109,6 +109,7 @@ class BrevService(
                 saksbehandlerNavn = signaturMedEnhet.navn,
                 enhet = signaturMedEnhet.enhet,
                 fagsystem = fagsak.fagsystem,
+                brevmottakere = brevmottakere,
             )
 
         lagreEllerOppdaterBrev(
@@ -373,6 +374,7 @@ class BrevService(
             saksbehandlerNavn = signaturMedEnhet.navn,
             enhet = signaturMedEnhet.enhet,
             fagsystem = fagsak.fagsystem,
+            brevmottakere = null,
         )
     }
 

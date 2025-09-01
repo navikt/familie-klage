@@ -14,8 +14,6 @@ import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil
@@ -46,7 +44,6 @@ class BrevServiceTest {
     private val brevInnholdUtleder = mockk<BrevInnholdUtleder>()
     private val taskService = mockk<TaskService>()
     private val brevmottakerUtleder = mockk<BrevmottakerUtleder>()
-    private val featureToggleService = mockk<FeatureToggleService>()
 
     private val brevService =
         BrevService(
@@ -62,13 +59,11 @@ class BrevServiceTest {
             brevInnholdUtleder = brevInnholdUtleder,
             taskService = taskService,
             brevmottakerUtleder = brevmottakerUtleder,
-            featureToggleService = featureToggleService,
         )
 
     @BeforeEach
     fun setup() {
         BrukerContextUtil.mockBrukerContext()
-        every { featureToggleService.isEnabled(any()) } returns true
     }
 
     @AfterEach
@@ -349,7 +344,7 @@ class BrevServiceTest {
             every { fagsakService.hentFagsak(behandling.fagsakId) } returns fagsak
             every { personopplysningerService.hentPersonopplysninger(any()) } returns personopplysningerDto
             every { brevsignaturService.lagSignatur(personopplysningerDto, fagsak.fagsystem) } returns DtoTestUtil.lagSignaturDto()
-            every { brevClient.genererHtmlFritekstbrev(any(), any(), any(), any()) } returns "<html />"
+            every { brevClient.genererHtmlFritekstbrev(any(), any(), any(), any(), any()) } returns "<html />"
             every { familieDokumentClient.genererPdfFraHtml(any()) } returns pdf
             every { brevmottakerUtleder.utledInitielleBrevmottakere(behandling.id) } returns initielleBrevmottakere
             every { brevRepository.findByIdOrNull(any()) } returns null
@@ -453,7 +448,7 @@ class BrevServiceTest {
             every { fagsakService.hentFagsak(behandling.fagsakId) } returns fagsak
             every { personopplysningerService.hentPersonopplysninger(any()) } returns personopplysningerDto
             every { brevsignaturService.lagSignatur(personopplysningerDto, fagsak.fagsystem) } returns DtoTestUtil.lagSignaturDto()
-            every { brevClient.genererHtmlFritekstbrev(any(), any(), any(), any()) } returns "<html />"
+            every { brevClient.genererHtmlFritekstbrev(any(), any(), any(), any(), any()) } returns "<html />"
             every { familieDokumentClient.genererPdfFraHtml(any()) } returns pdf
             every { brevmottakerUtleder.utledInitielleBrevmottakere(behandling.id) } returns initielleBrevmottakere
             every { brevRepository.findByIdOrNull(any()) } returns brev
