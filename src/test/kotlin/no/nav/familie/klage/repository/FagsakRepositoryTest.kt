@@ -5,7 +5,6 @@ import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.testutil.DomainUtil.behandling
-import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
@@ -109,17 +108,17 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
                 )
 
             // Act
-            val lagret = fagsakRepository.insertAll(listOf(fagsak1, fagsak2))
+            val fagsaker = fagsakRepository.insertAll(listOf(fagsak1, fagsak2))
 
             // Assert
-            assertThat(lagret).hasSize(2)
-            assertThat(lagret).anySatisfy {
+            assertThat(fagsaker).hasSize(2)
+            assertThat(fagsaker).anySatisfy {
                 assertThat(it.fagsakPersonId).isEqualTo(person.id)
                 assertThat(it.eksternId).isEqualTo(fagsak1.eksternId)
                 assertThat(it.stønadstype).isEqualTo(Stønadstype.BARNETRYGD)
                 assertThat(it.fagsystem).isEqualTo(Fagsystem.BA)
             }
-            assertThat(lagret).anySatisfy {
+            assertThat(fagsaker).anySatisfy {
                 assertThat(it.fagsakPersonId).isEqualTo(person.id)
                 assertThat(it.eksternId).isEqualTo(fagsak2.eksternId)
                 assertThat(it.stønadstype).isEqualTo(Stønadstype.BARNETRYGD)
