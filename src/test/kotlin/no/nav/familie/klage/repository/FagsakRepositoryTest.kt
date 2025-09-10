@@ -121,7 +121,6 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
             }
             assertThat(lagret).anySatisfy {
                 assertThat(it.fagsakPersonId).isEqualTo(person.id)
-                assertThat(it.fagsakPersonId).isEqualTo(person.id)
                 assertThat(it.eksternId).isEqualTo(fagsak2.eksternId)
                 assertThat(it.stønadstype).isEqualTo(Stønadstype.BARNETRYGD)
                 assertThat(it.fagsystem).isEqualTo(Fagsystem.BA)
