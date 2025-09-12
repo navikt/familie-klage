@@ -202,7 +202,7 @@ class FagsystemVedtakServiceTest {
                     fagsystemVedtakService.opprettRevurdering(behandlingKS)
                 }
             assertThat(exception.message).isEqualTo(
-                "Feilet opprettelse av revurdering for behandling=${behandlingKS.id} eksternFagsakId=${fagsakBA.eksternId}",
+                "Feilet opprettelse av revurdering for behandling=${behandlingKS.id} eksternFagsakId=${fagsakKS.eksternId}",
             )
         }
     }

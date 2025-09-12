@@ -53,7 +53,7 @@ internal class BlankettServiceTest {
     private val eksternFagsystemBehandlingId = "eksternFagsystemBehandlingId"
 
     private val blankettRequestSpot = slot<BlankettPdfRequest>()
-    private val fagsak = fagsak(setOf(PersonIdent("ident")))
+    private val fagsak = fagsak(eksternId = "1", identer = setOf(PersonIdent("ident")))
     private val behandling =
         behandling(
             fagsak = fagsak,

@@ -9,9 +9,13 @@ import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.relational.core.conversion.DbActionExecutionException
 import org.springframework.data.repository.findByIdOrNull
+import java.util.UUID
 import kotlin.random.Random
 
 internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
@@ -78,5 +82,78 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
         assertThat(lagretFagsak.stønadstype).isEqualTo(fagsak.stønadstype)
         assertThat(lagretFagsak.stønadstype).isEqualTo(fagsak.stønadstype)
         assertThat(lagretFagsak.fagsakPersonId).isEqualTo(fagsak.fagsakPersonId)
+    }
+
+    @Nested
+    inner class InsertAll {
+        @Test
+        fun `skal kunne lagre to fagsaker fra samme person og fagsystem men som har forskjellige eksterne fagsak kilder`() {
+            // Arrange
+            val person = testoppsettService.opprettPerson("01010199999")
+
+            val fagsak1 =
+                fagsakDomain(
+                    personId = person.id,
+                    eksternId = UUID.randomUUID().toString(),
+                    stønadstype = Stønadstype.BARNETRYGD,
+                    fagsystem = Fagsystem.BA,
+                )
+
+            val fagsak2 =
+                fagsakDomain(
+                    personId = person.id,
+                    eksternId = UUID.randomUUID().toString(),
+                    stønadstype = Stønadstype.BARNETRYGD,
+                    fagsystem = Fagsystem.BA,
+                )
+
+            // Act
+            val fagsaker = fagsakRepository.insertAll(listOf(fagsak1, fagsak2))
+
+            // Assert
+            assertThat(fagsaker).hasSize(2)
+            assertThat(fagsaker).anySatisfy {
+                assertThat(it.fagsakPersonId).isEqualTo(person.id)
+                assertThat(it.eksternId).isEqualTo(fagsak1.eksternId)
+                assertThat(it.stønadstype).isEqualTo(Stønadstype.BARNETRYGD)
+                assertThat(it.fagsystem).isEqualTo(Fagsystem.BA)
+            }
+            assertThat(fagsaker).anySatisfy {
+                assertThat(it.fagsakPersonId).isEqualTo(person.id)
+                assertThat(it.eksternId).isEqualTo(fagsak2.eksternId)
+                assertThat(it.stønadstype).isEqualTo(Stønadstype.BARNETRYGD)
+                assertThat(it.fagsystem).isEqualTo(Fagsystem.BA)
+            }
+        }
+
+        @Test
+        fun `skal ikke kunne lagre to fagsaker som er helt identiske`() {
+            // Arrange
+            val person = testoppsettService.opprettPerson("01010199999")
+            val eksternId = UUID.randomUUID().toString()
+
+            val fagsak1 =
+                fagsakDomain(
+                    personId = person.id,
+                    eksternId = eksternId,
+                    stønadstype = Stønadstype.BARNETRYGD,
+                    fagsystem = Fagsystem.BA,
+                )
+
+            val fagsak2 =
+                fagsakDomain(
+                    personId = person.id,
+                    eksternId = eksternId,
+                    stønadstype = Stønadstype.BARNETRYGD,
+                    fagsystem = Fagsystem.BA,
+                )
+
+            // Act & asseret
+            val exception =
+                assertThrows<DbActionExecutionException> {
+                    fagsakRepository.insertAll(listOf(fagsak1, fagsak2))
+                }
+            assertThat(exception.message).contains("Failed to execute InsertRoot")
+        }
     }
 }
