@@ -195,14 +195,15 @@ object DomainUtil {
         id: UUID = UUID.randomUUID(),
         sporbar: Sporbar = Sporbar(),
         fagsakPersonId: UUID = UUID.randomUUID(),
-    ): Fagsak = fagsak(stønadstype, id, FagsakPerson(id = fagsakPersonId, identer = identer), sporbar)
+        eksternId: String = UUID.randomUUID().toString(),
+    ): Fagsak = fagsak(stønadstype, id, FagsakPerson(id = fagsakPersonId, identer = identer), sporbar, eksternId)
 
     fun fagsak(
         stønadstype: Stønadstype = Stønadstype.OVERGANGSSTØNAD,
         id: UUID = UUID.randomUUID(),
         person: FagsakPerson,
         sporbar: Sporbar = Sporbar(),
-        eksternId: String = "1",
+        eksternId: String = UUID.randomUUID().toString(),
     ): Fagsak =
         Fagsak(
             id = id,

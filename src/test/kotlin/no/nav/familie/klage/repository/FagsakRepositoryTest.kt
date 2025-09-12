@@ -87,7 +87,7 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
     @Nested
     inner class InsertAll {
         @Test
-        fun `skal kunne lagre to fagsaker fra samme person, stønadstype, og fagsystem men som har forskjellige eksterne fagsak kilder`() {
+        fun `skal kunne lagre to fagsaker fra samme person og fagsystem men som har forskjellige eksterne fagsak kilder`() {
             // Arrange
             val person = testoppsettService.opprettPerson("01010199999")
 
