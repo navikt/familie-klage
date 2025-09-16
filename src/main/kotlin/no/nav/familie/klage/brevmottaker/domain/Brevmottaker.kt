@@ -28,6 +28,7 @@ data class BrevmottakerOrganisasjon(
     val organisasjonsnummer: String,
     val organisasjonsnavn: String,
     val navnHosOrganisasjon: String,
+    val mottakerRolle: MottakerRolle ? = null,
 ) : Brevmottaker
 
 @JsonDeserialize(`as` = BrevmottakerPersonMedIdent::class)
@@ -97,4 +98,5 @@ enum class MottakerRolle {
     FULLMAKT,
     BRUKER_MED_UTENLANDSK_ADRESSE,
     DØDSBO,
+    MOTTAKER,
 }
