@@ -32,12 +32,12 @@
         <felles.version>3.20250915092837_153983f</felles.version>
         <prosessering.version>2.20250311132904_6ee7728</prosessering.version>
         <springdoc.version>2.8.13</springdoc.version>
-        <mockk-jvm.version>1.14.5</mockk-jvm.version>
+        <mockk-jvm.version>1.14.6</mockk-jvm.version>
         <felles.version>3.20250915092837_153983f</felles.version>
         <prosessering.version>2.20250922094930_4bb329c</prosessering.version>
         <start-class>no.nav.familie.klage.ApplicationKt</start-class>
-        <kontrakter.version>3.0_20250926084423_43c9cbe</kontrakter.version>
-        <saksstatistikk-klage.version>2.0_20250922093519_c7288d4</saksstatistikk-klage.version>
+        <kontrakter.version>3.0_20250929124430_91dd0fd</kontrakter.version>
+        <saksstatistikk-klage.version>2.0_20250929124738_f28327d</saksstatistikk-klage.version>
         <nav.security.version>5.0.37</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskriver spring sin versjon, blir brukt av mock-oauth2-server -->
     </properties>
@@ -90,7 +90,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>11.12.0</version>
+            <version>11.13.2</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
