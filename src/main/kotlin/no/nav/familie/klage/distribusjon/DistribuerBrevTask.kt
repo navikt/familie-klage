@@ -1,5 +1,7 @@
 package no.nav.familie.klage.distribusjon
 
+import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.http.client.RessursException
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
@@ -17,10 +19,14 @@ import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.dokdist.AdresseType.norskPostadresse
 import no.nav.familie.kontrakter.felles.dokdist.AdresseType.utenlandskPostadresse
 import no.nav.familie.kontrakter.felles.dokdist.ManuellAdresse
+import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.web.client.HttpClientErrorException
 import java.util.UUID
 
 @Service
@@ -34,6 +40,8 @@ class DistribuerBrevTask(
     private val fagsakService: FagsakService,
     private val featureToggleService: FeatureToggleService,
 ) : AsyncTaskStep {
+    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
+
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
         val brev = brevService.hentBrev(behandlingId)
@@ -89,11 +97,22 @@ class DistribuerBrevTask(
         if (journalpost.distribusjonId == null) {
             val adresse = finnAdresseForJournalpost(journalpost, brevmottakere)
             val distribusjonId =
-                distribusjonService.distribuerBrev(
-                    journalpostId = journalpost.journalpostId,
-                    adresse = adresse,
-                    fagsystem = fagsystem,
-                )
+                try {
+                    distribusjonService.distribuerBrev(
+                        journalpostId = journalpost.journalpostId,
+                        adresse = adresse,
+                        fagsystem = fagsystem,
+                    )
+                } catch (e: RessursException) {
+                    val cause = e.cause
+                    if (cause is HttpClientErrorException.Conflict) {
+                        logger.warn("Conflict: distribuering av brev allerede utført for journalpost: ${journalpost.journalpostId}")
+                        val response: DistribuerJournalpostResponseTo = objectMapper.readValue(e.ressurs.data.toString())
+                        response.distribusjonId
+                    } else {
+                        throw e
+                    }
+                }
             val nyeJournalposter =
                 acc.map {
                     if (it.journalpostId == journalpost.journalpostId) {
