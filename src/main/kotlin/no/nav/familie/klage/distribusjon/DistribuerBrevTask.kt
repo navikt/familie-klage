@@ -108,7 +108,7 @@ class DistribuerBrevTask(
                     if (cause is HttpClientErrorException.Conflict) {
                         logger.warn("Conflict: distribuering av brev allerede utført for journalpost: ${journalpost.journalpostId}")
                         val response: DistribuerJournalpostResponseTo = objectMapper.readValue(e.ressurs.data.toString())
-                        response.distribusjonId
+                        response.bestillingsId
                     } else {
                         throw e
                     }
