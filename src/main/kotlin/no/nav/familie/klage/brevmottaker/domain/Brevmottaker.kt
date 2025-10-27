@@ -28,7 +28,7 @@ data class BrevmottakerOrganisasjon(
     val organisasjonsnummer: String,
     val organisasjonsnavn: String,
     val navnHosOrganisasjon: String,
-    val mottakerRolle: MottakerRolle ? = null,
+    val mottakerRolle: MottakerRolle? = null,
 ) : Brevmottaker
 
 @JsonDeserialize(`as` = BrevmottakerPersonMedIdent::class)
