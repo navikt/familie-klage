@@ -10,4 +10,6 @@ interface BehandleSakOppgaveRepository :
     RepositoryInterface<BehandleSakOppgave, UUID>,
     InsertUpdateRepository<BehandleSakOppgave> {
     fun findByBehandlingId(behandlingId: UUID): BehandleSakOppgave?
+
+    fun findByOppgaveId(oppgaveId: Long): BehandleSakOppgave?
 }
