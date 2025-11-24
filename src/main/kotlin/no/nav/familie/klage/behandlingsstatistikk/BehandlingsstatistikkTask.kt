@@ -1,7 +1,6 @@
 package no.nav.familie.klage.behandlingsstatistikk
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -22,7 +21,6 @@ import java.util.UUID
 )
 class BehandlingsstatistikkTask(
     private val behandlingStatistikkService: BehandlingsstatistikkService,
-    private val featureToggleService: FeatureToggleService,
 ) : AsyncTaskStep {
     override fun doTask(task: Task) {
         val (behandlingId, hendelse, hendelseTidspunkt, gjeldendeSaksbehandler) =
@@ -54,12 +52,13 @@ class BehandlingsstatistikkTask(
             behandlingId: UUID,
             eksternFagsakId: String,
             fagsystem: Fagsystem,
+            gjeldendeSaksbehandler: String? = null,
         ): Task =
             opprettTask(
                 behandlingId = behandlingId,
                 hendelse = BehandlingsstatistikkHendelse.PÅBEGYNT,
                 hendelseTidspunkt = LocalDateTime.now(),
-                gjeldendeSaksbehandler = SikkerhetContext.hentSaksbehandler(true),
+                gjeldendeSaksbehandler = gjeldendeSaksbehandler ?: SikkerhetContext.hentSaksbehandler(true),
                 eksternFagsakId = eksternFagsakId,
                 fagsystem = fagsystem,
             )
