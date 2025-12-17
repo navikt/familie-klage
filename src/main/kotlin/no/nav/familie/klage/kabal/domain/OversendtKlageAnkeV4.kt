@@ -83,7 +83,9 @@ data class OversendtKlageAnkeV4(
                     )
                 }
 
-                is BrevmottakerPersonUtenIdent -> null
+                is BrevmottakerPersonUtenIdent -> {
+                    null
+                }
             }
 
         private fun utledNavnFraBrevmottaker(brevmottaker: Brevmottaker): String =
@@ -94,7 +96,7 @@ data class OversendtKlageAnkeV4(
 
         private fun utledAdresseFraBrevmottaker(brevmottaker: Brevmottaker): OversendtAdresseV4? =
             when (brevmottaker) {
-                is BrevmottakerPersonUtenIdent ->
+                is BrevmottakerPersonUtenIdent -> {
                     OversendtAdresseV4(
                         adresselinje1 = brevmottaker.adresselinje1,
                         adresselinje2 = brevmottaker.adresselinje2,
@@ -102,8 +104,11 @@ data class OversendtKlageAnkeV4(
                         poststed = brevmottaker.poststed,
                         land = brevmottaker.landkode,
                     )
+                }
 
-                else -> null
+                else -> {
+                    null
+                }
             }
     }
 }

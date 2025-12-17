@@ -170,8 +170,9 @@ class JournalførBrevTask(
             }
         }
 
-        is BrevmottakerJournalpostUtenIdent ->
+        is BrevmottakerJournalpostUtenIdent -> {
             brevmottaker is BrevmottakerPersonUtenIdent && brevmottakerJournalpost.id == brevmottaker.id
+        }
     }
 
     override fun onCompletion(task: Task) {

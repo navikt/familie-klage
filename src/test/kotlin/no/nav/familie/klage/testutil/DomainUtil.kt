@@ -220,6 +220,7 @@ object DomainUtil {
                     -> Fagsystem.EF
 
                     Stønadstype.BARNETRYGD -> Fagsystem.BA
+
                     Stønadstype.KONTANTSTØTTE -> Fagsystem.KS
                 },
         )

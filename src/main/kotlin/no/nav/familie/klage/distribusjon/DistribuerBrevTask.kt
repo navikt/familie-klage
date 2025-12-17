@@ -145,7 +145,10 @@ class DistribuerBrevTask(
         brevmottakere: Brevmottakere?,
     ): ManuellAdresse? =
         when (journalpost) {
-            is BrevmottakerJournalpostMedIdent -> null
+            is BrevmottakerJournalpostMedIdent -> {
+                null
+            }
+
             is BrevmottakerJournalpostUtenIdent -> {
                 val brevmottaker =
                     brevmottakere

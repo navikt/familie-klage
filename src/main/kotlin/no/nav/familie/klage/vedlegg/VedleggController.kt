@@ -51,8 +51,11 @@ class VedleggController(
         val personIdent =
             journalpost.bruker?.let {
                 when (it.type) {
-                    BrukerIdType.FNR -> it.id
-                    BrukerIdType.AKTOERID ->
+                    BrukerIdType.FNR -> {
+                        it.id
+                    }
+
+                    BrukerIdType.AKTOERID -> {
                         pdlClient
                             .hentPersonidenter(
                                 it.id,
@@ -62,7 +65,11 @@ class VedleggController(
                             ).identer
                             .first()
                             .ident
-                    BrukerIdType.ORGNR -> error("Kan ikke hente journalpost=$journalpostId for orgnr")
+                    }
+
+                    BrukerIdType.ORGNR -> {
+                        error("Kan ikke hente journalpost=$journalpostId for orgnr")
+                    }
                 }
             } ?: error("Kan ikke hente journalpost=$journalpostId uten bruker")
         return Pair(journalpost, personIdent)

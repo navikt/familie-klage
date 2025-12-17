@@ -32,6 +32,7 @@ object VurderingValidator {
                     "Skal ikke ha innstilling til klageinstans ved omgjøring av vedtak"
                 }
             }
+
             Vedtak.OPPRETTHOLD_VEDTAK -> {
                 brukerfeilHvis(vurdering.hjemmel == null) {
                     "Mangler hjemmel på oppretthold vedtak"

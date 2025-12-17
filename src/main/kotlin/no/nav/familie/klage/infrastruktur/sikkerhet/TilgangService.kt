@@ -146,12 +146,16 @@ class TilgangService(
     private fun hentTilgangTilFagsak(
         fagsak: Fagsak,
     ) = when (fagsak.fagsystem) {
-        Fagsystem.BA, Fagsystem.KS ->
+        Fagsystem.BA, Fagsystem.KS -> {
             hentTilgangTilEksternFagsak(
                 eksternFagsakId = fagsak.eksternId,
                 fagsystem = fagsak.fagsystem,
             )
-        Fagsystem.EF -> harTilgangTilPersonMedRelasjoner(fagsak.hentAktivIdent())
+        }
+
+        Fagsystem.EF -> {
+            harTilgangTilPersonMedRelasjoner(fagsak.hentAktivIdent())
+        }
     }
 
     private fun hentTilgangTilEksternFagsak(
@@ -246,26 +250,37 @@ class TilgangService(
         val rollerFraToken = SikkerhetContext.hentGrupperFraToken()
         val rollerForBruker =
             when {
-                SikkerhetContext.hentSaksbehandler() == SikkerhetContext.SYSTEM_FORKORTELSE ->
+                SikkerhetContext.hentSaksbehandler() == SikkerhetContext.SYSTEM_FORKORTELSE -> {
                     listOf(
                         BehandlerRolle.SYSTEM,
                         BehandlerRolle.BESLUTTER,
                         BehandlerRolle.SAKSBEHANDLER,
                         BehandlerRolle.VEILEDER,
                     )
-                rollerFraToken.contains(fagsystemRolleConfig.beslutter) ->
+                }
+
+                rollerFraToken.contains(fagsystemRolleConfig.beslutter) -> {
                     listOf(
                         BehandlerRolle.BESLUTTER,
                         BehandlerRolle.SAKSBEHANDLER,
                         BehandlerRolle.VEILEDER,
                     )
-                rollerFraToken.contains(fagsystemRolleConfig.saksbehandler) ->
+                }
+
+                rollerFraToken.contains(fagsystemRolleConfig.saksbehandler) -> {
                     listOf(
                         BehandlerRolle.SAKSBEHANDLER,
                         BehandlerRolle.VEILEDER,
                     )
-                rollerFraToken.contains(fagsystemRolleConfig.veileder) -> listOf(BehandlerRolle.VEILEDER)
-                else -> listOf(BehandlerRolle.UKJENT)
+                }
+
+                rollerFraToken.contains(fagsystemRolleConfig.veileder) -> {
+                    listOf(BehandlerRolle.VEILEDER)
+                }
+
+                else -> {
+                    listOf(BehandlerRolle.UKJENT)
+                }
             }
 
         return rollerForBruker.contains(minimumsrolle)

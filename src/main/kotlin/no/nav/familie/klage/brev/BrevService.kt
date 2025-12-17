@@ -194,15 +194,16 @@ class BrevService(
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> {
                 val formkrav = formService.hentForm(behandling.id)
                 return when (behandling.påklagetVedtak.påklagetVedtakstype) {
-                    PåklagetVedtakstype.UTEN_VEDTAK ->
+                    PåklagetVedtakstype.UTEN_VEDTAK -> {
                         brevInnholdUtleder.lagFormkravAvvistBrevIkkePåklagetVedtak(
                             ident = fagsak.hentAktivIdent(),
                             navn = navn,
                             formkrav = formkrav,
                             stønadstype = fagsak.stønadstype,
                         )
+                    }
 
-                    else ->
+                    else -> {
                         brevInnholdUtleder.lagFormkravAvvistBrev(
                             ident = fagsak.hentAktivIdent(),
                             navn = navn,
@@ -211,13 +212,16 @@ class BrevService(
                             påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                             fagsystem = fagsak.fagsystem,
                         )
+                    }
                 }
             }
 
             BehandlingResultat.MEDHOLD,
             BehandlingResultat.IKKE_SATT,
             BehandlingResultat.HENLAGT,
-            -> throw Feil("Kan ikke lage brev for behandling med behandlingResultat=$behandlingResultat")
+            -> {
+                throw Feil("Kan ikke lage brev for behandling med behandlingResultat=$behandlingResultat")
+            }
         }
     }
 

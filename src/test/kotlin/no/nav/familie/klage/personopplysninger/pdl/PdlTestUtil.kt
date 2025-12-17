@@ -47,9 +47,11 @@ object PdlTestUtil {
                 it.trim().endsWith("{") -> {
                     map[parseToLabel(it)] = toMap(stringLines)
                 }
+
                 it.trim().endsWith("}") -> {
                     return map
                 }
+
                 else -> {
                     map[parseToLabel(it)] = null
                 }

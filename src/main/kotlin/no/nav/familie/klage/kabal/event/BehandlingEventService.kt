@@ -50,11 +50,16 @@ class BehandlingEventService(
             lagreKlageresultat(behandlingEvent, behandling)
 
             when (behandlingEvent.type) {
-                BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> behandleKlageAvsluttet(behandling, behandlingEvent)
+                BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> {
+                    behandleKlageAvsluttet(behandling, behandlingEvent)
+                }
+
                 BehandlingEventType.ANKEBEHANDLING_AVSLUTTET,
                 BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET,
                 BehandlingEventType.OMGJOERINGSKRAVBEHANDLING_AVSLUTTET,
-                -> opprettOppgaveTask(behandling, behandlingEvent)
+                -> {
+                    opprettOppgaveTask(behandling, behandlingEvent)
+                }
 
                 BehandlingEventType.ANKEBEHANDLING_OPPRETTET,
                 BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,
@@ -62,7 +67,9 @@ class BehandlingEventService(
                     // Skal ikke gjøre noe dersom eventtype er ANKEBEHANDLING_OPPRETTET eller ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET
                 }
 
-                BehandlingEventType.BEHANDLING_FEILREGISTRERT -> opprettBehandlingFeilregistrertTask(behandling.id)
+                BehandlingEventType.BEHANDLING_FEILREGISTRERT -> {
+                    opprettBehandlingFeilregistrertTask(behandling.id)
+                }
             }
         }
     }
@@ -103,10 +110,11 @@ class BehandlingEventService(
         behandlingEvent: BehandlingEvent,
     ) {
         when (behandling.status) {
-            BehandlingStatus.FERDIGSTILT ->
+            BehandlingStatus.FERDIGSTILT -> {
                 logger.error(
                     "Mottatt event på ferdigstilt behandling $behandlingEvent - event kan være lest fra før",
                 )
+            }
 
             else -> {
                 opprettOppgaveTask(behandling, behandlingEvent)
@@ -173,7 +181,9 @@ class BehandlingEventService(
             -> null
 
             Stønadstype.OVERGANGSSTØNAD -> Behandlingstema.Overgangsstønad
+
             Stønadstype.BARNETILSYN -> Behandlingstema.Barnetilsyn
+
             Stønadstype.SKOLEPENGER -> Behandlingstema.Skolepenger
         }
 
