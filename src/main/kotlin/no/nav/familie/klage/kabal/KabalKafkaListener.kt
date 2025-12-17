@@ -64,23 +64,37 @@ data class BehandlingEvent(
     fun mottattEllerAvsluttetTidspunkt(): LocalDateTime {
         val feilmelding = "Burde hatt behandlingdetaljer for event fra kabal av type $type"
         return when (type) {
-            BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET ->
+            BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> {
                 detaljer.klagebehandlingAvsluttet?.avsluttet ?: throw Feil(feilmelding)
-            BehandlingEventType.ANKEBEHANDLING_OPPRETTET ->
+            }
+
+            BehandlingEventType.ANKEBEHANDLING_OPPRETTET -> {
                 detaljer.ankebehandlingOpprettet?.mottattKlageinstans ?: throw Feil(feilmelding)
-            BehandlingEventType.ANKEBEHANDLING_AVSLUTTET -> detaljer.ankebehandlingAvsluttet?.avsluttet ?: throw Feil(feilmelding)
-            BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET ->
+            }
+
+            BehandlingEventType.ANKEBEHANDLING_AVSLUTTET -> {
+                detaljer.ankebehandlingAvsluttet?.avsluttet ?: throw Feil(feilmelding)
+            }
+
+            BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET -> {
                 detaljer.ankeITrygderettenbehandlingOpprettet?.sendtTilTrygderetten ?: throw Feil(feilmelding)
-            BehandlingEventType.BEHANDLING_FEILREGISTRERT ->
+            }
+
+            BehandlingEventType.BEHANDLING_FEILREGISTRERT -> {
                 detaljer.behandlingFeilregistrert?.feilregistrert
                     ?: throw Feil("Fant ikke tidspunkt for feilregistrering")
-            BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET ->
+            }
+
+            BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET -> {
                 detaljer.behandlingEtterTrygderettenOpphevetAvsluttet?.avsluttet
                     ?: throw Feil(feilmelding)
-            BehandlingEventType.OMGJOERINGSKRAVBEHANDLING_AVSLUTTET ->
+            }
+
+            BehandlingEventType.OMGJOERINGSKRAVBEHANDLING_AVSLUTTET -> {
                 detaljer.omgjoeringskravbehandlingAvsluttet?.avsluttet
                     ?: throw Feil("Ikke implementert for OMGJOERINGSKRAV_AVSLUTTET")
             BehandlingEventType.GJENOPPTAKSBEHANDLING_AVSLUTTET -> detaljer.gjenopptaksbehandlingAvsluttet?.avsluttet ?: throw Feil(feilmelding)
+            }
         }
     }
 

@@ -134,11 +134,15 @@ internal class TilgangServiceTest {
                         verify(exactly = 1) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                         verify(exactly = 0) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
+
                     Stønadstype.KONTANTSTØTTE -> {
                         verify(exactly = 1) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                         verify(exactly = 0) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
-                    else -> return
+
+                    else -> {
+                        return
+                    }
                 }
 
                 assertThat(manglerTilgangException.message)
@@ -166,11 +170,15 @@ internal class TilgangServiceTest {
                         verify(exactly = 1) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                         verify(exactly = 0) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
+
                     Stønadstype.KONTANTSTØTTE -> {
                         verify(exactly = 1) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                         verify(exactly = 0) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
-                    else -> return
+
+                    else -> {
+                        return
+                    }
                 }
             }
 
@@ -240,11 +248,15 @@ internal class TilgangServiceTest {
                         verify(exactly = 1) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                         verify(exactly = 0) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
+
                     Stønadstype.KONTANTSTØTTE -> {
                         verify(exactly = 1) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                         verify(exactly = 0) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
-                    else -> return
+
+                    else -> {
+                        return
+                    }
                 }
 
                 assertThat(manglerTilgangException.message)
@@ -280,11 +292,15 @@ internal class TilgangServiceTest {
                         verify(exactly = 1) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                         verify(exactly = 0) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
+
                     Stønadstype.KONTANTSTØTTE -> {
                         verify(exactly = 1) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                         verify(exactly = 0) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
-                    else -> return
+
+                    else -> {
+                        return
+                    }
                 }
             }
         }
@@ -310,11 +326,15 @@ internal class TilgangServiceTest {
                         verify(exactly = 1) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                         verify(exactly = 0) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
+
                     Stønadstype.KONTANTSTØTTE -> {
                         verify(exactly = 1) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                         verify(exactly = 0) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
-                    else -> return
+
+                    else -> {
+                        return
+                    }
                 }
 
                 assertThat(manglerTilgangException.message)
@@ -344,11 +364,15 @@ internal class TilgangServiceTest {
                         verify(exactly = 1) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                         verify(exactly = 0) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
+
                     Stønadstype.KONTANTSTØTTE -> {
                         verify(exactly = 1) { familieKSSakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                         verify(exactly = 0) { familieBASakClient.hentTilgangTilFagsak(fagsak.eksternId) }
                     }
-                    else -> return
+
+                    else -> {
+                        return
+                    }
                 }
             }
 

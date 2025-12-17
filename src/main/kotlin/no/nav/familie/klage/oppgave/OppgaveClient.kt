@@ -92,18 +92,23 @@ class OppgaveClient(
             return pakkUtRespons(respons, uri, "fordelOppgave").oppgaveId
         } catch (e: RessursException) {
             when {
-                e.ressurs.melding.contains("allerede er ferdigstilt") ->
+                e.ressurs.melding.contains("allerede er ferdigstilt") -> {
                     throw ApiFeil(
                         "Oppgaven med id=$oppgaveId er allerede ferdigstilt. Prøv å hente oppgaver på nytt.",
                         HttpStatus.BAD_REQUEST,
                     )
+                }
 
-                e.httpStatus == HttpStatus.CONFLICT -> throw ApiFeil(
-                    "Oppgaven har endret seg siden du sist hentet oppgaver. For å kunne gjøre endringer må du hente oppgaver på nytt.",
-                    HttpStatus.CONFLICT,
-                )
+                e.httpStatus == HttpStatus.CONFLICT -> {
+                    throw ApiFeil(
+                        "Oppgaven har endret seg siden du sist hentet oppgaver. For å kunne gjøre endringer må du hente oppgaver på nytt.",
+                        HttpStatus.CONFLICT,
+                    )
+                }
 
-                else -> throw e
+                else -> {
+                    throw e
+                }
             }
         }
     }

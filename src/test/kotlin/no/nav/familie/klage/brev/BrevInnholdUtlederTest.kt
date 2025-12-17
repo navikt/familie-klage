@@ -1282,6 +1282,7 @@ internal class BrevInnholdUtlederTest {
                     Stønadstype.BARNETRYGD,
                     Stønadstype.KONTANTSTØTTE,
                     -> Heading.H2
+
                     else -> null
                 },
             innhold = "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via \n${klageUrls[stønadstype]}.",
@@ -1312,16 +1313,20 @@ internal class BrevInnholdUtlederTest {
                     Stønadstype.BARNETRYGD,
                     Stønadstype.KONTANTSTØTTE,
                     -> Heading.H2
+
                     else -> null
                 },
             innhold =
                 when (stønadstype) {
-                    Stønadstype.KONTANTSTØTTE ->
+                    Stønadstype.KONTANTSTØTTE -> {
                         "Hvis du vil klage, må du gjøre dette innen 3 uker fra den datoen du fikk dette brevet. " +
                             "Du finner skjema og informasjon på ${klageUrls[stønadstype]}."
-                    else ->
+                    }
+
+                    else -> {
                         "Hvis du vil klage, må du gjøre dette innen 6 uker fra den datoen du fikk dette brevet. " +
                             "Du finner skjema og informasjon på ${klageUrls[stønadstype]}."
+                    }
                 },
         )
 

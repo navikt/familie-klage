@@ -62,23 +62,26 @@ class SlettbarBrevmottakerDtoDeserializer : JsonDeserializer<SlettbarBrevmottake
         val tree = jsonParser.readValueAsTree<JsonNode>()
         val type = SlettbarBrevmottakerDto.Type.valueOf(tree.get("type").asText())
         return when (type) {
-            SlettbarBrevmottakerDto.Type.PERSON_MED_IDENT ->
+            SlettbarBrevmottakerDto.Type.PERSON_MED_IDENT -> {
                 objectMapper.treeToValue(
                     tree,
                     SlettbarBrevmottakerPersonMedIdentDto::class.java,
                 )
+            }
 
-            SlettbarBrevmottakerDto.Type.PERSON_UTEN_IDENT ->
+            SlettbarBrevmottakerDto.Type.PERSON_UTEN_IDENT -> {
                 objectMapper.treeToValue(
                     tree,
                     SlettbarBrevmottakerPersonUtenIdentDto::class.java,
                 )
+            }
 
-            SlettbarBrevmottakerDto.Type.ORGANISASJON ->
+            SlettbarBrevmottakerDto.Type.ORGANISASJON -> {
                 objectMapper.treeToValue(
                     tree,
                     SlettbarBrevmottakerOrganisasjonDto::class.java,
                 )
+            }
         }
     }
 }
