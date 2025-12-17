@@ -16,6 +16,7 @@ import no.nav.familie.klage.kabal.BehandlingEtterTrygderettenOpphevetAvsluttetDe
 import no.nav.familie.klage.kabal.BehandlingEvent
 import no.nav.familie.klage.kabal.BehandlingFeilregistrertDetaljer
 import no.nav.familie.klage.kabal.BehandlingFeilregistrertTask
+import no.nav.familie.klage.kabal.GjenopptaksbehandlingAvsluttetDetaljer
 import no.nav.familie.klage.kabal.KlagebehandlingAvsluttetDetaljer
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.kabal.OmgjoeringskravbehandlingAvsluttetDetaljer
@@ -257,6 +258,28 @@ internal class BehandlingEventServiceTest {
         assertThat(
             taskSlot.captured.payload,
         ).contains("Hendelse fra klage av type behandling etter trygderetten opphevet avsluttet med utfall: HEVET mottatt.")
+    }
+
+    @Test
+    internal fun `Skal lage OpprettOppgave-task for behandlingsevent GJENOPPTAKSBEHANDLING_AVSLUTTET`() {
+        val taskSlot = slot<Task>()
+
+        val gjenopptaksbehandlingAvsluttetDetaljer =
+            GjenopptaksbehandlingAvsluttetDetaljer(LocalDateTime.now(), KlageinstansUtfall.GJENOPPTATT_OPPHEVET, emptyList())
+
+        every { taskService.save(capture(taskSlot)) } returns mockk()
+
+        behandlingEventService.handleEvent(
+            lagBehandlingEvent(
+                BehandlingEventType.GJENOPPTAKSBEHANDLING_AVSLUTTET,
+                BehandlingDetaljer(gjenopptaksbehandlingAvsluttet = gjenopptaksbehandlingAvsluttetDetaljer),
+            ),
+        )
+
+        assertThat(taskSlot.captured.type).isEqualTo(OpprettKabalEventOppgaveTask.TYPE)
+        assertThat(
+            taskSlot.captured.payload,
+        ).contains("Hendelse fra klage av type gjenopptak avsluttet med utfall: GJENOPPTATT_OPPHEVET")
     }
 
     private fun lagBehandlingEvent(

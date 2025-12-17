@@ -57,6 +57,7 @@ class BehandlingEventService(
                 BehandlingEventType.ANKEBEHANDLING_AVSLUTTET,
                 BehandlingEventType.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET_AVSLUTTET,
                 BehandlingEventType.OMGJOERINGSKRAVBEHANDLING_AVSLUTTET,
+                BehandlingEventType.GJENOPPTAKSBEHANDLING_AVSLUTTET,
                 -> {
                     opprettOppgaveTask(behandling, behandlingEvent)
                 }

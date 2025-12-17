@@ -94,6 +94,10 @@ data class BehandlingEvent(
                 detaljer.omgjoeringskravbehandlingAvsluttet?.avsluttet
                     ?: throw Feil("Ikke implementert for OMGJOERINGSKRAV_AVSLUTTET")
             }
+
+            BehandlingEventType.GJENOPPTAKSBEHANDLING_AVSLUTTET -> {
+                detaljer.gjenopptaksbehandlingAvsluttet?.avsluttet ?: throw Feil(feilmelding)
+            }
         }
     }
 
@@ -102,6 +106,7 @@ data class BehandlingEvent(
         return when (type) {
             BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> detaljer.klagebehandlingAvsluttet?.utfall ?: throw Feil(feilmelding)
             BehandlingEventType.ANKEBEHANDLING_AVSLUTTET -> detaljer.ankebehandlingAvsluttet?.utfall ?: throw Feil(feilmelding)
+            BehandlingEventType.GJENOPPTAKSBEHANDLING_AVSLUTTET -> detaljer.gjenopptaksbehandlingAvsluttet?.utfall ?: throw Feil(feilmelding)
             else -> null
         }
     }
@@ -110,6 +115,7 @@ data class BehandlingEvent(
         when (type) {
             BehandlingEventType.KLAGEBEHANDLING_AVSLUTTET -> detaljer.klagebehandlingAvsluttet?.journalpostReferanser ?: listOf()
             BehandlingEventType.ANKEBEHANDLING_AVSLUTTET -> detaljer.ankebehandlingAvsluttet?.journalpostReferanser ?: listOf()
+            BehandlingEventType.GJENOPPTAKSBEHANDLING_AVSLUTTET -> detaljer.gjenopptaksbehandlingAvsluttet?.journalpostReferanser ?: listOf()
             else -> listOf()
         }
 }
@@ -122,6 +128,7 @@ data class BehandlingDetaljer(
     val ankeITrygderettenbehandlingOpprettet: AnkeITrygderettenbehandlingOpprettetDetaljer? = null,
     val behandlingEtterTrygderettenOpphevetAvsluttet: BehandlingEtterTrygderettenOpphevetAvsluttetDetaljer? = null,
     val omgjoeringskravbehandlingAvsluttet: OmgjoeringskravbehandlingAvsluttetDetaljer? = null,
+    val gjenopptaksbehandlingAvsluttet: GjenopptaksbehandlingAvsluttetDetaljer? = null,
 ) {
     fun oppgaveTekst(saksbehandlersEnhet: String): String =
         klagebehandlingAvsluttet?.oppgaveTekst(saksbehandlersEnhet)
@@ -129,6 +136,7 @@ data class BehandlingDetaljer(
             ?: ankebehandlingAvsluttet?.oppgaveTekst(saksbehandlersEnhet)
             ?: behandlingEtterTrygderettenOpphevetAvsluttet?.oppgaveTekst(saksbehandlersEnhet)
             ?: omgjoeringskravbehandlingAvsluttet?.oppgaveTekst(saksbehandlersEnhet)
+            ?: gjenopptaksbehandlingAvsluttet?.oppgaveTekst(saksbehandlersEnhet)
             ?: "Ukjent"
 }
 
@@ -159,6 +167,18 @@ data class AnkebehandlingAvsluttetDetaljer(
 ) {
     fun oppgaveTekst(saksbehandlersEnhet: String): String =
         "Hendelse fra klage av type ankebehandling avsluttet med utfall: $utfall mottatt. " +
+            "Avsluttet tidspunkt: $avsluttet. " +
+            "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet. " +
+            "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
+}
+
+data class GjenopptaksbehandlingAvsluttetDetaljer(
+    val avsluttet: LocalDateTime,
+    val utfall: KlageinstansUtfall,
+    val journalpostReferanser: List<String>,
+) {
+    fun oppgaveTekst(saksbehandlersEnhet: String): String =
+        "Hendelse fra klage av type gjenopptak avsluttet med utfall: $utfall mottatt. " +
             "Avsluttet tidspunkt: $avsluttet. " +
             "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet. " +
             "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
