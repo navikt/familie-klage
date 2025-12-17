@@ -93,7 +93,10 @@ data class BehandlingEvent(
             BehandlingEventType.OMGJOERINGSKRAVBEHANDLING_AVSLUTTET -> {
                 detaljer.omgjoeringskravbehandlingAvsluttet?.avsluttet
                     ?: throw Feil("Ikke implementert for OMGJOERINGSKRAV_AVSLUTTET")
-            BehandlingEventType.GJENOPPTAKSBEHANDLING_AVSLUTTET -> detaljer.gjenopptaksbehandlingAvsluttet?.avsluttet ?: throw Feil(feilmelding)
+            }
+
+            BehandlingEventType.GJENOPPTAKSBEHANDLING_AVSLUTTET -> {
+                detaljer.gjenopptaksbehandlingAvsluttet?.avsluttet ?: throw Feil(feilmelding)
             }
         }
     }
@@ -176,9 +179,9 @@ data class GjenopptaksbehandlingAvsluttetDetaljer(
 ) {
     fun oppgaveTekst(saksbehandlersEnhet: String): String =
         "Hendelse fra klage av type gjenopptak avsluttet med utfall: $utfall mottatt. " +
-                "Avsluttet tidspunkt: $avsluttet. " +
-                "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet. " +
-                "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
+            "Avsluttet tidspunkt: $avsluttet. " +
+            "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet. " +
+            "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
 }
 
 data class BehandlingFeilregistrertDetaljer(
