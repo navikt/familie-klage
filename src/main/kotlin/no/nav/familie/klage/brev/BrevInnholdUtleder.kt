@@ -281,11 +281,21 @@ class BrevInnholdUtleder(
         påklagetVedtakDetaljer: PåklagetVedtakDetaljer?,
     ): String =
         when (påklagetVedtakDetaljer?.fagsystemType) {
-            FagsystemType.TILBAKEKREVING -> "tilbakebetaling av ${stønadstype.visningsnavn()}"
-            FagsystemType.SANKSJON_1_MND -> "sanksjon"
-            FagsystemType.UTESTENGELSE -> "utestengelse"
-            else ->
+            FagsystemType.TILBAKEKREVING -> {
+                "tilbakebetaling av ${stønadstype.visningsnavn()}"
+            }
+
+            FagsystemType.SANKSJON_1_MND -> {
+                "sanksjon"
+            }
+
+            FagsystemType.UTESTENGELSE -> {
+                "utestengelse"
+            }
+
+            else -> {
                 stønadstype.visningsnavn()
+            }
         }
 
     private fun utledDeloverskriftHeading(stønadstype: Stønadstype) =
@@ -301,7 +311,9 @@ class BrevInnholdUtleder(
             Stønadstype.BARNETILSYN,
             Stønadstype.SKOLEPENGER,
             -> "nav.no/alene-med-barn"
+
             Stønadstype.BARNETRYGD -> "nav.no/barnetrygd"
+
             Stønadstype.KONTANTSTØTTE -> "nav.no/kontantstotte"
         }
 
@@ -309,11 +321,15 @@ class BrevInnholdUtleder(
         when (this) {
             Stønadstype.OVERGANGSSTØNAD,
             -> "nav.no/klage#overgangsstonad-til-enslig-mor-eller-far"
+
             Stønadstype.BARNETILSYN,
             -> "nav.no/klage#stonad-til-barnetilsyn-for-enslig-mor-eller-far"
+
             Stønadstype.SKOLEPENGER,
             -> "nav.no/klage#stonad-til-skolepenger-for-enslig-mor-eller-far"
+
             Stønadstype.BARNETRYGD -> "nav.no/klage#barnetrygd"
+
             Stønadstype.KONTANTSTØTTE -> "nav.no/klage#kontantstotte"
         }
 
@@ -323,6 +339,7 @@ class BrevInnholdUtleder(
             Stønadstype.BARNETILSYN,
             Stønadstype.SKOLEPENGER,
             -> false
+
             Stønadstype.BARNETRYGD,
             Stønadstype.KONTANTSTØTTE,
             -> true

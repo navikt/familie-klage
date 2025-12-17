@@ -9,17 +9,21 @@ object EnhetValidator {
         fagsystem: Fagsystem,
     ) {
         when (fagsystem) {
-            Fagsystem.BA ->
+            Fagsystem.BA -> {
                 if (!BarnetrygdEnhet.erGyldigBehandlendeBarnetrygdEnhet(enhetsnummer)) {
                     throw ApiFeil.badRequest("Kan ikke oppdatere behandlende enhet til $enhetsnummer. Dette er ikke et gyldig enhetsnummer for barnetrygd.")
                 }
+            }
 
-            Fagsystem.KS ->
+            Fagsystem.KS -> {
                 if (!KontantstøtteEnhet.erGyldigBehandlendeKontantstøtteEnhet(enhetsnummer)) {
                     throw ApiFeil.badRequest("Kan ikke oppdatere behandlende enhet til $enhetsnummer. Dette er ikke et gyldig enhetsnummer for kontantstøtte.")
                 }
+            }
 
-            else -> throw ApiFeil.badRequest("Støtter ikke endring av enhet for fagsystem $fagsystem")
+            else -> {
+                throw ApiFeil.badRequest("Støtter ikke endring av enhet for fagsystem $fagsystem")
+            }
         }
     }
 }

@@ -16,16 +16,19 @@ object JournalføringUtil {
             val personer =
                 mottakere.personer.map {
                     when (it) {
-                        is BrevmottakerPersonMedIdent ->
+                        is BrevmottakerPersonMedIdent -> {
                             AvsenderMottaker(
                                 id = it.personIdent,
                                 navn = it.navn,
                                 idType = AvsenderMottakerIdType.FNR,
                             )
+                        }
 
-                        is BrevmottakerPersonUtenIdent -> throw IllegalStateException(
-                            "BrevmottakerPersonUtenIdent er foreløpig ikke støttet.",
-                        )
+                        is BrevmottakerPersonUtenIdent -> {
+                            throw IllegalStateException(
+                                "BrevmottakerPersonUtenIdent er foreløpig ikke støttet.",
+                            )
+                        }
                     }
                 }
             val organisasjoner =
@@ -41,26 +44,29 @@ object JournalføringUtil {
 
     fun mapAvsenderMottaker(brevmottaker: Brevmottaker): AvsenderMottaker =
         when (brevmottaker) {
-            is BrevmottakerOrganisasjon ->
+            is BrevmottakerOrganisasjon -> {
                 AvsenderMottaker(
                     id = brevmottaker.organisasjonsnummer,
                     navn = brevmottaker.navnHosOrganisasjon,
                     idType = AvsenderMottakerIdType.ORGNR,
                 )
+            }
 
-            is BrevmottakerPersonMedIdent ->
+            is BrevmottakerPersonMedIdent -> {
                 AvsenderMottaker(
                     id = brevmottaker.personIdent,
                     navn = brevmottaker.navn,
                     idType = AvsenderMottakerIdType.FNR,
                 )
+            }
 
-            is BrevmottakerPersonUtenIdent ->
+            is BrevmottakerPersonUtenIdent -> {
                 AvsenderMottaker(
                     id = null,
                     navn = brevmottaker.navn,
                     idType = null,
                 )
+            }
         }
 
     fun mapBrevmottakerJournalpost(
@@ -70,17 +76,19 @@ object JournalføringUtil {
     ) = when (brevmottaker) {
         is BrevmottakerPersonMedIdent,
         is BrevmottakerOrganisasjon,
-        ->
+        -> {
             BrevmottakerJournalpostMedIdent(
                 ident = avsenderMottaker.id ?: error("Mangler id for mottaker=$avsenderMottaker"),
                 journalpostId = journalpostId,
             )
+        }
 
         is BrevmottakerPersonUtenIdent,
-        ->
+        -> {
             BrevmottakerJournalpostUtenIdent(
                 id = brevmottaker.id,
                 journalpostId = journalpostId,
             )
+        }
     }
 }

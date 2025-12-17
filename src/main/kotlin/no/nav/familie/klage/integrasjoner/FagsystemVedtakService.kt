@@ -76,6 +76,7 @@ class FagsystemVedtakService(
             secureLogger.warn(errorSuffix, exception)
             when (fagsak.fagsystem) {
                 Fagsystem.EF -> ukjentFeilVedOpprettRevurdering
+
                 Fagsystem.KS,
                 Fagsystem.BA,
                 -> throw Feil(

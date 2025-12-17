@@ -38,6 +38,7 @@ class BrevsignaturService(
 
                 SignaturDto(SikkerhetContext.hentSaksbehandlerNavn(true), signaturEnhet)
             }
+
             Fagsystem.BA, Fagsystem.KS -> {
                 SignaturDto(SikkerhetContext.hentSaksbehandlerNavn(true), ENHET_NFP)
             }

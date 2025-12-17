@@ -90,7 +90,9 @@ data class OversendtKlageAnkeV3(
                     )
                 }
 
-                is BrevmottakerPersonUtenIdent -> throw IllegalStateException("Person uten ident er ikke støttet i V3")
+                is BrevmottakerPersonUtenIdent -> {
+                    throw IllegalStateException("Person uten ident er ikke støttet i V3")
+                }
             }
     }
 }

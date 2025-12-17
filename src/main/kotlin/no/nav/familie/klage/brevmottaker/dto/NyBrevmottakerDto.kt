@@ -166,23 +166,26 @@ class NyBrevmottakerDtoDeserializer : JsonDeserializer<NyBrevmottakerDto>() {
         val tree = jsonParser.readValueAsTree<JsonNode>()
         val type = NyBrevmottakerDto.Type.valueOf(tree.get("type").asText())
         return when (type) {
-            NyBrevmottakerDto.Type.PERSON_MED_IDENT ->
+            NyBrevmottakerDto.Type.PERSON_MED_IDENT -> {
                 objectMapper.treeToValue(
                     tree,
                     NyBrevmottakerPersonMedIdentDto::class.java,
                 )
+            }
 
-            NyBrevmottakerDto.Type.PERSON_UTEN_IDENT ->
+            NyBrevmottakerDto.Type.PERSON_UTEN_IDENT -> {
                 objectMapper.treeToValue(
                     tree,
                     NyBrevmottakerPersonUtenIdentDto::class.java,
                 )
+            }
 
-            NyBrevmottakerDto.Type.ORGANISASJON ->
+            NyBrevmottakerDto.Type.ORGANISASJON -> {
                 objectMapper.treeToValue(
                     tree,
                     NyBrevmottakerOrganisasjonDto::class.java,
                 )
+            }
         }
     }
 }
