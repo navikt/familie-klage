@@ -34,7 +34,7 @@ class PorteføljejusteringController(
         @RequestBody oppdaterBehandlendeEnhetRequest: OppdaterBehandlendeEnhetRequest,
     ): Ressurs<String> {
         val oppgaveId = oppdaterBehandlendeEnhetRequest.oppgaveId
-        val nyEnhet = oppdaterBehandlendeEnhetRequest.nyEnhet
+        val nyEnhetNummer = oppdaterBehandlendeEnhetRequest.nyEnhet
         val fagsystem = oppdaterBehandlendeEnhetRequest.fagsystem
 
         val behandleSakOppgave =
@@ -43,16 +43,18 @@ class PorteføljejusteringController(
 
         val behandling = behandlingService.hentBehandling(behandleSakOppgave.behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
-        val enhet = finnEnhet(fagsystem, nyEnhet)
 
-        val enhetErOppdatert = enhet.enhetsnummer == behandling.behandlendeEnhet
+        val gammelEnhet = finnEnhet(fagsystem, behandling.behandlendeEnhet)
+        val nyEnhet = finnEnhet(fagsystem, nyEnhetNummer)
+
+        val enhetErOppdatert = nyEnhet.enhetsnummer == gammelEnhet.enhetsnummer
         if (enhetErOppdatert) {
-            return Ressurs.success("Behandlende enhet er allerede satt til ${enhet.enhetsnummer}. Ingen oppdatering gjort.")
+            return Ressurs.success("Behandlende enhet er allerede satt til ${nyEnhet.enhetsnummer}. Ingen oppdatering gjort.")
         }
 
         behandlingService.oppdaterBehandlendeEnhet(
             behandlingId = behandling.id,
-            behandlendeEnhet = enhet,
+            behandlendeEnhet = nyEnhet,
             fagsystem = fagsystem,
         )
 
@@ -60,7 +62,7 @@ class PorteføljejusteringController(
             behandlingId = behandling.id,
             steg = behandling.steg,
             historikkHendelse = HistorikkHendelse.BEHANDLENDE_ENHET_ENDRET,
-            beskrivelse = "Behandlende enhet endret i forbindelse med porteføljejustering.",
+            beskrivelse = "Behandlende enhet endret fra ${gammelEnhet.enhetsnavn} til ${nyEnhet.enhetsnavn} i forbindelse med porteføljejustering januar 2026.",
         )
 
         taskService.save(
@@ -72,7 +74,7 @@ class PorteføljejusteringController(
             ),
         )
 
-        return Ressurs.success("Behandlende enhet oppdatert til ${enhet.enhetsnummer}.")
+        return Ressurs.success("Behandlende enhet oppdatert til ${nyEnhet.enhetsnummer}.")
     }
 
     data class OppdaterBehandlendeEnhetRequest(

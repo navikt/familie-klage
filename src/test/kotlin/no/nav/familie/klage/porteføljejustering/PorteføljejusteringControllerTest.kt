@@ -196,7 +196,7 @@ class PorteføljejusteringControllerTest {
                 behandlingId = behandlingId,
                 steg = behandling.steg,
                 historikkHendelse = HistorikkHendelse.BEHANDLENDE_ENHET_ENDRET,
-                beskrivelse = "Behandlende enhet endret i forbindelse med porteføljejustering.",
+                beskrivelse = "Behandlende enhet endret fra NAV Familie- og pensjonsytelser Drammen til NAV Familie- og pensjonsytelser Oslo 1 i forbindelse med porteføljejustering januar 2026.",
             )
         }
     }
@@ -252,7 +252,7 @@ class PorteføljejusteringControllerTest {
                 behandlingId = behandlingId,
                 steg = behandling.steg,
                 historikkHendelse = HistorikkHendelse.BEHANDLENDE_ENHET_ENDRET,
-                beskrivelse = "Behandlende enhet endret i forbindelse med porteføljejustering.",
+                beskrivelse = "Behandlende enhet endret fra NAV Familie- og pensjonsytelser Drammen til NAV Familie- og pensjonsytelser Oslo 1 i forbindelse med porteføljejustering januar 2026.",
             )
         }
     }
