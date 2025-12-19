@@ -71,6 +71,11 @@ class FerdigstillBehandlingService(
                 }
             }
         }
+        val saksbehandler = SikkerhetContext.hentSaksbehandler(true)
+        val brev = brevService.hentBrev(behandlingId)
+        if (!brev.saksbehandlerHtml.contains(saksbehandler)) {
+            throw Feil("Innlogget saksbehandler har ikke samme signatur som brevet. Kan ikke ferdigstille behandlingen.")
+        }
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(
             behandlingId = behandling.id,
             eksternFagsakId = fagsak.eksternId,
