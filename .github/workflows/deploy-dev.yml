@@ -15,7 +15,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up JDK 21
-        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # ratchet:actions/setup-java@v4
+        uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e # ratchet:actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # ratchet:actions/checkout@v4
-      - uses: nais/deploy/actions/deploy@56e14061f2a8437bd9119e7b8f92749a3b288db1 # ratchet:nais/deploy/actions/deploy@v2
+      - uses: nais/deploy/actions/deploy@fa754451577294aae42872a69b888b3470478ec1 # ratchet:nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
           RESOURCE: .nais/app-dev.yaml
