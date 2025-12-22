@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.0</version>
+        <version>3.5.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <repositories>
@@ -26,20 +26,20 @@
 
     <properties>
         <java.version>21</java.version>
-        <kotlin.version>2.3.0</kotlin.version>
+        <kotlin.version>2.2.21</kotlin.version>
         <flyway.version>11.15.0</flyway.version>
-        <springdoc.version>3.0.0</springdoc.version>
+        <springdoc.version>2.8.14</springdoc.version>
         <mockk-jvm.version>1.14.3</mockk-jvm.version>
-        <felles.version>4.20251203153147_ca40cc5</felles.version>
+        <felles.version>3.20251105152539_b03ed80</felles.version>
         <prosessering.version>2.20250311132904_6ee7728</prosessering.version>
-        <springdoc.version>3.0.0</springdoc.version>
-        <mockk-jvm.version>1.14.7</mockk-jvm.version>
-        <felles.version>4.20251203153147_ca40cc5</felles.version>
-        <prosessering.version>2.20251205101334_e75fc2d</prosessering.version>
+        <springdoc.version>2.8.14</springdoc.version>
+        <mockk-jvm.version>1.14.6</mockk-jvm.version>
+        <felles.version>3.20251105152539_b03ed80</felles.version>
+        <prosessering.version>2.20251110093725_10552cd</prosessering.version>
         <start-class>no.nav.familie.klage.ApplicationKt</start-class>
         <kontrakter.version>3.0_20251217091435_940f8da</kontrakter.version>
-        <saksstatistikk-klage.version>2.0_20251215095555_1c21aee</saksstatistikk-klage.version>
-        <nav.security.version>6.0.1</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
+        <saksstatistikk-klage.version>2.0_20251111094125_cdf5bf2</saksstatistikk-klage.version>
+        <nav.security.version>5.0.39</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskriver spring sin versjon, blir brukt av mock-oauth2-server -->
     </properties>
 
