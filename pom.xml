@@ -25,8 +25,8 @@
     </repositories>
 
     <properties>
-        <java.version>21</java.version>
-        <kotlin.version>2.2.21</kotlin.version>
+        <java.version>25</java.version>
+        <kotlin.version>2.3.0</kotlin.version>
         <flyway.version>11.15.0</flyway.version>
         <springdoc.version>2.8.14</springdoc.version>
         <mockk-jvm.version>1.14.3</mockk-jvm.version>
