@@ -12,11 +12,11 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0 # brukes for å unngå feil i differ i sonar
-      - name: Set up JDK 21
+      - name: Set up JDK 25
         uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e # ratchet:actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '25'
           cache: 'maven'
       - name: Bygg (dependabot)
         if: github.event.pull_request.user.login == 'dependabot[bot]'
