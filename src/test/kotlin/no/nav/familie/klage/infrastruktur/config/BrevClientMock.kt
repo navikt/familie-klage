@@ -15,7 +15,7 @@ class BrevClientMock {
     @Primary
     fun brevClient(): BrevClient {
         val brevClient: BrevClient = mockk()
-        every { brevClient.genererHtmlFritekstbrev(any(), any(), any(), any(), any()) } returns "<h1>Hei BESLUTTER_SIGNATUR</h1>"
+        every { brevClient.genererHtmlFritekstbrev(any(), any(), any(), any(), any()) } returns "<h1>Hei BESLUTTER_SIGNATUR julenissen</h1>"
         return brevClient
     }
 }

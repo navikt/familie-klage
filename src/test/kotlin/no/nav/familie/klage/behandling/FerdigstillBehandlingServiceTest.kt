@@ -110,6 +110,7 @@ class FerdigstillBehandlingServiceTest {
         every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id, any(), any()) } just Runs
         justRun { brevService.lagBrevPdf(any()) }
         every { fagsystemVedtakService.opprettRevurdering(any()) } returns OpprettRevurderingResponse(Opprettet("opprettetId"))
+        every { brevService.validerRiktigSaksbehandlerSignatur(any()) } just Runs
     }
 
     @AfterEach

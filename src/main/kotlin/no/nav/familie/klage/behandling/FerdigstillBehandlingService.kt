@@ -63,6 +63,7 @@ class FerdigstillBehandlingService(
             when (behandling.årsak) {
                 ORDINÆR -> {
                     brevService.lagBrevPdf(behandlingId)
+                    brevService.validerRiktigSaksbehandlerSignatur(behandlingId)
                     opprettJournalførBrevTask(behandlingId, fagsak.eksternId, fagsak.fagsystem)
                 }
 
