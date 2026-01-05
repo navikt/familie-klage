@@ -432,7 +432,7 @@ class BrevService(
         }
     }
 
-    fun validerRiktigSaksbehandlerSignatur(behandlingId: UUID,) {
+    fun validerRiktigSaksbehandlerSignatur(behandlingId: UUID) {
         val saksbehandler = SikkerhetContext.hentSaksbehandler(true)
         val brev = brevRepository.findByIdOrThrow(behandlingId)
         if (!brev.saksbehandlerHtml.contains(saksbehandler)) {
