@@ -433,7 +433,7 @@ class BrevService(
     }
 
     fun validerRiktigSaksbehandlerSignatur(behandlingId: UUID) {
-        val saksbehandler = SikkerhetContext.hentSaksbehandler(true)
+        val saksbehandler = SikkerhetContext.hentSaksbehandlerNavn(true)
         val brev = brevRepository.findByIdOrThrow(behandlingId)
         if (!brev.saksbehandlerHtml.contains(saksbehandler)) {
             throw Feil("Innlogget saksbehandler har ikke samme signatur som brevet. Kan ikke ferdigstille behandlingen.", "Brev har ikke riktig saksbehandler signatur, vennligst oppdater siden for å oppdatere brevsignatur.")
