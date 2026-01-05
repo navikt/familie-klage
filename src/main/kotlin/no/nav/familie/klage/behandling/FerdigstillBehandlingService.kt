@@ -63,6 +63,7 @@ class FerdigstillBehandlingService(
             when (behandling.årsak) {
                 ORDINÆR -> {
                     brevService.lagBrevPdf(behandlingId)
+                    brevService.validerRiktigSaksbehandlerSignatur(behandlingId)
                     opprettJournalførBrevTask(behandlingId, fagsak.eksternId, fagsak.fagsystem)
                 }
 
@@ -70,11 +71,6 @@ class FerdigstillBehandlingService(
                     opprettSendTilKabalTask(behandlingId, fagsak.eksternId, fagsak.fagsystem)
                 }
             }
-        }
-        val saksbehandler = SikkerhetContext.hentSaksbehandler(true)
-        val brev = brevService.hentBrev(behandlingId)
-        if (!brev.saksbehandlerHtml.contains(saksbehandler)) {
-            throw Feil("Innlogget saksbehandler har ikke samme signatur som brevet. Kan ikke ferdigstille behandlingen.")
         }
         oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(
             behandlingId = behandling.id,

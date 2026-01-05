@@ -34,6 +34,7 @@ import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
+import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
@@ -428,6 +429,14 @@ class BrevService(
                 }.isNotEmpty()
         feilHvis(harVerge || harFullmakt) {
             "Skal ikke sende brev hvis person er tilknyttet vergemål eller fullmakt"
+        }
+    }
+
+    fun validerRiktigSaksbehandlerSignatur(behandlingId: UUID,) {
+        val saksbehandler = SikkerhetContext.hentSaksbehandler(true)
+        val brev = brevRepository.findByIdOrThrow(behandlingId)
+        if (!brev.saksbehandlerHtml.contains(saksbehandler)) {
+            throw Feil("Innlogget saksbehandler har ikke samme signatur som brevet. Kan ikke ferdigstille behandlingen.")
         }
     }
 }

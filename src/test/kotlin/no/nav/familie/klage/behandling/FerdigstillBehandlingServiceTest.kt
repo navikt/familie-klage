@@ -1,5 +1,6 @@
 package no.nav.familie.klage.behandling
 
+import io.mockk.Awaits
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -14,10 +15,12 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.blankett.LagSaksbehandlingsblankettTask
 import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.distribusjon.DistribusjonService
 import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.distribusjon.SendTilKabalTask
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.felles.domain.Sporbar
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
@@ -38,6 +41,7 @@ import no.nav.familie.kontrakter.felles.klage.OpprettRevurderingResponse
 import no.nav.familie.kontrakter.felles.klage.Opprettet
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
+import org.apache.kafka.common.protocol.types.Field
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -45,6 +49,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import java.time.LocalDateTime
+import java.util.UUID
 
 class FerdigstillBehandlingServiceTest {
     private val fagsakService = mockk<FagsakService>()
@@ -110,6 +116,7 @@ class FerdigstillBehandlingServiceTest {
         every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id, any(), any()) } just Runs
         justRun { brevService.lagBrevPdf(any()) }
         every { fagsystemVedtakService.opprettRevurdering(any()) } returns OpprettRevurderingResponse(Opprettet("opprettetId"))
+        every { brevService.validerRiktigSaksbehandlerSignatur(any()) } just Runs
     }
 
     @AfterEach
