@@ -1,5 +1,6 @@
 package no.nav.familie.klage.porteføljejustering
 
+import jakarta.transaction.Transactional
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.enhet.Enhet.Companion.finnEnhet
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
@@ -29,6 +30,7 @@ class PorteføljejusteringController(
     private val behandlingshistorikkService: BehandlingshistorikkService,
     private val taskService: TaskService,
 ) {
+    @Transactional
     @PutMapping("/oppdater-behandlende-enhet")
     fun oppdaterBehandlendeEnhetPåBehandling(
         @RequestBody oppdaterBehandlendeEnhetRequest: OppdaterBehandlendeEnhetRequest,
