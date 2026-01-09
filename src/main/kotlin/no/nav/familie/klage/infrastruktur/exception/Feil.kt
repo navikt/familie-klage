@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-class Feil(
+open class Feil(
     message: String,
     val frontendFeilmelding: String? = null,
     val httpStatus: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR,

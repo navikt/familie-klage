@@ -1,5 +1,6 @@
 package no.nav.familie.klage.oppgave
 
+import no.nav.familie.http.client.RessursException
 import no.nav.familie.klage.behandling.dto.OppgaveDto
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.exception.ManglerTilgang
@@ -8,6 +9,7 @@ import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.oppgave.dto.SaksbehandlerDto
 import no.nav.familie.klage.oppgave.dto.SaksbehandlerRolle
+import no.nav.familie.kontrakter.felles.Ressurs.Status
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
@@ -29,6 +31,16 @@ class TilordnetRessursService(
                 behandleSakOppgave?.let { oppgaveClient.finnOppgaveMedId(it.oppgaveId) }
             } catch (exception: HttpClientErrorException) {
                 if (exception.statusCode == HttpStatus.FORBIDDEN) {
+                    throw ManglerTilgang(
+                        melding = "Bruker mangler tilgang til etterspurt oppgave",
+                        frontendFeilmelding = "Behandlingen er koblet til en oppgave du ikke har tilgang til. Visning av ansvarlig saksbehandler er derfor ikke mulig",
+                    )
+                } else {
+                    throw exception
+                }
+            } catch (exception: RessursException) {
+                val erIkkeTilgangFraIntegrasjoner = exception.ressurs.melding.contains("Feil mot ekstern tjeneste. 403")
+                if (exception.ressurs.status == Status.IKKE_TILGANG || erIkkeTilgangFraIntegrasjoner) {
                     throw ManglerTilgang(
                         melding = "Bruker mangler tilgang til etterspurt oppgave",
                         frontendFeilmelding = "Behandlingen er koblet til en oppgave du ikke har tilgang til. Visning av ansvarlig saksbehandler er derfor ikke mulig",

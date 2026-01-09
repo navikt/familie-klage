@@ -21,8 +21,8 @@ class ApiExceptionHandler {
     @ExceptionHandler(Throwable::class)
     fun handleThrowable(throwable: Throwable): ResponseEntity<Ressurs<Nothing>> {
         val metodeSomFeiler = finnMetodeSomFeiler(throwable)
-        secureLogger.error("Uventet feil: $metodeSomFeiler ${rootCause(throwable)}", throwable)
-        logger.error("Uventet feil: $metodeSomFeiler ${rootCause(throwable)} ")
+        secureLogger.error("Uventet feil: Metode: $metodeSomFeiler Øverste Feil: ${throwable::class} Rotfeil: ${rootCause(throwable)}", throwable)
+        logger.error("Uventet feil: Metode: $metodeSomFeiler Øverste Feil: ${throwable::class} Rotfeil: ${rootCause(throwable)}", throwable)
 
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -101,8 +101,8 @@ class ApiExceptionHandler {
         val firstElement =
             e.stackTrace.firstOrNull {
                 it.className.startsWith("no.nav.familie.klage") &&
-                    !it.className.contains("$") &&
-                    !it.className.contains("InsertUpdateRepositoryImpl")
+                        !it.className.contains("$") &&
+                        !it.className.contains("InsertUpdateRepositoryImpl")
             }
         if (firstElement != null) {
             val className = firstElement.className.split(".").lastOrNull()
