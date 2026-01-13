@@ -1,5 +1,6 @@
 package no.nav.familie.klage.oppgave
 
+import no.nav.familie.http.client.RessursException
 import no.nav.familie.klage.behandling.dto.OppgaveDto
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.exception.ManglerTilgang
@@ -29,6 +30,15 @@ class TilordnetRessursService(
                 behandleSakOppgave?.let { oppgaveClient.finnOppgaveMedId(it.oppgaveId) }
             } catch (exception: HttpClientErrorException) {
                 if (exception.statusCode == HttpStatus.FORBIDDEN) {
+                    throw ManglerTilgang(
+                        melding = "Bruker mangler tilgang til etterspurt oppgave",
+                        frontendFeilmelding = "Behandlingen er koblet til en oppgave du ikke har tilgang til. Visning av ansvarlig saksbehandler er derfor ikke mulig",
+                    )
+                } else {
+                    throw exception
+                }
+            } catch (exception: RessursException) {
+                if (exception.httpStatus == HttpStatus.FORBIDDEN) {
                     throw ManglerTilgang(
                         melding = "Bruker mangler tilgang til etterspurt oppgave",
                         frontendFeilmelding = "Behandlingen er koblet til en oppgave du ikke har tilgang til. Visning av ansvarlig saksbehandler er derfor ikke mulig",
