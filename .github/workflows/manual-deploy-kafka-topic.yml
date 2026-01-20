@@ -3,6 +3,10 @@ name: Deploy kafka topics
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -12,14 +16,12 @@ jobs:
       - name: deploy behandlingsstatistikk to dev
         uses: nais/deploy/actions/deploy@fa754451577294aae42872a69b888b3470478ec1 # ratchet:nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
           RESOURCE: kafka/aapen-klage-behandlingsstatistikk/behandlingsstatistikk-topic-dev.yaml
           PRINT_PAYLOAD: true
       - name: deploy behandlingsstatistikk to prod
         uses: nais/deploy/actions/deploy@fa754451577294aae42872a69b888b3470478ec1 # ratchet:nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
           RESOURCE: kafka/aapen-klage-behandlingsstatistikk/behandlingsstatistikk-topic-prod.yaml
           PRINT_PAYLOAD: true
