@@ -107,6 +107,7 @@ enum class Type(
     ANKE_I_TRYGDERETTEN("3", "Anke i Trygderetten", "Anke i Trygderetten"),
     BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET("4", "Behandling etter Trygderetten opphevet", "Behandling etter Trygderetten opphevet"),
     OMGJOERINGSKRAV("5", "Omgjøringskrav", "Omgjøringskrav"),
+    BEGJAERING_OM_GJENOPPTAK("6", "Begjæring om gjenoptak", "Begjæring om gjenoptak"),
 }
 
 data class OversendtKlager(
