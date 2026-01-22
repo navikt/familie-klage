@@ -13,7 +13,6 @@ import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.behandlingshistorikk.domain.HistorikkHendelse
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.infrastruktur.exception.Feil
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.oppgave.OppgaveService
 import no.nav.familie.klage.testutil.DomainUtil.behandling
@@ -37,7 +36,6 @@ class BehandlendeEnhetServiceTest {
     private val behandlingshistorikkService: BehandlingshistorikkService = mockk()
     private val oppgaveService: OppgaveService = mockk()
     private val taskService: TaskService = mockk()
-    private val featureToggleService: FeatureToggleService = mockk()
 
     private val behandlendeEnhetService =
         BehandlendeEnhetService(
@@ -46,7 +44,6 @@ class BehandlendeEnhetServiceTest {
             behandlingshistorikkService = behandlingshistorikkService,
             oppgaveService = oppgaveService,
             taskService = taskService,
-            featureToggleService = featureToggleService,
         )
 
     @BeforeEach

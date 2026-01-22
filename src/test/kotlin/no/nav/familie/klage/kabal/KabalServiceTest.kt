@@ -13,7 +13,6 @@ import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV3
 import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV4
@@ -42,11 +41,10 @@ import java.util.UUID
 
 internal class KabalServiceTest {
     private val kabalClient = mockk<KabalClient>()
-    private val featureToggleService = mockk<FeatureToggleService>()
     private val integrasjonerClient = mockk<FamilieIntegrasjonerClient>()
     private val lenkeConfig =
         LenkeConfig(efSakLenke = "BASEURL_EF", baSakLenke = "BASEURL_BA", ksSakLenke = "BASEURL_KS")
-    private val kabalService = KabalService(kabalClient, integrasjonerClient, lenkeConfig, featureToggleService)
+    private val kabalService = KabalService(kabalClient, integrasjonerClient, lenkeConfig)
     private val ingenBrevmottaker = Brevmottakere()
 
     private val saksbehandler = Saksbehandler(UUID.randomUUID(), "A123456", "Alfa", "Surname", "4415", "Skien")
@@ -70,7 +68,6 @@ internal class KabalServiceTest {
 
         @BeforeEach
         internal fun setUp() {
-            every { featureToggleService.isEnabled(any()) } returns false
             justRun { kabalClient.sendTilKabal(capture(oversendelseSlot)) }
         }
 
@@ -371,7 +368,6 @@ internal class KabalServiceTest {
 
         @BeforeEach
         internal fun setUp() {
-            every { featureToggleService.isEnabled(any()) } returns true
             justRun { kabalClient.sendTilKabal(capture(oversendelseSlot)) }
         }
 

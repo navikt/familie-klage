@@ -14,7 +14,6 @@ import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.formkrav.dto.FormkravDto
 import no.nav.familie.klage.formkrav.dto.tilDto
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
@@ -32,7 +31,6 @@ class FormService(
     private val vurderingService: VurderingService,
     private val taskService: TaskService,
     private val fagsakService: FagsakService,
-    private val featureToggleService: FeatureToggleService,
 ) {
     fun hentForm(behandlingId: UUID): Form = formRepository.findByIdOrThrow(behandlingId)
 

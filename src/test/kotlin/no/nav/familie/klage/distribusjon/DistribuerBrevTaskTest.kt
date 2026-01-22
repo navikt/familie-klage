@@ -17,7 +17,6 @@ import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpostMedIdent
 import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpostUtenIdent
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.domain.Fil
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.dokdist.AdresseType
@@ -33,10 +32,9 @@ class DistribuerBrevTaskTest {
     private val brevService = mockk<BrevService>()
     private val distribusjonService = mockk<DistribusjonService>()
     private val fagsakService = mockk<FagsakService>()
-    private val featureToggleService = mockk<FeatureToggleService>()
 
     private val distribuerBrevTask =
-        DistribuerBrevTask(brevService, distribusjonService, fagsakService, featureToggleService)
+        DistribuerBrevTask(brevService, distribusjonService, fagsakService)
 
     private val behandlingId = randomUUID()
     private val slotJournalposter = mutableListOf<BrevmottakereJournalposter>()
@@ -49,7 +47,6 @@ class DistribuerBrevTaskTest {
         every { distribusjonService.distribuerBrev(any(), any(), any()) } answers { "distId-${firstArg<String>()}" }
         justRun { brevService.oppdaterMottakerJournalpost(behandlingId, capture(slotJournalposter)) }
         every { fagsakService.hentFagsakForBehandling(behandlingId) } returns fagsak()
-        every { featureToggleService.isEnabled(any()) } returns true
     }
 
     @Nested

@@ -20,7 +20,6 @@ import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpost
 import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpostMedIdent
 import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpostUtenIdent
 import no.nav.familie.klage.felles.domain.Fil
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
@@ -41,7 +40,6 @@ internal class JournalførBrevTaskTest {
     val taskService = mockk<TaskService>()
     val distribusjonService = mockk<DistribusjonService>()
     val brevService = mockk<BrevService>()
-    val featureToggleService = mockk<FeatureToggleService>()
 
     val journalførBrevTask =
         JournalførBrevTask(
@@ -49,7 +47,6 @@ internal class JournalførBrevTaskTest {
             taskService = taskService,
             behandlingService = behandlingService,
             brevService = brevService,
-            featureToggleService = featureToggleService,
         )
 
     val behandlingId = UUID.randomUUID()
@@ -72,7 +69,6 @@ internal class JournalførBrevTaskTest {
         every {
             distribusjonService.journalførBrev(any(), any(), any(), any(), any())
         } answers { "journalpostId-${(it.invocation.args[3] as Int)}" }
-        every { featureToggleService.isEnabled(any()) } returns true
     }
 
     @AfterEach

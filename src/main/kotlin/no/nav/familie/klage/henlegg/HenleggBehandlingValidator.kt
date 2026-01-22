@@ -2,10 +2,6 @@ package no.nav.familie.klage.henlegg
 
 import no.nav.familie.klage.brevmottaker.BrevmottakerService
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
-import no.nav.familie.klage.infrastruktur.exception.feilHvis
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
-import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import org.springframework.stereotype.Component
 import java.util.UUID
 

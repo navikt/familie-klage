@@ -21,7 +21,6 @@ import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
-import no.nav.familie.klage.integrasjoner.FeatureToggleMock
 import no.nav.familie.klage.kabal.KabalService
 import no.nav.familie.klage.oppgave.OppgaveTaskService
 import no.nav.familie.klage.testutil.BrukerContextUtil
@@ -59,7 +58,6 @@ class FerdigstillBehandlingServiceTest {
     private val oppgaveTaskService = mockk<OppgaveTaskService>()
     private val brevService = mockk<BrevService>()
     private val fagsystemVedtakService = mockk<FagsystemVedtakService>()
-    private val featureToggleService = FeatureToggleMock().featureToggleService()
 
     private val ferdigstillBehandlingService =
         FerdigstillBehandlingService(
@@ -71,7 +69,6 @@ class FerdigstillBehandlingServiceTest {
             oppgaveTaskService = oppgaveTaskService,
             brevService = brevService,
             fagsystemVedtakService = fagsystemVedtakService,
-            featureToggleService = featureToggleService,
             fagsakService = fagsakService,
         )
     private val fagsak = DomainUtil.fagsakDomain().tilFagsak()

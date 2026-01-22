@@ -13,8 +13,6 @@ import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpostUtenIdent
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle.SKAL_BRUKE_NY_LØYPE_FOR_JOURNALFØRING
 import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.dokdist.AdresseType.norskPostadresse
 import no.nav.familie.kontrakter.felles.dokdist.AdresseType.utenlandskPostadresse
@@ -38,7 +36,6 @@ class DistribuerBrevTask(
     private val brevService: BrevService,
     private val distribusjonService: DistribusjonService,
     private val fagsakService: FagsakService,
-    private val featureToggleService: FeatureToggleService,
 ) : AsyncTaskStep {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -49,43 +46,16 @@ class DistribuerBrevTask(
 
         validerHarJournalposter(behandlingId, journalposter)
 
+        val fagsystem = fagsakService.hentFagsakForBehandling(behandlingId).fagsystem.tilFellesFagsystem()
         val distribueringer =
-            if (featureToggleService.isEnabled(SKAL_BRUKE_NY_LØYPE_FOR_JOURNALFØRING)) {
-                val fagsystem = fagsakService.hentFagsakForBehandling(behandlingId).fagsystem.tilFellesFagsystem()
-                journalposter.fold(journalposter) { acc, journalpost ->
-                    distribuerOgLagreJournalposter(behandlingId, acc, journalpost, brev.mottakere, fagsystem)
-                }
-            } else {
-                journalposter.fold(journalposter) { acc, journalpost ->
-                    distribuerOgLagreJournalposter(behandlingId, acc, journalpost)
-                }
+            journalposter.fold(journalposter) { acc, journalpost ->
+                distribuerOgLagreJournalposter(behandlingId, acc, journalpost, brev.mottakere, fagsystem)
             }
 
         feilHvis(distribueringer.any { it.distribusjonId == null }) {
             "Mangler distribusjonId for journalpost"
         }
     }
-
-    private fun distribuerOgLagreJournalposter(
-        behandlingId: UUID,
-        acc: List<BrevmottakerJournalpost>,
-        journalpost: BrevmottakerJournalpost,
-    ): List<BrevmottakerJournalpost> =
-        if (journalpost.distribusjonId == null) {
-            val distribusjonId = distribusjonService.distribuerBrev(journalpost.journalpostId)
-            val nyeJournalposter =
-                acc.map {
-                    if (it.journalpostId == journalpost.journalpostId) {
-                        it.medDistribusjonsId(distribusjonId = distribusjonId)
-                    } else {
-                        it
-                    }
-                }
-            brevService.oppdaterMottakerJournalpost(behandlingId, BrevmottakereJournalposter(nyeJournalposter))
-            nyeJournalposter
-        } else {
-            acc
-        }
 
     private fun distribuerOgLagreJournalposter(
         behandlingId: UUID,

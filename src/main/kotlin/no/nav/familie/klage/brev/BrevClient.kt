@@ -8,8 +8,6 @@ import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.felles.util.TekstUtil.norskFormat
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.beans.factory.annotation.Qualifier
@@ -26,7 +24,6 @@ class BrevClient(
     private val familieBrevUri: String,
     @Qualifier("utenAuth")
     private val restOperations: RestOperations,
-    private val featureToggleService: FeatureToggleService,
 ) : AbstractPingableRestClient(restOperations, "familie.brev") {
     override val pingUri: URI = URI.create("$familieBrevUri/api/status")
     private val pdfUri = URI.create("$familieBrevUri/blankett/klage/pdf")
@@ -43,7 +40,7 @@ class BrevClient(
         brevmottakere: Brevmottakere?,
     ): String {
         val url =
-            if (fagsystem in setOf(Fagsystem.BA, Fagsystem.KS) && featureToggleService.isEnabled(Toggle.BRUK_NYTT_BREV_BA_KS)) {
+            if (fagsystem in setOf(Fagsystem.BA, Fagsystem.KS)) {
                 URI.create("$familieBrevUri/api/fritekst-brev/baks/html")
             } else {
                 URI.create("$familieBrevUri/api/fritekst-brev/html")
