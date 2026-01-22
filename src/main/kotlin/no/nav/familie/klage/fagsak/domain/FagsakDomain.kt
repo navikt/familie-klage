@@ -27,6 +27,8 @@ data class FagsakDomain(
     @Id
     val id: UUID = UUID.randomUUID(),
     val fagsakPersonId: UUID,
+    @Column("fk_institusjon_id")
+    var institusjonId: UUID? = null,
     @Column("stonadstype")
     val stønadstype: Stønadstype,
     val fagsystem: Fagsystem,
