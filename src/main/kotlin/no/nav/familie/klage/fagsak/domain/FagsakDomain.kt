@@ -13,6 +13,7 @@ import java.util.UUID
 data class Fagsak(
     val id: UUID,
     val fagsakPersonId: UUID,
+    val institusjonId: UUID? = null,
     val personIdenter: Set<PersonIdent>,
     val eksternId: String,
     val stønadstype: Stønadstype,
@@ -40,6 +41,7 @@ data class FagsakDomain(
         Fagsak(
             id = id,
             fagsakPersonId = fagsakPersonId,
+            institusjonId = institusjonId,
             personIdenter = identer,
             eksternId = eksternId,
             stønadstype = stønadstype,

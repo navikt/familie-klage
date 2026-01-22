@@ -42,6 +42,7 @@ class OpprettBehandlingService(
         val fagsak =
             fagsakService.hentEllerOpprettFagsak(
                 ident = request.ident,
+                orgNummer = request.orgNummer,
                 eksternId = eksternFagsakId,
                 fagsystem = request.fagsystem,
                 stønadstype = stønadstype,

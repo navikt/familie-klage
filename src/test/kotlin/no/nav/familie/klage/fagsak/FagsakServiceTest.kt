@@ -2,29 +2,189 @@ package no.nav.familie.klage.fagsak
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
+import no.nav.familie.klage.fagsak.domain.FagsakDomain
+import no.nav.familie.klage.fagsak.domain.FagsakPerson
+import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
+import no.nav.familie.klage.institusjon.Institusjon
+import no.nav.familie.klage.institusjon.InstitusjonService
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
+import no.nav.familie.klage.personopplysninger.pdl.PdlIdent
+import no.nav.familie.klage.personopplysninger.pdl.PdlIdenter
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import java.time.LocalDateTime
+import java.util.UUID
 
 class FagsakServiceTest {
     private val fagsakRepository = mockk<FagsakRepository>()
     private val fagsakPersonService = mockk<FagsakPersonService>()
     private val pdlClient = mockk<PdlClient>()
+    private val institusjonService = mockk<InstitusjonService>()
+    private val featureToggleService = mockk<FeatureToggleService>()
 
     private val fagsakService: FagsakService =
         FagsakService(
             fagsakRepository = fagsakRepository,
             fagsakPersonService = fagsakPersonService,
             pdlClient = pdlClient,
+            institusjonService = institusjonService,
+            featureToggleService = featureToggleService,
         )
+
+    @BeforeEach
+    fun setup() {
+        every { featureToggleService.isEnabled(Toggle.SKAL_KUNNE_BEHANDLE_BA_INSTITUSJON_FAGSAKER) } returns true
+    }
+
+    @Nested
+    inner class HentEllerOpprettFagsak {
+        @Test
+        fun `skal opprette fagsak med institusjon`() {
+            // Arrange
+            val ident = "12345678903"
+            val orgNummer = "123456789"
+            val stønadstype = Stønadstype.BARNETRYGD
+            val fagsystem = Fagsystem.BA
+            val eksternId = "123"
+
+            val fagsakPerson =
+                FagsakPerson(
+                    id = UUID.randomUUID(),
+                    identer = setOf(PersonIdent(ident)),
+                    opprettetAv = "A",
+                    opprettetTid = LocalDateTime.now(),
+                )
+
+            val institusjon =
+                Institusjon(
+                    orgNummer = orgNummer,
+                    navn = "navn",
+                )
+
+            every {
+                pdlClient.hentPersonidenter(ident, stønadstype, true)
+            } returns PdlIdenter(listOf(PdlIdent(ident, false)))
+
+            every {
+                fagsakPersonService.hentEllerOpprettPerson(setOf(ident), ident)
+            } returns fagsakPerson
+
+            every {
+                fagsakPersonService.oppdaterIdent(fagsakPerson, ident)
+            } returns fagsakPerson
+
+            every {
+                institusjonService.hentEllerLagreInstitusjon(orgNummer)
+            } returns institusjon
+
+            every {
+                fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(eksternId, fagsystem, stønadstype)
+            } returns null
+
+            every {
+                fagsakRepository.insert(any())
+            } returnsArgument 0
+
+            // Act
+            val opprettetFagsak =
+                fagsakService.hentEllerOpprettFagsak(
+                    ident = ident,
+                    orgNummer = orgNummer,
+                    eksternId = eksternId,
+                    fagsystem = fagsystem,
+                    stønadstype = stønadstype,
+                )
+
+            // Assert
+            assertThat(opprettetFagsak.id).isNotNull()
+            assertThat(opprettetFagsak.fagsakPersonId).isEqualTo(fagsakPerson.id)
+            assertThat(opprettetFagsak.institusjonId).isEqualTo(institusjon.id)
+            assertThat(opprettetFagsak.personIdenter).hasSize(1)
+            assertThat(opprettetFagsak.personIdenter).anySatisfy { assertThat(it.ident).isEqualTo(ident) }
+            assertThat(opprettetFagsak.eksternId).isEqualTo(eksternId)
+            assertThat(opprettetFagsak.stønadstype).isEqualTo(stønadstype)
+            assertThat(opprettetFagsak.fagsystem).isEqualTo(fagsystem)
+            assertThat(opprettetFagsak.sporbar).isNotNull()
+        }
+
+        @Test
+        fun `skal opprette fagsak uten institusjon`() {
+            // Arrange
+            val ident = "12345678903"
+            val stønadstype = Stønadstype.BARNETRYGD
+            val fagsystem = Fagsystem.BA
+            val eksternId = "123"
+
+            val fagsakPerson =
+                FagsakPerson(
+                    id = UUID.randomUUID(),
+                    identer = setOf(PersonIdent(ident)),
+                    opprettetAv = "A",
+                    opprettetTid = LocalDateTime.now(),
+                )
+
+            val fagsakSlot = slot<FagsakDomain>()
+
+            every {
+                pdlClient.hentPersonidenter(ident, stønadstype, true)
+            } returns
+                PdlIdenter(
+                    listOf(
+                        PdlIdent(ident, false),
+                    ),
+                )
+
+            every {
+                fagsakPersonService.hentEllerOpprettPerson(setOf(ident), ident)
+            } returns fagsakPerson
+
+            every {
+                fagsakPersonService.oppdaterIdent(fagsakPerson, ident)
+            } returns fagsakPerson
+
+            every {
+                fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(eksternId, fagsystem, stønadstype)
+            } returns null
+
+            every {
+                fagsakRepository.insert(capture(fagsakSlot))
+            } returnsArgument 0
+
+            // Act
+            val opprettetFagsak =
+                fagsakService.hentEllerOpprettFagsak(
+                    ident = ident,
+                    orgNummer = null,
+                    eksternId = eksternId,
+                    fagsystem = fagsystem,
+                    stønadstype = stønadstype,
+                )
+
+            // Assert
+            assertThat(opprettetFagsak.id).isNotNull()
+            assertThat(opprettetFagsak.fagsakPersonId).isEqualTo(fagsakPerson.id)
+            assertThat(opprettetFagsak.institusjonId).isNull()
+            assertThat(opprettetFagsak.personIdenter).hasSize(1)
+            assertThat(opprettetFagsak.personIdenter).anySatisfy { assertThat(it.ident).isEqualTo(ident) }
+            assertThat(opprettetFagsak.eksternId).isEqualTo(eksternId)
+            assertThat(opprettetFagsak.stønadstype).isEqualTo(stønadstype)
+            assertThat(opprettetFagsak.fagsystem).isEqualTo(fagsystem)
+            assertThat(opprettetFagsak.sporbar).isNotNull()
+        }
+    }
 
     @Nested
     inner class HentFagsakForEksternIdOgFagsystem {
