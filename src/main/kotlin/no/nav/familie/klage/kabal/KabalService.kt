@@ -5,8 +5,6 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.config.LenkeConfig
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle.SKAL_BRUKE_KABAL_API_V4
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.kabal.domain.OversendtKlageAnke
 import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV3
@@ -23,7 +21,6 @@ class KabalService(
     private val kabalClient: KabalClient,
     private val integrasjonerClient: FamilieIntegrasjonerClient,
     private val lenkeConfig: LenkeConfig,
-    private val featureToggleService: FeatureToggleService,
 ) {
     fun sendTilKabal(
         fagsak: Fagsak,
@@ -45,7 +42,7 @@ class KabalService(
         saksbehandlersEnhet: String,
         brevmottakere: Brevmottakere?,
     ): OversendtKlageAnke =
-        if (fagsak.fagsystem in setOf(BA, KS) && featureToggleService.isEnabled(SKAL_BRUKE_KABAL_API_V4)) {
+        if (fagsak.fagsystem in setOf(BA, KS)) {
             OversendtKlageAnkeV4.lagKlageOversendelse(
                 fagsak = fagsak,
                 behandling = behandling,

@@ -2,7 +2,6 @@ package no.nav.familie.klage.brev
 
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.oppgave.OppgaveClient
 import no.nav.familie.klage.personopplysninger.dto.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerDto
@@ -18,7 +17,7 @@ import java.util.UUID
 
 internal class BrevsignaturServiceTest {
     private val oppgaveClient = mockk<OppgaveClient>()
-    val brevsignaturService = BrevsignaturService(mockk<FeatureToggleService>(relaxed = true), oppgaveClient)
+    val brevsignaturService = BrevsignaturService(oppgaveClient)
 
     @Test
     fun `skal anonymisere signatur hvis strengt fortrolig`() {

@@ -15,7 +15,6 @@ import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.util.TaskMetadata.SAKSBEHANDLER_METADATA_KEY
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.oppgave.OppgaveTaskService
@@ -46,7 +45,6 @@ class FerdigstillBehandlingService(
     private val oppgaveTaskService: OppgaveTaskService,
     private val brevService: BrevService,
     private val fagsystemVedtakService: FagsystemVedtakService,
-    private val featureToggleService: FeatureToggleService,
     private val fagsakService: FagsakService,
 ) {
     /**

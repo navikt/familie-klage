@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 class FeatureToggleController(
     private val featureToggleService: FeatureToggleService,
 ) {
-    private val featureTogglesIBruk: Set<Toggle> =
-        setOf(
-            Toggle.KAN_MELLOMLAGRE_VURDERING,
-        )
+    private val featureTogglesIBruk: Set<Toggle> = setOf()
 
     @GetMapping
     fun sjekkAlle(): Map<String, Boolean> = featureTogglesIBruk.associate { it.toggleId to featureToggleService.isEnabled(it) }

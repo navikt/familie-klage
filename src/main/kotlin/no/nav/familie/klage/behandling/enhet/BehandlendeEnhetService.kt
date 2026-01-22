@@ -6,7 +6,6 @@ import no.nav.familie.klage.behandlingshistorikk.domain.HistorikkHendelse
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.infrastruktur.exception.Feil
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.oppgave.OppgaveService
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.prosessering.internal.TaskService
@@ -21,7 +20,6 @@ class BehandlendeEnhetService(
     private val behandlingshistorikkService: BehandlingshistorikkService,
     private val oppgaveService: OppgaveService,
     private val taskService: TaskService,
-    private val featureToggleService: FeatureToggleService,
 ) {
     @Transactional
     fun oppdaterBehandlendeEnhetPåBehandling(

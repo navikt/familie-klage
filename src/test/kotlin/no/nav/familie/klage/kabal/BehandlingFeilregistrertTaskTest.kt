@@ -1,8 +1,6 @@
 package no.nav.familie.klage.kabal
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import io.mockk.every
-import io.mockk.mockk
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.StegService
@@ -13,7 +11,6 @@ import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.kabal.domain.KlageinstansResultat
 import no.nav.familie.klage.oppgave.OpprettKabalEventOppgaveTask
 import no.nav.familie.klage.oppgave.OpprettOppgavePayload
@@ -49,12 +46,9 @@ class BehandlingFeilregistrertTaskTest : OppslagSpringRunnerTest() {
     val personIdent = "12345678901"
     private lateinit var fagsak: Fagsak
     private lateinit var behandling: Behandling
-    private val featuretoggleService = mockk<FeatureToggleService>()
 
     @BeforeEach
     fun setup() {
-        every { featuretoggleService.isEnabled(any()) } returns true
-
         behandlingFeilregistrertTask =
             BehandlingFeilregistrertTask(stegService, taskService, behandlingService, fagsakService)
 

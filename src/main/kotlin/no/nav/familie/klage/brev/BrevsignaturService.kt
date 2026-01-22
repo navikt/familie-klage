@@ -1,8 +1,6 @@
 package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.brev.dto.SignaturDto
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.oppgave.OppgaveClient
 import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerDto
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class BrevsignaturService(
-    private val featureToggleService: FeatureToggleService,
     private val oppgaveClient: OppgaveClient,
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -25,10 +22,6 @@ class BrevsignaturService(
 
         if (harStrengtFortroligAdresse) {
             return SignaturDto(NAV_ANONYM_NAVN, ENHET_VIKAFOSSEN)
-        }
-
-        if (!featureToggleService.isEnabled(Toggle.VELG_SIGNATUR_BASERT_PÅ_FAGSAK)) {
-            SignaturDto(SikkerhetContext.hentSaksbehandlerNavn(true), ENHET_NAY)
         }
 
         return when (fagsystem) {
