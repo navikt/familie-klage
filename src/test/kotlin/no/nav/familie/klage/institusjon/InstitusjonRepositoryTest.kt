@@ -6,17 +6,18 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.util.UUID
 
 class InstitusjonRepositoryTest(
     @Autowired private val institusjonRepository: InstitusjonRepository,
 ) : OppslagSpringRunnerTest() {
-    @Nested
-    inner class FinnInstitusjon {
-        @AfterEach
-        fun tearDown() {
-            institusjonRepository.deleteAll()
-        }
+    @AfterEach
+    fun tearDown() {
+        institusjonRepository.deleteAll()
+    }
 
+    @Nested
+    inner class Insert {
         @Test
         fun `skal lagre institusjon`() {
             // Arrange
@@ -31,9 +32,36 @@ class InstitusjonRepositoryTest(
             assertThat(lagretInstitusjon.navn).isEqualTo(institusjon.navn)
             assertThat(lagretInstitusjon.tssEksternId).isEqualTo(institusjon.tssEksternId)
         }
+    }
 
+    @Nested
+    inner class FindById {
         @Test
-        fun `skal finne institusjon da den allerde finnes`() {
+        fun `skal finne institusjon ved å bruke id`() {
+            // Arrange
+            val institusjon =
+                Institusjon(
+                    id = UUID.randomUUID(),
+                    orgNummer = "123456789",
+                    navn = "navn",
+                    tssEksternId = "tssEksternId",
+                )
+
+            institusjonRepository.insert(institusjon)
+
+            // Act
+            val funnetInstitusjon = institusjonRepository.findById(institusjon.id)
+
+            // Assert
+            assertThat(funnetInstitusjon).isPresent()
+            assertThat(funnetInstitusjon.get()).isEqualTo(institusjon)
+        }
+    }
+
+    @Nested
+    inner class FinnInstitusjon {
+        @Test
+        fun `skal finne institusjon med orgnummer da den allerde finnes`() {
             // Arrange
             val institusjon = Institusjon(orgNummer = "123456789", navn = "navn", tssEksternId = "tssEksternId")
 
@@ -47,7 +75,7 @@ class InstitusjonRepositoryTest(
         }
 
         @Test
-        fun `skal ikke finne institusjon om den ikke finnes`() {
+        fun `skal ikke finne institusjon med orgnummer om den ikke finnes`() {
             // Arrange
             val orgNummer = "123456789"
 
