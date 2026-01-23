@@ -1,0 +1,1 @@
+ALTER TABLE INSTITUSJON RENAME COLUMN orgnummer TO org_nummer;
