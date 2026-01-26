@@ -163,8 +163,8 @@ internal class KabalServiceTest {
                         påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer),
                     )
                 val vurdering = vurdering(behandlingId = behandling.id, hjemmel = hjemmel)
-                val verge = BrevmottakerPersonMedIdent("01234567890", MottakerRolle.VERGE, "Navn")
-                val bruker = BrevmottakerPersonMedIdent(fagsak.hentAktivIdent(), MottakerRolle.BRUKER, "Navn")
+                val verge = BrevmottakerPersonMedIdent("01234567890", "Navn", MottakerRolle.VERGE)
+                val bruker = BrevmottakerPersonMedIdent(fagsak.hentAktivIdent(), "Navn", MottakerRolle.BRUKER)
                 kabalService.sendTilKabal(
                     fagsak,
                     behandling,
@@ -196,7 +196,7 @@ internal class KabalServiceTest {
                         påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer),
                     )
                 val vurdering = vurdering(behandlingId = behandling.id, hjemmel = hjemmel)
-                val verge = BrevmottakerPersonMedIdent("01234567890", MottakerRolle.VERGE, "Navn")
+                val verge = BrevmottakerPersonMedIdent("01234567890", "Navn", MottakerRolle.VERGE)
                 kabalService.sendTilKabal(
                     fagsak,
                     behandling,
@@ -228,7 +228,7 @@ internal class KabalServiceTest {
                         påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer),
                     )
                 val vurdering = vurdering(behandlingId = behandling.id, hjemmel = hjemmel)
-                val fullmektig = BrevmottakerPersonMedIdent("01234567890", MottakerRolle.FULLMAKT, "Navn")
+                val fullmektig = BrevmottakerPersonMedIdent("01234567890", "Navn", MottakerRolle.FULLMAKT)
                 kabalService.sendTilKabal(
                     fagsak,
                     behandling,
@@ -292,9 +292,9 @@ internal class KabalServiceTest {
                         påklagetVedtak = PåklagetVedtak(PåklagetVedtakstype.VEDTAK, påklagetVedtakDetaljer),
                     )
                 val vurdering = vurdering(behandlingId = behandling.id, hjemmel = hjemmel)
-                val fullmektigOrganisasjon = BrevmottakerOrganisasjon("012345678", "Navn på org", "Navn på person")
-                val fullmektig = BrevmottakerPersonMedIdent("01234567890", MottakerRolle.FULLMAKT, "Fullmektig")
-                val verge = BrevmottakerPersonMedIdent("98765432100", MottakerRolle.VERGE, "Verge")
+                val fullmektigOrganisasjon = BrevmottakerOrganisasjon(organisasjonsnummer = "012345678", organisasjonsnavn = "Navn på org", navnHosOrganisasjon = "Navn på person")
+                val fullmektig = BrevmottakerPersonMedIdent("01234567890", "Fullmektig", MottakerRolle.FULLMAKT)
+                val verge = BrevmottakerPersonMedIdent("98765432100", "Verge", MottakerRolle.VERGE)
                 kabalService.sendTilKabal(
                     fagsak,
                     behandling,
@@ -329,7 +329,7 @@ internal class KabalServiceTest {
         private val behandling = behandling(fagsak = fagsak, påklagetVedtak = påklagetVedtak)
         private val vurdering = vurdering(behandlingId = behandling.id, hjemmel = Hjemmel.BT_TO)
 
-        private val bruker = BrevmottakerPersonMedIdent(defaultIdent, MottakerRolle.BRUKER, "Bruker Brukersen")
+        private val bruker = BrevmottakerPersonMedIdent(defaultIdent, "Bruker Brukersen", MottakerRolle.BRUKER)
 
         private val fullmektigOrganisasjon =
             BrevmottakerOrganisasjon(

@@ -417,13 +417,13 @@ object DomainUtil {
     ): BrevmottakerPersonUtenIdent =
         BrevmottakerPersonUtenIdent(
             id,
-            mottakerRolle,
-            navn,
             adresselinje1,
             adresselinje2,
             postnummer,
             poststed,
             landkode,
+            navn,
+            mottakerRolle,
         )
 
     fun lagBrevmottakerPersonMedIdent(
@@ -433,8 +433,8 @@ object DomainUtil {
     ): BrevmottakerPersonMedIdent =
         BrevmottakerPersonMedIdent(
             personIdent,
-            mottakerRolle,
             navn,
+            mottakerRolle,
         )
 
     fun lagBrevmottakere(
@@ -489,8 +489,8 @@ object DomainUtil {
     ): NyBrevmottakerPersonMedIdent =
         NyBrevmottakerPersonMedIdent(
             personIdent,
-            mottakerRolle,
             navn,
+            mottakerRolle,
         )
 
     fun lagNyBrevmottakerOrganisasjon(
