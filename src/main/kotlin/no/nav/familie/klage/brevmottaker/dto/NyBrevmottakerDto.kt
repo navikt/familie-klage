@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.FULLMAKT
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.INSTITUSJON
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottaker
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPerson
@@ -149,7 +151,9 @@ data class NyBrevmottakerOrganisasjonDto(
         get() = NyBrevmottakerDto.Type.ORGANISASJON
 
     override fun valider() {
-        // Do nothing...
+        if (mottakerRolle != null && mottakerRolle !in setOf(INSTITUSJON, FULLMAKT)) {
+            throw ApiFeil.badRequest("Organisasjon må ha mottakerrolle $INSTITUSJON eller $FULLMAKT.")
+        }
     }
 }
 

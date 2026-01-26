@@ -18,9 +18,8 @@ import no.nav.familie.klage.brev.dto.SignaturDto
 import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerMinimumEnMottaker
 import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerUnikeBrevmottakere
 import no.nav.familie.klage.brevmottaker.BrevmottakerUtleder
-import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPerson
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
-import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPerson
+import no.nav.familie.klage.brevmottaker.domain.NyBrevmottaker
 import no.nav.familie.klage.brevmottaker.dto.BrevmottakereDto
 import no.nav.familie.klage.brevmottaker.dto.tilBrevmottakere
 import no.nav.familie.klage.distribusjon.JournalførBrevTask
@@ -277,7 +276,7 @@ class BrevService(
 
     fun lagHenleggelsesbrevOgOpprettJournalføringstask(
         behandlingId: UUID,
-        nyeBrevmottakere: List<NyBrevmottakerPerson>,
+        nyeBrevmottakere: List<NyBrevmottaker>,
     ) {
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
@@ -288,7 +287,7 @@ class BrevService(
 
         val html = lagHenleggelsesbrevHtml(behandlingId)
         val pdf = familieDokumentClient.genererPdfFraHtml(html)
-        val brevmottakere = Brevmottakere(nyeBrevmottakere.map { BrevmottakerPerson.opprettFra(it) })
+        val brevmottakere = Brevmottakere.opprettFra(nyeBrevmottakere)
 
         val eksisterendeBrev = brevRepository.findByIdOrNull(behandlingId)
         if (eksisterendeBrev != null) {

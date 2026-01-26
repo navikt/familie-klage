@@ -31,7 +31,17 @@ data class BrevmottakerOrganisasjon(
     val organisasjonsnavn: String,
     val navnHosOrganisasjon: String,
     override val mottakerRolle: MottakerRolle? = null,
-) : Brevmottaker
+) : Brevmottaker {
+    companion object {
+        fun opprettFra(nyBrevmottakerOrganisasjon: NyBrevmottakerOrganisasjon): BrevmottakerOrganisasjon =
+            BrevmottakerOrganisasjon(
+                organisasjonsnummer = nyBrevmottakerOrganisasjon.organisasjonsnummer,
+                organisasjonsnavn = nyBrevmottakerOrganisasjon.organisasjonsnavn,
+                navnHosOrganisasjon = nyBrevmottakerOrganisasjon.navnHosOrganisasjon,
+                mottakerRolle = nyBrevmottakerOrganisasjon.mottakerRolle,
+            )
+    }
+}
 
 @JsonDeserialize(`as` = BrevmottakerPersonMedIdent::class)
 data class BrevmottakerPersonMedIdent(

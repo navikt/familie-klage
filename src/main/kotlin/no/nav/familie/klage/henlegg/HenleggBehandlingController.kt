@@ -1,7 +1,7 @@
 package no.nav.familie.klage.henlegg
 
 import no.nav.familie.klage.brev.BrevService
-import no.nav.familie.klage.brevmottaker.dto.tilNyBrevmottakerPerson
+import no.nav.familie.klage.brevmottaker.dto.tilNyBrevmottaker
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -39,7 +39,7 @@ class HenleggBehandlingController(
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
         henleggBehandlingValidator.validerHenleggBehandlingDto(behandlingId, henleggBehandlingDto)
         if (henleggBehandlingDto.skalSendeHenleggelsesbrev) {
-            val nyeBrevmottakere = henleggBehandlingDto.nyeBrevmottakere.map { it.tilNyBrevmottakerPerson() }
+            val nyeBrevmottakere = henleggBehandlingDto.nyeBrevmottakere.map { it.tilNyBrevmottaker() }
             brevService.lagHenleggelsesbrevOgOpprettJournalføringstask(behandlingId, nyeBrevmottakere)
         }
         return Ressurs.success(henleggBehandlingService.henleggBehandling(behandlingId, henleggBehandlingDto.årsak))
