@@ -50,6 +50,6 @@ data class NyBrevmottakerPersonMedIdent(
 data class NyBrevmottakerOrganisasjon(
     val organisasjonsnummer: String,
     val organisasjonsnavn: String,
-    val navnHosOrganisasjon: String,
+    val navnHosOrganisasjon: String? = null,
     override val mottakerRolle: MottakerRolle? = null,
 ) : NyBrevmottaker

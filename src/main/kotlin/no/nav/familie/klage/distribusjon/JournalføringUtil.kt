@@ -35,7 +35,7 @@ object JournalføringUtil {
                 mottakere.organisasjoner.map {
                     AvsenderMottaker(
                         id = it.organisasjonsnummer,
-                        navn = it.navnHosOrganisasjon,
+                        navn = it.navnHosOrganisasjon ?: it.organisasjonsnavn,
                         idType = AvsenderMottakerIdType.ORGNR,
                     )
                 }
@@ -47,7 +47,7 @@ object JournalføringUtil {
             is BrevmottakerOrganisasjon -> {
                 AvsenderMottaker(
                     id = brevmottaker.organisasjonsnummer,
-                    navn = brevmottaker.navnHosOrganisasjon,
+                    navn = brevmottaker.navnHosOrganisasjon ?: brevmottaker.organisasjonsnavn,
                     idType = AvsenderMottakerIdType.ORGNR,
                 )
             }

@@ -144,7 +144,7 @@ fun NyBrevmottakerPersonMedIdentDto.tilNyBrevmottakerPersonMedIdent(): NyBrevmot
 data class NyBrevmottakerOrganisasjonDto(
     val organisasjonsnummer: String,
     val organisasjonsnavn: String,
-    val navnHosOrganisasjon: String,
+    val navnHosOrganisasjon: String? = null,
     override val mottakerRolle: MottakerRolle? = null,
 ) : NyBrevmottakerDto {
     override val type: NyBrevmottakerDto.Type

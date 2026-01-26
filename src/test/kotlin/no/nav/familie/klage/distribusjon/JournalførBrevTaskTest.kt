@@ -197,6 +197,29 @@ internal class JournalførBrevTaskTest {
             )
         }
 
+        @Test
+        internal fun `skal bruke organisasjonsnavn hvis navnHosOrganisasjon er null`() {
+            val brevmottakereMedNullNavnOrganisasjon =
+                Brevmottakere(
+                    listOf(BrevmottakerPersonMedIdent("1", "1navn", MottakerRolle.BRUKER)),
+                    listOf(BrevmottakerOrganisasjon("org1", "orgnavn", null)),
+                )
+            val avsenderMottakerOrganisasjonMedNavn =
+                AvsenderMottaker("org1", AvsenderMottakerIdType.ORGNR, "orgnavn")
+
+            mockHentBrev(mottakere = brevmottakereMedNullNavnOrganisasjon)
+
+            runTask()
+
+            verifyJournalførtBrev(2)
+            verifyOrder {
+                distribusjonService.journalførBrev(behandlingId, any(), any(), 0, avsenderMottaker1)
+                distribusjonService.journalførBrev(behandlingId, any(), any(), 1, avsenderMottakerOrganisasjonMedNavn)
+            }
+
+            validerLagringAvBrevmottakereJournalposter(slotBrevmottakereJournalposter[1].journalposter, listOf(avsenderMottaker1, avsenderMottakerOrganisasjonMedNavn))
+        }
+
         private fun verifyJournalførtBrev(antallGanger: Int) {
             verify(exactly = antallGanger) {
                 distribusjonService.journalførBrev(behandlingId, any(), any(), any(), any())

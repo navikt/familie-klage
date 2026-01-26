@@ -29,7 +29,7 @@ sealed interface BrevmottakerPerson : Brevmottaker {
 data class BrevmottakerOrganisasjon(
     val organisasjonsnummer: String,
     val organisasjonsnavn: String,
-    val navnHosOrganisasjon: String,
+    val navnHosOrganisasjon: String? = null,
     override val mottakerRolle: MottakerRolle? = null,
 ) : Brevmottaker {
     companion object {
