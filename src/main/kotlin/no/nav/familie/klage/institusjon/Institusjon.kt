@@ -8,5 +8,4 @@ data class Institusjon(
     val id: UUID = UUID.randomUUID(),
     val orgNummer: String,
     val navn: String,
-    val tssEksternId: String?,
 )
