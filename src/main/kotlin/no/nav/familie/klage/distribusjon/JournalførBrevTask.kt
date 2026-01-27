@@ -5,6 +5,7 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
+import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerBrevmottakerForInstitusjonssak
 import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerMinimumEnMottaker
 import no.nav.familie.klage.brevmottaker.domain.Brevmottaker
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerOrganisasjon
@@ -15,6 +16,7 @@ import no.nav.familie.klage.distribusjon.JournalføringUtil.mapBrevmottakerJourn
 import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpost
 import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpostMedIdent
 import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpostUtenIdent
+import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.felles.util.TaskMetadata.SAKSBEHANDLER_METADATA_KEY
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
@@ -38,6 +40,7 @@ class JournalførBrevTask(
     private val taskService: TaskService,
     private val behandlingService: BehandlingService,
     private val brevService: BrevService,
+    private val fagsakService: FagsakService,
 ) : AsyncTaskStep {
     override fun doTask(task: Task) {
         val behandlingId = UUID.fromString(task.payload)
@@ -47,6 +50,11 @@ class JournalførBrevTask(
 
         val mottakere = brev.mottakere ?: error("Mangler mottakere på brev for behandling=$behandlingId")
         validerMinimumEnMottaker(mottakere)
+
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
+        if (fagsak.erInstitusjonssak()) {
+            validerBrevmottakerForInstitusjonssak(mottakere)
+        }
 
         val journalposter = brev.mottakereJournalposter?.journalposter ?: emptyList()
 

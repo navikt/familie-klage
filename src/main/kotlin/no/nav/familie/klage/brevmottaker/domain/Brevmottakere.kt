@@ -4,6 +4,8 @@ data class Brevmottakere(
     val personer: List<BrevmottakerPerson> = emptyList(),
     val organisasjoner: List<BrevmottakerOrganisasjon> = emptyList(),
 ) {
+    fun tilListe(): List<Brevmottaker> = personer + organisasjoner
+
     companion object {
         fun opprettFra(brevmottakere: List<NyBrevmottaker>): Brevmottakere =
             Brevmottakere(
