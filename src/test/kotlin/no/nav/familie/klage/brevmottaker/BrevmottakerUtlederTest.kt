@@ -2,12 +2,14 @@ package no.nav.familie.klage.brevmottaker
 
 import io.mockk.every
 import io.mockk.mockk
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.testutil.DomainUtil
+import no.nav.familie.klage.testutil.DomainUtil.lagInstitusjon
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -25,7 +27,7 @@ class BrevmottakerUtlederTest {
     @Nested
     inner class UtledInitielleBrevmottakere {
         @Test
-        fun `skal utlede initielle brevmottakere`() {
+        fun `skal utlede bruker som initiell brevmottaker`() {
             // Arrange
             val personIdent = "123"
             val behandlingId = UUID.randomUUID()
@@ -46,6 +48,31 @@ class BrevmottakerUtlederTest {
                 assertThat(it.mottakerRolle).isEqualTo(MottakerRolle.BRUKER)
             }
             assertThat(brevmottakere.organisasjoner).isEmpty()
+        }
+
+        @Test
+        fun `skal utlede organisasjon som initiell brevmottaker`() {
+            // Arrange
+            val personIdent = "123"
+            val behandlingId = UUID.randomUUID()
+            val institusjon = lagInstitusjon()
+            val fagsak = DomainUtil.fagsak(identer = setOf(PersonIdent(personIdent)), institusjon = institusjon)
+            val personopplysninger = DomainUtil.personopplysningerDto(navn = "Navn Navnesen")
+
+            every { fagsakService.hentFagsakForBehandling(behandlingId) } returns fagsak
+            every { personopplysningerService.hentPersonopplysninger(behandlingId) } returns personopplysninger
+
+            // Act
+            val brevmottakere = brevmottakerUtleder.utledInitielleBrevmottakere(behandlingId)
+
+            // Assert
+            assertThat(brevmottakere.organisasjoner).hasSize(1)
+            assertThat(brevmottakere.organisasjoner[0]).isInstanceOfSatisfying(BrevmottakerOrganisasjon::class.java) {
+                assertThat(it.organisasjonsnummer).isEqualTo(institusjon.orgNummer)
+                assertThat(it.organisasjonsnavn).isEqualTo(institusjon.navn)
+                assertThat(it.mottakerRolle).isEqualTo(MottakerRolle.INSTITUSJON)
+            }
+            assertThat(brevmottakere.personer).isEmpty()
         }
     }
 
