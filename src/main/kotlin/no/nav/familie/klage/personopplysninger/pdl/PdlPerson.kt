@@ -9,7 +9,7 @@ data class PdlResponse<T>(
     val errors: List<PdlError>?,
     val extensions: PdlExtensions?,
 ) {
-    fun harFeil(): Boolean = errors != null && errors.isNotEmpty()
+    fun harFeil(): Boolean = !errors.isNullOrEmpty()
 
     fun harAdvarsel(): Boolean = !extensions?.warnings.isNullOrEmpty()
 

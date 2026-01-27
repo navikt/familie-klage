@@ -50,10 +50,8 @@ object FormUtil {
             )
 
     private fun friteksterUtfylt(formkrav: Form) =
-        formkrav.saksbehandlerBegrunnelse != null &&
-            formkrav.saksbehandlerBegrunnelse.isNotBlank() &&
-            formkrav.brevtekst != null &&
-            formkrav.brevtekst.isNotBlank()
+        !formkrav.saksbehandlerBegrunnelse.isNullOrBlank() &&
+            !formkrav.brevtekst.isNullOrBlank()
 
     private fun Form.alleSvarBortsettFraFrist() =
         setOf(
