@@ -85,7 +85,7 @@ object DomainUtil {
             fagsystem = fagsystem,
         )
 
-    fun FagsakDomain.tilFagsak(personIdent: String = "11223344551") = this.tilFagsakMedPerson(setOf(PersonIdent(ident = personIdent)))
+    fun FagsakDomain.tilFagsak(personIdent: String = "11223344551") = this.tilFagsakMedPersonOgInstitusjon(setOf(PersonIdent(ident = personIdent)))
 
     fun behandling(
         fagsak: Fagsak = fagsak(),

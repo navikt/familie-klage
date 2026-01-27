@@ -111,7 +111,7 @@ class FagsakServiceTest {
             // Assert
             assertThat(opprettetFagsak.id).isNotNull()
             assertThat(opprettetFagsak.fagsakPersonId).isEqualTo(fagsakPerson.id)
-            assertThat(opprettetFagsak.institusjonId).isEqualTo(institusjon.id)
+            assertThat(opprettetFagsak.institusjon).isEqualTo(institusjon)
             assertThat(opprettetFagsak.personIdenter).hasSize(1)
             assertThat(opprettetFagsak.personIdenter).anySatisfy { assertThat(it.ident).isEqualTo(ident) }
             assertThat(opprettetFagsak.eksternId).isEqualTo(eksternId)
@@ -176,7 +176,7 @@ class FagsakServiceTest {
             // Assert
             assertThat(opprettetFagsak.id).isNotNull()
             assertThat(opprettetFagsak.fagsakPersonId).isEqualTo(fagsakPerson.id)
-            assertThat(opprettetFagsak.institusjonId).isNull()
+            assertThat(opprettetFagsak.institusjon).isNull()
             assertThat(opprettetFagsak.personIdenter).hasSize(1)
             assertThat(opprettetFagsak.personIdenter).anySatisfy { assertThat(it.ident).isEqualTo(ident) }
             assertThat(opprettetFagsak.eksternId).isEqualTo(eksternId)

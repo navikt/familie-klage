@@ -35,7 +35,7 @@ class TestoppsettService(
                     eksternId = fagsak.eksternId,
                     sporbar = fagsak.sporbar,
                 ),
-            ).tilFagsakMedPerson(person.identer)
+            ).tilFagsakMedPersonOgInstitusjon(person.identer)
     }
 
     fun lagreBehandling(behandling: Behandling): Behandling = behandlingRepository.insert(behandling)

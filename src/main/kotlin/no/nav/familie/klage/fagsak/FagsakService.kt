@@ -48,18 +48,23 @@ class FagsakService(
             fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(eksternId, fagsystem, stønadstype)
                 ?: opprettFagsak(stønadstype, eksternId, fagsystem, oppdatertPerson, institusjon)
 
-        return fagsak.tilFagsakMedPerson(oppdatertPerson.identer)
+        return fagsak.tilFagsakMedPersonOgInstitusjon(oppdatertPerson.identer, institusjon)
     }
 
     fun hentFagsak(id: UUID): Fagsak {
         val fagsak = fagsakRepository.findByIdOrThrow(id)
-        return fagsak.tilFagsakMedPerson(fagsakPersonService.hentIdenter(fagsak.fagsakPersonId))
+        return fagsak.tilFagsakMedPersonOgInstitusjon(
+            identer = fagsakPersonService.hentIdenter(fagsak.fagsakPersonId),
+            institusjon = fagsak.institusjonId?.let { institusjonService.finnInstitusjon(it) },
+        )
     }
 
     fun hentFagsakForBehandling(behandlingId: UUID): Fagsak {
         val fagsak = fagsakRepository.finnFagsakForBehandlingId(behandlingId)
-        return fagsak?.tilFagsakMedPerson(fagsakPersonService.hentIdenter(fagsak.fagsakPersonId))
-            ?: throw Feil("Finner ikke fagsak til behandlingId=$behandlingId")
+        return fagsak?.tilFagsakMedPersonOgInstitusjon(
+            identer = fagsakPersonService.hentIdenter(fagsak.fagsakPersonId),
+            institusjon = fagsak.institusjonId?.let { institusjonService.finnInstitusjon(it) },
+        ) ?: throw Feil("Finner ikke fagsak til behandlingId=$behandlingId")
     }
 
     fun hentFagsakForEksternIdOgFagsystem(
@@ -74,7 +79,10 @@ class FagsakService(
                 else -> throw Feil("Stønadstype må spesifiseres for fagsystem $fagsystem")
             }
         val fagsak = fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(eksternId, fagsystem, stønadstype)
-        return fagsak?.tilFagsakMedPerson(fagsakPersonService.hentIdenter(fagsak.fagsakPersonId))
+        return fagsak?.tilFagsakMedPersonOgInstitusjon(
+            identer = fagsakPersonService.hentIdenter(fagsak.fagsakPersonId),
+            institusjon = fagsak.institusjonId?.let { institusjonService.finnInstitusjon(it) },
+        )
     }
 
     private fun opprettFagsak(

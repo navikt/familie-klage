@@ -52,7 +52,7 @@ class OpprettOppgaveTaskTest : OppslagSpringRunnerTest() {
 
         fagsak =
             testoppsettService.lagreFagsak(
-                fagsakDomain().tilFagsakMedPerson(
+                fagsakDomain().tilFagsakMedPersonOgInstitusjon(
                     setOf(
                         PersonIdent(personIdent),
                     ),

@@ -1,6 +1,7 @@
 package no.nav.familie.klage.fagsak.domain
 
 import no.nav.familie.klage.felles.domain.Sporbar
+import no.nav.familie.klage.institusjon.Institusjon
 import no.nav.familie.klage.kabal.domain.Ytelse
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
@@ -13,7 +14,7 @@ import java.util.UUID
 data class Fagsak(
     val id: UUID,
     val fagsakPersonId: UUID,
-    val institusjonId: UUID? = null,
+    val institusjon: Institusjon? = null,
     val personIdenter: Set<PersonIdent>,
     val eksternId: String,
     val stønadstype: Stønadstype,
@@ -37,11 +38,14 @@ data class FagsakDomain(
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),
 ) {
-    fun tilFagsakMedPerson(identer: Set<PersonIdent>): Fagsak =
+    fun tilFagsakMedPersonOgInstitusjon(
+        identer: Set<PersonIdent>,
+        institusjon: Institusjon? = null,
+    ): Fagsak =
         Fagsak(
             id = id,
             fagsakPersonId = fagsakPersonId,
-            institusjonId = institusjonId,
+            institusjon = institusjon,
             personIdenter = identer,
             eksternId = eksternId,
             stønadstype = stønadstype,

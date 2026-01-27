@@ -28,7 +28,7 @@ import java.util.UUID
 class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
     @Autowired private lateinit var behandlingRepository: BehandlingRepository
 
-    val fagsak = fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent("1")))
+    val fagsak = fagsakDomain().tilFagsakMedPersonOgInstitusjon(setOf(PersonIdent("1")))
 
     @BeforeEach
     fun setUp() {
@@ -111,14 +111,14 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
     internal fun `findByEksternBehandlingIdAndFagsystem - forvent treff`() {
         val fagsakPersistert =
             testoppsettService.lagreFagsak(
-                fagsakDomain().tilFagsakMedPerson(
+                fagsakDomain().tilFagsakMedPersonOgInstitusjon(
                     setOf(PersonIdent("12345678901")),
                 ),
             )
 
         val fagsakPersistert2 =
             testoppsettService.lagreFagsak(
-                fagsakDomain().tilFagsakMedPerson(
+                fagsakDomain().tilFagsakMedPersonOgInstitusjon(
                     setOf(PersonIdent("12345678902")),
                 ),
             )
@@ -142,7 +142,7 @@ class BehandlingRepositoryTest : OppslagSpringRunnerTest() {
 
         @Test
         internal fun `skal returnere tom liste når det kun finnes behandlinger på en annen fagsak`() {
-            val fagsak2 = testoppsettService.lagreFagsak(fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent("2"))))
+            val fagsak2 = testoppsettService.lagreFagsak(fagsakDomain().tilFagsakMedPersonOgInstitusjon(setOf(PersonIdent("2"))))
             behandlingRepository.insert(behandling(fagsak2))
 
             assertThat(behandlingRepository.finnKlagebehandlingsresultat(fagsak.eksternId, Fagsystem.EF))
