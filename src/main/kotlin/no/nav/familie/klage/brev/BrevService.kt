@@ -402,15 +402,9 @@ class BrevService(
         val personopplysninger = personopplysningerService.hentPersonopplysninger(ident)
         val harVerge = personopplysninger.vergemål.isNotEmpty()
         val harFullmakt: Boolean =
-            personopplysninger.fullmakt
-                .filter {
-                    it.gyldigTilOgMed == null ||
-                        (
-                            it.gyldigTilOgMed.isEqualOrAfter(
-                                LocalDate.now(),
-                            )
-                        )
-                }.isNotEmpty()
+            personopplysninger.fullmakt.any {
+                it.gyldigTilOgMed == null || it.gyldigTilOgMed.isEqualOrAfter(LocalDate.now())
+            }
         feilHvis(harVerge || harFullmakt) {
             "Skal ikke sende brev hvis person er tilknyttet vergemål eller fullmakt"
         }

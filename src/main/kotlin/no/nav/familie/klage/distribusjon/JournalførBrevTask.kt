@@ -182,8 +182,7 @@ class JournalførBrevTask(
                 properties =
                     Properties().apply {
                         this[SAKSBEHANDLER_METADATA_KEY] = SikkerhetContext.hentSaksbehandler(strict = true)
-                        // TODO : Endre "eksterFagsakId" til "eksternFagsakId"
-                        this["eksterFagsakId"] = fagsak.eksternId
+                        this["eksternFagsakId"] = fagsak.eksternId
                         this["fagsystem"] = fagsak.fagsystem.name
                     },
             )
