@@ -533,4 +533,14 @@ object DomainUtil {
             endretTid = endretTid,
             beskrivelse = beskrivelse,
         )
+
+    fun lagInstitusjon(
+        navn: String = "Institusjon AS",
+        orgNummer: String = "999888777",
+    ): Institusjon =
+        Institusjon(
+            id = UUID.randomUUID(),
+            navn = navn,
+            orgNummer = orgNummer,
+        )
 }

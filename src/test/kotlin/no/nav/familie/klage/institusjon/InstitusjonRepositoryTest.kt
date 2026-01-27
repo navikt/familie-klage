@@ -1,12 +1,12 @@
 package no.nav.familie.klage.institusjon
 
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
+import no.nav.familie.klage.testutil.DomainUtil.lagInstitusjon
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import java.util.UUID
 
 class InstitusjonRepositoryTest(
     @Autowired private val institusjonRepository: InstitusjonRepository,
@@ -21,7 +21,7 @@ class InstitusjonRepositoryTest(
         @Test
         fun `skal lagre institusjon`() {
             // Arrange
-            val institusjon = Institusjon(orgNummer = "123456789", navn = "navn")
+            val institusjon = lagInstitusjon()
 
             // Act
             val lagretInstitusjon = institusjonRepository.insert(institusjon)
@@ -38,12 +38,7 @@ class InstitusjonRepositoryTest(
         @Test
         fun `skal finne institusjon ved å bruke id`() {
             // Arrange
-            val institusjon =
-                Institusjon(
-                    id = UUID.randomUUID(),
-                    orgNummer = "123456789",
-                    navn = "navn",
-                )
+            val institusjon = lagInstitusjon()
 
             institusjonRepository.insert(institusjon)
 
@@ -61,7 +56,7 @@ class InstitusjonRepositoryTest(
         @Test
         fun `skal finne institusjon med orgnummer da den allerde finnes`() {
             // Arrange
-            val institusjon = Institusjon(orgNummer = "123456789", navn = "navn")
+            val institusjon = lagInstitusjon()
 
             institusjonRepository.insert(institusjon)
 
