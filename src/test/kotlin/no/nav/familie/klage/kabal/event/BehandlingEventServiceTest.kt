@@ -200,8 +200,6 @@ internal class BehandlingEventServiceTest {
 
     @Test
     internal fun `Skal ikke ferdigstille behandling for behandlingsevent ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET`() {
-        val klageinstansResultatSlot = slot<KlageinstansResultat>()
-
         behandlingEventService.handleEvent(
             lagBehandlingEvent(
                 BehandlingEventType.ANKE_I_TRYGDERETTENBEHANDLING_OPPRETTET,

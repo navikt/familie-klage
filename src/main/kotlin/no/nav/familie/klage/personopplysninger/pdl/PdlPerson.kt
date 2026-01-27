@@ -13,7 +13,7 @@ data class PdlResponse<T>(
 
     fun harAdvarsel(): Boolean = !extensions?.warnings.isNullOrEmpty()
 
-    fun errorMessages(): String = errors?.joinToString { it -> it.message } ?: ""
+    fun errorMessages(): String = errors?.joinToString { it.message } ?: ""
 }
 
 data class PdlExtensions(
@@ -32,7 +32,7 @@ data class PdlBolkResponse<T>(
     val errors: List<PdlError>?,
     val extensions: PdlExtensions?,
 ) {
-    fun errorMessages(): String = errors?.joinToString { it -> it.message } ?: ""
+    fun errorMessages(): String = errors?.joinToString { it.message } ?: ""
 
     fun harAdvarsel(): Boolean = !extensions?.warnings.isNullOrEmpty()
 }
@@ -104,11 +104,7 @@ data class Folkeregistermetadata(
 data class Adressebeskyttelse(
     val gradering: AdressebeskyttelseGradering,
     val metadata: Metadata,
-) {
-    fun erStrengtFortrolig(): Boolean =
-        this.gradering == AdressebeskyttelseGradering.STRENGT_FORTROLIG ||
-            this.gradering == AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND
-}
+)
 
 @Suppress("unused")
 enum class AdressebeskyttelseGradering {

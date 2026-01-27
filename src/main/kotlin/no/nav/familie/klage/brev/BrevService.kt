@@ -116,7 +116,6 @@ class BrevService(
         lagreEllerOppdaterBrev(
             behandlingId = behandlingId,
             saksbehandlerHtml = html,
-            fagsak = fagsak,
         )
 
         return familieDokumentClient.genererPdfFraHtml(html)
@@ -194,7 +193,7 @@ class BrevService(
 
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> {
                 val formkrav = formService.hentForm(behandling.id)
-                return when (behandling.påklagetVedtak.påklagetVedtakstype) {
+                when (behandling.påklagetVedtak.påklagetVedtakstype) {
                     PåklagetVedtakstype.UTEN_VEDTAK -> {
                         brevInnholdUtleder.lagFormkravAvvistBrevIkkePåklagetVedtak(
                             ident = fagsak.hentAktivIdent(),
@@ -233,7 +232,6 @@ class BrevService(
     fun lagreEllerOppdaterBrev(
         behandlingId: UUID,
         saksbehandlerHtml: String,
-        fagsak: Fagsak,
     ): Brev {
         val brev = brevRepository.findByIdOrNull(behandlingId)
         return if (brev != null) {

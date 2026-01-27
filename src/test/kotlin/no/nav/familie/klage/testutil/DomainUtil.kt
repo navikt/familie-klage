@@ -11,8 +11,6 @@ import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
 import no.nav.familie.klage.behandlingshistorikk.domain.HistorikkHendelse
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
-import no.nav.familie.klage.brev.dto.AvsnittDto
-import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPerson
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
@@ -357,53 +355,6 @@ object DomainUtil {
         egenAnsatt = egenAnsatt,
         vergemål = vergemål,
     )
-
-    fun lagPåklagetVedtakDetaljer(
-        fagsystemType: FagsystemType = FagsystemType.ORDNIÆR,
-        eksternFagsystemBehandlingId: String = "1234",
-        behandlingstype: String = "type",
-        resultat: String = "resultat",
-        vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
-        regelverk: Regelverk = Regelverk.NASJONAL,
-    ): PåklagetVedtakDetaljer =
-        PåklagetVedtakDetaljer(
-            fagsystemType = fagsystemType,
-            eksternFagsystemBehandlingId = eksternFagsystemBehandlingId,
-            internKlagebehandlingId = null,
-            behandlingstype = behandlingstype,
-            resultat = resultat,
-            vedtakstidspunkt = vedtakstidspunkt,
-            regelverk = regelverk,
-        )
-
-    fun lagFritekstBrevRequestDto(
-        overskrift: String = "overskrift",
-        avsnitt: List<AvsnittDto> =
-            listOf(
-                AvsnittDto(
-                    deloverskrift = "deloverskrift",
-                    innhold = "innhold",
-                    skalSkjulesIBrevbygger = false,
-                ),
-            ),
-        personIdent: String = "123",
-        navn: String = "navn",
-    ): FritekstBrevRequestDto =
-        FritekstBrevRequestDto(
-            overskrift,
-            avsnitt = avsnitt,
-            personIdent,
-            navn,
-        )
-
-    fun lagPåklagetVedtak(
-        påklagetVedtakstype: PåklagetVedtakstype = PåklagetVedtakstype.VEDTAK,
-        påklagetVedtakDetaljer: PåklagetVedtakDetaljer? = lagPåklagetVedtakDetaljer(),
-    ): PåklagetVedtak =
-        PåklagetVedtak(
-            påklagetVedtakstype = påklagetVedtakstype,
-            påklagetVedtakDetaljer = påklagetVedtakDetaljer,
-        )
 
     fun lagBrevmottakerPersonUtenIdent(
         id: UUID = UUID.randomUUID(),

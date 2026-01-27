@@ -11,7 +11,7 @@ object OppgaveUtil {
     fun lagFristForOppgave(gjeldendeTid: LocalDateTime): LocalDate {
         val fristTilNesteVirkedag = nesteVirkedag(gjeldendeTid.toLocalDate())
         return if (gjeldendeTid.hour >= 12) {
-            return nesteVirkedag(fristTilNesteVirkedag)
+            nesteVirkedag(fristTilNesteVirkedag)
         } else {
             fristTilNesteVirkedag
         }
