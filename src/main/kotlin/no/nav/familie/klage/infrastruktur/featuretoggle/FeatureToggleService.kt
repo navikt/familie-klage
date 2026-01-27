@@ -19,6 +19,7 @@ enum class Toggle(
     UTVIKLER_MED_VEILEDERRROLLE("familie.ef.sak.utviklere-med-veilederrolle", "Permission"),
 
     // Release
+    SKAL_KUNNE_BEHANDLE_BA_INSTITUSJON_FAGSAKER("familie-klage.skal-kunne-behandle-ba-institusjon-fagsaker"),
     ;
 
     companion object {

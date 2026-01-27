@@ -105,6 +105,13 @@ class IntegrasjonerConfig(
             .build()
             .toUri()
 
+    val hentOrganisasjonUri: URI =
+        UriComponentsBuilder
+            .fromUri(integrasjonUri)
+            .pathSegment(PATH_ORGANISASJON)
+            .build()
+            .toUri()
+
     companion object {
         private const val PATH_PING = "api/ping"
         private const val PATH_TILGANG_RELASJONER = "api/tilgang/person-med-relasjoner"
@@ -121,5 +128,6 @@ class IntegrasjonerConfig(
         private const val PATH_SAKSBEHANDLER = "api/saksbehandler"
         private const val PATH_DOKDIST = "api/dist/v1"
         private const val PATH_KABAL = "api/oversendelse/v3/sak"
+        private const val PATH_ORGANISASJON = "/api/organisasjon"
     }
 }

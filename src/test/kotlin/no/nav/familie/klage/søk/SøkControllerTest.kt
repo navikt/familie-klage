@@ -27,7 +27,7 @@ class SøkControllerTest : OppslagSpringRunnerTest() {
     private val fagsak =
         DomainUtil
             .fagsakDomain(eksternId = "1", stønadstype = Stønadstype.OVERGANGSSTØNAD)
-            .tilFagsakMedPerson(setOf(PersonIdent("1")))
+            .tilFagsakMedPersonOgInstitusjon(setOf(PersonIdent("1")))
     val behandling = behandling(fagsak, vedtakDato = null, henlagtÅrsak = null)
 
     @BeforeEach

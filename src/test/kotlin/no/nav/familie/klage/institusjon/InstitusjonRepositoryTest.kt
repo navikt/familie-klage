@@ -21,7 +21,7 @@ class InstitusjonRepositoryTest(
         @Test
         fun `skal lagre institusjon`() {
             // Arrange
-            val institusjon = Institusjon(orgNummer = "123456789", navn = "navn", tssEksternId = "tssEksternId")
+            val institusjon = Institusjon(orgNummer = "123456789", navn = "navn")
 
             // Act
             val lagretInstitusjon = institusjonRepository.insert(institusjon)
@@ -30,7 +30,6 @@ class InstitusjonRepositoryTest(
             assertThat(lagretInstitusjon.id).isNotNull()
             assertThat(lagretInstitusjon.orgNummer).isEqualTo(institusjon.orgNummer)
             assertThat(lagretInstitusjon.navn).isEqualTo(institusjon.navn)
-            assertThat(lagretInstitusjon.tssEksternId).isEqualTo(institusjon.tssEksternId)
         }
     }
 
@@ -44,7 +43,6 @@ class InstitusjonRepositoryTest(
                     id = UUID.randomUUID(),
                     orgNummer = "123456789",
                     navn = "navn",
-                    tssEksternId = "tssEksternId",
                 )
 
             institusjonRepository.insert(institusjon)
@@ -63,7 +61,7 @@ class InstitusjonRepositoryTest(
         @Test
         fun `skal finne institusjon med orgnummer da den allerde finnes`() {
             // Arrange
-            val institusjon = Institusjon(orgNummer = "123456789", navn = "navn", tssEksternId = "tssEksternId")
+            val institusjon = Institusjon(orgNummer = "123456789", navn = "navn")
 
             institusjonRepository.insert(institusjon)
 

@@ -32,7 +32,7 @@ internal class DistribusjonServiceTest {
     val distribusjonService = DistribusjonService(familieIntegrasjonerClient, fagsakService, behandlingService)
 
     val ident = "1"
-    val fagsak = fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent(ident)))
+    val fagsak = fagsakDomain().tilFagsakMedPersonOgInstitusjon(setOf(PersonIdent(ident)))
     val behandlendeEnhet = "enhet"
     val behandling = behandling(fagsak = fagsak, behandlendeEnhet = behandlendeEnhet, resultat = BehandlingResultat.IKKE_MEDHOLD)
 

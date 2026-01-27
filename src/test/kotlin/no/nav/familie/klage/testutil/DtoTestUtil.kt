@@ -86,14 +86,14 @@ object DtoTestUtil {
         behandlingsårsak: Klagebehandlingsårsak = Klagebehandlingsårsak.ORDINÆR,
     ): OpprettKlagebehandlingRequest =
         OpprettKlagebehandlingRequest(
-            ident,
-            stønadstype,
-            eksternFagsakId,
-            fagsystem,
-            klageMottatt,
-            behandlendeEnhet,
-            klageGjelderTilbakekreving,
-            behandlingsårsak,
+            ident = ident,
+            stønadstype = stønadstype,
+            eksternFagsakId = eksternFagsakId,
+            fagsystem = fagsystem,
+            klageMottatt = klageMottatt,
+            behandlendeEnhet = behandlendeEnhet,
+            klageGjelderTilbakekreving = klageGjelderTilbakekreving,
+            behandlingsårsak = behandlingsårsak,
         )
 
     fun lagPersonopplysningerDto(
