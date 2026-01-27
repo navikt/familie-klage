@@ -62,7 +62,7 @@ class PdlClientMock {
     }
 
     companion object {
-        private val annenForelderFnr = "17097926735"
+        private const val ANNEN_FORELDER_FNR = "17097926735"
 
         fun opprettPdlSøker() =
             pdlSøker(
@@ -87,7 +87,7 @@ class PdlClientMock {
                     type = "voksen",
                     vergeEllerFullmektig =
                         VergeEllerFullmektig(
-                            motpartsPersonident = annenForelderFnr,
+                            motpartsPersonident = ANNEN_FORELDER_FNR,
                             navn = null,
                             omfang = "personligeOgOekonomiskeInteresser",
                             omfangetErInnenPersonligOmraade = false,
@@ -99,7 +99,7 @@ class PdlClientMock {
                     type = "stadfestetFremtidsfullmakt",
                     vergeEllerFullmektig =
                         VergeEllerFullmektig(
-                            motpartsPersonident = annenForelderFnr,
+                            motpartsPersonident = ANNEN_FORELDER_FNR,
                             navn = null,
                             omfang = "personligeOgOekonomiskeInteresser",
                             omfangetErInnenPersonligOmraade = false,

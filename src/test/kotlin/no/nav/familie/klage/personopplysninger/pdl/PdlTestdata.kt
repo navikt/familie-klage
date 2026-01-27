@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 object PdlTestdata {
     private val metadataGjeldende = Metadata(false)
 
-    val ident = "2"
+    private const val IDENT = "2"
 
     private val folkeregistermetadata = Folkeregistermetadata(LocalDateTime.now(), LocalDateTime.now())
 
@@ -22,7 +22,7 @@ object PdlTestdata {
             personBolk =
                 listOf(
                     PersonDataBolk(
-                        ident = ident,
+                        ident = IDENT,
                         code = "ok",
                         person =
                             PdlNavn(

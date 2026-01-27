@@ -19,8 +19,8 @@ import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV4
 import no.nav.familie.klage.kabal.domain.OversendtPartIdType
 import no.nav.familie.klage.kabal.domain.OversendtType
 import no.nav.familie.klage.kabal.domain.Ytelse
+import no.nav.familie.klage.testutil.DomainUtil.DEFAULT_IDENT
 import no.nav.familie.klage.testutil.DomainUtil.behandling
-import no.nav.familie.klage.testutil.DomainUtil.defaultIdent
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
 import no.nav.familie.klage.testutil.DomainUtil.påklagetVedtakDetaljer
@@ -329,7 +329,7 @@ internal class KabalServiceTest {
         private val behandling = behandling(fagsak = fagsak, påklagetVedtak = påklagetVedtak)
         private val vurdering = vurdering(behandlingId = behandling.id, hjemmel = Hjemmel.BT_TO)
 
-        private val bruker = BrevmottakerPersonMedIdent(defaultIdent, MottakerRolle.BRUKER, "Bruker Brukersen")
+        private val bruker = BrevmottakerPersonMedIdent(DEFAULT_IDENT, MottakerRolle.BRUKER, "Bruker Brukersen")
 
         private val fullmektigOrganisasjon =
             BrevmottakerOrganisasjon(

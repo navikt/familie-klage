@@ -184,8 +184,8 @@ object DomainUtil {
             klageSignert = FormVilkår.OPPFYLT,
         )
 
-    val defaultIdent = "01010199999"
-    val defaultIdenter = setOf(PersonIdent(defaultIdent))
+    const val DEFAULT_IDENT = "01010199999"
+    val defaultIdenter = setOf(PersonIdent(DEFAULT_IDENT))
 
     fun fagsak(
         identer: Set<PersonIdent> = defaultIdenter,
