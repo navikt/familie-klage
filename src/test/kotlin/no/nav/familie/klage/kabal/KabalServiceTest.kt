@@ -61,7 +61,7 @@ internal class KabalServiceTest {
 
     @Nested
     inner class OversendtKlageAnkeV3Test {
-        private val fagsak = fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent("1")))
+        private val fagsak = fagsakDomain().tilFagsakMedPersonOgInstitusjon(setOf(PersonIdent("1")))
         private val hjemmel = Hjemmel.FT_FEMTEN_FIRE
 
         private val oversendelseSlot = slot<OversendtKlageAnkeV3>()

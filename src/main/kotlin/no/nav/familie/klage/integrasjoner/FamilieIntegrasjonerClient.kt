@@ -16,6 +16,7 @@ import no.nav.familie.kontrakter.felles.getDataOrThrow
 import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariantformat
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.JournalposterForBrukerRequest
+import no.nav.familie.kontrakter.felles.organisasjon.Organisasjon
 import no.nav.familie.kontrakter.felles.saksbehandler.Saksbehandler
 import no.nav.familie.log.NavHttpHeaders
 import org.slf4j.Logger
@@ -142,6 +143,16 @@ class FamilieIntegrasjonerClient(
                 .build()
                 .toUri(),
         ).getDataOrThrow()
+
+    fun hentOrganisasjon(orgNummer: String): Organisasjon {
+        val uri =
+            UriComponentsBuilder
+                .fromUri(integrasjonerConfig.hentOrganisasjonUri)
+                .pathSegment(orgNummer)
+                .build()
+                .toUri()
+        return getForEntity<Ressurs<Organisasjon>>(uri).getDataOrThrow()
+    }
 
     private fun headerMedSaksbehandler(saksbehandler: String?): HttpHeaders {
         val httpHeaders = HttpHeaders()

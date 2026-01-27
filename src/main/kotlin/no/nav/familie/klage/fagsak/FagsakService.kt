@@ -4,6 +4,10 @@ import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
+import no.nav.familie.klage.institusjon.Institusjon
+import no.nav.familie.klage.institusjon.InstitusjonService
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
@@ -17,10 +21,13 @@ class FagsakService(
     private val fagsakRepository: FagsakRepository,
     private val fagsakPersonService: FagsakPersonService,
     private val pdlClient: PdlClient,
+    private val institusjonService: InstitusjonService,
+    private val featureToggleService: FeatureToggleService,
 ) {
     @Transactional
     fun hentEllerOpprettFagsak(
         ident: String,
+        orgNummer: String? = null,
         eksternId: String,
         fagsystem: Fagsystem,
         stønadstype: Stønadstype,
@@ -29,22 +36,35 @@ class FagsakService(
         val gjeldendePersonIdent = personIdenter.gjeldende()
         val person = fagsakPersonService.hentEllerOpprettPerson(personIdenter.identer(), gjeldendePersonIdent.ident)
         val oppdatertPerson = fagsakPersonService.oppdaterIdent(person, gjeldendePersonIdent.ident)
+
+        val institusjon =
+            if (orgNummer != null && featureToggleService.isEnabled(Toggle.SKAL_KUNNE_BEHANDLE_BA_INSTITUSJON_FAGSAKER)) {
+                institusjonService.hentEllerLagreInstitusjon(orgNummer)
+            } else {
+                null
+            }
+
         val fagsak =
             fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(eksternId, fagsystem, stønadstype)
-                ?: opprettFagsak(stønadstype, eksternId, fagsystem, oppdatertPerson)
+                ?: opprettFagsak(stønadstype, eksternId, fagsystem, oppdatertPerson, institusjon)
 
-        return fagsak.tilFagsakMedPerson(oppdatertPerson.identer)
+        return fagsak.tilFagsakMedPersonOgInstitusjon(oppdatertPerson.identer, institusjon)
     }
 
     fun hentFagsak(id: UUID): Fagsak {
         val fagsak = fagsakRepository.findByIdOrThrow(id)
-        return fagsak.tilFagsakMedPerson(fagsakPersonService.hentIdenter(fagsak.fagsakPersonId))
+        return fagsak.tilFagsakMedPersonOgInstitusjon(
+            identer = fagsakPersonService.hentIdenter(fagsak.fagsakPersonId),
+            institusjon = fagsak.institusjonId?.let { institusjonService.finnInstitusjon(it) },
+        )
     }
 
     fun hentFagsakForBehandling(behandlingId: UUID): Fagsak {
         val fagsak = fagsakRepository.finnFagsakForBehandlingId(behandlingId)
-        return fagsak?.tilFagsakMedPerson(fagsakPersonService.hentIdenter(fagsak.fagsakPersonId))
-            ?: throw Feil("Finner ikke fagsak til behandlingId=$behandlingId")
+        return fagsak?.tilFagsakMedPersonOgInstitusjon(
+            identer = fagsakPersonService.hentIdenter(fagsak.fagsakPersonId),
+            institusjon = fagsak.institusjonId?.let { institusjonService.finnInstitusjon(it) },
+        ) ?: throw Feil("Finner ikke fagsak til behandlingId=$behandlingId")
     }
 
     fun hentFagsakForEksternIdOgFagsystem(
@@ -59,7 +79,10 @@ class FagsakService(
                 else -> throw Feil("Stønadstype må spesifiseres for fagsystem $fagsystem")
             }
         val fagsak = fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(eksternId, fagsystem, stønadstype)
-        return fagsak?.tilFagsakMedPerson(fagsakPersonService.hentIdenter(fagsak.fagsakPersonId))
+        return fagsak?.tilFagsakMedPersonOgInstitusjon(
+            identer = fagsakPersonService.hentIdenter(fagsak.fagsakPersonId),
+            institusjon = fagsak.institusjonId?.let { institusjonService.finnInstitusjon(it) },
+        )
     }
 
     private fun opprettFagsak(
@@ -67,10 +90,12 @@ class FagsakService(
         eksternId: String,
         fagsystem: Fagsystem,
         fagsakPerson: FagsakPerson,
+        institusjon: Institusjon?,
     ): FagsakDomain =
         fagsakRepository.insert(
             FagsakDomain(
                 fagsakPersonId = fagsakPerson.id,
+                institusjonId = institusjon?.id,
                 stønadstype = stønadstype,
                 eksternId = eksternId,
                 fagsystem = fagsystem,

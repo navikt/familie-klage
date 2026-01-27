@@ -29,7 +29,7 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
     internal fun findByFagsakId() {
         val fagsakPersistert =
             testoppsettService.lagreFagsak(
-                fagsakDomain().tilFagsakMedPerson(
+                fagsakDomain().tilFagsakMedPersonOgInstitusjon(
                     setOf(
                         PersonIdent("12345678901"),
                         PersonIdent("98765432109"),
@@ -44,7 +44,7 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
 
     @Test
     internal fun `skal hente fagsak på behandlingId`() {
-        val fagsak = fagsakDomain().tilFagsakMedPerson(setOf(PersonIdent("1")))
+        val fagsak = fagsakDomain().tilFagsakMedPersonOgInstitusjon(setOf(PersonIdent("1")))
 
         testoppsettService.lagreFagsak(fagsak)
         val behandling = behandlingRepository.insert(behandling(fagsak))
@@ -67,7 +67,7 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
                     eksternId = eksternId,
                     fagsystem = fagsystem,
                     stønadstype = stønadstype,
-                ).tilFagsakMedPerson(setOf(PersonIdent("1"))),
+                ).tilFagsakMedPersonOgInstitusjon(setOf(PersonIdent("1"))),
             )
 
         val fagsak =

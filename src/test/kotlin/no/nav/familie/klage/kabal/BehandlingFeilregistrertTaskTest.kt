@@ -54,7 +54,7 @@ class BehandlingFeilregistrertTaskTest : OppslagSpringRunnerTest() {
 
         fagsak =
             testoppsettService.lagreFagsak(
-                DomainUtil.fagsakDomain().tilFagsakMedPerson(
+                DomainUtil.fagsakDomain().tilFagsakMedPersonOgInstitusjon(
                     setOf(
                         PersonIdent(personIdent),
                     ),
