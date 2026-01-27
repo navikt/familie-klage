@@ -129,7 +129,7 @@ class BrevmottakerSletterTest {
                 assertThrows<Feil> {
                     brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
                 }
-            assertThat(exception.message).isEqualTo("Behandlingen er i steg ${behandling.steg}, forventet steg ${StegType.BREV}.")
+            assertThat(exception.message).isEqualTo("Behandling ${behandling.id} er i steg ${behandling.steg}, forventet steg ${StegType.BREV}.")
         }
 
         @Test

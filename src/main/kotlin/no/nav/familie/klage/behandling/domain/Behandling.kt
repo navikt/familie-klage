@@ -1,6 +1,8 @@
 package no.nav.familie.klage.behandling.domain
 
+import no.nav.familie.klage.behandling.domain.StegType.BREV
 import no.nav.familie.klage.felles.domain.Sporbar
+import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.kontrakter.felles.Regelverk
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
@@ -35,7 +37,24 @@ data class Behandling(
     val fagsystemRevurdering: FagsystemRevurdering? = null,
     @Column("arsak")
     val årsak: Klagebehandlingsårsak,
-)
+) {
+    fun validerRedigerbarBehandlingOgBehandlingsstegBrev() {
+        validerRedigerbarBehandling()
+        validerBehandlingssteg(BREV)
+    }
+
+    fun validerRedigerbarBehandling() {
+        feilHvis(status.erLåstForVidereBehandling()) {
+            "Behandling $id er låst for videre behandling."
+        }
+    }
+
+    fun validerBehandlingssteg(forventetSteg: StegType) {
+        feilHvis(steg != forventetSteg) {
+            "Behandling $id er i steg $steg, forventet steg $forventetSteg."
+        }
+    }
+}
 
 data class PåklagetVedtakDetaljer(
     val fagsystemType: FagsystemType,

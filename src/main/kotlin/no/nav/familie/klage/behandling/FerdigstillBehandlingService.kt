@@ -4,7 +4,6 @@ import no.nav.familie.klage.behandling.OpprettRevurderingUtil.skalOppretteRevurd
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
 import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandling.domain.tilFagsystemRevurdering
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.blankett.LagSaksbehandlingsblankettTask
@@ -172,12 +171,7 @@ class FerdigstillBehandlingService(
         }
 
     private fun validerKanFerdigstille(behandling: Behandling) {
-        if (behandling.status.erLåstForVidereBehandling()) {
-            throw Feil("Kan ikke ferdigstille behandlingen da den er låst for videre behandling")
-        }
-        if (behandling.steg != StegType.BREV) {
-            throw Feil("Kan ikke ferdigstille behandlingen fra steg=${behandling.steg}")
-        }
+        behandling.validerRedigerbarBehandlingOgBehandlingsstegBrev()
     }
 
     private fun utledBehandlingResultat(behandlingId: UUID): BehandlingResultat =

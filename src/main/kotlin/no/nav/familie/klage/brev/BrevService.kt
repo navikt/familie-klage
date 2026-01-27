@@ -4,8 +4,6 @@ import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
-import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.brev.dto.Delmal
@@ -15,8 +13,7 @@ import no.nav.familie.klage.brev.dto.Flettefelter
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.brev.dto.Henleggelsesbrev
 import no.nav.familie.klage.brev.dto.SignaturDto
-import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerMinimumEnMottaker
-import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerUnikeBrevmottakere
+import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerBrevmottakere
 import no.nav.familie.klage.brevmottaker.BrevmottakerUtleder
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPerson
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
@@ -79,12 +76,10 @@ class BrevService(
         brevmottakereDto: BrevmottakereDto,
     ) {
         val behandling = behandlingService.hentBehandling(behandlingId)
-        validerKanLageBrev(behandling)
+        behandling.validerRedigerbarBehandlingOgBehandlingsstegBrev()
 
         val brevmottakere = brevmottakereDto.tilBrevmottakere()
-
-        validerUnikeBrevmottakere(brevmottakere)
-        validerMinimumEnMottaker(brevmottakere)
+        validerBrevmottakere(behandlingId, brevmottakere)
 
         val brev = brevRepository.findByIdOrThrow(behandlingId)
         brevRepository.update(brev.copy(mottakere = brevmottakere))
@@ -98,7 +93,7 @@ class BrevService(
         val påklagetVedtakDetaljer = behandling.påklagetVedtak.påklagetVedtakDetaljer
         val brevmottakere = brevRepository.findByIdOrNull(behandlingId)?.mottakere ?: Brevmottakere()
 
-        validerKanLageBrev(behandling)
+        behandling.validerRedigerbarBehandlingOgBehandlingsstegBrev()
 
         val brevRequest = lagBrevRequest(behandling, fagsak, navn, påklagetVedtakDetaljer, behandling.klageMottatt)
 
@@ -119,15 +114,6 @@ class BrevService(
         )
 
         return familieDokumentClient.genererPdfFraHtml(html)
-    }
-
-    private fun validerKanLageBrev(behandling: Behandling) {
-        feilHvis(behandling.status.erLåstForVidereBehandling()) {
-            "Kan ikke oppdatere brev når behandlingen er låst"
-        }
-        feilHvis(behandling.steg != StegType.BREV) {
-            "Behandlingen er i feil steg (${behandling.steg}) steg=${StegType.BREV} for å kunne oppdatere brevet"
-        }
     }
 
     private fun lagBrevRequest(

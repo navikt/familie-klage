@@ -7,6 +7,7 @@ import io.mockk.unmockkObject
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.brev.BrevRepository
+import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
@@ -45,7 +46,7 @@ class BrevmottakerErstatterTest {
         @Test
         fun `skal kaste exception om man prøver å lagre ned tom brevmottakere`() {
             // Arrange
-            val behandling = DomainUtil.behandling(steg = StegType.OPPRETTET)
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyeBrevmottakere = DomainUtil.lagBrevmottakere()
 
@@ -110,7 +111,7 @@ class BrevmottakerErstatterTest {
                 assertThrows<Feil> {
                     brevmottakerErstatter.erstattBrevmottakere(behandling.id, nyeBrevmottakere)
                 }
-            assertThat(exception.message).isEqualTo("Behandlingen er i steg ${StegType.OPPRETTET}, forventet steg ${StegType.BREV}.")
+            assertThat(exception.message).isEqualTo("Behandling ${behandling.id} er i steg ${StegType.OPPRETTET}, forventet steg ${StegType.BREV}.")
         }
 
         @Test
@@ -133,12 +134,12 @@ class BrevmottakerErstatterTest {
 
             // Act & assert
             val exception =
-                assertThrows<Feil> {
+                assertThrows<ApiFeil> {
                     brevmottakerErstatter.erstattBrevmottakere(behandling.id, nyeBrevmottakere)
                 }
             assertThat(
                 exception.message,
-            ).isEqualTo("En person kan bare legges til en gang som brevmottaker for behandling ${behandling.id}.")
+            ).isEqualTo("En person kan bare legges til én gang som brevmottaker for behandling ${behandling.id}.")
         }
 
         @Test
@@ -163,12 +164,12 @@ class BrevmottakerErstatterTest {
 
             // Act & assert
             val exception =
-                assertThrows<Feil> {
+                assertThrows<ApiFeil> {
                     brevmottakerErstatter.erstattBrevmottakere(behandling.id, nyeBrevmottakere)
                 }
             assertThat(
                 exception.message,
-            ).isEqualTo("En person kan bare legges til en gang som brevmottaker for behandling ${behandling.id}.")
+            ).isEqualTo("En person kan bare legges til én gang som brevmottaker for behandling ${behandling.id}.")
         }
 
         @Test
@@ -191,12 +192,12 @@ class BrevmottakerErstatterTest {
 
             // Act & assert
             val exception =
-                assertThrows<Feil> {
+                assertThrows<ApiFeil> {
                     brevmottakerErstatter.erstattBrevmottakere(behandling.id, nyeBrevmottakere)
                 }
             assertThat(
                 exception.message,
-            ).isEqualTo("En organisasjon kan bare legges til en gang som brevmottaker for behandling ${behandling.id}.")
+            ).isEqualTo("En organisasjon kan bare legges til én gang som brevmottaker for behandling ${behandling.id}.")
         }
 
         @Test

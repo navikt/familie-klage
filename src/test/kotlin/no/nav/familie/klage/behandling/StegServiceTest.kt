@@ -141,7 +141,7 @@ internal class StegServiceTest {
 
     @Test
     fun `skal feile hvis behandling er låst`() {
-        every { behandlingRepository.findByIdOrThrow(any()) } returns behandling(status = BehandlingStatus.FERDIGSTILT)
+        every { behandlingRepository.findByIdOrThrow(any()) } returns behandling(id = behandlingId, status = BehandlingStatus.FERDIGSTILT)
 
         val feil =
             assertThrows<Feil> {
@@ -151,7 +151,7 @@ internal class StegServiceTest {
                     StegType.BREV,
                 )
             }
-        assertThat(feil.frontendFeilmelding).contains("Behandlingen er låst for videre behandling")
+        assertThat(feil.frontendFeilmelding).matches("Behandling $behandlingId er låst for videre behandling.")
     }
 
     @Test

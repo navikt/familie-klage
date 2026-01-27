@@ -2,10 +2,8 @@ package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.felles.domain.BehandlerRolle
-import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
 import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
@@ -30,7 +28,7 @@ class StegService(
     ) {
         val behandling = behandlingRepository.findByIdOrThrow(behandlingId)
         validerHarSaksbehandlerRolle(behandlingId)
-        validerGyldigNesteSteg(behandling)
+        behandling.validerRedigerbarBehandling()
         oppdaterBehandlingOgHistorikk(behandling, nåværendeSteg, nesteSteg, behandlingsresultat)
     }
 
@@ -77,11 +75,6 @@ class StegService(
             }
         } else {
             true
-        }
-
-    private fun validerGyldigNesteSteg(behandling: Behandling) =
-        feilHvis(behandling.status.erLåstForVidereBehandling()) {
-            "Behandlingen er låst for videre behandling"
         }
 
     private fun validerHarSaksbehandlerRolle(behandlingId: UUID) =
