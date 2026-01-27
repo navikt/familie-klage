@@ -2,6 +2,7 @@ package no.nav.familie.klage.institusjon
 
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class InstitusjonService(
@@ -21,4 +22,6 @@ class InstitusjonService(
             ),
         )
     }
+
+    fun finnInstitusjon(institusjonId: UUID): Institusjon? = institusjonRepository.findById(institusjonId).orElse(null)
 }

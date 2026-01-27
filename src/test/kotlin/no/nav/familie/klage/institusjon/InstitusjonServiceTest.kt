@@ -7,6 +7,8 @@ import no.nav.familie.kontrakter.felles.organisasjon.Organisasjon
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.util.Optional
+import java.util.UUID
 
 class InstitusjonServiceTest {
     private val institusjonRepository = mockk<InstitusjonRepository>()
@@ -58,6 +60,40 @@ class InstitusjonServiceTest {
             assertThat(hentetInstitusjon.id).isNotNull()
             assertThat(hentetInstitusjon.orgNummer).isEqualTo(organisasjon.organisasjonsnummer)
             assertThat(hentetInstitusjon.navn).isEqualTo(organisasjon.navn)
+        }
+    }
+
+    @Nested
+    inner class FinnInstitusjon {
+        @Test
+        fun `skal finne institusjon med id`() {
+            // Arrange
+            val lagretInstitusjon =
+                Institusjon(
+                    id = UUID.randomUUID(),
+                    orgNummer = "123456789",
+                    navn = "navn",
+                )
+
+            every { institusjonRepository.findById(lagretInstitusjon.id) } returns Optional.of(lagretInstitusjon)
+
+            // Act
+            val hentetInstitusjon = institusjonService.finnInstitusjon(lagretInstitusjon.id)
+
+            // Assert
+            assertThat(hentetInstitusjon).isEqualTo(lagretInstitusjon)
+        }
+
+        @Test
+        fun `skal returnere null hvis institusjon med id ikke eksisterer`() {
+            // Arrange
+            every { institusjonRepository.findById(any()) } returns Optional.empty()
+
+            // Act
+            val hentetInstitusjon = institusjonService.finnInstitusjon(UUID.randomUUID())
+
+            // Assert
+            assertThat(hentetInstitusjon).isNull()
         }
     }
 }
