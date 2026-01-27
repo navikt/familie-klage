@@ -97,6 +97,7 @@ data class OversendtKlageAnkeV3(
     }
 }
 
+@Suppress("unused")
 enum class Type(
     val id: String,
     val navn: String,

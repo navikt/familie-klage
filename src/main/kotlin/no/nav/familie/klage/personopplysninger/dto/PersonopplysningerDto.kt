@@ -23,7 +23,6 @@ data class FullmaktDto(
     val områder: List<String>,
 )
 
-@Suppress("unused") // Kopi fra PDL
 enum class Adressebeskyttelse {
     STRENGT_FORTROLIG,
     STRENGT_FORTROLIG_UTLAND,
@@ -34,7 +33,6 @@ enum class Adressebeskyttelse {
     fun erStrengtFortrolig() = this == STRENGT_FORTROLIG || this == STRENGT_FORTROLIG_UTLAND
 }
 
-@Suppress("unused") // Kopi fra PDL
 enum class Kjønn {
     KVINNE,
     MANN,
@@ -49,7 +47,6 @@ data class VergemålDto(
     val omfang: String?,
 )
 
-@Suppress("unused")
 enum class Folkeregisterpersonstatus(
     private val pdlStatus: String,
 ) {

@@ -113,6 +113,7 @@ data class OversendtKlageAnkeV4(
     }
 }
 
+@Suppress("unused")
 enum class OversendtType {
     KLAGE,
     ANKE,

@@ -26,6 +26,7 @@ data class OversendtDokumentReferanse(
     val journalpostId: String,
 )
 
+@Suppress("unused")
 enum class MottakDokumentType {
     BRUKERS_SOEKNAD,
     OPPRINNELIG_VEDTAK,

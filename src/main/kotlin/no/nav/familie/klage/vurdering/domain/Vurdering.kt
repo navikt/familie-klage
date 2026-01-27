@@ -43,6 +43,7 @@ enum class Vedtak {
         }
 }
 
+@Suppress("unused")
 enum class Hjemmel(
     val kabalHjemmel: KabalHjemmel,
 ) {

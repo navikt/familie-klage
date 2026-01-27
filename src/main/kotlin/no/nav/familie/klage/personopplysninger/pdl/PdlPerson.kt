@@ -110,6 +110,7 @@ data class Adressebeskyttelse(
             this.gradering == AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND
 }
 
+@Suppress("unused")
 enum class AdressebeskyttelseGradering {
     STRENGT_FORTROLIG,
     STRENGT_FORTROLIG_UTLAND,
@@ -136,6 +137,7 @@ data class Fullmakt(
     val omraader: List<String>,
 )
 
+@Suppress("unused")
 enum class MotpartsRolle {
     FULLMAKTSGIVER,
     FULLMEKTIG,
@@ -145,6 +147,7 @@ data class Kjønn(
     @JsonProperty("kjoenn") val kjønn: KjønnType,
 )
 
+@Suppress("unused")
 enum class KjønnType {
     KVINNE,
     MANN,

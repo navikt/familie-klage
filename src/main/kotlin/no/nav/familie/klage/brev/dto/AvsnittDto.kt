@@ -16,6 +16,7 @@ fun Avsnitt.tilDto(): AvsnittDto =
         skalSkjulesIBrevbygger = skalSkjulesIBrevbygger,
     )
 
+@Suppress("unused")
 enum class Heading {
     H1,
     H2,

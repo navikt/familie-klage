@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.async.AsyncRequestNotUsableException
 
-@Suppress("unused")
 @ControllerAdvice
 class ApiExceptionHandler {
     private val logger = LoggerFactory.getLogger(ApiExceptionHandler::class.java)
