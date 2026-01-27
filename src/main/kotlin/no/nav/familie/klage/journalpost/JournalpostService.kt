@@ -26,9 +26,9 @@ class JournalpostService(
         personIdent: String,
         stønadType: Stønadstype,
         antall: Int = 200,
-        typer: List<Journalposttype> = Journalposttype.values().toList(),
-    ): List<Journalpost> {
-        return try {
+        typer: List<Journalposttype> = Journalposttype.entries,
+    ): List<Journalpost> =
+        try {
             familieIntegrasjonerClient.finnJournalposter(
                 JournalposterForBrukerRequest(
                     brukerId =
@@ -60,7 +60,6 @@ class JournalpostService(
                 throw exception
             }
         }
-    }
 
     fun hentDokument(
         journalpost: Journalpost,

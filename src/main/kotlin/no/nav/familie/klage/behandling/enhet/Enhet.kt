@@ -13,8 +13,8 @@ interface Enhet {
             enhetsnummer: String,
         ): Enhet =
             when (fagsystem) {
-                Fagsystem.BA -> BarnetrygdEnhet.values().single { it.enhetsnummer == enhetsnummer }
-                Fagsystem.KS -> KontantstøtteEnhet.values().single { it.enhetsnummer == enhetsnummer }
+                Fagsystem.BA -> BarnetrygdEnhet.entries.single { it.enhetsnummer == enhetsnummer }
+                Fagsystem.KS -> KontantstøtteEnhet.entries.single { it.enhetsnummer == enhetsnummer }
                 Fagsystem.EF -> throw Feil("Oppslag av enhet for EF er ikke støttet.")
             }
     }
