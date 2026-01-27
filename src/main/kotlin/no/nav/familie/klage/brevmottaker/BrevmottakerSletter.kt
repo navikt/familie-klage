@@ -131,7 +131,7 @@ class BrevmottakerSletter(
         behandling: Behandling,
         brevmottakere: Brevmottakere,
     ) {
-        if (brevmottakere.personer.isEmpty() && brevmottakere.organisasjoner.isEmpty()) {
+        if (brevmottakere.tilListe().isEmpty()) {
             throw Feil("Må ha minimum en brevmottaker for behandling ${behandling.id}.")
         }
     }

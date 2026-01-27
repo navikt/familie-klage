@@ -28,7 +28,7 @@ object BrevmottakerUtil {
     }
 
     fun validerMinimumEnMottaker(mottakere: Brevmottakere) {
-        feilHvis(mottakere.personer.isEmpty() && mottakere.organisasjoner.isEmpty()) {
+        feilHvis(mottakere.tilListe().isEmpty()) {
             "Må ha minimum en mottaker"
         }
     }
