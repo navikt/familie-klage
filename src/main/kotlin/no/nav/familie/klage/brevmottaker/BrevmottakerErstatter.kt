@@ -10,7 +10,7 @@ import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.infrastruktur.exception.Feil
-import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.util.UUID

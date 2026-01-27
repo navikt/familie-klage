@@ -13,10 +13,10 @@ import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
+import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.integrasjoner.FagsystemVedtakService
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.oppgave.OppgaveTaskService
-import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.BrukerContextUtil.clearBrukerContext
 import no.nav.familie.klage.testutil.BrukerContextUtil.mockBrukerContext
 import no.nav.familie.klage.testutil.DomainUtil.behandling

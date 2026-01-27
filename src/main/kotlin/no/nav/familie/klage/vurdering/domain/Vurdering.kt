@@ -1,7 +1,7 @@
 package no.nav.familie.klage.vurdering.domain
 
 import no.nav.familie.klage.felles.domain.Sporbar
-import no.nav.familie.klage.kabal.KabalHjemmel
+import no.nav.familie.klage.kabal.domain.KabalHjemmel
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.Årsak
 import org.springframework.data.annotation.Id

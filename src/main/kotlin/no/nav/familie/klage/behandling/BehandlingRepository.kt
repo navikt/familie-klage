@@ -4,8 +4,8 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.Klagebehandlingsresultat
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.klage.repository.InsertUpdateRepository
-import no.nav.familie.klage.repository.RepositoryInterface
+import no.nav.familie.klage.infrastruktur.repository.InsertUpdateRepository
+import no.nav.familie.klage.infrastruktur.repository.RepositoryInterface
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import org.springframework.data.jdbc.repository.query.Modifying

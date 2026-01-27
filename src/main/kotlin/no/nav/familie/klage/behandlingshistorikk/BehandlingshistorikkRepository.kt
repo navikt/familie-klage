@@ -1,8 +1,8 @@
 package no.nav.familie.klage.behandlingshistorikk
 
 import no.nav.familie.klage.behandlingshistorikk.domain.Behandlingshistorikk
-import no.nav.familie.klage.repository.InsertUpdateRepository
-import no.nav.familie.klage.repository.RepositoryInterface
+import no.nav.familie.klage.infrastruktur.repository.InsertUpdateRepository
+import no.nav.familie.klage.infrastruktur.repository.RepositoryInterface
 import org.springframework.stereotype.Repository
 import java.util.UUID
 

@@ -8,7 +8,7 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
-import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
 import no.nav.familie.kontrakter.felles.Regelverk

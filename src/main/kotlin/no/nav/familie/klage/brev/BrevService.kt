@@ -34,9 +34,9 @@ import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
+import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
-import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.VurderingValidator.validerVurdering
 import no.nav.familie.klage.vurdering.dto.tilDto

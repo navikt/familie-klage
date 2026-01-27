@@ -3,8 +3,8 @@ package no.nav.familie.klage.kabal
 import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration.StringListWrapper
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
+import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.kabal.domain.KlageinstansResultat
-import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType

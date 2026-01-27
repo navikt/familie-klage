@@ -7,8 +7,8 @@ import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.felles.domain.BehandlerRolle
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvisIkke
+import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
-import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
 import org.springframework.stereotype.Service

@@ -8,8 +8,8 @@ import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
-import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import org.assertj.core.api.Assertions.assertThat

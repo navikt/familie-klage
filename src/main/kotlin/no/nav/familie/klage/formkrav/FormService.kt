@@ -14,7 +14,7 @@ import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.formkrav.dto.FormkravDto
 import no.nav.familie.klage.formkrav.dto.tilDto
-import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.prosessering.internal.TaskService

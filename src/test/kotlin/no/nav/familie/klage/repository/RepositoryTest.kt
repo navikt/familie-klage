@@ -4,6 +4,7 @@ import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.felles.domain.Endret
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
+import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
 import org.assertj.core.api.Assertions.assertThat
