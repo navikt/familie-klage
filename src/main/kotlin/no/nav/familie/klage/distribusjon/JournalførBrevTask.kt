@@ -57,22 +57,11 @@ class JournalførBrevTask(
         }
 
         val journalposter = brev.mottakereJournalposter?.journalposter ?: emptyList()
-
-        val journalposterMedNyePersoner =
-            journalførBrevmottakere(
-                brev = brev,
-                mottakere = mottakere.personer,
-                saksbehandler = saksbehandler,
-                journalposter = journalposter,
-            )
-
-        // `journalførBrevmottakere` overskriver journalposter på brevet i databasen,
-        // så vi må sende med journalpostene som ble lagt til i forrige kall
         journalførBrevmottakere(
             brev = brev,
-            mottakere = mottakere.organisasjoner,
+            mottakere = mottakere.tilListe(),
             saksbehandler = saksbehandler,
-            journalposter = journalposterMedNyePersoner,
+            journalposter = journalposter,
         )
     }
 
