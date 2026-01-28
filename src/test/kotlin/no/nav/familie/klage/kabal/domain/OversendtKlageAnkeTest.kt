@@ -6,6 +6,7 @@ import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.fagsak.domain.tilYtelse
+import no.nav.familie.klage.institusjon.Institusjon
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
@@ -58,6 +59,7 @@ class OversendtKlageAnkeTest {
             organisasjonsnummer = "123456789",
             organisasjonsnavn = "Organ Isasjon",
             navnHosOrganisasjon = "Bruker Brukersen",
+            mottakerRolle = MottakerRolle.FULLMAKT,
         )
 
     @Nested
@@ -66,6 +68,22 @@ class OversendtKlageAnkeTest {
         fun `utledFullmektigEllerVerge skal returnere null hvis det ikke er en fullmektig`() {
             // Arrange
             val brevmottakere = Brevmottakere(personer = listOf(bruker))
+
+            // Act
+            val fullmektig = utledFullmektigEllerVerge(brevmottakere)
+
+            // Assert
+            assertThat(fullmektig).isNull()
+        }
+
+        @Test
+        fun `skal ikke returnere institusjon`() {
+            // Arrange
+            val brevmottakere =
+                Brevmottakere(
+                    personer = listOf(bruker),
+                    organisasjoner = listOf(organisasjon.copy(mottakerRolle = MottakerRolle.INSTITUSJON)),
+                )
 
             // Act
             val fullmektig = utledFullmektigEllerVerge(brevmottakere)
@@ -219,6 +237,34 @@ class OversendtKlageAnkeTest {
             assertThat(oversendtKlageAnke.brukersKlageMottattVedtaksinstans).isEqualTo(behandling.klageMottatt)
             assertThat(oversendtKlageAnke.ytelse).isEqualTo(fagsak.stønadstype.tilYtelse())
             assertThat(oversendtKlageAnke.hindreAutomatiskSvarbrev).isFalse()
+        }
+
+        @Test
+        fun `skal legge institusjon som klager i OversendtKlageAnkeV4 dersom fagsak har institusjon`() {
+            // Arrange
+            val orgNummer = "12345678910"
+            val fagsakMedInstitusjon =
+                fagsak.copy(
+                    institusjon =
+                        Institusjon(
+                            orgNummer = orgNummer,
+                            navn = "Institusjon AS",
+                        ),
+                )
+
+            // Act
+            val oversendtKlageAnke =
+                OversendtKlageAnkeV4.lagKlageOversendelse(
+                    fagsak = fagsakMedInstitusjon,
+                    behandling = behandling,
+                    vurdering = vurdering,
+                    saksbehandlersEnhet = "1234",
+                    brevmottakere = Brevmottakere(),
+                )
+
+            // Assert
+            assertThat(oversendtKlageAnke.klager?.id?.type).isEqualTo(OversendtPartIdType.VIRKSOMHET)
+            assertThat(oversendtKlageAnke.klager?.id?.verdi).isEqualTo(orgNummer)
         }
 
         private fun lagKlageOversendelse(brevmottakere: Brevmottakere): OversendtKlageAnkeV4 =
