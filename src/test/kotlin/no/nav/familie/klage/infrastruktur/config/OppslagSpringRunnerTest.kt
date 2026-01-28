@@ -75,7 +75,6 @@ abstract class OppslagSpringRunnerTest {
     @Autowired
     private lateinit var rolleConfig: RolleConfig
 
-    @Suppress("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     private lateinit var mockOAuth2Server: MockOAuth2Server
 
@@ -129,11 +128,6 @@ abstract class OppslagSpringRunnerTest {
 
     protected fun localhost(uri: String): String = LOCALHOST + getPort() + uri
 
-    protected fun url(
-        baseUrl: String,
-        uri: String,
-    ): String = baseUrl + uri
-
     protected val lokalTestToken: String
         get() {
             return onBehalfOfToken(role = rolleConfig.ef.beslutter)
@@ -143,11 +137,6 @@ abstract class OppslagSpringRunnerTest {
         role: String = rolleConfig.ef.beslutter,
         saksbehandler: String = "julenissen",
     ): String = TokenUtil.onBehalfOfToken(mockOAuth2Server, role, saksbehandler)
-
-    protected fun clientToken(
-        clientId: String = "1",
-        accessAsApplication: Boolean = true,
-    ): String = TokenUtil.clientToken(mockOAuth2Server, clientId, accessAsApplication)
 
     companion object {
         private const val LOCALHOST = "http://localhost:"

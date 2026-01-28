@@ -129,7 +129,7 @@ class BrevmottakerSletterTest {
                 assertThrows<Feil> {
                     brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
                 }
-            assertThat(exception.message).isEqualTo("Behandlingen er i steg ${behandling.steg}, forventet steg ${StegType.BREV}.")
+            assertThat(exception.message).isEqualTo("Behandling ${behandling.id} er i steg ${behandling.steg}, forventet steg ${StegType.BREV}.")
         }
 
         @Test
@@ -291,7 +291,7 @@ class BrevmottakerSletterTest {
                     .captured
                     .mottakere
                     ?.personer
-                    ?.filterIsInstance(BrevmottakerPersonUtenIdent::class.java)
+                    ?.filterIsInstance<BrevmottakerPersonUtenIdent>()
             assertThat(brevmottakerPersonUtenIdent).hasSize(1)
             assertThat(brevmottakerPersonUtenIdent).allSatisfy {
                 assertThat(it.id).isNotEqualTo(slettbarBrevmottaker.id)
@@ -302,7 +302,7 @@ class BrevmottakerSletterTest {
                     .captured
                     .mottakere
                     ?.personer
-                    ?.filterIsInstance(BrevmottakerPersonMedIdent::class.java)
+                    ?.filterIsInstance<BrevmottakerPersonMedIdent>()
             assertThat(brevmottakerPersonMedIdent).hasSize(1)
             assertThat(brevmottakerPersonMedIdent).allSatisfy {
                 assertThat(it.personIdent).isNotEqualTo(slettbarBrevmottaker.id.toString())
@@ -380,7 +380,7 @@ class BrevmottakerSletterTest {
                     .captured
                     .mottakere
                     ?.personer
-                    ?.filterIsInstance(BrevmottakerPersonUtenIdent::class.java)
+                    ?.filterIsInstance<BrevmottakerPersonUtenIdent>()
             assertThat(brevmottakerPersonUtenIdent).hasSize(1)
             assertThat(brevmottakerPersonUtenIdent).allSatisfy {
                 assertThat(it.id).isNotEqualTo(slettbarBrevmottaker.id)
@@ -391,7 +391,7 @@ class BrevmottakerSletterTest {
                     .captured
                     .mottakere
                     ?.personer
-                    ?.filterIsInstance(BrevmottakerPersonMedIdent::class.java)
+                    ?.filterIsInstance<BrevmottakerPersonMedIdent>()
             assertThat(brevmottakerPersonMedIdent).isEmpty()
 
             verify(exactly = 1) { brevRepository.update(any()) }
@@ -469,7 +469,7 @@ class BrevmottakerSletterTest {
                     .captured
                     .mottakere
                     ?.personer
-                    ?.filterIsInstance(BrevmottakerPersonUtenIdent::class.java)
+                    ?.filterIsInstance<BrevmottakerPersonUtenIdent>()
             assertThat(brevmottakerPersonUtenIdent).isEmpty()
 
             val brevmottakerPersonMedIdent =
@@ -477,7 +477,7 @@ class BrevmottakerSletterTest {
                     .captured
                     .mottakere
                     ?.personer
-                    ?.filterIsInstance(BrevmottakerPersonMedIdent::class.java)
+                    ?.filterIsInstance<BrevmottakerPersonMedIdent>()
             assertThat(brevmottakerPersonMedIdent).hasSize(1)
             assertThat(brevmottakerPersonMedIdent).allSatisfy {
                 assertThat(it.personIdent).isEqualTo(personIdent.ident)
@@ -562,7 +562,7 @@ class BrevmottakerSletterTest {
                     .captured
                     .mottakere
                     ?.personer
-                    ?.filterIsInstance(BrevmottakerPersonUtenIdent::class.java)
+                    ?.filterIsInstance<BrevmottakerPersonUtenIdent>()
             assertThat(brevmottakerPersonUtenIdent).isEmpty()
 
             val brevmottakerPersonMedIdent =
@@ -570,7 +570,7 @@ class BrevmottakerSletterTest {
                     .captured
                     .mottakere
                     ?.personer
-                    ?.filterIsInstance(BrevmottakerPersonMedIdent::class.java)
+                    ?.filterIsInstance<BrevmottakerPersonMedIdent>()
             assertThat(brevmottakerPersonMedIdent).hasSize(1)
             assertThat(brevmottakerPersonMedIdent).allSatisfy {
                 assertThat(it.personIdent).isEqualTo(personIdent.ident)

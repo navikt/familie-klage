@@ -54,9 +54,9 @@ class BrevsignaturService(
     private fun hentSaksbehandlerInfo(navIdent: String) = oppgaveClient.hentSaksbehandlerInfo(navIdent)
 
     companion object {
-        val NAV_ANONYM_NAVN = "Nav anonym"
-        val ENHET_VIKAFOSSEN = "Nav Vikafossen"
-        val ENHET_NAY = "Nav arbeid og ytelser"
-        val ENHET_NFP = "Nav familie- og pensjonsytelser"
+        const val NAV_ANONYM_NAVN = "Nav anonym"
+        const val ENHET_VIKAFOSSEN = "Nav Vikafossen"
+        const val ENHET_NAY = "Nav arbeid og ytelser"
+        const val ENHET_NFP = "Nav familie- og pensjonsytelser"
     }
 }

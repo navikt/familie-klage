@@ -222,7 +222,7 @@ class FamilieIntegrasjonerMock(
         private val arbeidsfordeling =
             Ressurs.success(listOf(Arbeidsfordelingsenhet("4489", "nerd-enhet")))
 
-        private val fnr = "23097825289"
+        private const val FNR = "23097825289"
 
         private val oppdatertJournalpostResponse =
             Ressurs.success(OppdaterJournalpostResponse(journalpostId = "1234"))
@@ -235,7 +235,7 @@ class FamilieIntegrasjonerMock(
                 tema = "ENF",
                 behandlingstema = "ab0071",
                 tittel = "abrakadabra",
-                bruker = Bruker(type = BrukerIdType.FNR, id = fnr),
+                bruker = Bruker(type = BrukerIdType.FNR, id = FNR),
                 journalforendeEnhet = "4817",
                 kanal = "SKAN_IM",
                 relevanteDatoer = listOf(RelevantDato(LocalDateTime.now(), "DATO_REGISTRERT")),
@@ -314,7 +314,7 @@ class FamilieIntegrasjonerMock(
                 tema = "ENF",
                 behandlingstema = "ab0071",
                 tittel = "abrakadabra",
-                bruker = Bruker(type = BrukerIdType.FNR, id = fnr),
+                bruker = Bruker(type = BrukerIdType.FNR, id = FNR),
                 journalforendeEnhet = "4817",
                 kanal = "SKAN_IM",
                 relevanteDatoer = listOf(RelevantDato(LocalDateTime.now(), "DATO_REGISTRERT")),

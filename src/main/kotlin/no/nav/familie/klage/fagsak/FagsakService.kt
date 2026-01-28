@@ -4,12 +4,12 @@ import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.institusjon.Institusjon
 import no.nav.familie.klage.institusjon.InstitusjonService
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
-import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.stereotype.Service

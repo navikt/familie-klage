@@ -77,7 +77,7 @@ class FamilieIntegrasjonerClient(
         val journalpostRequest =
             DistribuerJournalpostRequest(
                 journalpostId = journalpostId,
-                bestillendeFagsystem = no.nav.familie.kontrakter.felles.Fagsystem.EF,
+                bestillendeFagsystem = Fagsystem.EF,
                 dokumentProdApp = "FAMILIE_KLAGE",
                 distribusjonstype = distribusjonstype,
             )

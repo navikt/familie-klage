@@ -4,7 +4,8 @@ import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.UTEN_VEDTAK
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
-import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.behandling.domain.StegType.BREV
+import no.nav.familie.klage.behandling.domain.StegType.FORMKRAV
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.formkrav.FormRepository
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
@@ -41,7 +42,7 @@ internal class BrevServiceIntegrasjonsTest : OppslagSpringRunnerTest() {
     private val fagsakFerdigstiltBehandling =
         fagsak(stønadstype = Stønadstype.SKOLEPENGER, fagsakPersonId = fagsak.fagsakPersonId)
     private val påklagetVedtak = PåklagetVedtak(VEDTAK, påklagetVedtakDetaljer("123"))
-    private val behandlingPåklagetVedtak = behandling(fagsak, steg = StegType.BREV, påklagetVedtak = påklagetVedtak)
+    private val behandlingPåklagetVedtak = behandling(fagsak, steg = BREV, påklagetVedtak = påklagetVedtak)
     private val ferdigstiltBehandling =
         behandling(
             fagsakFerdigstiltBehandling,
@@ -52,7 +53,7 @@ internal class BrevServiceIntegrasjonsTest : OppslagSpringRunnerTest() {
     private val behandlingUtenPåklagetVedtak =
         behandling(
             fagsakBehandlingUtenPåklagetVedtak,
-            steg = StegType.BREV,
+            steg = BREV,
             påklagetVedtak = påklagetVedtak.copy(påklagetVedtakstype = UTEN_VEDTAK),
         )
 
@@ -85,14 +86,14 @@ internal class BrevServiceIntegrasjonsTest : OppslagSpringRunnerTest() {
         @Test
         internal fun `skal ikke kunne lage eller oppdatere når behandlingen er låst`() {
             assertThatThrownBy { brevService.lagBrev(ferdigstiltBehandling.id) }
-                .hasMessage("Kan ikke oppdatere brev når behandlingen er låst")
+                .hasMessage("Behandling ${ferdigstiltBehandling.id} er låst for videre behandling.")
         }
 
         @Test
         internal fun `skal ikke kunne lage eller oppdatere når behandlingen ikke er i brevsteget`() {
-            behandlingRepository.update(behandlingPåklagetVedtak.copy(steg = StegType.FORMKRAV))
+            behandlingRepository.update(behandlingPåklagetVedtak.copy(steg = FORMKRAV))
             assertThatThrownBy { brevService.lagBrev(behandlingPåklagetVedtak.id) }
-                .hasMessageContaining("Behandlingen er i feil steg ")
+                .hasMessageContaining("Behandling ${behandlingPåklagetVedtak.id} er i steg $FORMKRAV, forventet steg $BREV.")
         }
 
         @Test

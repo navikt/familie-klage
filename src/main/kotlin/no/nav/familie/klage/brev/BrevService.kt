@@ -4,8 +4,6 @@ import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
-import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.brev.dto.Delmal
@@ -15,8 +13,7 @@ import no.nav.familie.klage.brev.dto.Flettefelter
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.brev.dto.Henleggelsesbrev
 import no.nav.familie.klage.brev.dto.SignaturDto
-import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerMinimumEnMottaker
-import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerUnikeBrevmottakere
+import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerBrevmottakere
 import no.nav.familie.klage.brevmottaker.BrevmottakerUtleder
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottaker
@@ -33,9 +30,9 @@ import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
+import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
-import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.VurderingValidator.validerVurdering
 import no.nav.familie.klage.vurdering.dto.tilDto
@@ -78,12 +75,10 @@ class BrevService(
         brevmottakereDto: BrevmottakereDto,
     ) {
         val behandling = behandlingService.hentBehandling(behandlingId)
-        validerKanLageBrev(behandling)
+        behandling.validerRedigerbarBehandlingOgBehandlingsstegBrev()
 
         val brevmottakere = brevmottakereDto.tilBrevmottakere()
-
-        validerUnikeBrevmottakere(brevmottakere)
-        validerMinimumEnMottaker(brevmottakere)
+        validerBrevmottakere(behandlingId, brevmottakere)
 
         val brev = brevRepository.findByIdOrThrow(behandlingId)
         brevRepository.update(brev.copy(mottakere = brevmottakere))
@@ -97,7 +92,7 @@ class BrevService(
         val påklagetVedtakDetaljer = behandling.påklagetVedtak.påklagetVedtakDetaljer
         val brevmottakere = brevRepository.findByIdOrNull(behandlingId)?.mottakere ?: Brevmottakere()
 
-        validerKanLageBrev(behandling)
+        behandling.validerRedigerbarBehandlingOgBehandlingsstegBrev()
 
         val brevRequest = lagBrevRequest(behandling, fagsak, navn, påklagetVedtakDetaljer, behandling.klageMottatt)
 
@@ -115,19 +110,9 @@ class BrevService(
         lagreEllerOppdaterBrev(
             behandlingId = behandlingId,
             saksbehandlerHtml = html,
-            fagsak = fagsak,
         )
 
         return familieDokumentClient.genererPdfFraHtml(html)
-    }
-
-    private fun validerKanLageBrev(behandling: Behandling) {
-        feilHvis(behandling.status.erLåstForVidereBehandling()) {
-            "Kan ikke oppdatere brev når behandlingen er låst"
-        }
-        feilHvis(behandling.steg != StegType.BREV) {
-            "Behandlingen er i feil steg (${behandling.steg}) steg=${StegType.BREV} for å kunne oppdatere brevet"
-        }
     }
 
     private fun lagBrevRequest(
@@ -193,7 +178,7 @@ class BrevService(
 
             BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST -> {
                 val formkrav = formService.hentForm(behandling.id)
-                return when (behandling.påklagetVedtak.påklagetVedtakstype) {
+                when (behandling.påklagetVedtak.påklagetVedtakstype) {
                     PåklagetVedtakstype.UTEN_VEDTAK -> {
                         brevInnholdUtleder.lagFormkravAvvistBrevIkkePåklagetVedtak(
                             ident = fagsak.hentAktivIdent(),
@@ -232,7 +217,6 @@ class BrevService(
     fun lagreEllerOppdaterBrev(
         behandlingId: UUID,
         saksbehandlerHtml: String,
-        fagsak: Fagsak,
     ): Brev {
         val brev = brevRepository.findByIdOrNull(behandlingId)
         return if (brev != null) {
@@ -417,15 +401,9 @@ class BrevService(
         val personopplysninger = personopplysningerService.hentPersonopplysninger(ident)
         val harVerge = personopplysninger.vergemål.isNotEmpty()
         val harFullmakt: Boolean =
-            personopplysninger.fullmakt
-                .filter {
-                    it.gyldigTilOgMed == null ||
-                        (
-                            it.gyldigTilOgMed.isEqualOrAfter(
-                                LocalDate.now(),
-                            )
-                        )
-                }.isNotEmpty()
+            personopplysninger.fullmakt.any {
+                it.gyldigTilOgMed == null || it.gyldigTilOgMed.isEqualOrAfter(LocalDate.now())
+            }
         feilHvis(harVerge || harFullmakt) {
             "Skal ikke sende brev hvis person er tilknyttet vergemål eller fullmakt"
         }

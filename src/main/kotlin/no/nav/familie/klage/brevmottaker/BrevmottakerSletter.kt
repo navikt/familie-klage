@@ -2,11 +2,9 @@ package no.nav.familie.klage.brevmottaker
 
 import jakarta.transaction.Transactional
 import no.nav.familie.klage.behandling.BehandlingService
-import no.nav.familie.klage.behandling.domain.Behandling
-import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.klage.behandling.domain.erLåstForVidereBehandling
 import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerBrevmottakere
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
@@ -55,8 +53,7 @@ class BrevmottakerSletter(
         logger.debug("Sletter brevmottaker {} for behandling {}.", slettBrevmottakerPersonUtenIdent.id, behandlingId)
 
         val behandling = behandlingService.hentBehandling(behandlingId)
-        validerRedigerbarBehandling(behandling)
-        validerKorrektBehandlingssteg(behandling)
+        behandling.validerRedigerbarBehandlingOgBehandlingsstegBrev()
 
         val brev = brevService.hentBrev(behandlingId)
         val brevmottakerPersoner = (brev.mottakere?.personer ?: emptyList())
@@ -106,33 +103,12 @@ class BrevmottakerSletter(
                     },
             )
 
-        validerMinimumEnMottaker(behandling, nyeBrevmottakere)
+        validerBrevmottakere(behandlingId, nyeBrevmottakere)
 
         brevRepository.update(
             brev.copy(
                 mottakere = nyeBrevmottakere,
             ),
         )
-    }
-
-    private fun validerRedigerbarBehandling(behandling: Behandling) {
-        if (behandling.status.erLåstForVidereBehandling()) {
-            throw Feil("Behandling ${behandling.id} er låst for videre behandling.")
-        }
-    }
-
-    private fun validerKorrektBehandlingssteg(behandling: Behandling) {
-        if (behandling.steg != StegType.BREV) {
-            throw Feil("Behandlingen er i steg ${behandling.steg}, forventet steg ${StegType.BREV}.")
-        }
-    }
-
-    private fun validerMinimumEnMottaker(
-        behandling: Behandling,
-        brevmottakere: Brevmottakere,
-    ) {
-        if (brevmottakere.tilListe().isEmpty()) {
-            throw Feil("Må ha minimum en brevmottaker for behandling ${behandling.id}.")
-        }
     }
 }

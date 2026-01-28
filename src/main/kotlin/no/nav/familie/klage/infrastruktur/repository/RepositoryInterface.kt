@@ -1,4 +1,4 @@
-package no.nav.familie.klage.repository
+package no.nav.familie.klage.infrastruktur.repository
 
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.NoRepositoryBean

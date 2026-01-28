@@ -2,7 +2,7 @@ package no.nav.familie.klage.brev
 
 import no.nav.familie.klage.brev.domain.Avsnitt
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
-import no.nav.familie.klage.repository.findByIdOrThrow
+import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import org.assertj.core.api.Assertions.assertThat

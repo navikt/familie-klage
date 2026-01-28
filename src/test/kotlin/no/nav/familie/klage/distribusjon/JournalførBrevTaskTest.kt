@@ -315,7 +315,7 @@ internal class JournalførBrevTaskTest {
             assertThat(task.type).isEqualTo(JournalførBrevTask.TYPE)
             assertThat(task.payload).isEqualTo(behandling.id.toString())
             assertThat(task.metadata["saksbehandler"]).isEqualTo("saksbehandler")
-            assertThat(task.metadata["eksterFagsakId"]).isEqualTo(fagsak.eksternId)
+            assertThat(task.metadata["eksternFagsakId"]).isEqualTo(fagsak.eksternId)
             assertThat(task.metadata["fagsystem"]).isEqualTo(fagsak.fagsystem.name)
         }
     }

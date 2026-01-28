@@ -59,7 +59,7 @@ internal class MålerRepositoryTest : OppslagSpringRunnerTest() {
     }
 
     @Test
-    internal fun `finnBehandlingerPerStatus`() {
+    internal fun finnBehandlingerPerStatus() {
         val data = målerRepository.finnBehandlingerPerStatus()
 
         assertThat(data).containsExactlyInAnyOrder(
@@ -70,7 +70,7 @@ internal class MålerRepositoryTest : OppslagSpringRunnerTest() {
     }
 
     @Test
-    internal fun `finnÅpneBehandlingerPerUke`() {
+    internal fun finnÅpneBehandlingerPerUke() {
         val data = målerRepository.finnÅpneBehandlingerPerUke()
 
         assertThat(data).containsExactlyInAnyOrder(
@@ -79,7 +79,7 @@ internal class MålerRepositoryTest : OppslagSpringRunnerTest() {
     }
 
     @Test
-    internal fun `finnVedtakPerUke`() {
+    internal fun finnVedtakPerUke() {
         val data = målerRepository.antallVedtak()
 
         assertThat(data).containsExactlyInAnyOrder(

@@ -1,5 +1,6 @@
 package no.nav.familie.klage.felles.domain
 
+@Suppress("unused")
 enum class BehandlerRolle(
     val nivå: Int,
 ) {

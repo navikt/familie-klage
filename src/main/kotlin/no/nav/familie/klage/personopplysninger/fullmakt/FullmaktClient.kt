@@ -40,4 +40,9 @@ data class Område(
     val handling: List<Handling>,
 )
 
-enum class Handling { LES, KOMMUNISER, SKRIV }
+@Suppress("unused")
+enum class Handling {
+    LES,
+    KOMMUNISER,
+    SKRIV,
+}

@@ -6,9 +6,7 @@ import io.mockk.mockk
 import io.mockk.runs
 import no.nav.familie.klage.personopplysninger.pdl.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.pdl.AdressebeskyttelseGradering
-import no.nav.familie.klage.personopplysninger.pdl.Fullmakt
 import no.nav.familie.klage.personopplysninger.pdl.KjønnType
-import no.nav.familie.klage.personopplysninger.pdl.MotpartsRolle
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.klage.personopplysninger.pdl.PdlIdent
 import no.nav.familie.klage.personopplysninger.pdl.PdlIdenter
@@ -24,7 +22,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
-import java.time.LocalDate
 
 @Configuration
 @Profile("mock-pdl")
@@ -65,9 +62,7 @@ class PdlClientMock {
     }
 
     companion object {
-        private val startdato = LocalDate.of(2020, 1, 1)
-        private val sluttdato = LocalDate.of(2021, 1, 1)
-        private val annenForelderFnr = "17097926735"
+        private const val ANNEN_FORELDER_FNR = "17097926735"
 
         fun opprettPdlSøker() =
             pdlSøker(
@@ -84,18 +79,6 @@ class PdlClientMock {
                 vergemaalEllerFremtidsfullmakt = vergemaalEllerFremtidsfullmakt(),
             )
 
-        private fun fullmakter(): List<Fullmakt> =
-            listOf(
-                Fullmakt(
-                    gyldigTilOgMed = startdato,
-                    gyldigFraOgMed = sluttdato,
-                    motpartsPersonident = "11111133333",
-                    fullmektigsNavn = "fullmektigsNavn",
-                    motpartsRolle = MotpartsRolle.FULLMEKTIG,
-                    omraader = listOf(),
-                ),
-            )
-
         private fun vergemaalEllerFremtidsfullmakt(): List<VergemaalEllerFremtidsfullmakt> =
             listOf(
                 VergemaalEllerFremtidsfullmakt(
@@ -104,7 +87,7 @@ class PdlClientMock {
                     type = "voksen",
                     vergeEllerFullmektig =
                         VergeEllerFullmektig(
-                            motpartsPersonident = annenForelderFnr,
+                            motpartsPersonident = ANNEN_FORELDER_FNR,
                             navn = null,
                             omfang = "personligeOgOekonomiskeInteresser",
                             omfangetErInnenPersonligOmraade = false,
@@ -116,7 +99,7 @@ class PdlClientMock {
                     type = "stadfestetFremtidsfullmakt",
                     vergeEllerFullmektig =
                         VergeEllerFullmektig(
-                            motpartsPersonident = annenForelderFnr,
+                            motpartsPersonident = ANNEN_FORELDER_FNR,
                             navn = null,
                             omfang = "personligeOgOekonomiskeInteresser",
                             omfangetErInnenPersonligOmraade = false,

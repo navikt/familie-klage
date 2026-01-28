@@ -44,7 +44,7 @@ class OppgaveClientTest {
                     method = eq(HttpMethod.GET),
                     requestEntity = any<HttpEntity<Void>>(),
                 )
-            } returns ResponseEntity.ok(Ressurs.Companion.success(eksisterendeOppgave))
+            } returns ResponseEntity.ok(Ressurs.success(eksisterendeOppgave))
 
             every {
                 restOperations.exchange<Ressurs<OppgaveResponse>>(
@@ -52,7 +52,7 @@ class OppgaveClientTest {
                     method = eq(HttpMethod.PATCH),
                     requestEntity = any<HttpEntity<Void>>(),
                 )
-            } returns ResponseEntity.ok(Ressurs.Companion.success(OppgaveResponse(oppgaveId)))
+            } returns ResponseEntity.ok(Ressurs.success(OppgaveResponse(oppgaveId)))
 
             // Act
             val oppgaveResponse =
@@ -86,7 +86,7 @@ class OppgaveClientTest {
                     method = eq(HttpMethod.GET),
                     requestEntity = any<HttpEntity<Void>>(),
                 )
-            } returns ResponseEntity.ok(Ressurs.Companion.success(eksisterendeOppgave))
+            } returns ResponseEntity.ok(Ressurs.success(eksisterendeOppgave))
 
             every {
                 restOperations.exchange<Ressurs<OppgaveResponse>>(
@@ -129,7 +129,7 @@ class OppgaveClientTest {
                     method = eq(HttpMethod.GET),
                     requestEntity = any<HttpEntity<Void>>(),
                 )
-            } returns ResponseEntity.ok(Ressurs.Companion.success(eksisterendeOppgave))
+            } returns ResponseEntity.ok(Ressurs.success(eksisterendeOppgave))
 
             every {
                 restOperations.exchange<Ressurs<OppgaveResponse>>(

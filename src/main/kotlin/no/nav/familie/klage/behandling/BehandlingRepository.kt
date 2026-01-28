@@ -2,10 +2,9 @@ package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.behandling.domain.Klagebehandlingsresultat
-import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.behandling.domain.StegType
-import no.nav.familie.klage.repository.InsertUpdateRepository
-import no.nav.familie.klage.repository.RepositoryInterface
+import no.nav.familie.klage.infrastruktur.repository.InsertUpdateRepository
+import no.nav.familie.klage.infrastruktur.repository.RepositoryInterface
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import org.springframework.data.jdbc.repository.query.Modifying
@@ -61,13 +60,4 @@ interface BehandlingRepository :
         @Param("eksternFagsakId") eksternFagsakId: String,
         @Param("fagsystem") fagsystem: Fagsystem,
     ): List<Klagebehandlingsresultat>
-
-    fun findByFagsakId(fagsakId: UUID): List<Behandling>
-
-    @Modifying
-    @Query("UPDATE behandling SET paklaget_vedtak_detaljer=:detaljer WHERE id=:id")
-    fun oppdaterPåklagetVedtakDetaljer(
-        detaljer: PåklagetVedtakDetaljer,
-        id: UUID,
-    )
 }

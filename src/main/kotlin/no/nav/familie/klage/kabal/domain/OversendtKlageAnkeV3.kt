@@ -8,7 +8,6 @@ import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.tilYtelse
-import no.nav.familie.klage.kabal.KabalHjemmel
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
@@ -97,6 +96,7 @@ data class OversendtKlageAnkeV3(
     }
 }
 
+@Suppress("unused")
 enum class Type(
     val id: String,
     val navn: String,

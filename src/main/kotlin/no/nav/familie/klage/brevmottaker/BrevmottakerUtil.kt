@@ -7,29 +7,44 @@ import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.FULLMAKT
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.INSTITUSJON
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvisIkke
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
+import java.util.UUID
 
 object BrevmottakerUtil {
-    fun validerUnikeBrevmottakere(mottakere: Brevmottakere) {
+    fun validerBrevmottakere(
+        behandlingId: UUID,
+        brevmottakere: Brevmottakere,
+    ) {
+        validerUnikeBrevmottakere(behandlingId, brevmottakere)
+        validerMinimumEnMottaker(behandlingId, brevmottakere)
+    }
+
+    private fun validerUnikeBrevmottakere(
+        behandlingId: UUID,
+        brevmottakere: Brevmottakere,
+    ) {
         val personmottakerIdentifikatorer =
-            mottakere.personer.map {
+            brevmottakere.personer.map {
                 when (it) {
                     is BrevmottakerPersonMedIdent -> it.personIdent
                     is BrevmottakerPersonUtenIdent -> it.id.toString()
                 }
             }
         brukerfeilHvisIkke(personmottakerIdentifikatorer.distinct().size == personmottakerIdentifikatorer.size) {
-            "En person kan bare legges til en gang som brevmottaker"
+            "En person kan bare legges til én gang som brevmottaker for behandling $behandlingId."
         }
 
-        val organisasjonsmottakerIdenter = mottakere.organisasjoner.map { it.organisasjonsnummer }
+        val organisasjonsmottakerIdenter = brevmottakere.organisasjoner.map { it.organisasjonsnummer }
         brukerfeilHvisIkke(organisasjonsmottakerIdenter.distinct().size == organisasjonsmottakerIdenter.size) {
-            "En organisasjon kan bare legges til en gang som brevmottaker"
+            "En organisasjon kan bare legges til én gang som brevmottaker for behandling $behandlingId."
         }
     }
 
-    fun validerMinimumEnMottaker(mottakere: Brevmottakere) {
-        feilHvis(mottakere.tilListe().isEmpty()) {
-            "Må ha minimum en mottaker"
+    private fun validerMinimumEnMottaker(
+        behandlingId: UUID,
+        brevmottakere: Brevmottakere,
+    ) {
+        feilHvis(brevmottakere.personer.isEmpty() && brevmottakere.organisasjoner.isEmpty()) {
+            "Må ha minimum en brevmottaker for behandling $behandlingId."
         }
     }
 
