@@ -5,7 +5,7 @@ import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
-import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerMinimumEnMottaker
+import no.nav.familie.klage.brevmottaker.BrevmottakerUtil.validerBrevmottakere
 import no.nav.familie.klage.brevmottaker.domain.Brevmottaker
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
@@ -46,7 +46,7 @@ class JournalførBrevTask(
         val brev = brevService.hentBrev(behandlingId)
 
         val mottakere = brev.mottakere ?: error("Mangler mottakere på brev for behandling=$behandlingId")
-        validerMinimumEnMottaker(mottakere)
+        validerBrevmottakere(behandlingId, mottakere)
 
         val journalposter = brev.mottakereJournalposter?.journalposter ?: emptyList()
 
@@ -182,8 +182,7 @@ class JournalførBrevTask(
                 properties =
                     Properties().apply {
                         this[SAKSBEHANDLER_METADATA_KEY] = SikkerhetContext.hentSaksbehandler(strict = true)
-                        // TODO : Endre "eksterFagsakId" til "eksternFagsakId"
-                        this["eksterFagsakId"] = fagsak.eksternId
+                        this["eksternFagsakId"] = fagsak.eksternId
                         this["fagsystem"] = fagsak.fagsystem.name
                     },
             )

@@ -35,7 +35,7 @@ class KafkaConfig {
         producerListener.setIncludeContents(false)
         val producerFactory = DefaultKafkaProducerFactory<String, String>(properties.buildProducerProperties())
 
-        return KafkaTemplate(producerFactory).apply<KafkaTemplate<String, String>> {
+        return KafkaTemplate(producerFactory).apply {
             setProducerListener(producerListener)
         }
     }

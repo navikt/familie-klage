@@ -2,13 +2,13 @@ package no.nav.familie.klage.infrastruktur
 
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.domain.Behandling
+import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.kabal.AnkebehandlingAvsluttetDetaljer
 import no.nav.familie.klage.kabal.AnkebehandlingOpprettetDetaljer
 import no.nav.familie.klage.kabal.BehandlingDetaljer
 import no.nav.familie.klage.kabal.BehandlingEvent
 import no.nav.familie.klage.kabal.KlagebehandlingAvsluttetDetaljer
 import no.nav.familie.klage.kabal.event.BehandlingEventService
-import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall

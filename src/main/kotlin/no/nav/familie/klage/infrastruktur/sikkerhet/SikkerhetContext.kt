@@ -6,8 +6,6 @@ object SikkerhetContext {
     private const val SYSTEM_NAVN = "System"
     const val SYSTEM_FORKORTELSE = "VL"
 
-    val NAVIDENT_REGEX = """^[a-zA-Z]\d{6}$""".toRegex()
-
     fun erMaskinTilMaskinToken(): Boolean {
         val claims = SpringTokenValidationContextHolder().getTokenValidationContext().getClaims("azuread")
         return claims.get("oid") != null &&

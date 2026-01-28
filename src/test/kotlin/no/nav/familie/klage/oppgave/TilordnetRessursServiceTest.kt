@@ -1,3 +1,5 @@
+package no.nav.familie.klage.oppgave
+
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -5,10 +7,6 @@ import no.nav.familie.klage.behandling.dto.OppgaveDto
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.exception.ManglerTilgang
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.oppgave.BehandleSakOppgave
-import no.nav.familie.klage.oppgave.BehandleSakOppgaveRepository
-import no.nav.familie.klage.oppgave.OppgaveClient
-import no.nav.familie.klage.oppgave.TilordnetRessursService
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgavePrioritet
 import no.nav.familie.kontrakter.felles.saksbehandler.Saksbehandler

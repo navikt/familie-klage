@@ -12,9 +12,9 @@ import io.mockk.verifyOrder
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandlingshistorikk.BehandlingshistorikkService
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
-import no.nav.familie.klage.repository.findByIdOrThrow
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
@@ -141,7 +141,7 @@ internal class StegServiceTest {
 
     @Test
     fun `skal feile hvis behandling er låst`() {
-        every { behandlingRepository.findByIdOrThrow(any()) } returns behandling(status = BehandlingStatus.FERDIGSTILT)
+        every { behandlingRepository.findByIdOrThrow(any()) } returns behandling(id = behandlingId, status = BehandlingStatus.FERDIGSTILT)
 
         val feil =
             assertThrows<Feil> {
@@ -151,7 +151,7 @@ internal class StegServiceTest {
                     StegType.BREV,
                 )
             }
-        assertThat(feil.frontendFeilmelding).contains("Behandlingen er låst for videre behandling")
+        assertThat(feil.frontendFeilmelding).matches("Behandling $behandlingId er låst for videre behandling.")
     }
 
     @Test

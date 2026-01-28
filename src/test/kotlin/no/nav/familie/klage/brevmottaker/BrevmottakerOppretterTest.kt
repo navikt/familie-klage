@@ -123,7 +123,7 @@ class BrevmottakerOppretterTest {
                 assertThrows<Feil> {
                     brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
                 }
-            assertThat(exception.message).isEqualTo("Behandlingen er i steg ${StegType.OPPRETTET}, forventet steg ${StegType.BREV}.")
+            assertThat(exception.message).isEqualTo("Behandling ${behandling.id} er i steg ${StegType.OPPRETTET}, forventet steg ${StegType.BREV}.")
         }
 
         @Test
@@ -914,7 +914,7 @@ class BrevmottakerOppretterTest {
             val capturedBrev = brevSlot.captured
             assertThat(capturedBrev.mottakere?.organisasjoner).isEmpty()
             assertThat(capturedBrev.mottakere?.personer).hasSize(1)
-            assertThat(capturedBrev.mottakere?.personer?.filterIsInstance(BrevmottakerPersonUtenIdent::class.java)).anySatisfy {
+            assertThat(capturedBrev.mottakere?.personer?.filterIsInstance<BrevmottakerPersonUtenIdent>()).anySatisfy {
                 assertThat(it).isEqualTo(brevmottaker)
             }
         }
@@ -995,10 +995,10 @@ class BrevmottakerOppretterTest {
             val capturedBrev = brevSlot.captured
             assertThat(capturedBrev.mottakere?.organisasjoner).isEmpty()
             assertThat(capturedBrev.mottakere?.personer).hasSize(2)
-            assertThat(capturedBrev.mottakere?.personer?.filterIsInstance(BrevmottakerPersonUtenIdent::class.java)).anySatisfy {
+            assertThat(capturedBrev.mottakere?.personer?.filterIsInstance<BrevmottakerPersonUtenIdent>()).anySatisfy {
                 assertThat(it).isEqualTo(brevmottaker)
             }
-            assertThat(capturedBrev.mottakere?.personer?.filterIsInstance(BrevmottakerPersonMedIdent::class.java)).anySatisfy {
+            assertThat(capturedBrev.mottakere?.personer?.filterIsInstance<BrevmottakerPersonMedIdent>()).anySatisfy {
                 assertThat(it).isEqualTo(brevmottakerPersonMedIdent)
             }
         }

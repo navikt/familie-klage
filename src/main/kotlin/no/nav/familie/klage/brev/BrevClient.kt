@@ -119,7 +119,3 @@ data class BrevRequest(
     val skjulBeslutterSignatur: Boolean,
     val dato: String,
 )
-
-data class BrevmottakereRequest(
-    val brevmottakere: Brevmottakere? = null,
-)

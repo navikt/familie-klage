@@ -9,11 +9,11 @@ data class PdlResponse<T>(
     val errors: List<PdlError>?,
     val extensions: PdlExtensions?,
 ) {
-    fun harFeil(): Boolean = errors != null && errors.isNotEmpty()
+    fun harFeil(): Boolean = !errors.isNullOrEmpty()
 
     fun harAdvarsel(): Boolean = !extensions?.warnings.isNullOrEmpty()
 
-    fun errorMessages(): String = errors?.joinToString { it -> it.message } ?: ""
+    fun errorMessages(): String = errors?.joinToString { it.message } ?: ""
 }
 
 data class PdlExtensions(
@@ -32,7 +32,7 @@ data class PdlBolkResponse<T>(
     val errors: List<PdlError>?,
     val extensions: PdlExtensions?,
 ) {
-    fun errorMessages(): String = errors?.joinToString { it -> it.message } ?: ""
+    fun errorMessages(): String = errors?.joinToString { it.message } ?: ""
 
     fun harAdvarsel(): Boolean = !extensions?.warnings.isNullOrEmpty()
 }
@@ -104,12 +104,9 @@ data class Folkeregistermetadata(
 data class Adressebeskyttelse(
     val gradering: AdressebeskyttelseGradering,
     val metadata: Metadata,
-) {
-    fun erStrengtFortrolig(): Boolean =
-        this.gradering == AdressebeskyttelseGradering.STRENGT_FORTROLIG ||
-            this.gradering == AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND
-}
+)
 
+@Suppress("unused")
 enum class AdressebeskyttelseGradering {
     STRENGT_FORTROLIG,
     STRENGT_FORTROLIG_UTLAND,
@@ -136,6 +133,7 @@ data class Fullmakt(
     val omraader: List<String>,
 )
 
+@Suppress("unused")
 enum class MotpartsRolle {
     FULLMAKTSGIVER,
     FULLMEKTIG,
@@ -145,6 +143,7 @@ data class Kjønn(
     @JsonProperty("kjoenn") val kjønn: KjønnType,
 )
 
+@Suppress("unused")
 enum class KjønnType {
     KVINNE,
     MANN,

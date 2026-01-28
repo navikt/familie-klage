@@ -14,8 +14,6 @@ import java.util.UUID
 class AvvistBrevUtlederLookupTest(
     @Autowired
     private val avvistBrevInnholdUtlederLookup: AvvistBrevInnholdUtleder.Lookup,
-    @Autowired
-    private val efAvvistBrevUtleder: EFAvvistBrevInnholdUtleder,
 ) : OppslagSpringRunnerTest() {
     @Test
     fun `skal hente EFAvvistBrevUtleder dersom fagsystem er EF`() {

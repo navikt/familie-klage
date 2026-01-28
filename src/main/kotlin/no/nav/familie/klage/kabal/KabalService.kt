@@ -10,8 +10,8 @@ import no.nav.familie.klage.kabal.domain.OversendtKlageAnke
 import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV3
 import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV4
 import no.nav.familie.klage.vurdering.domain.Vurdering
-import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Fagsystem.BA
+import no.nav.familie.kontrakter.felles.klage.Fagsystem.EF
 import no.nav.familie.kontrakter.felles.klage.Fagsystem.KS
 import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import org.springframework.stereotype.Service
@@ -67,9 +67,9 @@ class KabalService(
     ): String {
         val fagsystemUrl =
             when (fagsak.fagsystem) {
-                Fagsystem.EF -> lenkeConfig.efSakLenke
-                Fagsystem.BA -> lenkeConfig.baSakLenke
-                Fagsystem.KS -> lenkeConfig.ksSakLenke
+                EF -> lenkeConfig.efSakLenke
+                BA -> lenkeConfig.baSakLenke
+                KS -> lenkeConfig.ksSakLenke
             }
         val påklagetVedtakDetaljer = påklagetVedtak.påklagetVedtakDetaljer
         return if (påklagetVedtakDetaljer != null &&

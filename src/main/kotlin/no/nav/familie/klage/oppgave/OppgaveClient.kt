@@ -24,7 +24,7 @@ import java.net.URI
 @Component
 class OppgaveClient(
     @Qualifier("azure") restOperations: RestOperations,
-    private val integrasjonerConfig: IntegrasjonerConfig,
+    integrasjonerConfig: IntegrasjonerConfig,
 ) : AbstractPingableRestClient(restOperations, "oppgave") {
     override val pingUri: URI = integrasjonerConfig.pingUri
     private val oppgaveUri: URI = integrasjonerConfig.oppgaveUri

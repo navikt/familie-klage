@@ -9,7 +9,6 @@ import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.tilYtelse
-import no.nav.familie.klage.kabal.KabalHjemmel
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
 import java.time.LocalDate
@@ -113,6 +112,7 @@ data class OversendtKlageAnkeV4(
     }
 }
 
+@Suppress("unused")
 enum class OversendtType {
     KLAGE,
     ANKE,
