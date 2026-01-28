@@ -6,6 +6,7 @@ import io.mockk.slot
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brevmottaker.BrevmottakerUtleder
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
@@ -313,7 +314,8 @@ class BrevServiceTest {
 
             val bruker = DomainUtil.lagNyBrevmottakerPersonMedIdent(mottakerRolle = MottakerRolle.BRUKER)
             val verge = DomainUtil.lagNyBrevmottakerPersonUtenIdent(mottakerRolle = MottakerRolle.VERGE)
-            val nyeBrevmottakere = listOf(bruker, verge)
+            val organisasjon = DomainUtil.lagNyBrevmottakerOrganisasjon()
+            val nyeBrevmottakere = listOf(bruker, verge, organisasjon)
 
             val initielleBrevmottakere =
                 DomainUtil.lagBrevmottakere(
@@ -387,7 +389,17 @@ class BrevServiceTest {
                 assertThat(it.postnummer).isEqualTo(verge.postnummer)
                 assertThat(it.landkode).isEqualTo(verge.landkode)
             }
-            assertThat(brevSlot.captured.mottakere?.organisasjoner).isEmpty()
+            assertThat(brevSlot.captured.mottakere?.organisasjoner).hasSize(1)
+            assertThat(
+                brevSlot.captured.mottakere
+                    ?.organisasjoner
+                    ?.get(0),
+            ).isInstanceOfSatisfying(BrevmottakerOrganisasjon::class.java) {
+                assertThat(it.organisasjonsnummer).isEqualTo(organisasjon.organisasjonsnummer)
+                assertThat(it.organisasjonsnavn).isEqualTo(organisasjon.organisasjonsnavn)
+                assertThat(it.navnHosOrganisasjon).isEqualTo(organisasjon.navnHosOrganisasjon)
+                assertThat(it.mottakerRolle).isEqualTo(organisasjon.mottakerRolle)
+            }
             assertThat(brevSlot.captured.mottakereJournalposter).isNull()
             assertThat(brevSlot.captured.sporbar).isNotNull()
             assertThat(taskSlot.isCaptured).isTrue()

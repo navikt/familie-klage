@@ -3,6 +3,7 @@ package no.nav.familie.klage.institusjon
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
+import no.nav.familie.klage.testutil.DomainUtil.lagInstitusjon
 import no.nav.familie.kontrakter.felles.organisasjon.Organisasjon
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -25,11 +26,7 @@ class InstitusjonServiceTest {
         @Test
         fun `skal hente allerde eksistrende institusjon`() {
             // Arrange
-            val lagretInstitusjon =
-                Institusjon(
-                    orgNummer = "123456789",
-                    navn = "Navn",
-                )
+            val lagretInstitusjon = lagInstitusjon()
 
             every { institusjonRepository.finnInstitusjon(lagretInstitusjon.orgNummer) } returns lagretInstitusjon
 
@@ -68,12 +65,7 @@ class InstitusjonServiceTest {
         @Test
         fun `skal finne institusjon med id`() {
             // Arrange
-            val lagretInstitusjon =
-                Institusjon(
-                    id = UUID.randomUUID(),
-                    orgNummer = "123456789",
-                    navn = "navn",
-                )
+            val lagretInstitusjon = lagInstitusjon()
 
             every { institusjonRepository.findById(lagretInstitusjon.id) } returns Optional.of(lagretInstitusjon)
 

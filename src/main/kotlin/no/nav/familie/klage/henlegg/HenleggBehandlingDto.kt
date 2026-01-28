@@ -2,7 +2,6 @@ package no.nav.familie.klage.henlegg
 
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.brevmottaker.dto.NyBrevmottakerDto
-import no.nav.familie.klage.brevmottaker.dto.NyBrevmottakerPersonDto
 import no.nav.familie.klage.brevmottaker.dto.NyBrevmottakerPersonMedIdentDto
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.exception.Feil
@@ -11,7 +10,7 @@ import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 data class HenleggBehandlingDto(
     val årsak: HenlagtÅrsak,
     val skalSendeHenleggelsesbrev: Boolean = false,
-    val nyeBrevmottakere: List<NyBrevmottakerPersonDto> = emptyList(),
+    val nyeBrevmottakere: List<NyBrevmottakerDto> = emptyList(),
 ) {
     fun valider() {
         if (årsak == HenlagtÅrsak.FEILREGISTRERT && skalSendeHenleggelsesbrev) {
@@ -30,7 +29,7 @@ data class HenleggBehandlingDto(
             throw ApiFeil.badRequest("Forventer ingen duplikate mottaker roller.")
         }
 
-        val mottakerRoller = nyeBrevmottakere.map { it.mottakerRolle }
+        val mottakerRoller = nyeBrevmottakere.mapNotNull { it.mottakerRolle }
         if (mottakerRoller.containsAll(setOf(MottakerRolle.BRUKER, MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE))) {
             throw ApiFeil.badRequest("${MottakerRolle.BRUKER} kan ikke kombineres med ${MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE}.")
         }

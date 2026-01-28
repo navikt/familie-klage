@@ -9,13 +9,13 @@ import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
-import no.nav.familie.klage.institusjon.Institusjon
 import no.nav.familie.klage.institusjon.InstitusjonService
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.klage.personopplysninger.pdl.PdlIdent
 import no.nav.familie.klage.personopplysninger.pdl.PdlIdenter
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
+import no.nav.familie.klage.testutil.DomainUtil.lagInstitusjon
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.assertj.core.api.Assertions.assertThat
@@ -68,11 +68,7 @@ class FagsakServiceTest {
                     opprettetTid = LocalDateTime.now(),
                 )
 
-            val institusjon =
-                Institusjon(
-                    orgNummer = orgNummer,
-                    navn = "navn",
-                )
+            val institusjon = lagInstitusjon(orgNummer = orgNummer)
 
             every {
                 pdlClient.hentPersonidenter(ident, stønadstype, true)

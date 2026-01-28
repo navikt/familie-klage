@@ -31,6 +31,7 @@ import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
 import no.nav.familie.klage.infrastruktur.config.DatabaseConfiguration
+import no.nav.familie.klage.institusjon.Institusjon
 import no.nav.familie.klage.kabal.domain.KlageinstansResultat
 import no.nav.familie.klage.personopplysninger.dto.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.dto.Folkeregisterpersonstatus
@@ -189,23 +190,26 @@ object DomainUtil {
 
     fun fagsak(
         identer: Set<PersonIdent> = defaultIdenter,
+        institusjon: Institusjon? = null,
         stønadstype: Stønadstype = Stønadstype.OVERGANGSSTØNAD,
         id: UUID = UUID.randomUUID(),
         sporbar: Sporbar = Sporbar(),
         fagsakPersonId: UUID = UUID.randomUUID(),
         eksternId: String = UUID.randomUUID().toString(),
-    ): Fagsak = fagsak(stønadstype, id, FagsakPerson(id = fagsakPersonId, identer = identer), sporbar, eksternId)
+    ): Fagsak = fagsak(stønadstype, id, FagsakPerson(id = fagsakPersonId, identer = identer), institusjon, sporbar, eksternId)
 
     fun fagsak(
         stønadstype: Stønadstype = Stønadstype.OVERGANGSSTØNAD,
         id: UUID = UUID.randomUUID(),
         person: FagsakPerson,
+        institusjon: Institusjon? = null,
         sporbar: Sporbar = Sporbar(),
         eksternId: String = UUID.randomUUID().toString(),
     ): Fagsak =
         Fagsak(
             id = id,
             fagsakPersonId = person.id,
+            institusjon = institusjon,
             personIdenter = person.identer,
             stønadstype = stønadstype,
             sporbar = sporbar,
@@ -368,13 +372,13 @@ object DomainUtil {
     ): BrevmottakerPersonUtenIdent =
         BrevmottakerPersonUtenIdent(
             id,
-            mottakerRolle,
-            navn,
             adresselinje1,
             adresselinje2,
             postnummer,
             poststed,
             landkode,
+            navn,
+            mottakerRolle,
         )
 
     fun lagBrevmottakerPersonMedIdent(
@@ -384,8 +388,8 @@ object DomainUtil {
     ): BrevmottakerPersonMedIdent =
         BrevmottakerPersonMedIdent(
             personIdent,
-            mottakerRolle,
             navn,
+            mottakerRolle,
         )
 
     fun lagBrevmottakere(
@@ -440,8 +444,8 @@ object DomainUtil {
     ): NyBrevmottakerPersonMedIdent =
         NyBrevmottakerPersonMedIdent(
             personIdent,
-            mottakerRolle,
             navn,
+            mottakerRolle,
         )
 
     fun lagNyBrevmottakerOrganisasjon(
@@ -483,5 +487,15 @@ object DomainUtil {
             opprettetAv = opprettetAv,
             endretTid = endretTid,
             beskrivelse = beskrivelse,
+        )
+
+    fun lagInstitusjon(
+        navn: String = "Institusjon AS",
+        orgNummer: String = "999888777",
+    ): Institusjon =
+        Institusjon(
+            id = UUID.randomUUID(),
+            navn = navn,
+            orgNummer = orgNummer,
         )
 }

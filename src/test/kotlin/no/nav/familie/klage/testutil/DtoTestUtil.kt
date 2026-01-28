@@ -63,11 +63,13 @@ object DtoTestUtil {
         organisasjonsnummer: String = "123",
         organisasjonsnavn: String = "Orgnavn",
         navnHosOrganisasjon: String = "navnHosOrganisasjon",
+        mottakerRolle: MottakerRolle? = MottakerRolle.FULLMAKT,
     ): NyBrevmottakerOrganisasjonDto =
         NyBrevmottakerOrganisasjonDto(
             organisasjonsnummer = organisasjonsnummer,
             organisasjonsnavn = organisasjonsnavn,
             navnHosOrganisasjon = navnHosOrganisasjon,
+            mottakerRolle = mottakerRolle,
         )
 
     fun lagSlettbarBrevmottakerPersonUtenIdentDto(id: UUID = UUID.randomUUID()): SlettbarBrevmottakerPersonUtenIdentDto =

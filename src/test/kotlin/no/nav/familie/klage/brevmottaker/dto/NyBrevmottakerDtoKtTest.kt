@@ -11,7 +11,11 @@ import no.nav.familie.klage.testutil.DtoTestUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
+import org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE
 import org.springframework.http.HttpStatus
 
 class NyBrevmottakerDtoKtTest {
@@ -161,6 +165,41 @@ class NyBrevmottakerDtoKtTest {
             assertThat(nyBrevmottakerOrganisasjon.organisasjonsnavn).isEqualTo(nyBrevmottakerOrganisasjonDto.organisasjonsnavn)
             assertThat(nyBrevmottakerOrganisasjon.navnHosOrganisasjon).isEqualTo(nyBrevmottakerOrganisasjonDto.navnHosOrganisasjon)
         }
+
+        @ParameterizedTest
+        @EnumSource(value = MottakerRolle::class, names = ["INSTITUSJON", "FULLMAKT"], mode = EXCLUDE)
+        fun `skal kaste feil hvis mottakerrolle er ugyldig`(
+            mottakerRolle: MottakerRolle,
+        ) {
+            // Arrange
+            val dto =
+                DtoTestUtil.lagNyBrevmottakerOrganisasjonDto(
+                    organisasjonsnummer = "123",
+                    organisasjonsnavn = "orgnavn",
+                    navnHosOrganisasjon = "navn hos org",
+                    mottakerRolle = mottakerRolle,
+                )
+
+            // Act & Assert
+            val exception = assertThrows<ApiFeil> { dto.valider() }
+            assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
+            assertThat(exception.message).isEqualTo("Organisasjon må ha mottakerrolle INSTITUSJON eller FULLMAKT.")
+        }
+    }
+
+    @Test
+    fun `skal ikke kaste feil hvis mottakerrolle er null`() {
+        // Arrange
+        val dto =
+            DtoTestUtil.lagNyBrevmottakerOrganisasjonDto(
+                organisasjonsnummer = "123",
+                organisasjonsnavn = "orgnavn",
+                navnHosOrganisasjon = "navn hos org",
+                mottakerRolle = null,
+            )
+
+        // Act & Assert
+        assertDoesNotThrow { dto.valider() }
     }
 
     @Nested

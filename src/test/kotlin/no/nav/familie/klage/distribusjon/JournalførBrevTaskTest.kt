@@ -19,9 +19,13 @@ import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpost
 import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpostMedIdent
 import no.nav.familie.klage.distribusjon.domain.BrevmottakerJournalpostUtenIdent
+import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.domain.Fil
+import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.testutil.DomainUtil
+import no.nav.familie.klage.testutil.DomainUtil.fagsak
+import no.nav.familie.klage.testutil.DomainUtil.lagInstitusjon
 import no.nav.familie.kontrakter.felles.dokarkiv.AvsenderMottaker
 import no.nav.familie.kontrakter.felles.journalpost.AvsenderMottakerIdType
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
@@ -32,6 +36,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.util.Properties
 import java.util.UUID
 
@@ -40,6 +45,7 @@ internal class JournalførBrevTaskTest {
     val taskService = mockk<TaskService>()
     val distribusjonService = mockk<DistribusjonService>()
     val brevService = mockk<BrevService>()
+    val fagsakService = mockk<FagsakService>()
 
     val journalførBrevTask =
         JournalførBrevTask(
@@ -47,6 +53,7 @@ internal class JournalførBrevTaskTest {
             taskService = taskService,
             behandlingService = behandlingService,
             brevService = brevService,
+            fagsakService = fagsakService,
         )
 
     val behandlingId = UUID.randomUUID()
@@ -63,12 +70,13 @@ internal class JournalførBrevTaskTest {
     internal fun setUp() {
         mockkObject(SikkerhetContext)
         every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler"
-        every { behandlingService.hentAktivIdent(behandlingId) } returns Pair("ident", DomainUtil.fagsak())
+        every { behandlingService.hentAktivIdent(behandlingId) } returns Pair("ident", fagsak())
         justRun { brevService.oppdaterMottakerJournalpost(any(), capture(slotBrevmottakereJournalposter)) }
         every { taskService.save(capture(slotSaveTask)) } answers { firstArg() }
         every {
             distribusjonService.journalførBrev(any(), any(), any(), any(), any())
         } answers { "journalpostId-${(it.invocation.args[3] as Int)}" }
+        every { fagsakService.hentFagsakForBehandling(any()) } returns fagsak()
     }
 
     @AfterEach
@@ -124,8 +132,8 @@ internal class JournalførBrevTaskTest {
         val brevmottakere =
             Brevmottakere(
                 listOf(
-                    BrevmottakerPersonMedIdent("1", MottakerRolle.BRUKER, "1navn"),
-                    BrevmottakerPersonMedIdent("2", MottakerRolle.FULLMAKT, "2navn"),
+                    BrevmottakerPersonMedIdent("1", "1navn", MottakerRolle.BRUKER),
+                    BrevmottakerPersonMedIdent("2", "2navn", MottakerRolle.FULLMAKT),
                     brevmottakerUtenIdent,
                 ),
                 listOf(BrevmottakerOrganisasjon("org1", "orgnavn", "mottaker")),
@@ -197,6 +205,74 @@ internal class JournalførBrevTaskTest {
             )
         }
 
+        @Test
+        internal fun `skal bruke organisasjonsnavn hvis navnHosOrganisasjon er null`() {
+            val brevmottakereMedNullNavnOrganisasjon =
+                Brevmottakere(
+                    listOf(BrevmottakerPersonMedIdent("1", "1navn", MottakerRolle.BRUKER)),
+                    listOf(BrevmottakerOrganisasjon("org1", "orgnavn", null)),
+                )
+            val avsenderMottakerOrganisasjonMedNavn =
+                AvsenderMottaker("org1", AvsenderMottakerIdType.ORGNR, "orgnavn")
+
+            mockHentBrev(mottakere = brevmottakereMedNullNavnOrganisasjon)
+
+            runTask()
+
+            verifyJournalførtBrev(2)
+            verifyOrder {
+                distribusjonService.journalførBrev(behandlingId, any(), any(), 0, avsenderMottaker1)
+                distribusjonService.journalførBrev(behandlingId, any(), any(), 1, avsenderMottakerOrganisasjonMedNavn)
+            }
+
+            validerLagringAvBrevmottakereJournalposter(slotBrevmottakereJournalposter[1].journalposter, listOf(avsenderMottaker1, avsenderMottakerOrganisasjonMedNavn))
+        }
+
+        @Test
+        internal fun `skal kaste feil hvis institusjon ikke er brevmottaker i en institusjonssak`() {
+            val brevmottakereMedInstitusjonOgBruker =
+                Brevmottakere(
+                    listOf(BrevmottakerPersonMedIdent("1", "1navn", MottakerRolle.BRUKER)),
+                )
+
+            every { fagsakService.hentFagsakForBehandling(behandlingId) } returns fagsak(institusjon = lagInstitusjon())
+
+            mockHentBrev(mottakere = brevmottakereMedInstitusjonOgBruker)
+
+            val feil =
+                assertThrows<Feil> {
+                    runTask()
+                }
+
+            assertThat(feil.message).isEqualTo("I institusjonssaker skal én brevmottaker ha rollen ${MottakerRolle.INSTITUSJON}")
+            verify(exactly = 0) {
+                distribusjonService.journalførBrev(any(), any(), any(), any(), any())
+            }
+        }
+
+        @Test
+        internal fun `skal kaste feil hvis en brevmottaker har en annen rolle enn INSTITUSJON eller FULLMAKT i en institusjonssak`() {
+            val brevmottakereMedInstitusjonOgBruker =
+                Brevmottakere(
+                    listOf(BrevmottakerPersonMedIdent("1", "1navn", MottakerRolle.BRUKER)),
+                    listOf(BrevmottakerOrganisasjon("org1", "orgnavn", null, MottakerRolle.INSTITUSJON)),
+                )
+
+            every { fagsakService.hentFagsakForBehandling(behandlingId) } returns fagsak(institusjon = lagInstitusjon())
+
+            mockHentBrev(mottakere = brevmottakereMedInstitusjonOgBruker)
+
+            val feil =
+                assertThrows<Feil> {
+                    runTask()
+                }
+
+            assertThat(feil.message).isEqualTo("I institusjonssaker kan brevmottakere kun ha rollene ${MottakerRolle.INSTITUSJON} og ${MottakerRolle.FULLMAKT}")
+            verify(exactly = 0) {
+                distribusjonService.journalførBrev(any(), any(), any(), any(), any())
+            }
+        }
+
         private fun verifyJournalførtBrev(antallGanger: Int) {
             verify(exactly = antallGanger) {
                 distribusjonService.journalførBrev(behandlingId, any(), any(), any(), any())
@@ -229,7 +305,7 @@ internal class JournalførBrevTaskTest {
         @Test
         fun `skal opprette task`() {
             // Arrange
-            val fagsak = DomainUtil.fagsak()
+            val fagsak = fagsak()
             val behandling = DomainUtil.behandling(fagsak)
 
             // Act
