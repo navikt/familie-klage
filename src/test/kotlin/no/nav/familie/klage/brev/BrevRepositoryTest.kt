@@ -64,7 +64,7 @@ internal class BrevRepositoryTest : OppslagSpringRunnerTest() {
                 Brevmottakere(
                     personer =
                         listOf(
-                            BrevmottakerPersonMedIdent("ident", MottakerRolle.BRUKER, "navn"),
+                            BrevmottakerPersonMedIdent("ident", "navn", MottakerRolle.BRUKER),
                             BrevmottakerPersonUtenIdent(
                                 id = UUID.randomUUID(),
                                 mottakerRolle = MottakerRolle.BRUKER,

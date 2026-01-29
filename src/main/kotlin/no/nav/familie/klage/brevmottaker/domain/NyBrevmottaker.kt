@@ -2,21 +2,23 @@ package no.nav.familie.klage.brevmottaker.domain
 
 private const val LANDKODE_NO = "NO"
 
-sealed interface NyBrevmottaker
+sealed interface NyBrevmottaker {
+    val mottakerRolle: MottakerRolle?
+}
 
 sealed interface NyBrevmottakerPerson : NyBrevmottaker {
-    val mottakerRolle: MottakerRolle
     val navn: String
+    override val mottakerRolle: MottakerRolle
 }
 
 data class NyBrevmottakerPersonUtenIdent(
-    override val mottakerRolle: MottakerRolle,
-    override val navn: String,
     val adresselinje1: String,
     val adresselinje2: String? = null,
     val postnummer: String?,
     val poststed: String?,
     val landkode: String,
+    override val navn: String,
+    override val mottakerRolle: MottakerRolle,
 ) : NyBrevmottakerPerson {
     init {
         require(landkode.length == 2) { "Ugyldig landkode: $landkode." }
@@ -36,8 +38,8 @@ data class NyBrevmottakerPersonUtenIdent(
 
 data class NyBrevmottakerPersonMedIdent(
     val personIdent: String,
-    override val mottakerRolle: MottakerRolle,
     override val navn: String,
+    override val mottakerRolle: MottakerRolle,
 ) : NyBrevmottakerPerson {
     init {
         require(personIdent.isNotBlank()) { "Personident kan ikke være blank." }
@@ -48,5 +50,6 @@ data class NyBrevmottakerPersonMedIdent(
 data class NyBrevmottakerOrganisasjon(
     val organisasjonsnummer: String,
     val organisasjonsnavn: String,
-    val navnHosOrganisasjon: String,
+    val navnHosOrganisasjon: String? = null,
+    override val mottakerRolle: MottakerRolle? = null,
 ) : NyBrevmottaker

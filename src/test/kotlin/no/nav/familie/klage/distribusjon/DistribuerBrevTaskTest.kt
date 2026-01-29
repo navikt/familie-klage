@@ -196,7 +196,7 @@ class DistribuerBrevTaskTest {
     ) = BrevmottakerJournalpostUtenIdent(idForPersonUtenIdent, journalpostId, distribusjonId = distribusjonId)
 
     private val personMedIdent =
-        BrevmottakerPersonMedIdent(identForPersonMedIdent, MottakerRolle.BRUKER, "Navn Navnesen")
+        BrevmottakerPersonMedIdent(identForPersonMedIdent, "Navn Navnesen", MottakerRolle.BRUKER)
 
     private val personUtenIdent =
         BrevmottakerPersonUtenIdent(

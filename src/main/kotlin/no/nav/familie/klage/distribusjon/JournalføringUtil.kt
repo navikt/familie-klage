@@ -15,7 +15,7 @@ object JournalføringUtil {
             is BrevmottakerOrganisasjon -> {
                 AvsenderMottaker(
                     id = brevmottaker.organisasjonsnummer,
-                    navn = brevmottaker.navnHosOrganisasjon,
+                    navn = brevmottaker.navnHosOrganisasjon ?: brevmottaker.organisasjonsnavn,
                     idType = AvsenderMottakerIdType.ORGNR,
                 )
             }

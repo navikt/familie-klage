@@ -3,6 +3,8 @@ package no.nav.familie.klage.brevmottaker
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.FULLMAKT
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.INSTITUSJON
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvisIkke
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import java.util.UUID
@@ -43,6 +45,24 @@ object BrevmottakerUtil {
     ) {
         feilHvis(brevmottakere.personer.isEmpty() && brevmottakere.organisasjoner.isEmpty()) {
             "Må ha minimum en brevmottaker for behandling $behandlingId."
+        }
+    }
+
+    fun validerBrevmottakerForInstitusjonssak(mottakere: Brevmottakere) {
+        validerAtInstitusjonErBrevmottaker(mottakere)
+        validerAtBareInstitusjonOgFullmaktErBrevmottaker(mottakere)
+    }
+
+    private fun validerAtInstitusjonErBrevmottaker(mottakere: Brevmottakere) {
+        feilHvis(mottakere.organisasjoner.none { it.mottakerRolle == INSTITUSJON }) {
+            "I institusjonssaker skal én brevmottaker ha rollen $INSTITUSJON"
+        }
+    }
+
+    private fun validerAtBareInstitusjonOgFullmaktErBrevmottaker(mottakere: Brevmottakere) {
+        val harUgyldigBrevmottaker = mottakere.tilListe().any { it.mottakerRolle !in setOf(INSTITUSJON, FULLMAKT) }
+        feilHvis(harUgyldigBrevmottaker) {
+            "I institusjonssaker kan brevmottakere kun ha rollene $INSTITUSJON og $FULLMAKT"
         }
     }
 }

@@ -22,6 +22,8 @@ data class Fagsak(
     val sporbar: Sporbar,
 ) {
     fun hentAktivIdent(): String = personIdenter.maxByOrNull { it.sporbar.endret.endretTid }?.ident ?: error("Fant ingen ident på fagsak $id")
+
+    fun erInstitusjonssak(): Boolean = institusjon != null
 }
 
 @Table("fagsak")

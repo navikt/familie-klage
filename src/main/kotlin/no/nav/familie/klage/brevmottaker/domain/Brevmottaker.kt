@@ -8,12 +8,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
 import java.util.UUID
 
-sealed interface Brevmottaker
+sealed interface Brevmottaker {
+    val mottakerRolle: MottakerRolle?
+}
 
 @JsonDeserialize(using = BrevmottakerPersonDeserializer::class)
 sealed interface BrevmottakerPerson : Brevmottaker {
     val navn: String
-    val mottakerRolle: MottakerRolle
+    override val mottakerRolle: MottakerRolle
 
     companion object {
         fun opprettFra(nyBrevmottakerPerson: NyBrevmottakerPerson): BrevmottakerPerson =
@@ -27,15 +29,25 @@ sealed interface BrevmottakerPerson : Brevmottaker {
 data class BrevmottakerOrganisasjon(
     val organisasjonsnummer: String,
     val organisasjonsnavn: String,
-    val navnHosOrganisasjon: String,
-    val mottakerRolle: MottakerRolle? = null,
-) : Brevmottaker
+    val navnHosOrganisasjon: String? = null,
+    override val mottakerRolle: MottakerRolle? = null,
+) : Brevmottaker {
+    companion object {
+        fun opprettFra(nyBrevmottakerOrganisasjon: NyBrevmottakerOrganisasjon): BrevmottakerOrganisasjon =
+            BrevmottakerOrganisasjon(
+                organisasjonsnummer = nyBrevmottakerOrganisasjon.organisasjonsnummer,
+                organisasjonsnavn = nyBrevmottakerOrganisasjon.organisasjonsnavn,
+                navnHosOrganisasjon = nyBrevmottakerOrganisasjon.navnHosOrganisasjon,
+                mottakerRolle = nyBrevmottakerOrganisasjon.mottakerRolle,
+            )
+    }
+}
 
 @JsonDeserialize(`as` = BrevmottakerPersonMedIdent::class)
 data class BrevmottakerPersonMedIdent(
     val personIdent: String,
-    override val mottakerRolle: MottakerRolle,
     override val navn: String,
+    override val mottakerRolle: MottakerRolle,
 ) : BrevmottakerPerson {
     companion object {
         fun opprettFra(
@@ -52,13 +64,13 @@ data class BrevmottakerPersonMedIdent(
 @JsonDeserialize(`as` = BrevmottakerPersonUtenIdent::class)
 data class BrevmottakerPersonUtenIdent(
     val id: UUID = UUID.randomUUID(),
-    override val mottakerRolle: MottakerRolle,
-    override val navn: String,
     val adresselinje1: String,
     val adresselinje2: String?,
     val postnummer: String?,
     val poststed: String?,
     val landkode: String,
+    override val navn: String,
+    override val mottakerRolle: MottakerRolle,
 ) : BrevmottakerPerson {
     companion object {
         fun opprettFra(

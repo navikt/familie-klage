@@ -4,11 +4,17 @@ import io.mockk.every
 import io.mockk.mockk
 import no.nav.familie.klage.brevmottaker.BrevmottakerService
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
+import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.testutil.DomainUtil
+import no.nav.familie.klage.testutil.DomainUtil.fagsak
+import no.nav.familie.klage.testutil.DomainUtil.lagInstitusjon
 import no.nav.familie.klage.testutil.DtoTestUtil
+import no.nav.familie.klage.testutil.DtoTestUtil.lagNyBrevmottakerOrganisasjonDto
+import no.nav.familie.klage.testutil.DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto
 import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -17,7 +23,13 @@ import java.util.UUID
 
 class HenleggBehandlingValidatorTest {
     private val brevmottakerService = mockk<BrevmottakerService>()
-    private val henleggBehandlingValidator = HenleggBehandlingValidator(brevmottakerService = brevmottakerService)
+    private val fagsakService = mockk<FagsakService>()
+    private val henleggBehandlingValidator = HenleggBehandlingValidator(brevmottakerService = brevmottakerService, fagsakService = fagsakService)
+
+    @BeforeEach
+    fun setup() {
+        every { fagsakService.hentFagsakForBehandling(any()) } returns fagsak()
+    }
 
     @Nested
     inner class ValiderHenleggBehandlingDto {
@@ -27,7 +39,7 @@ class HenleggBehandlingValidatorTest {
             val behandlingId = UUID.randomUUID()
 
             val brukerFraDto =
-                DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto(
+                lagNyBrevmottakerPersonMedIdentDto(
                     personIdent = "1",
                     mottakerRolle = MottakerRolle.BRUKER,
                     navn = "navn",
@@ -105,7 +117,7 @@ class HenleggBehandlingValidatorTest {
             val behandlingId = UUID.randomUUID()
 
             val brukerFraDto =
-                DtoTestUtil.lagNyBrevmottakerPersonMedIdentDto(
+                lagNyBrevmottakerPersonMedIdentDto(
                     personIdent = "1",
                     mottakerRolle = MottakerRolle.BRUKER,
                     navn = "navn",
@@ -136,6 +148,33 @@ class HenleggBehandlingValidatorTest {
                     henleggBehandlingValidator.validerHenleggBehandlingDto(behandlingId, henleggBehandlingDto)
                 }
             assertThat(exception.message).isEqualTo("Innsendt bruker samsvarer ikke med bruker utledet fra behandlingen.")
+        }
+
+        @Test
+        fun `skal kaste exception om institusjonssak har ugyldig brevmottaker`() {
+            // Arrange
+            val behandlingId = UUID.randomUUID()
+
+            val henleggBehandlingDto =
+                HenleggBehandlingDto(
+                    årsak = HenlagtÅrsak.TRUKKET_TILBAKE,
+                    skalSendeHenleggelsesbrev = true,
+                    nyeBrevmottakere =
+                        listOf(
+                            lagNyBrevmottakerPersonMedIdentDto(mottakerRolle = MottakerRolle.BRUKER),
+                            lagNyBrevmottakerOrganisasjonDto(mottakerRolle = MottakerRolle.INSTITUSJON),
+                        ),
+                )
+
+            every { fagsakService.hentFagsakForBehandling(behandlingId) } returns
+                fagsak(institusjon = lagInstitusjon())
+
+            // Act & assert
+            val exception =
+                assertThrows<ApiFeil> {
+                    henleggBehandlingValidator.validerHenleggBehandlingDto(behandlingId, henleggBehandlingDto)
+                }
+            assertThat(exception.message).isEqualTo("I institusjonssaker kan brevmottakere kun ha rollene ${MottakerRolle.INSTITUSJON} og ${MottakerRolle.FULLMAKT}")
         }
     }
 }
