@@ -9,6 +9,7 @@ import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype.VEDTAK
 import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandling.domain.harManuellVedtaksdato
 import no.nav.familie.klage.fagsak.domain.Fagsak
+import no.nav.familie.klage.institusjon.Institusjon
 import no.nav.familie.kontrakter.felles.Regelverk
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
@@ -39,6 +40,7 @@ data class BehandlingDto(
     val fagsystemRevurdering: FagsystemRevurdering?,
     val årsak: Klagebehandlingsårsak,
     val behandlendeEnhet: String,
+    val institusjon: Institusjon? = null,
 )
 
 /**
@@ -90,4 +92,5 @@ fun Behandling.tilDto(
         fagsystemRevurdering = this.fagsystemRevurdering,
         årsak = this.årsak,
         behandlendeEnhet = this.behandlendeEnhet,
+        institusjon = fagsak.institusjon,
     )
