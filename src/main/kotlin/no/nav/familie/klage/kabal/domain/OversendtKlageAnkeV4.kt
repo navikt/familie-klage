@@ -16,6 +16,7 @@ import java.time.LocalDate
 data class OversendtKlageAnkeV4(
     val type: OversendtType,
     val sakenGjelder: OversendtPartV4,
+    val klager: OversendtPartV4? = null,
     val prosessfullmektig: OversendtProsessfullmektigV4?,
     val fagsak: OversendtSak,
     val kildeReferanse: String,
@@ -46,6 +47,16 @@ data class OversendtKlageAnkeV4(
                                 verdi = fagsak.hentAktivIdent(),
                             ),
                     ),
+                klager =
+                    fagsak.institusjon?.let {
+                        OversendtPartV4(
+                            id =
+                                OversendtPartId(
+                                    type = OversendtPartIdType.VIRKSOMHET,
+                                    verdi = it.orgNummer,
+                                ),
+                        )
+                    },
                 prosessfullmektig = brevmottakere?.let { utledFullmektigFraBrevmottakere(brevmottakere) },
                 fagsak = OversendtSak(fagsakId = fagsak.eksternId, fagsystem = fagsak.fagsystem.tilFellesFagsystem()),
                 kildeReferanse = behandling.eksternBehandlingId.toString(),

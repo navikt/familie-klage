@@ -99,4 +99,5 @@ enum class MottakerRolle {
     BRUKER_MED_UTENLANDSK_ADRESSE,
     DØDSBO,
     MOTTAKER,
+    INSTITUSJON,
 }

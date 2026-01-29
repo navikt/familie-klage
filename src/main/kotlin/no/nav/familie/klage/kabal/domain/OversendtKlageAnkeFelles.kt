@@ -46,4 +46,4 @@ enum class Ytelse {
 fun utledFullmektigEllerVerge(brevmottakere: Brevmottakere) =
     brevmottakere.personer.firstOrNull { it.mottakerRolle == MottakerRolle.FULLMAKT }
         ?: brevmottakere.personer.firstOrNull { it.mottakerRolle == MottakerRolle.VERGE }
-        ?: brevmottakere.organisasjoner.firstOrNull()
+        ?: brevmottakere.organisasjoner.firstOrNull { it.mottakerRolle != MottakerRolle.INSTITUSJON }
