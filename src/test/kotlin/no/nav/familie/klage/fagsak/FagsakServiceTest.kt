@@ -180,6 +180,72 @@ class FagsakServiceTest {
             assertThat(opprettetFagsak.fagsystem).isEqualTo(fagsystem)
             assertThat(opprettetFagsak.sporbar).isNotNull()
         }
+
+        @Test
+        fun `skal kaste feil hvis en eksisterende fagsak mangler institusjon og man har sendt med orgnummer`() {
+            // Arrange
+            val ident = "12345678903"
+            val orgNummer = "123456789"
+            val stønadstype = Stønadstype.BARNETRYGD
+            val fagsystem = Fagsystem.BA
+            val eksternId = "123"
+
+            val fagsakPerson =
+                FagsakPerson(
+                    id = UUID.randomUUID(),
+                    identer = setOf(PersonIdent(ident)),
+                    opprettetAv = "A",
+                    opprettetTid = LocalDateTime.now(),
+                )
+
+            val institusjon = lagInstitusjon(orgNummer = orgNummer)
+
+            val fagsakDomain =
+                fagsakDomain(
+                    stønadstype = stønadstype,
+                    personId = fagsakPerson.id,
+                    fagsystem = fagsystem,
+                    eksternId = eksternId,
+                    institusjonId = null,
+                )
+
+            every {
+                pdlClient.hentPersonidenter(ident, stønadstype, true)
+            } returns PdlIdenter(listOf(PdlIdent(ident, false)))
+
+            every {
+                fagsakPersonService.hentEllerOpprettPerson(setOf(ident), ident)
+            } returns fagsakPerson
+
+            every {
+                fagsakPersonService.oppdaterIdent(fagsakPerson, ident)
+            } returns fagsakPerson
+
+            every {
+                institusjonService.hentEllerLagreInstitusjon(orgNummer)
+            } returns institusjon
+
+            every {
+                fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(eksternId, fagsystem, stønadstype)
+            } returns fagsakDomain
+
+            every {
+                fagsakRepository.insert(any())
+            } returnsArgument 0
+
+            // Act & assert
+            val exception =
+                assertThrows<Feil> {
+                    fagsakService.hentEllerOpprettFagsak(
+                        ident = ident,
+                        orgNummer = orgNummer,
+                        eksternId = eksternId,
+                        fagsystem = fagsystem,
+                        stønadstype = stønadstype,
+                    )
+                }
+            assertThat(exception.message).isEqualTo("Fagsak med eksternId=$eksternId finnes allerede, men ikke med institusjon=$orgNummer.")
+        }
     }
 
     @Nested
