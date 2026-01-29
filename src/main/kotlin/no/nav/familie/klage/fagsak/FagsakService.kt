@@ -4,14 +4,15 @@ import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.infrastruktur.exception.Feil
-import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
+import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.institusjon.Institusjon
 import no.nav.familie.klage.institusjon.InstitusjonService
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -24,6 +25,8 @@ class FagsakService(
     private val institusjonService: InstitusjonService,
     private val featureToggleService: FeatureToggleService,
 ) {
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     @Transactional
     fun hentEllerOpprettFagsak(
         ident: String,
@@ -44,9 +47,12 @@ class FagsakService(
                 null
             }
 
-        val fagsak =
-            fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(eksternId, fagsystem, stønadstype)
-                ?: opprettFagsak(stønadstype, eksternId, fagsystem, oppdatertPerson, institusjon)
+        val fagsakDomain = fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(eksternId, fagsystem, stønadstype)
+        if (fagsakDomain != null && fagsakDomain.institusjonId == null && orgNummer != null) {
+            logger.error("Fagsak med eksternId=$eksternId finnes allerede, men ikke med institusjon=$orgNummer.")
+            throw Feil("Fagsak med eksternId=$eksternId finnes allerede, men ikke med institusjon=$orgNummer.")
+        }
+        val fagsak = fagsakDomain ?: opprettFagsak(stønadstype, eksternId, fagsystem, oppdatertPerson, institusjon)
 
         return fagsak.tilFagsakMedPersonOgInstitusjon(oppdatertPerson.identer, institusjon)
     }

@@ -75,6 +75,7 @@ object DomainUtil {
         personId: UUID = UUID.randomUUID(),
         fagsystem: Fagsystem = Fagsystem.EF,
         eksternId: String = Random.nextInt().toString(),
+        institusjonId: UUID? = null,
     ): FagsakDomain =
         FagsakDomain(
             id = id,
@@ -82,6 +83,7 @@ object DomainUtil {
             stønadstype = stønadstype,
             eksternId = eksternId,
             fagsystem = fagsystem,
+            institusjonId = institusjonId,
         )
 
     fun FagsakDomain.tilFagsak(personIdent: String = "11223344551") = this.tilFagsakMedPersonOgInstitusjon(setOf(PersonIdent(ident = personIdent)))
