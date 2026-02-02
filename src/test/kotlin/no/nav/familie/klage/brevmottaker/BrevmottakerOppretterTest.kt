@@ -464,8 +464,11 @@ class BrevmottakerOppretterTest {
                 )
 
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
-            val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonMedIdent))
+            val brevmottakerOrganisasjon = DomainUtil.lagBrevmottakerOrganisasjon()
+            val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonMedIdent), organisasjoner = listOf(brevmottakerOrganisasjon))
             val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
+
+            val brevSlot = slot<Brev>()
 
             every {
                 behandlingService.hentBehandling(behandling.id)
@@ -484,7 +487,7 @@ class BrevmottakerOppretterTest {
             } returns DomainUtil.fagsak(identer = setOf(PersonIdent("01010199999")))
 
             every {
-                brevRepository.update(any())
+                brevRepository.update(capture(brevSlot))
             } returnsArgument 0
 
             // Act
@@ -505,6 +508,10 @@ class BrevmottakerOppretterTest {
                 assertThat(it.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
                 assertThat(it.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
             }
+
+            val capturedBrev = brevSlot.captured
+            assertThat(capturedBrev.mottakere?.organisasjoner).containsExactly(brevmottakerOrganisasjon)
+            assertThat(capturedBrev.mottakere?.personer?.filterIsInstance<BrevmottakerPersonMedIdent>()).containsExactly(brevmottakerPersonMedIdent)
         }
 
         @EnumSource(value = MottakerRolle::class)
