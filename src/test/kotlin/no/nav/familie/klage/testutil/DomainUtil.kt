@@ -454,22 +454,26 @@ object DomainUtil {
         organisasjonsnummer: String = "123",
         organisasjonsnavn: String = "Orgnavn",
         navnHosOrganisasjon: String = "navnHosOrganisasjon",
+        mottakerRolle: MottakerRolle? = MottakerRolle.FULLMAKT,
     ): NyBrevmottakerOrganisasjon =
         NyBrevmottakerOrganisasjon(
             organisasjonsnummer = organisasjonsnummer,
             organisasjonsnavn = organisasjonsnavn,
             navnHosOrganisasjon = navnHosOrganisasjon,
+            mottakerRolle = mottakerRolle,
         )
 
     fun lagBrevmottakerOrganisasjon(
         organisasjonsnummer: String = "123",
         organisasjonsnavn: String = "Orgnavn",
         navnHosOrganisasjon: String = "navnHosOrganisasjon",
+        mottakerRolle: MottakerRolle? = MottakerRolle.FULLMAKT,
     ): BrevmottakerOrganisasjon =
         BrevmottakerOrganisasjon(
             organisasjonsnummer = organisasjonsnummer,
             organisasjonsnavn = organisasjonsnavn,
             navnHosOrganisasjon = navnHosOrganisasjon,
+            mottakerRolle = mottakerRolle,
         )
 
     fun lagBehandlingshistorikk(

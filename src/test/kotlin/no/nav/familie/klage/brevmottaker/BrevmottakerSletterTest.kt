@@ -272,6 +272,7 @@ class BrevmottakerSletterTest {
                                         landkode = "DK",
                                     ),
                                 ),
+                            organisasjoner = listOf(DomainUtil.lagBrevmottakerOrganisasjon()),
                         ),
                 )
 
@@ -283,7 +284,7 @@ class BrevmottakerSletterTest {
             brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
 
             // Assert
-            assertThat(brevSlot.captured.mottakere?.organisasjoner).isEmpty()
+            assertThat(brevSlot.captured.mottakere?.organisasjoner).hasSize(1)
             assertThat(brevSlot.captured.mottakere?.personer).hasSize(2)
 
             val brevmottakerPersonUtenIdent =
