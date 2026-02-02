@@ -269,9 +269,9 @@ class BrevService(
             validerIkkeSendTrukketKlageBrevHvisVergemålEllerFullmakt(behandlingId)
         }
 
-        val html = lagHenleggelsesbrevHtml(behandlingId)
-        val pdf = familieDokumentClient.genererPdfFraHtml(html)
         val brevmottakere = Brevmottakere.opprettFra(nyeBrevmottakere)
+        val html = lagHenleggelsesbrevHtml(behandlingId, brevmottakere)
+        val pdf = familieDokumentClient.genererPdfFraHtml(html)
 
         val eksisterendeBrev = brevRepository.findByIdOrNull(behandlingId)
         if (eksisterendeBrev != null) {
@@ -296,14 +296,20 @@ class BrevService(
         taskService.save(JournalførBrevTask.opprettTask(fagsak, behandling))
     }
 
-    fun genererHenleggelsesbrev(behandlingId: UUID): ByteArray {
-        val html =
-            lagHenleggelsesbrevHtml(behandlingId)
+    fun genererHenleggelsesbrev(
+        behandlingId: UUID,
+        nyeBrevmottakere: List<NyBrevmottaker>,
+    ): ByteArray {
+        val brevmottakere = Brevmottakere.opprettFra(nyeBrevmottakere)
+        val html = lagHenleggelsesbrevHtml(behandlingId, brevmottakere)
 
         return familieDokumentClient.genererPdfFraHtml(html)
     }
 
-    private fun lagHenleggelsesbrevHtml(behandlingId: UUID): String {
+    private fun lagHenleggelsesbrevHtml(
+        behandlingId: UUID,
+        brevmottakere: Brevmottakere,
+    ): String {
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
         val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
@@ -314,7 +320,7 @@ class BrevService(
             when (stønadstype) {
                 Stønadstype.BARNETRYGD,
                 Stønadstype.KONTANTSTØTTE,
-                -> lagHenleggelsesbrevHtmlBaks(signaturMedEnhet, personopplysninger.navn, fagsak)
+                -> lagHenleggelsesbrevHtmlBaks(signaturMedEnhet, personopplysninger.navn, fagsak, brevmottakere)
 
                 Stønadstype.OVERGANGSSTØNAD,
                 Stønadstype.BARNETILSYN,
@@ -349,6 +355,7 @@ class BrevService(
         signaturMedEnhet: SignaturDto,
         navn: String,
         fagsak: Fagsak,
+        brevmottakere: Brevmottakere,
     ): String {
         val henleggelsesbrevInnhold =
             brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(
@@ -362,7 +369,7 @@ class BrevService(
             saksbehandlerNavn = signaturMedEnhet.navn,
             enhet = signaturMedEnhet.enhet,
             fagsystem = fagsak.fagsystem,
-            brevmottakere = null,
+            brevmottakere = brevmottakere,
         )
     }
 
