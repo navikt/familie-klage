@@ -1,7 +1,6 @@
 package no.nav.familie.klage.brevmottaker
 
 import no.nav.familie.klage.brevmottaker.domain.Brevmottaker
-import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonUtenIdent
@@ -13,9 +12,10 @@ object BrevmottakerOppretterValidator {
         brukerensNavn: String,
         behandlingId: UUID,
         nyBrevmottakerPersonUtenIdent: NyBrevmottakerPersonUtenIdent,
-        eksisterendeBrevmottakerePersonerUtenIdent: List<BrevmottakerPersonUtenIdent>,
+        eksisterendeBrevmottakere: List<Brevmottaker>,
     ) {
-        val eksisterendeMottakerRoller = eksisterendeBrevmottakerePersonerUtenIdent.map { it.mottakerRolle }
+        val manueltOpprettedeBrevmottakere = eksisterendeBrevmottakere.filter { it.mottakerRolle !in setOf(MottakerRolle.BRUKER, MottakerRolle.INSTITUSJON) }
+        val eksisterendeMottakerRoller = manueltOpprettedeBrevmottakere.mapNotNull { it.mottakerRolle }
         when {
             eksisterendeMottakerRoller.any { it == nyBrevmottakerPersonUtenIdent.mottakerRolle } -> {
                 throw Feil(
@@ -34,7 +34,7 @@ object BrevmottakerOppretterValidator {
             }
 
             nyBrevmottakerPersonUtenIdent.mottakerRolle == MottakerRolle.DØDSBO &&
-                eksisterendeBrevmottakerePersonerUtenIdent.isNotEmpty() -> {
+                manueltOpprettedeBrevmottakere.isNotEmpty() -> {
                 throw Feil("Kan ikke legge til dødsbo når det allerede finnes brevmottakere for $behandlingId.")
             }
 
