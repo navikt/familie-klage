@@ -1,7 +1,9 @@
 package no.nav.familie.klage.brevmottaker
 
+import no.nav.familie.klage.brevmottaker.domain.Brevmottaker
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
+import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import java.util.UUID
@@ -50,6 +52,29 @@ object BrevmottakerOppretterValidator {
                 MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE !in eksisterendeMottakerRoller &&
                 nyBrevmottakerPersonUtenIdent.mottakerRolle !== MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE -> {
                 throw Feil("Kan kun legge til bruker med utenlandsk adresse om det finnes en brevmottaker allerede for $behandlingId.")
+            }
+        }
+    }
+
+    fun validerNyBrevmottakerOrganisasjon(
+        behandlingId: UUID,
+        nyBrevmottakerOrganisasjon: NyBrevmottakerOrganisasjon,
+        eksisterendeBrevmottakere: List<Brevmottaker>,
+    ) {
+        val eksisterendeMottakerRoller = eksisterendeBrevmottakere.map { it.mottakerRolle }
+        when {
+            eksisterendeMottakerRoller.any { it == nyBrevmottakerOrganisasjon.mottakerRolle } -> {
+                throw Feil(
+                    "Kan ikke ha duplikate MottakerRolle. ${nyBrevmottakerOrganisasjon.mottakerRolle} finnes allerede for $behandlingId.",
+                )
+            }
+
+            nyBrevmottakerOrganisasjon.mottakerRolle != MottakerRolle.FULLMAKT -> {
+                throw Feil("Organisasjon kan kun ha mottakerrolle fullmakt for $behandlingId.")
+            }
+
+            eksisterendeMottakerRoller.any { it == MottakerRolle.INSTITUSJON } && eksisterendeBrevmottakere.size > 1 -> {
+                throw Feil("Kan kun ha én ekstra brevmottaker når institusjon er brevmottaker for $behandlingId.")
             }
         }
     }
