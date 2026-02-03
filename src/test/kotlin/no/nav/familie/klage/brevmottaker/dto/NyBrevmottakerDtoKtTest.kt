@@ -115,7 +115,7 @@ class NyBrevmottakerDtoKtTest {
             // Arrange
             val nyBrevmottakerDto =
                 DtoTestUtil.lagNyBrevmottakerOrganisasjonDto(
-                    organisasjonsnummer = "123",
+                    organisasjonsnummer = "310287849",
                     organisasjonsnavn = "organisasjonsnavn",
                     navnHosOrganisasjon = "navnHosOrganisasjon",
                 )
@@ -151,7 +151,7 @@ class NyBrevmottakerDtoKtTest {
             // Arrange
             val nyBrevmottakerOrganisasjonDto =
                 DtoTestUtil.lagNyBrevmottakerOrganisasjonDto(
-                    organisasjonsnummer = "123",
+                    organisasjonsnummer = "310287849",
                     organisasjonsnavn = "orgnavn",
                     navnHosOrganisasjon = "navn hos org",
                 )

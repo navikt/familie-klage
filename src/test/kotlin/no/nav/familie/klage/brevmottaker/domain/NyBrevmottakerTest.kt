@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 
 class NyBrevmottakerTest {
     @Nested
@@ -154,6 +156,18 @@ class NyBrevmottakerTest {
         }
 
         @Test
+        fun `skal kaste exception hvis mottakerrolle er institusjon`() {
+            // Act & assert
+            val exception =
+                assertThrows<IllegalArgumentException> {
+                    DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                        mottakerRolle = MottakerRolle.INSTITUSJON,
+                    )
+                }
+            assertThat(exception.message).isEqualTo("Institusjon kan ikke være mottakerrolle for brevmottakerperson uten ident.")
+        }
+
+        @Test
         fun `skal opprette ny brevmottaker med utenlandsk landekode`() {
             // Act
             val nyBrevmottaker =
@@ -233,6 +247,18 @@ class NyBrevmottakerTest {
         }
 
         @Test
+        fun `skal kaste exception hvis mottakerrolle er institusjon`() {
+            // Act & assert
+            val exception =
+                assertThrows<IllegalArgumentException> {
+                    DomainUtil.lagNyBrevmottakerPersonMedIdent(
+                        mottakerRolle = MottakerRolle.INSTITUSJON,
+                    )
+                }
+            assertThat(exception.message).isEqualTo("Institusjon kan ikke være mottakerrolle for brevmottakerperson med ident.")
+        }
+
+        @Test
         fun `skal ikke kaste exception ved oppretting`() {
             // Act & assert
             assertDoesNotThrow {
@@ -240,6 +266,66 @@ class NyBrevmottakerTest {
                     personIdent = "12345678903",
                     mottakerRolle = MottakerRolle.BRUKER,
                     navn = "Navn Navnesen",
+                )
+            }
+        }
+    }
+
+    @Nested
+    inner class NyBrevmottakerOrganisasjonTest {
+        @Test
+        fun `skal kaste exception om organisasjonsnummer er blank`() {
+            // Act & assert
+            val exception =
+                assertThrows<IllegalStateException> {
+                    NyBrevmottakerOrganisasjon(
+                        mottakerRolle = MottakerRolle.FULLMAKT,
+                        organisasjonsnummer = "",
+                        organisasjonsnavn = "Org Navn",
+                    )
+                }
+            assertThat(exception.message).isEqualTo("Ugyldig organisasjonsnummer: ")
+        }
+
+        @Test
+        fun `skal kaste exception om organisasjonsnavn er blank`() {
+            // Act & assert
+            val exception =
+                assertThrows<IllegalArgumentException> {
+                    NyBrevmottakerOrganisasjon(
+                        mottakerRolle = MottakerRolle.FULLMAKT,
+                        organisasjonsnummer = "310287849",
+                        organisasjonsnavn = "",
+                    )
+                }
+            assertThat(exception.message).isEqualTo("Organisasjonsnavn kan ikke være blank.")
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = MottakerRolle::class, names = ["INSTITUSJON", "FULLMAKT"], mode = EnumSource.Mode.EXCLUDE)
+        fun `skal kaste exception om mottakerrolle er ugyldig`(
+            ugyldigMottakerRolle: MottakerRolle,
+        ) {
+            // Act & assert
+            val exception =
+                assertThrows<IllegalArgumentException> {
+                    NyBrevmottakerOrganisasjon(
+                        mottakerRolle = ugyldigMottakerRolle,
+                        organisasjonsnummer = "310287849",
+                        organisasjonsnavn = "Org Navn",
+                    )
+                }
+            assertThat(exception.message).isEqualTo("Brevmottakerorganisasjon kan ikke ha mottakerrolle $ugyldigMottakerRolle.")
+        }
+
+        @Test
+        fun `skal ikke kaste exception ved oppretting`() {
+            // Act & assert
+            assertDoesNotThrow {
+                NyBrevmottakerOrganisasjon(
+                    mottakerRolle = MottakerRolle.FULLMAKT,
+                    organisasjonsnummer = "310287849",
+                    organisasjonsnavn = "Org Navn",
                 )
             }
         }
