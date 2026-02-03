@@ -4,8 +4,10 @@ import jakarta.transaction.Transactional
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brevmottaker.BrevmottakerOppretterValidator.validerNyBrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.BrevmottakerOppretterValidator.validerNyBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brevmottaker.domain.Brevmottaker
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
@@ -15,6 +17,9 @@ import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle.MANUELL_BREVMOTTAKER_ORGANISASJON
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -33,6 +38,7 @@ class BrevmottakerOppretter(
     private val brevService: BrevService,
     private val brevRepository: BrevRepository,
     private val personopplysningerService: PersonopplysningerService,
+    private val featureToggleService: FeatureToggleService,
 ) {
     private val logger = LoggerFactory.getLogger(BrevmottakerOppretter::class.java)
 
@@ -42,7 +48,7 @@ class BrevmottakerOppretter(
         nyBrevmottaker: NyBrevmottaker,
     ): Brevmottaker =
         when (nyBrevmottaker) {
-            is NyBrevmottakerOrganisasjon -> throw UnsupportedOperationException("${nyBrevmottaker::class.simpleName} er ikke støttet.")
+            is NyBrevmottakerOrganisasjon -> opprettBrevmottakerOrganisasjon(behandlingId, nyBrevmottaker)
             is NyBrevmottakerPersonMedIdent -> throw UnsupportedOperationException("${nyBrevmottaker::class.simpleName} er ikke støttet.")
             is NyBrevmottakerPersonUtenIdent -> opprettBrevmottakerPersonUtenIdent(behandlingId, nyBrevmottaker)
         }
@@ -107,5 +113,44 @@ class BrevmottakerOppretter(
         )
 
         return brevmottakerPersonUtenIdentSomSkalOpprettes
+    }
+
+    private fun opprettBrevmottakerOrganisasjon(
+        behandlingId: UUID,
+        nyBrevmottakerOrganisasjon: NyBrevmottakerOrganisasjon,
+    ): Brevmottaker {
+        if (!featureToggleService.isEnabled(MANUELL_BREVMOTTAKER_ORGANISASJON)) {
+            throw Feil("Feature toggle for å opprette manuell brevmottaker organisasjon er ikke aktivert.")
+        }
+
+        logger.debug("Oppretter brevmottaker for behandling {}.", behandlingId)
+
+        val behandling = behandlingService.hentBehandling(behandlingId)
+        behandling.validerRedigerbarBehandlingOgBehandlingsstegBrev()
+
+        val brev = brevService.hentBrev(behandlingId)
+        val brevmottakere = brev.mottakere ?: Brevmottakere()
+        validerNyBrevmottakerOrganisasjon(
+            behandlingId = behandlingId,
+            nyBrevmottakerOrganisasjon = nyBrevmottakerOrganisasjon,
+            eksisterendeBrevmottakere = brevmottakere.tilListe(),
+        )
+
+        val brevmottakerOrganisasjonSomSkalOpprettes =
+            BrevmottakerOrganisasjon.opprettFra(nyBrevmottakerOrganisasjon)
+
+        val nyeBrevmottakerOrganisasjoner =
+            brevmottakere.organisasjoner + brevmottakerOrganisasjonSomSkalOpprettes
+
+        brevRepository.update(
+            brev.copy(
+                mottakere =
+                    brevmottakere.copy(
+                        organisasjoner = nyeBrevmottakerOrganisasjoner,
+                    ),
+            ),
+        )
+
+        return brevmottakerOrganisasjonSomSkalOpprettes
     }
 }
