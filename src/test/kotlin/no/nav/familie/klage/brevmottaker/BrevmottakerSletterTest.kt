@@ -22,6 +22,8 @@ import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonUtenId
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.testutil.DomainUtil
@@ -42,6 +44,7 @@ class BrevmottakerSletterTest {
     private val brevService: BrevService = mockk()
     private val brevRepository: BrevRepository = mockk()
     private val personopplysningerService: PersonopplysningerService = mockk()
+    private val featureToggleService: FeatureToggleService = mockk()
     private val brevmottakerSletter: BrevmottakerSletter =
         BrevmottakerSletter(
             behandlingService = behandlingService,
@@ -49,12 +52,14 @@ class BrevmottakerSletterTest {
             brevRepository = brevRepository,
             fagsakService = fagsakService,
             personopplysningerService = personopplysningerService,
+            featureToggleService = featureToggleService,
         )
 
     @BeforeEach
     fun setUp() {
         mockkObject(SikkerhetContext)
         every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler"
+        every { featureToggleService.isEnabled(Toggle.MANUELL_BREVMOTTAKER_ORGANISASJON) } returns true
     }
 
     @AfterEach
@@ -63,22 +68,7 @@ class BrevmottakerSletterTest {
     }
 
     @Nested
-    inner class SlettBrevmottakerTest {
-        @Test
-        fun `skal kaste exception om brevmottaker er SlettbarBrevmottakerOrganisasjon`() {
-            // Arrange
-            val behandling = DomainUtil.behandling()
-
-            val slettbarBrevmottaker = SlettbarBrevmottakerOrganisasjon("123")
-
-            // Act & assert
-            val exception =
-                assertThrows<UnsupportedOperationException> {
-                    brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
-                }
-            assertThat(exception.message).isEqualTo("Sletting av organisasjon er ikke støttet.")
-        }
-
+    inner class SlettBrevmottakerPersonMedIdentTest {
         @Test
         fun `skal kaste exception om brevmottaker er SlettbarBrevmottakerPersonMedIdent`() {
             // Arrange
@@ -93,7 +83,10 @@ class BrevmottakerSletterTest {
                 }
             assertThat(exception.message).isEqualTo("Sletting av person med ident er ikke støttet.")
         }
+    }
 
+    @Nested
+    inner class SlettBrevmottakerPersonUtenIdentTest {
         @Test
         fun `skal kaste exception om behandling er låst for videre redigering`() {
             // Arrange
@@ -575,6 +568,241 @@ class BrevmottakerSletterTest {
             assertThat(brevmottakerPersonMedIdent).hasSize(1)
             assertThat(brevmottakerPersonMedIdent).allSatisfy {
                 assertThat(it.personIdent).isEqualTo(personIdent.ident)
+            }
+
+            verify(exactly = 1) { brevRepository.update(any()) }
+        }
+    }
+
+    @Nested
+    inner class SlettBrevmottakerOrganisasjonTest {
+        @Test
+        fun `skal kaste exception om behandling er låst for videre redigering`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.BREV, status = BehandlingStatus.FERDIGSTILT)
+
+            val slettbarBrevmottaker = SlettbarBrevmottakerOrganisasjon("123123123")
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            // Act & assert
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
+                }
+            assertThat(exception.message).isEqualTo("Behandling ${behandling.id} er låst for videre behandling.")
+        }
+
+        @Test
+        fun `skal kaste exception om behandling er i feil steg`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.FORMKRAV)
+
+            val slettbarBrevmottaker = SlettbarBrevmottakerOrganisasjon("123123123")
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            // Act & assert
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
+                }
+            assertThat(exception.message).isEqualTo("Behandling ${behandling.id} er i steg ${behandling.steg}, forventet steg ${StegType.BREV}.")
+        }
+
+        @Test
+        fun `skal kaste exception om brevmottakeren som skal slettes ikke finnes da mottakere i brev er null`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
+
+            val slettbarBrevmottaker = SlettbarBrevmottakerOrganisasjon("123123123")
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                brevService.hentBrev(behandling.id)
+            } returns DomainUtil.lagBrev(behandlingId = behandling.id, mottakere = null)
+
+            // Act & assert
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
+                }
+            assertThat(exception.message).isEqualTo("Brevmottaker ${slettbarBrevmottaker.organisasjonsnummer} kan ikke slettes da den ikke finnes.")
+        }
+
+        @Test
+        fun `skal kaste exception om brevmottakeren som skal slettes ikke finnes da mottakere i brev er en tom liste`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
+
+            val slettbarBrevmottaker = SlettbarBrevmottakerOrganisasjon("123123123")
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                brevService.hentBrev(behandling.id)
+            } returns
+                DomainUtil.lagBrev(
+                    behandlingId = behandling.id,
+                    mottakere = DomainUtil.lagBrevmottakere(organisasjoner = emptyList()),
+                )
+
+            // Act & assert
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
+                }
+            assertThat(exception.message).isEqualTo("Brevmottaker ${slettbarBrevmottaker.organisasjonsnummer} kan ikke slettes da den ikke finnes.")
+        }
+
+        @Test
+        fun `skal kaste exception om man prøver å slette slik at ingen brevmottakere er igjen`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
+
+            val slettbarBrevmottaker = SlettbarBrevmottakerOrganisasjon("123123123")
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                fagsakService.hentFagsak(behandling.fagsakId)
+            } returns
+                DomainUtil.fagsak(
+                    identer = setOf(PersonIdent("123")),
+                )
+
+            every {
+                brevService.hentBrev(behandling.id)
+            } returns
+                DomainUtil.lagBrev(
+                    behandlingId = behandling.id,
+                    mottakere =
+                        Brevmottakere(
+                            organisasjoner =
+                                listOf(
+                                    DomainUtil.lagBrevmottakerOrganisasjon(
+                                        organisasjonsnummer = slettbarBrevmottaker.organisasjonsnummer,
+                                        mottakerRolle = MottakerRolle.FULLMAKT,
+                                    ),
+                                ),
+                        ),
+                )
+
+            // Act & assert
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
+                }
+            assertThat(exception.message).isEqualTo("Må ha minimum en brevmottaker for behandling ${behandling.id}.")
+            verify { brevRepository wasNot called }
+        }
+
+        @Test
+        fun `skal slette brevmottakeren`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
+
+            val slettbarBrevmottaker = SlettbarBrevmottakerOrganisasjon("123123123")
+
+            val brevSlot = slot<Brev>()
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                fagsakService.hentFagsak(behandling.fagsakId)
+            } returns
+                DomainUtil.fagsak(
+                    identer = setOf(PersonIdent("123")),
+                )
+
+            every {
+                brevService.hentBrev(behandling.id)
+            } returns
+                DomainUtil.lagBrev(
+                    behandlingId = behandling.id,
+                    mottakere =
+                        Brevmottakere(
+                            personer =
+                                listOf(
+                                    DomainUtil.lagBrevmottakerPersonMedIdent(
+                                        mottakerRolle = MottakerRolle.BRUKER,
+                                    ),
+                                    DomainUtil.lagBrevmottakerPersonUtenIdent(
+                                        id = UUID.randomUUID(),
+                                        mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+                                        adresselinje1 = "Adresse 1, Mars, 1337",
+                                        adresselinje2 = null,
+                                        poststed = null,
+                                        postnummer = null,
+                                        landkode = "DK",
+                                    ),
+                                ),
+                            organisasjoner =
+                                listOf(
+                                    DomainUtil.lagBrevmottakerOrganisasjon(
+                                        organisasjonsnummer = slettbarBrevmottaker.organisasjonsnummer,
+                                    ),
+                                    DomainUtil.lagBrevmottakerOrganisasjon(
+                                        organisasjonsnummer = "321321321",
+                                    ),
+                                ),
+                        ),
+                )
+
+            every {
+                brevRepository.update(capture(brevSlot))
+            } returnsArgument 0
+
+            // Act
+            brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
+
+            // Assert
+            assertThat(brevSlot.captured.mottakere?.organisasjoner).hasSize(1)
+            assertThat(brevSlot.captured.mottakere?.personer).hasSize(2)
+
+            val brevmottakerPersonUtenIdent =
+                brevSlot
+                    .captured
+                    .mottakere
+                    ?.personer
+                    ?.filterIsInstance<BrevmottakerPersonUtenIdent>()
+            assertThat(brevmottakerPersonUtenIdent).hasSize(1)
+            assertThat(brevmottakerPersonUtenIdent).allSatisfy {
+                assertThat(it.id.toString()).isNotEqualTo(slettbarBrevmottaker.organisasjonsnummer)
+            }
+
+            val brevmottakerPersonMedIdent =
+                brevSlot
+                    .captured
+                    .mottakere
+                    ?.personer
+                    ?.filterIsInstance<BrevmottakerPersonMedIdent>()
+            assertThat(brevmottakerPersonMedIdent).hasSize(1)
+            assertThat(brevmottakerPersonMedIdent).allSatisfy {
+                assertThat(it.personIdent).isNotEqualTo(slettbarBrevmottaker.organisasjonsnummer)
+            }
+
+            val brevmottakerOrganisasjon =
+                brevSlot
+                    .captured
+                    .mottakere
+                    ?.organisasjoner
+            assertThat(brevmottakerOrganisasjon).hasSize(1)
+            assertThat(brevmottakerOrganisasjon).allSatisfy {
+                assertThat(it.organisasjonsnummer).isNotEqualTo(slettbarBrevmottaker.organisasjonsnummer)
             }
 
             verify(exactly = 1) { brevRepository.update(any()) }
