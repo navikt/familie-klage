@@ -11,7 +11,9 @@ import no.nav.familie.klage.brevmottaker.domain.BrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
-import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.BRUKER
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.DØDSBO
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottaker
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonMedIdent
@@ -27,8 +29,8 @@ import java.util.UUID
 
 private val MOTTAKER_ROLLER_HVOR_BRUKER_SKAL_SLETTES_VED_OPPRETTELSE =
     setOf(
-        MottakerRolle.DØDSBO,
-        MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+        DØDSBO,
+        BRUKER_MED_UTENLANDSK_ADRESSE,
     )
 
 @Component
@@ -76,7 +78,7 @@ class BrevmottakerOppretter(
         val harBrevmottakerPersonBruker =
             brevmottakere.personer
                 .filterIsInstance<BrevmottakerPersonMedIdent>()
-                .filter { it.mottakerRolle == MottakerRolle.BRUKER }
+                .filter { it.mottakerRolle == BRUKER }
                 .any { it.personIdent == aktivIdentForFagsak }
 
         val skalSletteBrevmottakerPersonBruker =
@@ -89,24 +91,20 @@ class BrevmottakerOppretter(
                 nyBrevmottakerPersonUtenIdent = nyBrevmottakerPersonUtenIdent,
             )
 
+        val nyeBrevmottakerePersoner =
+            if (skalSletteBrevmottakerPersonBruker) {
+                brevmottakere.personer.filterNot {
+                    it is BrevmottakerPersonMedIdent && it.personIdent == aktivIdentForFagsak
+                }
+            } else {
+                brevmottakere.personer
+            } + brevmottakerPersonUtenIdentSomSkalOpprettes
+
         brevRepository.update(
             brev.copy(
                 mottakere =
-                    Brevmottakere(
-                        personer =
-                            if (skalSletteBrevmottakerPersonBruker) {
-                                val filtrerteBrevmottakerPersoner =
-                                    brevmottakere.personer.filter {
-                                        when (it) {
-                                            is BrevmottakerPersonMedIdent -> it.personIdent != aktivIdentForFagsak
-                                            is BrevmottakerPersonUtenIdent -> true
-                                        }
-                                    }
-                                filtrerteBrevmottakerPersoner + brevmottakerPersonUtenIdentSomSkalOpprettes
-                            } else {
-                                brevmottakere.personer + brevmottakerPersonUtenIdentSomSkalOpprettes
-                            },
-                        organisasjoner = brevmottakere.organisasjoner,
+                    brevmottakere.copy(
+                        personer = nyeBrevmottakerePersoner,
                     ),
             ),
         )
