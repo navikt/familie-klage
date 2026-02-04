@@ -4,17 +4,24 @@ import jakarta.transaction.Transactional
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brevmottaker.BrevmottakerOppretterValidator.validerNyBrevmottakerOrganisasjon
+import no.nav.familie.klage.brevmottaker.BrevmottakerOppretterValidator.validerNyBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brevmottaker.domain.Brevmottaker
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
-import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.BRUKER
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.DØDSBO
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottaker
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle.MANUELL_BREVMOTTAKER_ORGANISASJON
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -22,8 +29,8 @@ import java.util.UUID
 
 private val MOTTAKER_ROLLER_HVOR_BRUKER_SKAL_SLETTES_VED_OPPRETTELSE =
     setOf(
-        MottakerRolle.DØDSBO,
-        MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+        DØDSBO,
+        BRUKER_MED_UTENLANDSK_ADRESSE,
     )
 
 @Component
@@ -33,6 +40,7 @@ class BrevmottakerOppretter(
     private val brevService: BrevService,
     private val brevRepository: BrevRepository,
     private val personopplysningerService: PersonopplysningerService,
+    private val featureToggleService: FeatureToggleService,
 ) {
     private val logger = LoggerFactory.getLogger(BrevmottakerOppretter::class.java)
 
@@ -42,7 +50,7 @@ class BrevmottakerOppretter(
         nyBrevmottaker: NyBrevmottaker,
     ): Brevmottaker =
         when (nyBrevmottaker) {
-            is NyBrevmottakerOrganisasjon -> throw UnsupportedOperationException("${nyBrevmottaker::class.simpleName} er ikke støttet.")
+            is NyBrevmottakerOrganisasjon -> opprettBrevmottakerOrganisasjon(behandlingId, nyBrevmottaker)
             is NyBrevmottakerPersonMedIdent -> throw UnsupportedOperationException("${nyBrevmottaker::class.simpleName} er ikke støttet.")
             is NyBrevmottakerPersonUtenIdent -> opprettBrevmottakerPersonUtenIdent(behandlingId, nyBrevmottaker)
         }
@@ -58,11 +66,11 @@ class BrevmottakerOppretter(
 
         val brev = brevService.hentBrev(behandlingId)
         val brevmottakere = brev.mottakere ?: Brevmottakere()
-        val brevmottakerePersonerUtenIdent = brevmottakere.personer.filterIsInstance<BrevmottakerPersonUtenIdent>()
         validerNyBrevmottakerPersonUtenIdent(
-            behandlingId,
-            nyBrevmottakerPersonUtenIdent,
-            brevmottakerePersonerUtenIdent,
+            brukerensNavn = personopplysningerService.hentPersonopplysninger(behandlingId).navn,
+            behandlingId = behandlingId,
+            nyBrevmottakerPersonUtenIdent = nyBrevmottakerPersonUtenIdent,
+            eksisterendeBrevmottakere = brevmottakere.tilListe(),
         )
 
         val aktivIdentForFagsak = fagsakService.hentFagsak(behandling.fagsakId).hentAktivIdent()
@@ -70,7 +78,7 @@ class BrevmottakerOppretter(
         val harBrevmottakerPersonBruker =
             brevmottakere.personer
                 .filterIsInstance<BrevmottakerPersonMedIdent>()
-                .filter { it.mottakerRolle == MottakerRolle.BRUKER }
+                .filter { it.mottakerRolle == BRUKER }
                 .any { it.personIdent == aktivIdentForFagsak }
 
         val skalSletteBrevmottakerPersonBruker =
@@ -83,24 +91,20 @@ class BrevmottakerOppretter(
                 nyBrevmottakerPersonUtenIdent = nyBrevmottakerPersonUtenIdent,
             )
 
+        val nyeBrevmottakerePersoner =
+            if (skalSletteBrevmottakerPersonBruker) {
+                brevmottakere.personer.filterNot {
+                    it is BrevmottakerPersonMedIdent && it.personIdent == aktivIdentForFagsak
+                }
+            } else {
+                brevmottakere.personer
+            } + brevmottakerPersonUtenIdentSomSkalOpprettes
+
         brevRepository.update(
             brev.copy(
                 mottakere =
-                    Brevmottakere(
-                        personer =
-                            if (skalSletteBrevmottakerPersonBruker) {
-                                val filtrerteBrevmottakerPersoner =
-                                    brevmottakere.personer.filter {
-                                        when (it) {
-                                            is BrevmottakerPersonMedIdent -> it.personIdent != aktivIdentForFagsak
-                                            is BrevmottakerPersonUtenIdent -> true
-                                        }
-                                    }
-                                filtrerteBrevmottakerPersoner + brevmottakerPersonUtenIdentSomSkalOpprettes
-                            } else {
-                                brevmottakere.personer + brevmottakerPersonUtenIdentSomSkalOpprettes
-                            },
-                        organisasjoner = brevmottakere.organisasjoner,
+                    brevmottakere.copy(
+                        personer = nyeBrevmottakerePersoner,
                     ),
             ),
         )
@@ -108,50 +112,42 @@ class BrevmottakerOppretter(
         return brevmottakerPersonUtenIdentSomSkalOpprettes
     }
 
-    private fun validerNyBrevmottakerPersonUtenIdent(
+    private fun opprettBrevmottakerOrganisasjon(
         behandlingId: UUID,
-        nyBrevmottakerPersonUtenIdent: NyBrevmottakerPersonUtenIdent,
-        eksisterendeBrevmottakerePersonerUtenIdent: List<BrevmottakerPersonUtenIdent>,
-    ) {
-        val brukerensNavn = personopplysningerService.hentPersonopplysninger(behandlingId).navn
-        val eksisterendeMottakerRoller = eksisterendeBrevmottakerePersonerUtenIdent.map { it.mottakerRolle }
-        when {
-            eksisterendeMottakerRoller.any { it == nyBrevmottakerPersonUtenIdent.mottakerRolle } -> {
-                throw Feil(
-                    "Kan ikke ha duplikate MottakerRolle. ${nyBrevmottakerPersonUtenIdent.mottakerRolle} finnes allerede for $behandlingId.",
-                )
-            }
-
-            nyBrevmottakerPersonUtenIdent.mottakerRolle == MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE &&
-                nyBrevmottakerPersonUtenIdent.navn != brukerensNavn -> {
-                throw Feil("Ved bruker med utenlandsk adresse skal brevmottakerens navn være brukerens navn for $behandlingId.")
-            }
-
-            nyBrevmottakerPersonUtenIdent.mottakerRolle == MottakerRolle.DØDSBO &&
-                !nyBrevmottakerPersonUtenIdent.navn.contains(brukerensNavn) -> {
-                throw Feil("Ved dødsbo skal brevmottakerens navn inneholde brukerens navn for $behandlingId.")
-            }
-
-            nyBrevmottakerPersonUtenIdent.mottakerRolle == MottakerRolle.DØDSBO &&
-                eksisterendeBrevmottakerePersonerUtenIdent.isNotEmpty() -> {
-                throw Feil("Kan ikke legge til dødsbo når det allerede finnes brevmottakere for $behandlingId.")
-            }
-
-            eksisterendeMottakerRoller.any { it == MottakerRolle.DØDSBO } -> {
-                throw Feil("Kan ikke legge til flere brevmottakere når det allerede finnes et dødsbo for $behandlingId.")
-            }
-
-            MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE in eksisterendeMottakerRoller &&
-                nyBrevmottakerPersonUtenIdent.mottakerRolle !== MottakerRolle.VERGE &&
-                nyBrevmottakerPersonUtenIdent.mottakerRolle !== MottakerRolle.FULLMAKT -> {
-                throw Feil("Bruker med utenlandsk adresse kan kun kombineres med verge eller fullmektig for $behandlingId.")
-            }
-
-            eksisterendeMottakerRoller.isNotEmpty() &&
-                MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE !in eksisterendeMottakerRoller &&
-                nyBrevmottakerPersonUtenIdent.mottakerRolle !== MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE -> {
-                throw Feil("Kan kun legge til bruker med utenlandsk adresse om det finnes en brevmottaker allerede for $behandlingId.")
-            }
+        nyBrevmottakerOrganisasjon: NyBrevmottakerOrganisasjon,
+    ): Brevmottaker {
+        if (!featureToggleService.isEnabled(MANUELL_BREVMOTTAKER_ORGANISASJON)) {
+            throw Feil("Feature toggle for å opprette manuell brevmottaker organisasjon er ikke aktivert.")
         }
+
+        logger.debug("Oppretter brevmottaker for behandling {}.", behandlingId)
+
+        val behandling = behandlingService.hentBehandling(behandlingId)
+        behandling.validerRedigerbarBehandlingOgBehandlingsstegBrev()
+
+        val brev = brevService.hentBrev(behandlingId)
+        val brevmottakere = brev.mottakere ?: Brevmottakere()
+        validerNyBrevmottakerOrganisasjon(
+            behandlingId = behandlingId,
+            nyBrevmottakerOrganisasjon = nyBrevmottakerOrganisasjon,
+            eksisterendeBrevmottakere = brevmottakere.tilListe(),
+        )
+
+        val brevmottakerOrganisasjonSomSkalOpprettes =
+            BrevmottakerOrganisasjon.opprettFra(nyBrevmottakerOrganisasjon)
+
+        val nyeBrevmottakerOrganisasjoner =
+            brevmottakere.organisasjoner + brevmottakerOrganisasjonSomSkalOpprettes
+
+        brevRepository.update(
+            brev.copy(
+                mottakere =
+                    brevmottakere.copy(
+                        organisasjoner = nyeBrevmottakerOrganisasjoner,
+                    ),
+            ),
+        )
+
+        return brevmottakerOrganisasjonSomSkalOpprettes
     }
 }

@@ -16,7 +16,6 @@ import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
-import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.fagsak.FagsakService
@@ -64,21 +63,6 @@ class BrevmottakerSletterTest {
 
     @Nested
     inner class SlettBrevmottakerTest {
-        @Test
-        fun `skal kaste exception om brevmottaker er SlettbarBrevmottakerOrganisasjon`() {
-            // Arrange
-            val behandling = DomainUtil.behandling()
-
-            val slettbarBrevmottaker = SlettbarBrevmottakerOrganisasjon("123")
-
-            // Act & assert
-            val exception =
-                assertThrows<UnsupportedOperationException> {
-                    brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
-                }
-            assertThat(exception.message).isEqualTo("Sletting av organisasjon er ikke støttet.")
-        }
-
         @Test
         fun `skal kaste exception om brevmottaker er SlettbarBrevmottakerPersonMedIdent`() {
             // Arrange
