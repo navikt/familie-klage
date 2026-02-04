@@ -41,7 +41,7 @@ class BrevmottakerSletter(
         behandlingId: UUID,
         slettbarBrevmottaker: SlettbarBrevmottaker,
     ) = when (slettbarBrevmottaker) {
-        is SlettbarBrevmottakerOrganisasjon -> throw UnsupportedOperationException("Sletting av organisasjon er ikke støttet.")
+        is SlettbarBrevmottakerOrganisasjon -> slettBrevmottakerOrganisasjon(behandlingId, slettbarBrevmottaker)
         is SlettbarBrevmottakerPersonMedIdent -> throw UnsupportedOperationException("Sletting av person med ident er ikke støttet.")
         is SlettbarBrevmottakerPersonUtenIdent -> slettBrevmottakerPersonUtenIdent(behandlingId, slettbarBrevmottaker)
     }
@@ -102,6 +102,46 @@ class BrevmottakerSletter(
                         nyeBrevmottakerPersoner
                     },
                 organisasjoner = brevmottakere.organisasjoner,
+            )
+
+        validerBrevmottakere(behandlingId, nyeBrevmottakere)
+
+        brevRepository.update(
+            brev.copy(
+                mottakere = nyeBrevmottakere,
+            ),
+        )
+    }
+
+    private fun slettBrevmottakerOrganisasjon(
+        behandlingId: UUID,
+        slettbarBrevmottaker: SlettbarBrevmottakerOrganisasjon,
+    ) {
+        logger.debug("Sletter brevmottaker {} for behandling {}.", slettbarBrevmottaker.organisasjonsnummer, behandlingId)
+
+        val behandling = behandlingService.hentBehandling(behandlingId)
+        behandling.validerRedigerbarBehandlingOgBehandlingsstegBrev()
+
+        val brev = brevService.hentBrev(behandlingId)
+        val brevmottakere = brev.mottakere ?: Brevmottakere()
+
+        val brevmottakerOrganisasjonSomSkalSlettes =
+            brevmottakere.organisasjoner
+                .find { it.organisasjonsnummer == slettbarBrevmottaker.organisasjonsnummer }
+
+        if (brevmottakerOrganisasjonSomSkalSlettes == null) {
+            throw Feil("Brevmottaker ${slettbarBrevmottaker.organisasjonsnummer} kan ikke slettes da den ikke finnes.")
+        }
+
+        val nyeBrevmottakerOrganisasjoner =
+            brevmottakere.organisasjoner.filter {
+                it.organisasjonsnummer != slettbarBrevmottaker.organisasjonsnummer
+            }
+
+        val nyeBrevmottakere =
+            Brevmottakere(
+                personer = brevmottakere.personer,
+                organisasjoner = nyeBrevmottakerOrganisasjoner,
             )
 
         validerBrevmottakere(behandlingId, nyeBrevmottakere)
