@@ -57,8 +57,8 @@ class BrevmottakerOppretter(
         behandling.validerRedigerbarBehandlingOgBehandlingsstegBrev()
 
         val brev = brevService.hentBrev(behandlingId)
-        val brevmottakerPersoner = brev.mottakere?.personer ?: emptyList()
-        val brevmottakerePersonerUtenIdent = brevmottakerPersoner.filterIsInstance<BrevmottakerPersonUtenIdent>()
+        val brevmottakere = brev.mottakere ?: Brevmottakere()
+        val brevmottakerePersonerUtenIdent = brevmottakere.personer.filterIsInstance<BrevmottakerPersonUtenIdent>()
         validerNyBrevmottakerPersonUtenIdent(
             behandlingId,
             nyBrevmottakerPersonUtenIdent,
@@ -68,7 +68,7 @@ class BrevmottakerOppretter(
         val aktivIdentForFagsak = fagsakService.hentFagsak(behandling.fagsakId).hentAktivIdent()
 
         val harBrevmottakerPersonBruker =
-            brevmottakerPersoner
+            brevmottakere.personer
                 .filterIsInstance<BrevmottakerPersonMedIdent>()
                 .filter { it.mottakerRolle == MottakerRolle.BRUKER }
                 .any { it.personIdent == aktivIdentForFagsak }
@@ -90,7 +90,7 @@ class BrevmottakerOppretter(
                         personer =
                             if (skalSletteBrevmottakerPersonBruker) {
                                 val filtrerteBrevmottakerPersoner =
-                                    brevmottakerPersoner.filter {
+                                    brevmottakere.personer.filter {
                                         when (it) {
                                             is BrevmottakerPersonMedIdent -> it.personIdent != aktivIdentForFagsak
                                             is BrevmottakerPersonUtenIdent -> true
@@ -98,8 +98,9 @@ class BrevmottakerOppretter(
                                     }
                                 filtrerteBrevmottakerPersoner + brevmottakerPersonUtenIdentSomSkalOpprettes
                             } else {
-                                brevmottakerPersoner + brevmottakerPersonUtenIdentSomSkalOpprettes
+                                brevmottakere.personer + brevmottakerPersonUtenIdentSomSkalOpprettes
                             },
+                        organisasjoner = brevmottakere.organisasjoner,
                     ),
             ),
         )

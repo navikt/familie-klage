@@ -56,10 +56,10 @@ class BrevmottakerSletter(
         behandling.validerRedigerbarBehandlingOgBehandlingsstegBrev()
 
         val brev = brevService.hentBrev(behandlingId)
-        val brevmottakerPersoner = (brev.mottakere?.personer ?: emptyList())
+        val brevmottakere = brev.mottakere ?: Brevmottakere()
 
         val brevmottakerPersonSomSkalSlettes =
-            brevmottakerPersoner
+            brevmottakere.personer
                 .filterIsInstance<BrevmottakerPersonUtenIdent>()
                 .find { it.id == slettBrevmottakerPersonUtenIdent.id }
 
@@ -68,7 +68,7 @@ class BrevmottakerSletter(
         }
 
         val nyeBrevmottakerPersoner =
-            brevmottakerPersoner.filter {
+            brevmottakere.personer.filter {
                 when (it) {
                     is BrevmottakerPersonMedIdent -> true
                     is BrevmottakerPersonUtenIdent -> it.id != slettBrevmottakerPersonUtenIdent.id
@@ -78,7 +78,7 @@ class BrevmottakerSletter(
         val fagsakAktivIdent = fagsakService.hentFagsak(behandling.fagsakId).hentAktivIdent()
 
         val harBrevmottakerPersonBruker =
-            brevmottakerPersoner
+            brevmottakere.personer
                 .filterIsInstance<BrevmottakerPersonMedIdent>()
                 .filter { it.mottakerRolle == MottakerRolle.BRUKER }
                 .any { it.personIdent == fagsakAktivIdent }
@@ -101,6 +101,7 @@ class BrevmottakerSletter(
                     } else {
                         nyeBrevmottakerPersoner
                     },
+                organisasjoner = brevmottakere.organisasjoner,
             )
 
         validerBrevmottakere(behandlingId, nyeBrevmottakere)

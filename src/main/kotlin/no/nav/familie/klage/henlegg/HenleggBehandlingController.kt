@@ -51,6 +51,17 @@ class HenleggBehandlingController(
     ): Ressurs<ByteArray> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
         tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-        return Ressurs.success(brevService.genererHenleggelsesbrev(behandlingId))
+        return Ressurs.success(brevService.genererHenleggelsesbrev(behandlingId, emptyList()))
+    }
+
+    @PostMapping("/{behandlingId}/henlegg/brev/forhandsvisning")
+    fun genererHenleggBrev(
+        @PathVariable behandlingId: UUID,
+        @RequestBody forhåndsvisHenleggBehandlingBrevDto: ForhåndsvisHenleggBehandlingBrevDto,
+    ): Ressurs<ByteArray> {
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.UPDATE)
+        tilgangService.validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
+        val nyeBrevmottakere = forhåndsvisHenleggBehandlingBrevDto.brevmottakere.map { it.tilNyBrevmottaker() }
+        return Ressurs.success(brevService.genererHenleggelsesbrev(behandlingId, nyeBrevmottakere))
     }
 }
