@@ -1,7 +1,7 @@
 package no.nav.familie.klage.infrastruktur.config
 
 import no.nav.familie.kafka.KafkaErrorHandler
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties
+import org.springframework.boot.kafka.autoconfigure.KafkaProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
@@ -24,7 +24,7 @@ class KafkaConfig {
         kafkaErrorHandler: KafkaErrorHandler,
     ): ConcurrentKafkaListenerContainerFactory<String, String> {
         val factory = ConcurrentKafkaListenerContainerFactory<String, String>()
-        factory.consumerFactory = DefaultKafkaConsumerFactory(properties.buildConsumerProperties())
+        factory.setConsumerFactory(DefaultKafkaConsumerFactory(properties.buildConsumerProperties()))
         factory.setCommonErrorHandler(kafkaErrorHandler)
         return factory
     }

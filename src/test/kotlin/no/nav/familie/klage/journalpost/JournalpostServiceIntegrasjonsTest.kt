@@ -21,17 +21,17 @@ class JournalpostServiceIntegrasjonsTest {
     private lateinit var familieIntegrasjonerClient: FamilieIntegrasjonerClient
     private lateinit var journalpostService: JournalpostService
 
-
     @BeforeEach
     fun initClass() {
         wiremockServerItem = WireMockServer(WireMockConfiguration.wireMockConfig().dynamicPort())
         wiremockServerItem.start()
         val integrasjonUri = URI.create(wiremockServerItem.baseUrl())
-        familieIntegrasjonerClient = FamilieIntegrasjonerClient(
-            restOperations = restOperations,
-            integrasjonUri = integrasjonUri,
-            integrasjonerConfig = IntegrasjonerConfig(integrasjonUri)
-        )
+        familieIntegrasjonerClient =
+            FamilieIntegrasjonerClient(
+                restOperations = restOperations,
+                integrasjonUri = integrasjonUri,
+                integrasjonerConfig = IntegrasjonerConfig(integrasjonUri),
+            )
         journalpostService = JournalpostService(familieIntegrasjonerClient)
     }
 
@@ -44,29 +44,29 @@ class JournalpostServiceIntegrasjonsTest {
                 .willReturn(
                     WireMock.forbidden().withBody(
                         """
-                    {
-                      "data": null,
-                      "status": "IKKE_TILGANG",
-                      "melding": "Bruker eller system har ikke tilgang til saf ressurs",
-                      "frontendFeilmelding": null,
-                      "stacktrace": null,
-                      "callId": null
-                    }
-                """.trimIndent()
-                    )
-                )
+                        {
+                          "data": null,
+                          "status": "IKKE_TILGANG",
+                          "melding": "Bruker eller system har ikke tilgang til saf ressurs",
+                          "frontendFeilmelding": null,
+                          "stacktrace": null,
+                          "callId": null
+                        }
+                        """.trimIndent(),
+                    ),
+                ),
         )
 
         // Act
-        val manglerTilgang = assertThrows<ManglerTilgang> {
-            journalpostService.finnJournalposter(
-                personIdent = "12345678901",
-                stønadType = Stønadstype.BARNETRYGD,
-            )
-        }
+        val manglerTilgang =
+            assertThrows<ManglerTilgang> {
+                journalpostService.finnJournalposter(
+                    personIdent = "12345678901",
+                    stønadType = Stønadstype.BARNETRYGD,
+                )
+            }
 
         // Assert
         Assertions.assertThat(manglerTilgang.melding).isEqualTo("Bruker mangler tilgang til etterspurt oppgave")
     }
-
 }
