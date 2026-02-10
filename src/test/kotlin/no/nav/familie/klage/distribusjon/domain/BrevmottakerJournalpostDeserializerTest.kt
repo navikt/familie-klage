@@ -1,6 +1,6 @@
 package no.nav.familie.klage.distribusjon.domain
 
-import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
+import no.nav.familie.klage.infrastruktur.config.JsonMapperProvider.jsonMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -21,12 +21,12 @@ class BrevmottakerJournalpostDeserializerTest {
                     distribusjonId = "distribusjonId",
                 )
 
-            val json = objectMapper.writeValueAsString(brevmottakerJournalpostMedIdent)
-            val parser = objectMapper.factory.createParser(json)
+            val json = jsonMapper.writeValueAsString(brevmottakerJournalpostMedIdent)
+            val parser = jsonMapper.factory.createParser(json)
 
             // Act
             val deserialize =
-                brevmottakerJournalpostDeserializer.deserialize(parser, objectMapper.deserializationContext)
+                brevmottakerJournalpostDeserializer.deserialize(parser, jsonMapper.deserializationContext)
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(BrevmottakerJournalpostMedIdent::class.java) {
@@ -46,12 +46,12 @@ class BrevmottakerJournalpostDeserializerTest {
                     distribusjonId = "distribusjonId",
                 )
 
-            val json = objectMapper.writeValueAsString(brevmottakerJournalpostMedIdent)
-            val parser = objectMapper.factory.createParser(json)
+            val json = jsonMapper.writeValueAsString(brevmottakerJournalpostMedIdent)
+            val parser = jsonMapper.factory.createParser(json)
 
             // Act
             val deserialize =
-                brevmottakerJournalpostDeserializer.deserialize(parser, objectMapper.deserializationContext)
+                brevmottakerJournalpostDeserializer.deserialize(parser, jsonMapper.deserializationContext)
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(BrevmottakerJournalpostUtenIdent::class.java) {

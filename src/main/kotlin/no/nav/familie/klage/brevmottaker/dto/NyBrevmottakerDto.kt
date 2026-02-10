@@ -14,7 +14,7 @@ import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPerson
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonUtenIdent
-import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
+import no.nav.familie.klage.infrastruktur.config.JsonMapperProvider.jsonMapper
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 
 private const val LANDKODE_NO = "NO"
@@ -174,21 +174,21 @@ class NyBrevmottakerDtoDeserializer : JsonDeserializer<NyBrevmottakerDto>() {
         val type = NyBrevmottakerDto.Type.valueOf(tree.get("type").asText())
         return when (type) {
             NyBrevmottakerDto.Type.PERSON_MED_IDENT -> {
-                objectMapper.treeToValue(
+                jsonMapper.treeToValue(
                     tree,
                     NyBrevmottakerPersonMedIdentDto::class.java,
                 )
             }
 
             NyBrevmottakerDto.Type.PERSON_UTEN_IDENT -> {
-                objectMapper.treeToValue(
+                jsonMapper.treeToValue(
                     tree,
                     NyBrevmottakerPersonUtenIdentDto::class.java,
                 )
             }
 
             NyBrevmottakerDto.Type.ORGANISASJON -> {
-                objectMapper.treeToValue(
+                jsonMapper.treeToValue(
                     tree,
                     NyBrevmottakerOrganisasjonDto::class.java,
                 )

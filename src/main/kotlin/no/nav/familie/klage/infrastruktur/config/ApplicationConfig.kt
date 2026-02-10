@@ -50,7 +50,7 @@ class ApplicationConfig {
 
     @Bean
     @Primary
-    fun objectMapper() = ObjectMapperProvider.objectMapper
+    fun objectMapper() = JsonMapperProvider.jsonMapper
 
     @Bean
     fun logFilter(): FilterRegistrationBean<LogFilter> {
@@ -75,8 +75,8 @@ class ApplicationConfig {
      */
     @Bean
     @Primary
-    fun restTemplateBuilder(objectMapper: ObjectMapper): RestTemplateBuilder {
-        val jacksonJsonHttpMessageConverter = JacksonJsonHttpMessageConverter(objectMapper)
+    fun restTemplateBuilder(): RestTemplateBuilder {
+        val jacksonJsonHttpMessageConverter = JacksonJsonHttpMessageConverter(jsonMapper)
         return RestTemplateBuilder()
             .connectTimeout(Duration.of(2, ChronoUnit.SECONDS))
             .readTimeout(Duration.of(30, ChronoUnit.SECONDS))

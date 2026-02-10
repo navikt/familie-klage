@@ -9,7 +9,7 @@ import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottaker
 import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonUtenIdent
-import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
+import no.nav.familie.klage.infrastruktur.config.JsonMapperProvider.jsonMapper
 import java.util.UUID
 
 @JsonDeserialize(using = SlettbarBrevmottakerDtoDeserializer::class)
@@ -63,21 +63,21 @@ class SlettbarBrevmottakerDtoDeserializer : JsonDeserializer<SlettbarBrevmottake
         val type = SlettbarBrevmottakerDto.Type.valueOf(tree.get("type").asText())
         return when (type) {
             SlettbarBrevmottakerDto.Type.PERSON_MED_IDENT -> {
-                objectMapper.treeToValue(
+                jsonMapper.treeToValue(
                     tree,
                     SlettbarBrevmottakerPersonMedIdentDto::class.java,
                 )
             }
 
             SlettbarBrevmottakerDto.Type.PERSON_UTEN_IDENT -> {
-                objectMapper.treeToValue(
+                jsonMapper.treeToValue(
                     tree,
                     SlettbarBrevmottakerPersonUtenIdentDto::class.java,
                 )
             }
 
             SlettbarBrevmottakerDto.Type.ORGANISASJON -> {
-                objectMapper.treeToValue(
+                jsonMapper.treeToValue(
                     tree,
                     SlettbarBrevmottakerOrganisasjonDto::class.java,
                 )

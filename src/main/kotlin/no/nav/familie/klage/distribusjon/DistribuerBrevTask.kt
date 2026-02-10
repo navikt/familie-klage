@@ -1,6 +1,5 @@
 package no.nav.familie.klage.distribusjon
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.domain.Brev
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
@@ -16,7 +15,7 @@ import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.dokdist.AdresseType.norskPostadresse
 import no.nav.familie.kontrakter.felles.dokdist.AdresseType.utenlandskPostadresse
 import no.nav.familie.kontrakter.felles.dokdist.ManuellAdresse
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
@@ -77,7 +76,7 @@ class DistribuerBrevTask(
                     val cause = e.cause
                     if (cause is HttpClientErrorException.Conflict) {
                         logger.warn("Conflict: distribuering av brev allerede utført for journalpost: ${journalpost.journalpostId}")
-                        val response: DistribuerJournalpostResponse = objectMapper.readValue(e.ressurs.data.toString())
+                        val response: DistribuerJournalpostResponse = jsonMapper.readValue(e.ressurs.data.toString(), DistribuerJournalpostResponse::class.java)
                         response.bestillingsId
                     } else {
                         throw e

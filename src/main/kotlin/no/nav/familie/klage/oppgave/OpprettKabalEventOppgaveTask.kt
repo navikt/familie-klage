@@ -7,9 +7,9 @@ import no.nav.familie.klage.fagsak.FagsakRepository
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.oppgave.OppgaveUtil.lagFristForOppgave
 import no.nav.familie.kontrakter.felles.Behandlingstema
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
-import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
 import no.nav.familie.kontrakter.felles.oppgave.OppgavePrioritet
@@ -38,7 +38,7 @@ class OpprettKabalEventOppgaveTask(
     private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun doTask(task: Task) {
-        val opprettOppgavePayload = objectMapper.readValue<OpprettOppgavePayload>(task.payload)
+        val opprettOppgavePayload = jsonMapper.readValue(task.payload, OpprettOppgavePayload::class.java)
 
         val behandling = behandlingRepository.findByEksternBehandlingId(opprettOppgavePayload.klagebehandlingEksternId)
 
@@ -83,7 +83,7 @@ class OpprettKabalEventOppgaveTask(
         ): Task =
             Task(
                 type = TYPE,
-                payload = objectMapper.writeValueAsString(opprettOppgavePayload),
+                payload = jsonMapper.writeValueAsString(opprettOppgavePayload),
                 properties =
                     Properties().apply {
                         this["eksternFagsakId"] = eksternFagsakId

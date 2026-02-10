@@ -1,7 +1,6 @@
 package no.nav.familie.klage.infrastruktur.config
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import no.nav.familie.klage.infrastruktur.config.getCacheOrThrow
 import org.springframework.cache.Cache
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.EnableCaching
@@ -10,9 +9,7 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
-import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
-import kotlin.jvm.java
 
 @Configuration
 @EnableCaching

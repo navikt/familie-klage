@@ -1,7 +1,7 @@
 package no.nav.familie.klage.behandlingsstatistikk
 
 import no.nav.familie.eksterne.kontrakter.saksstatistikk.klage.BehandlingsstatistikkKlage
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaTemplate
@@ -26,7 +26,7 @@ class BehandlingsstatistikkProducer(
             kafkaTemplate.send(topic, statistikk.behandlingId.toString(), statistikk.toJson()).get()
             logger.info(
                 "Behandlingstatistikk for behandling=${statistikk.behandlingId} " +
-                    "behandlingStatus=${statistikk.behandlingStatus} sent til Kafka",
+                        "behandlingStatus=${statistikk.behandlingStatus} sent til Kafka",
             )
         }.onFailure {
             val errorMessage = "Could not send behandling to Kafka. Check secure logs for more information."
@@ -36,5 +36,5 @@ class BehandlingsstatistikkProducer(
         }
     }
 
-    private fun Any.toJson(): String = objectMapper.writeValueAsString(this)
+    private fun Any.toJson(): String = jsonMapper.writeValueAsString(this)
 }

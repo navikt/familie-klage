@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
+import no.nav.familie.klage.infrastruktur.config.JsonMapperProvider.jsonMapper
 import java.util.UUID
 
 @JsonDeserialize(using = BrevmottakerJournalpostDeserializer::class)
@@ -41,9 +41,9 @@ class BrevmottakerJournalpostDeserializer : JsonDeserializer<BrevmottakerJournal
     ): BrevmottakerJournalpost {
         val tree = jsonParser.readValueAsTree<JsonNode>()
         return if (tree.has("ident")) {
-            objectMapper.treeToValue(tree, BrevmottakerJournalpostMedIdent::class.java)
+            jsonMapper.treeToValue(tree, BrevmottakerJournalpostMedIdent::class.java)
         } else {
-            objectMapper.treeToValue(tree, BrevmottakerJournalpostUtenIdent::class.java)
+            jsonMapper.treeToValue(tree, BrevmottakerJournalpostUtenIdent::class.java)
         }
     }
 }

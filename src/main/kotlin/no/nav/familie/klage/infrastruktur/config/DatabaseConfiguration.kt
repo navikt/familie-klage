@@ -1,13 +1,12 @@
 package no.nav.familie.klage.infrastruktur.config
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakDetaljer
 import no.nav.familie.klage.brev.domain.BrevmottakereJournalposter
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.felles.domain.Endret
 import no.nav.familie.klage.felles.domain.Fil
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.prosessering.PropertiesWrapperTilStringConverter
 import no.nav.familie.prosessering.StringTilPropertiesWrapperConverter
 import org.apache.commons.lang3.StringUtils
@@ -115,13 +114,13 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
         override fun convert(o: Brevmottakere): PGobject =
             PGobject().apply {
                 type = "json"
-                value = objectMapper.writeValueAsString(o)
+                value = jsonMapper.writeValueAsString(o)
             }
     }
 
     @ReadingConverter
     class BytearrayTilBrevmottakereConverter : Converter<PGobject, Brevmottakere> {
-        override fun convert(pGobject: PGobject): Brevmottakere = objectMapper.readValue(pGobject.value!!)
+        override fun convert(pGobject: PGobject): Brevmottakere = jsonMapper.readValue(pGobject.value!!, Brevmottakere::class.java)
     }
 
     @WritingConverter
@@ -129,13 +128,13 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
         override fun convert(o: BrevmottakereJournalposter): PGobject =
             PGobject().apply {
                 type = "json"
-                value = objectMapper.writeValueAsString(o)
+                value = jsonMapper.writeValueAsString(o)
             }
     }
 
     @ReadingConverter
     class BytearrayTilBrevmottakereJournalposterConverter : Converter<PGobject, BrevmottakereJournalposter> {
-        override fun convert(pGobject: PGobject): BrevmottakereJournalposter = objectMapper.readValue(pGobject.value!!)
+        override fun convert(pGobject: PGobject): BrevmottakereJournalposter = jsonMapper.readValue(pGobject.value!!, BrevmottakereJournalposter::class.java)
     }
 
     @WritingConverter
@@ -143,13 +142,13 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
         override fun convert(o: PåklagetVedtakDetaljer): PGobject =
             PGobject().apply {
                 type = "json"
-                value = objectMapper.writeValueAsString(o)
+                value = jsonMapper.writeValueAsString(o)
             }
     }
 
     @ReadingConverter
     class BytearrayTilPåklagetVedtakDetaljerConverter : Converter<PGobject, PåklagetVedtakDetaljer> {
-        override fun convert(pGobject: PGobject): PåklagetVedtakDetaljer = objectMapper.readValue(pGobject.value!!)
+        override fun convert(pGobject: PGobject): PåklagetVedtakDetaljer = jsonMapper.readValue(pGobject.value!!, PåklagetVedtakDetaljer::class.java)
     }
 
     @WritingConverter
@@ -157,12 +156,12 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
         override fun convert(o: FagsystemRevurdering): PGobject =
             PGobject().apply {
                 type = "json"
-                value = objectMapper.writeValueAsString(o)
+                value = jsonMapper.writeValueAsString(o)
             }
     }
 
     @ReadingConverter
     class BytearrayTilOpprettetRevurderingConverter : Converter<PGobject, FagsystemRevurdering> {
-        override fun convert(pGobject: PGobject): FagsystemRevurdering = objectMapper.readValue(pGobject.value!!)
+        override fun convert(pGobject: PGobject): FagsystemRevurdering = jsonMapper.readValue(pGobject.value!!, FagsystemRevurdering::class.java)
     }
 }

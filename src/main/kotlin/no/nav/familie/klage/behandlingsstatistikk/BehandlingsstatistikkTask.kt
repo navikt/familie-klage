@@ -1,9 +1,8 @@
 package no.nav.familie.klage.behandlingsstatistikk
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
-import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
@@ -24,7 +23,7 @@ class BehandlingsstatistikkTask(
 ) : AsyncTaskStep {
     override fun doTask(task: Task) {
         val (behandlingId, hendelse, hendelseTidspunkt, gjeldendeSaksbehandler) =
-            objectMapper.readValue<BehandlingsstatistikkTaskPayload>(task.payload)
+            jsonMapper.readValue(task.payload, BehandlingsstatistikkTaskPayload::class.java)
         behandlingStatistikkService.sendBehandlingstatistikk(
             behandlingId,
             hendelse,
@@ -118,7 +117,7 @@ class BehandlingsstatistikkTask(
             Task(
                 type = TYPE,
                 payload =
-                    objectMapper.writeValueAsString(
+                    jsonMapper.writeValueAsString(
                         BehandlingsstatistikkTaskPayload(
                             behandlingId,
                             hendelse,
