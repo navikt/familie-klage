@@ -26,7 +26,7 @@ class BehandlingsstatistikkProducer(
             kafkaTemplate.send(topic, statistikk.behandlingId.toString(), statistikk.toJson()).get()
             logger.info(
                 "Behandlingstatistikk for behandling=${statistikk.behandlingId} " +
-                        "behandlingStatus=${statistikk.behandlingStatus} sent til Kafka",
+                    "behandlingStatus=${statistikk.behandlingStatus} sent til Kafka",
             )
         }.onFailure {
             val errorMessage = "Could not send behandling to Kafka. Check secure logs for more information."

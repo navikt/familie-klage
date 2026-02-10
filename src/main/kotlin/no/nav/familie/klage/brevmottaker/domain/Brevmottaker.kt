@@ -1,11 +1,11 @@
 package no.nav.familie.klage.brevmottaker.domain
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import no.nav.familie.klage.infrastruktur.config.JsonMapperProvider.jsonMapper
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.DeserializationContext
+import tools.jackson.databind.JsonNode
+import tools.jackson.databind.annotation.JsonDeserialize
+import tools.jackson.databind.deser.std.StdDeserializer
 import java.util.UUID
 
 sealed interface Brevmottaker {
@@ -90,7 +90,7 @@ data class BrevmottakerPersonUtenIdent(
     }
 }
 
-class BrevmottakerPersonDeserializer : JsonDeserializer<BrevmottakerPerson>() {
+class BrevmottakerPersonDeserializer : StdDeserializer<BrevmottakerPerson>(BrevmottakerPerson::class.java) {
     override fun deserialize(
         jsonParser: JsonParser,
         context: DeserializationContext,

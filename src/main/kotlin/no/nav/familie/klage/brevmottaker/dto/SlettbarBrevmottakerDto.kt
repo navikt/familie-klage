@@ -1,15 +1,15 @@
 package no.nav.familie.klage.brevmottaker.dto
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottaker
 import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.infrastruktur.config.JsonMapperProvider.jsonMapper
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.DeserializationContext
+import tools.jackson.databind.JsonNode
+import tools.jackson.databind.annotation.JsonDeserialize
+import tools.jackson.databind.deser.std.StdDeserializer
 import java.util.UUID
 
 @JsonDeserialize(using = SlettbarBrevmottakerDtoDeserializer::class)
@@ -54,7 +54,7 @@ data class SlettbarBrevmottakerOrganisasjonDto(
         get() = SlettbarBrevmottakerDto.Type.ORGANISASJON
 }
 
-class SlettbarBrevmottakerDtoDeserializer : JsonDeserializer<SlettbarBrevmottakerDto>() {
+class SlettbarBrevmottakerDtoDeserializer : StdDeserializer<SlettbarBrevmottakerDto>(SlettbarBrevmottakerDto::class.java) {
     override fun deserialize(
         jsonParser: JsonParser,
         context: DeserializationContext,

@@ -5,9 +5,9 @@ import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.kabal.domain.Type
 import no.nav.familie.klage.kabal.event.BehandlingEventService
 import no.nav.familie.kontrakter.felles.Fagsystem
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
-import no.nav.familie.kontrakter.felles.jsonMapper
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.listener.ConsumerSeekAware
