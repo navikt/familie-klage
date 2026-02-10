@@ -129,8 +129,8 @@ data class NyBrevmottakerPersonMedIdentDto(
 
     fun erLik(brevmottakerPersonMedIdent: BrevmottakerPersonMedIdent): Boolean =
         brevmottakerPersonMedIdent.personIdent == this.personIdent &&
-                brevmottakerPersonMedIdent.mottakerRolle == this.mottakerRolle &&
-                brevmottakerPersonMedIdent.navn == this.navn
+            brevmottakerPersonMedIdent.mottakerRolle == this.mottakerRolle &&
+            brevmottakerPersonMedIdent.navn == this.navn
 }
 
 fun NyBrevmottakerPersonMedIdentDto.tilNyBrevmottakerPersonMedIdent(): NyBrevmottakerPersonMedIdent =

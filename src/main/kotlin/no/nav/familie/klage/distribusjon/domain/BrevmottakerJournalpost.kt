@@ -1,11 +1,11 @@
 package no.nav.familie.klage.distribusjon.domain
 
+import no.nav.familie.klage.infrastruktur.config.JsonMapperProvider.jsonMapper
 import tools.jackson.core.JsonParser
 import tools.jackson.databind.DeserializationContext
 import tools.jackson.databind.JsonNode
 import tools.jackson.databind.ValueDeserializer
 import tools.jackson.databind.annotation.JsonDeserialize
-import no.nav.familie.klage.infrastruktur.config.JsonMapperProvider.jsonMapper
 import java.util.UUID
 
 @JsonDeserialize(using = BrevmottakerJournalpostDeserializer::class)
