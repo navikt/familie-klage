@@ -13,6 +13,7 @@ import no.nav.familie.kontrakter.felles.klage.KlagebehandlingDto
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.slf4j.LoggerFactory
+import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -93,8 +94,9 @@ class EksternBehandlingController(
     @PostMapping("/opprett")
     fun opprettBehandling(
         @RequestBody opprettKlageBehandlingDto: OpprettKlagebehandlingRequest,
-    ) {
+    ): ResponseEntity<Ressurs<String>> {
         opprettBehandlingService.opprettBehandling(opprettKlageBehandlingDto)
+        return ResponseEntity.ok(Ressurs.success("Opprettet"))
     }
 
     @PostMapping("/v2/opprett")
