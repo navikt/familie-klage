@@ -1,5 +1,6 @@
 package no.nav.familie.klage.infrastruktur.featuretoggle
 
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle.MANUELL_BREVMOTTAKER_ORGANISASJON
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,7 +14,10 @@ import org.springframework.web.bind.annotation.RestController
 class FeatureToggleController(
     private val featureToggleService: FeatureToggleService,
 ) {
-    private val featureTogglesIBruk: Set<Toggle> = setOf()
+    private val featureTogglesIBruk: Set<Toggle> =
+        setOf(
+            MANUELL_BREVMOTTAKER_ORGANISASJON,
+        )
 
     @GetMapping
     fun sjekkAlle(): Map<String, Boolean> = featureTogglesIBruk.associate { it.toggleId to featureToggleService.isEnabled(it) }

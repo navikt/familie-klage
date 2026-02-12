@@ -15,6 +15,8 @@ import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonMedIde
 import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle.MANUELL_BREVMOTTAKER_ORGANISASJON
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -33,6 +35,7 @@ class BrevmottakerSletter(
     private val brevRepository: BrevRepository,
     private val fagsakService: FagsakService,
     private val personopplysningerService: PersonopplysningerService,
+    private val featureToggleService: FeatureToggleService,
 ) {
     private val logger = LoggerFactory.getLogger(BrevmottakerSletter::class.java)
 
@@ -41,7 +44,7 @@ class BrevmottakerSletter(
         behandlingId: UUID,
         slettbarBrevmottaker: SlettbarBrevmottaker,
     ) = when (slettbarBrevmottaker) {
-        is SlettbarBrevmottakerOrganisasjon -> throw UnsupportedOperationException("Sletting av organisasjon er ikke støttet.")
+        is SlettbarBrevmottakerOrganisasjon -> slettBrevmottakerOrganisasjon(behandlingId, slettbarBrevmottaker)
         is SlettbarBrevmottakerPersonMedIdent -> throw UnsupportedOperationException("Sletting av person med ident er ikke støttet.")
         is SlettbarBrevmottakerPersonUtenIdent -> slettBrevmottakerPersonUtenIdent(behandlingId, slettbarBrevmottaker)
     }
@@ -102,6 +105,49 @@ class BrevmottakerSletter(
                         nyeBrevmottakerPersoner
                     },
                 organisasjoner = brevmottakere.organisasjoner,
+            )
+
+        validerBrevmottakere(behandlingId, nyeBrevmottakere)
+
+        brevRepository.update(
+            brev.copy(
+                mottakere = nyeBrevmottakere,
+            ),
+        )
+    }
+
+    private fun slettBrevmottakerOrganisasjon(
+        behandlingId: UUID,
+        slettbarBrevmottaker: SlettbarBrevmottakerOrganisasjon,
+    ) {
+        if (!featureToggleService.isEnabled(MANUELL_BREVMOTTAKER_ORGANISASJON)) {
+            throw Feil("Feature toggle for å slette manuell brevmottaker organisasjon er ikke aktivert.")
+        }
+
+        logger.debug("Sletter brevmottaker {} for behandling {}.", slettbarBrevmottaker.organisasjonsnummer, behandlingId)
+
+        val behandling = behandlingService.hentBehandling(behandlingId)
+        behandling.validerRedigerbarBehandlingOgBehandlingsstegBrev()
+
+        val brev = brevService.hentBrev(behandlingId)
+        val brevmottakere = brev.mottakere ?: Brevmottakere()
+
+        val brevmottakerOrganisasjonSomSkalSlettes =
+            brevmottakere.organisasjoner
+                .find { it.organisasjonsnummer == slettbarBrevmottaker.organisasjonsnummer }
+
+        if (brevmottakerOrganisasjonSomSkalSlettes == null) {
+            throw Feil("Brevmottaker ${slettbarBrevmottaker.organisasjonsnummer} kan ikke slettes da den ikke finnes.")
+        }
+
+        val nyeBrevmottakerOrganisasjoner =
+            brevmottakere.organisasjoner.filter {
+                it.organisasjonsnummer != slettbarBrevmottaker.organisasjonsnummer
+            }
+
+        val nyeBrevmottakere =
+            brevmottakere.copy(
+                organisasjoner = nyeBrevmottakerOrganisasjoner,
             )
 
         validerBrevmottakere(behandlingId, nyeBrevmottakere)
