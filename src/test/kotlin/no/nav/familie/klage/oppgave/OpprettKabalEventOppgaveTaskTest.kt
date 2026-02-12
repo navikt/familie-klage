@@ -17,6 +17,7 @@ import no.nav.familie.klage.testutil.DomainUtil.fagsakDomain
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Regelverk
 import no.nav.familie.kontrakter.felles.Tema
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
@@ -24,7 +25,6 @@ import no.nav.familie.kontrakter.felles.klage.FagsystemType
 import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
-import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.Behandlingstype
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgavePrioritet
@@ -72,7 +72,7 @@ class OpprettKabalEventOppgaveTaskTest {
             val task =
                 Task(
                     OpprettKabalEventOppgaveTask.TYPE,
-                    objectMapper.writeValueAsString(opprettOppgavePayload),
+                    jsonMapper.writeValueAsString(opprettOppgavePayload),
                 )
 
             val fagsak =
@@ -144,7 +144,7 @@ class OpprettKabalEventOppgaveTaskTest {
             val task =
                 Task(
                     OpprettKabalEventOppgaveTask.TYPE,
-                    objectMapper.writeValueAsString(opprettOppgavePayload),
+                    jsonMapper.writeValueAsString(opprettOppgavePayload),
                 )
 
             val fagsak =
@@ -239,7 +239,7 @@ class OpprettKabalEventOppgaveTaskTest {
             val task =
                 Task(
                     OpprettKabalEventOppgaveTask.TYPE,
-                    objectMapper.writeValueAsString(opprettOppgavePayload),
+                    jsonMapper.writeValueAsString(opprettOppgavePayload),
                 )
 
             val fagsak =
@@ -334,7 +334,7 @@ class OpprettKabalEventOppgaveTaskTest {
             val task =
                 Task(
                     OpprettKabalEventOppgaveTask.TYPE,
-                    objectMapper.writeValueAsString(opprettOppgavePayload),
+                    jsonMapper.writeValueAsString(opprettOppgavePayload),
                 )
 
             val fagsak =
@@ -434,7 +434,7 @@ class OpprettKabalEventOppgaveTaskTest {
 
             // Assert
             assertThat(task.type).isEqualTo(OpprettKabalEventOppgaveTask.TYPE)
-            assertThat(task.payload).isEqualTo(objectMapper.writeValueAsString(opprettOppgavePayload))
+            assertThat(task.payload).isEqualTo(jsonMapper.writeValueAsString(opprettOppgavePayload))
         }
     }
 }

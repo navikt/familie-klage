@@ -5,7 +5,7 @@ import io.mockk.verify
 import no.nav.familie.klage.kabal.event.BehandlingEventService
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -51,6 +51,6 @@ class KabalKafkaListenerTest {
                     ),
                 ),
             )
-        return objectMapper.writeValueAsString(behandlingEvent)
+        return jsonMapper.writeValueAsString(behandlingEvent)
     }
 }

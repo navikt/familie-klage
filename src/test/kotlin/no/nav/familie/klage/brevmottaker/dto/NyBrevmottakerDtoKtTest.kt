@@ -664,16 +664,16 @@ class NyBrevmottakerDtoKtTest {
             // Arrange
             val json =
                 "{" +
-                    "\"type\":\"ORGANISASJON\"," +
-                    "\"organisasjonsnummer\":\"123\"," +
-                    "\"organisasjonsnavn\":\"Orgnavn\"," +
-                    "\"navnHosOrganisasjon\":\"OG\"" +
-                    "}"
+                        "\"type\":\"ORGANISASJON\"," +
+                        "\"organisasjonsnummer\":\"123\"," +
+                        "\"organisasjonsnavn\":\"Orgnavn\"," +
+                        "\"navnHosOrganisasjon\":\"OG\"" +
+                        "}"
 
-            val parser = jsonMapper.factory.createParser(json)
+            val parser = jsonMapper.createParser(json)
 
             // Act
-            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, jsonMapper.deserializationContext)
+            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, jsonMapper._deserializationContext())
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(NyBrevmottakerOrganisasjonDto::class.java) {
@@ -688,16 +688,16 @@ class NyBrevmottakerDtoKtTest {
             // Arrange
             val json =
                 "{" +
-                    "\"type\":\"PERSON_MED_IDENT\"," +
-                    "\"personIdent\":\"01492350318\"," +
-                    "\"mottakerRolle\":\"BRUKER\"," +
-                    "\"navn\":\"Fornavn mellomnavn Etternavn\"" +
-                    "}"
+                        "\"type\":\"PERSON_MED_IDENT\"," +
+                        "\"personIdent\":\"01492350318\"," +
+                        "\"mottakerRolle\":\"BRUKER\"," +
+                        "\"navn\":\"Fornavn mellomnavn Etternavn\"" +
+                        "}"
 
-            val parser = jsonMapper.factory.createParser(json)
+            val parser = jsonMapper.createParser(json)
 
             // Act
-            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, jsonMapper.deserializationContext)
+            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, jsonMapper._deserializationContext())
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(NyBrevmottakerPersonMedIdentDto::class.java) {
@@ -712,20 +712,20 @@ class NyBrevmottakerDtoKtTest {
             // Arrange
             val json =
                 "{" +
-                    "\"type\":\"PERSON_UTEN_IDENT\"," +
-                    "\"mottakerRolle\":\"FULLMAKT\"," +
-                    "\"navn\":\"Fornavn mellomnavn Etternavn\"," +
-                    "\"adresselinje1\":\"Adresse 1\"," +
-                    "\"adresselinje2\":\"Adresse 2\"," +
-                    "\"postnummer\":\"0010\"," +
-                    "\"poststed\":\"Oslo\"," +
-                    "\"landkode\":\"NO\"" +
-                    "}"
+                        "\"type\":\"PERSON_UTEN_IDENT\"," +
+                        "\"mottakerRolle\":\"FULLMAKT\"," +
+                        "\"navn\":\"Fornavn mellomnavn Etternavn\"," +
+                        "\"adresselinje1\":\"Adresse 1\"," +
+                        "\"adresselinje2\":\"Adresse 2\"," +
+                        "\"postnummer\":\"0010\"," +
+                        "\"poststed\":\"Oslo\"," +
+                        "\"landkode\":\"NO\"" +
+                        "}"
 
-            val parser = jsonMapper.factory.createParser(json)
+            val parser = jsonMapper.createParser(json)
 
             // Act
-            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, jsonMapper.deserializationContext)
+            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, jsonMapper._deserializationContext())
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(NyBrevmottakerPersonUtenIdentDto::class.java) {
@@ -744,17 +744,17 @@ class NyBrevmottakerDtoKtTest {
             // Arrange
             val json =
                 "{" +
-                    "\"type\":\"PERSON_UTEN_IDENT\"," +
-                    "\"mottakerRolle\":\"BRUKER_MED_UTENLANDSK_ADRESSE\"," +
-                    "\"navn\":\"Fornavn mellomnavn Etternavn\"," +
-                    "\"adresselinje1\":\"Adresse 1, Mars, 1337\"," +
-                    "\"landkode\":\"DK\"" +
-                    "}"
+                        "\"type\":\"PERSON_UTEN_IDENT\"," +
+                        "\"mottakerRolle\":\"BRUKER_MED_UTENLANDSK_ADRESSE\"," +
+                        "\"navn\":\"Fornavn mellomnavn Etternavn\"," +
+                        "\"adresselinje1\":\"Adresse 1, Mars, 1337\"," +
+                        "\"landkode\":\"DK\"" +
+                        "}"
 
-            val parser = jsonMapper.factory.createParser(json)
+            val parser = jsonMapper.createParser(json)
 
             // Act
-            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, jsonMapper.deserializationContext)
+            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, jsonMapper._deserializationContext())
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(NyBrevmottakerPersonUtenIdentDto::class.java) {

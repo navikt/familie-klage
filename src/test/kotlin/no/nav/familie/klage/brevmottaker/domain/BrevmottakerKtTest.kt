@@ -148,10 +148,10 @@ class BrevmottakerKtTest {
                 )
 
             val json = jsonMapper.writeValueAsString(brevmottakerPersonMedIdent)
-            val parser = jsonMapper.factory.createParser(json)
+            val parser = jsonMapper.createParser(json)
 
             // Act
-            val deserialize = brevmottakerPersonDeserializer.deserialize(parser, jsonMapper.deserializationContext)
+            val deserialize = brevmottakerPersonDeserializer.deserialize(parser, jsonMapper._deserializationContext())
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(BrevmottakerPersonMedIdent::class.java) {
@@ -179,10 +179,10 @@ class BrevmottakerKtTest {
                 )
 
             val json = jsonMapper.writeValueAsString(brevmottakerPersonMedIdent)
-            val parser = jsonMapper.factory.createParser(json)
+            val parser = jsonMapper.createParser(json)
 
             // Act
-            val deserialize = brevmottakerPersonDeserializer.deserialize(parser, jsonMapper.deserializationContext)
+            val deserialize = brevmottakerPersonDeserializer.deserialize(parser, jsonMapper._deserializationContext())
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
@@ -215,10 +215,10 @@ class BrevmottakerKtTest {
                 )
 
             val json = jsonMapper.writeValueAsString(brevmottakerPersonMedIdent)
-            val parser = jsonMapper.factory.createParser(json)
+            val parser = jsonMapper.createParser(json)
 
             // Act
-            val deserialize = brevmottakerPersonDeserializer.deserialize(parser, jsonMapper.deserializationContext)
+            val deserialize = brevmottakerPersonDeserializer.deserialize(parser, jsonMapper._deserializationContext())
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {

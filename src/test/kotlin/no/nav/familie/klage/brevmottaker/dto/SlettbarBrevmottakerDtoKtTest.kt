@@ -115,13 +115,13 @@ class SlettbarBrevmottakerDtoKtTest {
                     "\"organisasjonsnummer\":\"321\"" +
                     "}"
 
-            val parser = jsonMapper.factory.createParser(json)
+            val parser = jsonMapper.createParser(json)
 
             // Act
             val deserialize =
                 slettbarBrevmottakerDtoDeserializer.deserialize(
                     parser,
-                    jsonMapper.deserializationContext,
+                    jsonMapper._deserializationContext(),
                 )
 
             // Assert
@@ -139,13 +139,13 @@ class SlettbarBrevmottakerDtoKtTest {
                     "\"personIdent\":\"123\"" +
                     "}"
 
-            val parser = jsonMapper.factory.createParser(json)
+            val parser = jsonMapper.createParser(json)
 
             // Act
             val deserialize =
                 slettbarBrevmottakerDtoDeserializer.deserialize(
                     parser,
-                    jsonMapper.deserializationContext,
+                    jsonMapper._deserializationContext(),
                 )
 
             // Assert
@@ -165,13 +165,13 @@ class SlettbarBrevmottakerDtoKtTest {
                     "\"id\":\"${id}\"" +
                     "}"
 
-            val parser = jsonMapper.factory.createParser(json)
+            val parser = jsonMapper.createParser(json)
 
             // Act
             val deserialize =
                 slettbarBrevmottakerDtoDeserializer.deserialize(
                     parser,
-                    jsonMapper.deserializationContext,
+                    jsonMapper._deserializationContext(),
                 )
 
             // Assert

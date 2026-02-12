@@ -58,11 +58,10 @@ fun <K : Any, T> CacheManager.getValue(
     valueLoader: () -> T,
 ): T = this.getNullable(cache, key, valueLoader) ?: error("Finner ikke cache for cache=$cache key=$key")
 
-
 fun <K : Any, T> CacheManager.getNullable(
     cacheName: String,
     key: K,
-    valueLoader: () -> T?
+    valueLoader: () -> T?,
 ): T? {
     val cache = getCacheOrThrow(cacheName)
 
@@ -70,6 +69,5 @@ fun <K : Any, T> CacheManager.getNullable(
     return (cache.get(key)?.get() as T?)
         ?: valueLoader().also { cache.put(key, it) }
 }
-
 
 fun CacheManager.getCacheOrThrow(cache: String) = this.getCache(cache) ?: error("Finner ikke cache=$cache")

@@ -22,11 +22,11 @@ class BrevmottakerJournalpostDeserializerTest {
                 )
 
             val json = jsonMapper.writeValueAsString(brevmottakerJournalpostMedIdent)
-            val parser = jsonMapper.factory.createParser(json)
+            val parser = jsonMapper.createParser(json)
 
             // Act
             val deserialize =
-                brevmottakerJournalpostDeserializer.deserialize(parser, jsonMapper.deserializationContext)
+                brevmottakerJournalpostDeserializer.deserialize(parser, jsonMapper._deserializationContext())
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(BrevmottakerJournalpostMedIdent::class.java) {
@@ -47,11 +47,11 @@ class BrevmottakerJournalpostDeserializerTest {
                 )
 
             val json = jsonMapper.writeValueAsString(brevmottakerJournalpostMedIdent)
-            val parser = jsonMapper.factory.createParser(json)
+            val parser = jsonMapper.createParser(json)
 
             // Act
             val deserialize =
-                brevmottakerJournalpostDeserializer.deserialize(parser, jsonMapper.deserializationContext)
+                brevmottakerJournalpostDeserializer.deserialize(parser, jsonMapper._deserializationContext())
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(BrevmottakerJournalpostUtenIdent::class.java) {
