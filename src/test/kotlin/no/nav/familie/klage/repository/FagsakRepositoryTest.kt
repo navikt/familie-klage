@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.relational.core.conversion.DbActionExecutionException
+import org.springframework.dao.DuplicateKeyException
 import org.springframework.data.repository.findByIdOrNull
 import java.util.UUID
 import kotlin.random.Random
@@ -150,10 +150,10 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
 
             // Act & asseret
             val exception =
-                assertThrows<DbActionExecutionException> {
+                assertThrows<DuplicateKeyException> {
                     fagsakRepository.insertAll(listOf(fagsak1, fagsak2))
                 }
-            assertThat(exception.message).contains("Failed to execute InsertRoot")
+            assertThat(exception.message).contains("duplicate key value violates unique constraint \"fagsak_person_unique\"")
         }
     }
 }
