@@ -62,10 +62,8 @@ data class NyBrevmottakerOrganisasjon(
     init {
         Organisasjonsnummer(organisasjonsnummer)
         require(organisasjonsnavn.isNotBlank()) { "Organisasjonsnavn kan ikke være blank." }
-        mottakerRolle?.let {
-            require(mottakerRolle in setOf(INSTITUSJON, FULLMAKT)) {
-                "Brevmottakerorganisasjon kan ikke ha mottakerrolle $mottakerRolle."
-            }
+        require(mottakerRolle == null || mottakerRolle in setOf(INSTITUSJON, FULLMAKT)) {
+            "Brevmottakerorganisasjon kan ikke ha mottakerrolle $mottakerRolle."
         }
     }
 }
