@@ -205,7 +205,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                 )
 
             // Assert
-            assertThat(1).isEqualTo(HttpStatus.FORBIDDEN)
+            assertThat(exchange.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
             assertThat(exchange.body?.status).isEqualTo(Ressurs.Status.IKKE_TILGANG)
             assertThat(exchange.body?.melding).isEqualTo(
                 "Saksbehandler julenissen har ikke tilgang til behandling=${behandling.id}",
