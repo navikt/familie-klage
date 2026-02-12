@@ -14,9 +14,11 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import java.util.UUID
 
 class SøkControllerTest : OppslagSpringRunnerTest() {
@@ -56,10 +58,11 @@ class SøkControllerTest : OppslagSpringRunnerTest() {
         assertThat(body.data).isEqualTo(PersonTreffDto("12345678901", "Fornavn mellomnavn Etternavn"))
     }
 
-    private fun søkPerson(personIdentDto: PersonIdentDto) =
-        restTemplate.exchange<Ressurs<PersonTreffDto>>(
+    private fun søkPerson(personIdentDto: PersonIdentDto): ResponseEntity<Ressurs<PersonTreffDto>> =
+        restTemplate.exchange(
             localhost("/api/sok/person"),
             HttpMethod.POST,
             HttpEntity(personIdentDto, headers),
+            object : ParameterizedTypeReference<Ressurs<PersonTreffDto>>() {},
         )
 }

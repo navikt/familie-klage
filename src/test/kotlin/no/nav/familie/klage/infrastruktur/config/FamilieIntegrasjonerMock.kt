@@ -201,8 +201,8 @@ class FamilieIntegrasjonerMock(
         Tilgang(
             false,
             "Mock sier: Du har " +
-                    "ikke tilgang " +
-                    "til person ikkeTilgang",
+                "ikke tilgang " +
+                "til person ikkeTilgang",
         )
 
     @Bean("mock-integrasjoner")

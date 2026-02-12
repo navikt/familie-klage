@@ -17,7 +17,6 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.HenlagtÅrsak
 import no.nav.familie.kontrakter.felles.klage.KlagebehandlingDto
-import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.klage.Årsak
 import org.assertj.core.api.Assertions.assertThat
@@ -26,7 +25,7 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.web.client.exchange
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -168,10 +167,11 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
         }
 
         private fun hentBehandlinger(url: String) =
-            restTemplate.exchange<Ressurs<Map<String, List<KlagebehandlingDto>>>>(
+            restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 HttpEntity(null, headers),
+                object : ParameterizedTypeReference<Ressurs<Map<String, List<KlagebehandlingDto>>>>() {},
             )
     }
 
@@ -184,13 +184,14 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
 
             // Act
             val response =
-                restTemplate.exchange<Ressurs<UUID>>(
-                    localhost("$baseUrl/v2/opprett"),
+                restTemplate.exchange(
+                    localhost(uri = "$baseUrl/v2/opprett"),
                     HttpMethod.POST,
-                    HttpEntity<OpprettKlagebehandlingRequest>(
+                    HttpEntity(
                         opprettKlagebehandlingRequest,
                         headers,
                     ),
+                    object : ParameterizedTypeReference<Ressurs<UUID>>() {},
                 )
 
             // Arrange
