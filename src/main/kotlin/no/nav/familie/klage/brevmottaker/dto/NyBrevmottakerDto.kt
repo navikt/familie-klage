@@ -171,7 +171,7 @@ class NyBrevmottakerDtoDeserializer : StdDeserializer<NyBrevmottakerDto>(NyBrevm
         context: DeserializationContext,
     ): NyBrevmottakerDto {
         val tree = jsonParser.readValueAsTree<JsonNode>()
-        val type = NyBrevmottakerDto.Type.valueOf(tree.get("type").toString())
+        val type = NyBrevmottakerDto.Type.valueOf(tree.get("type").asString())
         return when (type) {
             NyBrevmottakerDto.Type.PERSON_MED_IDENT -> {
                 jsonMapper.treeToValue(

@@ -148,7 +148,7 @@ class BrevService(
                 } else {
                     val klagefristUnntakOppfylt =
                         formkrav.klagefristOverholdtUnntak in
-                            listOf(FormkravFristUnntak.UNNTAK_SÆRLIG_GRUNN, FormkravFristUnntak.UNNTAK_KAN_IKKE_LASTES)
+                                listOf(FormkravFristUnntak.UNNTAK_SÆRLIG_GRUNN, FormkravFristUnntak.UNNTAK_KAN_IKKE_LASTES)
 
                     brukerfeilHvis(klagefristUnntakOppfylt && formkrav.brevtekst == null) {
                         "Hvis unntak for klagefrist er oppfylt, må begrunnelse fylles ut i fritekstfelt"
@@ -204,7 +204,7 @@ class BrevService(
             BehandlingResultat.MEDHOLD,
             BehandlingResultat.IKKE_SATT,
             BehandlingResultat.HENLAGT,
-            -> {
+                -> {
                 throw Feil("Kan ikke lage brev for behandling med behandlingResultat=$behandlingResultat")
             }
         }
@@ -320,12 +320,12 @@ class BrevService(
             when (stønadstype) {
                 Stønadstype.BARNETRYGD,
                 Stønadstype.KONTANTSTØTTE,
-                -> lagHenleggelsesbrevHtmlBaks(signaturMedEnhet, personopplysninger.navn, fagsak, brevmottakere)
+                    -> lagHenleggelsesbrevHtmlBaks(signaturMedEnhet, personopplysninger.navn, fagsak, brevmottakere)
 
                 Stønadstype.OVERGANGSSTØNAD,
                 Stønadstype.BARNETILSYN,
                 Stønadstype.SKOLEPENGER,
-                -> lagHenleggelsesbrevHtmlEf(behandlingId, signaturMedEnhet, fagsak)
+                    -> lagHenleggelsesbrevHtmlEf(behandlingId, signaturMedEnhet, fagsak)
             }
 
         return html

@@ -24,8 +24,8 @@ import no.nav.familie.klage.testutil.DomainUtil.vurderingDto
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.kontrakter.felles.klage.Årsak
-import no.nav.security.mock.oauth2.http.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -70,38 +70,38 @@ internal class BlankettServiceTest {
         every { personopplysningerDto.navn } returns "navn"
         every { personopplysningerService.hentPersonopplysninger(behandlingId) } returns personopplysningerDto
         every { formService.hentFormDto(behandlingId) } returns
-            oppfyltForm(behandlingId)
-                .copy(
-                    saksbehandlerBegrunnelse = "Ok",
-                    brevtekst = "Brevtekst",
-                    klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_SATT,
-                ).tilDto(mockk())
+                oppfyltForm(behandlingId)
+                    .copy(
+                        saksbehandlerBegrunnelse = "Ok",
+                        brevtekst = "Brevtekst",
+                        klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_SATT,
+                    ).tilDto(mockk())
         every { vurderingService.hentVurderingDto(behandlingId) } returns
-            vurderingDto(
-                vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
-                årsak = Årsak.FEIL_I_LOVANDVENDELSE,
-                begrunnelseOmgjøring = "begrunnelse",
-                hjemmel = Hjemmel.BT_FEM,
-                interntNotat = "interntNotat",
-                innstillingKlageinstans = "innstillingKlageinstans",
-                dokumentasjonOgUtredning = "dokumentasjonOgUtredning",
-                spørsmåletISaken = "spørsmåletISaken",
-                aktuelleRettskilder = "aktuelleRettskilder",
-                klagersAnførsler = "klagersAnførsler",
-                vurderingAvKlagen = "vurderingAvKlagen",
-            )
+                vurderingDto(
+                    vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
+                    årsak = Årsak.FEIL_I_LOVANDVENDELSE,
+                    begrunnelseOmgjøring = "begrunnelse",
+                    hjemmel = Hjemmel.BT_FEM,
+                    interntNotat = "interntNotat",
+                    innstillingKlageinstans = "innstillingKlageinstans",
+                    dokumentasjonOgUtredning = "dokumentasjonOgUtredning",
+                    spørsmåletISaken = "spørsmåletISaken",
+                    aktuelleRettskilder = "aktuelleRettskilder",
+                    klagersAnførsler = "klagersAnførsler",
+                    vurderingAvKlagen = "vurderingAvKlagen",
+                )
         every { brevClient.genererBlankett(capture(blankettRequestSpot)) } returns byteArrayOf()
         every { fagsystemVedtakService.hentFagsystemVedtak(behandlingId) } returns
-            listOf(
-                fagsystemVedtak(eksternBehandlingId = eksternFagsystemBehandlingId),
-            )
+                listOf(
+                    fagsystemVedtak(eksternBehandlingId = eksternFagsystemBehandlingId),
+                )
     }
 
     @Test
     internal fun `validerer json-request`() {
         service.lagBlankett(behandling.id)
 
-        val blankettRequest = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(blankettRequestSpot.captured)
+        val blankettRequest = jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(blankettRequestSpot.captured)
         val expected =
             this::class.java.classLoader
                 .getResource("blankett/request.json")!!

@@ -1,6 +1,5 @@
 package no.nav.familie.klage.brev
 
-import com.fasterxml.jackson.databind.JsonNode
 import no.nav.familie.klage.blankett.BlankettPdfRequest
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
+import tools.jackson.databind.JsonNode
 import java.net.URI
 import java.time.LocalDate
 
