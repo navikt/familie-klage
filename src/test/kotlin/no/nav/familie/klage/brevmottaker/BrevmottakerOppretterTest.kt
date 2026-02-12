@@ -489,7 +489,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerPersonUtenIdent,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
                 assertThat(it.id).isNotNull()
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
@@ -556,7 +556,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerPersonUtenIdent,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
                 assertThat(it.id).isNotNull()
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
@@ -619,7 +619,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerPersonUtenIdent,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
                 assertThat(it.id).isNotNull()
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
@@ -678,7 +678,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerPersonUtenIdent,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
                 assertThat(it.id).isNotNull()
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
@@ -745,7 +745,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerPersonUtenIdent,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
                 assertThat(it.id).isNotNull()
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
@@ -819,7 +819,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerPersonUtenIdent,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
                 assertThat(it.id).isNotNull()
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
@@ -893,7 +893,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerPersonUtenIdent,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
                 assertThat(it.id).isNotNull()
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
@@ -965,7 +965,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerPersonUtenIdent,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
                 assertThat(it.id).isNotNull()
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
@@ -1046,7 +1046,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerPersonUtenIdent,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
                 assertThat(it.id).isNotNull()
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
@@ -1257,7 +1257,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerOrganisasjon,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerOrganisasjon::class.java) {
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerOrganisasjon.mottakerRolle)
                 assertThat(it.organisasjonsnavn).isEqualTo(nyBrevmottakerOrganisasjon.organisasjonsnavn)
@@ -1307,7 +1307,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerOrganisasjon,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerOrganisasjon::class.java) {
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerOrganisasjon.mottakerRolle)
                 assertThat(it.organisasjonsnavn).isEqualTo(nyBrevmottakerOrganisasjon.organisasjonsnavn)
@@ -1353,7 +1353,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerOrganisasjon,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerOrganisasjon::class.java) {
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerOrganisasjon.mottakerRolle)
                 assertThat(it.organisasjonsnavn).isEqualTo(nyBrevmottakerOrganisasjon.organisasjonsnavn)
