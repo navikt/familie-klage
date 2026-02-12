@@ -70,31 +70,31 @@ internal class BlankettServiceTest {
         every { personopplysningerDto.navn } returns "navn"
         every { personopplysningerService.hentPersonopplysninger(behandlingId) } returns personopplysningerDto
         every { formService.hentFormDto(behandlingId) } returns
-                oppfyltForm(behandlingId)
-                    .copy(
-                        saksbehandlerBegrunnelse = "Ok",
-                        brevtekst = "Brevtekst",
-                        klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_SATT,
-                    ).tilDto(mockk())
+            oppfyltForm(behandlingId)
+                .copy(
+                    saksbehandlerBegrunnelse = "Ok",
+                    brevtekst = "Brevtekst",
+                    klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_SATT,
+                ).tilDto(mockk())
         every { vurderingService.hentVurderingDto(behandlingId) } returns
-                vurderingDto(
-                    vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
-                    årsak = Årsak.FEIL_I_LOVANDVENDELSE,
-                    begrunnelseOmgjøring = "begrunnelse",
-                    hjemmel = Hjemmel.BT_FEM,
-                    interntNotat = "interntNotat",
-                    innstillingKlageinstans = "innstillingKlageinstans",
-                    dokumentasjonOgUtredning = "dokumentasjonOgUtredning",
-                    spørsmåletISaken = "spørsmåletISaken",
-                    aktuelleRettskilder = "aktuelleRettskilder",
-                    klagersAnførsler = "klagersAnførsler",
-                    vurderingAvKlagen = "vurderingAvKlagen",
-                )
+            vurderingDto(
+                vedtak = Vedtak.OPPRETTHOLD_VEDTAK,
+                årsak = Årsak.FEIL_I_LOVANDVENDELSE,
+                begrunnelseOmgjøring = "begrunnelse",
+                hjemmel = Hjemmel.BT_FEM,
+                interntNotat = "interntNotat",
+                innstillingKlageinstans = "innstillingKlageinstans",
+                dokumentasjonOgUtredning = "dokumentasjonOgUtredning",
+                spørsmåletISaken = "spørsmåletISaken",
+                aktuelleRettskilder = "aktuelleRettskilder",
+                klagersAnførsler = "klagersAnførsler",
+                vurderingAvKlagen = "vurderingAvKlagen",
+            )
         every { brevClient.genererBlankett(capture(blankettRequestSpot)) } returns byteArrayOf()
         every { fagsystemVedtakService.hentFagsystemVedtak(behandlingId) } returns
-                listOf(
-                    fagsystemVedtak(eksternBehandlingId = eksternFagsystemBehandlingId),
-                )
+            listOf(
+                fagsystemVedtak(eksternBehandlingId = eksternFagsystemBehandlingId),
+            )
     }
 
     @Test
