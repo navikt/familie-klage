@@ -24,8 +24,8 @@ import no.nav.familie.klage.testutil.DomainUtil.vurderingDto
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.kontrakter.felles.klage.Årsak
-import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -101,7 +101,7 @@ internal class BlankettServiceTest {
     internal fun `validerer json-request`() {
         service.lagBlankett(behandling.id)
 
-        val blankettRequest = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(blankettRequestSpot.captured)
+        val blankettRequest = jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(blankettRequestSpot.captured)
         val expected =
             this::class.java.classLoader
                 .getResource("blankett/request.json")!!

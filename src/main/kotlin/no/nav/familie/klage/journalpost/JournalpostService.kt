@@ -1,6 +1,5 @@
 package no.nav.familie.klage.journalpost
 
-import no.nav.familie.http.client.RessursException
 import no.nav.familie.klage.infrastruktur.exception.ManglerTilgang
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvisIkke
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
@@ -12,6 +11,7 @@ import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.JournalposterForBrukerRequest
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
+import no.nav.familie.restklient.client.RessursException
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.client.HttpClientErrorException

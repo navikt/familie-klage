@@ -3,7 +3,7 @@ package no.nav.familie.klage.brevmottaker.dto
 import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonUtenIdent
-import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
+import no.nav.familie.klage.infrastruktur.config.JsonMapperProvider.jsonMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -115,13 +115,13 @@ class SlettbarBrevmottakerDtoKtTest {
                     "\"organisasjonsnummer\":\"321\"" +
                     "}"
 
-            val parser = objectMapper.factory.createParser(json)
+            val parser = jsonMapper.createParser(json)
 
             // Act
             val deserialize =
                 slettbarBrevmottakerDtoDeserializer.deserialize(
                     parser,
-                    objectMapper.deserializationContext,
+                    jsonMapper._deserializationContext(),
                 )
 
             // Assert
@@ -139,13 +139,13 @@ class SlettbarBrevmottakerDtoKtTest {
                     "\"personIdent\":\"123\"" +
                     "}"
 
-            val parser = objectMapper.factory.createParser(json)
+            val parser = jsonMapper.createParser(json)
 
             // Act
             val deserialize =
                 slettbarBrevmottakerDtoDeserializer.deserialize(
                     parser,
-                    objectMapper.deserializationContext,
+                    jsonMapper._deserializationContext(),
                 )
 
             // Assert
@@ -165,13 +165,13 @@ class SlettbarBrevmottakerDtoKtTest {
                     "\"id\":\"${id}\"" +
                     "}"
 
-            val parser = objectMapper.factory.createParser(json)
+            val parser = jsonMapper.createParser(json)
 
             // Act
             val deserialize =
                 slettbarBrevmottakerDtoDeserializer.deserialize(
                     parser,
-                    objectMapper.deserializationContext,
+                    jsonMapper._deserializationContext(),
                 )
 
             // Assert

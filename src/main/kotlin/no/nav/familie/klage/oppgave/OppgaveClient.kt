@@ -1,7 +1,5 @@
 package no.nav.familie.klage.oppgave
 
-import no.nav.familie.http.client.AbstractPingableRestClient
-import no.nav.familie.http.client.RessursException
 import no.nav.familie.klage.behandling.enhet.Enhet
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import no.nav.familie.klage.infrastruktur.config.IntegrasjonerConfig
@@ -13,6 +11,8 @@ import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.familie.kontrakter.felles.saksbehandler.Saksbehandler
+import no.nav.familie.restklient.client.AbstractPingableRestClient
+import no.nav.familie.restklient.client.RessursException
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus

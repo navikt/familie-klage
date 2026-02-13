@@ -1,6 +1,6 @@
 package no.nav.familie.klage.brevmottaker.domain
 
-import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
+import no.nav.familie.klage.infrastruktur.config.JsonMapperProvider.jsonMapper
 import no.nav.familie.klage.testutil.DomainUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -147,11 +147,11 @@ class BrevmottakerKtTest {
                     navn = "Fornavn mellomnavn Etternavn",
                 )
 
-            val json = objectMapper.writeValueAsString(brevmottakerPersonMedIdent)
-            val parser = objectMapper.factory.createParser(json)
+            val json = jsonMapper.writeValueAsString(brevmottakerPersonMedIdent)
+            val parser = jsonMapper.createParser(json)
 
             // Act
-            val deserialize = brevmottakerPersonDeserializer.deserialize(parser, objectMapper.deserializationContext)
+            val deserialize = brevmottakerPersonDeserializer.deserialize(parser, jsonMapper._deserializationContext())
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(BrevmottakerPersonMedIdent::class.java) {
@@ -178,11 +178,11 @@ class BrevmottakerKtTest {
                     landkode = "NO",
                 )
 
-            val json = objectMapper.writeValueAsString(brevmottakerPersonMedIdent)
-            val parser = objectMapper.factory.createParser(json)
+            val json = jsonMapper.writeValueAsString(brevmottakerPersonMedIdent)
+            val parser = jsonMapper.createParser(json)
 
             // Act
-            val deserialize = brevmottakerPersonDeserializer.deserialize(parser, objectMapper.deserializationContext)
+            val deserialize = brevmottakerPersonDeserializer.deserialize(parser, jsonMapper._deserializationContext())
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
@@ -214,11 +214,11 @@ class BrevmottakerKtTest {
                     landkode = "DK",
                 )
 
-            val json = objectMapper.writeValueAsString(brevmottakerPersonMedIdent)
-            val parser = objectMapper.factory.createParser(json)
+            val json = jsonMapper.writeValueAsString(brevmottakerPersonMedIdent)
+            val parser = jsonMapper.createParser(json)
 
             // Act
-            val deserialize = brevmottakerPersonDeserializer.deserialize(parser, objectMapper.deserializationContext)
+            val deserialize = brevmottakerPersonDeserializer.deserialize(parser, jsonMapper._deserializationContext())
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {

@@ -1,7 +1,5 @@
 package no.nav.familie.klage.brev
 
-import com.fasterxml.jackson.databind.JsonNode
-import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.klage.blankett.BlankettPdfRequest
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
@@ -10,11 +8,13 @@ import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
+import no.nav.familie.restklient.client.AbstractPingableRestClient
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
+import tools.jackson.databind.JsonNode
 import java.net.URI
 import java.time.LocalDate
 
