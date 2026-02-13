@@ -1,6 +1,5 @@
 package no.nav.familie.klage.infrastruktur.config
 
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.log.NavSystemtype
@@ -44,9 +43,6 @@ import java.time.temporal.ChronoUnit
 @EnableScheduling
 class ApplicationConfig {
     private val logger = LoggerFactory.getLogger(this::class.java)
-
-    @Bean
-    fun kotlinModule(): KotlinModule = KotlinModule.Builder().build()
 
     @Bean
     @Primary
