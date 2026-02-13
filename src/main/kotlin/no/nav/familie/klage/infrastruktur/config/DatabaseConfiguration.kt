@@ -28,6 +28,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.transaction.PlatformTransactionManager
+import tools.jackson.module.kotlin.readValue
 import java.util.Optional
 import javax.sql.DataSource
 
@@ -120,7 +121,7 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
 
     @ReadingConverter
     class BytearrayTilBrevmottakereConverter : Converter<PGobject, Brevmottakere> {
-        override fun convert(pGobject: PGobject): Brevmottakere = jsonMapper.readValue(pGobject.value!!, Brevmottakere::class.java)
+        override fun convert(pGobject: PGobject): Brevmottakere = jsonMapper.readValue(pGobject.value!!)
     }
 
     @WritingConverter
@@ -134,7 +135,7 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
 
     @ReadingConverter
     class BytearrayTilBrevmottakereJournalposterConverter : Converter<PGobject, BrevmottakereJournalposter> {
-        override fun convert(pGobject: PGobject): BrevmottakereJournalposter = jsonMapper.readValue(pGobject.value!!, BrevmottakereJournalposter::class.java)
+        override fun convert(pGobject: PGobject): BrevmottakereJournalposter = jsonMapper.readValue(pGobject.value!!)
     }
 
     @WritingConverter
@@ -148,7 +149,7 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
 
     @ReadingConverter
     class BytearrayTilPåklagetVedtakDetaljerConverter : Converter<PGobject, PåklagetVedtakDetaljer> {
-        override fun convert(pGobject: PGobject): PåklagetVedtakDetaljer = jsonMapper.readValue(pGobject.value!!, PåklagetVedtakDetaljer::class.java)
+        override fun convert(pGobject: PGobject): PåklagetVedtakDetaljer = jsonMapper.readValue(pGobject.value!!)
     }
 
     @WritingConverter
@@ -162,6 +163,6 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
 
     @ReadingConverter
     class BytearrayTilOpprettetRevurderingConverter : Converter<PGobject, FagsystemRevurdering> {
-        override fun convert(pGobject: PGobject): FagsystemRevurdering = jsonMapper.readValue(pGobject.value!!, FagsystemRevurdering::class.java)
+        override fun convert(pGobject: PGobject): FagsystemRevurdering = jsonMapper.readValue(pGobject.value!!)
     }
 }

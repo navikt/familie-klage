@@ -1,6 +1,5 @@
 package no.nav.familie.klage.kabal
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.kabal.domain.Type
 import no.nav.familie.klage.kabal.event.BehandlingEventService
@@ -147,9 +146,9 @@ data class KlagebehandlingAvsluttetDetaljer(
 ) {
     fun oppgaveTekst(saksbehandlersEnhet: String): String =
         "Hendelse fra klage av type klagebehandling avsluttet med utfall: $utfall mottatt. " +
-            "Avsluttet tidspunkt: $avsluttet. " +
-            "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet. " +
-            "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
+                "Avsluttet tidspunkt: $avsluttet. " +
+                "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet. " +
+                "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
 }
 
 data class AnkebehandlingOpprettetDetaljer(
@@ -157,7 +156,7 @@ data class AnkebehandlingOpprettetDetaljer(
 ) {
     fun oppgaveTekst(saksbehandlersEnhet: String): String =
         "Hendelse fra klage av type ankebehandling opprettet mottatt. Mottatt klageinstans: $mottattKlageinstans. " +
-            "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet."
+                "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet."
 }
 
 data class AnkebehandlingAvsluttetDetaljer(
@@ -167,9 +166,9 @@ data class AnkebehandlingAvsluttetDetaljer(
 ) {
     fun oppgaveTekst(saksbehandlersEnhet: String): String =
         "Hendelse fra klage av type ankebehandling avsluttet med utfall: $utfall mottatt. " +
-            "Avsluttet tidspunkt: $avsluttet. " +
-            "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet. " +
-            "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
+                "Avsluttet tidspunkt: $avsluttet. " +
+                "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet. " +
+                "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
 }
 
 data class GjenopptaksbehandlingAvsluttetDetaljer(
@@ -179,9 +178,9 @@ data class GjenopptaksbehandlingAvsluttetDetaljer(
 ) {
     fun oppgaveTekst(saksbehandlersEnhet: String): String =
         "Hendelse fra klage av type gjenopptak avsluttet med utfall: $utfall mottatt. " +
-            "Avsluttet tidspunkt: $avsluttet. " +
-            "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet. " +
-            "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
+                "Avsluttet tidspunkt: $avsluttet. " +
+                "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet. " +
+                "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
 }
 
 data class BehandlingFeilregistrertDetaljer(
@@ -202,9 +201,9 @@ data class BehandlingEtterTrygderettenOpphevetAvsluttetDetaljer(
 ) {
     fun oppgaveTekst(saksbehandlersEnhet: String): String =
         "Hendelse fra klage av type behandling etter trygderetten opphevet avsluttet med utfall: $utfall mottatt. " +
-            "Avsluttet tidspunkt: $avsluttet. " +
-            "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet. " +
-            "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
+                "Avsluttet tidspunkt: $avsluttet. " +
+                "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet. " +
+                "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
 }
 
 data class OmgjoeringskravbehandlingAvsluttetDetaljer(
@@ -214,7 +213,7 @@ data class OmgjoeringskravbehandlingAvsluttetDetaljer(
 ) {
     fun oppgaveTekst(saksbehandlersEnhet: String) =
         "Hendelse fra klage etter omgjøringskrav med utfall $utfall mottatt. " +
-            "Avsluttet tidspunkt: $avsluttet. " +
-            "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet. " +
-            "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
+                "Avsluttet tidspunkt: $avsluttet. " +
+                "Opprinnelig klagebehandling er behandlet av enhet: $saksbehandlersEnhet. " +
+                "Journalpost referanser: ${journalpostReferanser.joinToString(", ")}"
 }
