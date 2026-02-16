@@ -65,8 +65,10 @@ class BrevInnholdUtleder(
         klageMottatt: LocalDate,
     ): FritekstBrevRequestDto {
         validerVurdering(vurdering.tilDto(), fagsak.fagsystem)
+        val fraKlager = if (fagsak.erInstitusjonssak()) "fra institusjonen" else "din"
+        val sakenDinFormulering = if (fagsak.erInstitusjonssak()) "vedtaket" else "saken din"
         return FritekstBrevRequestDto(
-            overskrift = "Vi har sendt klagen din til Nav Klageinstans Nord",
+            overskrift = "Vi har sendt klagen $fraKlager til Nav Klageinstans Nord",
             navn = navn,
             personIdent = fagsak.hentAktivIdent(),
             avsnitt =
@@ -74,10 +76,10 @@ class BrevInnholdUtleder(
                     AvsnittDto(
                         deloverskrift = "",
                         innhold =
-                            "Vi har ${klageMottatt.norskFormatLang()} fått klagen din på vedtaket om " +
+                            "Vi har ${klageMottatt.norskFormatLang()} fått klagen $fraKlager på vedtaket om " +
                                 "${visningsnavn(fagsak.stønadstype, påklagetVedtakDetaljer)} som ble gjort " +
                                 "${påklagetVedtakDetaljer.vedtakstidspunkt.norskFormatLang()}, " +
-                                "og kommet frem til at vi ikke endrer vedtaket. Nav Klageinstans skal derfor vurdere saken din på nytt.",
+                                "og kommet frem til at vi ikke endrer vedtaket. Nav Klageinstans skal derfor vurdere $sakenDinFormulering på nytt.",
                     ),
                     AvsnittDto(
                         deloverskrift = "",
@@ -134,9 +136,10 @@ class BrevInnholdUtleder(
     ): FritekstBrevRequestDto {
         val avvistBrevUtleder = avvistBrevInnholdUtlederLookup.hentAvvistBrevUtlederForFagsystem(fagsak.fagsystem)
         val avvistBrevInnhold = avvistBrevUtleder.utledBrevInnhold(fagsak, form)
+        val fraKlager = if (fagsak.erInstitusjonssak()) "fra institusjonen" else "din"
 
         return FritekstBrevRequestDto(
-            overskrift = "Vi har avvist klagen din på vedtaket om ${visningsnavn(fagsak.stønadstype, påklagetVedtakDetaljer)}",
+            overskrift = "Vi har avvist klagen $fraKlager på vedtaket om ${visningsnavn(fagsak.stønadstype, påklagetVedtakDetaljer)}",
             personIdent = fagsak.hentAktivIdent(),
             navn = navn,
             avsnitt =
@@ -167,16 +170,18 @@ class BrevInnholdUtleder(
     ): FritekstBrevRequestDto {
         val brevtekstFraSaksbehandler =
             formkrav.brevtekst ?: error("Må ha brevtekst fra saksbehandler for å generere brev ved formkrav ikke oppfylt")
+        val fraKlager = if (fagsak.erInstitusjonssak()) "fra institusjonen" else "din"
+        val begrunnelseFormulering = if (fagsak.erInstitusjonssak()) "det ikke er" else "du ikke har"
 
         return FritekstBrevRequestDto(
-            overskrift = "Vi har avvist klagen din",
+            overskrift = "Vi har avvist klagen $fraKlager",
             personIdent = fagsak.hentAktivIdent(),
             navn = navn,
             avsnitt =
                 listOf(
                     AvsnittDto(
                         deloverskrift = "",
-                        innhold = "Vi har avvist klagen din fordi du ikke har klaget på et vedtak.",
+                        innhold = "Vi har avvist klagen $fraKlager fordi $begrunnelseFormulering klaget på et vedtak.",
                     ),
                     AvsnittDto(
                         deloverskrift = "",
@@ -196,23 +201,29 @@ class BrevInnholdUtleder(
     fun lagHenleggelsesbrevBaksInnhold(
         fagsak: Fagsak,
         navn: String,
-    ): FritekstBrevRequestDto =
-        FritekstBrevRequestDto(
-            overskrift = "Saken din er avsluttet",
+    ): FritekstBrevRequestDto {
+        val overskrift = if (fagsak.erInstitusjonssak()) "Saken er avsluttet" else "Saken din er avsluttet"
+        val innhold =
+            if (fagsak.erInstitusjonssak()) {
+                "Institusjonen har trukket klagen på vedtaket om ${fagsak.stønadstype.name.lowercase()}. Vi har derfor avsluttet saken."
+            } else {
+                "Du har trukket klagen din på vedtaket om ${fagsak.stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din."
+            }
+        return FritekstBrevRequestDto(
+            overskrift = overskrift,
             personIdent = fagsak.hentAktivIdent(),
             navn = navn,
             avsnitt =
                 listOfNotNull(
                     AvsnittDto(
                         deloverskrift = "",
-                        innhold =
-                            "Du har trukket klagen din på vedtaket om " +
-                                "${fagsak.stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din.",
+                        innhold = innhold,
                     ),
                     duHarRettTilInnsynAvsnitt(fagsak),
                     harDuSpørsmålAvsnitt(fagsak),
                 ),
         )
+    }
 
     private fun duHarRettTilÅKlageAvsnitt(fagsak: Fagsak): AvsnittDto {
         val stønadstype = fagsak.stønadstype
