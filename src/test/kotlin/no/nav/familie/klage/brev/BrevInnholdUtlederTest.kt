@@ -79,6 +79,8 @@ internal class BrevInnholdUtlederTest {
             vurderingAvKlagen = vurderingAvKlagen,
         )
 
+    private val påklagetVedtakDetaljer = påklagetVedtakDetaljer(vedtakstidspunkt = vedtakstidspunkt)
+
     @BeforeEach
     fun oppsett() {
         every { avvistBrevInnholdUtlederLookup.hentAvvistBrevUtlederForFagsystem(Fagsystem.EF) } returns EFAvvistBrevInnholdUtleder()
@@ -97,13 +99,6 @@ internal class BrevInnholdUtlederTest {
             mode = EnumSource.Mode.EXCLUDE,
         )
         fun `brev for opprettholdelse skal inneholde blant annat dato og stønadstype`(stønadstype: Stønadstype) {
-            // Arrange
-            val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    eksternFagsystemBehandlingId = "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
-                )
-
             // Act
             val opprettholdelsesbrev =
                 brevInnholdUtleder.lagOpprettholdelseBrev(
@@ -142,9 +137,7 @@ internal class BrevInnholdUtlederTest {
         fun `brev for opprettholdelse skal ha med info om tilbakebetaling`(stønadstype: Stønadstype) {
             // Arrange
             val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
+                påklagetVedtakDetaljer.copy(
                     fagsystemType = FagsystemType.TILBAKEKREVING,
                 )
 
@@ -187,9 +180,7 @@ internal class BrevInnholdUtlederTest {
         fun `skal utlede brev for opprettholdelse for EF og skal ha med info om sanksjon`(stønadstype: Stønadstype) {
             // Arrange
             val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
+                påklagetVedtakDetaljer.copy(
                     fagsystemType = FagsystemType.SANKSJON_1_MND,
                 )
 
@@ -231,9 +222,7 @@ internal class BrevInnholdUtlederTest {
         fun `skal utlede opprettholdselesbrev for BA og KS sanksjon`(stønadstype: Stønadstype) {
             // Arrange
             val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
+                påklagetVedtakDetaljer.copy(
                     fagsystemType = FagsystemType.SANKSJON_1_MND,
                 )
 
@@ -286,9 +275,7 @@ internal class BrevInnholdUtlederTest {
         fun `skal utlede opprettholdselesbrev for BA og KS tilbakekreving`(stønadstype: Stønadstype) {
             // Arrange
             val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
+                påklagetVedtakDetaljer.copy(
                     fagsystemType = FagsystemType.TILBAKEKREVING,
                 )
 
@@ -343,9 +330,7 @@ internal class BrevInnholdUtlederTest {
             // Arrange
 
             val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
+                påklagetVedtakDetaljer.copy(
                     fagsystemType = FagsystemType.UTESTENGELSE,
                 )
 
@@ -396,14 +381,6 @@ internal class BrevInnholdUtlederTest {
             mode = EnumSource.Mode.INCLUDE,
         )
         fun `skal utlede opprettholdselesbrev for BA og KS ordinær`(stønadstype: Stønadstype) {
-            // Arrange
-            val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
-                    fagsystemType = FagsystemType.ORDNIÆR,
-                )
-
             // Act
             val opprettholdelsesbrev =
                 brevInnholdUtleder.lagOpprettholdelseBrev(
@@ -451,14 +428,6 @@ internal class BrevInnholdUtlederTest {
             mode = EnumSource.Mode.INCLUDE,
         )
         fun `skal utlede opprettholdselesbrev for BA og KS klagefristunntak oppfylt`(stønadstype: Stønadstype) {
-            // Arrange
-            val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
-                    fagsystemType = FagsystemType.ORDNIÆR,
-                )
-
             // Act
             val opprettholdelsesbrev =
                 brevInnholdUtleder.lagOpprettholdelseBrev(
@@ -512,9 +481,7 @@ internal class BrevInnholdUtlederTest {
         fun `brev for avvist formkrav skal ha med info om tilbakebetaling for EF`(stønadstype: Stønadstype) {
             // Arrange
             val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
+                påklagetVedtakDetaljer.copy(
                     fagsystemType = FagsystemType.TILBAKEKREVING,
                 )
 
@@ -558,9 +525,7 @@ internal class BrevInnholdUtlederTest {
         fun `brev for avvist formkrav skal ha med info om tilbakebetaling for BA`() {
             // Arrange
             val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
+                påklagetVedtakDetaljer.copy(
                     fagsystemType = FagsystemType.TILBAKEKREVING,
                 )
 
@@ -604,9 +569,7 @@ internal class BrevInnholdUtlederTest {
         fun `brev for avvist formkrav skal ha med info om tilbakebetaling for KS`() {
             // Arrange
             val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
+                påklagetVedtakDetaljer.copy(
                     fagsystemType = FagsystemType.TILBAKEKREVING,
                 )
 
@@ -650,9 +613,7 @@ internal class BrevInnholdUtlederTest {
         fun `brev for avvist formkrav skal ha med info om sanksjon for EF`() {
             // Arrange
             val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
+                påklagetVedtakDetaljer.copy(
                     fagsystemType = FagsystemType.SANKSJON_1_MND,
                 )
 
@@ -694,9 +655,7 @@ internal class BrevInnholdUtlederTest {
         fun `brev for avvist formkrav skal ha med info om sanksjon for BA`() {
             // Arrange
             val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
+                påklagetVedtakDetaljer.copy(
                     fagsystemType = FagsystemType.SANKSJON_1_MND,
                 )
 
@@ -738,9 +697,7 @@ internal class BrevInnholdUtlederTest {
         fun `brev for avvist formkrav skal ha med info om sanksjon for KS`() {
             // Arrange
             val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
+                påklagetVedtakDetaljer.copy(
                     fagsystemType = FagsystemType.SANKSJON_1_MND,
                 )
 
@@ -782,9 +739,7 @@ internal class BrevInnholdUtlederTest {
         fun `brev for avvist formkrav skal ha med info om utestengelse for EF`() {
             // Arrange
             val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
+                påklagetVedtakDetaljer.copy(
                     fagsystemType = FagsystemType.UTESTENGELSE,
                 )
 
@@ -826,9 +781,7 @@ internal class BrevInnholdUtlederTest {
         fun `brev for avvist formkrav skal ha med info om utestengelse for BA`() {
             // Arrange
             val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
+                påklagetVedtakDetaljer.copy(
                     fagsystemType = FagsystemType.UTESTENGELSE,
                 )
 
@@ -870,9 +823,7 @@ internal class BrevInnholdUtlederTest {
         fun `brev for avvist formkrav skal ha med info om utestengelse for KS`() {
             // Arrange
             val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
+                påklagetVedtakDetaljer.copy(
                     fagsystemType = FagsystemType.UTESTENGELSE,
                 )
 
@@ -913,13 +864,6 @@ internal class BrevInnholdUtlederTest {
         @Test
         fun `skal utlede avvist brev om vedtak for BA`() {
             // Arrange
-            val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
-                    fagsystemType = FagsystemType.ORDNIÆR,
-                )
-
             val fagsak =
                 fagsak.copy(
                     stønadstype = Stønadstype.BARNETRYGD,
@@ -994,13 +938,6 @@ internal class BrevInnholdUtlederTest {
         @Test
         fun `skal utlede avvist brev om vedtak for KS`() {
             // Arrange
-            val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
-                    fagsystemType = FagsystemType.ORDNIÆR,
-                )
-
             val fagsak =
                 fagsak.copy(
                     stønadstype = Stønadstype.KONTANTSTØTTE,
@@ -1080,12 +1017,6 @@ internal class BrevInnholdUtlederTest {
         )
         fun `skal utlede avvist brev om vedtak for EF`(stønadstype: Stønadstype) {
             // Arrange
-            val påklagetVedtakDetaljer =
-                påklagetVedtakDetaljer(
-                    "123",
-                    vedtakstidspunkt = vedtakstidspunkt,
-                )
-
             val fagsak =
                 fagsak.copy(
                     stønadstype = stønadstype,
