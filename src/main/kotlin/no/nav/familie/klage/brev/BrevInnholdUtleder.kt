@@ -133,7 +133,7 @@ class BrevInnholdUtleder(
         påklagetVedtakDetaljer: PåklagetVedtakDetaljer?,
     ): FritekstBrevRequestDto {
         val avvistBrevUtleder = avvistBrevInnholdUtlederLookup.hentAvvistBrevUtlederForFagsystem(fagsak.fagsystem)
-        val avvistBrevInnhold = avvistBrevUtleder.utledBrevInnhold(form)
+        val avvistBrevInnhold = avvistBrevUtleder.utledBrevInnhold(fagsak, form)
 
         return FritekstBrevRequestDto(
             overskrift = "Vi har avvist klagen din på vedtaket om ${visningsnavn(fagsak.stønadstype, påklagetVedtakDetaljer)}",

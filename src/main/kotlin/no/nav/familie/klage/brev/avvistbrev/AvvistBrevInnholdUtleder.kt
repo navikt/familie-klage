@@ -1,5 +1,6 @@
 package no.nav.familie.klage.brev.avvistbrev
 
+import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.formkrav.domain.FormVilkår.IKKE_OPPFYLT
 import no.nav.familie.klage.infrastruktur.exception.Feil
@@ -9,13 +10,21 @@ import org.springframework.stereotype.Component
 interface AvvistBrevInnholdUtleder<T : FormkravVilkår> {
     val fagsystem: Fagsystem
 
-    fun utledBrevInnhold(form: Form): AvvistBrevInnhold {
+    fun utledBrevInnhold(
+        fagsak: Fagsak,
+        form: Form,
+    ): AvvistBrevInnhold {
         val ikkeOppfylteFormkrav = utledIkkeOppfylteFormkrav(form)
         if (ikkeOppfylteFormkrav.isEmpty()) {
             throw Feil("Kan ikke utlede brevinnhold for avvist brev dersom alle formkrav er oppfylt")
         }
         return AvvistBrevInnhold(
-            årsakTilAvvisning = utledÅrsakTilAvvisningstekst(ikkeOppfylteFormkrav),
+            årsakTilAvvisning =
+                if (fagsak.erInstitusjonssak()) {
+                    utledÅrsakTilAvvisningstekstForInstitusjon(ikkeOppfylteFormkrav)
+                } else {
+                    utledÅrsakTilAvvisningstekstForPerson(ikkeOppfylteFormkrav)
+                },
             brevtekstFraSaksbehandler =
                 form.brevtekst ?: error("Må ha brevtekst fra saksbehandler for å generere brev ved formkrav ikke oppfylt"),
             lovtekst = utledLovtekst(ikkeOppfylteFormkrav.tilFormkravVilkår()),
@@ -27,7 +36,8 @@ interface AvvistBrevInnholdUtleder<T : FormkravVilkår> {
     fun Set<Formkrav>.tilFormkravVilkår(): Set<T>
 
     companion object {
-        private const val INNHOLDSTEKST_PREFIX = "Vi har avvist klagen din fordi"
+        private const val INNHOLDSTEKST_PREFIX_PERSON = "Vi har avvist klagen din fordi"
+        private const val INNHOLDSTEKST_PREFIX_INSTITUSJON = "Vi har avvist klagen fra institusjonen fordi"
 
         private fun utledIkkeOppfylteFormkrav(form: Form): Set<Formkrav> =
             setOf(
@@ -37,11 +47,18 @@ interface AvvistBrevInnholdUtleder<T : FormkravVilkår> {
                 if (form.klagefristOverholdt == IKKE_OPPFYLT) Formkrav.KLAGEFRIST_OVERHOLDT else null,
             ).filterNotNull().toSet()
 
-        private fun utledÅrsakTilAvvisningstekst(formkrav: Set<Formkrav>): String =
+        private fun utledÅrsakTilAvvisningstekstForPerson(formkrav: Set<Formkrav>): String =
             if (formkrav.size > 1) {
-                "$INNHOLDSTEKST_PREFIX ${formkrav.joinToString("") { "\n  •  ${it.tekst}" }}"
+                "$INNHOLDSTEKST_PREFIX_PERSON ${formkrav.joinToString("") { "\n  •  ${it.tekstForPerson}" }}"
             } else {
-                "$INNHOLDSTEKST_PREFIX ${formkrav.single().tekst}."
+                "$INNHOLDSTEKST_PREFIX_PERSON ${formkrav.single().tekstForPerson}."
+            }
+
+        private fun utledÅrsakTilAvvisningstekstForInstitusjon(formkrav: Set<Formkrav>): String =
+            if (formkrav.size > 1) {
+                "$INNHOLDSTEKST_PREFIX_INSTITUSJON ${formkrav.joinToString("") { "\n  •  ${it.tekstForInstitusjon}" }}"
+            } else {
+                "$INNHOLDSTEKST_PREFIX_INSTITUSJON ${formkrav.single().tekstForInstitusjon}."
             }
 
         internal fun utledParagrafer(paragrafer: Set<String>): String =

@@ -10,9 +10,8 @@ import no.nav.familie.klage.brev.dto.AvsnittDto
 import no.nav.familie.klage.brev.dto.Heading
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.felles.util.StønadstypeVisningsnavn.visningsnavn
-import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
-import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
+import no.nav.familie.klage.testutil.DomainUtil.ikkeOppfyltForm
 import no.nav.familie.klage.testutil.DomainUtil.påklagetVedtakDetaljer
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
@@ -1224,14 +1223,6 @@ internal class BrevInnholdUtlederTest {
             assertThat(henleggelsesbrevBaksInnhold.avsnitt.elementAt(2)).isEqualTo(forventetHarDuSpørsmålBaKs(stønadstype))
         }
     }
-
-    private fun ikkeOppfyltForm() =
-        oppfyltForm(
-            behandlingId = UUID.randomUUID(),
-        ).copy(
-            klagePart = FormVilkår.IKKE_OPPFYLT,
-            brevtekst = "brevtekst",
-        )
 
     private val forventetInnstillingKlageinstans =
         AvsnittDto(
