@@ -249,7 +249,7 @@ class BrevInnholdUtleder(
                 innhold =
                     "Du har rett til å se dokumentene i saken din. Dette følger av forvaltningsloven § 18. " +
                         "Kontakt oss om du vil se dokumentene i saken din. Ta kontakt på nav.no/kontakt eller på telefon " +
-                        "55 55 33 33 <34>. Du kan lese mer om innsynsretten på nav.no/personvernerklaering.",
+                            "55 55 33 33. Du kan lese mer om innsynsretten på nav.no/personvernerklaering.",
             )
         } else {
             AvsnittDto(
