@@ -12,6 +12,7 @@ import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.felles.util.StønadstypeVisningsnavn.visningsnavn
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.klage.testutil.DomainUtil.ikkeOppfyltForm
+import no.nav.familie.klage.testutil.DomainUtil.lagInstitusjon
 import no.nav.familie.klage.testutil.DomainUtil.påklagetVedtakDetaljer
 import no.nav.familie.klage.vurdering.domain.Hjemmel
 import no.nav.familie.klage.vurdering.domain.Vedtak
@@ -467,6 +468,71 @@ internal class BrevInnholdUtlederTest {
             assertThat(opprettholdelsesbrev.avsnitt.elementAt(9)).isEqualTo(forventetHarDuNyeOpplysninger(stønadstype))
             assertThat(opprettholdelsesbrev.avsnitt.elementAt(10)).isEqualTo(forventetDuHarRettTilInnsynBaKs)
             assertThat(opprettholdelsesbrev.avsnitt.elementAt(11)).isEqualTo(forventetHarDuSpørsmålBaKs(stønadstype))
+        }
+
+        @Test
+        fun `skal utlede opprettholdelsesbrev for BA institusjon`() {
+            // Act
+            val opprettholdelsesbrev =
+                brevInnholdUtleder.lagOpprettholdelseBrev(
+                    fagsak = fagsak.copy(stønadstype = Stønadstype.BARNETRYGD, institusjon = lagInstitusjon()),
+                    klagefristUnntakBegrunnelse = null,
+                    vurdering = vurdering,
+                    navn = navn,
+                    påklagetVedtakDetaljer = påklagetVedtakDetaljer,
+                    klageMottatt = klageMottatt,
+                )
+
+            // Assert
+            assertThat(opprettholdelsesbrev.overskrift).isEqualTo("Vi har sendt klagen fra institusjonen til Nav Klageinstans Nord")
+            assertThat(opprettholdelsesbrev.personIdent).isEqualTo(ident)
+            assertThat(opprettholdelsesbrev.navn).isEqualTo(navn)
+            assertThat(opprettholdelsesbrev.avsnitt).hasSize(11)
+            assertAvsnittUtenDeloverskrift(
+                opprettholdelsesbrev.avsnitt.elementAt(0),
+                "Vi har 6. november 2021 fått klagen fra institusjonen på vedtaket om ${Stønadstype.BARNETRYGD.visningsnavn()} som ble gjort 5. november 2021," +
+                    " og kommet frem til at vi ikke endrer vedtaket. Nav Klageinstans skal derfor vurdere vedtaket på nytt.",
+            )
+            assertAvsnittUtenDeloverskrift(
+                opprettholdelsesbrev.avsnitt.elementAt(1),
+                "Saksbehandlingstidene finner du på nav.no/saksbehandlingstider.",
+            )
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(2)).satisfies({
+                assertThat(it.deloverskrift).isEqualTo("Dette er vurderingen vi har sendt til Nav Klageinstans")
+                assertThat(it.deloverskriftHeading).isEqualTo(Heading.H2)
+                assertThat(it.innhold).isEmpty()
+            })
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(3)).isEqualTo(forventetDokumentasjonOgUtredning)
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(4)).isEqualTo(forventetSpørsmåletISaken)
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(5)).isEqualTo(forventetAktuelleRettskilder)
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(6)).isEqualTo(forventetKlagersAnførsler)
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(7)).isEqualTo(forventetVurderingAvKlagen)
+
+            val forventetHarDuNyeOpplysninger =
+                AvsnittDto(
+                    deloverskrift = "Har dere nye opplysninger?",
+                    deloverskriftHeading = Heading.H2,
+                    innhold = "Har dere nye opplysninger eller ønsker å uttale dere, kan dere sende oss dette via \n${klageUrls[Stønadstype.BARNETRYGD]}.",
+                )
+            val forventetDuHarRettTilInnsyn =
+                AvsnittDto(
+                    deloverskrift = "Dere har rett til innsyn i saken",
+                    deloverskriftHeading = Heading.H2,
+                    innhold =
+                        "Dere har rett til å se dokumentene i saken. Dette følger av forvaltningsloven § 18. " +
+                            "Kontakt oss om dere vil se dokumentene i saken. Ta kontakt på nav.no/kontakt eller på " +
+                            "telefon 55 55 33 33. Dere kan lese mer om innsynsretten på nav.no/personvernerklaering.",
+                )
+            val forventetHarDuSpørsmål =
+                AvsnittDto(
+                    deloverskrift = "Har dere spørsmål?",
+                    deloverskriftHeading = Heading.H2,
+                    innhold = "Dere finner mer informasjon på nav.no/barnetrygd. Dersom dere ikke finner svar på spørsmålet deres, kontakt oss på nav.no/kontakt.",
+                )
+
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(8)).isEqualTo(forventetHarDuNyeOpplysninger)
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(9)).isEqualTo(forventetDuHarRettTilInnsyn)
+            assertThat(opprettholdelsesbrev.avsnitt.elementAt(10)).isEqualTo(forventetHarDuSpørsmål)
         }
     }
 
@@ -1050,6 +1116,53 @@ internal class BrevInnholdUtlederTest {
             assertThat(formkravAvvistBrev.avsnitt.elementAt(4)).isEqualTo(forventetDuHarRettTilInnsynEf)
             assertThat(formkravAvvistBrev.avsnitt.elementAt(5)).isEqualTo(forventetHarDuSpørsmålEf(stønadstype))
         }
+
+        @Test
+        fun `skal utlede avvist brev for institusjon`() {
+            // Act
+            val brev =
+                brevInnholdUtleder.lagFormkravAvvistBrev(
+                    fagsak = fagsak.copy(stønadstype = Stønadstype.BARNETRYGD, institusjon = lagInstitusjon()),
+                    navn = navn,
+                    form = ikkeOppfyltForm(),
+                    påklagetVedtakDetaljer = påklagetVedtakDetaljer,
+                )
+
+            // Assert
+            assertThat(brev.overskrift).isEqualTo("Vi har avvist klagen fra institusjonen på vedtaket om barnetrygd")
+            assertThat(brev.avsnitt).hasSize(6)
+            assertAvsnittUtenDeloverskrift(brev.avsnitt.elementAt(0), "Vi har avvist klagen fra institusjonen fordi dere har klaget på et vedtak som ikke gjelder institusjonen.")
+            assertAvsnittUtenDeloverskrift(brev.avsnitt.elementAt(1), "brevtekst")
+            assertAvsnittUtenDeloverskrift(brev.avsnitt.elementAt(2), "Vedtaket er gjort etter forvaltningsloven §§ 28 og 33.")
+
+            val forventetDuHarRettTilÅKlage =
+                AvsnittDto(
+                    deloverskrift = "Dere har rett til å klage",
+                    deloverskriftHeading = Heading.H2,
+                    innhold =
+                        "Dere kan klage innen seks uker fra den datoen dere mottok vedtaket. " +
+                            "Dere finner skjema og informasjon på ${klageUrls[Stønadstype.BARNETRYGD]}.",
+                )
+            val forventetDuHarRettTilInnsyn =
+                AvsnittDto(
+                    deloverskrift = "Dere har rett til innsyn i saken",
+                    deloverskriftHeading = Heading.H2,
+                    innhold =
+                        "Dere har rett til å se dokumentene i saken. Dette følger av forvaltningsloven § 18. " +
+                            "Kontakt oss om dere vil se dokumentene i saken. Ta kontakt på nav.no/kontakt eller på " +
+                            "telefon 55 55 33 33. Dere kan lese mer om innsynsretten på nav.no/personvernerklaering.",
+                )
+            val forventetHarDuSpørsmål =
+                AvsnittDto(
+                    deloverskrift = "Har dere spørsmål?",
+                    deloverskriftHeading = Heading.H2,
+                    innhold = "Dere finner mer informasjon på nav.no/barnetrygd. Dersom dere ikke finner svar på spørsmålet deres, kontakt oss på nav.no/kontakt.",
+                )
+
+            assertThat(brev.avsnitt.elementAt(3)).isEqualTo(forventetDuHarRettTilÅKlage)
+            assertThat(brev.avsnitt.elementAt(4)).isEqualTo(forventetDuHarRettTilInnsyn)
+            assertThat(brev.avsnitt.elementAt(5)).isEqualTo(forventetHarDuSpørsmål)
+        }
     }
 
     @Nested
@@ -1122,6 +1235,52 @@ internal class BrevInnholdUtlederTest {
             assertThat(brev.avsnitt.elementAt(4)).isEqualTo(forventetDuHarRettTilInnsynBaKs)
             assertThat(brev.avsnitt.elementAt(5)).isEqualTo(forventetHarDuSpørsmålBaKs(stønadstype))
         }
+
+        @Test
+        fun `skal utlede brev for avvist formkrav uten påklaget vedtak for institusjon`() {
+            // Act
+            val brev =
+                brevInnholdUtleder.lagFormkravAvvistBrevIkkePåklagetVedtak(
+                    fagsak = fagsak.copy(stønadstype = Stønadstype.BARNETRYGD, institusjon = lagInstitusjon()),
+                    navn = navn,
+                    formkrav = ikkeOppfyltForm(),
+                )
+
+            // Assert
+            assertThat(brev.overskrift).isEqualTo("Vi har avvist klagen fra institusjonen")
+            assertThat(brev.avsnitt).hasSize(6)
+            assertAvsnittUtenDeloverskrift(brev.avsnitt.elementAt(0), "Vi har avvist klagen fra institusjonen fordi det ikke er klaget på et vedtak.")
+            assertAvsnittUtenDeloverskrift(brev.avsnitt.elementAt(1), "brevtekst")
+            assertAvsnittUtenDeloverskrift(brev.avsnitt.elementAt(2), "Vedtaket er gjort etter forvaltningsloven §§ 28 og 33.")
+
+            val forventetDuHarRettTilÅKlage =
+                AvsnittDto(
+                    deloverskrift = "Dere har rett til å klage",
+                    deloverskriftHeading = Heading.H2,
+                    innhold =
+                        "Dere kan klage innen seks uker fra den datoen dere mottok vedtaket. " +
+                            "Dere finner skjema og informasjon på ${klageUrls[Stønadstype.BARNETRYGD]}.",
+                )
+            val forventetDuHarRettTilInnsyn =
+                AvsnittDto(
+                    deloverskrift = "Dere har rett til innsyn i saken",
+                    deloverskriftHeading = Heading.H2,
+                    innhold =
+                        "Dere har rett til å se dokumentene i saken. Dette følger av forvaltningsloven § 18. " +
+                            "Kontakt oss om dere vil se dokumentene i saken. Ta kontakt på nav.no/kontakt eller på " +
+                            "telefon 55 55 33 33. Dere kan lese mer om innsynsretten på nav.no/personvernerklaering.",
+                )
+            val forventetHarDuSpørsmål =
+                AvsnittDto(
+                    deloverskrift = "Har dere spørsmål?",
+                    deloverskriftHeading = Heading.H2,
+                    innhold = "Dere finner mer informasjon på nav.no/barnetrygd. Dersom dere ikke finner svar på spørsmålet deres, kontakt oss på nav.no/kontakt.",
+                )
+
+            assertThat(brev.avsnitt.elementAt(3)).isEqualTo(forventetDuHarRettTilÅKlage)
+            assertThat(brev.avsnitt.elementAt(4)).isEqualTo(forventetDuHarRettTilInnsyn)
+            assertThat(brev.avsnitt.elementAt(5)).isEqualTo(forventetHarDuSpørsmål)
+        }
     }
 
     @Nested
@@ -1152,6 +1311,45 @@ internal class BrevInnholdUtlederTest {
             )
             assertThat(henleggelsesbrevBaksInnhold.avsnitt.elementAt(1)).isEqualTo(forventetDuHarRettTilInnsynBaKs)
             assertThat(henleggelsesbrevBaksInnhold.avsnitt.elementAt(2)).isEqualTo(forventetHarDuSpørsmålBaKs(stønadstype))
+        }
+
+        @Test
+        fun `skal utlede brevinnhold for henleggelsesbrev for institusjon`() {
+            // Act
+            val henleggelsesbrevBaksInnhold =
+                brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(
+                    fagsak = fagsak.copy(stønadstype = Stønadstype.BARNETRYGD, institusjon = lagInstitusjon()),
+                    navn = navn,
+                )
+
+            // Assert
+            assertThat(henleggelsesbrevBaksInnhold.overskrift).isEqualTo("Saken er avsluttet")
+            assertThat(henleggelsesbrevBaksInnhold.personIdent).isEqualTo(ident)
+            assertThat(henleggelsesbrevBaksInnhold.navn).isEqualTo(navn)
+            assertThat(henleggelsesbrevBaksInnhold.avsnitt).hasSize(3)
+            assertAvsnittUtenDeloverskrift(
+                henleggelsesbrevBaksInnhold.avsnitt.elementAt(0),
+                "Institusjonen har trukket klagen på vedtaket om barnetrygd. Vi har derfor avsluttet saken.",
+            )
+
+            val forventetDuHarRettTilInnsyn =
+                AvsnittDto(
+                    deloverskrift = "Dere har rett til innsyn i saken",
+                    deloverskriftHeading = Heading.H2,
+                    innhold =
+                        "Dere har rett til å se dokumentene i saken. Dette følger av forvaltningsloven § 18. " +
+                            "Kontakt oss om dere vil se dokumentene i saken. Ta kontakt på nav.no/kontakt eller på " +
+                            "telefon 55 55 33 33. Dere kan lese mer om innsynsretten på nav.no/personvernerklaering.",
+                )
+            val forventetHarDuSpørsmål =
+                AvsnittDto(
+                    deloverskrift = "Har dere spørsmål?",
+                    deloverskriftHeading = Heading.H2,
+                    innhold = "Dere finner mer informasjon på nav.no/barnetrygd. Dersom dere ikke finner svar på spørsmålet deres, kontakt oss på nav.no/kontakt.",
+                )
+
+            assertThat(henleggelsesbrevBaksInnhold.avsnitt.elementAt(1)).isEqualTo(forventetDuHarRettTilInnsyn)
+            assertThat(henleggelsesbrevBaksInnhold.avsnitt.elementAt(2)).isEqualTo(forventetHarDuSpørsmål)
         }
     }
 
