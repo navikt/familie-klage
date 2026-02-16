@@ -352,7 +352,7 @@ class BrevServiceTest {
             every { brevRepository.findByIdOrNull(any()) } returns null
             every { brevRepository.insert(capture(brevSlot)) } answers { firstArg() }
             every { taskService.save(capture(taskSlot)) } answers { firstArg() }
-            every { brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(any(), any(), any()) } returns lagFritekstBrevRequestDto
+            every { brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(any(), any()) } returns lagFritekstBrevRequestDto
 
             // Act
             brevService.lagHenleggelsesbrevOgOpprettJournalføringstask(
@@ -466,7 +466,7 @@ class BrevServiceTest {
             every { brevRepository.findByIdOrNull(any()) } returns brev
             every { brevRepository.update(capture(brevSlot)) } answers { firstArg() }
             every { taskService.save(capture(taskSlot)) } answers { firstArg() }
-            every { brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(any(), any(), any()) } returns lagFritekstBrevRequestDto
+            every { brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(any(), any()) } returns lagFritekstBrevRequestDto
 
             // Act
             brevService.lagHenleggelsesbrevOgOpprettJournalføringstask(
