@@ -216,13 +216,23 @@ class BrevInnholdUtleder(
 
     private fun duHarRettTilÅKlageAvsnitt(fagsak: Fagsak): AvsnittDto {
         val stønadstype = fagsak.stønadstype
-        return AvsnittDto(
-            deloverskrift = "Du har rett til å klage",
-            deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
-            innhold =
-                "Hvis du vil klage, må du gjøre dette innen ${utledKlagefrist(stønadstype)} uker fra den datoen du fikk dette brevet. " +
-                    "Du finner skjema og informasjon på ${stønadstype.klageUrl()}.",
-        )
+        return if (fagsak.erInstitusjonssak()) {
+            AvsnittDto(
+                deloverskrift = "Dere har rett til å klage",
+                deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
+                innhold =
+                    "Dere kan klage innen seks uker fra den datoen dere mottok vedtaket. " +
+                        "Dere finner skjema og informasjon på ${stønadstype.klageUrl()}.",
+            )
+        } else {
+            AvsnittDto(
+                deloverskrift = "Du har rett til å klage",
+                deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
+                innhold =
+                    "Hvis du vil klage, må du gjøre dette innen ${utledKlagefrist(stønadstype)} uker fra den datoen du fikk dette brevet. " +
+                        "Du finner skjema og informasjon på ${stønadstype.klageUrl()}.",
+            )
+        }
     }
 
     private fun utledKlagefrist(stønadstype: Stønadstype): Int =
@@ -233,24 +243,43 @@ class BrevInnholdUtleder(
 
     private fun harDuNyeOpplysningerAvsnitt(fagsak: Fagsak): AvsnittDto {
         val stønadstype = fagsak.stønadstype
-        return AvsnittDto(
-            deloverskrift = "Har du nye opplysninger?",
-            deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
-            innhold = "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via \n${stønadstype.klageUrl()}.",
-        )
+        return if (fagsak.erInstitusjonssak()) {
+            AvsnittDto(
+                deloverskrift = "Har dere nye opplysninger?",
+                deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
+                innhold = "Har dere nye opplysninger eller ønsker å uttale dere, kan dere sende oss dette via \n${stønadstype.klageUrl()}.",
+            )
+        } else {
+            AvsnittDto(
+                deloverskrift = "Har du nye opplysninger?",
+                deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
+                innhold = "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via \n${stønadstype.klageUrl()}.",
+            )
+        }
     }
 
     private fun duHarRettTilInnsynAvsnitt(fagsak: Fagsak): AvsnittDto {
         val stønadstype = fagsak.stønadstype
         return if (stønadstype.erBarnetrygdEllerKontantstøtte()) {
-            AvsnittDto(
-                deloverskrift = "Du har rett til innsyn i saken din",
-                deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
-                innhold =
-                    "Du har rett til å se dokumentene i saken din. Dette følger av forvaltningsloven § 18. " +
-                        "Kontakt oss om du vil se dokumentene i saken din. Ta kontakt på nav.no/kontakt eller på telefon " +
+            if (fagsak.erInstitusjonssak()) {
+                AvsnittDto(
+                    deloverskrift = "Dere har rett til innsyn i saken",
+                    deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
+                    innhold =
+                        "Dere har rett til å se dokumentene i saken. Dette følger av forvaltningsloven § 18. " +
+                            "Kontakt oss om dere vil se dokumentene i saken. Ta kontakt på nav.no/kontakt eller på telefon " +
+                            "55 55 33 33. Dere kan lese mer om innsynsretten på nav.no/personvernerklaering.",
+                )
+            } else {
+                AvsnittDto(
+                    deloverskrift = "Du har rett til innsyn i saken din",
+                    deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
+                    innhold =
+                        "Du har rett til å se dokumentene i saken din. Dette følger av forvaltningsloven § 18. " +
+                            "Kontakt oss om du vil se dokumentene i saken din. Ta kontakt på nav.no/kontakt eller på telefon " +
                             "55 55 33 33. Du kan lese mer om innsynsretten på nav.no/personvernerklaering.",
-            )
+                )
+            }
         } else {
             AvsnittDto(
                 deloverskrift = "Du har rett til innsyn",
@@ -261,20 +290,35 @@ class BrevInnholdUtleder(
 
     private fun harDuSpørsmålAvsnitt(fagsak: Fagsak): AvsnittDto {
         val stønadstype = fagsak.stønadstype
-        return AvsnittDto(
-            deloverskrift = "Har du spørsmål?",
-            deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
-            innhold =
-                if (stønadstype.erBarnetrygdEllerKontantstøtte()) {
-                    "Du finner mer informasjon på ${stønadstype.lesMerUrl()}. " +
-                        "På nav.no/kontakt kan du chatte eller skrive til oss. " +
-                        "Hvis du ikke finner svar på nav.no kan du ringe oss på telefon 55 55 33 33, hverdager 09.00-15.00."
-                } else {
+        return if (stønadstype.erBarnetrygdEllerKontantstøtte()) {
+            if (fagsak.erInstitusjonssak()) {
+                AvsnittDto(
+                    deloverskrift = "Har dere spørsmål?",
+                    deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
+                    innhold =
+                        "Dere finner mer informasjon på ${stønadstype.lesMerUrl()}. " +
+                            "Dersom dere ikke finner svar på spørsmålet deres, kontakt oss på nav.no/kontakt.",
+                )
+            } else {
+                AvsnittDto(
+                    deloverskrift = "Har du spørsmål?",
+                    deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
+                    innhold =
+                        "Du finner mer informasjon på ${stønadstype.lesMerUrl()}. " +
+                            "På nav.no/kontakt kan du chatte eller skrive til oss. " +
+                            "Hvis du ikke finner svar på nav.no kan du ringe oss på telefon 55 55 33 33, hverdager 09.00-15.00.",
+                )
+            }
+        } else {
+            AvsnittDto(
+                deloverskrift = "Har du spørsmål?",
+                deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
+                innhold =
                     "Du finner mer informasjon på ${stønadstype.lesMerUrl()}.\n\n" +
                         "På nav.no/kontakt kan du chatte eller skrive til oss.\n\n" +
-                        "Hvis du ikke finner svar på nav.no kan du ringe oss på telefon 55 55 33 33, hverdager 09.00-15.00."
-                },
-        )
+                        "Hvis du ikke finner svar på nav.no kan du ringe oss på telefon 55 55 33 33, hverdager 09.00-15.00.",
+            )
+        }
     }
 
     private fun visningsnavn(
