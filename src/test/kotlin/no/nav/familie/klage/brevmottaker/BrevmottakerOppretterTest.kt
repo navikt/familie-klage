@@ -10,12 +10,21 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.brev.BrevRepository
 import no.nav.familie.klage.brev.BrevService
 import no.nav.familie.klage.brev.domain.Brev
+import no.nav.familie.klage.brevmottaker.domain.BrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.BRUKER
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.DØDSBO
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.FULLMAKT
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.INSTITUSJON
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.VERGE
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.testutil.DomainUtil
@@ -28,6 +37,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE
 
 class BrevmottakerOppretterTest {
     private val behandlingService: BehandlingService = mockk()
@@ -35,6 +45,7 @@ class BrevmottakerOppretterTest {
     private val brevService: BrevService = mockk()
     private val brevRepository: BrevRepository = mockk()
     private val personopplysningerService: PersonopplysningerService = mockk()
+    private val featureToggleService: FeatureToggleService = mockk()
 
     private val brevmottakerOppretter: BrevmottakerOppretter =
         BrevmottakerOppretter(
@@ -43,12 +54,14 @@ class BrevmottakerOppretterTest {
             brevService = brevService,
             brevRepository = brevRepository,
             personopplysningerService = personopplysningerService,
+            featureToggleService = featureToggleService,
         )
 
     @BeforeEach
     fun setUp() {
         mockkObject(SikkerhetContext)
         every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler"
+        every { featureToggleService.isEnabled(Toggle.MANUELL_BREVMOTTAKER_ORGANISASJON) } returns true
     }
 
     @AfterEach
@@ -57,22 +70,7 @@ class BrevmottakerOppretterTest {
     }
 
     @Nested
-    inner class OpprettBrevmottakerTest {
-        @Test
-        fun `skal kaste exception om man prøver å opprette for NyBrevmottakerOrganisasjon`() {
-            // Arrange
-            val behandling = DomainUtil.behandling(status = BehandlingStatus.FERDIGSTILT)
-
-            val nyBrevmottakerOrganisasjon = DomainUtil.lagNyBrevmottakerOrganisasjon()
-
-            // Act & assert
-            val exception =
-                assertThrows<UnsupportedOperationException> {
-                    brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerOrganisasjon)
-                }
-            assertThat(exception.message).isEqualTo("NyBrevmottakerOrganisasjon er ikke støttet.")
-        }
-
+    inner class OpprettBrevmottakerPersonMedIdent {
         @Test
         fun `skal kaste exception om man prøver å opprette for NyBrevmottakerPersonMedIdent`() {
             // Arrange
@@ -87,7 +85,10 @@ class BrevmottakerOppretterTest {
                 }
             assertThat(exception.message).isEqualTo("NyBrevmottakerPersonMedIdent er ikke støttet.")
         }
+    }
 
+    @Nested
+    inner class OpprettBrevmottakerPersonUtenIdent {
         @Test
         fun `skal kaste exception om behandling ikke er redigerbar`() {
             // Arrange
@@ -133,7 +134,7 @@ class BrevmottakerOppretterTest {
 
             val nyBrevmottakerPersonUtenIdent =
                 DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                    mottakerRolle = MottakerRolle.FULLMAKT,
+                    mottakerRolle = FULLMAKT,
                     navn = "navn",
                     adresselinje1 = "adresse1",
                     adresselinje2 = "adresse2",
@@ -145,7 +146,7 @@ class BrevmottakerOppretterTest {
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
             val brevmottakerPersonUtenIdent =
                 DomainUtil.lagBrevmottakerPersonUtenIdent(
-                    mottakerRolle = MottakerRolle.FULLMAKT,
+                    mottakerRolle = FULLMAKT,
                 )
             val brevmottakere =
                 DomainUtil.lagBrevmottakere(
@@ -180,7 +181,7 @@ class BrevmottakerOppretterTest {
 
             val nyBrevmottakerPersonUtenIdent =
                 DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                    mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+                    mottakerRolle = BRUKER_MED_UTENLANDSK_ADRESSE,
                     navn = "navn",
                     adresselinje1 = "Adresse 1, Mars, 1337",
                     adresselinje2 = null,
@@ -222,7 +223,7 @@ class BrevmottakerOppretterTest {
 
             val nyBrevmottakerPersonUtenIdent =
                 DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                    mottakerRolle = MottakerRolle.DØDSBO,
+                    mottakerRolle = DØDSBO,
                     navn = "navn",
                     adresselinje1 = "Adresse 1, Mars, 1337",
                     adresselinje2 = null,
@@ -262,7 +263,7 @@ class BrevmottakerOppretterTest {
 
             val nyBrevmottakerPersonUtenIdent =
                 DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                    mottakerRolle = MottakerRolle.DØDSBO,
+                    mottakerRolle = DØDSBO,
                     navn = "navn",
                     adresselinje1 = "Adresse 1, Mars, 1337",
                     adresselinje2 = null,
@@ -306,7 +307,7 @@ class BrevmottakerOppretterTest {
 
             val nyBrevmottakerPersonUtenIdent =
                 DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                    mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+                    mottakerRolle = BRUKER_MED_UTENLANDSK_ADRESSE,
                     navn = "navn",
                     adresselinje1 = "Adresse 1, Mars, 1337",
                     adresselinje2 = null,
@@ -318,7 +319,7 @@ class BrevmottakerOppretterTest {
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
             val brevmottakerPersonUtenIdent =
                 DomainUtil.lagBrevmottakerPersonUtenIdent(
-                    mottakerRolle = MottakerRolle.DØDSBO,
+                    mottakerRolle = DØDSBO,
                 )
             val brevmottakere =
                 DomainUtil.lagBrevmottakere(
@@ -349,13 +350,13 @@ class BrevmottakerOppretterTest {
         }
 
         @Test
-        fun `skal kaste exception om man prøver å legge til en brevmottaker som ikke er VERGE eller FULLMEKTIG når det allerede finnes en brevmottaker med utenlandsk adresse`() {
+        fun `skal kaste exception om man prøver å legge til en brevmottaker som ikke er VERGE eller FULLMAKT når det allerede finnes en brevmottaker med utenlandsk adresse`() {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent =
                 DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                    mottakerRolle = MottakerRolle.BRUKER,
+                    mottakerRolle = BRUKER,
                     navn = "navn",
                     adresselinje1 = "Adresse 1, Mars, 1337",
                     adresselinje2 = null,
@@ -367,7 +368,7 @@ class BrevmottakerOppretterTest {
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
             val brevmottakerPersonUtenIdent =
                 DomainUtil.lagBrevmottakerPersonUtenIdent(
-                    mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+                    mottakerRolle = BRUKER_MED_UTENLANDSK_ADRESSE,
                 )
             val brevmottakere =
                 DomainUtil.lagBrevmottakere(
@@ -404,7 +405,7 @@ class BrevmottakerOppretterTest {
 
             val nyBrevmottakerPersonUtenIdent =
                 DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                    mottakerRolle = MottakerRolle.BRUKER,
+                    mottakerRolle = BRUKER,
                     navn = "navn",
                     adresselinje1 = "Adresse 1, Mars, 1337",
                     adresselinje2 = null,
@@ -416,7 +417,7 @@ class BrevmottakerOppretterTest {
             val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
             val brevmottakerPersonUtenIdent =
                 DomainUtil.lagBrevmottakerPersonUtenIdent(
-                    mottakerRolle = MottakerRolle.FULLMAKT,
+                    mottakerRolle = FULLMAKT,
                 )
             val brevmottakere =
                 DomainUtil.lagBrevmottakere(
@@ -446,26 +447,17 @@ class BrevmottakerOppretterTest {
             )
         }
 
-        @EnumSource(value = MottakerRolle::class)
+        @EnumSource(value = MottakerRolle::class, names = ["FULLMAKT", "INSTITUSJON"], mode = EXCLUDE)
         @ParameterizedTest
-        fun `skal opprette brevmottaker når det allerede finnes brevmottakere`(mottakerRolle: MottakerRolle) {
+        fun `skal kaste exception om man prøver å legge til en brevmottaker som ikke er FULLMAKT hvis en brevmottaker har mottakerrolle INSTITUSJON`(mottakerRolle: MottakerRolle) {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent =
-                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                    mottakerRolle = mottakerRolle,
-                    navn = "navn",
-                    adresselinje1 = "Adresse 1, Mars, 1337",
-                    adresselinje2 = null,
-                    postnummer = null,
-                    poststed = null,
-                    landkode = "DK",
-                )
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(mottakerRolle = mottakerRolle)
 
-            val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
-            val brevmottakerOrganisasjon = DomainUtil.lagBrevmottakerOrganisasjon()
-            val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonMedIdent), organisasjoner = listOf(brevmottakerOrganisasjon))
+            val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent(mottakerRolle = BRUKER)
+            val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonMedIdent))
             val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
 
             val brevSlot = slot<Brev>()
@@ -497,7 +489,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerPersonUtenIdent,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
                 assertThat(it.id).isNotNull()
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
@@ -510,11 +502,78 @@ class BrevmottakerOppretterTest {
             }
 
             val capturedBrev = brevSlot.captured
-            assertThat(capturedBrev.mottakere?.organisasjoner).containsExactly(brevmottakerOrganisasjon)
+            assertThat(capturedBrev.mottakere?.organisasjoner).isEmpty()
             assertThat(capturedBrev.mottakere?.personer?.filterIsInstance<BrevmottakerPersonMedIdent>()).containsExactly(brevmottakerPersonMedIdent)
         }
 
-        @EnumSource(value = MottakerRolle::class)
+        @EnumSource(value = MottakerRolle::class, names = ["INSTITUSJON"], mode = EXCLUDE)
+        @ParameterizedTest
+        fun `skal opprette brevmottaker når det allerede finnes brevmottakere`(mottakerRolle: MottakerRolle) {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
+
+            val nyBrevmottakerPersonUtenIdent =
+                DomainUtil.lagNyBrevmottakerPersonUtenIdent(
+                    mottakerRolle = mottakerRolle,
+                    navn = "navn",
+                    adresselinje1 = "Adresse 1, Mars, 1337",
+                    adresselinje2 = null,
+                    postnummer = null,
+                    poststed = null,
+                    landkode = "DK",
+                )
+
+            val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent(mottakerRolle = BRUKER)
+            val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonMedIdent))
+            val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
+
+            val brevSlot = slot<Brev>()
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                personopplysningerService.hentPersonopplysninger(behandling.id)
+            } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
+
+            every {
+                brevService.hentBrev(behandling.id)
+            } returns brev
+
+            every {
+                fagsakService.hentFagsak(behandling.fagsakId)
+            } returns DomainUtil.fagsak(identer = setOf(PersonIdent("01010199999")))
+
+            every {
+                brevRepository.update(capture(brevSlot))
+            } returnsArgument 0
+
+            // Act
+            val brevmottaker =
+                brevmottakerOppretter.opprettBrevmottaker(
+                    behandling.id,
+                    nyBrevmottakerPersonUtenIdent,
+                )
+
+            // Assert
+            assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
+                assertThat(it.id).isNotNull()
+                assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
+                assertThat(it.navn).isEqualTo(nyBrevmottakerPersonUtenIdent.navn)
+                assertThat(it.adresselinje1).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje1)
+                assertThat(it.adresselinje2).isEqualTo(nyBrevmottakerPersonUtenIdent.adresselinje2)
+                assertThat(it.postnummer).isEqualTo(nyBrevmottakerPersonUtenIdent.postnummer)
+                assertThat(it.poststed).isEqualTo(nyBrevmottakerPersonUtenIdent.poststed)
+                assertThat(it.landkode).isEqualTo(nyBrevmottakerPersonUtenIdent.landkode)
+            }
+
+            val capturedBrev = brevSlot.captured
+            assertThat(capturedBrev.mottakere?.organisasjoner).isEmpty()
+            assertThat(capturedBrev.mottakere?.personer?.filterIsInstance<BrevmottakerPersonMedIdent>()).containsExactly(brevmottakerPersonMedIdent)
+        }
+
+        @EnumSource(value = MottakerRolle::class, names = ["INSTITUSJON"], mode = EXCLUDE)
         @ParameterizedTest
         fun `skal opprette brevmottaker når brevmottakere i brev er null`(mottakerRolle: MottakerRolle) {
             // Arrange
@@ -560,7 +619,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerPersonUtenIdent,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
                 assertThat(it.id).isNotNull()
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
@@ -573,7 +632,7 @@ class BrevmottakerOppretterTest {
             }
         }
 
-        @EnumSource(value = MottakerRolle::class)
+        @EnumSource(value = MottakerRolle::class, names = ["INSTITUSJON"], mode = EXCLUDE)
         @ParameterizedTest
         fun `skal opprette brevmottaker når brevmottakere i brev er tom`(mottakerRolle: MottakerRolle) {
             // Arrange
@@ -619,7 +678,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerPersonUtenIdent,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
                 assertThat(it.id).isNotNull()
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
@@ -634,8 +693,8 @@ class BrevmottakerOppretterTest {
 
         @EnumSource(
             value = MottakerRolle::class,
-            names = ["BRUKER_MED_UTENLANDSK_ADRESSE", "DØDSBO"],
-            mode = EnumSource.Mode.EXCLUDE,
+            names = ["BRUKER_MED_UTENLANDSK_ADRESSE", "DØDSBO", "INSTITUSJON"],
+            mode = EXCLUDE,
         )
         @ParameterizedTest
         fun `skal opprette brevmottaker selv om personopplysningsnavnet er forskjellig for mottakertyper som ikke skal være preutfylt`(
@@ -655,7 +714,7 @@ class BrevmottakerOppretterTest {
                     landkode = "DK",
                 )
 
-            val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
+            val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent(mottakerRolle = BRUKER)
             val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonMedIdent))
             val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
 
@@ -686,7 +745,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerPersonUtenIdent,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
                 assertThat(it.id).isNotNull()
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
@@ -722,10 +781,10 @@ class BrevmottakerOppretterTest {
                     landkode = "DK",
                 )
 
-            val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
+            val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent(mottakerRolle = BRUKER)
             val brevmottakerPersonUtenIdent =
                 DomainUtil.lagBrevmottakerPersonUtenIdent(
-                    mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+                    mottakerRolle = BRUKER_MED_UTENLANDSK_ADRESSE,
                 )
             val brevmottakere =
                 DomainUtil.lagBrevmottakere(
@@ -760,7 +819,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerPersonUtenIdent,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
                 assertThat(it.id).isNotNull()
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
@@ -787,7 +846,7 @@ class BrevmottakerOppretterTest {
 
             val nyBrevmottakerPersonUtenIdent =
                 DomainUtil.lagNyBrevmottakerPersonUtenIdent(
-                    mottakerRolle = MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE,
+                    mottakerRolle = BRUKER_MED_UTENLANDSK_ADRESSE,
                     navn = "navn",
                     adresselinje1 = "Adresse 1, Mars, 1337",
                     adresselinje2 = null,
@@ -834,7 +893,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerPersonUtenIdent,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
                 assertThat(it.id).isNotNull()
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
@@ -871,7 +930,7 @@ class BrevmottakerOppretterTest {
 
             val brevmottakerPersonMedIdent =
                 DomainUtil.lagBrevmottakerPersonMedIdent(
-                    mottakerRolle = MottakerRolle.BRUKER,
+                    mottakerRolle = BRUKER,
                     personIdent = personIdent.ident,
                 )
             val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonMedIdent))
@@ -906,7 +965,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerPersonUtenIdent,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
                 assertThat(it.id).isNotNull()
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
@@ -952,7 +1011,7 @@ class BrevmottakerOppretterTest {
 
             val brevmottakerPersonMedIdent =
                 DomainUtil.lagBrevmottakerPersonMedIdent(
-                    mottakerRolle = MottakerRolle.BRUKER,
+                    mottakerRolle = BRUKER,
                     personIdent = "11010199999",
                 )
             val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonMedIdent))
@@ -987,7 +1046,7 @@ class BrevmottakerOppretterTest {
                     nyBrevmottakerPersonUtenIdent,
                 )
 
-            // Act & assert
+            // Assert
             assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerPersonUtenIdent::class.java) {
                 assertThat(it.id).isNotNull()
                 assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerPersonUtenIdent.mottakerRolle)
@@ -1007,6 +1066,299 @@ class BrevmottakerOppretterTest {
             }
             assertThat(capturedBrev.mottakere?.personer?.filterIsInstance<BrevmottakerPersonMedIdent>()).anySatisfy {
                 assertThat(it).isEqualTo(brevmottakerPersonMedIdent)
+            }
+        }
+    }
+
+    @Nested
+    inner class OpprettBrevmottakerOrganisasjon {
+        @Test
+        fun `skal kaste exception om behandling ikke er redigerbar`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(status = BehandlingStatus.FERDIGSTILT)
+
+            val nyBrevmottakerOrganisasjon = DomainUtil.lagNyBrevmottakerOrganisasjon()
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            // Act & assert
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerOrganisasjon)
+                }
+            assertThat(exception.message).isEqualTo("Behandling ${behandling.id} er låst for videre behandling.")
+        }
+
+        @Test
+        fun `skal kaste exception om behandling ikke er i brev steg`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.OPPRETTET)
+
+            val nyBrevmottakerOrganisasjon = DomainUtil.lagNyBrevmottakerOrganisasjon()
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            // Act & assert
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerOrganisasjon)
+                }
+            assertThat(exception.message).isEqualTo("Behandling ${behandling.id} er i steg ${StegType.OPPRETTET}, forventet steg ${StegType.BREV}.")
+        }
+
+        @Test
+        fun `skal kaste exception om det allerede finnes en brevmottaker med samme MottakerRolle`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
+
+            val nyBrevmottakerOrganisasjon =
+                DomainUtil.lagNyBrevmottakerOrganisasjon(mottakerRolle = FULLMAKT)
+
+            val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
+            val brevmottakerPersonUtenIdent =
+                DomainUtil.lagBrevmottakerPersonUtenIdent(mottakerRolle = FULLMAKT)
+
+            val brevmottakere =
+                DomainUtil.lagBrevmottakere(
+                    personer = listOf(brevmottakerPersonMedIdent, brevmottakerPersonUtenIdent),
+                )
+
+            val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                personopplysningerService.hentPersonopplysninger(behandling.id)
+            } returns DomainUtil.lagPersonopplysningerDto()
+
+            every {
+                brevService.hentBrev(behandling.id)
+            } returns brev
+
+            // Act & assert
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerOrganisasjon)
+                }
+            assertThat(exception.message).isEqualTo("Kan ikke ha duplikate MottakerRolle. FULLMAKT finnes allerede for ${behandling.id}.")
+        }
+
+        @Test
+        fun `skal kaste exception om mottakerrolle ikke er fullmakt`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
+
+            val nyBrevmottakerOrganisasjon =
+                DomainUtil.lagNyBrevmottakerOrganisasjon(mottakerRolle = INSTITUSJON)
+
+            val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent()
+            val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonMedIdent))
+            val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                personopplysningerService.hentPersonopplysninger(behandling.id)
+            } returns DomainUtil.lagPersonopplysningerDto(navn = "et annet navn")
+
+            every {
+                brevService.hentBrev(behandling.id)
+            } returns brev
+
+            // Act & assert
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerOrganisasjon)
+                }
+            assertThat(
+                exception.message,
+            ).isEqualTo("Organisasjon kan kun ha mottakerrolle fullmakt for ${behandling.id}.")
+        }
+
+        @Test
+        fun `skal kaste exception om det allerede finnes en manuelt opprettet brevmottaker når en brevmottaker er institusjon`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
+
+            val nyBrevmottakerOrganisasjon =
+                DomainUtil.lagNyBrevmottakerOrganisasjon(mottakerRolle = FULLMAKT)
+
+            val brevmottakerOrganisasjon = DomainUtil.lagBrevmottakerOrganisasjon(mottakerRolle = INSTITUSJON)
+            val brevmottakerPersonUtenIdent = DomainUtil.lagBrevmottakerPersonUtenIdent(mottakerRolle = VERGE)
+            val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonUtenIdent), organisasjoner = listOf(brevmottakerOrganisasjon))
+            val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                personopplysningerService.hentPersonopplysninger(behandling.id)
+            } returns DomainUtil.lagPersonopplysningerDto(navn = "et annet navn")
+
+            every {
+                brevService.hentBrev(behandling.id)
+            } returns brev
+
+            // Act & assert
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerOrganisasjon)
+                }
+            assertThat(exception.message).isEqualTo("Kan kun ha én ekstra brevmottaker når institusjon er brevmottaker for ${behandling.id}.")
+        }
+
+        @Test
+        fun `skal opprette brevmottaker når det allerede finnes brevmottakere`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
+
+            val nyBrevmottakerOrganisasjon =
+                DomainUtil.lagNyBrevmottakerOrganisasjon(mottakerRolle = FULLMAKT)
+
+            val brevmottakerPersonMedIdent = DomainUtil.lagBrevmottakerPersonMedIdent(mottakerRolle = BRUKER)
+            val brevmottakere = DomainUtil.lagBrevmottakere(personer = listOf(brevmottakerPersonMedIdent))
+            val brev = DomainUtil.lagBrev(mottakere = brevmottakere)
+
+            val brevSlot = slot<Brev>()
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                personopplysningerService.hentPersonopplysninger(behandling.id)
+            } returns DomainUtil.lagPersonopplysningerDto()
+
+            every {
+                brevService.hentBrev(behandling.id)
+            } returns brev
+
+            every {
+                fagsakService.hentFagsak(behandling.fagsakId)
+            } returns DomainUtil.fagsak()
+
+            every {
+                brevRepository.update(capture(brevSlot))
+            } returnsArgument 0
+
+            // Act
+            val brevmottaker =
+                brevmottakerOppretter.opprettBrevmottaker(
+                    behandling.id,
+                    nyBrevmottakerOrganisasjon,
+                )
+
+            // Assert
+            assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerOrganisasjon::class.java) {
+                assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerOrganisasjon.mottakerRolle)
+                assertThat(it.organisasjonsnavn).isEqualTo(nyBrevmottakerOrganisasjon.organisasjonsnavn)
+                assertThat(it.organisasjonsnummer).isEqualTo(nyBrevmottakerOrganisasjon.organisasjonsnummer)
+                assertThat(it.navnHosOrganisasjon).isEqualTo(nyBrevmottakerOrganisasjon.navnHosOrganisasjon)
+            }
+
+            val capturedBrev = brevSlot.captured
+            assertThat(capturedBrev.mottakere?.organisasjoner).containsExactly(brevmottaker as BrevmottakerOrganisasjon)
+            assertThat(capturedBrev.mottakere?.personer).containsExactly(brevmottakerPersonMedIdent)
+        }
+
+        @Test
+        fun `skal opprette brevmottaker når brevmottakere i brev er null`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
+
+            val nyBrevmottakerOrganisasjon =
+                DomainUtil.lagNyBrevmottakerOrganisasjon(mottakerRolle = FULLMAKT)
+
+            val brev = DomainUtil.lagBrev(mottakere = null)
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                personopplysningerService.hentPersonopplysninger(behandling.id)
+            } returns DomainUtil.lagPersonopplysningerDto()
+
+            every {
+                brevService.hentBrev(behandling.id)
+            } returns brev
+
+            every {
+                fagsakService.hentFagsak(behandling.fagsakId)
+            } returns DomainUtil.fagsak()
+
+            every {
+                brevRepository.update(any())
+            } returnsArgument 0
+
+            // Act
+            val brevmottaker =
+                brevmottakerOppretter.opprettBrevmottaker(
+                    behandling.id,
+                    nyBrevmottakerOrganisasjon,
+                )
+
+            // Assert
+            assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerOrganisasjon::class.java) {
+                assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerOrganisasjon.mottakerRolle)
+                assertThat(it.organisasjonsnavn).isEqualTo(nyBrevmottakerOrganisasjon.organisasjonsnavn)
+                assertThat(it.organisasjonsnummer).isEqualTo(nyBrevmottakerOrganisasjon.organisasjonsnummer)
+                assertThat(it.navnHosOrganisasjon).isEqualTo(nyBrevmottakerOrganisasjon.navnHosOrganisasjon)
+            }
+        }
+
+        @Test
+        fun `skal opprette brevmottaker når brevmottakere i brev er tom`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
+
+            val nyBrevmottakerOrganisasjon =
+                DomainUtil.lagNyBrevmottakerOrganisasjon(mottakerRolle = FULLMAKT)
+
+            val brev = DomainUtil.lagBrev(mottakere = DomainUtil.lagBrevmottakere(organisasjoner = emptyList()))
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                personopplysningerService.hentPersonopplysninger(behandling.id)
+            } returns DomainUtil.lagPersonopplysningerDto()
+
+            every {
+                brevService.hentBrev(behandling.id)
+            } returns brev
+
+            every {
+                fagsakService.hentFagsak(behandling.fagsakId)
+            } returns DomainUtil.fagsak()
+
+            every {
+                brevRepository.update(any())
+            } returnsArgument 0
+
+            // Act
+            val brevmottaker =
+                brevmottakerOppretter.opprettBrevmottaker(
+                    behandling.id,
+                    nyBrevmottakerOrganisasjon,
+                )
+
+            // Assert
+            assertThat(brevmottaker).isInstanceOfSatisfying(BrevmottakerOrganisasjon::class.java) {
+                assertThat(it.mottakerRolle).isEqualTo(nyBrevmottakerOrganisasjon.mottakerRolle)
+                assertThat(it.organisasjonsnavn).isEqualTo(nyBrevmottakerOrganisasjon.organisasjonsnavn)
+                assertThat(it.organisasjonsnummer).isEqualTo(nyBrevmottakerOrganisasjon.organisasjonsnummer)
+                assertThat(it.navnHosOrganisasjon).isEqualTo(nyBrevmottakerOrganisasjon.navnHosOrganisasjon)
             }
         }
     }

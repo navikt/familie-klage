@@ -295,7 +295,7 @@ class BrevmottakerErstatterTest {
             // Act
             val brevmottakere = brevmottakerErstatter.erstattBrevmottakere(behandling.id, nyeBrevmottakere)
 
-            // Act & assert
+            // Assert
             assertThat(brevmottakere).isEqualTo(nyeBrevmottakere)
         }
     }

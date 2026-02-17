@@ -32,10 +32,23 @@
         <felles.version>4.20260205114838_3a4c3dc</felles.version>
         <prosessering.version>2.20251110093725_10552cd</prosessering.version>
         <start-class>no.nav.familie.klage.ApplicationKt</start-class>
-        <kontrakter.version>4.0_20260202125108_bec1903</kontrakter.version>
+        <kontrakter.version>4.0_20260217104427_430ef0f</kontrakter.version>
         <saksstatistikk-klage.version>2.0_20260127152808_4f00dcf</saksstatistikk-klage.version>
         <nav.security.version>6.0.2</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
+        <testcontainers.version>1.21.4</testcontainers.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -237,7 +250,6 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.21.3</version>
             <scope>test</scope>
         </dependency>
 

@@ -1,5 +1,9 @@
 package no.nav.familie.klage.brevmottaker.domain
 
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.FULLMAKT
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.INSTITUSJON
+import no.nav.familie.kontrakter.felles.Organisasjonsnummer
+
 private const val LANDKODE_NO = "NO"
 
 sealed interface NyBrevmottaker {
@@ -33,6 +37,7 @@ data class NyBrevmottakerPersonUtenIdent(
             require(postnummer.isNullOrBlank()) { "Ved utenlandsk landkode må postnummer settes i adresselinje 1." }
             require(poststed.isNullOrBlank()) { "Ved utenlandsk landkode må poststed settes i adresselinje 1." }
         }
+        require(mottakerRolle != INSTITUSJON) { "Mottakerrolle kan ikke være institusjon." }
     }
 }
 
@@ -44,6 +49,7 @@ data class NyBrevmottakerPersonMedIdent(
     init {
         require(personIdent.isNotBlank()) { "Personident kan ikke være blank." }
         require(navn.isNotBlank()) { "Navn kan ikke være blank." }
+        require(mottakerRolle != INSTITUSJON) { "Mottakerrolle kan ikke være institusjon." }
     }
 }
 
@@ -52,4 +58,12 @@ data class NyBrevmottakerOrganisasjon(
     val organisasjonsnavn: String,
     val navnHosOrganisasjon: String? = null,
     override val mottakerRolle: MottakerRolle? = null,
-) : NyBrevmottaker
+) : NyBrevmottaker {
+    init {
+        Organisasjonsnummer(organisasjonsnummer)
+        require(organisasjonsnavn.isNotBlank()) { "Organisasjonsnavn kan ikke være blank." }
+        require(mottakerRolle == null || mottakerRolle in setOf(INSTITUSJON, FULLMAKT)) {
+            "Brevmottakerorganisasjon kan ikke ha mottakerrolle $mottakerRolle."
+        }
+    }
+}
