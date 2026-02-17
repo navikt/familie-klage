@@ -17,6 +17,7 @@ import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
+import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.BRUKER_MED_UTENLANDSK_ADRESSE
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonUtenIdent
@@ -425,9 +426,9 @@ object DomainUtil {
         navn: String = "Navn Navnesen",
         adresselinje1: String = "Adresselinje 1",
         adresselinje2: String? = null,
-        postnummer: String? = "0010",
-        poststed: String? = "Oslo",
-        landkode: String = "NO",
+        postnummer: String? = "0010".takeIf { mottakerRolle != BRUKER_MED_UTENLANDSK_ADRESSE },
+        poststed: String? = "Oslo".takeIf { mottakerRolle != BRUKER_MED_UTENLANDSK_ADRESSE },
+        landkode: String = if (mottakerRolle == BRUKER_MED_UTENLANDSK_ADRESSE) "DK" else "NO",
     ): NyBrevmottakerPersonUtenIdent =
         NyBrevmottakerPersonUtenIdent(
             mottakerRolle = mottakerRolle,
@@ -451,7 +452,7 @@ object DomainUtil {
         )
 
     fun lagNyBrevmottakerOrganisasjon(
-        organisasjonsnummer: String = "123",
+        organisasjonsnummer: String = "310287849",
         organisasjonsnavn: String = "Orgnavn",
         navnHosOrganisasjon: String = "navnHosOrganisasjon",
         mottakerRolle: MottakerRolle? = MottakerRolle.FULLMAKT,

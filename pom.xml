@@ -37,11 +37,24 @@
         <felles.version>3.20251105152539_b03ed80</felles.version>
         <prosessering.version>2.20251110093725_10552cd</prosessering.version>
         <start-class>no.nav.familie.klage.ApplicationKt</start-class>
-        <kontrakter.version>3.0_20260122095323_4466664</kontrakter.version>
+        <kontrakter.version>3.0_20260216094023_d89773a</kontrakter.version>
         <saksstatistikk-klage.version>2.0_20251111094125_cdf5bf2</saksstatistikk-klage.version>
         <nav.security.version>5.0.39</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskriver spring sin versjon, blir brukt av mock-oauth2-server -->
+        <testcontainers.version>1.21.4</testcontainers.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -226,7 +239,6 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.21.3</version>
             <scope>test</scope>
         </dependency>
 
