@@ -2,6 +2,7 @@ package no.nav.familie.klage.brev.avvistbrev
 
 import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -11,9 +12,9 @@ import java.util.UUID
 
 class EFAvvistBrevUtlederTest {
     private val efAvvistBrevUtleder = EFAvvistBrevInnholdUtleder()
-
-    val folketrygdLovPrefix = "Vedtaket er gjort etter folketrygdloven"
-    val forvaltningslovPrefix = "Vedtaket er gjort etter forvaltningsloven"
+    private val fagsak = fagsak()
+    private val folketrygdLovPrefix = "Vedtaket er gjort etter folketrygdloven"
+    private val forvaltningslovPrefix = "Vedtaket er gjort etter forvaltningsloven"
 
     @Nested
     inner class UtledBrevInnhold {
@@ -26,6 +27,7 @@ class EFAvvistBrevUtlederTest {
             val feil =
                 assertThrows<Feil> {
                     efAvvistBrevUtleder.utledBrevInnhold(
+                        fagsak = fagsak,
                         form = oppfyltForm,
                     )
                 }
@@ -42,10 +44,10 @@ class EFAvvistBrevUtlederTest {
                 ).copy(klagePart = FormVilkår.IKKE_OPPFYLT, brevtekst = saksbehandlerBrevtekst)
 
             // Act
-            val brevInnhold = efAvvistBrevUtleder.utledBrevInnhold(klagePartIkkeOppfyltForm)
+            val brevInnhold = efAvvistBrevUtleder.utledBrevInnhold(fagsak, klagePartIkkeOppfyltForm)
 
             // Assert
-            assertThat(brevInnhold.årsakTilAvvisning).contains(Formkrav.KLAGE_PART.tekst)
+            assertThat(brevInnhold.årsakTilAvvisning).contains(Formkrav.KLAGE_PART.tekstForPerson)
             assertThat(brevInnhold.lovtekst).contains("28")
             assertThat(brevInnhold.lovtekst).contains("33")
             assertThat(brevInnhold.lovtekst).doesNotContain("31")
@@ -64,10 +66,10 @@ class EFAvvistBrevUtlederTest {
                 ).copy(klageKonkret = FormVilkår.IKKE_OPPFYLT, brevtekst = saksbehandlerBrevtekst)
 
             // Act
-            val brevInnhold = efAvvistBrevUtleder.utledBrevInnhold(klagePartIkkeOppfyltForm)
+            val brevInnhold = efAvvistBrevUtleder.utledBrevInnhold(fagsak, klagePartIkkeOppfyltForm)
 
             // Assert
-            assertThat(brevInnhold.årsakTilAvvisning).contains(Formkrav.KLAGE_KONKRET.tekst)
+            assertThat(brevInnhold.årsakTilAvvisning).contains(Formkrav.KLAGE_KONKRET.tekstForPerson)
             assertThat(brevInnhold.lovtekst).contains(forvaltningslovPrefix)
             assertThat(brevInnhold.lovtekst).contains("32")
             assertThat(brevInnhold.lovtekst).contains("33")
@@ -87,10 +89,10 @@ class EFAvvistBrevUtlederTest {
                 ).copy(klageSignert = FormVilkår.IKKE_OPPFYLT, brevtekst = saksbehandlerBrevtekst)
 
             // Act
-            val brevInnhold = efAvvistBrevUtleder.utledBrevInnhold(klagePartIkkeOppfyltForm)
+            val brevInnhold = efAvvistBrevUtleder.utledBrevInnhold(fagsak, klagePartIkkeOppfyltForm)
 
             // Assert
-            assertThat(brevInnhold.årsakTilAvvisning).contains(Formkrav.KLAGE_SIGNERT.tekst)
+            assertThat(brevInnhold.årsakTilAvvisning).contains(Formkrav.KLAGE_SIGNERT.tekstForPerson)
             assertThat(brevInnhold.lovtekst).contains(forvaltningslovPrefix)
             assertThat(brevInnhold.lovtekst).contains("31")
             assertThat(brevInnhold.lovtekst).contains("33")
@@ -110,10 +112,10 @@ class EFAvvistBrevUtlederTest {
                 ).copy(klagefristOverholdt = FormVilkår.IKKE_OPPFYLT, brevtekst = saksbehandlerBrevtekst)
 
             // Act
-            val brevInnhold = efAvvistBrevUtleder.utledBrevInnhold(klagePartIkkeOppfyltForm)
+            val brevInnhold = efAvvistBrevUtleder.utledBrevInnhold(fagsak, klagePartIkkeOppfyltForm)
 
             // Assert
-            assertThat(brevInnhold.årsakTilAvvisning).contains(Formkrav.KLAGEFRIST_OVERHOLDT.tekst)
+            assertThat(brevInnhold.årsakTilAvvisning).contains(Formkrav.KLAGEFRIST_OVERHOLDT.tekstForPerson)
             assertThat(brevInnhold.lovtekst).contains(folketrygdLovPrefix)
             assertThat(brevInnhold.lovtekst).contains("og forvaltningsloven")
             assertThat(brevInnhold.lovtekst).contains("21-12")
@@ -141,11 +143,11 @@ class EFAvvistBrevUtlederTest {
             )
 
         // Act
-        val brevInnhold = efAvvistBrevUtleder.utledBrevInnhold(klagePartIkkeOppfyltForm)
+        val brevInnhold = efAvvistBrevUtleder.utledBrevInnhold(fagsak, klagePartIkkeOppfyltForm)
 
         // Assert
         listOf(Formkrav.KLAGE_PART, Formkrav.KLAGE_KONKRET, Formkrav.KLAGE_SIGNERT, Formkrav.KLAGEFRIST_OVERHOLDT).forEach {
-            assertThat(brevInnhold.årsakTilAvvisning).contains(it.tekst)
+            assertThat(brevInnhold.årsakTilAvvisning).contains(it.tekstForPerson)
         }
         assertThat(brevInnhold.lovtekst).contains(folketrygdLovPrefix)
         assertThat(brevInnhold.lovtekst).contains("og forvaltningsloven")

@@ -34,8 +34,6 @@ import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.vurdering.VurderingService
-import no.nav.familie.klage.vurdering.VurderingValidator.validerVurdering
-import no.nav.familie.klage.vurdering.dto.tilDto
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
@@ -138,10 +136,9 @@ class BrevService(
                                 "Behandling med resultat $behandlingResultat mangler innstillingKlageinstans for generering av brev",
                             )
                     brevInnholdUtleder.lagOpprettholdelseBrev(
-                        ident = fagsak.hentAktivIdent(),
+                        fagsak = fagsak,
                         innstillingKlageinstans = innstillingKlageinstans,
                         navn = navn,
-                        stønadstype = fagsak.stønadstype,
                         påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                         klageMottatt = klageMottatt,
                     )
@@ -158,18 +155,11 @@ class BrevService(
                         "Behandling ${behandling.id} mangler vurdering for generering av brev"
                     }
 
-                    validerVurdering(vurdering.tilDto(), fagsak.fagsystem)
-
                     brevInnholdUtleder.lagOpprettholdelseBrev(
-                        ident = fagsak.hentAktivIdent(),
+                        fagsak = fagsak,
                         klagefristUnntakBegrunnelse = if (klagefristUnntakOppfylt) formkrav.brevtekst else null,
-                        dokumentasjonOgUtredning = vurdering.dokumentasjonOgUtredning!!,
-                        spørsmåletISaken = vurdering.spørsmåletISaken!!,
-                        aktuelleRettskilder = vurdering.aktuelleRettskilder!!,
-                        klagersAnførsler = vurdering.klagersAnførsler!!,
-                        vurderingAvKlagen = vurdering.vurderingAvKlagen!!,
+                        vurdering = vurdering,
                         navn = navn,
-                        stønadstype = fagsak.stønadstype,
                         påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                         klageMottatt = klageMottatt,
                     )
@@ -181,21 +171,18 @@ class BrevService(
                 when (behandling.påklagetVedtak.påklagetVedtakstype) {
                     PåklagetVedtakstype.UTEN_VEDTAK -> {
                         brevInnholdUtleder.lagFormkravAvvistBrevIkkePåklagetVedtak(
-                            ident = fagsak.hentAktivIdent(),
+                            fagsak = fagsak,
                             navn = navn,
                             formkrav = formkrav,
-                            stønadstype = fagsak.stønadstype,
                         )
                     }
 
                     else -> {
                         brevInnholdUtleder.lagFormkravAvvistBrev(
-                            ident = fagsak.hentAktivIdent(),
+                            fagsak = fagsak,
                             navn = navn,
                             form = formkrav,
-                            stønadstype = fagsak.stønadstype,
                             påklagetVedtakDetaljer = påklagetVedtakDetaljer,
-                            fagsystem = fagsak.fagsystem,
                         )
                     }
                 }
@@ -359,9 +346,8 @@ class BrevService(
     ): String {
         val henleggelsesbrevInnhold =
             brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(
-                ident = fagsak.hentAktivIdent(),
+                fagsak = fagsak,
                 navn = navn,
-                stønadstype = fagsak.stønadstype,
             )
 
         return brevClient.genererHtmlFritekstbrev(

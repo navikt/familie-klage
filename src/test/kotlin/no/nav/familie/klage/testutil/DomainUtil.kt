@@ -178,7 +178,7 @@ object DomainUtil {
         interntNotat = interntNotat,
     )
 
-    fun oppfyltForm(behandlingId: UUID) =
+    fun oppfyltForm(behandlingId: UUID = UUID.randomUUID()) =
         Form(
             behandlingId = behandlingId,
             klagePart = FormVilkår.OPPFYLT,
@@ -186,6 +186,14 @@ object DomainUtil {
             klagefristOverholdtUnntak = FormkravFristUnntak.IKKE_SATT,
             klageKonkret = FormVilkår.OPPFYLT,
             klageSignert = FormVilkår.OPPFYLT,
+        )
+
+    fun ikkeOppfyltForm() =
+        oppfyltForm(
+            behandlingId = UUID.randomUUID(),
+        ).copy(
+            klagePart = FormVilkår.IKKE_OPPFYLT,
+            brevtekst = "brevtekst",
         )
 
     const val DEFAULT_IDENT = "01010199999"
