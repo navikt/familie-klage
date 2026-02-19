@@ -54,7 +54,7 @@ object BrevmottakerOppretterValidator {
             }
 
             eksisterendeMottakerRoller.isNotEmpty() &&
-                    BRUKER_MED_UTENLANDSK_ADRESSE !in eksisterendeMottakerRoller &&
+                BRUKER_MED_UTENLANDSK_ADRESSE !in eksisterendeMottakerRoller &&
                 nyBrevmottakerPersonUtenIdent.mottakerRolle !== BRUKER_MED_UTENLANDSK_ADRESSE -> {
                 throw Feil("Kan kun legge til bruker med utenlandsk adresse om det finnes en brevmottaker allerede for $behandlingId.")
             }

@@ -1,6 +1,5 @@
 package no.nav.familie.klage.oppgave
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.fagsak.FagsakPersonRepository
 import no.nav.familie.klage.fagsak.FagsakRepository
