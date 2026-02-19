@@ -1,15 +1,14 @@
 package no.nav.familie.klage.brev.avvistbrev
 
-import no.nav.familie.klage.formkrav.domain.FormVilkår
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
-import no.nav.familie.klage.testutil.DomainUtil.oppfyltForm
+import no.nav.familie.klage.testutil.DomainUtil.fagsak
+import no.nav.familie.klage.testutil.DomainUtil.ikkeOppfyltForm
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.springframework.beans.factory.annotation.Autowired
-import java.util.UUID
 
 class AvvistBrevUtlederLookupTest(
     @Autowired
@@ -25,10 +24,8 @@ class AvvistBrevUtlederLookupTest(
         assertInstanceOf(EFAvvistBrevInnholdUtleder::class.java, avvistBrevUtleder)
         assertDoesNotThrow {
             avvistBrevUtleder.utledBrevInnhold(
-                oppfyltForm(behandlingId = UUID.randomUUID()).copy(
-                    klagePart = FormVilkår.IKKE_OPPFYLT,
-                    brevtekst = "Test",
-                ),
+                fagsak = fagsak(),
+                form = ikkeOppfyltForm(),
             )
         }
     }
@@ -43,10 +40,8 @@ class AvvistBrevUtlederLookupTest(
         assertInstanceOf(BAAvvistBrevInnholdUtleder::class.java, avvistBrevUtleder)
         assertDoesNotThrow {
             avvistBrevUtleder.utledBrevInnhold(
-                oppfyltForm(behandlingId = UUID.randomUUID()).copy(
-                    klagePart = FormVilkår.IKKE_OPPFYLT,
-                    brevtekst = "Test",
-                ),
+                fagsak = fagsak(),
+                form = ikkeOppfyltForm(),
             )
         }
     }
@@ -61,10 +56,8 @@ class AvvistBrevUtlederLookupTest(
         assertInstanceOf(KSAvvistBrevInnholdUtleder::class.java, avvistBrevUtleder)
         assertDoesNotThrow {
             avvistBrevUtleder.utledBrevInnhold(
-                oppfyltForm(behandlingId = UUID.randomUUID()).copy(
-                    klagePart = FormVilkår.IKKE_OPPFYLT,
-                    brevtekst = "Test",
-                ),
+                fagsak = fagsak(),
+                form = ikkeOppfyltForm(),
             )
         }
     }
