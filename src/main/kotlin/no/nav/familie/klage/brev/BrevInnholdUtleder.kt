@@ -9,6 +9,7 @@ import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.felles.util.StønadstypeVisningsnavn.visningsnavn
 import no.nav.familie.klage.felles.util.TekstUtil.norskFormat
 import no.nav.familie.klage.felles.util.TekstUtil.norskFormatLang
+import no.nav.familie.klage.felles.util.TekstUtil.storForbokstav
 import no.nav.familie.klage.formkrav.domain.Form
 import no.nav.familie.klage.vurdering.VurderingValidator.validerVurdering
 import no.nav.familie.klage.vurdering.domain.Vurdering
@@ -65,10 +66,10 @@ class BrevInnholdUtleder(
         klageMottatt: LocalDate,
     ): FritekstBrevRequestDto {
         validerVurdering(vurdering.tilDto(), fagsak.fagsystem)
-        val fraKlager = if (fagsak.erInstitusjonssak()) "fra institusjonen" else "din"
-        val sakenDinFormulering = if (fagsak.erInstitusjonssak()) "vedtaket" else "saken din"
+        val (possesiv) = hentPronomen(fagsak)
+
         return FritekstBrevRequestDto(
-            overskrift = "Vi har sendt klagen $fraKlager til Nav Klageinstans Nord",
+            overskrift = "Vi har sendt klagen $possesiv til Nav Klageinstans Nord",
             navn = navn,
             personIdent = fagsak.hentAktivIdent(),
             avsnitt =
@@ -76,10 +77,10 @@ class BrevInnholdUtleder(
                     AvsnittDto(
                         deloverskrift = "",
                         innhold =
-                            "Vi har ${klageMottatt.norskFormatLang()} fått klagen $fraKlager på vedtaket om " +
+                            "Vi har ${klageMottatt.norskFormatLang()} fått klagen $possesiv på vedtaket om " +
                                 "${visningsnavn(fagsak.stønadstype, påklagetVedtakDetaljer)} som ble gjort " +
                                 "${påklagetVedtakDetaljer.vedtakstidspunkt.norskFormatLang()}, " +
-                                "og kommet frem til at vi ikke endrer vedtaket. Nav Klageinstans skal derfor vurdere $sakenDinFormulering på nytt.",
+                                "og kommet frem til at vi ikke endrer vedtaket. Nav Klageinstans skal derfor vurdere saken $possesiv på nytt.",
                     ),
                     AvsnittDto(
                         deloverskrift = "",
@@ -136,10 +137,10 @@ class BrevInnholdUtleder(
     ): FritekstBrevRequestDto {
         val avvistBrevUtleder = avvistBrevInnholdUtlederLookup.hentAvvistBrevUtlederForFagsystem(fagsak.fagsystem)
         val avvistBrevInnhold = avvistBrevUtleder.utledBrevInnhold(fagsak, form)
-        val fraKlager = if (fagsak.erInstitusjonssak()) "fra institusjonen" else "din"
+        val (possesiv) = hentPronomen(fagsak)
 
         return FritekstBrevRequestDto(
-            overskrift = "Vi har avvist klagen $fraKlager på vedtaket om ${visningsnavn(fagsak.stønadstype, påklagetVedtakDetaljer)}",
+            overskrift = "Vi har avvist klagen $possesiv på vedtaket om ${visningsnavn(fagsak.stønadstype, påklagetVedtakDetaljer)}",
             personIdent = fagsak.hentAktivIdent(),
             navn = navn,
             avsnitt =
@@ -170,18 +171,17 @@ class BrevInnholdUtleder(
     ): FritekstBrevRequestDto {
         val brevtekstFraSaksbehandler =
             formkrav.brevtekst ?: error("Må ha brevtekst fra saksbehandler for å generere brev ved formkrav ikke oppfylt")
-        val fraKlager = if (fagsak.erInstitusjonssak()) "fra institusjonen" else "din"
-        val begrunnelseFormulering = if (fagsak.erInstitusjonssak()) "det ikke er" else "du ikke har"
+        val (possesiv, subjekt) = hentPronomen(fagsak)
 
         return FritekstBrevRequestDto(
-            overskrift = "Vi har avvist klagen $fraKlager",
+            overskrift = "Vi har avvist klagen $possesiv",
             personIdent = fagsak.hentAktivIdent(),
             navn = navn,
             avsnitt =
                 listOf(
                     AvsnittDto(
                         deloverskrift = "",
-                        innhold = "Vi har avvist klagen $fraKlager fordi $begrunnelseFormulering klaget på et vedtak.",
+                        innhold = "Vi har avvist klagen $possesiv fordi $subjekt ikke har klaget på et vedtak.",
                     ),
                     AvsnittDto(
                         deloverskrift = "",
@@ -202,22 +202,17 @@ class BrevInnholdUtleder(
         fagsak: Fagsak,
         navn: String,
     ): FritekstBrevRequestDto {
-        val overskrift = if (fagsak.erInstitusjonssak()) "Saken er avsluttet" else "Saken din er avsluttet"
-        val innhold =
-            if (fagsak.erInstitusjonssak()) {
-                "Institusjonen har trukket klagen på vedtaket om ${fagsak.stønadstype.name.lowercase()}. Vi har derfor avsluttet saken."
-            } else {
-                "Du har trukket klagen din på vedtaket om ${fagsak.stønadstype.name.lowercase()}. Vi har derfor avsluttet saken din."
-            }
+        val (possesiv, subjekt) = hentPronomen(fagsak)
+
         return FritekstBrevRequestDto(
-            overskrift = overskrift,
+            overskrift = "Saken $possesiv er avsluttet",
             personIdent = fagsak.hentAktivIdent(),
             navn = navn,
             avsnitt =
                 listOfNotNull(
                     AvsnittDto(
                         deloverskrift = "",
-                        innhold = innhold,
+                        innhold = "${subjekt.storForbokstav()} har trukket klagen $possesiv på vedtaket om ${fagsak.stønadstype.name.lowercase()}. Vi har derfor avsluttet saken $possesiv.",
                     ),
                     duHarRettTilInnsynAvsnitt(fagsak),
                     harDuSpørsmålAvsnitt(fagsak),
@@ -227,23 +222,14 @@ class BrevInnholdUtleder(
 
     private fun duHarRettTilÅKlageAvsnitt(fagsak: Fagsak): AvsnittDto {
         val stønadstype = fagsak.stønadstype
-        return if (fagsak.erInstitusjonssak()) {
-            AvsnittDto(
-                deloverskrift = "Dere har rett til å klage",
-                deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
-                innhold =
-                    "Dere kan klage innen seks uker fra den datoen dere mottok vedtaket. " +
-                        "Dere finner skjema og informasjon på ${stønadstype.klageUrl()}.",
-            )
-        } else {
-            AvsnittDto(
-                deloverskrift = "Du har rett til å klage",
-                deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
-                innhold =
-                    "Hvis du vil klage, må du gjøre dette innen ${utledKlagefrist(stønadstype)} uker fra den datoen du fikk dette brevet. " +
-                        "Du finner skjema og informasjon på ${stønadstype.klageUrl()}.",
-            )
-        }
+        val (_, subjekt) = hentPronomen(fagsak)
+        return AvsnittDto(
+            deloverskrift = "${subjekt.storForbokstav()} har rett til å klage",
+            deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
+            innhold =
+                "Hvis $subjekt vil klage, må $subjekt gjøre dette innen ${utledKlagefrist(stønadstype)} uker fra den datoen $subjekt fikk dette brevet. " +
+                    "${subjekt.storForbokstav()} finner skjema og informasjon på ${stønadstype.klageUrl()}.",
+        )
     }
 
     private fun utledKlagefrist(stønadstype: Stønadstype): Int =
@@ -254,43 +240,26 @@ class BrevInnholdUtleder(
 
     private fun harDuNyeOpplysningerAvsnitt(fagsak: Fagsak): AvsnittDto {
         val stønadstype = fagsak.stønadstype
-        return if (fagsak.erInstitusjonssak()) {
-            AvsnittDto(
-                deloverskrift = "Har dere nye opplysninger?",
-                deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
-                innhold = "Har dere nye opplysninger eller ønsker å uttale dere, kan dere sende oss dette via \n${stønadstype.klageUrl()}.",
-            )
-        } else {
-            AvsnittDto(
-                deloverskrift = "Har du nye opplysninger?",
-                deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
-                innhold = "Har du nye opplysninger eller ønsker å uttale deg, kan du sende oss dette via \n${stønadstype.klageUrl()}.",
-            )
-        }
+        val (_, subjekt, objekt) = hentPronomen(fagsak)
+        return AvsnittDto(
+            deloverskrift = "Har $subjekt nye opplysninger?",
+            deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
+            innhold = "Har $subjekt nye opplysninger eller ønsker å uttale $objekt, kan $subjekt sende oss dette via \n${stønadstype.klageUrl()}.",
+        )
     }
 
     private fun duHarRettTilInnsynAvsnitt(fagsak: Fagsak): AvsnittDto {
         val stønadstype = fagsak.stønadstype
         return if (stønadstype.erBarnetrygdEllerKontantstøtte()) {
-            if (fagsak.erInstitusjonssak()) {
-                AvsnittDto(
-                    deloverskrift = "Dere har rett til innsyn i saken",
-                    deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
-                    innhold =
-                        "Dere har rett til å se dokumentene i saken. Dette følger av forvaltningsloven § 18. " +
-                            "Kontakt oss om dere vil se dokumentene i saken. Ta kontakt på nav.no/kontakt eller på telefon " +
-                            "55 55 33 33. Dere kan lese mer om innsynsretten på nav.no/personvernerklaering.",
-                )
-            } else {
-                AvsnittDto(
-                    deloverskrift = "Du har rett til innsyn i saken din",
-                    deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
-                    innhold =
-                        "Du har rett til å se dokumentene i saken din. Dette følger av forvaltningsloven § 18. " +
-                            "Kontakt oss om du vil se dokumentene i saken din. Ta kontakt på nav.no/kontakt eller på telefon " +
-                            "55 55 33 33. Du kan lese mer om innsynsretten på nav.no/personvernerklaering.",
-                )
-            }
+            val (possesiv, subjekt) = hentPronomen(fagsak)
+            AvsnittDto(
+                deloverskrift = "${subjekt.storForbokstav()} har rett til innsyn i saken $possesiv",
+                deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
+                innhold =
+                    "${subjekt.storForbokstav()} har rett til å se dokumentene i saken $possesiv. Dette følger av forvaltningsloven § 18. " +
+                        "Kontakt oss om $subjekt vil se dokumentene i saken $possesiv. Ta kontakt på nav.no/kontakt eller på telefon " +
+                        "55 55 33 33. ${subjekt.storForbokstav()} kan lese mer om innsynsretten på nav.no/personvernerklaering.",
+            )
         } else {
             AvsnittDto(
                 deloverskrift = "Du har rett til innsyn",
@@ -302,24 +271,15 @@ class BrevInnholdUtleder(
     private fun harDuSpørsmålAvsnitt(fagsak: Fagsak): AvsnittDto {
         val stønadstype = fagsak.stønadstype
         return if (stønadstype.erBarnetrygdEllerKontantstøtte()) {
-            if (fagsak.erInstitusjonssak()) {
-                AvsnittDto(
-                    deloverskrift = "Har dere spørsmål?",
-                    deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
-                    innhold =
-                        "Dere finner mer informasjon på ${stønadstype.lesMerUrl()}. " +
-                            "Dersom dere ikke finner svar på spørsmålet deres, kontakt oss på nav.no/kontakt.",
-                )
-            } else {
-                AvsnittDto(
-                    deloverskrift = "Har du spørsmål?",
-                    deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
-                    innhold =
-                        "Du finner mer informasjon på ${stønadstype.lesMerUrl()}. " +
-                            "På nav.no/kontakt kan du chatte eller skrive til oss. " +
-                            "Hvis du ikke finner svar på nav.no kan du ringe oss på telefon 55 55 33 33, hverdager 09.00-15.00.",
-                )
-            }
+            val (_, subjekt) = hentPronomen(fagsak)
+            AvsnittDto(
+                deloverskrift = "Har $subjekt spørsmål?",
+                deloverskriftHeading = utledDeloverskriftHeading(stønadstype),
+                innhold =
+                    "${subjekt.storForbokstav()} finner mer informasjon på ${stønadstype.lesMerUrl()}. " +
+                        "På nav.no/kontakt kan $subjekt chatte eller skrive til oss. " +
+                        "Hvis $subjekt ikke finner svar på nav.no kan $subjekt ringe oss på telefon 55 55 33 33, hverdager 09.00-15.00.",
+            )
         } else {
             AvsnittDto(
                 deloverskrift = "Har du spørsmål?",
@@ -390,4 +350,12 @@ class BrevInnholdUtleder(
         }
 
     private fun Stønadstype.erBarnetrygdEllerKontantstøtte() = this in setOf(Stønadstype.BARNETRYGD, Stønadstype.KONTANTSTØTTE)
+
+    private fun hentPronomen(fagsak: Fagsak): Pronomen = if (fagsak.erInstitusjonssak()) Pronomen("deres", "dere", "dere") else Pronomen("din", "du", "deg")
+
+    private data class Pronomen(
+        val possesiv: String,
+        val subjekt: String,
+        val objekt: String,
+    )
 }
