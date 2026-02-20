@@ -1,9 +1,9 @@
 package no.nav.familie.klage.personopplysninger.pdl
 
-import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.klage.infrastruktur.config.PdlConfig
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
+import no.nav.familie.restklient.client.AbstractPingableRestClient
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpHeaders

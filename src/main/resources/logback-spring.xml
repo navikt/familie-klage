@@ -52,5 +52,5 @@
     <logger name="org.apache.http.client.protocol.ResponseProcessCookies" level="ERROR"/>
     <logger name="org.apache.wss4j.common.crypto.CryptoBase" level="ERROR"/>
     <logger name="org.springframework.data.convert.CustomConversions" level="ERROR"/>
-
+    <logger name="org.hibernate.orm.connections.pooling" level="WARN"/>
 </configuration>

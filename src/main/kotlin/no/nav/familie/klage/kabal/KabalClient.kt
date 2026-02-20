@@ -1,9 +1,9 @@
 package no.nav.familie.klage.kabal
 
-import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.klage.kabal.domain.OversendtKlageAnke
 import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV3
 import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV4
+import no.nav.familie.restklient.client.AbstractRestClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier

@@ -2,8 +2,8 @@ package no.nav.familie.klage
 
 import no.nav.familie.klage.infrastruktur.config.ApplicationConfig
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
 import org.springframework.boot.builder.SpringApplicationBuilder
+import org.springframework.boot.webmvc.autoconfigure.error.ErrorMvcAutoConfiguration
 import org.springframework.context.annotation.Import
 import java.util.Properties
 
