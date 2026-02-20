@@ -19,12 +19,7 @@ interface AvvistBrevInnholdUtleder<T : FormkravVilkår> {
             throw Feil("Kan ikke utlede brevinnhold for avvist brev dersom alle formkrav er oppfylt")
         }
         return AvvistBrevInnhold(
-            årsakTilAvvisning =
-                if (fagsak.erInstitusjonssak()) {
-                    utledÅrsakTilAvvisningstekstForInstitusjon(ikkeOppfylteFormkrav)
-                } else {
-                    utledÅrsakTilAvvisningstekstForPerson(ikkeOppfylteFormkrav)
-                },
+            årsakTilAvvisning = utledÅrsakTilAvvisningstekst(ikkeOppfylteFormkrav, fagsak.erInstitusjonssak()),
             brevtekstFraSaksbehandler =
                 form.brevtekst ?: error("Må ha brevtekst fra saksbehandler for å generere brev ved formkrav ikke oppfylt"),
             lovtekst = utledLovtekst(ikkeOppfylteFormkrav.tilFormkravVilkår()),
@@ -36,9 +31,6 @@ interface AvvistBrevInnholdUtleder<T : FormkravVilkår> {
     fun Set<Formkrav>.tilFormkravVilkår(): Set<T>
 
     companion object {
-        private const val INNHOLDSTEKST_PREFIX_PERSON = "Vi har avvist klagen din fordi"
-        private const val INNHOLDSTEKST_PREFIX_INSTITUSJON = "Vi har avvist klagen fra institusjonen fordi"
-
         private fun utledIkkeOppfylteFormkrav(form: Form): Set<Formkrav> =
             setOf(
                 if (form.klagePart == IKKE_OPPFYLT) Formkrav.KLAGE_PART else null,
@@ -47,18 +39,16 @@ interface AvvistBrevInnholdUtleder<T : FormkravVilkår> {
                 if (form.klagefristOverholdt == IKKE_OPPFYLT) Formkrav.KLAGEFRIST_OVERHOLDT else null,
             ).filterNotNull().toSet()
 
-        private fun utledÅrsakTilAvvisningstekstForPerson(formkrav: Set<Formkrav>): String =
-            if (formkrav.size > 1) {
-                "$INNHOLDSTEKST_PREFIX_PERSON ${formkrav.joinToString("") { "\n  •  ${it.tekstForPerson}" }}"
-            } else {
-                "$INNHOLDSTEKST_PREFIX_PERSON ${formkrav.single().tekstForPerson}."
-            }
+        private fun innholdstekstPrefiks(erInstitusjonssak: Boolean) = "Vi har avvist klagen ${if (erInstitusjonssak) "deres" else "din"} fordi"
 
-        private fun utledÅrsakTilAvvisningstekstForInstitusjon(formkrav: Set<Formkrav>): String =
+        private fun utledÅrsakTilAvvisningstekst(
+            formkrav: Set<Formkrav>,
+            erInstitusjonssak: Boolean,
+        ): String =
             if (formkrav.size > 1) {
-                "$INNHOLDSTEKST_PREFIX_INSTITUSJON ${formkrav.joinToString("") { "\n  •  ${it.tekstForInstitusjon}" }}"
+                "${innholdstekstPrefiks(erInstitusjonssak)} ${formkrav.joinToString("") { "\n  •  ${it.hentTekst(erInstitusjonssak)}" }}"
             } else {
-                "$INNHOLDSTEKST_PREFIX_INSTITUSJON ${formkrav.single().tekstForInstitusjon}."
+                "${innholdstekstPrefiks(erInstitusjonssak)} ${formkrav.single().hentTekst(erInstitusjonssak)}."
             }
 
         internal fun utledParagrafer(paragrafer: Set<String>): String =
