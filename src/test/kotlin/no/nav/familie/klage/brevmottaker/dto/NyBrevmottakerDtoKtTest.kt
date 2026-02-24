@@ -4,7 +4,7 @@ import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonUtenIdent
-import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
+import no.nav.familie.klage.infrastruktur.config.JsonMapperProvider.jsonMapper
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DtoTestUtil
@@ -670,10 +670,10 @@ class NyBrevmottakerDtoKtTest {
                     "\"navnHosOrganisasjon\":\"OG\"" +
                     "}"
 
-            val parser = objectMapper.factory.createParser(json)
+            val parser = jsonMapper.createParser(json)
 
             // Act
-            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, objectMapper.deserializationContext)
+            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, jsonMapper._deserializationContext())
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(NyBrevmottakerOrganisasjonDto::class.java) {
@@ -694,10 +694,10 @@ class NyBrevmottakerDtoKtTest {
                     "\"navn\":\"Fornavn mellomnavn Etternavn\"" +
                     "}"
 
-            val parser = objectMapper.factory.createParser(json)
+            val parser = jsonMapper.createParser(json)
 
             // Act
-            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, objectMapper.deserializationContext)
+            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, jsonMapper._deserializationContext())
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(NyBrevmottakerPersonMedIdentDto::class.java) {
@@ -722,10 +722,10 @@ class NyBrevmottakerDtoKtTest {
                     "\"landkode\":\"NO\"" +
                     "}"
 
-            val parser = objectMapper.factory.createParser(json)
+            val parser = jsonMapper.createParser(json)
 
             // Act
-            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, objectMapper.deserializationContext)
+            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, jsonMapper._deserializationContext())
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(NyBrevmottakerPersonUtenIdentDto::class.java) {
@@ -751,10 +751,10 @@ class NyBrevmottakerDtoKtTest {
                     "\"landkode\":\"DK\"" +
                     "}"
 
-            val parser = objectMapper.factory.createParser(json)
+            val parser = jsonMapper.createParser(json)
 
             // Act
-            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, objectMapper.deserializationContext)
+            val deserialize = nyBrevmottakerDtoDeserializer.deserialize(parser, jsonMapper._deserializationContext())
 
             // Assert
             assertThat(deserialize).isInstanceOfSatisfying(NyBrevmottakerPersonUtenIdentDto::class.java) {

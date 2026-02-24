@@ -1,6 +1,5 @@
 package no.nav.familie.klage.kabal
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.StegService
@@ -15,10 +14,10 @@ import no.nav.familie.klage.kabal.domain.KlageinstansResultat
 import no.nav.familie.klage.oppgave.OpprettKabalEventOppgaveTask
 import no.nav.familie.klage.oppgave.OpprettOppgavePayload
 import no.nav.familie.klage.testutil.DomainUtil
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
-import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.Behandlingstype
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
@@ -29,17 +28,23 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class BehandlingFeilregistrertTaskTest : OppslagSpringRunnerTest() {
-    @Autowired lateinit var behandlingRepository: BehandlingRepository
+    @Autowired
+    lateinit var behandlingRepository: BehandlingRepository
 
-    @Autowired lateinit var stegService: StegService
+    @Autowired
+    lateinit var stegService: StegService
 
-    @Autowired lateinit var taskService: TaskService
+    @Autowired
+    lateinit var taskService: TaskService
 
-    @Autowired lateinit var behandlingService: BehandlingService
+    @Autowired
+    lateinit var behandlingService: BehandlingService
 
-    @Autowired lateinit var fagsakService: FagsakService
+    @Autowired
+    lateinit var fagsakService: FagsakService
 
-    @Autowired lateinit var klageresultatRepository: KlageresultatRepository
+    @Autowired
+    lateinit var klageresultatRepository: KlageresultatRepository
 
     private lateinit var behandlingFeilregistrertTask: BehandlingFeilregistrertTask
 
@@ -96,7 +101,7 @@ class BehandlingFeilregistrertTaskTest : OppslagSpringRunnerTest() {
         assertThat(oppdatertBehandling.status).isEqualTo(BehandlingStatus.FERDIGSTILT)
 
         val opprettOppgaveTask = taskService.findAll().single { it.type == OpprettKabalEventOppgaveTask.TYPE }
-        val opprettOppgavePayload = objectMapper.readValue<OpprettOppgavePayload>(opprettOppgaveTask.payload)
+        val opprettOppgavePayload = jsonMapper.readValue(opprettOppgaveTask.payload, OpprettOppgavePayload::class.java)
         assertThat(
             opprettOppgavePayload.oppgaveTekst,
         ).isEqualTo("Klagebehandlingen er sendt tilbake fra KA med status feilregistrert.\n\nBegrunnelse fra KA: \"fordi det var feil\"")

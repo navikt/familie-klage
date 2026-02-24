@@ -1,6 +1,5 @@
 package no.nav.familie.klage.oppgave
 
-import no.nav.familie.http.client.RessursException
 import no.nav.familie.klage.behandling.dto.OppgaveDto
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.exception.ManglerTilgang
@@ -12,6 +11,7 @@ import no.nav.familie.klage.oppgave.dto.SaksbehandlerRolle
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
+import no.nav.familie.restklient.client.RessursException
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.client.HttpClientErrorException

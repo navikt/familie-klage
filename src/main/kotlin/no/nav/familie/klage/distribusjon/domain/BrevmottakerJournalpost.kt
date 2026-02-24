@@ -1,11 +1,11 @@
 package no.nav.familie.klage.distribusjon.domain
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
+import no.nav.familie.klage.infrastruktur.config.JsonMapperProvider.jsonMapper
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.DeserializationContext
+import tools.jackson.databind.JsonNode
+import tools.jackson.databind.ValueDeserializer
+import tools.jackson.databind.annotation.JsonDeserialize
 import java.util.UUID
 
 @JsonDeserialize(using = BrevmottakerJournalpostDeserializer::class)
@@ -34,16 +34,16 @@ data class BrevmottakerJournalpostUtenIdent(
     override fun medDistribusjonsId(distribusjonId: String) = copy(distribusjonId = distribusjonId)
 }
 
-class BrevmottakerJournalpostDeserializer : JsonDeserializer<BrevmottakerJournalpost>() {
+class BrevmottakerJournalpostDeserializer : ValueDeserializer<BrevmottakerJournalpost>() {
     override fun deserialize(
         jsonParser: JsonParser,
         context: DeserializationContext,
     ): BrevmottakerJournalpost {
         val tree = jsonParser.readValueAsTree<JsonNode>()
         return if (tree.has("ident")) {
-            objectMapper.treeToValue(tree, BrevmottakerJournalpostMedIdent::class.java)
+            jsonMapper.treeToValue(tree, BrevmottakerJournalpostMedIdent::class.java)
         } else {
-            objectMapper.treeToValue(tree, BrevmottakerJournalpostUtenIdent::class.java)
+            jsonMapper.treeToValue(tree, BrevmottakerJournalpostUtenIdent::class.java)
         }
     }
 }

@@ -21,7 +21,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.web.client.exchange
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -64,6 +64,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                     localhost("$baseUrl/${behandling.id}"),
                     HttpMethod.GET,
                     HttpEntity<Void>(null, headers),
+                    object : ParameterizedTypeReference<Ressurs<BrevmottakereDto>>() {},
                 )
 
             // Assert
@@ -91,6 +92,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                     localhost("$baseUrl/${behandling.id}"),
                     HttpMethod.GET,
                     HttpEntity<Void>(null, headers),
+                    object : ParameterizedTypeReference<Ressurs<BrevmottakereDto>>() {},
                 )
 
             // Assert
@@ -127,6 +129,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                     localhost("$baseUrl/${behandling.id}"),
                     HttpMethod.GET,
                     HttpEntity<Void>(null, headers),
+                    object : ParameterizedTypeReference<Ressurs<BrevmottakereDto>>() {},
                 )
 
             // Assert
@@ -198,6 +201,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                     localhost("$baseUrl/${behandling.id}"),
                     HttpMethod.PUT,
                     HttpEntity<BrevmottakereDto>(brevmottakereDto, headers),
+                    object : ParameterizedTypeReference<Ressurs<BrevmottakereDto>>() {},
                 )
 
             // Assert
@@ -231,6 +235,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                     localhost("$baseUrl/${behandling.id}"),
                     HttpMethod.PUT,
                     HttpEntity<BrevmottakereDto>(brevmottakereDto, headers),
+                    object : ParameterizedTypeReference<Ressurs<BrevmottakereDto>>() {},
                 )
 
             // Assert
@@ -260,6 +265,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                     localhost("$baseUrl/${behandling.id}"),
                     HttpMethod.PUT,
                     HttpEntity<BrevmottakereDto>(brevmottakereDto, headers),
+                    object : ParameterizedTypeReference<Ressurs<BrevmottakereDto>>() {},
                 )
 
             // Assert
@@ -306,6 +312,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                     localhost("$baseUrl/${behandling.id}"),
                     HttpMethod.PUT,
                     HttpEntity<BrevmottakereDto>(brevmottakereDto, headers),
+                    object : ParameterizedTypeReference<Ressurs<BrevmottakereDto>>() {},
                 )
 
             // Assert
@@ -363,6 +370,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                     localhost("$baseUrl/${behandling.id}"),
                     HttpMethod.POST,
                     HttpEntity<NyBrevmottakerDto>(nyBrevmottakerDto, headers),
+                    object : ParameterizedTypeReference<Ressurs<BrevmottakereDto>>() {},
                 )
 
             // Assert
@@ -390,6 +398,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                     localhost("$baseUrl/${behandling.id}"),
                     HttpMethod.POST,
                     HttpEntity<NyBrevmottakerDto>(nyBrevmottakerDto, headers),
+                    object : ParameterizedTypeReference<Ressurs<BrevmottakereDto>>() {},
                 )
 
             // Assert
@@ -425,6 +434,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                     localhost("$baseUrl/${behandling.id}"),
                     HttpMethod.POST,
                     HttpEntity<NyBrevmottakerDto>(nyBrevmottakerDto, headers),
+                    object : ParameterizedTypeReference<Ressurs<BrevmottakereDto>>() {},
                 )
 
             // Assert
@@ -463,6 +473,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                     localhost("$baseUrl/${behandling.id}"),
                     HttpMethod.POST,
                     HttpEntity<NyBrevmottakerDto>(nyBrevmottakerDto, headers),
+                    object : ParameterizedTypeReference<Ressurs<BrevmottakereDto>>() {},
                 )
 
             // Assert
@@ -531,6 +542,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                         DtoTestUtil.lagSlettbarBrevmottakerPersonUtenIdentDto(UUID.randomUUID()),
                         headers,
                     ),
+                    object : ParameterizedTypeReference<Ressurs<BrevmottakereDto>>() {},
                 )
 
             // Assert
@@ -561,6 +573,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                         DtoTestUtil.lagSlettbarBrevmottakerPersonUtenIdentDto(UUID.randomUUID()),
                         headers,
                     ),
+                    object : ParameterizedTypeReference<Ressurs<BrevmottakereDto>>() {},
                 )
 
             // Assert
@@ -593,13 +606,14 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
 
             // Act
             val exchange =
-                restTemplate.exchange<Ressurs<BrevmottakereDto>>(
+                restTemplate.exchange(
                     localhost("$baseUrl/${behandling.id}"),
                     HttpMethod.DELETE,
                     HttpEntity<SlettbarBrevmottakerDto>(
                         DtoTestUtil.lagSlettbarBrevmottakerPersonUtenIdentDto(brevmottakerPersonUtenIdent.id),
                         headers,
                     ),
+                    object : ParameterizedTypeReference<Ressurs<BrevmottakereDto>>() {},
                 )
 
             // Assert
@@ -650,6 +664,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                     localhost("$baseUrl/initielle/${behandling.id}"),
                     HttpMethod.GET,
                     HttpEntity<Void>(null, headers),
+                    object : ParameterizedTypeReference<Ressurs<BrevmottakereDto>>() {},
                 )
 
             // Assert
@@ -677,6 +692,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                     localhost("$baseUrl/initielle/${behandling.id}"),
                     HttpMethod.GET,
                     HttpEntity<Void>(null, headers),
+                    object : ParameterizedTypeReference<Ressurs<BrevmottakereDto>>() {},
                 )
 
             // Assert
@@ -701,6 +717,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                     localhost("$baseUrl/initielle/${behandling.id}"),
                     HttpMethod.GET,
                     HttpEntity<Void>(null, headers),
+                    object : ParameterizedTypeReference<Ressurs<BrevmottakereDto>>() {},
                 )
 
             // Assert

@@ -1,10 +1,5 @@
 package no.nav.familie.klage.brevmottaker.dto
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.FULLMAKT
@@ -14,8 +9,13 @@ import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPerson
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.NyBrevmottakerPersonUtenIdent
-import no.nav.familie.klage.infrastruktur.config.ObjectMapperProvider.objectMapper
+import no.nav.familie.klage.infrastruktur.config.JsonMapperProvider.jsonMapper
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.DeserializationContext
+import tools.jackson.databind.JsonNode
+import tools.jackson.databind.annotation.JsonDeserialize
+import tools.jackson.databind.deser.std.StdDeserializer
 
 private const val LANDKODE_NO = "NO"
 
@@ -165,30 +165,30 @@ fun NyBrevmottakerOrganisasjonDto.tilNyBrevmottakerOrganisasjon(): NyBrevmottake
         mottakerRolle = mottakerRolle,
     )
 
-class NyBrevmottakerDtoDeserializer : JsonDeserializer<NyBrevmottakerDto>() {
+class NyBrevmottakerDtoDeserializer : StdDeserializer<NyBrevmottakerDto>(NyBrevmottakerDto::class.java) {
     override fun deserialize(
         jsonParser: JsonParser,
         context: DeserializationContext,
     ): NyBrevmottakerDto {
         val tree = jsonParser.readValueAsTree<JsonNode>()
-        val type = NyBrevmottakerDto.Type.valueOf(tree.get("type").asText())
+        val type = NyBrevmottakerDto.Type.valueOf(tree.get("type").asString())
         return when (type) {
             NyBrevmottakerDto.Type.PERSON_MED_IDENT -> {
-                objectMapper.treeToValue(
+                jsonMapper.treeToValue(
                     tree,
                     NyBrevmottakerPersonMedIdentDto::class.java,
                 )
             }
 
             NyBrevmottakerDto.Type.PERSON_UTEN_IDENT -> {
-                objectMapper.treeToValue(
+                jsonMapper.treeToValue(
                     tree,
                     NyBrevmottakerPersonUtenIdentDto::class.java,
                 )
             }
 
             NyBrevmottakerDto.Type.ORGANISASJON -> {
-                objectMapper.treeToValue(
+                jsonMapper.treeToValue(
                     tree,
                     NyBrevmottakerOrganisasjonDto::class.java,
                 )

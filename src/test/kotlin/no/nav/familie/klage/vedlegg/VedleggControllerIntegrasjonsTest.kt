@@ -9,7 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.web.client.exchange
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -49,6 +49,7 @@ internal class VedleggControllerIntegrasjonsTest : OppslagSpringRunnerTest() {
             localhost("/api/vedlegg/$behandlingId"),
             HttpMethod.GET,
             HttpEntity(null, headers),
+            object : ParameterizedTypeReference<Ressurs<List<DokumentinfoDto>>>() {},
         )
 
     private fun hentDokument(
@@ -59,5 +60,6 @@ internal class VedleggControllerIntegrasjonsTest : OppslagSpringRunnerTest() {
             localhost("/api/vedlegg/$journalpostId/dokument-pdf/$dokumentinfoId"),
             HttpMethod.GET,
             HttpEntity(null, headers),
+            ByteArray::class.java,
         )
 }

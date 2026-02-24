@@ -1,7 +1,7 @@
 package no.nav.familie.klage.behandlingsstatistikk
 
 import no.nav.familie.eksterne.kontrakter.saksstatistikk.klage.BehandlingsstatistikkKlage
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaTemplate
@@ -36,5 +36,5 @@ class BehandlingsstatistikkProducer(
         }
     }
 
-    private fun Any.toJson(): String = objectMapper.writeValueAsString(this)
+    private fun Any.toJson(): String = jsonMapper.writeValueAsString(this)
 }

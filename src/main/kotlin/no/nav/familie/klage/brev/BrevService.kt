@@ -34,10 +34,10 @@ import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.vurdering.VurderingService
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
-import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -329,7 +329,7 @@ class BrevService(
             brevClient
                 .genererHtml(
                     brevmal = "informasjonsbrevTrukketKlage",
-                    saksbehandlerBrevrequest = objectMapper.valueToTree(henleggelsesbrev),
+                    saksbehandlerBrevrequest = jsonMapper.valueToTree(henleggelsesbrev),
                     saksbehandlersignatur = signaturMedEnhet.navn,
                     saksbehandlerEnhet = signaturMedEnhet.enhet,
                     skjulBeslutterSignatur = true,
