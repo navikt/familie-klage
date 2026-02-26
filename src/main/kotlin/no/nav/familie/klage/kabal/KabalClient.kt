@@ -4,6 +4,7 @@ import no.nav.familie.klage.kabal.domain.OversendtKlageAnke
 import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV3
 import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV4
 import no.nav.familie.restklient.client.AbstractRestClient
+import no.nav.familie.restklient.client.ResponseBodyNullException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
@@ -37,8 +38,12 @@ class KabalClient(
             .toUri()
 
     fun sendTilKabal(oversendtKlage: OversendtKlageAnke) =
-        when (oversendtKlage) {
-            is OversendtKlageAnkeV3 -> postForEntity<Any>(oversendelseUrlV3, oversendtKlage)
-            is OversendtKlageAnkeV4 -> postForEntity<Any>(oversendelseUrlV4, oversendtKlage)
+        try {
+            when (oversendtKlage) {
+                is OversendtKlageAnkeV3 -> postForEntity<Any>(oversendelseUrlV3, oversendtKlage)
+                is OversendtKlageAnkeV4 -> postForEntity<Any>(oversendelseUrlV4, oversendtKlage)
+            }
+        } catch (_: ResponseBodyNullException) {
+            // Kabal returnerer 200 OK med tom body ved suksess
         }
 }
