@@ -444,7 +444,7 @@ internal class KabalServiceTest {
                 val prosessfullmektig = oversendelseSlot.captured.prosessfullmektig!!
                 assertThat(prosessfullmektig.id?.verdi).isEqualTo(verge.personIdent)
                 assertThat(prosessfullmektig.id?.type).isEqualTo(OversendtPartIdType.PERSON)
-                assertThat(prosessfullmektig.navn).isEqualTo(verge.navn)
+                assertThat(prosessfullmektig.navn).isNull()
                 assertThat(prosessfullmektig.adresse).isNull()
             }
 
@@ -463,7 +463,7 @@ internal class KabalServiceTest {
                 val prosessfullmektig = oversendelseSlot.captured.prosessfullmektig!!
                 assertThat(prosessfullmektig.id?.verdi).isEqualTo(fullmektigMedIdent.personIdent)
                 assertThat(prosessfullmektig.id?.type).isEqualTo(OversendtPartIdType.PERSON)
-                assertThat(prosessfullmektig.navn).isEqualTo(fullmektigMedIdent.navn)
+                assertThat(prosessfullmektig.navn).isNull()
                 assertThat(prosessfullmektig.adresse).isNull()
             }
 
@@ -508,7 +508,7 @@ internal class KabalServiceTest {
                 val prosessfullmektig = oversendelseSlot.captured.prosessfullmektig!!
                 assertThat(prosessfullmektig.id?.verdi).isEqualTo(fullmektigOrganisasjon.organisasjonsnummer)
                 assertThat(prosessfullmektig.id?.type).isEqualTo(OversendtPartIdType.VIRKSOMHET)
-                assertThat(prosessfullmektig.navn).isEqualTo(fullmektigOrganisasjon.organisasjonsnavn)
+                assertThat(prosessfullmektig.navn).isNull()
                 assertThat(prosessfullmektig.adresse).isNull()
             }
 
@@ -530,7 +530,7 @@ internal class KabalServiceTest {
                 val prosessfullmektig = oversendelseSlot.captured.prosessfullmektig!!
                 assertThat(prosessfullmektig.id?.verdi).isEqualTo(fullmektigMedIdent.personIdent)
                 assertThat(prosessfullmektig.id?.type).isEqualTo(OversendtPartIdType.PERSON)
-                assertThat(prosessfullmektig.navn).isEqualTo(fullmektigMedIdent.navn)
+                assertThat(prosessfullmektig.navn).isNull()
                 assertThat(prosessfullmektig.adresse).isNull()
             }
         }

@@ -3,7 +3,6 @@ package no.nav.familie.klage.kabal.domain
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.brevmottaker.domain.Brevmottaker
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerOrganisasjon
-import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPerson
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.BrevmottakerPersonUtenIdent
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
@@ -98,27 +97,24 @@ data class OversendtKlageAnkeV4(
                 }
             }
 
-        private fun utledNavnFraBrevmottaker(brevmottaker: Brevmottaker): String =
-            when (brevmottaker) {
-                is BrevmottakerOrganisasjon -> brevmottaker.organisasjonsnavn
-                is BrevmottakerPerson -> brevmottaker.navn
+        private fun utledNavnFraBrevmottaker(brevmottaker: Brevmottaker): String? =
+            if (brevmottaker is BrevmottakerPersonUtenIdent) {
+                brevmottaker.navn
+            } else {
+                null
             }
 
         private fun utledAdresseFraBrevmottaker(brevmottaker: Brevmottaker): OversendtAdresseV4? =
-            when (brevmottaker) {
-                is BrevmottakerPersonUtenIdent -> {
-                    OversendtAdresseV4(
-                        adresselinje1 = brevmottaker.adresselinje1,
-                        adresselinje2 = brevmottaker.adresselinje2,
-                        postnummer = brevmottaker.postnummer,
-                        poststed = brevmottaker.poststed,
-                        land = brevmottaker.landkode,
-                    )
-                }
-
-                else -> {
-                    null
-                }
+            if (brevmottaker is BrevmottakerPersonUtenIdent) {
+                OversendtAdresseV4(
+                    adresselinje1 = brevmottaker.adresselinje1,
+                    adresselinje2 = brevmottaker.adresselinje2,
+                    postnummer = brevmottaker.postnummer,
+                    poststed = brevmottaker.poststed,
+                    land = brevmottaker.landkode,
+                )
+            } else {
+                null
             }
     }
 }
