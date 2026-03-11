@@ -30,6 +30,7 @@ class TestoppsettService(
                 FagsakDomain(
                     id = fagsak.id,
                     fagsakEierPersonId = person.id,
+                    søkerPersonId = person.id,
                     stønadstype = fagsak.stønadstype,
                     fagsystem = fagsak.fagsystem,
                     eksternId = fagsak.eksternId,
