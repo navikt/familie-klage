@@ -48,8 +48,8 @@ data class PdlErrorExtensions(
     fun notFound() = code == "not_found"
 }
 
-data class PdlSøkerData(
-    val person: PdlSøker?,
+data class PdlPersonData(
+    val person: PdlPerson?,
 )
 
 data class PdlIdent(
@@ -83,7 +83,7 @@ data class PdlNavn(
     val navn: List<Navn>,
 )
 
-data class PdlSøker(
+data class PdlPerson(
     val adressebeskyttelse: List<Adressebeskyttelse>,
     @JsonProperty("doedsfall") val dødsfall: List<Dødsfall>,
     @JsonProperty("kjoenn") val kjønn: List<Kjønn>,

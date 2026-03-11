@@ -11,7 +11,7 @@ import no.nav.familie.klage.personopplysninger.dto.VergemålDto
 import no.nav.familie.klage.personopplysninger.fullmakt.FullmaktService
 import no.nav.familie.klage.personopplysninger.pdl.Fullmakt
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
-import no.nav.familie.klage.personopplysninger.pdl.PdlSøker
+import no.nav.familie.klage.personopplysninger.pdl.PdlPerson
 import no.nav.familie.klage.personopplysninger.pdl.gjeldende
 import no.nav.familie.klage.personopplysninger.pdl.gjelende
 import no.nav.familie.klage.personopplysninger.pdl.visningsnavn
@@ -34,26 +34,26 @@ class PersonopplysningerService(
 
         val egenAnsatt = integrasjonerClient.egenAnsatt(fagsak.hentFagsakEierIdent())
 
-        val pdlSøker = pdlClient.hentPerson(fagsak.hentFagsakEierIdent(), fagsak.stønadstype)
+        val pdlPerson = pdlClient.hentPerson(fagsak.hentFagsakEierIdent(), fagsak.stønadstype)
         val fullmakt = fullmaktService.hentFullmakt(fagsak.hentFagsakEierIdent())
         return PersonopplysningerDto(
             personIdent = fagsak.hentFagsakEierIdent(),
-            navn = pdlSøker.navn.gjeldende().visningsnavn(),
+            navn = pdlPerson.navn.gjeldende().visningsnavn(),
             kjønn =
                 Kjønn.valueOf(
-                    pdlSøker.kjønn
+                    pdlPerson.kjønn
                         .gjelende()
                         .kjønn.name,
                 ),
-            adressebeskyttelse = pdlSøker.adressebeskyttelse.gjeldende()?.let { Adressebeskyttelse.valueOf(it.gradering.name) },
+            adressebeskyttelse = pdlPerson.adressebeskyttelse.gjeldende()?.let { Adressebeskyttelse.valueOf(it.gradering.name) },
             folkeregisterpersonstatus =
-                pdlSøker.folkeregisterpersonstatus
+                pdlPerson.folkeregisterpersonstatus
                     .gjeldende()
                     ?.let { Folkeregisterpersonstatus.fraPdl(it) },
-            dødsdato = pdlSøker.dødsfall.gjeldende()?.dødsdato,
+            dødsdato = pdlPerson.dødsfall.gjeldende()?.dødsdato,
             fullmakt = mapFullmakt(fullmakt),
             egenAnsatt = egenAnsatt,
-            vergemål = mapVergemål(pdlSøker),
+            vergemål = mapVergemål(pdlPerson),
         )
     }
 
@@ -69,7 +69,7 @@ class PersonopplysningerService(
                 )
             }.sortedByDescending(FullmaktDto::gyldigFraOgMed)
 
-    private fun mapVergemål(søker: PdlSøker) =
+    private fun mapVergemål(søker: PdlPerson) =
         søker.vergemaalEllerFremtidsfullmakt.filter { it.type != "stadfestetFremtidsfullmakt" }.map {
             VergemålDto(
                 embete = it.embete,
