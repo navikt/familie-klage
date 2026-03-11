@@ -27,6 +27,7 @@ class FagsakService(
     @Transactional
     fun hentEllerOpprettFagsak(
         fagsakEierIdent: String,
+        søkerIdent: String,
         orgNummer: String? = null,
         eksternId: String,
         fagsystem: Fagsystem,
@@ -39,14 +40,15 @@ class FagsakService(
         }
         
         val fagsakEier = hentEllerOpprettPersonOgOppdaterIdenter(fagsakEierIdent, stønadstype)
+        val søker = if (fagsakEierIdent == søkerIdent) fagsakEier else hentEllerOpprettPersonOgOppdaterIdenter(søkerIdent, stønadstype)
 
         val institusjon =
             fagsakDomain?.institusjonId?.let { institusjonService.finnInstitusjon(it) } 
                 ?: orgNummer?.let { institusjonService.hentEllerLagreInstitusjon(orgNummer) }
 
-        val fagsak = fagsakDomain ?: opprettFagsak(stønadstype, eksternId, fagsystem, fagsakEier, institusjon)
+        val fagsak = fagsakDomain ?: opprettFagsak(stønadstype, eksternId, fagsystem, fagsakEier, søker, institusjon)
 
-        return fagsak.tilFagsakMedPersonOgInstitusjon(fagsakEier.identer, institusjon)
+        return fagsak.tilFagsakMedPersonOgInstitusjon(fagsakEier.identer, søker.identer, institusjon)
     }
 
     private fun hentEllerOpprettPersonOgOppdaterIdenter(
@@ -85,6 +87,7 @@ class FagsakService(
     private fun tilFagsakMedIdenterOgInstitusjon(fagsak: FagsakDomain): Fagsak =
         fagsak.tilFagsakMedPersonOgInstitusjon(
             fagsakEierIdenter = fagsakPersonService.hentIdenter(fagsak.fagsakEierPersonId),
+            søkerIdenter = fagsakPersonService.hentIdenter(fagsak.søkerPersonId),
             institusjon = fagsak.institusjonId?.let { institusjonService.finnInstitusjon(it) },
         )
 
@@ -93,11 +96,13 @@ class FagsakService(
         eksternId: String,
         fagsystem: Fagsystem,
         fagsakEier: FagsakPerson,
+        søker: FagsakPerson,
         institusjon: Institusjon?,
     ): FagsakDomain =
         fagsakRepository.insert(
             FagsakDomain(
                 fagsakEierPersonId = fagsakEier.id,
+                søkerPersonId = søker.id,
                 institusjonId = institusjon?.id,
                 stønadstype = stønadstype,
                 eksternId = eksternId,

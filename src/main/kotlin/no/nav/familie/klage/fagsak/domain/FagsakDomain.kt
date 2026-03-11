@@ -14,14 +14,18 @@ import java.util.UUID
 data class Fagsak(
     val id: UUID,
     val fagsakEierPersonId: UUID,
+    val søkerPersonId: UUID,
     val institusjon: Institusjon? = null,
     val fagsakEierIdenter: Set<PersonIdent>,
+    val søkerIdenter: Set<PersonIdent>,
     val eksternId: String,
     val stønadstype: Stønadstype,
     val fagsystem: Fagsystem,
     val sporbar: Sporbar,
 ) {
     fun hentFagsakEierIdent(): String = fagsakEierIdenter.maxByOrNull { it.sporbar.endret.endretTid }?.ident ?: error("Fant ingen ident på fagsak $id")
+
+    fun hentSøkerIdent(): String = søkerIdenter.maxByOrNull { it.sporbar.endret.endretTid }?.ident ?: error("Fant ingen ident for søker på fagsak $id")
 
     fun erInstitusjonssak(): Boolean = institusjon != null
 }
@@ -44,13 +48,16 @@ data class FagsakDomain(
 ) {
     fun tilFagsakMedPersonOgInstitusjon(
         fagsakEierIdenter: Set<PersonIdent>,
+        søkerIdenter: Set<PersonIdent> = fagsakEierIdenter,
         institusjon: Institusjon? = null,
     ): Fagsak =
         Fagsak(
             id = id,
             fagsakEierPersonId = fagsakEierPersonId,
+            søkerPersonId = søkerPersonId,
             institusjon = institusjon,
             fagsakEierIdenter = fagsakEierIdenter,
+            søkerIdenter = søkerIdenter,
             eksternId = eksternId,
             stønadstype = stønadstype,
             fagsystem = fagsystem,

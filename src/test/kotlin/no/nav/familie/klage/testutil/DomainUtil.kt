@@ -81,6 +81,7 @@ object DomainUtil {
         FagsakDomain(
             id = id,
             fagsakEierPersonId = personId,
+            søkerPersonId = personId,
             stønadstype = stønadstype,
             eksternId = eksternId,
             fagsystem = fagsystem,
@@ -220,8 +221,10 @@ object DomainUtil {
         Fagsak(
             id = id,
             fagsakEierPersonId = person.id,
+            søkerPersonId = person.id,
             institusjon = institusjon,
             fagsakEierIdenter = person.identer,
+            søkerIdenter = person.identer,
             stønadstype = stønadstype,
             sporbar = sporbar,
             eksternId = eksternId,

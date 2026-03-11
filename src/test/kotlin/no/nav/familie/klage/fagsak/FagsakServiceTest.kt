@@ -88,6 +88,7 @@ class FagsakServiceTest {
             val opprettetFagsak =
                 fagsakService.hentEllerOpprettFagsak(
                     fagsakEierIdent = ident,
+                    søkerIdent = ident,
                     orgNummer = orgNummer,
                     eksternId = eksternId,
                     fagsystem = fagsystem,
@@ -153,6 +154,7 @@ class FagsakServiceTest {
             val opprettetFagsak =
                 fagsakService.hentEllerOpprettFagsak(
                     fagsakEierIdent = ident,
+                    søkerIdent = ident,
                     orgNummer = null,
                     eksternId = eksternId,
                     fagsystem = fagsystem,
@@ -228,6 +230,7 @@ class FagsakServiceTest {
                 assertThrows<Feil> {
                     fagsakService.hentEllerOpprettFagsak(
                         fagsakEierIdent = ident,
+                        søkerIdent = ident,
                         orgNummer = orgNummer,
                         eksternId = eksternId,
                         fagsystem = fagsystem,

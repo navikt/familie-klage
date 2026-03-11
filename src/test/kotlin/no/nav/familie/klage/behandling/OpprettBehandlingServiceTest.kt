@@ -1,6 +1,7 @@
 package no.nav.familie.klage.behandling
 
 import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.infrastruktur.exception.Feil
@@ -9,8 +10,10 @@ import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.tilFagsak
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
+import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -25,6 +28,9 @@ internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {
 
     @Autowired
     private lateinit var behandlingService: BehandlingService
+
+    @Autowired
+    private lateinit var fagsakService: FagsakService
 
     @BeforeEach
     internal fun setUp() {
@@ -73,6 +79,29 @@ internal class OpprettBehandlingServiceTest : OppslagSpringRunnerTest() {
         val feil = assertThrows<Feil> { opprettBehandlingService.opprettBehandling(request) }
 
         assertThat(feil.frontendFeilmelding).contains("Kan ikke opprette klage med krav mottatt frem i tid for eksternFagsakId")
+    }
+
+    @Test
+    internal fun `skal legge til søker i fagsaken`() {
+        val fagsakEierIdent = "1234"
+        val søkerIdent = "4321"
+        val opprettKlagebehandlingRequest =
+            OpprettKlagebehandlingRequest(
+                ident = fagsakEierIdent,
+                søkerIdent = søkerIdent,
+                stønadstype = Stønadstype.BARNETRYGD,
+                eksternFagsakId = "12345679",
+                fagsystem = Fagsystem.BA,
+                klageMottatt = LocalDate.now(),
+                behandlendeEnhet = "0000",
+                behandlingsårsak = Klagebehandlingsårsak.ORDINÆR,
+            )
+
+        val nyBehandling = opprettBehandlingService.opprettBehandling(opprettKlagebehandlingRequest)
+
+        val fagsak = fagsakService.hentFagsakForBehandling(nyBehandling)
+        assertThat(fagsak.hentFagsakEierIdent()).isEqualTo(fagsakEierIdent)
+        assertThat(fagsak.hentSøkerIdent()).isEqualTo(søkerIdent)
     }
 
     private fun opprettKlagebehandlingRequest(
