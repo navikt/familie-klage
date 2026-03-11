@@ -27,13 +27,13 @@ class PdlClient(
     fun hentPerson(
         personIdent: String,
         stønadstype: Stønadstype,
-    ): PdlSøker {
+    ): PdlPerson {
         val pdlPersonRequest =
             PdlPersonRequest(
                 variables = PdlPersonRequestVariables(personIdent),
-                query = PdlConfig.søkerQuery,
+                query = PdlConfig.hentPersonQuery,
             )
-        val pdlResponse: PdlResponse<PdlSøkerData> =
+        val pdlResponse: PdlResponse<PdlPersonData> =
             postForEntity(
                 pdlConfig.pdlUri,
                 pdlPersonRequest,

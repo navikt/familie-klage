@@ -32,9 +32,9 @@ object PdlTestdata {
                 ),
         )
 
-    val pdlSøkerData =
-        PdlSøkerData(
-            PdlSøker(
+    val pdlPersonData =
+        PdlPersonData(
+            PdlPerson(
                 adressebeskyttelse,
                 dødsfall,
                 listOf(Kjønn(KjønnType.KVINNE)),

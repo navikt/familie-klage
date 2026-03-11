@@ -24,7 +24,7 @@ import no.nav.familie.klage.testutil.DomainUtil.defaultIdenter
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.klage.testutil.PdlTestdataHelper.lagNavn
 import no.nav.familie.klage.testutil.PdlTestdataHelper.metadataGjeldende
-import no.nav.familie.klage.testutil.PdlTestdataHelper.pdlSøker
+import no.nav.familie.klage.testutil.PdlTestdataHelper.pdlPerson
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -51,7 +51,7 @@ internal class PersonopplysningerServiceTest {
     internal fun setUp() {
         every { behandlingService.hentBehandling(behandling.id) } returns behandling
         every { fagsakService.hentFagsak(fagsak.id) } returns fagsak
-        every { pdlClient.hentPerson(any(), any()) } returns lagPdlSøker()
+        every { pdlClient.hentPerson(any(), any()) } returns lagPdlPerson()
         every { pdlClient.hentNavnBolk(any(), any()) } returns navnBolkResponse()
         every { integrasjonerClient.egenAnsatt(any()) } returns true
         every { fullmaktService.hentFullmakt(any()) } returns listOf(fullmakt())
@@ -90,8 +90,8 @@ internal class PersonopplysningerServiceTest {
             "fullmaktIdent" to PdlNavn(listOf(Navn("fullmakt", null, "etternavn", metadataGjeldende))),
         )
 
-    private fun lagPdlSøker() =
-        pdlSøker(
+    private fun lagPdlPerson() =
+        pdlPerson(
             listOf(PdlAdressebeskyttelse(PdlAdressebeskyttelseGradering1.FORTROLIG, metadataGjeldende)),
             listOf(Dødsfall(LocalDate.now())),
             listOf(PdlFolkeregisterpersonstatus1("doed", "d", metadataGjeldende)),

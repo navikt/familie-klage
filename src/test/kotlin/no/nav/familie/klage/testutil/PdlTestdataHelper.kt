@@ -8,7 +8,7 @@ import no.nav.familie.klage.personopplysninger.pdl.KjønnType
 import no.nav.familie.klage.personopplysninger.pdl.Metadata
 import no.nav.familie.klage.personopplysninger.pdl.Navn
 import no.nav.familie.klage.personopplysninger.pdl.PdlNavn
-import no.nav.familie.klage.personopplysninger.pdl.PdlSøker
+import no.nav.familie.klage.personopplysninger.pdl.PdlPerson
 import no.nav.familie.klage.personopplysninger.pdl.VergemaalEllerFremtidsfullmakt
 
 object PdlTestdataHelper {
@@ -34,14 +34,14 @@ object PdlTestdataHelper {
             navn,
         )
 
-    fun pdlSøker(
+    fun pdlPerson(
         adressebeskyttelse: List<Adressebeskyttelse> = emptyList(),
         dødsfall: List<Dødsfall> = emptyList(),
         folkeregisterpersonstatus: List<Folkeregisterpersonstatus> = emptyList(),
         kjønn: Kjønn? = null,
         navn: List<Navn> = emptyList(),
         vergemaalEllerFremtidsfullmakt: List<VergemaalEllerFremtidsfullmakt> = emptyList(),
-    ) = PdlSøker(
+    ) = PdlPerson(
         adressebeskyttelse,
         dødsfall,
         listOfNotNull(kjønn),
