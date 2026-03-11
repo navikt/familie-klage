@@ -17,7 +17,7 @@ import java.util.UUID
 data class Klagebehandlingsresultat(
     val id: UUID,
     val fagsakId: UUID,
-    val fagsakPersonId: UUID,
+    val fagsakEierPersonId: UUID,
     val status: BehandlingStatus,
     val opprettet: LocalDateTime,
     val mottattDato: LocalDate,

@@ -311,7 +311,7 @@ internal class BehandlingServiceTest {
         Klagebehandlingsresultat(
             id = UUID.randomUUID(),
             fagsakId = UUID.randomUUID(),
-            fagsakPersonId = UUID.randomUUID(),
+            fagsakEierPersonId = UUID.randomUUID(),
             status = BehandlingStatus.FERDIGSTILT,
             opprettet = LocalDateTime.now(),
             mottattDato = LocalDate.now(),

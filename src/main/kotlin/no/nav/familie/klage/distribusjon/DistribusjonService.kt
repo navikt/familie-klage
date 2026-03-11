@@ -85,7 +85,7 @@ class DistribusjonService(
             )
         val arkiverDokumentRequest =
             ArkiverDokumentRequest(
-                fnr = fagsak.hentAktivIdent(),
+                fnr = fagsak.hentFagsakEierIdent(),
                 forsøkFerdigstill = true,
                 hoveddokumentvarianter = listOf(dokument),
                 vedleggsdokumenter = listOf(),

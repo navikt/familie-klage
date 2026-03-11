@@ -71,7 +71,7 @@ class BehandlingService(
     fun hentAktivIdent(behandlingId: UUID): Pair<String, Fagsak> {
         val behandling = hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
-        return Pair(fagsak.hentAktivIdent(), fagsak)
+        return Pair(fagsak.hentFagsakEierIdent(), fagsak)
     }
 
     fun oppdaterBehandlingMedResultat(

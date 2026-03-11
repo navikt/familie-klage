@@ -90,7 +90,7 @@ internal class KabalServiceTest {
             assertThat(oversendelse.tilknyttedeJournalposter).isEmpty()
             assertThat(oversendelse.brukersHenvendelseMottattNavDato).isEqualTo(behandling.klageMottatt)
             assertThat(oversendelse.innsendtTilNav).isEqualTo(behandling.klageMottatt)
-            assertThat(oversendelse.klager.id.verdi).isEqualTo(fagsak.hentAktivIdent())
+            assertThat(oversendelse.klager.id.verdi).isEqualTo(fagsak.hentFagsakEierIdent())
             assertThat(oversendelse.sakenGjelder).isNull()
             assertThat(oversendelse.kilde).isEqualTo(Fagsystem.EF)
             assertThat(oversendelse.ytelse).isEqualTo(Ytelse.ENF_ENF)
@@ -164,7 +164,7 @@ internal class KabalServiceTest {
                     )
                 val vurdering = vurdering(behandlingId = behandling.id, hjemmel = hjemmel)
                 val verge = BrevmottakerPersonMedIdent("01234567890", "Navn", MottakerRolle.VERGE)
-                val bruker = BrevmottakerPersonMedIdent(fagsak.hentAktivIdent(), "Navn", MottakerRolle.BRUKER)
+                val bruker = BrevmottakerPersonMedIdent(fagsak.hentFagsakEierIdent(), "Navn", MottakerRolle.BRUKER)
                 kabalService.sendTilKabal(
                     fagsak,
                     behandling,
@@ -386,7 +386,7 @@ internal class KabalServiceTest {
             val oversendelse = oversendelseSlot.captured
             assertThat(oversendelse.type).isEqualTo(OversendtType.KLAGE)
             assertThat(oversendelse.sakenGjelder.id.type).isEqualTo(OversendtPartIdType.PERSON)
-            assertThat(oversendelse.sakenGjelder.id.verdi).isEqualTo(fagsak.hentAktivIdent())
+            assertThat(oversendelse.sakenGjelder.id.verdi).isEqualTo(fagsak.hentFagsakEierIdent())
             assertThat(oversendelse.prosessfullmektig).isNull()
             assertThat(oversendelse.fagsak.fagsakId).isEqualTo(fagsak.eksternId)
             assertThat(oversendelse.fagsak.fagsystem).isEqualTo(Fagsystem.BA)

@@ -80,7 +80,7 @@ object DomainUtil {
     ): FagsakDomain =
         FagsakDomain(
             id = id,
-            fagsakPersonId = personId,
+            fagsakEierPersonId = personId,
             stønadstype = stønadstype,
             eksternId = eksternId,
             fagsystem = fagsystem,
@@ -205,9 +205,9 @@ object DomainUtil {
         stønadstype: Stønadstype = Stønadstype.OVERGANGSSTØNAD,
         id: UUID = UUID.randomUUID(),
         sporbar: Sporbar = Sporbar(),
-        fagsakPersonId: UUID = UUID.randomUUID(),
+        fagsakEierPersonId: UUID = UUID.randomUUID(),
         eksternId: String = UUID.randomUUID().toString(),
-    ): Fagsak = fagsak(stønadstype, id, FagsakPerson(id = fagsakPersonId, identer = identer), institusjon, sporbar, eksternId)
+    ): Fagsak = fagsak(stønadstype, id, FagsakPerson(id = fagsakEierPersonId, identer = identer), institusjon, sporbar, eksternId)
 
     fun fagsak(
         stønadstype: Stønadstype = Stønadstype.OVERGANGSSTØNAD,
@@ -219,9 +219,9 @@ object DomainUtil {
     ): Fagsak =
         Fagsak(
             id = id,
-            fagsakPersonId = person.id,
+            fagsakEierPersonId = person.id,
             institusjon = institusjon,
-            personIdenter = person.identer,
+            fagsakEierIdenter = person.identer,
             stønadstype = stønadstype,
             sporbar = sporbar,
             eksternId = eksternId,
@@ -324,6 +324,7 @@ object DomainUtil {
     ) = PersonopplysningerDto(
         personIdent = personIdent,
         navn = navn,
+        fødselsdato = LocalDate.now().minusYears(40),
         kjønn = Kjønn.MANN,
         adressebeskyttelse = adressebeskyttelse,
         folkeregisterpersonstatus = Folkeregisterpersonstatus.BOSATT,
@@ -362,6 +363,7 @@ object DomainUtil {
     ) = PersonopplysningerDto(
         personIdent = personIdent,
         navn = navn,
+        fødselsdato = LocalDate.now().minusYears(40),
         kjønn = kjønn,
         adressebeskyttelse = adressebeskyttelse,
         folkeregisterpersonstatus = folkeregisterpersonstatus,

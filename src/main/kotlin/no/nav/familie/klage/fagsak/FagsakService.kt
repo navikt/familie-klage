@@ -26,13 +26,13 @@ class FagsakService(
 
     @Transactional
     fun hentEllerOpprettFagsak(
-        ident: String,
+        fagsakEierIdent: String,
         orgNummer: String? = null,
         eksternId: String,
         fagsystem: Fagsystem,
         stønadstype: Stønadstype,
     ): Fagsak {
-        val person = hentEllerOpprettPersonOgOppdaterIdenter(ident, stønadstype)
+        val fagsakEier = hentEllerOpprettPersonOgOppdaterIdenter(fagsakEierIdent, stønadstype)
         val institusjon = orgNummer?.let { institusjonService.hentEllerLagreInstitusjon(orgNummer) }
 
         val fagsakDomain = fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(eksternId, fagsystem, stønadstype)
@@ -41,9 +41,9 @@ class FagsakService(
             throw Feil("Fagsak med eksternId=$eksternId finnes allerede, men ikke med institusjon=$orgNummer.")
         }
 
-        val fagsak = fagsakDomain ?: opprettFagsak(stønadstype, eksternId, fagsystem, person, institusjon)
+        val fagsak = fagsakDomain ?: opprettFagsak(stønadstype, eksternId, fagsystem, fagsakEier, institusjon)
 
-        return fagsak.tilFagsakMedPersonOgInstitusjon(person.identer, institusjon)
+        return fagsak.tilFagsakMedPersonOgInstitusjon(fagsakEier.identer, institusjon)
     }
 
     private fun hentEllerOpprettPersonOgOppdaterIdenter(
@@ -81,7 +81,7 @@ class FagsakService(
 
     private fun tilFagsakMedIdenterOgInstitusjon(fagsak: FagsakDomain): Fagsak =
         fagsak.tilFagsakMedPersonOgInstitusjon(
-            identer = fagsakPersonService.hentIdenter(fagsak.fagsakPersonId),
+            fagsakEierIdenter = fagsakPersonService.hentIdenter(fagsak.fagsakEierPersonId),
             institusjon = fagsak.institusjonId?.let { institusjonService.finnInstitusjon(it) },
         )
 
@@ -89,12 +89,12 @@ class FagsakService(
         stønadstype: Stønadstype,
         eksternId: String,
         fagsystem: Fagsystem,
-        fagsakPerson: FagsakPerson,
+        fagsakEier: FagsakPerson,
         institusjon: Institusjon?,
     ): FagsakDomain =
         fagsakRepository.insert(
             FagsakDomain(
-                fagsakPersonId = fagsakPerson.id,
+                fagsakEierPersonId = fagsakEier.id,
                 institusjonId = institusjon?.id,
                 stønadstype = stønadstype,
                 eksternId = eksternId,

@@ -43,7 +43,7 @@ data class OversendtKlageAnkeV4(
                         id =
                             OversendtPartId(
                                 type = OversendtPartIdType.PERSON,
-                                verdi = fagsak.hentAktivIdent(),
+                                verdi = fagsak.hentFagsakEierIdent(),
                             ),
                     ),
                 klager =

@@ -87,7 +87,7 @@ class FagsakServiceTest {
             // Act
             val opprettetFagsak =
                 fagsakService.hentEllerOpprettFagsak(
-                    ident = ident,
+                    fagsakEierIdent = ident,
                     orgNummer = orgNummer,
                     eksternId = eksternId,
                     fagsystem = fagsystem,
@@ -96,10 +96,10 @@ class FagsakServiceTest {
 
             // Assert
             assertThat(opprettetFagsak.id).isNotNull()
-            assertThat(opprettetFagsak.fagsakPersonId).isEqualTo(fagsakPerson.id)
+            assertThat(opprettetFagsak.fagsakEierPersonId).isEqualTo(fagsakPerson.id)
             assertThat(opprettetFagsak.institusjon).isEqualTo(institusjon)
-            assertThat(opprettetFagsak.personIdenter).hasSize(1)
-            assertThat(opprettetFagsak.personIdenter).anySatisfy { assertThat(it.ident).isEqualTo(ident) }
+            assertThat(opprettetFagsak.fagsakEierIdenter).hasSize(1)
+            assertThat(opprettetFagsak.fagsakEierIdenter).anySatisfy { assertThat(it.ident).isEqualTo(ident) }
             assertThat(opprettetFagsak.eksternId).isEqualTo(eksternId)
             assertThat(opprettetFagsak.stønadstype).isEqualTo(stønadstype)
             assertThat(opprettetFagsak.fagsystem).isEqualTo(fagsystem)
@@ -152,7 +152,7 @@ class FagsakServiceTest {
             // Act
             val opprettetFagsak =
                 fagsakService.hentEllerOpprettFagsak(
-                    ident = ident,
+                    fagsakEierIdent = ident,
                     orgNummer = null,
                     eksternId = eksternId,
                     fagsystem = fagsystem,
@@ -161,10 +161,10 @@ class FagsakServiceTest {
 
             // Assert
             assertThat(opprettetFagsak.id).isNotNull()
-            assertThat(opprettetFagsak.fagsakPersonId).isEqualTo(fagsakPerson.id)
+            assertThat(opprettetFagsak.fagsakEierPersonId).isEqualTo(fagsakPerson.id)
             assertThat(opprettetFagsak.institusjon).isNull()
-            assertThat(opprettetFagsak.personIdenter).hasSize(1)
-            assertThat(opprettetFagsak.personIdenter).anySatisfy { assertThat(it.ident).isEqualTo(ident) }
+            assertThat(opprettetFagsak.fagsakEierIdenter).hasSize(1)
+            assertThat(opprettetFagsak.fagsakEierIdenter).anySatisfy { assertThat(it.ident).isEqualTo(ident) }
             assertThat(opprettetFagsak.eksternId).isEqualTo(eksternId)
             assertThat(opprettetFagsak.stønadstype).isEqualTo(stønadstype)
             assertThat(opprettetFagsak.fagsystem).isEqualTo(fagsystem)
@@ -227,7 +227,7 @@ class FagsakServiceTest {
             val exception =
                 assertThrows<Feil> {
                     fagsakService.hentEllerOpprettFagsak(
-                        ident = ident,
+                        fagsakEierIdent = ident,
                         orgNummer = orgNummer,
                         eksternId = eksternId,
                         fagsystem = fagsystem,
@@ -288,7 +288,7 @@ class FagsakServiceTest {
             val fagsak = fagsakDomain(fagsystem = fagsystem, stønadstype = stønadstype)
 
             every { fagsakRepository.findByEksternIdAndFagsystemAndStønadstype(fagsak.eksternId, fagsystem, stønadstype) } returns fagsak
-            every { fagsakPersonService.hentIdenter(fagsak.fagsakPersonId) } returns emptySet()
+            every { fagsakPersonService.hentIdenter(fagsak.fagsakEierPersonId) } returns emptySet()
 
             // Act
             val fagsakMedEksternId =
@@ -304,7 +304,7 @@ class FagsakServiceTest {
             assertThat(fagsakMedEksternId.eksternId).isEqualTo(fagsak.eksternId)
             assertThat(fagsakMedEksternId.fagsystem).isEqualTo(fagsak.fagsystem)
             assertThat(fagsakMedEksternId.stønadstype).isEqualTo(fagsak.stønadstype)
-            assertThat(fagsakMedEksternId.fagsakPersonId).isEqualTo(fagsak.fagsakPersonId)
+            assertThat(fagsakMedEksternId.fagsakEierPersonId).isEqualTo(fagsak.fagsakEierPersonId)
         }
     }
 }
