@@ -7,8 +7,6 @@ import no.nav.familie.klage.fagsak.domain.FagsakDomain
 import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.exception.Feil
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.institusjon.InstitusjonService
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.klage.personopplysninger.pdl.PdlIdent
@@ -19,7 +17,6 @@ import no.nav.familie.klage.testutil.DomainUtil.lagInstitusjon
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -33,7 +30,6 @@ class FagsakServiceTest {
     private val fagsakPersonService = mockk<FagsakPersonService>()
     private val pdlClient = mockk<PdlClient>()
     private val institusjonService = mockk<InstitusjonService>()
-    private val featureToggleService = mockk<FeatureToggleService>()
 
     private val fagsakService: FagsakService =
         FagsakService(
@@ -41,13 +37,7 @@ class FagsakServiceTest {
             fagsakPersonService = fagsakPersonService,
             pdlClient = pdlClient,
             institusjonService = institusjonService,
-            featureToggleService = featureToggleService,
         )
-
-    @BeforeEach
-    fun setup() {
-        every { featureToggleService.isEnabled(Toggle.SKAL_KUNNE_BEHANDLE_BA_INSTITUSJON_FAGSAKER) } returns true
-    }
 
     @Nested
     inner class HentEllerOpprettFagsak {
