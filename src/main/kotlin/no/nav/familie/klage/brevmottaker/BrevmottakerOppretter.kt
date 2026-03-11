@@ -73,7 +73,7 @@ class BrevmottakerOppretter(
             eksisterendeBrevmottakere = brevmottakere.tilListe(),
         )
 
-        val aktivIdentForFagsak = fagsakService.hentFagsak(behandling.fagsakId).hentAktivIdent()
+        val aktivIdentForFagsak = fagsakService.hentFagsak(behandling.fagsakId).hentFagsakEierIdent()
 
         val harBrevmottakerPersonBruker =
             brevmottakere.personer

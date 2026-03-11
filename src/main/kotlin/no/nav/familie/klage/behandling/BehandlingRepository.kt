@@ -42,7 +42,7 @@ interface BehandlingRepository :
             SELECT 
              b.id,
              b.fagsak_id,
-             f.fagsak_person_id,
+             f.fagsak_eier_person_id,
              b.status,
              b.opprettet_tid opprettet,
              b.klage_mottatt mottatt_dato,

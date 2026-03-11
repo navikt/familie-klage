@@ -39,7 +39,7 @@ class TestController(
         val eksternFagsakId =
             fagsakRepository
                 .findAll()
-                .find { it.fagsakPersonId == fagsakPerson.id && it.stønadstype == request.stønadstype }
+                .find { it.fagsakEierPersonId == fagsakPerson.id && it.stønadstype == request.stønadstype }
                 ?.eksternId ?: UUID.randomUUID().toString()
 
         val behandlingId =

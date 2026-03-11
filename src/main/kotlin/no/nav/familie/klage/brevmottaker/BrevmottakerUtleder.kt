@@ -35,7 +35,7 @@ class BrevmottakerUtleder(
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
         return BrevmottakerPersonMedIdent(
-            personIdent = fagsak.hentAktivIdent(),
+            personIdent = fagsak.hentFagsakEierIdent(),
             navn = personopplysninger.navn,
             mottakerRolle = MottakerRolle.BRUKER,
         )

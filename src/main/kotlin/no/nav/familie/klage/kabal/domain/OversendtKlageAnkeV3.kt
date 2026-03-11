@@ -48,7 +48,7 @@ data class OversendtKlageAnkeV3(
                         id =
                             OversendtPartId(
                                 type = OversendtPartIdType.PERSON,
-                                verdi = fagsak.hentAktivIdent(),
+                                verdi = fagsak.hentFagsakEierIdent(),
                             ),
                         klagersProsessfullmektig = brevmottakere?.let { utledFullmektigFraBrevmottakere(brevmottakere) },
                     ),

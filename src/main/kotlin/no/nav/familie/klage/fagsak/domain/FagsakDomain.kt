@@ -13,15 +13,15 @@ import java.util.UUID
 
 data class Fagsak(
     val id: UUID,
-    val fagsakPersonId: UUID,
+    val fagsakEierPersonId: UUID,
     val institusjon: Institusjon? = null,
-    val personIdenter: Set<PersonIdent>,
+    val fagsakEierIdenter: Set<PersonIdent>,
     val eksternId: String,
     val stønadstype: Stønadstype,
     val fagsystem: Fagsystem,
     val sporbar: Sporbar,
 ) {
-    fun hentAktivIdent(): String = personIdenter.maxByOrNull { it.sporbar.endret.endretTid }?.ident ?: error("Fant ingen ident på fagsak $id")
+    fun hentFagsakEierIdent(): String = fagsakEierIdenter.maxByOrNull { it.sporbar.endret.endretTid }?.ident ?: error("Fant ingen ident på fagsak $id")
 
     fun erInstitusjonssak(): Boolean = institusjon != null
 }
@@ -30,7 +30,7 @@ data class Fagsak(
 data class FagsakDomain(
     @Id
     val id: UUID = UUID.randomUUID(),
-    val fagsakPersonId: UUID,
+    val fagsakEierPersonId: UUID,
     @Column("fk_institusjon_id")
     var institusjonId: UUID? = null,
     @Column("stonadstype")
@@ -41,14 +41,14 @@ data class FagsakDomain(
     val sporbar: Sporbar = Sporbar(),
 ) {
     fun tilFagsakMedPersonOgInstitusjon(
-        identer: Set<PersonIdent>,
+        fagsakEierIdenter: Set<PersonIdent>,
         institusjon: Institusjon? = null,
     ): Fagsak =
         Fagsak(
             id = id,
-            fagsakPersonId = fagsakPersonId,
+            fagsakEierPersonId = fagsakEierPersonId,
             institusjon = institusjon,
-            personIdenter = identer,
+            fagsakEierIdenter = fagsakEierIdenter,
             eksternId = eksternId,
             stønadstype = stønadstype,
             fagsystem = fagsystem,

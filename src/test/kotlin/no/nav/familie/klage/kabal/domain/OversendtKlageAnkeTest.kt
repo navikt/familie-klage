@@ -152,7 +152,7 @@ class OversendtKlageAnkeTest {
             // Assert
             assertThat(oversendtKlageAnke.type).isEqualTo(Type.KLAGE)
             assertThat(oversendtKlageAnke.klager.id.type).isEqualTo(OversendtPartIdType.PERSON)
-            assertThat(oversendtKlageAnke.klager.id.verdi).isEqualTo(fagsak.hentAktivIdent())
+            assertThat(oversendtKlageAnke.klager.id.verdi).isEqualTo(fagsak.hentFagsakEierIdent())
             assertThat(
                 oversendtKlageAnke.klager.klagersProsessfullmektig
                     ?.id
@@ -221,7 +221,7 @@ class OversendtKlageAnkeTest {
             // Assert
             assertThat(oversendtKlageAnke.type).isEqualTo(OversendtType.KLAGE)
             assertThat(oversendtKlageAnke.sakenGjelder.id.type).isEqualTo(OversendtPartIdType.PERSON)
-            assertThat(oversendtKlageAnke.sakenGjelder.id.verdi).isEqualTo(fagsak.hentAktivIdent())
+            assertThat(oversendtKlageAnke.sakenGjelder.id.verdi).isEqualTo(fagsak.hentFagsakEierIdent())
             assertThat(oversendtKlageAnke.prosessfullmektig?.id).isNull()
             assertThat(oversendtKlageAnke.prosessfullmektig?.navn).isEqualTo(fullmektigUtenIdent.navn)
             assertThat(oversendtKlageAnke.prosessfullmektig?.adresse?.adresselinje1).isEqualTo(fullmektigUtenIdent.adresselinje1)

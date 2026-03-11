@@ -88,7 +88,7 @@ class BlankettService(
         behandling: Behandling,
         fagsak: Fagsak,
     ): PersonopplysningerDto {
-        val personIdent = fagsak.hentAktivIdent()
+        val personIdent = fagsak.hentFagsakEierIdent()
         val navn = personopplysningerService.hentPersonopplysninger(behandling.id).navn
         return PersonopplysningerDto(navn, personIdent)
     }

@@ -33,7 +33,7 @@ class BrevInnholdUtleder(
         FritekstBrevRequestDto(
             overskrift = "Vi har sendt klagen din til Nav Klageinstans Nord",
             navn = navn,
-            personIdent = fagsak.hentAktivIdent(),
+            personIdent = fagsak.hentFagsakEierIdent(),
             avsnitt =
                 listOf(
                     AvsnittDto(
@@ -71,7 +71,7 @@ class BrevInnholdUtleder(
         return FritekstBrevRequestDto(
             overskrift = "Vi har sendt klagen $possesiv til Nav Klageinstans Nord",
             navn = navn,
-            personIdent = fagsak.hentAktivIdent(),
+            personIdent = fagsak.hentFagsakEierIdent(),
             avsnitt =
                 listOfNotNull(
                     AvsnittDto(
@@ -141,7 +141,7 @@ class BrevInnholdUtleder(
 
         return FritekstBrevRequestDto(
             overskrift = "Vi har avvist klagen $possesiv på vedtaket om ${visningsnavn(fagsak.stønadstype, påklagetVedtakDetaljer)}",
-            personIdent = fagsak.hentAktivIdent(),
+            personIdent = fagsak.hentFagsakEierIdent(),
             navn = navn,
             avsnitt =
                 listOf(
@@ -175,7 +175,7 @@ class BrevInnholdUtleder(
 
         return FritekstBrevRequestDto(
             overskrift = "Vi har avvist klagen $possesiv",
-            personIdent = fagsak.hentAktivIdent(),
+            personIdent = fagsak.hentFagsakEierIdent(),
             navn = navn,
             avsnitt =
                 listOf(
@@ -206,7 +206,7 @@ class BrevInnholdUtleder(
 
         return FritekstBrevRequestDto(
             overskrift = "Saken $possesiv er avsluttet",
-            personIdent = fagsak.hentAktivIdent(),
+            personIdent = fagsak.hentFagsakEierIdent(),
             navn = navn,
             avsnitt =
                 listOfNotNull(

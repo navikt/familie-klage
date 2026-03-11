@@ -120,10 +120,10 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
             val fagsak2 =
                 DomainUtil
                     .fagsakDomain(
-                        personId = fagsak.fagsakPersonId,
+                        personId = fagsak.fagsakEierPersonId,
                         eksternId = "2",
                         stønadstype = Stønadstype.BARNETILSYN,
-                    ).tilFagsakMedPersonOgInstitusjon(fagsak.personIdenter)
+                    ).tilFagsakMedPersonOgInstitusjon(fagsak.fagsakEierIdenter)
 
             testoppsettService.lagreFagsak(fagsak2)
             behandlingRepository.insert(behandling(fagsak))
@@ -153,7 +153,7 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
             val fagsakAnnenPerson =
                 DomainUtil
                     .fagsakDomain(
-                        personId = fagsak.fagsakPersonId,
+                        personId = fagsak.fagsakEierPersonId,
                         eksternId = "2",
                         stønadstype = Stønadstype.BARNETILSYN,
                     ).tilFagsakMedPersonOgInstitusjon(setOf(PersonIdent("2")))

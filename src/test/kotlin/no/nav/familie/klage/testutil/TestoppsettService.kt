@@ -29,7 +29,7 @@ class TestoppsettService(
             .insert(
                 FagsakDomain(
                     id = fagsak.id,
-                    fagsakPersonId = person.id,
+                    fagsakEierPersonId = person.id,
                     stønadstype = fagsak.stønadstype,
                     fagsystem = fagsak.fagsystem,
                     eksternId = fagsak.eksternId,
@@ -41,11 +41,11 @@ class TestoppsettService(
     fun lagreBehandling(behandling: Behandling): Behandling = behandlingRepository.insert(behandling)
 
     private fun hentEllerOpprettPerson(fagsak: Fagsak): FagsakPerson {
-        val person = fagsakPersonRepository.findByIdOrNull(fagsak.fagsakPersonId)
+        val person = fagsakPersonRepository.findByIdOrNull(fagsak.fagsakEierPersonId)
         return person ?: fagsakPersonRepository.insert(
             FagsakPerson(
-                fagsak.fagsakPersonId,
-                identer = fagsak.personIdenter,
+                fagsak.fagsakEierPersonId,
+                identer = fagsak.fagsakEierIdenter,
             ),
         )
     }

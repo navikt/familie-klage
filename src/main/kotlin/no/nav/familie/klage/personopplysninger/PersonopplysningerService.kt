@@ -32,12 +32,12 @@ class PersonopplysningerService(
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
 
-        val egenAnsatt = integrasjonerClient.egenAnsatt(fagsak.hentAktivIdent())
+        val egenAnsatt = integrasjonerClient.egenAnsatt(fagsak.hentFagsakEierIdent())
 
-        val pdlSøker = pdlClient.hentPerson(fagsak.hentAktivIdent(), fagsak.stønadstype)
-        val fullmakt = fullmaktService.hentFullmakt(fagsak.hentAktivIdent())
+        val pdlSøker = pdlClient.hentPerson(fagsak.hentFagsakEierIdent(), fagsak.stønadstype)
+        val fullmakt = fullmaktService.hentFullmakt(fagsak.hentFagsakEierIdent())
         return PersonopplysningerDto(
-            personIdent = fagsak.hentAktivIdent(),
+            personIdent = fagsak.hentFagsakEierIdent(),
             navn = pdlSøker.navn.gjeldende().visningsnavn(),
             kjønn =
                 Kjønn.valueOf(

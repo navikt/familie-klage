@@ -81,7 +81,7 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
         assertThat(lagretFagsak.eksternId).isEqualTo(fagsak.eksternId)
         assertThat(lagretFagsak.stønadstype).isEqualTo(fagsak.stønadstype)
         assertThat(lagretFagsak.stønadstype).isEqualTo(fagsak.stønadstype)
-        assertThat(lagretFagsak.fagsakPersonId).isEqualTo(fagsak.fagsakPersonId)
+        assertThat(lagretFagsak.fagsakEierPersonId).isEqualTo(fagsak.fagsakEierPersonId)
     }
 
     @Nested
@@ -113,13 +113,13 @@ internal class FagsakRepositoryTest : OppslagSpringRunnerTest() {
             // Assert
             assertThat(fagsaker).hasSize(2)
             assertThat(fagsaker).anySatisfy {
-                assertThat(it.fagsakPersonId).isEqualTo(person.id)
+                assertThat(it.fagsakEierPersonId).isEqualTo(person.id)
                 assertThat(it.eksternId).isEqualTo(fagsak1.eksternId)
                 assertThat(it.stønadstype).isEqualTo(Stønadstype.BARNETRYGD)
                 assertThat(it.fagsystem).isEqualTo(Fagsystem.BA)
             }
             assertThat(fagsaker).anySatisfy {
-                assertThat(it.fagsakPersonId).isEqualTo(person.id)
+                assertThat(it.fagsakEierPersonId).isEqualTo(person.id)
                 assertThat(it.eksternId).isEqualTo(fagsak2.eksternId)
                 assertThat(it.stønadstype).isEqualTo(Stønadstype.BARNETRYGD)
                 assertThat(it.fagsystem).isEqualTo(Fagsystem.BA)
