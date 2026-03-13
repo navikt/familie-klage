@@ -111,6 +111,7 @@ object DtoTestUtil {
     ) = PersonopplysningerDto(
         personIdent = personIdent,
         navn = navn,
+        fødselsdato = LocalDate.now().minusYears(40),
         kjønn = kjønn,
         adressebeskyttelse = adressebeskyttelse,
         folkeregisterpersonstatus = folkeregisterpersonstatus,

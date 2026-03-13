@@ -6,6 +6,7 @@ import io.mockk.mockk
 import io.mockk.runs
 import no.nav.familie.klage.personopplysninger.pdl.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.pdl.AdressebeskyttelseGradering
+import no.nav.familie.klage.personopplysninger.pdl.Fødselsdato
 import no.nav.familie.klage.personopplysninger.pdl.KjønnType
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.klage.personopplysninger.pdl.PdlIdent
@@ -22,6 +23,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
+import java.time.LocalDate
 
 @Configuration
 @Profile("mock-pdl")
@@ -66,6 +68,13 @@ class PdlClientMock {
 
         fun opprettPdlPerson() =
             pdlPerson(
+                fødselsdato =
+                    LocalDate.now().minusYears(40).let {
+                        Fødselsdato(
+                            fødselsdato = it,
+                            fødselsår = it.year,
+                        )
+                    },
                 adressebeskyttelse =
                     listOf(
                         Adressebeskyttelse(

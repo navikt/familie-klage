@@ -104,15 +104,16 @@ internal class PersonopplysningerServiceTest {
 
     private fun lagPdlPerson() =
         pdlPerson(
-            listOf(PdlAdressebeskyttelse(PdlAdressebeskyttelseGradering1.FORTROLIG, metadataGjeldende)),
-            listOf(Dødsfall(LocalDate.now())),
-            listOf(PdlFolkeregisterpersonstatus1("doed", "d", metadataGjeldende)),
-            PdlKjønn(KjønnType.KVINNE),
-            listOf(lagNavn()),
-            listOf(
-                VergemaalEllerFremtidsfullmakt(
-                    "embete",
-                    null,
+            adressebeskyttelse = listOf(PdlAdressebeskyttelse(PdlAdressebeskyttelseGradering1.FORTROLIG, metadataGjeldende)),
+            dødsfall = listOf(Dødsfall(LocalDate.now())),
+            folkeregisterpersonstatus = listOf(PdlFolkeregisterpersonstatus1("doed", "d", metadataGjeldende)),
+            kjønn = PdlKjønn(KjønnType.KVINNE),
+            navn = listOf(lagNavn()),
+            vergemaalEllerFremtidsfullmakt =
+                listOf(
+                    VergemaalEllerFremtidsfullmakt(
+                        "embete",
+                        null,
                     "type",
                     VergeEllerFullmektig("vergeIdent", Personnavn("", "", null), "omfang", true),
                 ),

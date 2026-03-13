@@ -16,6 +16,7 @@ import no.nav.familie.klage.personopplysninger.pdl.visningsnavn
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 import java.util.UUID
 
 @Service
@@ -48,6 +49,7 @@ class PersonopplysningerService(
         return PersonopplysningerDto(
             personIdent = ident,
             navn = pdlPerson.navn.gjeldende().visningsnavn(),
+            fødselsdato = pdlPerson.fødselsdato.let { it.fødselsdato ?: LocalDate.of(it.fødselsår, 1, 1) },
             kjønn =
                 Kjønn.valueOf(
                     pdlPerson.kjønn
