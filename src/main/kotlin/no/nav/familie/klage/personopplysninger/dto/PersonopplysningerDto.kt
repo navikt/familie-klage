@@ -3,6 +3,11 @@ package no.nav.familie.klage.personopplysninger.dto
 import java.time.LocalDate
 import no.nav.familie.klage.personopplysninger.pdl.Folkeregisterpersonstatus as PdlFolkeregisterpersonstatus
 
+data class PersonopplysningerFagsakEierOgSøkerDto(
+    val fagsakEier: PersonopplysningerDto,
+    val søker: PersonopplysningerDto,
+)
+
 data class PersonopplysningerDto(
     val personIdent: String,
     val navn: String,

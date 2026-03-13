@@ -1,6 +1,5 @@
 package no.nav.familie.klage.personopplysninger
 
-import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.personopplysninger.dto.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.dto.Folkeregisterpersonstatus
@@ -13,36 +12,46 @@ import no.nav.familie.klage.personopplysninger.pdl.Fullmakt
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.klage.personopplysninger.pdl.PdlPerson
 import no.nav.familie.klage.personopplysninger.pdl.gjeldende
-import no.nav.familie.klage.personopplysninger.pdl.gjelende
 import no.nav.familie.klage.personopplysninger.pdl.visningsnavn
+import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import java.util.UUID
 
 @Service
 class PersonopplysningerService(
-    private val behandlingService: BehandlingService,
     private val fagsakService: FagsakService,
     private val pdlClient: PdlClient,
     private val integrasjonerClient: PersonopplysningerIntegrasjonerClient,
     private val fullmaktService: FullmaktService,
 ) {
+    @Cacheable("hentPersonopplysninger", cacheManager = "shortCache", key = "'fagsakEier:' + #behandlingId")
+    fun hentPersonopplysningerFagsakEier(behandlingId: UUID): PersonopplysningerDto {
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
+        return hentPersonopplysninger(fagsak.hentFagsakEierIdent(), fagsak.stønadstype)
+    }
+
+    @Cacheable("hentPersonopplysninger", cacheManager = "shortCache", key = "'soker:' + #behandlingId")
+    fun hentPersonopplysningerSøker(behandlingId: UUID): PersonopplysningerDto {
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
+        return hentPersonopplysninger(fagsak.hentSøkerIdent(), fagsak.stønadstype)
+    }
+
     @Cacheable("hentPersonopplysninger", cacheManager = "shortCache")
-    fun hentPersonopplysninger(behandlingId: UUID): PersonopplysningerDto {
-        val behandling = behandlingService.hentBehandling(behandlingId)
-        val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
-
-        val egenAnsatt = integrasjonerClient.egenAnsatt(fagsak.hentFagsakEierIdent())
-
-        val pdlPerson = pdlClient.hentPerson(fagsak.hentFagsakEierIdent(), fagsak.stønadstype)
-        val fullmakt = fullmaktService.hentFullmakt(fagsak.hentFagsakEierIdent())
+    fun hentPersonopplysninger(
+        ident: String,
+        stønadstype: Stønadstype,
+    ): PersonopplysningerDto {
+        val egenAnsatt = integrasjonerClient.egenAnsatt(ident)
+        val pdlPerson = pdlClient.hentPerson(ident, stønadstype)
+        val fullmakt = fullmaktService.hentFullmakt(ident)
         return PersonopplysningerDto(
-            personIdent = fagsak.hentFagsakEierIdent(),
+            personIdent = ident,
             navn = pdlPerson.navn.gjeldende().visningsnavn(),
             kjønn =
                 Kjønn.valueOf(
                     pdlPerson.kjønn
-                        .gjelende()
+                        .gjeldende()
                         .kjønn.name,
                 ),
             adressebeskyttelse = pdlPerson.adressebeskyttelse.gjeldende()?.let { Adressebeskyttelse.valueOf(it.gradering.name) },
