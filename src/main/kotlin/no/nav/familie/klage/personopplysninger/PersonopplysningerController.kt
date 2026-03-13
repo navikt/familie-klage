@@ -3,6 +3,7 @@ package no.nav.familie.klage.personopplysninger
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerDto
+import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerFagsakEierOgSøkerDto
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
@@ -27,5 +28,19 @@ class PersonopplysningerController(
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         return Ressurs.success(personopplysningerService.hentPersonopplysninger(behandlingId))
+    }
+
+    @GetMapping("{behandlingId}/fagsak-eier-og-soker")
+    fun hentPersonopplysningerForFagsakEierOgSøker(
+        @PathVariable behandlingId: UUID,
+    ): Ressurs<PersonopplysningerFagsakEierOgSøkerDto> {
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
+        val dto =
+            PersonopplysningerFagsakEierOgSøkerDto(
+                fagsakEier = personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId),
+                søker = personopplysningerService.hentPersonopplysningerSøker(behandlingId),
+            )
+        return Ressurs.success(dto)
     }
 }

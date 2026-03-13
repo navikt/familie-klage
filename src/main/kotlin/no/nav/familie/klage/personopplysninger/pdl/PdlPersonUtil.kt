@@ -22,6 +22,6 @@ fun List<Folkeregisterpersonstatus>.gjeldende(): Folkeregisterpersonstatus? = th
 
 fun List<Adressebeskyttelse>.gjeldende(): Adressebeskyttelse? = this.find { !it.metadata.historisk }
 
-fun List<Kjønn>.gjelende(): Kjønn = this.single()
+fun List<Kjønn>.gjeldende(): Kjønn = this.single()
 
 fun PdlIdenter.identer(): Set<String> = this.identer.map { it.ident }.toSet()
