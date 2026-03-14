@@ -97,7 +97,7 @@ class BrevmottakerSletter(
                         val brevmottakerPersonBruker =
                             BrevmottakerPersonMedIdent(
                                 personIdent = fagsakAktivIdent,
-                                navn = personopplysningerService.hentPersonopplysninger(behandlingId).navn,
+                                navn = personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId).navn,
                                 mottakerRolle = MottakerRolle.BRUKER,
                             )
                         nyeBrevmottakerPersoner + brevmottakerPersonBruker

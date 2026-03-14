@@ -418,7 +418,7 @@ class BrevmottakerSletterTest {
                 )
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns
                 DomainUtil.lagPersonopplysningerDto(
                     personIdent = personIdent.ident,
@@ -507,7 +507,7 @@ class BrevmottakerSletterTest {
                 )
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns
                 DomainUtil.lagPersonopplysningerDto(
                     personIdent = personIdent.ident,

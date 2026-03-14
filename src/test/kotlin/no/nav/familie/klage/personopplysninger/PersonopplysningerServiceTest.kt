@@ -114,9 +114,9 @@ internal class PersonopplysningerServiceTest {
                     VergemaalEllerFremtidsfullmakt(
                         "embete",
                         null,
-                    "type",
-                    VergeEllerFullmektig("vergeIdent", Personnavn("", "", null), "omfang", true),
+                        "type",
+                        VergeEllerFullmektig("vergeIdent", Personnavn("", "", null), "omfang", true),
+                    ),
                 ),
-            ),
         )
 }

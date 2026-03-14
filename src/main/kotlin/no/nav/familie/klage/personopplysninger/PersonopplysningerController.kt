@@ -27,7 +27,7 @@ class PersonopplysningerController(
     ): Ressurs<PersonopplysningerDto> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
-        return Ressurs.success(personopplysningerService.hentPersonopplysninger(behandlingId))
+        return Ressurs.success(personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId))
     }
 
     @GetMapping("{behandlingId}/fagsak-eier-og-soker")

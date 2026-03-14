@@ -159,7 +159,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -199,7 +199,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = "et annet navn")
 
             every {
@@ -241,7 +241,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = "et annet navn")
 
             every {
@@ -285,7 +285,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -332,7 +332,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -381,7 +381,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -430,7 +430,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -467,7 +467,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -534,7 +534,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -597,7 +597,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -656,7 +656,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -723,7 +723,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = "ikke samme navn")
 
             every {
@@ -797,7 +797,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -871,7 +871,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -943,7 +943,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -1024,7 +1024,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -1134,7 +1134,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto()
 
             every {
@@ -1166,7 +1166,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = "et annet navn")
 
             every {
@@ -1201,7 +1201,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = "et annet navn")
 
             every {
@@ -1235,7 +1235,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto()
 
             every {
@@ -1285,7 +1285,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto()
 
             every {
@@ -1331,7 +1331,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto()
 
             every {

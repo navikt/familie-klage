@@ -35,7 +35,7 @@ class BrevmottakerUtlederTest {
             val personopplysninger = DomainUtil.personopplysningerDto(navn = "Navn Navnesen")
 
             every { fagsakService.hentFagsakForBehandling(behandlingId) } returns fagsak
-            every { personopplysningerService.hentPersonopplysninger(behandlingId) } returns personopplysninger
+            every { personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId) } returns personopplysninger
 
             // Act
             val brevmottakere = brevmottakerUtleder.utledInitielleBrevmottakere(behandlingId)
@@ -60,7 +60,7 @@ class BrevmottakerUtlederTest {
             val personopplysninger = DomainUtil.personopplysningerDto(navn = "Navn Navnesen")
 
             every { fagsakService.hentFagsakForBehandling(behandlingId) } returns fagsak
-            every { personopplysningerService.hentPersonopplysninger(behandlingId) } returns personopplysninger
+            every { personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId) } returns personopplysninger
 
             // Act
             val brevmottakere = brevmottakerUtleder.utledInitielleBrevmottakere(behandlingId)
@@ -87,7 +87,7 @@ class BrevmottakerUtlederTest {
             val personopplysninger = DomainUtil.personopplysningerDto(navn = "Navn Navnesen")
 
             every { fagsakService.hentFagsakForBehandling(behandlingId) } returns fagsak
-            every { personopplysningerService.hentPersonopplysninger(behandlingId) } returns personopplysninger
+            every { personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId) } returns personopplysninger
 
             // Act
             val brevmottakerBruker = brevmottakerUtleder.utledBrevmottakerBrukerFraBehandling(behandlingId)

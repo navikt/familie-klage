@@ -27,7 +27,7 @@ class PersonopplysningerService(
     private val fullmaktService: FullmaktService,
 ) {
     @Cacheable("hentPersonopplysninger", cacheManager = "shortCache")
-    fun hentPersonopplysninger(behandlingId: UUID): PersonopplysningerDto {
+    fun hentPersonopplysningerFagsakEier(behandlingId: UUID): PersonopplysningerDto {
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         return hentPersonopplysninger(fagsak.hentFagsakEierIdent(), fagsak.stønadstype)
     }
