@@ -33,7 +33,7 @@ class BrevmottakerUtleder(
 
     fun utledBrevmottakerBrukerFraBehandling(behandlingId: UUID): BrevmottakerPersonMedIdent {
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
-        val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
+        val personopplysninger = personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId)
         return BrevmottakerPersonMedIdent(
             personIdent = fagsak.hentFagsakEierIdent(),
             navn = personopplysninger.navn,

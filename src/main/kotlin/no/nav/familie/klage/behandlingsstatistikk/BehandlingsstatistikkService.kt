@@ -56,7 +56,7 @@ class BehandlingsstatistikkService(
         val vurdering = vurderingService.hentVurdering(behandling.id)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
         val erStrengtFortrolig =
-            personopplysningerService.hentPersonopplysninger(behandlingId).adressebeskyttelse?.erStrengtFortrolig()
+            personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId).adressebeskyttelse?.erStrengtFortrolig()
                 ?: false
 
         val behandlendeEnhet =

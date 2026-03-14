@@ -68,7 +68,7 @@ internal class BlankettServiceTest {
         every { behandlingService.hentBehandling(behandlingId) } returns behandling
         val personopplysningerDto = mockk<PersonopplysningerDto>()
         every { personopplysningerDto.navn } returns "navn"
-        every { personopplysningerService.hentPersonopplysninger(behandlingId) } returns personopplysningerDto
+        every { personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId) } returns personopplysningerDto
         every { formService.hentFormDto(behandlingId) } returns
             oppfyltForm(behandlingId)
                 .copy(

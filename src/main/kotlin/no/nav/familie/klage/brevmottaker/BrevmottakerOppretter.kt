@@ -67,7 +67,7 @@ class BrevmottakerOppretter(
         val brev = brevService.hentBrev(behandlingId)
         val brevmottakere = brev.mottakere ?: Brevmottakere()
         validerNyBrevmottakerPersonUtenIdent(
-            brukerensNavn = personopplysningerService.hentPersonopplysninger(behandlingId).navn,
+            brukerensNavn = personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId).navn,
             behandlingId = behandlingId,
             nyBrevmottakerPersonUtenIdent = nyBrevmottakerPersonUtenIdent,
             eksisterendeBrevmottakere = brevmottakere.tilListe(),

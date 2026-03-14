@@ -83,7 +83,7 @@ class BrevService(
     }
 
     fun lagBrev(behandlingId: UUID): ByteArray {
-        val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
+        val personopplysninger = personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId)
         val navn = personopplysninger.navn
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
@@ -299,7 +299,7 @@ class BrevService(
     ): String {
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
-        val personopplysninger = personopplysningerService.hentPersonopplysninger(behandlingId)
+        val personopplysninger = personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId)
         val signaturMedEnhet = brevsignaturService.lagSignatur(personopplysninger, fagsak.fagsystem)
         val stønadstype = fagsak.stønadstype
 
@@ -368,11 +368,11 @@ class BrevService(
     }
 
     private fun lagNavnOgIdentFlettefelt(behandlingId: UUID): Flettefelter {
-        val visningsNavn = personopplysningerService.hentPersonopplysninger(behandlingId).navn
+        val visningsNavn = personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId).navn
         val navnOgIdentFlettefelt =
             Flettefelter(
                 navn = listOf(visningsNavn),
-                fodselsnummer = listOf(personopplysningerService.hentPersonopplysninger(behandlingId).personIdent),
+                fodselsnummer = listOf(personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId).personIdent),
             )
         return navnOgIdentFlettefelt
     }
@@ -391,7 +391,7 @@ class BrevService(
         )
 
     private fun validerIkkeSendTrukketKlageBrevHvisVergemålEllerFullmakt(ident: UUID) {
-        val personopplysninger = personopplysningerService.hentPersonopplysninger(ident)
+        val personopplysninger = personopplysningerService.hentPersonopplysningerFagsakEier(ident)
         val harVerge = personopplysninger.vergemål.isNotEmpty()
         val harFullmakt: Boolean =
             personopplysninger.fullmakt.any {

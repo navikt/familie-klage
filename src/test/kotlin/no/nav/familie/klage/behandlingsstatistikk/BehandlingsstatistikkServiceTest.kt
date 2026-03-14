@@ -67,7 +67,7 @@ internal class BehandlingsstatistikkServiceTest {
         every { behandlingService.hentBehandling(behandling.id) } returns behandling
 
         every { vurderingService.hentVurdering(behandling.id) } returns vurdering
-        every { personopplysningerService.hentPersonopplysninger(behandling.id) } returns personopplysningerDto(personIdent = personIdent)
+        every { personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id) } returns personopplysningerDto(personIdent = personIdent)
 
         justRun { behandlingsstatistikkProducer.sendBehandlingsstatistikk(capture(behandlingsstatistikkKlageSlot)) }
     }
@@ -112,7 +112,7 @@ internal class BehandlingsstatistikkServiceTest {
         val gjeldendeSaksbehandler = "gjeldendeSaksbehandler"
         val hendelse = BehandlingsstatistikkHendelse.FERDIG
 
-        every { personopplysningerService.hentPersonopplysninger(behandling.id) } returns
+        every { personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id) } returns
             personopplysningerDto(adressebeskyttelse = Adressebeskyttelse.STRENGT_FORTROLIG)
 
         service.sendBehandlingstatistikk(behandling.id, hendelse, hendelseTidspunkt, gjeldendeSaksbehandler)
