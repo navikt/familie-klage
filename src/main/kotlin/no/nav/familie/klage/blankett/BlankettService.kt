@@ -4,7 +4,6 @@ import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.brev.BrevClient
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.fagsak.domain.Fagsak
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.formkrav.dto.FormkravDto
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
@@ -40,7 +39,7 @@ class BlankettService(
                         påklagetVedtak = påklagetVedtak,
                         årsak = behandling.årsak,
                     ),
-                personopplysninger = lagPersonopplysningerDto(behandling, fagsak),
+                personopplysninger = lagPersonopplysningerDto(behandling),
                 formkrav = mapFormkrav(formkrav),
                 vurdering = mapVurdering(vurdering),
             )
@@ -84,12 +83,8 @@ class BlankettService(
             brevtekst = formkrav.brevtekst,
         )
 
-    private fun lagPersonopplysningerDto(
-        behandling: Behandling,
-        fagsak: Fagsak,
-    ): PersonopplysningerDto {
-        val personIdent = fagsak.hentFagsakEierIdent()
-        val navn = personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id).navn
-        return PersonopplysningerDto(navn, personIdent)
+    private fun lagPersonopplysningerDto(behandling: Behandling): PersonopplysningerDto {
+        val personopplysninger = personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
+        return PersonopplysningerDto(personopplysninger.navn, personopplysninger.personIdent)
     }
 }
