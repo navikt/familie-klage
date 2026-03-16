@@ -20,6 +20,7 @@ import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerOrganisasjon
 import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonMedIdent
 import no.nav.familie.klage.brevmottaker.domain.SlettbarBrevmottakerPersonUtenIdent
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
@@ -27,6 +28,7 @@ import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.testutil.DomainUtil
+import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -126,8 +128,37 @@ class BrevmottakerSletterTest {
         }
 
         @Test
+        fun `skal kaste exception om fagsak har forskjellig fagsakeier og søker`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
+            val fagsak =
+                fagsak(
+                    fagsakEier = FagsakPerson(identer = setOf(PersonIdent("1"))),
+                    søker = FagsakPerson(identer = setOf(PersonIdent("2"))),
+                )
+
+            val slettbarBrevmottaker = SlettbarBrevmottakerPersonUtenIdent(UUID.randomUUID())
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
+
+            // Act & assert
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
+                }
+            assertThat(exception.message).isEqualTo("Brevmottakere kan ikke endres hvis fagsakeier og søker ikke er den samme personen for ${behandling.id}.")
+        }
+
+        @Test
         fun `skal kaste exception om brevmottakeren som skal slettes ikke finnes da mottakere i brev er null`() {
             // Arrange
+            val fagsak = fagsak(identer = setOf(PersonIdent("123")))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val slettbarBrevmottaker = SlettbarBrevmottakerPersonUtenIdent(UUID.randomUUID())
@@ -140,6 +171,10 @@ class BrevmottakerSletterTest {
                 brevService.hentBrev(behandling.id)
             } returns DomainUtil.lagBrev(behandlingId = behandling.id, mottakere = null)
 
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
+
             // Act & assert
             val exception =
                 assertThrows<Feil> {
@@ -151,6 +186,7 @@ class BrevmottakerSletterTest {
         @Test
         fun `skal kaste exception om brevmottakeren som skal slettes ikke finnes da mottakere i brev er en tom liste`() {
             // Arrange
+            val fagsak = fagsak()
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val slettbarBrevmottaker = SlettbarBrevmottakerPersonUtenIdent(UUID.randomUUID())
@@ -167,6 +203,10 @@ class BrevmottakerSletterTest {
                     mottakere = DomainUtil.lagBrevmottakere(personer = emptyList()),
                 )
 
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
+
             // Act & assert
             val exception =
                 assertThrows<Feil> {
@@ -178,6 +218,7 @@ class BrevmottakerSletterTest {
         @Test
         fun `skal kaste exception om man prøver å slette slik at ingen brevmottakere er igjen`() {
             // Arrange
+            val fagsak = fagsak(identer = setOf(PersonIdent("123")))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val slettbarBrevmottaker = SlettbarBrevmottakerPersonUtenIdent(UUID.randomUUID())
@@ -188,10 +229,11 @@ class BrevmottakerSletterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns
-                DomainUtil.fagsak(
-                    identer = setOf(PersonIdent("123")),
-                )
+            } returns fagsak
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             every {
                 brevService.hentBrev(behandling.id)
@@ -222,6 +264,7 @@ class BrevmottakerSletterTest {
         @Test
         fun `skal slette brevmottakeren`() {
             // Arrange
+            val fagsak = fagsak(identer = setOf(PersonIdent("123")))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val slettbarBrevmottaker = SlettbarBrevmottakerPersonUtenIdent(UUID.randomUUID())
@@ -234,10 +277,11 @@ class BrevmottakerSletterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns
-                DomainUtil.fagsak(
-                    identer = setOf(PersonIdent("123")),
-                )
+            } returns fagsak
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             every {
                 brevService.hentBrev(behandling.id)
@@ -315,6 +359,7 @@ class BrevmottakerSletterTest {
             mottakerRolle: MottakerRolle,
         ) {
             // Arrange
+            val fagsak = fagsak(identer = setOf(PersonIdent("123")))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val slettbarBrevmottaker = SlettbarBrevmottakerPersonUtenIdent(UUID.randomUUID())
@@ -327,10 +372,7 @@ class BrevmottakerSletterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns
-                DomainUtil.fagsak(
-                    identer = setOf(PersonIdent("123")),
-                )
+            } returns fagsak
 
             every {
                 brevService.hentBrev(behandling.id)
@@ -361,6 +403,10 @@ class BrevmottakerSletterTest {
             every {
                 brevRepository.update(capture(brevSlot))
             } returnsArgument 0
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             // Act
             brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
@@ -402,6 +448,7 @@ class BrevmottakerSletterTest {
         ) {
             // Arrange
             val personIdent = PersonIdent("123")
+            val fagsak = fagsak(identer = setOf(personIdent))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
             val slettbarBrevmottaker = SlettbarBrevmottakerPersonUtenIdent(UUID.randomUUID())
             val brevSlot = slot<Brev>()
@@ -412,10 +459,11 @@ class BrevmottakerSletterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns
-                DomainUtil.fagsak(
-                    identer = setOf(personIdent),
-                )
+            } returns fagsak
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             every {
                 personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
@@ -491,6 +539,7 @@ class BrevmottakerSletterTest {
         ) {
             // Arrange
             val personIdent = PersonIdent("123")
+            val fagsak = fagsak(identer = setOf(personIdent))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
             val slettbarBrevmottaker = SlettbarBrevmottakerPersonUtenIdent(UUID.randomUUID())
             val brevSlot = slot<Brev>()
@@ -501,10 +550,11 @@ class BrevmottakerSletterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns
-                DomainUtil.fagsak(
-                    identer = setOf(personIdent),
-                )
+            } returns fagsak
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             every {
                 personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
@@ -615,6 +665,34 @@ class BrevmottakerSletterTest {
         }
 
         @Test
+        fun `skal kaste exception om fagsak har forskjellig fagsakeier og søker`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
+            val fagsak =
+                fagsak(
+                    fagsakEier = FagsakPerson(identer = setOf(PersonIdent("1"))),
+                    søker = FagsakPerson(identer = setOf(PersonIdent("2"))),
+                )
+
+            val slettbarBrevmottaker = SlettbarBrevmottakerOrganisasjon("123456789")
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
+
+            // Act & assert
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)
+                }
+            assertThat(exception.message).isEqualTo("Brevmottakere kan ikke endres hvis fagsakeier og søker ikke er den samme personen for ${behandling.id}.")
+        }
+
+        @Test
         fun `skal kaste exception om brevmottakeren som skal slettes ikke finnes da mottakere i brev er null`() {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
@@ -628,6 +706,10 @@ class BrevmottakerSletterTest {
             every {
                 brevService.hentBrev(behandling.id)
             } returns DomainUtil.lagBrev(behandlingId = behandling.id, mottakere = null)
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak()
 
             // Act & assert
             val exception =
@@ -656,6 +738,10 @@ class BrevmottakerSletterTest {
                     mottakere = DomainUtil.lagBrevmottakere(organisasjoner = emptyList()),
                 )
 
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak()
+
             // Act & assert
             val exception =
                 assertThrows<Feil> {
@@ -678,7 +764,7 @@ class BrevmottakerSletterTest {
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
             } returns
-                DomainUtil.fagsak(
+                fagsak(
                     identer = setOf(PersonIdent("123")),
                 )
 
@@ -698,6 +784,10 @@ class BrevmottakerSletterTest {
                                 ),
                         ),
                 )
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak()
 
             // Act & assert
             val exception =
@@ -724,7 +814,7 @@ class BrevmottakerSletterTest {
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
             } returns
-                DomainUtil.fagsak(
+                fagsak(
                     identer = setOf(PersonIdent("123")),
                 )
 
@@ -765,6 +855,10 @@ class BrevmottakerSletterTest {
             every {
                 brevRepository.update(capture(brevSlot))
             } returnsArgument 0
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak()
 
             // Act
             brevmottakerSletter.slettBrevmottaker(behandling.id, slettbarBrevmottaker)

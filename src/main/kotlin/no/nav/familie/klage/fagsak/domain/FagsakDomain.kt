@@ -28,6 +28,8 @@ data class Fagsak(
     fun hentSøkerIdent(): String = søkerIdenter.maxByOrNull { it.sporbar.endret.endretTid }?.ident ?: error("Fant ingen ident for søker på fagsak $id")
 
     fun erInstitusjonssak(): Boolean = institusjon != null
+
+    fun erSøkerFagsakEier(): Boolean = fagsakEierPersonId == søkerPersonId
 }
 
 @Table("fagsak")

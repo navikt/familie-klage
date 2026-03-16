@@ -58,6 +58,11 @@ class BrevmottakerSletter(
         val behandling = behandlingService.hentBehandling(behandlingId)
         behandling.validerRedigerbarBehandlingOgBehandlingsstegBrev()
 
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
+        if (!fagsak.erSøkerFagsakEier()) {
+            throw Feil("Brevmottakere kan ikke endres hvis fagsakeier og søker ikke er den samme personen for $behandlingId.")
+        }
+
         val brev = brevService.hentBrev(behandlingId)
         val brevmottakere = brev.mottakere ?: Brevmottakere()
 
@@ -78,7 +83,7 @@ class BrevmottakerSletter(
                 }
             }
 
-        val fagsakAktivIdent = fagsakService.hentFagsak(behandling.fagsakId).hentFagsakEierIdent()
+        val fagsakAktivIdent = fagsak.hentFagsakEierIdent()
 
         val harBrevmottakerPersonBruker =
             brevmottakere.personer
@@ -128,6 +133,11 @@ class BrevmottakerSletter(
 
         val behandling = behandlingService.hentBehandling(behandlingId)
         behandling.validerRedigerbarBehandlingOgBehandlingsstegBrev()
+
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
+        if (!fagsak.erSøkerFagsakEier()) {
+            throw Feil("Brevmottakere kan ikke endres hvis fagsakeier og søker ikke er den samme personen for $behandlingId.")
+        }
 
         val brev = brevService.hentBrev(behandlingId)
         val brevmottakere = brev.mottakere ?: Brevmottakere()

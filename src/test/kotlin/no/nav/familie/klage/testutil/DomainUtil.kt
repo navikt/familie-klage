@@ -208,23 +208,32 @@ object DomainUtil {
         sporbar: Sporbar = Sporbar(),
         fagsakEierPersonId: UUID = UUID.randomUUID(),
         eksternId: String = UUID.randomUUID().toString(),
-    ): Fagsak = fagsak(stønadstype, id, FagsakPerson(id = fagsakEierPersonId, identer = identer), institusjon, sporbar, eksternId)
+    ): Fagsak =
+        fagsak(
+            stønadstype = stønadstype,
+            id = id,
+            fagsakEier = FagsakPerson(id = fagsakEierPersonId, identer = identer),
+            institusjon = institusjon,
+            sporbar = sporbar,
+            eksternId = eksternId,
+        )
 
     fun fagsak(
         stønadstype: Stønadstype = Stønadstype.OVERGANGSSTØNAD,
         id: UUID = UUID.randomUUID(),
-        person: FagsakPerson,
+        fagsakEier: FagsakPerson,
+        søker: FagsakPerson = fagsakEier,
         institusjon: Institusjon? = null,
         sporbar: Sporbar = Sporbar(),
         eksternId: String = UUID.randomUUID().toString(),
     ): Fagsak =
         Fagsak(
             id = id,
-            fagsakEierPersonId = person.id,
-            søkerPersonId = person.id,
+            fagsakEierPersonId = fagsakEier.id,
+            søkerPersonId = søker.id,
             institusjon = institusjon,
-            fagsakEierIdenter = person.identer,
-            søkerIdenter = person.identer,
+            fagsakEierIdenter = fagsakEier.identer,
+            søkerIdenter = søker.identer,
             stønadstype = stønadstype,
             sporbar = sporbar,
             eksternId = eksternId,
