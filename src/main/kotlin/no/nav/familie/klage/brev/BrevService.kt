@@ -421,10 +421,23 @@ class BrevService(
     }
 
     fun validerRiktigSaksbehandlerSignatur(behandlingId: UUID) {
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         val saksbehandler = SikkerhetContext.hentSaksbehandlerNavn(true)
-        val brev = brevRepository.findByIdOrThrow(behandlingId)
-        if (!brev.saksbehandlerHtml.contains(saksbehandler)) {
-            throw Feil("Innlogget saksbehandler har ikke samme signatur som brevet. Kan ikke ferdigstille behandlingen.", "Brev har ikke riktig saksbehandler signatur, vennligst oppdater siden for å oppdatere brevsignatur.")
+        val brevInneholderSaksbehandlersNavn = brevRepository.findByIdOrThrow(behandlingId).saksbehandlerHtml.contains(saksbehandler)
+        if (featureToggleService.isEnabled(Toggle.BRUK_SØKER_PERSONOPPLYSNINGER)) {
+            if (fagsak.erSøkerFagsakEier()) {
+                if (!brevInneholderSaksbehandlersNavn) {
+                    throw Feil("Innlogget saksbehandler har ikke samme signatur som brevet. Kan ikke ferdigstille behandlingen.", "Brev har ikke riktig saksbehandler signatur, vennligst oppdater siden for å oppdatere brevsignatur.")
+                }
+            } else {
+                if (brevInneholderSaksbehandlersNavn) {
+                    throw Feil("Brev skal ikke inneholde navn på saksbehandler")
+                }
+            }
+        } else {
+            if (!brevInneholderSaksbehandlersNavn) {
+                throw Feil("Innlogget saksbehandler har ikke samme signatur som brevet. Kan ikke ferdigstille behandlingen.", "Brev har ikke riktig saksbehandler signatur, vennligst oppdater siden for å oppdatere brevsignatur.")
+            }
         }
     }
 }
