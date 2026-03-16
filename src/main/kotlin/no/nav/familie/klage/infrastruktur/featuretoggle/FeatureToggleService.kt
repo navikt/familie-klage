@@ -21,6 +21,7 @@ enum class Toggle(
     // Release
     SKAL_KUNNE_BEHANDLE_BA_INSTITUSJON_FAGSAKER("familie-klage.skal-kunne-behandle-ba-institusjon-fagsaker"),
     MANUELL_BREVMOTTAKER_ORGANISASJON("familie-klage.manuell-brevmottaker-organisasjon"),
+    BRUK_SØKER_PERSONOPPLYSNINGER("familie-klage.bruk-soker-personopplysninger"),
     ;
 
     companion object {

@@ -30,6 +30,8 @@ import no.nav.familie.klage.formkrav.domain.FormkravFristUnntak
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.brukerfeilHvis
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
@@ -60,6 +62,7 @@ class BrevService(
     private val brevInnholdUtleder: BrevInnholdUtleder,
     private val taskService: TaskService,
     private val brevmottakerUtleder: BrevmottakerUtleder,
+    private val featureToggleService: FeatureToggleService,
 ) {
     fun hentBrev(behandlingId: UUID): Brev = brevRepository.findByIdOrThrow(behandlingId)
 
@@ -83,7 +86,12 @@ class BrevService(
     }
 
     fun lagBrev(behandlingId: UUID): ByteArray {
-        val personopplysninger = personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId)
+        val personopplysninger =
+            if (featureToggleService.isEnabled(Toggle.BRUK_SØKER_PERSONOPPLYSNINGER)) {
+                personopplysningerService.hentPersonopplysningerSøker(behandlingId)
+            } else {
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId)
+            }
         val navn = personopplysninger.navn
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
@@ -299,7 +307,12 @@ class BrevService(
     ): String {
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
-        val personopplysninger = personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId)
+        val personopplysninger =
+            if (featureToggleService.isEnabled(Toggle.BRUK_SØKER_PERSONOPPLYSNINGER)) {
+                personopplysningerService.hentPersonopplysningerSøker(behandlingId)
+            } else {
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId)
+            }
         val signaturMedEnhet = brevsignaturService.lagSignatur(personopplysninger, fagsak.fagsystem)
         val stønadstype = fagsak.stønadstype
 
@@ -368,11 +381,16 @@ class BrevService(
     }
 
     private fun lagNavnOgIdentFlettefelt(behandlingId: UUID): Flettefelter {
-        val visningsNavn = personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId).navn
+        val personopplysninger =
+            if (featureToggleService.isEnabled(Toggle.BRUK_SØKER_PERSONOPPLYSNINGER)) {
+                personopplysningerService.hentPersonopplysningerSøker(behandlingId)
+            } else {
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId)
+            }
         val navnOgIdentFlettefelt =
             Flettefelter(
-                navn = listOf(visningsNavn),
-                fodselsnummer = listOf(personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId).personIdent),
+                navn = listOf(personopplysninger.navn),
+                fodselsnummer = listOf(personopplysninger.personIdent),
             )
         return navnOgIdentFlettefelt
     }
