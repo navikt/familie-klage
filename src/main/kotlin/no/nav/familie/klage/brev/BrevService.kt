@@ -431,7 +431,10 @@ class BrevService(
                 }
             } else {
                 if (brevInneholderSaksbehandlersNavn) {
-                    throw Feil("Brev skal ikke inneholde navn på saksbehandler")
+                    throw Feil(
+                        "Brev skal ikke inneholde navn på saksbehandler. behandlingId=$behandlingId",
+                        "Brev skal ikke inneholde navn på saksbehandler.",
+                    )
                 }
             }
         } else {
