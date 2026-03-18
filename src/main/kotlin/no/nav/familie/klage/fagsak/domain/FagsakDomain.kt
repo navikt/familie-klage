@@ -13,24 +13,32 @@ import java.util.UUID
 
 data class Fagsak(
     val id: UUID,
-    val fagsakPersonId: UUID,
+    val fagsakEierPersonId: UUID,
+    val søkerPersonId: UUID,
     val institusjon: Institusjon? = null,
-    val personIdenter: Set<PersonIdent>,
+    val fagsakEierIdenter: Set<PersonIdent>,
+    val søkerIdenter: Set<PersonIdent>,
     val eksternId: String,
     val stønadstype: Stønadstype,
     val fagsystem: Fagsystem,
     val sporbar: Sporbar,
 ) {
-    fun hentAktivIdent(): String = personIdenter.maxByOrNull { it.sporbar.endret.endretTid }?.ident ?: error("Fant ingen ident på fagsak $id")
+    fun hentFagsakEierIdent(): String = fagsakEierIdenter.maxByOrNull { it.sporbar.endret.endretTid }?.ident ?: error("Fant ingen ident på fagsak $id")
+
+    fun hentSøkerIdent(): String = søkerIdenter.maxByOrNull { it.sporbar.endret.endretTid }?.ident ?: error("Fant ingen ident for søker på fagsak $id")
 
     fun erInstitusjonssak(): Boolean = institusjon != null
+
+    fun erSøkerFagsakEier(): Boolean = fagsakEierPersonId == søkerPersonId
 }
 
 @Table("fagsak")
 data class FagsakDomain(
     @Id
     val id: UUID = UUID.randomUUID(),
-    val fagsakPersonId: UUID,
+    val fagsakEierPersonId: UUID,
+    @Column("soker_person_id")
+    val søkerPersonId: UUID,
     @Column("fk_institusjon_id")
     var institusjonId: UUID? = null,
     @Column("stonadstype")
@@ -41,14 +49,17 @@ data class FagsakDomain(
     val sporbar: Sporbar = Sporbar(),
 ) {
     fun tilFagsakMedPersonOgInstitusjon(
-        identer: Set<PersonIdent>,
+        fagsakEierIdenter: Set<PersonIdent>,
+        søkerIdenter: Set<PersonIdent> = fagsakEierIdenter,
         institusjon: Institusjon? = null,
     ): Fagsak =
         Fagsak(
             id = id,
-            fagsakPersonId = fagsakPersonId,
+            fagsakEierPersonId = fagsakEierPersonId,
+            søkerPersonId = søkerPersonId,
             institusjon = institusjon,
-            personIdenter = identer,
+            fagsakEierIdenter = fagsakEierIdenter,
+            søkerIdenter = søkerIdenter,
             eksternId = eksternId,
             stønadstype = stønadstype,
             fagsystem = fagsystem,

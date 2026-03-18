@@ -1,5 +1,9 @@
 query($ident: ID!){
     person: hentPerson(ident: $ident) {
+        foedselsdato {
+            foedselsdato
+            foedselsaar
+        }
         adressebeskyttelse {
             gradering
             metadata {

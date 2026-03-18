@@ -79,7 +79,7 @@ class OpprettKabalEventOppgaveTaskTest {
                 fagsak(
                     id = UUID.fromString("5d4a47f1-9d72-4bab-a86d-8f3ed269a8b7"),
                     stønadstype = Stønadstype.BARNETRYGD,
-                    fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
+                    fagsakEierPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
                 )
 
             val behandling =
@@ -151,14 +151,14 @@ class OpprettKabalEventOppgaveTaskTest {
                 fagsak(
                     id = UUID.fromString("5d4a47f1-9d72-4bab-a86d-8f3ed269a8b7"),
                     stønadstype = Stønadstype.BARNETRYGD,
-                    fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
+                    fagsakEierPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
                 )
 
             val fagsakDomain =
                 fagsakDomain(
                     id = fagsak.id,
                     stønadstype = fagsak.stønadstype,
-                    personId = fagsak.fagsakPersonId,
+                    personId = fagsak.fagsakEierPersonId,
                     fagsystem = fagsak.fagsystem,
                     eksternId = fagsak.eksternId,
                 )
@@ -197,7 +197,7 @@ class OpprettKabalEventOppgaveTaskTest {
 
             every { behandlingRepository.findByEksternBehandlingId(opprettOppgavePayload.klagebehandlingEksternId) } returns behandling
             every { fagsakRepository.finnFagsakForBehandlingId(behandling.id) } returns fagsakDomain
-            every { fagsakPersonRepository.hentAktivIdent(fagsakDomain.fagsakPersonId) } returns fagsakDomain.fagsakPersonId.toString()
+            every { fagsakPersonRepository.hentAktivIdent(fagsakDomain.fagsakEierPersonId) } returns fagsakDomain.fagsakEierPersonId.toString()
             every { oppgaveClient.opprettOppgave(capture(opprettOppgaveRequestSlot)) } returns 1L
 
             // Act
@@ -246,14 +246,14 @@ class OpprettKabalEventOppgaveTaskTest {
                 fagsak(
                     id = UUID.fromString("5d4a47f1-9d72-4bab-a86d-8f3ed269a8b7"),
                     stønadstype = Stønadstype.BARNETRYGD,
-                    fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
+                    fagsakEierPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
                 )
 
             val fagsakDomain =
                 fagsakDomain(
                     id = fagsak.id,
                     stønadstype = fagsak.stønadstype,
-                    personId = fagsak.fagsakPersonId,
+                    personId = fagsak.fagsakEierPersonId,
                     fagsystem = fagsak.fagsystem,
                     eksternId = fagsak.eksternId,
                 )
@@ -292,7 +292,7 @@ class OpprettKabalEventOppgaveTaskTest {
 
             every { behandlingRepository.findByEksternBehandlingId(opprettOppgavePayload.klagebehandlingEksternId) } returns behandling
             every { fagsakRepository.finnFagsakForBehandlingId(behandling.id) } returns fagsakDomain
-            every { fagsakPersonRepository.hentAktivIdent(fagsakDomain.fagsakPersonId) } returns fagsakDomain.fagsakPersonId.toString()
+            every { fagsakPersonRepository.hentAktivIdent(fagsakDomain.fagsakEierPersonId) } returns fagsakDomain.fagsakEierPersonId.toString()
             every { oppgaveClient.opprettOppgave(capture(opprettOppgaveRequestSlot)) } returns 1L
 
             // Act
@@ -341,14 +341,14 @@ class OpprettKabalEventOppgaveTaskTest {
                 fagsak(
                     id = UUID.fromString("5d4a47f1-9d72-4bab-a86d-8f3ed269a8b7"),
                     stønadstype = Stønadstype.BARNETRYGD,
-                    fagsakPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
+                    fagsakEierPersonId = UUID.fromString("6706f41f-5e55-4849-b07b-b79c06764e69"),
                 )
 
             val fagsakDomain =
                 fagsakDomain(
                     id = fagsak.id,
                     stønadstype = fagsak.stønadstype,
-                    personId = fagsak.fagsakPersonId,
+                    personId = fagsak.fagsakEierPersonId,
                     fagsystem = fagsak.fagsystem,
                     eksternId = fagsak.eksternId,
                 )
@@ -387,7 +387,7 @@ class OpprettKabalEventOppgaveTaskTest {
 
             every { behandlingRepository.findByEksternBehandlingId(opprettOppgavePayload.klagebehandlingEksternId) } returns behandling
             every { fagsakRepository.finnFagsakForBehandlingId(behandling.id) } returns fagsakDomain
-            every { fagsakPersonRepository.hentAktivIdent(fagsakDomain.fagsakPersonId) } returns fagsakDomain.fagsakPersonId.toString()
+            every { fagsakPersonRepository.hentAktivIdent(fagsakDomain.fagsakEierPersonId) } returns fagsakDomain.fagsakEierPersonId.toString()
             every { oppgaveClient.opprettOppgave(capture(opprettOppgaveRequestSlot)) } returns 1L
 
             // Act

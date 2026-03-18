@@ -20,7 +20,7 @@ class PdlConfig(
     companion object {
         const val PATH_GRAPHQL = "graphql"
 
-        val søkerQuery = graphqlQuery("/pdl/søker.graphql")
+        val hentPersonQuery = graphqlQuery("/pdl/hent-person.graphql")
 
         val bolkNavnQuery = graphqlQuery("/pdl/navn_bolk.graphql")
 

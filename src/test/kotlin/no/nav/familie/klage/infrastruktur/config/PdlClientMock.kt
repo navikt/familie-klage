@@ -6,6 +6,7 @@ import io.mockk.mockk
 import io.mockk.runs
 import no.nav.familie.klage.personopplysninger.pdl.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.pdl.AdressebeskyttelseGradering
+import no.nav.familie.klage.personopplysninger.pdl.Fødselsdato
 import no.nav.familie.klage.personopplysninger.pdl.KjønnType
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.klage.personopplysninger.pdl.PdlIdent
@@ -16,12 +17,13 @@ import no.nav.familie.klage.testutil.PdlTestdataHelper.lagKjønn
 import no.nav.familie.klage.testutil.PdlTestdataHelper.lagNavn
 import no.nav.familie.klage.testutil.PdlTestdataHelper.metadataGjeldende
 import no.nav.familie.klage.testutil.PdlTestdataHelper.pdlNavn
-import no.nav.familie.klage.testutil.PdlTestdataHelper.pdlSøker
+import no.nav.familie.klage.testutil.PdlTestdataHelper.pdlPerson
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
+import java.time.LocalDate
 
 @Configuration
 @Profile("mock-pdl")
@@ -35,7 +37,7 @@ class PdlClientMock {
 
         every { pdlClient.hentNavnBolk(any(), any()) } answers { firstArg<List<String>>().associateWith { pdlNavn(listOf(lagNavn())) } }
 
-        every { pdlClient.hentPerson(any(), any()) } returns opprettPdlSøker()
+        every { pdlClient.hentPerson(any(), any()) } returns opprettPdlPerson()
 
         every {
             pdlClient.hentPersonidenter(
@@ -64,8 +66,15 @@ class PdlClientMock {
     companion object {
         private const val ANNEN_FORELDER_FNR = "17097926735"
 
-        fun opprettPdlSøker() =
-            pdlSøker(
+        fun opprettPdlPerson() =
+            pdlPerson(
+                fødselsdato =
+                    LocalDate.now().minusYears(40).let {
+                        Fødselsdato(
+                            fødselsdato = it,
+                            fødselsår = it.year,
+                        )
+                    },
                 adressebeskyttelse =
                     listOf(
                         Adressebeskyttelse(

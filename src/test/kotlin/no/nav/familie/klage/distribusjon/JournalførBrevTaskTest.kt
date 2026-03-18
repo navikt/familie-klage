@@ -70,7 +70,7 @@ internal class JournalførBrevTaskTest {
     internal fun setUp() {
         mockkObject(SikkerhetContext)
         every { SikkerhetContext.hentSaksbehandler(any()) } returns "saksbehandler"
-        every { behandlingService.hentAktivIdent(behandlingId) } returns Pair("ident", fagsak())
+        every { behandlingService.hentFagsakEierIdent(behandlingId) } returns Pair("ident", fagsak())
         justRun { brevService.oppdaterMottakerJournalpost(any(), capture(slotBrevmottakereJournalposter)) }
         every { taskService.save(capture(slotSaveTask)) } answers { firstArg() }
         every {

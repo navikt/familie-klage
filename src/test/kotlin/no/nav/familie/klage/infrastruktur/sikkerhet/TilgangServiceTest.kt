@@ -188,13 +188,13 @@ internal class TilgangServiceTest {
                 val fagsak = fagsak()
                 every { fagsakService.hentFagsak(fagsak.id) } returns fagsak
 
-                every { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentAktivIdent()) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
+                every { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentFagsakEierIdent()) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
 
                 // Act & Assert
                 testWithBrukerContext {
                     val manglerTilgangException = assertThrows<ManglerTilgang> { tilgangService.validerTilgangTilFagsak(fagsak.id, AuditLoggerEvent.ACCESS) }
 
-                    verify(exactly = 1) { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentAktivIdent()) }
+                    verify(exactly = 1) { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentFagsakEierIdent()) }
                     assertThat(manglerTilgangException.message)
                         .isEqualTo(
                             "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
@@ -210,12 +210,12 @@ internal class TilgangServiceTest {
                 val fagsak = fagsak()
                 every { fagsakService.hentFagsak(fagsak.id) } returns fagsak
 
-                every { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentAktivIdent()) } returns Tilgang(harTilgang = true)
+                every { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentFagsakEierIdent()) } returns Tilgang(harTilgang = true)
 
                 // Act & Assert
                 testWithBrukerContext {
                     assertDoesNotThrow { tilgangService.validerTilgangTilFagsak(fagsak.id, AuditLoggerEvent.ACCESS) }
-                    verify(exactly = 1) { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentAktivIdent()) }
+                    verify(exactly = 1) { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentFagsakEierIdent()) }
                 }
             }
         }
@@ -383,13 +383,13 @@ internal class TilgangServiceTest {
                 val behandling = behandling(fagsak)
 
                 every { fagsakService.hentFagsakForBehandling(behandling.id) } returns fagsak
-                every { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentAktivIdent()) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
+                every { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentFagsakEierIdent()) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
 
                 // Act & Assert
                 testWithBrukerContext {
                     val manglerTilgangException = assertThrows<ManglerTilgang> { tilgangService.validerTilgangTilBehandling(behandling.id, AuditLoggerEvent.ACCESS) }
 
-                    verify(exactly = 1) { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentAktivIdent()) }
+                    verify(exactly = 1) { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentFagsakEierIdent()) }
                     assertThat(manglerTilgangException.message)
                         .isEqualTo(
                             "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
@@ -406,12 +406,12 @@ internal class TilgangServiceTest {
                 val behandling = behandling(fagsak)
 
                 every { fagsakService.hentFagsakForBehandling(behandling.id) } returns fagsak
-                every { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentAktivIdent()) } returns Tilgang(harTilgang = true)
+                every { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentFagsakEierIdent()) } returns Tilgang(harTilgang = true)
 
                 // Act & Assert
                 testWithBrukerContext {
                     assertDoesNotThrow { tilgangService.validerTilgangTilBehandling(behandling.id, AuditLoggerEvent.ACCESS) }
-                    verify(exactly = 1) { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentAktivIdent()) }
+                    verify(exactly = 1) { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentFagsakEierIdent()) }
                 }
             }
         }

@@ -30,7 +30,7 @@ internal class VedleggServiceTest {
 
     @BeforeEach
     internal fun setUp() {
-        every { behandlingServiceMock.hentAktivIdent(any()) } returns Pair("12345678910", fagsak)
+        every { behandlingServiceMock.hentFagsakEierIdent(any()) } returns Pair("12345678910", fagsak)
     }
 
     @Test

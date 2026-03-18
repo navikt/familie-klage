@@ -57,7 +57,7 @@ class TilgangService(
         val fagsak = hentFagsak(fagsakId)
         val tilgang = hentTilgangTilFagsak(fagsak)
 
-        auditLogger.log(Sporingsdata(event, fagsak.hentAktivIdent(), tilgang, custom1 = CustomKeyValue("fagsak", fagsakId.toString())))
+        auditLogger.log(Sporingsdata(event, fagsak.hentFagsakEierIdent(), tilgang, custom1 = CustomKeyValue("fagsak", fagsakId.toString())))
 
         if (!tilgang.harTilgang) {
             throw ManglerTilgang(
@@ -81,7 +81,7 @@ class TilgangService(
 
         val tilgang = hentTilgangTilFagsak(fagsak)
 
-        auditLogger.log(Sporingsdata(event, fagsak.hentAktivIdent(), tilgang, custom1 = CustomKeyValue("fagsak", fagsak.id.toString())))
+        auditLogger.log(Sporingsdata(event, fagsak.hentFagsakEierIdent(), tilgang, custom1 = CustomKeyValue("fagsak", fagsak.id.toString())))
 
         if (!tilgang.harTilgang) {
             throw ManglerTilgang(
@@ -103,7 +103,7 @@ class TilgangService(
         auditLogger.log(
             Sporingsdata(
                 event,
-                fagsak.hentAktivIdent(),
+                fagsak.hentFagsakEierIdent(),
                 tilgang,
                 custom1 = CustomKeyValue("behandling", behandlingId.toString()),
             ),
@@ -154,7 +154,7 @@ class TilgangService(
         }
 
         Fagsystem.EF -> {
-            harTilgangTilPersonMedRelasjoner(fagsak.hentAktivIdent())
+            harTilgangTilPersonMedRelasjoner(fagsak.hentFagsakEierIdent())
         }
     }
 

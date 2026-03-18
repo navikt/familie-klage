@@ -3,13 +3,15 @@ package no.nav.familie.klage.testutil
 import no.nav.familie.klage.personopplysninger.pdl.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.pdl.Dødsfall
 import no.nav.familie.klage.personopplysninger.pdl.Folkeregisterpersonstatus
+import no.nav.familie.klage.personopplysninger.pdl.Fødselsdato
 import no.nav.familie.klage.personopplysninger.pdl.Kjønn
 import no.nav.familie.klage.personopplysninger.pdl.KjønnType
 import no.nav.familie.klage.personopplysninger.pdl.Metadata
 import no.nav.familie.klage.personopplysninger.pdl.Navn
 import no.nav.familie.klage.personopplysninger.pdl.PdlNavn
-import no.nav.familie.klage.personopplysninger.pdl.PdlSøker
+import no.nav.familie.klage.personopplysninger.pdl.PdlPerson
 import no.nav.familie.klage.personopplysninger.pdl.VergemaalEllerFremtidsfullmakt
+import java.time.LocalDate
 
 object PdlTestdataHelper {
     val metadataGjeldende = Metadata(historisk = false)
@@ -34,15 +36,17 @@ object PdlTestdataHelper {
             navn,
         )
 
-    fun pdlSøker(
+    fun pdlPerson(
+        fødselsdato: Fødselsdato = Fødselsdato(LocalDate.now().minusYears(40), LocalDate.now().minusYears(40).year),
         adressebeskyttelse: List<Adressebeskyttelse> = emptyList(),
         dødsfall: List<Dødsfall> = emptyList(),
         folkeregisterpersonstatus: List<Folkeregisterpersonstatus> = emptyList(),
         kjønn: Kjønn? = null,
         navn: List<Navn> = emptyList(),
         vergemaalEllerFremtidsfullmakt: List<VergemaalEllerFremtidsfullmakt> = emptyList(),
-    ) = PdlSøker(
+    ) = PdlPerson(
         adressebeskyttelse,
+        fødselsdato,
         dødsfall,
         listOfNotNull(kjønn),
         folkeregisterpersonstatus,

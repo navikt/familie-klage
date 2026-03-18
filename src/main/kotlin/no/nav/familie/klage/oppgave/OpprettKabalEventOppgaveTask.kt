@@ -47,13 +47,13 @@ class OpprettKabalEventOppgaveTask(
             throw Feil("Finner ikke fagsak for behandling med ekstern id ${behandling.eksternBehandlingId}.")
         }
 
-        val aktivIdent = personRepository.hentAktivIdent(fagsakDomain.fagsakPersonId)
+        val fagsakEierIdent = personRepository.hentAktivIdent(fagsakDomain.fagsakEierPersonId)
 
         val opprettOppgaveRequest =
             OpprettOppgaveRequest(
                 ident =
                     OppgaveIdentV2(
-                        ident = aktivIdent,
+                        ident = fagsakEierIdent,
                         gruppe = IdentGruppe.FOLKEREGISTERIDENT,
                     ),
                 saksId = fagsakDomain.eksternId,

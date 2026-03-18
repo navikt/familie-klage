@@ -12,6 +12,6 @@ class InntektService(
 ) {
     fun genererAInntektUrlPåFagsak(fagsakId: UUID): String {
         val fagsak = fagsakService.hentFagsak(fagsakId)
-        return aMeldingInntektClient.genererAInntektUrl(fagsak.hentAktivIdent())
+        return aMeldingInntektClient.genererAInntektUrl(fagsak.hentFagsakEierIdent())
     }
 }

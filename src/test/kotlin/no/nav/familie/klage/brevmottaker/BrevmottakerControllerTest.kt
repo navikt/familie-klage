@@ -45,7 +45,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                 testoppsettService.lagreFagsak(
                     DomainUtil.fagsak(
                         stønadstype = Stønadstype.BARNETRYGD,
-                        person =
+                        fagsakEier =
                             FagsakPerson(
                                 identer =
                                     setOf(
@@ -176,7 +176,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                 testoppsettService.lagreFagsak(
                     DomainUtil.fagsak(
                         stønadstype = Stønadstype.BARNETRYGD,
-                        person =
+                        fagsakEier =
                             FagsakPerson(
                                 identer =
                                     setOf(
@@ -349,7 +349,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                 testoppsettService.lagreFagsak(
                     DomainUtil.fagsak(
                         stønadstype = Stønadstype.BARNETRYGD,
-                        person =
+                        fagsakEier =
                             FagsakPerson(
                                 identer =
                                     setOf(
@@ -520,7 +520,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                 testoppsettService.lagreFagsak(
                     DomainUtil.fagsak(
                         stønadstype = Stønadstype.BARNETRYGD,
-                        person =
+                        fagsakEier =
                             FagsakPerson(
                                 identer =
                                     setOf(
@@ -645,7 +645,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
                 testoppsettService.lagreFagsak(
                     DomainUtil.fagsak(
                         stønadstype = Stønadstype.BARNETRYGD,
-                        person =
+                        fagsakEier =
                             FagsakPerson(
                                 identer =
                                     setOf(
@@ -707,7 +707,7 @@ class BrevmottakerControllerTest : OppslagSpringRunnerTest() {
         fun `skal utelde initielle brevmottakere`() {
             // Arrange
             val fagsakPerson = testoppsettService.opprettPerson(FagsakPerson(identer = setOf(PersonIdent("12345678903"))))
-            val fagsak = testoppsettService.lagreFagsak(DomainUtil.fagsak(stønadstype = Stønadstype.BARNETRYGD, person = fagsakPerson))
+            val fagsak = testoppsettService.lagreFagsak(DomainUtil.fagsak(stønadstype = Stønadstype.BARNETRYGD, fagsakEier = fagsakPerson))
             val behandling = testoppsettService.lagreBehandling(behandling(fagsak))
             headers.setBearerAuth(onBehalfOfToken(role = rolleConfig.ba.veileder))
 

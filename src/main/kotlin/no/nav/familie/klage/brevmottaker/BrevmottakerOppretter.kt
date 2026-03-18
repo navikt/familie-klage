@@ -64,22 +64,27 @@ class BrevmottakerOppretter(
         val behandling = behandlingService.hentBehandling(behandlingId)
         behandling.validerRedigerbarBehandlingOgBehandlingsstegBrev()
 
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
+        if (!fagsak.erSøkerFagsakEier()) {
+            throw Feil("Brevmottakere kan ikke endres hvis fagsakeier og søker ikke er den samme personen for $behandlingId.")
+        }
+
         val brev = brevService.hentBrev(behandlingId)
         val brevmottakere = brev.mottakere ?: Brevmottakere()
         validerNyBrevmottakerPersonUtenIdent(
-            brukerensNavn = personopplysningerService.hentPersonopplysninger(behandlingId).navn,
+            brukerensNavn = personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId).navn,
             behandlingId = behandlingId,
             nyBrevmottakerPersonUtenIdent = nyBrevmottakerPersonUtenIdent,
             eksisterendeBrevmottakere = brevmottakere.tilListe(),
         )
 
-        val aktivIdentForFagsak = fagsakService.hentFagsak(behandling.fagsakId).hentAktivIdent()
+        val fagsakEierIdent = fagsakService.hentFagsak(behandling.fagsakId).hentFagsakEierIdent()
 
         val harBrevmottakerPersonBruker =
             brevmottakere.personer
                 .filterIsInstance<BrevmottakerPersonMedIdent>()
                 .filter { it.mottakerRolle == BRUKER }
-                .any { it.personIdent == aktivIdentForFagsak }
+                .any { it.personIdent == fagsakEierIdent }
 
         val skalSletteBrevmottakerPersonBruker =
             harBrevmottakerPersonBruker &&
@@ -94,7 +99,7 @@ class BrevmottakerOppretter(
         val nyeBrevmottakerePersoner =
             if (skalSletteBrevmottakerPersonBruker) {
                 brevmottakere.personer.filterNot {
-                    it is BrevmottakerPersonMedIdent && it.personIdent == aktivIdentForFagsak
+                    it is BrevmottakerPersonMedIdent && it.personIdent == fagsakEierIdent
                 }
             } else {
                 brevmottakere.personer
@@ -124,6 +129,11 @@ class BrevmottakerOppretter(
 
         val behandling = behandlingService.hentBehandling(behandlingId)
         behandling.validerRedigerbarBehandlingOgBehandlingsstegBrev()
+
+        val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
+        if (!fagsak.erSøkerFagsakEier()) {
+            throw Feil("Brevmottakere kan ikke endres hvis fagsakeier og søker ikke er den samme personen for $behandlingId.")
+        }
 
         val brev = brevService.hentBrev(behandlingId)
         val brevmottakere = brev.mottakere ?: Brevmottakere()

@@ -40,7 +40,7 @@ internal class BrevServiceIntegrasjonsTest : OppslagSpringRunnerTest() {
 
     private val fagsak = fagsak()
     private val fagsakFerdigstiltBehandling =
-        fagsak(stønadstype = Stønadstype.SKOLEPENGER, fagsakPersonId = fagsak.fagsakPersonId)
+        fagsak(stønadstype = Stønadstype.SKOLEPENGER, fagsakEierPersonId = fagsak.fagsakEierPersonId)
     private val påklagetVedtak = PåklagetVedtak(VEDTAK, påklagetVedtakDetaljer("123"))
     private val behandlingPåklagetVedtak = behandling(fagsak, steg = BREV, påklagetVedtak = påklagetVedtak)
     private val ferdigstiltBehandling =

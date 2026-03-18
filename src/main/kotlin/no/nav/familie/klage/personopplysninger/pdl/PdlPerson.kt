@@ -48,8 +48,8 @@ data class PdlErrorExtensions(
     fun notFound() = code == "not_found"
 }
 
-data class PdlSøkerData(
-    val person: PdlSøker?,
+data class PdlPersonData(
+    val person: PdlPerson?,
 )
 
 data class PdlIdent(
@@ -83,8 +83,9 @@ data class PdlNavn(
     val navn: List<Navn>,
 )
 
-data class PdlSøker(
+data class PdlPerson(
     val adressebeskyttelse: List<Adressebeskyttelse>,
+    @JsonProperty("foedselsdato") val fødselsdato: Fødselsdato,
     @JsonProperty("doedsfall") val dødsfall: List<Dødsfall>,
     @JsonProperty("kjoenn") val kjønn: List<Kjønn>,
     val folkeregisterpersonstatus: List<Folkeregisterpersonstatus>,
@@ -113,6 +114,11 @@ enum class AdressebeskyttelseGradering {
     FORTROLIG,
     UGRADERT,
 }
+
+data class Fødselsdato(
+    @JsonProperty("foedselsdato") val fødselsdato: LocalDate?,
+    @JsonProperty("foedselsaar") val fødselsår: Int,
+)
 
 data class Dødsfall(
     @JsonProperty("doedsdato") val dødsdato: LocalDate?,

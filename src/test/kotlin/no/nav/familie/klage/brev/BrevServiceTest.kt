@@ -15,6 +15,8 @@ import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.domain.Fil
 import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil
@@ -45,6 +47,7 @@ class BrevServiceTest {
     private val brevInnholdUtleder = mockk<BrevInnholdUtleder>()
     private val taskService = mockk<TaskService>()
     private val brevmottakerUtleder = mockk<BrevmottakerUtleder>()
+    private val featureToggleService = mockk<FeatureToggleService>()
 
     private val brevService =
         BrevService(
@@ -60,11 +63,13 @@ class BrevServiceTest {
             brevInnholdUtleder = brevInnholdUtleder,
             taskService = taskService,
             brevmottakerUtleder = brevmottakerUtleder,
+            featureToggleService = featureToggleService,
         )
 
     @BeforeEach
     fun setup() {
         BrukerContextUtil.mockBrukerContext()
+        every { featureToggleService.isEnabled(Toggle.BRUK_SØKER_PERSONOPPLYSNINGER) } returns true
     }
 
     @AfterEach
@@ -92,7 +97,7 @@ class BrevServiceTest {
 
             every { behandlingService.hentBehandling(behandling.id) } returns behandling
             every { fagsakService.hentFagsak(behandling.fagsakId) } returns fagsak
-            every { personopplysningerService.hentPersonopplysninger(any()) } returns personopplysningerDtoMedVergemål
+            every { personopplysningerService.hentPersonopplysningerFagsakEier(any()) } returns personopplysningerDtoMedVergemål
 
             // Act & assert
             val exception =
@@ -120,7 +125,7 @@ class BrevServiceTest {
 
             every { behandlingService.hentBehandling(behandling.id) } returns behandling
             every { fagsakService.hentFagsak(behandling.fagsakId) } returns fagsak
-            every { personopplysningerService.hentPersonopplysninger(any()) } returns personopplysningerDto
+            every { personopplysningerService.hentPersonopplysningerFagsakEier(any()) } returns personopplysningerDto
 
             // Act & assert
             val exception =
@@ -175,7 +180,8 @@ class BrevServiceTest {
             every { behandlingService.hentBehandling(behandling.id) } returns behandling
             every { behandlingService.hentBehandlingDto(behandling.id) } returns DtoTestUtil.lagBehandlingDto(fagsak = fagsak, behandling = behandling)
             every { fagsakService.hentFagsak(behandling.fagsakId) } returns fagsak
-            every { personopplysningerService.hentPersonopplysninger(any()) } returns personopplysningerDto
+            every { personopplysningerService.hentPersonopplysningerFagsakEier(any()) } returns personopplysningerDto
+            every { personopplysningerService.hentPersonopplysningerSøker(any()) } returns personopplysningerDto
             every { brevsignaturService.lagSignatur(personopplysningerDto, fagsak.fagsystem) } returns DtoTestUtil.lagSignaturDto()
             every { brevClient.genererHtml(any(), any(), any(), any(), any(), any()) } returns "<html />"
             every { familieDokumentClient.genererPdfFraHtml(any()) } returns pdf
@@ -256,7 +262,8 @@ class BrevServiceTest {
             every { behandlingService.hentBehandling(behandling.id) } returns behandling
             every { behandlingService.hentBehandlingDto(behandling.id) } returns DtoTestUtil.lagBehandlingDto(fagsak = fagsak, behandling = behandling)
             every { fagsakService.hentFagsak(behandling.fagsakId) } returns fagsak
-            every { personopplysningerService.hentPersonopplysninger(any()) } returns personopplysningerDto
+            every { personopplysningerService.hentPersonopplysningerFagsakEier(any()) } returns personopplysningerDto
+            every { personopplysningerService.hentPersonopplysningerSøker(any()) } returns personopplysningerDto
             every { brevsignaturService.lagSignatur(personopplysningerDto, fagsak.fagsystem) } returns DtoTestUtil.lagSignaturDto()
             every { brevClient.genererHtml(any(), any(), any(), any(), any(), any()) } returns "<html />"
             every { familieDokumentClient.genererPdfFraHtml(any()) } returns pdf
@@ -344,7 +351,8 @@ class BrevServiceTest {
             every { behandlingService.hentBehandling(behandling.id) } returns behandling
             every { behandlingService.hentBehandlingDto(behandling.id) } returns DtoTestUtil.lagBehandlingDto(fagsak = fagsak, behandling = behandling)
             every { fagsakService.hentFagsak(behandling.fagsakId) } returns fagsak
-            every { personopplysningerService.hentPersonopplysninger(any()) } returns personopplysningerDto
+            every { personopplysningerService.hentPersonopplysningerFagsakEier(any()) } returns personopplysningerDto
+            every { personopplysningerService.hentPersonopplysningerSøker(any()) } returns personopplysningerDto
             every { brevsignaturService.lagSignatur(personopplysningerDto, fagsak.fagsystem) } returns DtoTestUtil.lagSignaturDto()
             every { brevClient.genererHtmlFritekstbrev(any(), any(), any(), any(), any()) } returns "<html />"
             every { familieDokumentClient.genererPdfFraHtml(any()) } returns pdf
@@ -458,7 +466,8 @@ class BrevServiceTest {
             every { behandlingService.hentBehandling(behandling.id) } returns behandling
             every { behandlingService.hentBehandlingDto(behandling.id) } returns DtoTestUtil.lagBehandlingDto(fagsak = fagsak, behandling = behandling)
             every { fagsakService.hentFagsak(behandling.fagsakId) } returns fagsak
-            every { personopplysningerService.hentPersonopplysninger(any()) } returns personopplysningerDto
+            every { personopplysningerService.hentPersonopplysningerFagsakEier(any()) } returns personopplysningerDto
+            every { personopplysningerService.hentPersonopplysningerSøker(any()) } returns personopplysningerDto
             every { brevsignaturService.lagSignatur(personopplysningerDto, fagsak.fagsystem) } returns DtoTestUtil.lagSignaturDto()
             every { brevClient.genererHtmlFritekstbrev(any(), any(), any(), any(), any()) } returns "<html />"
             every { familieDokumentClient.genererPdfFraHtml(any()) } returns pdf
@@ -540,7 +549,8 @@ class BrevServiceTest {
             every { behandlingService.hentBehandling(behandling.id) } returns behandling
             every { behandlingService.hentBehandlingDto(behandling.id) } returns DtoTestUtil.lagBehandlingDto(fagsak = fagsak, behandling = behandling)
             every { fagsakService.hentFagsak(behandling.fagsakId) } returns fagsak
-            every { personopplysningerService.hentPersonopplysninger(any()) } returns personopplysningerDto
+            every { personopplysningerService.hentPersonopplysningerFagsakEier(any()) } returns personopplysningerDto
+            every { personopplysningerService.hentPersonopplysningerSøker(any()) } returns personopplysningerDto
             every { brevsignaturService.lagSignatur(personopplysningerDto, fagsak.fagsystem) } returns DtoTestUtil.lagSignaturDto()
             every { brevClient.genererHtml(any(), any(), any(), any(), any(), any()) } returns "<html />"
             every { familieDokumentClient.genererPdfFraHtml(any()) } returns pdf
@@ -620,7 +630,8 @@ class BrevServiceTest {
             every { behandlingService.hentBehandling(behandling.id) } returns behandling
             every { behandlingService.hentBehandlingDto(behandling.id) } returns DtoTestUtil.lagBehandlingDto(fagsak = fagsak, behandling = behandling)
             every { fagsakService.hentFagsak(behandling.fagsakId) } returns fagsak
-            every { personopplysningerService.hentPersonopplysninger(any()) } returns personopplysningerDto
+            every { personopplysningerService.hentPersonopplysningerFagsakEier(any()) } returns personopplysningerDto
+            every { personopplysningerService.hentPersonopplysningerSøker(any()) } returns personopplysningerDto
             every { brevsignaturService.lagSignatur(personopplysningerDto, fagsak.fagsystem) } returns DtoTestUtil.lagSignaturDto()
             every { brevClient.genererHtml(any(), any(), any(), any(), any(), any()) } returns "<html />"
             every { familieDokumentClient.genererPdfFraHtml(any()) } returns pdf

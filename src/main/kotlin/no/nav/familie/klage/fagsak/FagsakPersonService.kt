@@ -18,8 +18,6 @@ class FagsakPersonService(
         return personIdenter
     }
 
-    fun hentAktivIdent(personId: UUID): String = fagsakPersonRepository.hentAktivIdent(personId)
-
     @Transactional
     fun hentEllerOpprettPerson(
         personIdenter: Set<String>,

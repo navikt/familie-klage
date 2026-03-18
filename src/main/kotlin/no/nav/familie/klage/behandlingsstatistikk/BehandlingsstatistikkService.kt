@@ -56,7 +56,7 @@ class BehandlingsstatistikkService(
         val vurdering = vurderingService.hentVurdering(behandling.id)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
         val erStrengtFortrolig =
-            personopplysningerService.hentPersonopplysninger(behandlingId).adressebeskyttelse?.erStrengtFortrolig()
+            personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId).adressebeskyttelse?.erStrengtFortrolig()
                 ?: false
 
         val behandlendeEnhet =
@@ -69,7 +69,7 @@ class BehandlingsstatistikkService(
 
         return BehandlingsstatistikkKlage(
             behandlingId = behandling.eksternBehandlingId,
-            personIdent = fagsak.hentAktivIdent(),
+            personIdent = fagsak.hentFagsakEierIdent(),
             registrertTid = behandling.sporbar.opprettetTid.atZone(zoneIdOslo),
             endretTid = hendelseTidspunkt.atZone(zoneIdOslo),
             tekniskTid = ZonedDateTime.now(zoneIdOslo),

@@ -15,7 +15,7 @@ class VedleggService(
     private val journalpostService: JournalpostService,
 ) {
     fun finnVedleggPåBehandling(behandlingId: UUID): List<DokumentinfoDto> {
-        val (personIdent, fagsak) = behandlingService.hentAktivIdent(behandlingId)
+        val (personIdent, fagsak) = behandlingService.hentFagsakEierIdent(behandlingId)
         val journalposter = journalpostService.finnJournalposter(personIdent, fagsak.stønadstype)
 
         return journalposter

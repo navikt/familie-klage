@@ -21,6 +21,7 @@ import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.FULLMAKT
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.INSTITUSJON
 import no.nav.familie.klage.brevmottaker.domain.MottakerRolle.VERGE
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.fagsak.domain.FagsakPerson
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
@@ -28,6 +29,7 @@ import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.testutil.DomainUtil
+import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -128,8 +130,37 @@ class BrevmottakerOppretterTest {
         }
 
         @Test
+        fun `skal kaste exception om fagsak har forskjellig fagsakeier og søker`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
+            val fagsak =
+                fagsak(
+                    fagsakEier = FagsakPerson(identer = setOf(PersonIdent("1"))),
+                    søker = FagsakPerson(identer = setOf(PersonIdent("2"))),
+                )
+
+            val nyBrevmottakerPersonUtenIdent = DomainUtil.lagNyBrevmottakerPersonUtenIdent()
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
+
+            // Act & assert
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerPersonUtenIdent)
+                }
+            assertThat(exception.message).isEqualTo("Brevmottakere kan ikke endres hvis fagsakeier og søker ikke er den samme personen for ${behandling.id}.")
+        }
+
+        @Test
         fun `skal kaste exception om det allerede finnes en brevmottaker med samme MottakerRolle`() {
             // Arrange
+            val fagsak = fagsak(identer = setOf(PersonIdent("01010199999")))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent =
@@ -159,12 +190,16 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
                 brevService.hentBrev(behandling.id)
             } returns brev
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             // Act & assert
             val exception =
@@ -177,6 +212,7 @@ class BrevmottakerOppretterTest {
         @Test
         fun `skal kaste exception om bruker med utenlandsk adresse ikke har samme navn som i personopplysningene`() {
             // Arrange
+            val fagsak = fagsak(identer = setOf(PersonIdent("01010199999")))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent =
@@ -199,12 +235,16 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = "et annet navn")
 
             every {
                 brevService.hentBrev(behandling.id)
             } returns brev
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             // Act & assert
             val exception =
@@ -219,6 +259,7 @@ class BrevmottakerOppretterTest {
         @Test
         fun `skal kaste exception om dødsbo ikke har samme navn som i personopplysningene`() {
             // Arrange
+            val fagsak = fagsak(identer = setOf(PersonIdent("01010199999")))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent =
@@ -241,12 +282,16 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = "et annet navn")
 
             every {
                 brevService.hentBrev(behandling.id)
             } returns brev
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             // Act & assert
             val exception =
@@ -259,6 +304,7 @@ class BrevmottakerOppretterTest {
         @Test
         fun `skal kaste exception om man prøver å legge til dødsbo når det allerede finnes en brevmottaker`() {
             // Arrange
+            val fagsak = fagsak(identer = setOf(PersonIdent("01010199999")))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent =
@@ -285,12 +331,16 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
                 brevService.hentBrev(behandling.id)
             } returns brev
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             // Act & assert
             val exception =
@@ -303,6 +353,7 @@ class BrevmottakerOppretterTest {
         @Test
         fun `skal kaste exception om man prøver å legge til en brevmottaker når det allerede finnes en dødsbo brevmottaker`() {
             // Arrange
+            val fagsak = fagsak(identer = setOf(PersonIdent("01010199999")))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent =
@@ -332,12 +383,16 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
                 brevService.hentBrev(behandling.id)
             } returns brev
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             // Act & assert
             val exception =
@@ -352,6 +407,7 @@ class BrevmottakerOppretterTest {
         @Test
         fun `skal kaste exception om man prøver å legge til en brevmottaker som ikke er VERGE eller FULLMAKT når det allerede finnes en brevmottaker med utenlandsk adresse`() {
             // Arrange
+            val fagsak = fagsak(identer = setOf(PersonIdent("01010199999")))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent =
@@ -381,12 +437,16 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
                 brevService.hentBrev(behandling.id)
             } returns brev
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             // Act & assert
             val exception =
@@ -401,6 +461,7 @@ class BrevmottakerOppretterTest {
         @Test
         fun `skal kaste exception om man prøver å legge til en brevmottaker som ikke har mottakertype bruker med utenlandsk adresse om det allerede finnes en brevmottaker`() {
             // Arrange
+            val fagsak = fagsak(identer = setOf(PersonIdent("01010199999")))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent =
@@ -430,12 +491,16 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
                 brevService.hentBrev(behandling.id)
             } returns brev
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             // Act & assert
             val exception =
@@ -451,6 +516,7 @@ class BrevmottakerOppretterTest {
         @ParameterizedTest
         fun `skal kaste exception om man prøver å legge til en brevmottaker som ikke er FULLMAKT hvis en brevmottaker har mottakerrolle INSTITUSJON`(mottakerRolle: MottakerRolle) {
             // Arrange
+            val fagsak = fagsak(identer = setOf(PersonIdent("01010199999")))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent =
@@ -467,7 +533,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -476,7 +542,11 @@ class BrevmottakerOppretterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns DomainUtil.fagsak(identer = setOf(PersonIdent("01010199999")))
+            } returns fagsak
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             every {
                 brevRepository.update(capture(brevSlot))
@@ -510,6 +580,7 @@ class BrevmottakerOppretterTest {
         @ParameterizedTest
         fun `skal opprette brevmottaker når det allerede finnes brevmottakere`(mottakerRolle: MottakerRolle) {
             // Arrange
+            val fagsak = fagsak(identer = setOf(PersonIdent("01010199999")))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent =
@@ -534,7 +605,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -543,7 +614,11 @@ class BrevmottakerOppretterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns DomainUtil.fagsak(identer = setOf(PersonIdent("01010199999")))
+            } returns fagsak
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             every {
                 brevRepository.update(capture(brevSlot))
@@ -577,6 +652,7 @@ class BrevmottakerOppretterTest {
         @ParameterizedTest
         fun `skal opprette brevmottaker når brevmottakere i brev er null`(mottakerRolle: MottakerRolle) {
             // Arrange
+            val fagsak = fagsak(identer = setOf(PersonIdent("01010199999")))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent =
@@ -597,7 +673,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -606,7 +682,11 @@ class BrevmottakerOppretterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns DomainUtil.fagsak(identer = setOf(PersonIdent("01010199999")))
+            } returns fagsak
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             every {
                 brevRepository.update(any())
@@ -636,6 +716,7 @@ class BrevmottakerOppretterTest {
         @ParameterizedTest
         fun `skal opprette brevmottaker når brevmottakere i brev er tom`(mottakerRolle: MottakerRolle) {
             // Arrange
+            val fagsak = fagsak(identer = setOf(PersonIdent("01010199999")))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent =
@@ -656,7 +737,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -665,7 +746,11 @@ class BrevmottakerOppretterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns DomainUtil.fagsak(identer = setOf(PersonIdent("01010199999")))
+            } returns fagsak
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             every {
                 brevRepository.update(any())
@@ -701,6 +786,7 @@ class BrevmottakerOppretterTest {
             mottakerRolle: MottakerRolle,
         ) {
             // Arrange
+            val fagsak = fagsak(identer = setOf(PersonIdent("01010199999")))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent =
@@ -723,7 +809,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = "ikke samme navn")
 
             every {
@@ -732,7 +818,11 @@ class BrevmottakerOppretterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns DomainUtil.fagsak(identer = setOf(PersonIdent("01010199999")))
+            } returns fagsak
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             every {
                 brevRepository.update(any())
@@ -768,6 +858,7 @@ class BrevmottakerOppretterTest {
             mottakerRolle: MottakerRolle,
         ) {
             // Arrange
+            val fagsak = fagsak(identer = setOf(PersonIdent("01010199999")))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent =
@@ -797,7 +888,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -806,7 +897,11 @@ class BrevmottakerOppretterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns DomainUtil.fagsak(identer = setOf(PersonIdent("01010199999")))
+            } returns fagsak
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             every {
                 brevRepository.update(any())
@@ -842,6 +937,7 @@ class BrevmottakerOppretterTest {
             mottakerRolle: MottakerRolle,
         ) {
             // Arrange
+            val fagsak = fagsak(identer = setOf(PersonIdent("01010199999")))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent =
@@ -871,7 +967,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -880,7 +976,11 @@ class BrevmottakerOppretterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns DomainUtil.fagsak(identer = setOf(PersonIdent("01010199999")))
+            } returns fagsak
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             every {
                 brevRepository.update(any())
@@ -915,6 +1015,7 @@ class BrevmottakerOppretterTest {
         fun `skal slette bruker ved enkelte MottakerRoller`(mottakerRolle: MottakerRolle) {
             // Arrange
             val personIdent = PersonIdent("01010199999")
+            val fagsak = fagsak(identer = setOf(personIdent))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent =
@@ -943,7 +1044,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -952,7 +1053,11 @@ class BrevmottakerOppretterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns DomainUtil.fagsak(identer = setOf(personIdent))
+            } returns fagsak
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             every {
                 brevRepository.update(capture(brevSlot))
@@ -996,6 +1101,7 @@ class BrevmottakerOppretterTest {
         ) {
             // Arrange
             val personIdent = PersonIdent("01010199999")
+            val fagsak = fagsak(identer = setOf(personIdent))
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
 
             val nyBrevmottakerPersonUtenIdent =
@@ -1024,7 +1130,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = nyBrevmottakerPersonUtenIdent.navn)
 
             every {
@@ -1033,7 +1139,11 @@ class BrevmottakerOppretterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns DomainUtil.fagsak(identer = setOf(personIdent))
+            } returns fagsak
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
 
             every {
                 brevRepository.update(capture(brevSlot))
@@ -1111,6 +1221,34 @@ class BrevmottakerOppretterTest {
         }
 
         @Test
+        fun `skal kaste exception om fagsak har forskjellig fagsakeier og søker`() {
+            // Arrange
+            val behandling = DomainUtil.behandling(steg = StegType.BREV)
+            val fagsak =
+                fagsak(
+                    fagsakEier = FagsakPerson(identer = setOf(PersonIdent("1"))),
+                    søker = FagsakPerson(identer = setOf(PersonIdent("2"))),
+                )
+
+            val nyBrevmottakerOrganisasjon = DomainUtil.lagNyBrevmottakerOrganisasjon()
+
+            every {
+                behandlingService.hentBehandling(behandling.id)
+            } returns behandling
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak
+
+            // Act & assert
+            val exception =
+                assertThrows<Feil> {
+                    brevmottakerOppretter.opprettBrevmottaker(behandling.id, nyBrevmottakerOrganisasjon)
+                }
+            assertThat(exception.message).isEqualTo("Brevmottakere kan ikke endres hvis fagsakeier og søker ikke er den samme personen for ${behandling.id}.")
+        }
+
+        @Test
         fun `skal kaste exception om det allerede finnes en brevmottaker med samme MottakerRolle`() {
             // Arrange
             val behandling = DomainUtil.behandling(steg = StegType.BREV)
@@ -1134,12 +1272,16 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto()
 
             every {
                 brevService.hentBrev(behandling.id)
             } returns brev
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak()
 
             // Act & assert
             val exception =
@@ -1166,12 +1308,16 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = "et annet navn")
 
             every {
                 brevService.hentBrev(behandling.id)
             } returns brev
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak()
 
             // Act & assert
             val exception =
@@ -1201,12 +1347,16 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto(navn = "et annet navn")
 
             every {
                 brevService.hentBrev(behandling.id)
             } returns brev
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak()
 
             // Act & assert
             val exception =
@@ -1235,7 +1385,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto()
 
             every {
@@ -1244,11 +1394,15 @@ class BrevmottakerOppretterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns DomainUtil.fagsak()
+            } returns fagsak()
 
             every {
                 brevRepository.update(capture(brevSlot))
             } returnsArgument 0
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak()
 
             // Act
             val brevmottaker =
@@ -1285,7 +1439,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto()
 
             every {
@@ -1294,11 +1448,15 @@ class BrevmottakerOppretterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns DomainUtil.fagsak()
+            } returns fagsak()
 
             every {
                 brevRepository.update(any())
             } returnsArgument 0
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak()
 
             // Act
             val brevmottaker =
@@ -1331,7 +1489,7 @@ class BrevmottakerOppretterTest {
             } returns behandling
 
             every {
-                personopplysningerService.hentPersonopplysninger(behandling.id)
+                personopplysningerService.hentPersonopplysningerFagsakEier(behandling.id)
             } returns DomainUtil.lagPersonopplysningerDto()
 
             every {
@@ -1340,11 +1498,15 @@ class BrevmottakerOppretterTest {
 
             every {
                 fagsakService.hentFagsak(behandling.fagsakId)
-            } returns DomainUtil.fagsak()
+            } returns fagsak()
 
             every {
                 brevRepository.update(any())
             } returnsArgument 0
+
+            every {
+                fagsakService.hentFagsakForBehandling(behandling.id)
+            } returns fagsak()
 
             // Act
             val brevmottaker =

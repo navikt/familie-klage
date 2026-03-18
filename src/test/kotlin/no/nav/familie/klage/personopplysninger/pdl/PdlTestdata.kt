@@ -17,6 +17,8 @@ object PdlTestdata {
 
     private val dødsfall = listOf(Dødsfall(LocalDate.now()))
 
+    private val fødselsdato = LocalDate.now().minusYears(40).let { Fødselsdato(it, it.year) }
+
     val pdlNavnBolk =
         PersonBolk(
             personBolk =
@@ -32,10 +34,11 @@ object PdlTestdata {
                 ),
         )
 
-    val pdlSøkerData =
-        PdlSøkerData(
-            PdlSøker(
+    val pdlPersonData =
+        PdlPersonData(
+            PdlPerson(
                 adressebeskyttelse,
+                fødselsdato,
                 dødsfall,
                 listOf(Kjønn(KjønnType.KVINNE)),
                 listOf(Folkeregisterpersonstatus("", "", metadataGjeldende)),
