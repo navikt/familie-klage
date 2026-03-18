@@ -83,13 +83,13 @@ class BrevmottakerSletter(
                 }
             }
 
-        val fagsakAktivIdent = fagsak.hentFagsakEierIdent()
+        val fagsakEierIdent = fagsak.hentFagsakEierIdent()
 
         val harBrevmottakerPersonBruker =
             brevmottakere.personer
                 .filterIsInstance<BrevmottakerPersonMedIdent>()
                 .filter { it.mottakerRolle == MottakerRolle.BRUKER }
-                .any { it.personIdent == fagsakAktivIdent }
+                .any { it.personIdent == fagsakEierIdent }
 
         val skalLeggeTilBrevmottakerPersonBrukerVedSletting =
             !harBrevmottakerPersonBruker &&
@@ -101,7 +101,7 @@ class BrevmottakerSletter(
                     if (skalLeggeTilBrevmottakerPersonBrukerVedSletting) {
                         val brevmottakerPersonBruker =
                             BrevmottakerPersonMedIdent(
-                                personIdent = fagsakAktivIdent,
+                                personIdent = fagsakEierIdent,
                                 navn = personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId).navn,
                                 mottakerRolle = MottakerRolle.BRUKER,
                             )

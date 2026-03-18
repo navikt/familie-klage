@@ -68,7 +68,7 @@ class BehandlingService(
         fagsystem: Fagsystem,
     ): List<Klagebehandlingsresultat> = behandlingRepository.finnKlagebehandlingsresultat(eksternFagsakId, fagsystem)
 
-    fun hentAktivIdent(behandlingId: UUID): Pair<String, Fagsak> {
+    fun hentFagsakEierIdent(behandlingId: UUID): Pair<String, Fagsak> {
         val behandling = hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
         return Pair(fagsak.hentFagsakEierIdent(), fagsak)

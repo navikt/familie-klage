@@ -78,13 +78,13 @@ class BrevmottakerOppretter(
             eksisterendeBrevmottakere = brevmottakere.tilListe(),
         )
 
-        val aktivIdentForFagsak = fagsakService.hentFagsak(behandling.fagsakId).hentFagsakEierIdent()
+        val fagsakEierIdent = fagsakService.hentFagsak(behandling.fagsakId).hentFagsakEierIdent()
 
         val harBrevmottakerPersonBruker =
             brevmottakere.personer
                 .filterIsInstance<BrevmottakerPersonMedIdent>()
                 .filter { it.mottakerRolle == BRUKER }
-                .any { it.personIdent == aktivIdentForFagsak }
+                .any { it.personIdent == fagsakEierIdent }
 
         val skalSletteBrevmottakerPersonBruker =
             harBrevmottakerPersonBruker &&
@@ -99,7 +99,7 @@ class BrevmottakerOppretter(
         val nyeBrevmottakerePersoner =
             if (skalSletteBrevmottakerPersonBruker) {
                 brevmottakere.personer.filterNot {
-                    it is BrevmottakerPersonMedIdent && it.personIdent == aktivIdentForFagsak
+                    it is BrevmottakerPersonMedIdent && it.personIdent == fagsakEierIdent
                 }
             } else {
                 brevmottakere.personer
