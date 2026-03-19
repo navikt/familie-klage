@@ -85,7 +85,7 @@ data class PdlNavn(
 
 data class PdlPerson(
     val adressebeskyttelse: List<Adressebeskyttelse>,
-    @JsonProperty("foedselsdato") val fødselsdato: Fødselsdato,
+    @JsonProperty("foedselsdato") val fødselsdato: List<Fødselsdato>,
     @JsonProperty("doedsfall") val dødsfall: List<Dødsfall>,
     @JsonProperty("kjoenn") val kjønn: List<Kjønn>,
     val folkeregisterpersonstatus: List<Folkeregisterpersonstatus>,

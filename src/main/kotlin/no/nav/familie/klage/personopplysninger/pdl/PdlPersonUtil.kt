@@ -24,4 +24,6 @@ fun List<Adressebeskyttelse>.gjeldende(): Adressebeskyttelse? = this.find { !it.
 
 fun List<Kjønn>.gjeldende(): Kjønn = this.single()
 
+fun List<Fødselsdato>.gjeldende(): Fødselsdato? = this.firstOrNull()
+
 fun PdlIdenter.identer(): Set<String> = this.identer.map { it.ident }.toSet()
