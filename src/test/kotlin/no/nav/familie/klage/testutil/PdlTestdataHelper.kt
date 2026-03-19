@@ -37,7 +37,7 @@ object PdlTestdataHelper {
         )
 
     fun pdlPerson(
-        fødselsdato: Fødselsdato = Fødselsdato(LocalDate.now().minusYears(40), LocalDate.now().minusYears(40).year),
+        fødselsdato: List<Fødselsdato> = listOf(Fødselsdato(LocalDate.now().minusYears(40), LocalDate.now().minusYears(40).year)),
         adressebeskyttelse: List<Adressebeskyttelse> = emptyList(),
         dødsfall: List<Dødsfall> = emptyList(),
         folkeregisterpersonstatus: List<Folkeregisterpersonstatus> = emptyList(),

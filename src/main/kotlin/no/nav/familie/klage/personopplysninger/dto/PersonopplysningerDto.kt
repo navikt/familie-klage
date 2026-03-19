@@ -11,7 +11,7 @@ data class PersonopplysningerFagsakEierOgSøkerDto(
 data class PersonopplysningerDto(
     val personIdent: String,
     val navn: String,
-    val fødselsdato: LocalDate,
+    val fødselsdato: LocalDate?,
     val kjønn: Kjønn,
     val adressebeskyttelse: Adressebeskyttelse?,
     val folkeregisterpersonstatus: Folkeregisterpersonstatus?,

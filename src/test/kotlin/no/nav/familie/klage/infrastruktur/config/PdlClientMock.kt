@@ -70,9 +70,11 @@ class PdlClientMock {
             pdlPerson(
                 fødselsdato =
                     LocalDate.now().minusYears(40).let {
-                        Fødselsdato(
-                            fødselsdato = it,
-                            fødselsår = it.year,
+                        listOf(
+                            Fødselsdato(
+                                fødselsdato = it,
+                                fødselsår = it.year,
+                            ),
                         )
                     },
                 adressebeskyttelse =

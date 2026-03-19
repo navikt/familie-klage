@@ -49,7 +49,7 @@ class PersonopplysningerService(
         return PersonopplysningerDto(
             personIdent = ident,
             navn = pdlPerson.navn.gjeldende().visningsnavn(),
-            fødselsdato = pdlPerson.fødselsdato.let { it.fødselsdato ?: LocalDate.of(it.fødselsår, 1, 1) },
+            fødselsdato = pdlPerson.fødselsdato.gjeldende()?.let { it.fødselsdato ?: LocalDate.of(it.fødselsår, 1, 1) },
             kjønn =
                 Kjønn.valueOf(
                     pdlPerson.kjønn

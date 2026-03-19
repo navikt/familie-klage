@@ -17,7 +17,7 @@ object PdlTestdata {
 
     private val dødsfall = listOf(Dødsfall(LocalDate.now()))
 
-    private val fødselsdato = LocalDate.now().minusYears(40).let { Fødselsdato(it, it.year) }
+    private val fødselsdato = LocalDate.now().minusYears(40).let { listOf(Fødselsdato(it, it.year)) }
 
     val pdlNavnBolk =
         PersonBolk(
