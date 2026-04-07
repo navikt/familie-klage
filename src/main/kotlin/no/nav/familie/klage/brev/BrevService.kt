@@ -93,7 +93,7 @@ class BrevService(
             } else {
                 personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId)
             }
-        val navn = personopplysninger.navn
+        val personopplysningerForSignatur = personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId)
         val behandling = behandlingService.hentBehandling(behandlingId)
         val fagsak = fagsakService.hentFagsak(behandling.fagsakId)
         val påklagetVedtakDetaljer = behandling.påklagetVedtak.påklagetVedtakDetaljer
@@ -103,7 +103,7 @@ class BrevService(
 
         val brevRequest = lagBrevRequest(behandling, fagsak, personopplysninger, påklagetVedtakDetaljer, behandling.klageMottatt)
 
-        val signaturMedEnhet = brevsignaturService.lagSignatur(personopplysninger, fagsak.fagsystem)
+        val signaturMedEnhet = brevsignaturService.lagSignatur(personopplysningerForSignatur, fagsak.fagsystem)
 
         val html =
             brevClient.genererHtmlFritekstbrev(
@@ -314,7 +314,8 @@ class BrevService(
             } else {
                 personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId)
             }
-        val signaturMedEnhet = brevsignaturService.lagSignatur(personopplysninger, fagsak.fagsystem)
+        val personopplysningerForSignatur = personopplysningerService.hentPersonopplysningerFagsakEier(behandlingId)
+        val signaturMedEnhet = brevsignaturService.lagSignatur(personopplysningerForSignatur, fagsak.fagsystem)
         val stønadstype = fagsak.stønadstype
 
         val html =
