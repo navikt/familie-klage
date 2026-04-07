@@ -27,7 +27,7 @@ internal class BrevsignaturServiceTest {
         val signaturMedEnhet = brevsignaturService.lagSignatur(personopplysningerDto, Fagsystem.EF)
 
         assertThat(signaturMedEnhet.enhet).isEqualTo(BrevsignaturService.ENHET_VIKAFOSSEN)
-        assertThat(signaturMedEnhet.navn).isEqualTo(BrevsignaturService.NAV_ANONYM_NAVN)
+        assertThat(signaturMedEnhet.navn).isNull()
     }
 
     @Test
