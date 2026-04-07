@@ -176,7 +176,7 @@ class BrevInnholdUtleder(
 
         return FritekstBrevRequestDto(
             overskrift = "Vi har avvist klagen $possesiv",
-            personIdent = personopplysninger.navn,
+            personIdent = personopplysninger.personIdent,
             navn = personopplysninger.navn,
             avsnitt =
                 listOf(
