@@ -35,6 +35,7 @@ import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
+import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerDto
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.kontrakter.felles.klage.BehandlingResultat
@@ -100,7 +101,7 @@ class BrevService(
 
         behandling.validerRedigerbarBehandlingOgBehandlingsstegBrev()
 
-        val brevRequest = lagBrevRequest(behandling, fagsak, navn, påklagetVedtakDetaljer, behandling.klageMottatt)
+        val brevRequest = lagBrevRequest(behandling, fagsak, personopplysninger, påklagetVedtakDetaljer, behandling.klageMottatt)
 
         val signaturMedEnhet = brevsignaturService.lagSignatur(personopplysninger, fagsak.fagsystem)
 
@@ -124,7 +125,7 @@ class BrevService(
     private fun lagBrevRequest(
         behandling: Behandling,
         fagsak: Fagsak,
-        navn: String,
+        personopplysninger: PersonopplysningerDto,
         påklagetVedtakDetaljer: PåklagetVedtakDetaljer?,
         klageMottatt: LocalDate,
     ): FritekstBrevRequestDto {
@@ -146,7 +147,7 @@ class BrevService(
                     brevInnholdUtleder.lagOpprettholdelseBrev(
                         fagsak = fagsak,
                         innstillingKlageinstans = innstillingKlageinstans,
-                        navn = navn,
+                        personopplysninger = personopplysninger,
                         påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                         klageMottatt = klageMottatt,
                     )
@@ -167,7 +168,7 @@ class BrevService(
                         fagsak = fagsak,
                         klagefristUnntakBegrunnelse = if (klagefristUnntakOppfylt) formkrav.brevtekst else null,
                         vurdering = vurdering,
-                        navn = navn,
+                        personopplysninger = personopplysninger,
                         påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                         klageMottatt = klageMottatt,
                     )
@@ -180,7 +181,7 @@ class BrevService(
                     PåklagetVedtakstype.UTEN_VEDTAK -> {
                         brevInnholdUtleder.lagFormkravAvvistBrevIkkePåklagetVedtak(
                             fagsak = fagsak,
-                            navn = navn,
+                            personopplysninger = personopplysninger,
                             formkrav = formkrav,
                         )
                     }
@@ -188,7 +189,7 @@ class BrevService(
                     else -> {
                         brevInnholdUtleder.lagFormkravAvvistBrev(
                             fagsak = fagsak,
-                            navn = navn,
+                            personopplysninger = personopplysninger,
                             form = formkrav,
                             påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                         )
@@ -320,7 +321,7 @@ class BrevService(
             when (stønadstype) {
                 Stønadstype.BARNETRYGD,
                 Stønadstype.KONTANTSTØTTE,
-                -> lagHenleggelsesbrevHtmlBaks(signaturMedEnhet, personopplysninger.navn, fagsak, brevmottakere)
+                -> lagHenleggelsesbrevHtmlBaks(signaturMedEnhet, personopplysninger, fagsak, brevmottakere)
 
                 Stønadstype.OVERGANGSSTØNAD,
                 Stønadstype.BARNETILSYN,
@@ -353,14 +354,14 @@ class BrevService(
 
     private fun lagHenleggelsesbrevHtmlBaks(
         signaturMedEnhet: SignaturDto,
-        navn: String,
+        personopplysninger: PersonopplysningerDto,
         fagsak: Fagsak,
         brevmottakere: Brevmottakere,
     ): String {
         val henleggelsesbrevInnhold =
             brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(
                 fagsak = fagsak,
-                navn = navn,
+                personopplysninger = personopplysninger,
             )
 
         return brevClient.genererHtmlFritekstbrev(

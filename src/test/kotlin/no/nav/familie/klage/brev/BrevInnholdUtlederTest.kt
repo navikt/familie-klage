@@ -11,6 +11,10 @@ import no.nav.familie.klage.brev.dto.Heading
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.felles.util.StønadstypeVisningsnavn.visningsnavn
 import no.nav.familie.klage.felles.util.TekstUtil.storForbokstav
+import no.nav.familie.klage.personopplysninger.dto.Adressebeskyttelse
+import no.nav.familie.klage.personopplysninger.dto.Folkeregisterpersonstatus
+import no.nav.familie.klage.personopplysninger.dto.Kjønn
+import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerDto
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.klage.testutil.DomainUtil.ikkeOppfyltForm
 import no.nav.familie.klage.testutil.DomainUtil.lagInstitusjon
@@ -28,12 +32,26 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
 internal class BrevInnholdUtlederTest {
     private val ident = "12345678903"
     private val navn = "Navn Navnesen"
+    private val personopplysninger =
+        PersonopplysningerDto(
+            personIdent = ident,
+            navn = navn,
+            fødselsdato = LocalDate.of(1990, 1, 1),
+            kjønn = Kjønn.KVINNE,
+            adressebeskyttelse = Adressebeskyttelse.UGRADERT,
+            folkeregisterpersonstatus = Folkeregisterpersonstatus.BOSATT,
+            dødsdato = null,
+            fullmakt = listOf(),
+            egenAnsatt = false,
+            vergemål = listOf(),
+        )
     private val vedtakstidspunkt = LocalDateTime.of(2021, 11, 5, 14, 56, 22)
     private val avvistBrevInnholdUtlederLookup = mockk<AvvistBrevInnholdUtleder.Lookup>()
     private val brevInnholdUtleder = BrevInnholdUtleder(avvistBrevInnholdUtlederLookup)
@@ -106,7 +124,7 @@ internal class BrevInnholdUtlederTest {
                 brevInnholdUtleder.lagOpprettholdelseBrev(
                     fagsak = fagsak.copy(stønadstype = stønadstype),
                     innstillingKlageinstans = innstillingKlageinstans,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                     klageMottatt = klageMottatt,
                 )
@@ -148,7 +166,7 @@ internal class BrevInnholdUtlederTest {
                 brevInnholdUtleder.lagOpprettholdelseBrev(
                     fagsak = fagsak.copy(stønadstype = stønadstype),
                     innstillingKlageinstans = innstillingKlageinstans,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                     klageMottatt = klageMottatt,
                 )
@@ -191,7 +209,7 @@ internal class BrevInnholdUtlederTest {
                 brevInnholdUtleder.lagOpprettholdelseBrev(
                     fagsak = fagsak.copy(stønadstype = stønadstype),
                     innstillingKlageinstans = innstillingKlageinstans,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                     klageMottatt = klageMottatt,
                 )
@@ -234,7 +252,7 @@ internal class BrevInnholdUtlederTest {
                     fagsak = fagsak.copy(stønadstype = stønadstype),
                     klagefristUnntakBegrunnelse = null,
                     vurdering = vurdering,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                     klageMottatt = klageMottatt,
                 )
@@ -287,7 +305,7 @@ internal class BrevInnholdUtlederTest {
                     fagsak = fagsak.copy(stønadstype = stønadstype),
                     klagefristUnntakBegrunnelse = null,
                     vurdering = vurdering,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                     klageMottatt = klageMottatt,
                 )
@@ -342,7 +360,7 @@ internal class BrevInnholdUtlederTest {
                     fagsak = fagsak.copy(stønadstype = stønadstype),
                     klagefristUnntakBegrunnelse = null,
                     vurdering = vurdering,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                     klageMottatt = klageMottatt,
                 )
@@ -389,7 +407,7 @@ internal class BrevInnholdUtlederTest {
                     fagsak = fagsak.copy(stønadstype = stønadstype),
                     klagefristUnntakBegrunnelse = null,
                     vurdering = vurdering,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                     klageMottatt = klageMottatt,
                 )
@@ -436,7 +454,7 @@ internal class BrevInnholdUtlederTest {
                     fagsak = fagsak.copy(stønadstype = stønadstype),
                     klagefristUnntakBegrunnelse = klagefristUnntakBegrunnelse,
                     vurdering = vurdering,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                     klageMottatt = klageMottatt,
                 )
@@ -479,7 +497,7 @@ internal class BrevInnholdUtlederTest {
                     fagsak = fagsak.copy(stønadstype = Stønadstype.BARNETRYGD, institusjon = lagInstitusjon()),
                     klagefristUnntakBegrunnelse = null,
                     vurdering = vurdering,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                     klageMottatt = klageMottatt,
                 )
@@ -539,7 +557,7 @@ internal class BrevInnholdUtlederTest {
             val formkravAvvistBrev =
                 brevInnholdUtleder.lagFormkravAvvistBrev(
                     fagsak = fagsak,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     form = ikkeOppfyltForm(),
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                 )
@@ -583,7 +601,7 @@ internal class BrevInnholdUtlederTest {
             val formkravAvvistBrev =
                 brevInnholdUtleder.lagFormkravAvvistBrev(
                     fagsak = fagsak,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     form = ikkeOppfyltForm(),
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                 )
@@ -627,7 +645,7 @@ internal class BrevInnholdUtlederTest {
             val formkravAvvistBrev =
                 brevInnholdUtleder.lagFormkravAvvistBrev(
                     fagsak = fagsak,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     form = ikkeOppfyltForm(),
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                 )
@@ -671,7 +689,7 @@ internal class BrevInnholdUtlederTest {
             val formkravAvvistBrev =
                 brevInnholdUtleder.lagFormkravAvvistBrev(
                     fagsak = fagsak,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     form = ikkeOppfyltForm(),
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                 )
@@ -713,7 +731,7 @@ internal class BrevInnholdUtlederTest {
             val formkravAvvistBrev =
                 brevInnholdUtleder.lagFormkravAvvistBrev(
                     fagsak = fagsak,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     form = ikkeOppfyltForm(),
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                 )
@@ -755,7 +773,7 @@ internal class BrevInnholdUtlederTest {
             val formkravAvvistBrev =
                 brevInnholdUtleder.lagFormkravAvvistBrev(
                     fagsak = fagsak,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     form = ikkeOppfyltForm(),
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                 )
@@ -797,7 +815,7 @@ internal class BrevInnholdUtlederTest {
             val formkravAvvistBrev =
                 brevInnholdUtleder.lagFormkravAvvistBrev(
                     fagsak = fagsak,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     form = ikkeOppfyltForm(),
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                 )
@@ -839,7 +857,7 @@ internal class BrevInnholdUtlederTest {
             val formkravAvvistBrev =
                 brevInnholdUtleder.lagFormkravAvvistBrev(
                     fagsak = fagsak,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     form = ikkeOppfyltForm(),
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                 )
@@ -881,7 +899,7 @@ internal class BrevInnholdUtlederTest {
             val formkravAvvistBrev =
                 brevInnholdUtleder.lagFormkravAvvistBrev(
                     fagsak = fagsak,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     form = ikkeOppfyltForm(),
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                 )
@@ -918,7 +936,7 @@ internal class BrevInnholdUtlederTest {
             val formkravAvvistBrev =
                 brevInnholdUtleder.lagFormkravAvvistBrev(
                     fagsak = fagsak,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     form = ikkeOppfyltForm(),
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                 )
@@ -955,7 +973,7 @@ internal class BrevInnholdUtlederTest {
             val formkravAvvistBrev =
                 brevInnholdUtleder.lagFormkravAvvistBrev(
                     fagsak = fagsak,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     form = ikkeOppfyltForm(),
                     påklagetVedtakDetaljer = null,
                 )
@@ -992,7 +1010,7 @@ internal class BrevInnholdUtlederTest {
             val formkravAvvistBrev =
                 brevInnholdUtleder.lagFormkravAvvistBrev(
                     fagsak = fagsak,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     form = ikkeOppfyltForm(),
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                 )
@@ -1029,7 +1047,7 @@ internal class BrevInnholdUtlederTest {
             val formkravAvvistBrev =
                 brevInnholdUtleder.lagFormkravAvvistBrev(
                     fagsak = fagsak,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     form = ikkeOppfyltForm(),
                     påklagetVedtakDetaljer = null,
                 )
@@ -1071,7 +1089,7 @@ internal class BrevInnholdUtlederTest {
             val formkravAvvistBrev =
                 brevInnholdUtleder.lagFormkravAvvistBrev(
                     fagsak = fagsak,
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     form = ikkeOppfyltForm(),
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                 )
@@ -1101,7 +1119,7 @@ internal class BrevInnholdUtlederTest {
             val brev =
                 brevInnholdUtleder.lagFormkravAvvistBrev(
                     fagsak = fagsak.copy(stønadstype = Stønadstype.BARNETRYGD, institusjon = lagInstitusjon()),
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     form = ikkeOppfyltForm(),
                     påklagetVedtakDetaljer = påklagetVedtakDetaljer,
                 )
@@ -1128,7 +1146,7 @@ internal class BrevInnholdUtlederTest {
                 assertThrows<IllegalStateException> {
                     brevInnholdUtleder.lagFormkravAvvistBrevIkkePåklagetVedtak(
                         fagsak = fagsak(),
-                        navn = navn,
+                        personopplysninger = personopplysninger,
                         formkrav = ikkeOppfyltForm().copy(brevtekst = null),
                     )
                 }
@@ -1147,7 +1165,7 @@ internal class BrevInnholdUtlederTest {
             val brev =
                 brevInnholdUtleder.lagFormkravAvvistBrevIkkePåklagetVedtak(
                     fagsak = fagsak.copy(stønadstype = stønadstype),
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     formkrav = ikkeOppfyltForm(),
                 )
 
@@ -1174,7 +1192,7 @@ internal class BrevInnholdUtlederTest {
             val brev =
                 brevInnholdUtleder.lagFormkravAvvistBrevIkkePåklagetVedtak(
                     fagsak = fagsak.copy(stønadstype = stønadstype),
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     formkrav = ikkeOppfyltForm(),
                 )
 
@@ -1195,7 +1213,7 @@ internal class BrevInnholdUtlederTest {
             val brev =
                 brevInnholdUtleder.lagFormkravAvvistBrevIkkePåklagetVedtak(
                     fagsak = fagsak.copy(stønadstype = Stønadstype.BARNETRYGD, institusjon = lagInstitusjon()),
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                     formkrav = ikkeOppfyltForm(),
                 )
 
@@ -1224,7 +1242,7 @@ internal class BrevInnholdUtlederTest {
             val henleggelsesbrevBaksInnhold =
                 brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(
                     fagsak = fagsak.copy(stønadstype = stønadstype),
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                 )
 
             // Assert
@@ -1247,7 +1265,7 @@ internal class BrevInnholdUtlederTest {
             val henleggelsesbrevBaksInnhold =
                 brevInnholdUtleder.lagHenleggelsesbrevBaksInnhold(
                     fagsak = fagsak.copy(stønadstype = Stønadstype.BARNETRYGD, institusjon = lagInstitusjon()),
-                    navn = navn,
+                    personopplysninger = personopplysninger,
                 )
 
             // Assert
