@@ -21,7 +21,7 @@ class BrevsignaturService(
         val harStrengtFortroligAdresse: Boolean = personopplysningerDto.adressebeskyttelse?.erStrengtFortrolig() ?: false
 
         if (harStrengtFortroligAdresse) {
-            return SignaturDto(NAV_ANONYM_NAVN, ENHET_VIKAFOSSEN)
+            return SignaturDto(enhet = ENHET_VIKAFOSSEN)
         }
 
         return when (fagsystem) {
@@ -54,7 +54,6 @@ class BrevsignaturService(
     private fun hentSaksbehandlerInfo(navIdent: String) = oppgaveClient.hentSaksbehandlerInfo(navIdent)
 
     companion object {
-        const val NAV_ANONYM_NAVN = "Nav anonym"
         const val ENHET_VIKAFOSSEN = "Nav Vikafossen"
         const val ENHET_NAY = "Nav arbeid og ytelser"
         const val ENHET_NFP = "Nav familie- og pensjonsytelser"

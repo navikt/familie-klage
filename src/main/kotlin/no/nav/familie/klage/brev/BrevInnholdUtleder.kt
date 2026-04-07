@@ -11,6 +11,7 @@ import no.nav.familie.klage.felles.util.TekstUtil.norskFormat
 import no.nav.familie.klage.felles.util.TekstUtil.norskFormatLang
 import no.nav.familie.klage.felles.util.TekstUtil.storForbokstav
 import no.nav.familie.klage.formkrav.domain.Form
+import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerDto
 import no.nav.familie.klage.vurdering.VurderingValidator.validerVurdering
 import no.nav.familie.klage.vurdering.domain.Vurdering
 import no.nav.familie.klage.vurdering.dto.tilDto
@@ -26,14 +27,14 @@ class BrevInnholdUtleder(
     fun lagOpprettholdelseBrev(
         fagsak: Fagsak,
         innstillingKlageinstans: String,
-        navn: String,
+        personopplysninger: PersonopplysningerDto,
         påklagetVedtakDetaljer: PåklagetVedtakDetaljer,
         klageMottatt: LocalDate,
     ): FritekstBrevRequestDto =
         FritekstBrevRequestDto(
             overskrift = "Vi har sendt klagen din til Nav Klageinstans Nord",
-            navn = navn,
-            personIdent = fagsak.hentFagsakEierIdent(),
+            navn = personopplysninger.navn,
+            personIdent = personopplysninger.personIdent,
             avsnitt =
                 listOf(
                     AvsnittDto(
@@ -61,7 +62,7 @@ class BrevInnholdUtleder(
         fagsak: Fagsak,
         klagefristUnntakBegrunnelse: String?,
         vurdering: Vurdering,
-        navn: String,
+        personopplysninger: PersonopplysningerDto,
         påklagetVedtakDetaljer: PåklagetVedtakDetaljer,
         klageMottatt: LocalDate,
     ): FritekstBrevRequestDto {
@@ -70,8 +71,8 @@ class BrevInnholdUtleder(
 
         return FritekstBrevRequestDto(
             overskrift = "Vi har sendt klagen $possesiv til Nav Klageinstans Nord",
-            navn = navn,
-            personIdent = fagsak.hentFagsakEierIdent(),
+            navn = personopplysninger.navn,
+            personIdent = personopplysninger.personIdent,
             avsnitt =
                 listOfNotNull(
                     AvsnittDto(
@@ -131,7 +132,7 @@ class BrevInnholdUtleder(
 
     fun lagFormkravAvvistBrev(
         fagsak: Fagsak,
-        navn: String,
+        personopplysninger: PersonopplysningerDto,
         form: Form,
         påklagetVedtakDetaljer: PåklagetVedtakDetaljer?,
     ): FritekstBrevRequestDto {
@@ -141,8 +142,8 @@ class BrevInnholdUtleder(
 
         return FritekstBrevRequestDto(
             overskrift = "Vi har avvist klagen $possesiv på vedtaket om ${visningsnavn(fagsak.stønadstype, påklagetVedtakDetaljer)}",
-            personIdent = fagsak.hentFagsakEierIdent(),
-            navn = navn,
+            personIdent = personopplysninger.personIdent,
+            navn = personopplysninger.navn,
             avsnitt =
                 listOf(
                     AvsnittDto(
@@ -166,7 +167,7 @@ class BrevInnholdUtleder(
 
     fun lagFormkravAvvistBrevIkkePåklagetVedtak(
         fagsak: Fagsak,
-        navn: String,
+        personopplysninger: PersonopplysningerDto,
         formkrav: Form,
     ): FritekstBrevRequestDto {
         val brevtekstFraSaksbehandler =
@@ -175,8 +176,8 @@ class BrevInnholdUtleder(
 
         return FritekstBrevRequestDto(
             overskrift = "Vi har avvist klagen $possesiv",
-            personIdent = fagsak.hentFagsakEierIdent(),
-            navn = navn,
+            personIdent = personopplysninger.navn,
+            navn = personopplysninger.navn,
             avsnitt =
                 listOf(
                     AvsnittDto(
@@ -200,14 +201,14 @@ class BrevInnholdUtleder(
 
     fun lagHenleggelsesbrevBaksInnhold(
         fagsak: Fagsak,
-        navn: String,
+        personopplysninger: PersonopplysningerDto,
     ): FritekstBrevRequestDto {
         val (possesiv, subjekt) = hentPronomen(fagsak)
 
         return FritekstBrevRequestDto(
             overskrift = "Saken $possesiv er avsluttet",
-            personIdent = fagsak.hentFagsakEierIdent(),
-            navn = navn,
+            personIdent = personopplysninger.personIdent,
+            navn = personopplysninger.navn,
             avsnitt =
                 listOfNotNull(
                     AvsnittDto(

@@ -34,7 +34,7 @@ class BrevClient(
 
     fun genererHtmlFritekstbrev(
         fritekstBrev: FritekstBrevRequestDto,
-        saksbehandlerNavn: String,
+        saksbehandlerNavn: String?,
         enhet: String,
         fagsystem: Fagsystem,
         brevmottakere: Brevmottakere?,
@@ -62,7 +62,7 @@ class BrevClient(
     fun genererHtml(
         brevmal: String,
         saksbehandlerBrevrequest: JsonNode,
-        saksbehandlersignatur: String,
+        saksbehandlersignatur: String?,
         saksbehandlerEnhet: String?,
         skjulBeslutterSignatur: Boolean,
         stønadstype: Stønadstype,
@@ -105,14 +105,14 @@ class BrevClient(
 
 data class FritekstBrevRequestMedSignatur(
     val brevFraSaksbehandler: FritekstBrevRequestDto,
-    val saksbehandlersignatur: String,
+    val saksbehandlersignatur: String? = null,
     val enhet: String,
     val brevmottakere: Brevmottakere? = null,
 )
 
 data class BrevRequest(
     val brevFraSaksbehandler: JsonNode,
-    val saksbehandlersignatur: String,
+    val saksbehandlersignatur: String? = null,
     val saksbehandlerEnhet: String? = null,
     val besluttersignatur: String? = null,
     val beslutterEnhet: String? = null,
