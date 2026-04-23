@@ -30,7 +30,7 @@
         <springdoc.version>3.0.1</springdoc.version>
         <mockk-jvm.version>1.14.6</mockk-jvm.version>
         <felles.version>4.20260205114838_3a4c3dc</felles.version>
-        <prosessering.version>2.20251110093725_10552cd</prosessering.version>
+        <prosessering.version>2.20260420122910_8bfca04</prosessering.version>
         <start-class>no.nav.familie.klage.ApplicationKt</start-class>
         <kontrakter.version>4.0_20260310154326_244725f</kontrakter.version>
         <saksstatistikk-klage.version>2.0_20260127152808_4f00dcf</saksstatistikk-klage.version>
@@ -151,6 +151,11 @@
         <dependency>
             <groupId>no.nav.familie</groupId>
             <artifactId>prosessering-core</artifactId>
+            <version>${prosessering.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.familie</groupId>
+            <artifactId>prosessering-web-nav-token-support</artifactId>
             <version>${prosessering.version}</version>
         </dependency>
         <dependency>
