@@ -18,7 +18,6 @@ import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.KanOppretteRevurderingResponse
 import no.nav.familie.kontrakter.felles.oppgave.MappeDto
-import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -31,7 +30,6 @@ import java.util.UUID
 
 @RestController
 @RequestMapping(path = ["/api/behandling"])
-@ProtectedWithClaims(issuer = "azuread")
 @Validated
 class BehandlingController(
     private val behandlingService: BehandlingService,

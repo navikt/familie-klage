@@ -5,7 +5,6 @@ import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerDto
 import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerFagsakEierOgSøkerDto
 import no.nav.familie.kontrakter.felles.Ressurs
-import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -15,7 +14,6 @@ import java.util.UUID
 
 @RestController
 @RequestMapping(path = ["/api/personopplysninger"])
-@ProtectedWithClaims(issuer = "azuread")
 @Validated
 class PersonopplysningerController(
     private val personopplysningerService: PersonopplysningerService,

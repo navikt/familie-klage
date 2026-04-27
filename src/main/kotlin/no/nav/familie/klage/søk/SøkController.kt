@@ -12,7 +12,6 @@ import no.nav.familie.klage.søk.dto.PersonTreffDto
 import no.nav.familie.klage.søk.ereg.EregService
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.organisasjon.Organisasjon
-import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping(path = ["/api/sok"])
-@ProtectedWithClaims(issuer = "azuread")
 @Validated
 class SøkController(
     private val tilgangService: TilgangService,
