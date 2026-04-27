@@ -16,12 +16,6 @@ spring:
       security:
         protocol: PLAINTEXT
 
-no.nav.security.jwt:
-  issuer.azuread:
-    discoveryurl: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
-    accepted_audience: ${AZURE_APP_CLIENT_ID}
-    proxy_url: #Default satt, skal være null lokalt
-
 AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
 FAMILIE_INTEGRASJONER_URL: http://localhost:8386
 FAMILIE_BREV_API_URL: http://localhost:8001
