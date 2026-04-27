@@ -1,6 +1,8 @@
 package no.nav.familie.klage.infrastruktur.config
 
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
+import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext.hentClaimFraToken
+import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext.hentJwt
 import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.log.NavSystemtype
 import no.nav.familie.log.filter.LogFilter
@@ -9,10 +11,12 @@ import no.nav.familie.prosessering.config.ProsesseringInfoProvider
 import no.nav.familie.restklient.config.RestTemplateAzure
 import no.nav.familie.restklient.interceptor.ConsumerIdClientInterceptor
 import no.nav.familie.restklient.interceptor.MdcValuesPropagatingClientInterceptor
-import no.nav.familie.sikkerhet.context.FamilieFellesNavTokenSupportKonfigurasjon
+import no.nav.familie.sikkerhet.UgyldigJwtTokenException
+import no.nav.familie.sikkerhet.context.FamilieFellesSpringSecurityKonfigurasjon
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
-import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
-import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
+import no.nav.security.token.support.core.context.TokenValidationContext
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
+import no.nav.security.token.support.core.jwt.JwtToken
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringBootConfiguration
@@ -38,8 +42,7 @@ import java.time.temporal.ChronoUnit
     "no.nav.familie.sikkerhet",
     "no.nav.familie.unleash",
 )
-@EnableJwtTokenValidation(ignore = ["org.springframework", "org.springdoc"])
-@Import(RestTemplateAzure::class, FamilieFellesNavTokenSupportKonfigurasjon::class)
+@Import(RestTemplateAzure::class, FamilieFellesSpringSecurityKonfigurasjon::class)
 @EnableOAuth2Client(cacheEnabled = true)
 @EnableScheduling
 class ApplicationConfig {
@@ -92,18 +95,23 @@ class ApplicationConfig {
             ).build()
 
     @Bean
+    fun tokenValidationContextHolder(): TokenValidationContextHolder =
+        object : TokenValidationContextHolder {
+            override fun getTokenValidationContext(): TokenValidationContext {
+                val validatedTokens = hentJwt()?.let { mapOf(it.issuer.toString() to JwtToken(it.tokenValue)) }.orEmpty()
+                return TokenValidationContext(validatedTokens)
+            }
+
+            override fun setTokenValidationContext(tokenValidationContext: TokenValidationContext?) = Unit
+        }
+
+    @Bean
     fun prosesseringInfoProvider(
         @Value("\${prosessering.rolle}") prosesseringRolle: String,
     ) = object : ProsesseringInfoProvider {
         override fun hentBrukernavn(): String =
-            try {
-                SpringTokenValidationContextHolder()
-                    .getTokenValidationContext()
-                    .getClaims("azuread")
-                    .getStringClaim("preferred_username")
-            } catch (e: Exception) {
-                throw e
-            }
+            hentClaimFraToken("preferred_username")
+                ?: throw UgyldigJwtTokenException("Fant ikke preferred_username i token")
 
         override fun harTilgang(): Boolean = SikkerhetContext.harRolle(prosesseringRolle)
     }

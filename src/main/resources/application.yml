@@ -14,9 +14,6 @@ springdoc:
     disable-swagger-default-url: true
 
 no.nav.security.jwt:
-  issuer.azuread:
-    discoveryurl: ${AZURE_APP_WELL_KNOWN_URL}
-    accepted_audience: ${AZURE_APP_CLIENT_ID}
   client:
     registration:
       familie-integrasjoner:
@@ -151,6 +148,12 @@ FAMILIE_INTEGRASJONER_SCOPE: api://${DEPLOY_ENV}-fss.teamfamilie.familie-integra
 
 
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${AZURE_OPENID_CONFIG_ISSUER}
+          audiences: ${AZURE_APP_CLIENT_ID}
   mvc:
     format:
       date: iso
