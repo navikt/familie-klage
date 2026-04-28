@@ -149,6 +149,11 @@
             <version>${felles.version}</version>
         </dependency>
         <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>sikkerhet-token-support</artifactId>
+            <version>${felles.version}</version>
+        </dependency>
+        <dependency>
             <groupId>no.nav.familie</groupId>
             <artifactId>prosessering-core</artifactId>
             <version>${prosessering.version}</version>
@@ -171,11 +176,6 @@
         <dependency>
             <groupId>no.nav.familie.felles</groupId>
             <artifactId>kafka</artifactId>
-            <version>${felles.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.familie.felles</groupId>
-            <artifactId>sikkerhet-token-support</artifactId>
             <version>${felles.version}</version>
         </dependency>
         <!-- Logging og metrikker -->
