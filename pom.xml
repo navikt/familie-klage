@@ -29,7 +29,7 @@
         <kotlin.version>2.3.10</kotlin.version>
         <springdoc.version>3.0.1</springdoc.version>
         <mockk-jvm.version>1.14.6</mockk-jvm.version>
-        <felles.version>4.20260205114838_3a4c3dc</felles.version>
+        <felles.version>4.20260428092133_557f62f</felles.version>
         <prosessering.version>2.20260420122910_8bfca04</prosessering.version>
         <start-class>no.nav.familie.klage.ApplicationKt</start-class>
         <kontrakter.version>4.0_20260310154326_244725f</kontrakter.version>
@@ -171,6 +171,11 @@
         <dependency>
             <groupId>no.nav.familie.felles</groupId>
             <artifactId>kafka</artifactId>
+            <version>${felles.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>sikkerhet-token-support</artifactId>
             <version>${felles.version}</version>
         </dependency>
         <!-- Logging og metrikker -->
