@@ -9,7 +9,6 @@ import no.nav.familie.prosessering.config.ProsesseringInfoProvider
 import no.nav.familie.restklient.config.RestTemplateAzure
 import no.nav.familie.restklient.interceptor.ConsumerIdClientInterceptor
 import no.nav.familie.restklient.interceptor.MdcValuesPropagatingClientInterceptor
-import no.nav.familie.sikkerhet.context.FamilieFellesNavTokenSupportKonfigurasjon
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
@@ -39,7 +38,7 @@ import java.time.temporal.ChronoUnit
     "no.nav.familie.unleash",
 )
 @EnableJwtTokenValidation(ignore = ["org.springframework", "org.springdoc"])
-@Import(RestTemplateAzure::class, FamilieFellesNavTokenSupportKonfigurasjon::class)
+@Import(RestTemplateAzure::class)
 @EnableOAuth2Client(cacheEnabled = true)
 @EnableScheduling
 class ApplicationConfig {
