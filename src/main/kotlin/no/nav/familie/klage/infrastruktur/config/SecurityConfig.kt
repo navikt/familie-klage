@@ -1,12 +1,19 @@
 package no.nav.familie.klage.infrastruktur.config
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import no.nav.familie.klage.infrastruktur.config.JsonMapperProvider.jsonMapper
 import no.nav.familie.klage.infrastruktur.sikkerhet.AzureJwtAuthenticationConverter
+import no.nav.familie.kontrakter.felles.Ressurs
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.MediaType
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.access.AccessDeniedHandler
 
 @Configuration
 @EnableWebSecurity
@@ -21,17 +28,41 @@ class SecurityConfig(
                 authorize("/internal/**", permitAll)
                 authorize("/actuator/**", permitAll)
                 authorize("/swagger-ui/**", permitAll)
+                authorize("/v2/api-docs/**", permitAll)
                 authorize("/v3/api-docs/**", permitAll)
                 authorize("/swagger-ui.html", permitAll)
+                authorize("/swagger-resources/**", permitAll)
                 authorize("/api/ping", permitAll)
-                authorize(anyRequest, authenticated)
+                authorize(anyRequest, hasRole("VEILEDER"))
             }
             oauth2ResourceServer {
                 jwt {
                     jwtAuthenticationConverter = azureJwtAuthenticationConverter
                 }
             }
+            exceptionHandling {
+                accessDeniedHandler = accessDeniedHandler()
+            }
         }
         return http.build()
     }
+
+    private fun accessDeniedHandler(): AccessDeniedHandler =
+        AccessDeniedHandler { _: HttpServletRequest, response: HttpServletResponse, _: AccessDeniedException ->
+            response.apply {
+                status = HttpServletResponse.SC_FORBIDDEN
+                contentType = MediaType.APPLICATION_JSON_VALUE
+                characterEncoding = "UTF-8"
+                jsonMapper.writeValue(
+                    writer,
+                    Ressurs(
+                        data = null,
+                        status = Ressurs.Status.IKKE_TILGANG,
+                        melding = "Bruker har ikke tilgang til saksbehandlingsløsningen",
+                        frontendFeilmelding = "Du mangler tilgang til denne saksbehandlingsløsningen",
+                        stacktrace = null,
+                    ),
+                )
+            }
+        }
 }
