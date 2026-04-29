@@ -1,0 +1,18 @@
+name: Digestabot Updates
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 1' # monday 06:00
+
+jobs:
+  digest-update:
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    uses: navikt/familie-baks-gha-workflows/.github/workflows/digestabot.yaml@main
+    with:
+      digestabot-client-id: ${{ vars.DIGESTABOT_CLIENT_ID }}
+    secrets:
+      DIGESTABOT_PRIVATE_KEY: ${{ secrets.DIGESTABOT_PRIVATE_KEY }}
