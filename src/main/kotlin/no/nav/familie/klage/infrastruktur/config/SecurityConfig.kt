@@ -1,5 +1,6 @@
 package no.nav.familie.klage.infrastruktur.config
 
+import no.nav.familie.klage.infrastruktur.sikkerhet.AzureJwtAuthenticationConverter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -9,7 +10,9 @@ import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig {
+class SecurityConfig(
+    private val azureJwtAuthenticationConverter: AzureJwtAuthenticationConverter,
+) {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http {
@@ -24,7 +27,9 @@ class SecurityConfig {
                 authorize(anyRequest, authenticated)
             }
             oauth2ResourceServer {
-                jwt { }
+                jwt {
+                    jwtAuthenticationConverter = azureJwtAuthenticationConverter
+                }
             }
         }
         return http.build()
