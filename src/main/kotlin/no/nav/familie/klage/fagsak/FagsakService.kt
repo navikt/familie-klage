@@ -38,12 +38,12 @@ class FagsakService(
             logger.error("Fagsak med eksternId=$eksternId finnes allerede, men ikke med institusjon=$orgNummer.")
             throw Feil("Fagsak med eksternId=$eksternId finnes allerede, men ikke med institusjon=$orgNummer.")
         }
-        
+
         val fagsakEier = hentEllerOpprettPersonOgOppdaterIdenter(fagsakEierIdent, stønadstype)
         val søker = if (fagsakEierIdent == søkerIdent) fagsakEier else hentEllerOpprettPersonOgOppdaterIdenter(søkerIdent, stønadstype)
 
         val institusjon =
-            fagsakDomain?.institusjonId?.let { institusjonService.finnInstitusjon(it) } 
+            fagsakDomain?.institusjonId?.let { institusjonService.finnInstitusjon(it) }
                 ?: orgNummer?.let { institusjonService.hentEllerLagreInstitusjon(orgNummer) }
 
         val fagsak = fagsakDomain ?: opprettFagsak(stønadstype, eksternId, fagsystem, fagsakEier, søker, institusjon)
