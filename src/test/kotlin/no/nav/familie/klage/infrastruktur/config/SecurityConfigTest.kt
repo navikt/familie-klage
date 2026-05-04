@@ -3,6 +3,7 @@ package no.nav.familie.klage.infrastruktur.config
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.Ressurs.Status.FEILET
 import no.nav.familie.kontrakter.felles.Ressurs.Status.IKKE_TILGANG
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.assertj.core.api.Assertions.assertThat
@@ -51,12 +52,14 @@ class SecurityConfigTest(
         @Test
         fun `api-kall uten token returnerer 401`() {
             val response =
-                restTemplate.exchange<Any>(
+                restTemplate.exchange<Ressurs<Any>>(
                     url = behandlingUrl,
                     method = GET,
                     requestEntity = HttpEntity(null, headers),
                 )
             assertThat(response.statusCode).isEqualTo(UNAUTHORIZED)
+            assertThat(response.body?.status).isEqualTo(FEILET)
+            assertThat(response.body?.frontendFeilmelding).isEqualTo("En uventet feil oppstod: Kall ikke autorisert")
         }
     }
 
