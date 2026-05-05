@@ -22,7 +22,6 @@ import no.nav.familie.klage.vurdering.domain.Vurdering
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskLogg
 import no.nav.security.mock.oauth2.MockOAuth2Server
-import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -35,6 +34,8 @@ import org.springframework.data.jdbc.core.JdbcAggregateOperations
 import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
@@ -56,7 +57,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
     "mock-fullmakt",
     "mock-featuretoggle",
 )
-@EnableMockOAuth2Server
 abstract class OppslagSpringRunnerTest {
     protected val listAppender = initLoggingEventListAppender()
     protected var loggingEvents: MutableList<ILoggingEvent> = listAppender.list
@@ -74,9 +74,6 @@ abstract class OppslagSpringRunnerTest {
 
     @Autowired
     private lateinit var rolleConfig: RolleConfig
-
-    @Autowired
-    private lateinit var mockOAuth2Server: MockOAuth2Server
 
     @Autowired
     lateinit var testoppsettService: TestoppsettService
@@ -140,6 +137,22 @@ abstract class OppslagSpringRunnerTest {
 
     companion object {
         private const val LOCALHOST = "http://localhost:"
+
+        val mockOAuth2Server: MockOAuth2Server by lazy {
+            MockOAuth2Server().also { server ->
+                server.start()
+                Runtime.getRuntime().addShutdownHook(Thread { server.shutdown() })
+            }
+        }
+
+        @JvmStatic
+        @DynamicPropertySource
+        @Suppress("unused")
+        fun mockOAuth2ServerProperties(registry: DynamicPropertyRegistry) {
+            val port = mockOAuth2Server.baseUrl().port
+            registry.add("AZURE_OPENID_CONFIG_ISSUER") { "http://localhost:$port/azuread" }
+            registry.add("AZURE_APP_CLIENT_ID") { "aud-localhost" }
+        }
 
         protected fun initLoggingEventListAppender(): ListAppender<ILoggingEvent> {
             val listAppender = ListAppender<ILoggingEvent>()
