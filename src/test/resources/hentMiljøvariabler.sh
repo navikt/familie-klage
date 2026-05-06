@@ -20,10 +20,11 @@ PODVARIABLER="$(kubectl -n teamfamilie get secret "$AZURE_SECRET" -o json | jq '
 AZURE_APP_CLIENT_ID="$(echo "$PODVARIABLER" | grep "AZURE_APP_CLIENT_ID" | sed 's/:/=/1' | tr -d '",'| tr -d ' "')"
 AZURE_APP_CLIENT_SECRET="$(echo "$PODVARIABLER" | grep "AZURE_APP_CLIENT_SECRET" | sed 's/:/=/1' | tr -d '",'| tr -d ' "')"
 AZURE_OPENID_CONFIG_ISSUER="$(echo "$PODVARIABLER" | grep "AZURE_OPENID_CONFIG_ISSUER" | sed 's/:/=/1' | tr -d '",'| tr -d ' "')"
+AZURE_OPENID_CONFIG_JWKS_URI="$(echo "$PODVARIABLER" | grep "AZURE_OPENID_CONFIG_JWKS_URI" | sed 's/:/=/1' | tr -d '",'| tr -d ' "')"
 
 if [ -z "$AZURE_APP_CLIENT_ID" ]
 then
       exit 1
 else
-      printf "%s;%s;%s" "$AZURE_APP_CLIENT_ID" "$AZURE_APP_CLIENT_SECRET" "$AZURE_OPENID_CONFIG_ISSUER"
+      printf "%s;%s;%s;%s" "$AZURE_APP_CLIENT_ID" "$AZURE_APP_CLIENT_SECRET" "$AZURE_OPENID_CONFIG_ISSUER" "$AZURE_OPENID_CONFIG_JWKS_URI"
 fi

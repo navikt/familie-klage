@@ -151,6 +151,7 @@ abstract class OppslagSpringRunnerTest {
         fun mockOAuth2ServerProperties(registry: DynamicPropertyRegistry) {
             val port = mockOAuth2Server.baseUrl().port
             registry.add("AZURE_OPENID_CONFIG_ISSUER") { "http://localhost:$port/azuread" }
+            registry.add("AZURE_OPENID_CONFIG_JWKS_URI") { "http://localhost:$port/azuread/jwks" }
             registry.add("AZURE_APP_CLIENT_ID") { "aud-localhost" }
         }
 
