@@ -1,7 +1,5 @@
 package no.nav.familie.klage.infrastruktur.sikkerhet
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
@@ -9,8 +7,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 object SikkerhetContext {
     private const val SYSTEM_NAVN = "System"
     const val SYSTEM_FORKORTELSE = "VL"
-
-    private val logger: Logger = LoggerFactory.getLogger(SikkerhetContext::class.java)
 
     fun erMaskinTilMaskinToken(): Boolean {
         val oid = hentClaimFraToken<String>("oid")
@@ -34,10 +30,7 @@ object SikkerhetContext {
 
     fun hentGrupperFraToken(): List<String> = hentClaimFraToken<List<String>>("groups") ?: emptyList()
 
-    fun <T> hentClaimFraToken(claim: String): T? =
-        runCatching { hentJwt()!!.getClaim<T>(claim)!! }
-            .onFailure { logger.warn("Klarte ikke å hent claim '$claim' fra token", it) }
-            .getOrNull()
+    fun <T> hentClaimFraToken(claim: String): T? = runCatching { hentJwt()!!.getClaim<T>(claim)!! }.getOrNull()
 
     fun hentJwt(): Jwt? = (SecurityContextHolder.getContext().authentication as? JwtAuthenticationToken)?.token
 
