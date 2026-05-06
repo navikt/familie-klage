@@ -30,11 +30,10 @@ class SecurityConfig(
             authorizeHttpRequests {
                 authorize("/internal/**", permitAll)
                 authorize("/actuator/**", permitAll)
-                authorize("/swagger-ui/**", permitAll)
-                authorize("/v2/api-docs/**", permitAll)
-                authorize("/v3/api-docs/**", permitAll)
                 authorize("/swagger-ui.html", permitAll)
-                authorize("/swagger-resources/**", permitAll)
+                authorize("/swagger-ui/**", permitAll)
+                authorize("/v3/api-docs", permitAll)
+                authorize("/v3/api-docs/**", permitAll)
                 authorize("/api/ping", permitAll)
                 authorize(anyRequest, hasRole("VEILEDER"))
             }
