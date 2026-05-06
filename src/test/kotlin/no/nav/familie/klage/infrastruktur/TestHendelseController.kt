@@ -12,6 +12,7 @@ import no.nav.familie.klage.kabal.event.BehandlingEventService
 import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.KlageinstansUtfall
+import org.springframework.context.annotation.Profile
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -25,6 +26,7 @@ import java.util.UUID
 @RestController
 @RequestMapping(path = ["/api/test/kabal"])
 @Validated
+@Profile("!prod")
 class TestHendelseController(
     private val behandlingRepository: BehandlingRepository,
     private val behandlingEventService: BehandlingEventService,
