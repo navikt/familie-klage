@@ -29,7 +29,6 @@ class SecurityConfig(
             csrf { disable() }
             authorizeHttpRequests {
                 authorize("/internal/**", permitAll)
-                authorize("/actuator/**", permitAll)
                 authorize("/swagger-ui.html", permitAll)
                 authorize("/swagger-ui/**", permitAll)
                 authorize("/v3/api-docs", permitAll)
