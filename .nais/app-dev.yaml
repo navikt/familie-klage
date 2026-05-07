@@ -47,7 +47,7 @@ spec:
         diskAutoresize: true
         cascadingDelete: false
         highAvailability: false
-        pointInTimeRecovery: true
+        pointInTimeRecovery: false
         maintenance:
           day: 7
           hour: 23
