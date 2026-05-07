@@ -9,14 +9,9 @@ class RolleConfig(
     val ks: FagsystemRolleConfig,
     val egenAnsatt: String,
 ) {
-    val beslutterRoller: Set<String>
-        get() = setOf(ba.beslutter, ef.beslutter, ks.beslutter)
-
-    val saksbehandlerRoller: Set<String>
-        get() = setOf(ba.saksbehandler, ks.saksbehandler, egenAnsatt)
-
-    val veilederRoller: Set<String>
-        get() = setOf(ba.veileder, ks.veileder, ef.veileder)
+    val beslutterRoller = setOf(ba.beslutter, ks.beslutter, ef.beslutter)
+    val saksbehandlerRoller = setOf(ba.saksbehandler, ks.saksbehandler, ef.saksbehandler)
+    val veilederRoller = setOf(ba.veileder, ks.veileder, ef.veileder)
 }
 
 data class FagsystemRolleConfig(
