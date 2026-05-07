@@ -59,7 +59,7 @@ class SecurityConfigTest(
                 )
             assertThat(response.statusCode).isEqualTo(UNAUTHORIZED)
             assertThat(response.body?.status).isEqualTo(FEILET)
-            assertThat(response.body?.frontendFeilmelding).isEqualTo("En uventet feil oppstod: Kall ikke autorisert")
+            assertThat(response.body?.frontendFeilmelding).isEqualTo("Kall ikke autorisert")
         }
     }
 

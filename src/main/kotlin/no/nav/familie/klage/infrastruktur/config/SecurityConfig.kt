@@ -83,7 +83,7 @@ class SecurityConfig(
                     writer,
                     failure<String>(
                         errorMessage = "401 Unauthorized",
-                        frontendFeilmelding = "En uventet feil oppstod: Kall ikke autorisert",
+                        frontendFeilmelding = "Kall ikke autorisert",
                     ),
                 )
             }
