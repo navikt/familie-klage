@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.2</version>
+        <version>4.0.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <repositories>
@@ -26,16 +26,16 @@
 
     <properties>
         <java.version>25</java.version>
-        <kotlin.version>2.3.10</kotlin.version>
-        <springdoc.version>3.0.1</springdoc.version>
-        <mockk-jvm.version>1.14.6</mockk-jvm.version>
-        <felles.version>4.20260428145828_c16a1d8</felles.version>
-        <prosessering.version>2.20260420122910_8bfca04</prosessering.version>
+        <kotlin.version>2.3.21</kotlin.version>
+        <springdoc.version>3.0.3</springdoc.version>
+        <mockk-jvm.version>1.14.9</mockk-jvm.version>
+        <felles.version>4.20260508110757_96596c8</felles.version>
+        <prosessering.version>2.20260505135425_027709f</prosessering.version>
         <start-class>no.nav.familie.klage.ApplicationKt</start-class>
-        <kontrakter.version>4.0_20260310154326_244725f</kontrakter.version>
-        <saksstatistikk-klage.version>2.0_20260127152808_4f00dcf</saksstatistikk-klage.version>
-        <nav.security.version>6.0.2</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
-        <testcontainers.version>1.21.4</testcontainers.version>
+        <kontrakter.version>4.0_20260505124916_025d466</kontrakter.version>
+        <saksstatistikk-klage.version>2.0_20260323170751_4c02e3c</saksstatistikk-klage.version>
+        <nav.security.version>6.0.7</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
+        <testcontainers.version>2.0.5</testcontainers.version>
     </properties>
 
     <dependencyManagement>
@@ -221,7 +221,7 @@
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
             <artifactId>wiremock-jre8-standalone</artifactId>
-            <version>2.35.2</version>
+            <version>3.0.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -307,7 +307,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.4</version>
+                <version>3.5.5</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
