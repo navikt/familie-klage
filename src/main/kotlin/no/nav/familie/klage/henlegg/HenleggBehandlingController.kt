@@ -5,7 +5,6 @@ import no.nav.familie.klage.brevmottaker.dto.tilNyBrevmottaker
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
-import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.validation.annotation.Validated
@@ -19,7 +18,6 @@ import java.util.UUID
 
 @RestController
 @RequestMapping(path = ["/api/behandling"])
-@ProtectedWithClaims(issuer = "azuread")
 @Validated
 class HenleggBehandlingController(
     private val tilgangService: TilgangService,

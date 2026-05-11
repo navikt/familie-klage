@@ -133,11 +133,6 @@ class TilgangService(
 
     fun harEgenAnsattRolle(): Boolean = SikkerhetContext.harRolle(rolleConfig.egenAnsatt)
 
-    fun harMinimumRolleTversFagsystem(minimumsrolle: BehandlerRolle): Boolean =
-        harTilgangTilGittRolleForFagsystem(rolleConfig.ba, minimumsrolle) ||
-            harTilgangTilGittRolleForFagsystem(rolleConfig.ef, minimumsrolle) ||
-            harTilgangTilGittRolleForFagsystem(rolleConfig.ks, minimumsrolle)
-
     fun harTilgangTilBehandlingGittRolle(
         behandlingId: UUID,
         minimumsrolle: BehandlerRolle,

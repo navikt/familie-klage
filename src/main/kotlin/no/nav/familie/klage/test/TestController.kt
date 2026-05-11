@@ -10,7 +10,7 @@ import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Klagebehandlingsårsak
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
-import no.nav.security.token.support.core.api.ProtectedWithClaims
+import org.springframework.context.annotation.Profile
 import org.springframework.http.MediaType
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PostMapping
@@ -22,8 +22,8 @@ import java.util.UUID
 
 @RestController
 @RequestMapping(path = ["/api/test"], produces = [MediaType.APPLICATION_JSON_VALUE])
-@ProtectedWithClaims(issuer = "azuread")
 @Validated
+@Profile("!prod")
 class TestController(
     private val fagsakPersonService: FagsakPersonService,
     private val fagsakRepository: FagsakRepository,

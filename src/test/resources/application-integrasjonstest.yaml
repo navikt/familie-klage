@@ -3,13 +3,6 @@ server:
 
 kafka.enabled: false
 
-no.nav.security.jwt:
-  issuer.azuread:
-    discoveryurl: http://localhost:${mock-oauth2-server.port}/azuread/.well-known/openid-configuration
-    accepted_audience: aud-localhost
-    proxy_url: #Default satt, skal være null i integrasjonstest
-
-
 spring:
   kafka:
     bootstrap-servers: http://localhost:9092

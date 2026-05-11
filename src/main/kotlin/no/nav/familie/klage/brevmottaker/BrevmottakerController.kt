@@ -10,7 +10,6 @@ import no.nav.familie.klage.brevmottaker.dto.tilSlettbarBrevmottaker
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.kontrakter.felles.Ressurs
-import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -24,7 +23,6 @@ import java.util.UUID
 
 @RestController
 @RequestMapping(path = ["/api/brevmottaker"])
-@ProtectedWithClaims(issuer = "azuread")
 @Validated
 class BrevmottakerController(
     private val brevmottakerService: BrevmottakerService,

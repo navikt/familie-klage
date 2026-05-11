@@ -36,6 +36,7 @@
         <saksstatistikk-klage.version>2.0_20260127152808_4f00dcf</saksstatistikk-klage.version>
         <nav.security.version>6.0.2</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <testcontainers.version>1.21.4</testcontainers.version>
+        <mock-oauth2-server.version>3.0.1</mock-oauth2-server.version>
     </properties>
 
     <dependencyManagement>
@@ -104,6 +105,10 @@
             <artifactId>spring-boot-starter-flyway</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+        <dependency>
             <groupId>tools.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>
@@ -150,7 +155,7 @@
         </dependency>
         <dependency>
             <groupId>no.nav.familie.felles</groupId>
-            <artifactId>sikkerhet-token-support</artifactId>
+            <artifactId>sikkerhet-spring-security</artifactId>
             <version>${felles.version}</version>
         </dependency>
         <dependency>
@@ -160,7 +165,7 @@
         </dependency>
         <dependency>
             <groupId>no.nav.familie</groupId>
-            <artifactId>prosessering-web-nav-token-support</artifactId>
+            <artifactId>prosessering-web-spring-security</artifactId>
             <version>${prosessering.version}</version>
         </dependency>
         <dependency>
@@ -211,11 +216,6 @@
             <artifactId>token-client-spring</artifactId>
             <version>${nav.security.version}</version>
         </dependency>
-        <dependency>
-            <groupId>no.nav.security</groupId>
-            <artifactId>token-validation-core</artifactId>
-            <version>${nav.security.version}</version>
-        </dependency>
 
         <!-- test -->
         <dependency>
@@ -253,8 +253,8 @@
         </dependency>
         <dependency>
             <groupId>no.nav.security</groupId>
-            <artifactId>token-validation-spring-test</artifactId>
-            <version>${nav.security.version}</version>
+            <artifactId>mock-oauth2-server</artifactId>
+            <version>${mock-oauth2-server.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

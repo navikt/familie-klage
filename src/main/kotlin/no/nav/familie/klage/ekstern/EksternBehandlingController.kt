@@ -11,7 +11,6 @@ import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.KlagebehandlingDto
 import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
-import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -27,7 +26,6 @@ import java.util.UUID
 
 @RestController
 @RequestMapping(path = ["/api/ekstern/behandling"])
-@ProtectedWithClaims(issuer = "azuread")
 @Validated
 class EksternBehandlingController(
     private val tilgangService: TilgangService,
