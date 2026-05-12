@@ -35,7 +35,7 @@
         <kontrakter.version>4.0_20260505124916_025d466</kontrakter.version>
         <saksstatistikk-klage.version>2.0_20260323170751_4c02e3c</saksstatistikk-klage.version>
         <nav.security.version>6.0.7</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
-        <testcontainers.version>2.0.5</testcontainers.version>
+        <testcontainers.version>1.21.4</testcontainers.version>
         <mock-oauth2-server.version>3.0.3</mock-oauth2-server.version>
     </properties>
 
