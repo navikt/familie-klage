@@ -3,26 +3,18 @@ package no.nav.familie.klage.personopplysninger.pdl
 import no.nav.familie.klage.infrastruktur.config.PdlConfig
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
-import no.nav.familie.restklient.client.AbstractPingableRestClient
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.cache.annotation.Cacheable
-import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestOperations
-import java.net.URI
+import org.springframework.web.client.RestClient
+import org.springframework.web.client.body
 
 @Service
 class PdlClient(
     val pdlConfig: PdlConfig,
-    @Qualifier("azureClientCredential") restTemplate: RestOperations,
-) : AbstractPingableRestClient(restTemplate, "pdl.personinfo") {
-    override val pingUri: URI
-        get() = pdlConfig.pdlUri
-
-    override fun ping() {
-        operations.optionsForAllow(pingUri)
-    }
-
+    @Qualifier("pdlRestClient") private val restClient: RestClient,
+) {
     @Cacheable("hentPerson", cacheManager = "shortCache")
     fun hentPerson(
         personIdent: String,
@@ -34,11 +26,14 @@ class PdlClient(
                 query = PdlConfig.hentPersonQuery,
             )
         val pdlResponse: PdlResponse<PdlPersonData> =
-            postForEntity(
-                pdlConfig.pdlUri,
-                pdlPersonRequest,
-                httpHeaders(mapTilTema(stønadstype)),
-            )
+            restClient
+                .post()
+                .uri(pdlConfig.pdlUri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers { it.addAll(httpHeaders(mapTilTema(stønadstype))) }
+                .body(pdlPersonRequest)
+                .retrieve()
+                .body<PdlResponse<PdlPersonData>>()!!
         return feilsjekkOgReturnerData(personIdent, pdlResponse) { it.person }
     }
 
@@ -54,11 +49,14 @@ class PdlClient(
                 query = PdlConfig.bolkNavnQuery,
             )
         val pdlResponse: PdlBolkResponse<PdlNavn> =
-            postForEntity(
-                pdlConfig.pdlUri,
-                pdlPersonRequest,
-                httpHeaders(mapTilTema(stønadstype)),
-            )
+            restClient
+                .post()
+                .uri(pdlConfig.pdlUri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers { it.addAll(httpHeaders(mapTilTema(stønadstype))) }
+                .body(pdlPersonRequest)
+                .retrieve()
+                .body<PdlBolkResponse<PdlNavn>>()!!
         return feilsjekkOgReturnerData(pdlResponse)
     }
 
@@ -79,11 +77,14 @@ class PdlClient(
                 query = PdlConfig.hentIdentQuery,
             )
         val pdlResponse: PdlResponse<PdlHentIdenter> =
-            postForEntity(
-                pdlConfig.pdlUri,
-                pdlIdentRequest,
-                httpHeaders(tema),
-            )
+            restClient
+                .post()
+                .uri(pdlConfig.pdlUri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers { it.addAll(httpHeaders(tema)) }
+                .body(pdlIdentRequest)
+                .retrieve()
+                .body<PdlResponse<PdlHentIdenter>>()!!
         return feilsjekkOgReturnerData(ident, pdlResponse) { it.hentIdenter }
     }
 
@@ -93,8 +94,8 @@ class PdlClient(
         historikk: Boolean = false,
     ): PdlIdenter = hentPersonidenter(ident, mapTilTema(stønadstype), historikk)
 
-    private fun httpHeaders(tema: Tema): HttpHeaders =
-        HttpHeaders().apply {
+    private fun httpHeaders(tema: Tema): org.springframework.http.HttpHeaders =
+        org.springframework.http.HttpHeaders().apply {
             add("Tema", tema.name)
             add("behandlingsnummer", tema.behandlingsnummer)
         }

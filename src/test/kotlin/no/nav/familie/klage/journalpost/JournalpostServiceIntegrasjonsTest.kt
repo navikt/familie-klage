@@ -11,12 +11,10 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.springframework.boot.restclient.RestTemplateBuilder
-import org.springframework.web.client.RestOperations
+import org.springframework.web.client.RestClient
 import java.net.URI
 
 class JournalpostServiceIntegrasjonsTest {
-    private val restOperations: RestOperations = RestTemplateBuilder().build()
     private lateinit var wiremockServerItem: WireMockServer
     private lateinit var familieIntegrasjonerClient: FamilieIntegrasjonerClient
     private lateinit var journalpostService: JournalpostService
@@ -28,7 +26,7 @@ class JournalpostServiceIntegrasjonsTest {
         val integrasjonUri = URI.create(wiremockServerItem.baseUrl())
         familieIntegrasjonerClient =
             FamilieIntegrasjonerClient(
-                restOperations = restOperations,
+                restClient = RestClient.builder().build(),
                 integrasjonUri = integrasjonUri,
                 integrasjonerConfig = IntegrasjonerConfig(integrasjonUri),
             )

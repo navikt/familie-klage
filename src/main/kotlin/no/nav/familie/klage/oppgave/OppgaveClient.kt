@@ -11,54 +11,72 @@ import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.familie.kontrakter.felles.saksbehandler.Saksbehandler
-import no.nav.familie.restklient.client.AbstractPingableRestClient
-import no.nav.familie.restklient.client.RessursException
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestOperations
+import org.springframework.web.client.HttpClientErrorException
+import org.springframework.web.client.RestClient
+import org.springframework.web.client.body
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 @Component
 class OppgaveClient(
-    @Qualifier("azure") restOperations: RestOperations,
+    @Qualifier("integrasjonerRestClient") private val restClient: RestClient,
     integrasjonerConfig: IntegrasjonerConfig,
-) : AbstractPingableRestClient(restOperations, "oppgave") {
-    override val pingUri: URI = integrasjonerConfig.pingUri
+) {
     private val oppgaveUri: URI = integrasjonerConfig.oppgaveUri
     private val saksbehandlerUri: URI = integrasjonerConfig.saksbehandlerUri
 
     fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): Long {
         val uri = URI.create("$oppgaveUri/opprett")
-
         val respons =
-            postForEntity<Ressurs<OppgaveResponse>>(uri, opprettOppgaveRequest, HttpHeaders().medContentTypeJsonUTF8())
+            restClient
+                .post()
+                .uri(uri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(opprettOppgaveRequest)
+                .retrieve()
+                .body<Ressurs<OppgaveResponse>>()!!
         return pakkUtRespons(respons, uri, "opprettOppgave").oppgaveId
     }
 
     fun finnOppgaveMedId(oppgaveId: Long): Oppgave {
         val uri = URI.create("$oppgaveUri/$oppgaveId")
-
-        val respons = getForEntity<Ressurs<Oppgave>>(uri)
+        val respons =
+            restClient
+                .get()
+                .uri(uri)
+                .retrieve()
+                .body<Ressurs<Oppgave>>()!!
         return pakkUtRespons(respons, uri, "finnOppgaveMedId")
     }
 
     fun ferdigstillOppgave(oppgaveId: Long) {
         val uri = URI.create("$oppgaveUri/$oppgaveId/ferdigstill")
-        val respons = patchForEntity<Ressurs<OppgaveResponse>>(uri, "")
+        val respons =
+            restClient
+                .patch()
+                .uri(uri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("")
+                .retrieve()
+                .body<Ressurs<OppgaveResponse>>()!!
         pakkUtRespons(respons, uri, "ferdigstillOppgave")
     }
 
     fun oppdaterOppgave(oppgave: Oppgave): Long {
         val uri = URI.create("$oppgaveUri/${oppgave.id!!}/oppdater")
         val respons =
-            patchForEntity<Ressurs<OppgaveResponse>>(
-                uri,
-                oppgave,
-                HttpHeaders().medContentTypeJsonUTF8(),
-            )
+            restClient
+                .patch()
+                .uri(uri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(oppgave)
+                .retrieve()
+                .body<Ressurs<OppgaveResponse>>()!!
         return pakkUtRespons(respons, uri, "oppdaterOppgave").oppgaveId
     }
 
@@ -88,18 +106,25 @@ class OppgaveClient(
         }
 
         try {
-            val respons = postForEntity<Ressurs<OppgaveResponse>>(uri, HttpHeaders().medContentTypeJsonUTF8())
+            val respons =
+                restClient
+                    .post()
+                    .uri(uri)
+                    .headers { it.addAll(HttpHeaders().medContentTypeJsonUTF8()) }
+                    .retrieve()
+                    .body<Ressurs<OppgaveResponse>>()!!
             return pakkUtRespons(respons, uri, "fordelOppgave").oppgaveId
-        } catch (e: RessursException) {
+        } catch (e: HttpClientErrorException) {
+            val melding = e.responseBodyAsString
             when {
-                e.ressurs.melding.contains("allerede er ferdigstilt") -> {
+                melding.contains("allerede er ferdigstilt") -> {
                     throw ApiFeil(
                         "Oppgaven med id=$oppgaveId er allerede ferdigstilt. Prøv å hente oppgaver på nytt.",
                         HttpStatus.BAD_REQUEST,
                     )
                 }
 
-                e.httpStatus == HttpStatus.CONFLICT -> {
+                e.statusCode == HttpStatus.CONFLICT -> {
                     throw ApiFeil(
                         "Oppgaven har endret seg siden du sist hentet oppgaver. For å kunne gjøre endringer må du hente oppgaver på nytt.",
                         HttpStatus.CONFLICT,
@@ -125,15 +150,23 @@ class OppgaveClient(
                 .queryParam("limit", limit)
                 .build()
                 .toUri()
-
-        val respons = getForEntity<Ressurs<FinnMappeResponseDto>>(uri = uri)
+        val respons =
+            restClient
+                .get()
+                .uri(uri)
+                .retrieve()
+                .body<Ressurs<FinnMappeResponseDto>>()!!
         return pakkUtRespons(respons = respons, uri = uri, metode = "finnMappe")
     }
 
     fun hentSaksbehandlerInfo(navIdent: String): Saksbehandler {
         val uri = URI.create("$saksbehandlerUri/$navIdent")
-
-        val respons = getForEntity<Ressurs<Saksbehandler>>(uri)
+        val respons =
+            restClient
+                .get()
+                .uri(uri)
+                .retrieve()
+                .body<Ressurs<Saksbehandler>>()!!
         return pakkUtRespons(respons, uri, "hentSaksbehandlerInfo")
     }
 
@@ -156,7 +189,13 @@ class OppgaveClient(
                 .build()
                 .toUri()
         try {
-            val response = patchForEntity<Ressurs<OppgaveResponse>>(uri = uri, payload = HttpHeaders().medContentTypeJsonUTF8())
+            val response =
+                restClient
+                    .patch()
+                    .uri(uri)
+                    .headers { it.addAll(HttpHeaders().medContentTypeJsonUTF8()) }
+                    .retrieve()
+                    .body<Ressurs<OppgaveResponse>>()!!
             return pakkUtRespons(respons = response, uri = uri, metode = "tilordnetEnhet")
         } catch (exception: Exception) {
             throw IntegrasjonException(msg = "Oppdatering av enhet på oppgave feilet.", uri = uri, throwable = exception)

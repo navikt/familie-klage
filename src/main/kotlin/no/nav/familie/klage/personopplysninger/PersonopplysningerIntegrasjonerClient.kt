@@ -6,34 +6,37 @@ import no.nav.familie.klage.felles.dto.Tilgang
 import no.nav.familie.klage.infrastruktur.config.IntegrasjonerConfig
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
-import no.nav.familie.restklient.client.AbstractPingableRestClient
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestOperations
-import java.net.URI
+import org.springframework.web.client.RestClient
+import org.springframework.web.client.body
 
 @Component
 class PersonopplysningerIntegrasjonerClient(
-    @Qualifier("azure") restOperations: RestOperations,
+    @Qualifier("integrasjonerRestClient") private val restClient: RestClient,
     private val integrasjonerConfig: IntegrasjonerConfig,
-) : AbstractPingableRestClient(restOperations, "familie.integrasjoner") {
-    override val pingUri: URI = integrasjonerConfig.pingUri
-
+) {
     fun sjekkTilgangTilPersonMedRelasjoner(personIdent: String): Tilgang =
-        postForEntity(
-            integrasjonerConfig.tilgangRelasjonerUri,
-            PersonIdent(personIdent),
-            HttpHeaders().also {
-                it.set(HEADER_NAV_TEMA, HEADER_NAV_TEMA_ENF)
-            },
-        )
+        restClient
+            .post()
+            .uri(integrasjonerConfig.tilgangRelasjonerUri)
+            .contentType(MediaType.APPLICATION_JSON)
+            .header(HEADER_NAV_TEMA, HEADER_NAV_TEMA_ENF)
+            .body(PersonIdent(personIdent))
+            .retrieve()
+            .body<Tilgang>()!!
 
     fun egenAnsatt(ident: String): Boolean =
-        postForEntity<Ressurs<EgenAnsattResponse>>(
-            integrasjonerConfig.egenAnsattUri,
-            EgenAnsattRequest(ident),
-        ).data!!.erEgenAnsatt
+        restClient
+            .post()
+            .uri(integrasjonerConfig.egenAnsattUri)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(EgenAnsattRequest(ident))
+            .retrieve()
+            .body<Ressurs<EgenAnsattResponse>>()!!
+            .data!!
+            .erEgenAnsatt
 
     companion object {
         const val HEADER_NAV_TEMA = "Nav-Tema"
