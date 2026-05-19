@@ -172,9 +172,8 @@ spring:
     placeholders:
       ignoreIfProd:
   datasource:
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/familie-klage
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: ${DB_JDBC_URL}
+
     hikari:
       maximum-pool-size: 20
       connection-test-query: "select 1"
