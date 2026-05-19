@@ -47,8 +47,8 @@ spec:
         tier: db-custom-1-3840
         diskAutoresize: true
         cascadingDelete: false
-        highAvailability: false
-        pointInTimeRecovery: false
+        highAvailability: true
+        pointInTimeRecovery: true
         maintenance:
           day: 7
           hour: 23
