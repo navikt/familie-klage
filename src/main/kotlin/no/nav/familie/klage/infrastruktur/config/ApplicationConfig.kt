@@ -18,10 +18,13 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
+import org.springframework.http.converter.HttpMessageConverters
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
+import org.springframework.http.converter.yaml.MappingJackson2YamlHttpMessageConverter
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.web.client.RestOperations
 import org.springframework.web.client.RestTemplate
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 
@@ -73,6 +76,16 @@ class ApplicationConfig {
             .readTimeout(Duration.of(30, ChronoUnit.SECONDS))
             .additionalMessageConverters(listOf(jacksonJsonHttpMessageConverter) + RestTemplate().messageConverters)
     }
+
+    @Bean
+    fun removeYamlConverter(): WebMvcConfigurer =
+        object : WebMvcConfigurer {
+            override fun configureMessageConverters(builder: HttpMessageConverters.ServerBuilder) {
+                builder.configureMessageConvertersList { converters ->
+                    converters.removeIf { it is MappingJackson2YamlHttpMessageConverter }
+                }
+            }
+        }
 
     @Bean("utenAuth")
     fun restTemplate(
