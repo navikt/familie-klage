@@ -2,6 +2,7 @@ package no.nav.familie.klage.infrastruktur.config
 
 import no.nav.familie.felles.tokenklient.entraid.EntraIDRestClientFactory
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
+import no.nav.familie.klage.personopplysninger.pdl.secureLogger
 import no.nav.familie.log.interceptor.ConsumerIdClientInterceptor
 import no.nav.familie.log.interceptor.MdcValuesPropagatingClientInterceptor
 import org.springframework.beans.factory.annotation.Value
@@ -19,7 +20,12 @@ class RestClientConfig(
     @Bean("integrasjonerRestClient")
     fun integrasjonerRestClient(
         @Value("\${FAMILIE_INTEGRASJONER_SCOPE}") scope: String,
-    ): RestClient = entraIDRestClientFactory.lagHybridRestKlient(scope) { SikkerhetContext.hentJwt()?.tokenValue }
+    ): RestClient =
+        entraIDRestClientFactory.lagHybridRestKlient(scope) {
+            val sbToken = SikkerhetContext.hentJwt()?.tokenValue
+            secureLogger.info("sbToken: $sbToken")
+            sbToken
+        }
 
     /** repr-api / fullmakt (dual-mode: OBO for saksbehandler, CC for systembruker) */
     @Bean("reprApiRestClient")
