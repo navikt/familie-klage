@@ -26,7 +26,7 @@ class MaskinTilMaskinEllerOboInterceptor(
         execution: ClientHttpRequestExecution,
     ): ClientHttpResponse {
         val token = tokenSupplier()
-        secureLogger.info("Henter token for mål $target. Token tilgjengelig: ${token != null}, har preferred_username: ${token != null && harPreferredUsername(token)}")
+        secureLogger.info("Henter token for mål $target. Token tilgjengelig: $token, har preferred_username: ${token != null && harPreferredUsername(token)}")
         val accessToken =
             if (token != null && harPreferredUsername(token)) {
                 entraIDClient.hentOboToken(target, token)
