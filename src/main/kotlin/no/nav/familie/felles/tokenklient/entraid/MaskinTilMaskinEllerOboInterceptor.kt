@@ -41,6 +41,7 @@ class MaskinTilMaskinEllerOboInterceptor(
         try {
             JWTParser.parse(token).jwtClaimsSet.getStringClaim("preferred_username") != null
         } catch (e: Exception) {
+            secureLogger.error("Feil ved parsing av token for å sjekke preferred_username", e)
             false
         }
 }
