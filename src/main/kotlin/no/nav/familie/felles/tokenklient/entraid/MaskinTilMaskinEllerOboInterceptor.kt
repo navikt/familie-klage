@@ -29,9 +29,13 @@ class MaskinTilMaskinEllerOboInterceptor(
         secureLogger.info("Henter token for mål $target. Token tilgjengelig: $token, har preferred_username: ${token != null && harPreferredUsername(token)}")
         val accessToken =
             if (token != null && harPreferredUsername(token)) {
-                entraIDClient.hentOboToken(target, token)
+                val oboToken = entraIDClient.hentOboToken(target, token)
+                secureLogger.info("Hentet OBO-token $oboToken")
+                oboToken
             } else {
-                entraIDClient.hentMaskinTilMaskinToken(target)
+                val m2m = entraIDClient.hentMaskinTilMaskinToken(target)
+                secureLogger.info("Hentet m2m-token $m2m")
+                m2m
             }
         request.headers.setBearerAuth(accessToken)
         return execution.execute(request, body)
