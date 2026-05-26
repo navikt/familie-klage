@@ -20,7 +20,6 @@ import no.nav.familie.kontrakter.felles.klage.BehandlingStatus
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import no.nav.familie.kontrakter.felles.oppgave.Behandlingstype
 import no.nav.familie.prosessering.internal.TaskService
-import no.nav.familie.restklient.client.RessursException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -169,7 +168,7 @@ class BehandlingEventService(
     private fun utledSaksbehandlerEnhet(saksbehandlerIdent: String) =
         try {
             integrasjonerClient.hentSaksbehandlerInfo(saksbehandlerIdent).enhet
-        } catch (e: RessursException) {
+        } catch (e: Exception) {
             logger.error("Kunne ikke hente enhet for saksbehandler med ident=$saksbehandlerIdent")
             secureLogger.error("Kunne ikke hente enhet for saksbehandler med ident=$saksbehandlerIdent", e)
             "Ukjent"

@@ -3,14 +3,13 @@ package no.nav.familie.klage.kabal
 import no.nav.familie.klage.kabal.domain.OversendtKlageAnke
 import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV3
 import no.nav.familie.klage.kabal.domain.OversendtKlageAnkeV4
-import no.nav.familie.restklient.client.AbstractRestClient
-import no.nav.familie.restklient.client.ResponseBodyNullException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestOperations
+import org.springframework.web.client.RestClient
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
@@ -18,9 +17,9 @@ import java.net.URI
 class KabalClient(
     @Value("\${KABAL_URL}")
     private val kabalUrl: URI,
-    @Qualifier("azure")
-    private val restOperations: RestOperations,
-) : AbstractRestClient(restOperations, "familie.kabal") {
+    @Qualifier("kabalRestClient")
+    private val restClient: RestClient,
+) {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     private val oversendelseUrlV3: URI =
@@ -37,13 +36,27 @@ class KabalClient(
             .build()
             .toUri()
 
-    fun sendTilKabal(oversendtKlage: OversendtKlageAnke) =
-        try {
-            when (oversendtKlage) {
-                is OversendtKlageAnkeV3 -> postForEntity<Any>(oversendelseUrlV3, oversendtKlage)
-                is OversendtKlageAnkeV4 -> postForEntity<Any>(oversendelseUrlV4, oversendtKlage)
+    fun sendTilKabal(oversendtKlage: OversendtKlageAnke) {
+        when (oversendtKlage) {
+            is OversendtKlageAnkeV3 -> {
+                restClient
+                    .post()
+                    .uri(oversendelseUrlV3)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(oversendtKlage)
+                    .retrieve()
+                    .toBodilessEntity()
             }
-        } catch (_: ResponseBodyNullException) {
-            // Kabal returnerer 200 OK med tom body ved suksess
+
+            is OversendtKlageAnkeV4 -> {
+                restClient
+                    .post()
+                    .uri(oversendelseUrlV4)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(oversendtKlage)
+                    .retrieve()
+                    .toBodilessEntity()
+            }
         }
+    }
 }

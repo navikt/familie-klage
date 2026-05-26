@@ -1,32 +1,21 @@
 package no.nav.familie.klage.infrastruktur.config
 
-import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.log.NavSystemtype
 import no.nav.familie.log.filter.LogFilter
 import no.nav.familie.log.filter.RequestTimeFilter
-import no.nav.familie.log.interceptor.ConsumerIdClientInterceptor
-import no.nav.familie.log.interceptor.MdcValuesPropagatingClientInterceptor
-import no.nav.familie.restklient.config.RestTemplateAzure
 import no.nav.familie.sikkerhet.context.FamilieFellesSpringSecurityKonfigurasjon
-import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
-import org.springframework.boot.restclient.RestTemplateBuilder
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
 import org.springframework.http.converter.HttpMessageConverters
-import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
 import org.springframework.http.converter.yaml.MappingJackson2YamlHttpMessageConverter
 import org.springframework.scheduling.annotation.EnableScheduling
-import org.springframework.web.client.RestOperations
-import org.springframework.web.client.RestTemplate
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import java.time.Duration
-import java.time.temporal.ChronoUnit
 
 @SpringBootConfiguration
 @ConfigurationPropertiesScan
@@ -35,9 +24,9 @@ import java.time.temporal.ChronoUnit
     "no.nav.familie.klage",
     "no.nav.familie.sikkerhet",
     "no.nav.familie.unleash",
+    "no.nav.familie.felles.tokenklient",
 )
-@Import(RestTemplateAzure::class, FamilieFellesSpringSecurityKonfigurasjon::class)
-@EnableOAuth2Client(cacheEnabled = true)
+@Import(FamilieFellesSpringSecurityKonfigurasjon::class)
 @EnableScheduling
 class ApplicationConfig {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -64,19 +53,6 @@ class ApplicationConfig {
         return filterRegistration
     }
 
-    /**
-     * Overskrever felles sin som bruker proxy, som ikke skal brukes på gcp
-     */
-    @Bean
-    @Primary
-    fun restTemplateBuilder(): RestTemplateBuilder {
-        val jacksonJsonHttpMessageConverter = JacksonJsonHttpMessageConverter(jsonMapper)
-        return RestTemplateBuilder()
-            .connectTimeout(Duration.of(2, ChronoUnit.SECONDS))
-            .readTimeout(Duration.of(30, ChronoUnit.SECONDS))
-            .additionalMessageConverters(listOf(jacksonJsonHttpMessageConverter) + RestTemplate().messageConverters)
-    }
-
     @Bean
     fun removeYamlConverter(): WebMvcConfigurer =
         object : WebMvcConfigurer {
@@ -86,15 +62,4 @@ class ApplicationConfig {
                 }
             }
         }
-
-    @Bean("utenAuth")
-    fun restTemplate(
-        restTemplateBuilder: RestTemplateBuilder,
-        consumerIdClientInterceptor: ConsumerIdClientInterceptor,
-    ): RestOperations =
-        restTemplateBuilder
-            .additionalInterceptors(
-                consumerIdClientInterceptor,
-                MdcValuesPropagatingClientInterceptor(),
-            ).build()
 }

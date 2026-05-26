@@ -17,29 +17,28 @@ import no.nav.familie.kontrakter.felles.journalpost.JournalposterForBrukerReques
 import no.nav.familie.kontrakter.felles.organisasjon.Organisasjon
 import no.nav.familie.kontrakter.felles.saksbehandler.Saksbehandler
 import no.nav.familie.log.NavHttpHeaders
-import no.nav.familie.restklient.client.AbstractPingableRestClient
-import no.nav.familie.restklient.client.RessursException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestOperations
+import org.springframework.web.client.HttpClientErrorException
+import org.springframework.web.client.RestClient
+import org.springframework.web.client.body
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 @Component
 class FamilieIntegrasjonerClient(
-    @Qualifier("azure") restOperations: RestOperations,
+    @Qualifier("integrasjonerRestClient") private val restClient: RestClient,
     @Value("\${FAMILIE_INTEGRASJONER_URL}")
     private val integrasjonUri: URI,
     private val integrasjonerConfig: IntegrasjonerConfig,
-) : AbstractPingableRestClient(restOperations, "journalpost") {
+) {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
-
-    override val pingUri: URI = URI.create("/api/ping")
 
     private val dokuarkivUri: URI =
         UriComponentsBuilder
@@ -55,18 +54,25 @@ class FamilieIntegrasjonerClient(
         arkiverDokumentRequest: ArkiverDokumentRequest,
         saksbehandler: String?,
     ): ArkiverDokumentResponse =
-        postForEntity<Ressurs<ArkiverDokumentResponse>>(
-            URI.create("$dokuarkivUri/v4"),
-            arkiverDokumentRequest,
-            headerMedSaksbehandler(saksbehandler),
-        ).data
+        restClient
+            .post()
+            .uri(URI.create("$dokuarkivUri/v4"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .headers { headerMedSaksbehandler(saksbehandler, it) }
+            .body(arkiverDokumentRequest)
+            .retrieve()
+            .body<Ressurs<ArkiverDokumentResponse>>()!!
+            .data
             ?: error("Kunne ikke arkivere dokument med fagsakid ${arkiverDokumentRequest.fagsakId}")
 
     fun hentSaksbehandlerInfo(navIdent: String): Saksbehandler =
-        getForEntity<Ressurs<Saksbehandler>>(
-            URI.create("$saksbehandlerUri/$navIdent"),
-            HttpHeaders().medContentTypeJsonUTF8(),
-        ).data
+        restClient
+            .get()
+            .uri(URI.create("$saksbehandlerUri/$navIdent"))
+            .headers { it.addAll(HttpHeaders().medContentTypeJsonUTF8()) }
+            .retrieve()
+            .body<Ressurs<Saksbehandler>>()!!
+            .data
             ?: error("Kunne ikke hente saksbehandlerinfo for saksbehandler med ident=$navIdent")
 
     // sende brev til bruker
@@ -81,12 +87,14 @@ class FamilieIntegrasjonerClient(
                 dokumentProdApp = "FAMILIE_KLAGE",
                 distribusjonstype = distribusjonstype,
             )
-
-        return postForEntity<Ressurs<String>>(
-            integrasjonerConfig.distribuerDokumentUri,
-            journalpostRequest,
-            HttpHeaders().medContentTypeJsonUTF8(),
-        ).getDataOrThrow()
+        return restClient
+            .post()
+            .uri(integrasjonerConfig.distribuerDokumentUri)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(journalpostRequest)
+            .retrieve()
+            .body<Ressurs<String>>()!!
+            .getDataOrThrow()
     }
 
     // sende brev til bruker
@@ -104,45 +112,61 @@ class FamilieIntegrasjonerClient(
                 distribusjonstype = distribusjonstype,
                 adresse = adresse,
             )
-
-        return postForEntity<Ressurs<String>>(
-            integrasjonerConfig.distribuerDokumentUri,
-            journalpostRequest,
-            HttpHeaders().medContentTypeJsonUTF8(),
-        ).getDataOrThrow()
+        return restClient
+            .post()
+            .uri(integrasjonerConfig.distribuerDokumentUri)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(journalpostRequest)
+            .retrieve()
+            .body<Ressurs<String>>()!!
+            .getDataOrThrow()
     }
 
     fun finnJournalposter(journalposterForBrukerRequest: JournalposterForBrukerRequest): List<Journalpost> =
-        postForEntity<Ressurs<List<Journalpost>>>(journalpostURI, journalposterForBrukerRequest).data
+        restClient
+            .post()
+            .uri(journalpostURI)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(journalposterForBrukerRequest)
+            .retrieve()
+            .body<Ressurs<List<Journalpost>>>()!!
+            .data
             ?: error("Kunne ikke hente vedlegg for ${journalposterForBrukerRequest.brukerId.id}")
 
     fun hentJournalpost(journalpostId: String): Journalpost {
-        val ressurs =
-            try {
-                getForEntity<Ressurs<Journalpost>>(URI.create("$journalpostURI?journalpostId=$journalpostId"))
-            } catch (e: RessursException) {
-                if (e.message?.contains("Fant ikke journalpost i fagarkivet") == true) {
-                    throw ApiFeil("Finner ikke journalpost i fagarkivet", HttpStatus.BAD_REQUEST)
-                } else {
-                    throw e
-                }
+        try {
+            return restClient
+                .get()
+                .uri(URI.create("$journalpostURI?journalpostId=$journalpostId"))
+                .retrieve()
+                .body<Ressurs<Journalpost>>()!!
+                .getDataOrThrow()
+        } catch (e: HttpClientErrorException) {
+            if (e.responseBodyAsString.contains("Fant ikke journalpost i fagarkivet")) {
+                throw ApiFeil("Finner ikke journalpost i fagarkivet", HttpStatus.BAD_REQUEST)
+            } else {
+                throw e
             }
-        return ressurs.getDataOrThrow()
+        }
     }
 
     fun hentDokument(
         journalpostId: String,
         dokumentInfoId: String,
     ): ByteArray =
-        getForEntity<Ressurs<ByteArray>>(
-            UriComponentsBuilder
-                .fromUriString(
-                    "$journalpostURI/hentdokument/" +
-                        "$journalpostId/$dokumentInfoId",
-                ).queryParam("variantFormat", Dokumentvariantformat.ARKIV)
-                .build()
-                .toUri(),
-        ).getDataOrThrow()
+        restClient
+            .get()
+            .uri(
+                UriComponentsBuilder
+                    .fromUriString(
+                        "$journalpostURI/hentdokument/" +
+                            "$journalpostId/$dokumentInfoId",
+                    ).queryParam("variantFormat", Dokumentvariantformat.ARKIV)
+                    .build()
+                    .toUri(),
+            ).retrieve()
+            .body<Ressurs<ByteArray>>()!!
+            .getDataOrThrow()
 
     fun hentOrganisasjon(orgNummer: String): Organisasjon {
         val uri =
@@ -151,14 +175,20 @@ class FamilieIntegrasjonerClient(
                 .pathSegment(orgNummer)
                 .build()
                 .toUri()
-        return getForEntity<Ressurs<Organisasjon>>(uri).getDataOrThrow()
+        return restClient
+            .get()
+            .uri(uri)
+            .retrieve()
+            .body<Ressurs<Organisasjon>>()!!
+            .getDataOrThrow()
     }
 
-    private fun headerMedSaksbehandler(saksbehandler: String?): HttpHeaders {
-        val httpHeaders = HttpHeaders()
+    private fun headerMedSaksbehandler(
+        saksbehandler: String?,
+        headers: HttpHeaders,
+    ) {
         if (saksbehandler != null) {
-            httpHeaders.set(NavHttpHeaders.NAV_USER_ID.asString(), saksbehandler)
+            headers.set(NavHttpHeaders.NAV_USER_ID.asString(), saksbehandler)
         }
-        return httpHeaders
     }
 }

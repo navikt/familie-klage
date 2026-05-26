@@ -14,8 +14,20 @@ spring:
 unleash:
   enabled: false
 
+NAIS_TOKEN_ENDPOINT: http://localhost/token
+NAIS_TOKEN_EXCHANGE_ENDPOINT: http://localhost/token/exchange
 FAMILIE_INTEGRASJONER_URL: http://localhost:8386
 FAMILIE_BREV_API_URL: http://localhost:8002
+
+PDL_SCOPE: dummy
+REPR_API_SCOPE: dummy
+KABAL_SCOPE: dummy
+FAMILIE_EF_SAK_SCOPE: dummy
+FAMILIE_BA_SAK_SCOPE: dummy
+FAMILIE_KS_SAK_SCOPE: dummy
+FAMILIE_INTEGRASJONER_SCOPE: dummy
+FAMILIE_EF_PROXY_SCOPE: dummy
+DEPLOY_ENV: dev
 
 AZURE_APP_TENANT_ID: navq.onmicrosoft.com
 

@@ -11,7 +11,6 @@ import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.JournalposterForBrukerRequest
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
-import no.nav.familie.restklient.client.RessursException
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.client.HttpClientErrorException
@@ -43,15 +42,6 @@ class JournalpostService(
             )
         } catch (exception: HttpClientErrorException) {
             if (exception.statusCode == HttpStatus.FORBIDDEN) {
-                throw ManglerTilgang(
-                    melding = "Bruker mangler tilgang til etterspurt oppgave",
-                    frontendFeilmelding = "Behandlingen er koblet til en oppgave du ikke har tilgang til. Visning av ansvarlig saksbehandler er derfor ikke mulig",
-                )
-            } else {
-                throw exception
-            }
-        } catch (exception: RessursException) {
-            if (exception.httpStatus == HttpStatus.FORBIDDEN) {
                 throw ManglerTilgang(
                     melding = "Bruker mangler tilgang til etterspurt oppgave",
                     frontendFeilmelding = "Behandlingen er koblet til en oppgave du ikke har tilgang til. Visning av ansvarlig saksbehandler er derfor ikke mulig",

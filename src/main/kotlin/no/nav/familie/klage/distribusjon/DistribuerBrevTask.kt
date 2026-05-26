@@ -12,6 +12,7 @@ import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.kontrakter.felles.Fagsystem
+import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.dokdist.AdresseType.norskPostadresse
 import no.nav.familie.kontrakter.felles.dokdist.AdresseType.utenlandskPostadresse
 import no.nav.familie.kontrakter.felles.dokdist.ManuellAdresse
@@ -19,7 +20,6 @@ import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.restklient.client.RessursException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -72,15 +72,18 @@ class DistribuerBrevTask(
                         adresse = adresse,
                         fagsystem = fagsystem,
                     )
-                } catch (e: RessursException) {
-                    val cause = e.cause
-                    if (cause is HttpClientErrorException.Conflict) {
-                        logger.warn("Conflict: distribuering av brev allerede utført for journalpost: ${journalpost.journalpostId}")
-                        val response: DistribuerJournalpostResponse = jsonMapper.readValue(e.ressurs.data.toString(), DistribuerJournalpostResponse::class.java)
-                        response.bestillingsId
-                    } else {
-                        throw e
-                    }
+                } catch (e: HttpClientErrorException.Conflict) {
+                    logger.warn("Conflict: distribuering av brev allerede utført for journalpost: ${journalpost.journalpostId}")
+                    val ressurs: Ressurs<DistribuerJournalpostResponse> =
+                        jsonMapper.readValue(
+                            e.responseBodyAsString,
+                            jsonMapper.typeFactory.constructParametricType(
+                                Ressurs::class.java,
+                                DistribuerJournalpostResponse::class.java,
+                            ),
+                        )
+                    ressurs.data?.bestillingsId
+                        ?: error("Mangler bestillingsId i Conflict-respons for journalpost ${journalpost.journalpostId}")
                 }
             val nyeJournalposter =
                 acc.map {

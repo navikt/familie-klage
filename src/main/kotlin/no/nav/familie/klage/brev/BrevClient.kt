@@ -4,16 +4,15 @@ import no.nav.familie.klage.blankett.BlankettPdfRequest
 import no.nav.familie.klage.brev.dto.FritekstBrevRequestDto
 import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.felles.util.TekstUtil.norskFormat
-import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import no.nav.familie.klage.infrastruktur.exception.feilHvis
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
-import no.nav.familie.restklient.client.AbstractPingableRestClient
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestOperations
+import org.springframework.web.client.RestClient
+import org.springframework.web.client.body
 import tools.jackson.databind.JsonNode
 import java.net.URI
 import java.time.LocalDate
@@ -22,16 +21,9 @@ import java.time.LocalDate
 class BrevClient(
     @Value("\${FAMILIE_BREV_API_URL}")
     private val familieBrevUri: String,
-    @Qualifier("utenAuth")
-    private val restOperations: RestOperations,
-) : AbstractPingableRestClient(restOperations, "familie.brev") {
-    override val pingUri: URI = URI.create("$familieBrevUri/api/status")
-    private val pdfUri = URI.create("$familieBrevUri/blankett/klage/pdf")
-
-    override fun ping() {
-        operations.optionsForAllow(pingUri)
-    }
-
+    @Qualifier("utenAuthRestClient")
+    private val restClient: RestClient,
+) {
     fun genererHtmlFritekstbrev(
         fritekstBrev: FritekstBrevRequestDto,
         saksbehandlerNavn: String?,
@@ -45,19 +37,29 @@ class BrevClient(
             } else {
                 URI.create("$familieBrevUri/api/fritekst-brev/html")
             }
-        return postForEntity(
-            url,
-            FritekstBrevRequestMedSignatur(
-                brevFraSaksbehandler = fritekstBrev,
-                saksbehandlersignatur = saksbehandlerNavn,
-                enhet = enhet,
-                brevmottakere = brevmottakere,
-            ),
-            HttpHeaders().medContentTypeJsonUTF8(),
-        )
+        return restClient
+            .post()
+            .uri(url)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(
+                FritekstBrevRequestMedSignatur(
+                    brevFraSaksbehandler = fritekstBrev,
+                    saksbehandlersignatur = saksbehandlerNavn,
+                    enhet = enhet,
+                    brevmottakere = brevmottakere,
+                ),
+            ).retrieve()
+            .body<String>()!!
     }
 
-    fun genererBlankett(blankettPdfRequest: BlankettPdfRequest): ByteArray = postForEntity(pdfUri, blankettPdfRequest, HttpHeaders().medContentTypeJsonUTF8())
+    fun genererBlankett(blankettPdfRequest: BlankettPdfRequest): ByteArray =
+        restClient
+            .post()
+            .uri(URI.create("$familieBrevUri/blankett/klage/pdf"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(blankettPdfRequest)
+            .retrieve()
+            .body<ByteArray>()!!
 
     fun genererHtml(
         brevmal: String,
@@ -74,17 +76,20 @@ class BrevClient(
         val datasetOgType = hentTilhørendeSanityDatasetOgType(stønadstype)
         val url = URI.create("$familieBrevUri/api/$datasetOgType/bokmaal/$brevmal/html")
 
-        return postForEntity(
-            url,
-            BrevRequest(
-                brevFraSaksbehandler = saksbehandlerBrevrequest,
-                saksbehandlersignatur = saksbehandlersignatur,
-                saksbehandlerEnhet = saksbehandlerEnhet,
-                skjulBeslutterSignatur = skjulBeslutterSignatur,
-                dato = LocalDate.now().norskFormat(),
-            ),
-            HttpHeaders().medContentTypeJsonUTF8(),
-        )
+        return restClient
+            .post()
+            .uri(url)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(
+                BrevRequest(
+                    brevFraSaksbehandler = saksbehandlerBrevrequest,
+                    saksbehandlersignatur = saksbehandlersignatur,
+                    saksbehandlerEnhet = saksbehandlerEnhet,
+                    skjulBeslutterSignatur = skjulBeslutterSignatur,
+                    dato = LocalDate.now().norskFormat(),
+                ),
+            ).retrieve()
+            .body<String>()!!
     }
 
     private fun hentTilhørendeSanityDatasetOgType(stønadstype: Stønadstype) =

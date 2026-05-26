@@ -7,52 +7,64 @@ import no.nav.familie.kontrakter.felles.klage.FagsystemVedtak
 import no.nav.familie.kontrakter.felles.klage.KanOppretteRevurderingResponse
 import no.nav.familie.kontrakter.felles.klage.OpprettRevurderingResponse
 import no.nav.familie.kontrakter.felles.tilgangskontroll.FagsakTilgang
-import no.nav.familie.restklient.client.AbstractRestClient
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestOperations
+import org.springframework.web.client.RestClient
+import org.springframework.web.client.body
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.util.UUID
 
 @Component
 class FamilieKSSakClient(
-    @Qualifier("azure") restOperations: RestOperations,
+    @Qualifier("ksSakRestClient") private val restClient: RestClient,
     @Value("\${FAMILIE_KS_SAK_URL}") private val familieKsSakUri: URI,
-) : AbstractRestClient(restOperations, "familie.ks.sak") {
-    fun hentVedtak(eksternFagsakId: String): List<FagsystemVedtak> {
-        val hentVedtakUri =
-            UriComponentsBuilder
-                .fromUri(familieKsSakUri)
-                .pathSegment("api/ekstern/fagsaker/$eksternFagsakId/vedtak")
-                .build()
-                .toUri()
-        return getForEntity<Ressurs<List<FagsystemVedtak>>>(hentVedtakUri).getDataOrThrow()
-    }
+) {
+    fun hentVedtak(eksternFagsakId: String): List<FagsystemVedtak> =
+        restClient
+            .get()
+            .uri(
+                UriComponentsBuilder
+                    .fromUri(familieKsSakUri)
+                    .pathSegment("api/ekstern/fagsaker/$eksternFagsakId/vedtak")
+                    .build()
+                    .toUri(),
+            ).retrieve()
+            .body<Ressurs<List<FagsystemVedtak>>>()!!
+            .getDataOrThrow()
 
-    fun kanOppretteRevurdering(eksternFagsakId: String): KanOppretteRevurderingResponse {
-        val hentVedtakUri =
-            UriComponentsBuilder
-                .fromUri(familieKsSakUri)
-                .pathSegment("api/ekstern/fagsaker/$eksternFagsakId/kan-opprette-revurdering-klage")
-                .build()
-                .toUri()
-        return getForEntity<Ressurs<KanOppretteRevurderingResponse>>(hentVedtakUri).getDataOrThrow()
-    }
+    fun kanOppretteRevurdering(eksternFagsakId: String): KanOppretteRevurderingResponse =
+        restClient
+            .get()
+            .uri(
+                UriComponentsBuilder
+                    .fromUri(familieKsSakUri)
+                    .pathSegment("api/ekstern/fagsaker/$eksternFagsakId/kan-opprette-revurdering-klage")
+                    .build()
+                    .toUri(),
+            ).retrieve()
+            .body<Ressurs<KanOppretteRevurderingResponse>>()!!
+            .getDataOrThrow()
 
     fun opprettRevurdering(
         eksternFagsakId: String,
         eksternBehandlingId: UUID,
-    ): OpprettRevurderingResponse {
-        val hentVedtakUri =
-            UriComponentsBuilder
-                .fromUri(familieKsSakUri)
-                .pathSegment("api/ekstern/fagsak/$eksternFagsakId/klagebehandling/$eksternBehandlingId/opprett-revurdering-klage")
-                .build()
-                .toUri()
-        return postForEntity<Ressurs<OpprettRevurderingResponse>>(hentVedtakUri, emptyMap<String, String>()).getDataOrThrow()
-    }
+    ): OpprettRevurderingResponse =
+        restClient
+            .post()
+            .uri(
+                UriComponentsBuilder
+                    .fromUri(familieKsSakUri)
+                    .pathSegment("api/ekstern/fagsak/$eksternFagsakId/klagebehandling/$eksternBehandlingId/opprett-revurdering-klage")
+                    .build()
+                    .toUri(),
+            ).contentType(MediaType.APPLICATION_JSON)
+            .body(emptyMap<String, String>())
+            .retrieve()
+            .body<Ressurs<OpprettRevurderingResponse>>()!!
+            .getDataOrThrow()
 
     fun hentTilgangTilFagsak(eksternFagsakId: String): Tilgang {
         val tilgangUri =
@@ -61,7 +73,13 @@ class FamilieKSSakClient(
                 .pathSegment("api/ekstern/fagsak/$eksternFagsakId/tilgang")
                 .build()
                 .toUri()
-        val fagsakTilgang = getForEntity<Ressurs<FagsakTilgang>>(tilgangUri).getDataOrThrow()
+        val fagsakTilgang =
+            restClient
+                .get()
+                .uri(tilgangUri)
+                .retrieve()
+                .body<Ressurs<FagsakTilgang>>()!!
+                .getDataOrThrow()
         return Tilgang(harTilgang = fagsakTilgang.harTilgang, begrunnelse = fagsakTilgang.begrunnelse)
     }
 }
