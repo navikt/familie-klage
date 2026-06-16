@@ -17,12 +17,14 @@ import no.nav.familie.klage.formkrav.FormService
 import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
+import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.testutil.BrukerContextUtil
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DtoTestUtil
 import no.nav.familie.klage.vurdering.VurderingService
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
+import no.nav.familie.kontrakter.felles.organisasjon.Organisasjon
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
@@ -30,6 +32,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDate
@@ -48,6 +51,7 @@ class BrevServiceTest {
     private val taskService = mockk<TaskService>()
     private val brevmottakerUtleder = mockk<BrevmottakerUtleder>()
     private val featureToggleService = mockk<FeatureToggleService>()
+    private val familieIntegrasjonerClient = mockk<FamilieIntegrasjonerClient>()
 
     private val brevService =
         BrevService(
@@ -64,6 +68,7 @@ class BrevServiceTest {
             taskService = taskService,
             brevmottakerUtleder = brevmottakerUtleder,
             featureToggleService = featureToggleService,
+            familieIntegrasjonerClient = familieIntegrasjonerClient,
         )
 
     @BeforeEach
@@ -75,6 +80,64 @@ class BrevServiceTest {
     @AfterEach
     fun tearDown() {
         BrukerContextUtil.clearBrukerContext()
+    }
+
+    @Nested
+    inner class ValiderBrevmottakerOrganisasjonerEksisterer {
+        private val behandling = DomainUtil.behandling()
+        private val organisasjonsnummer = "987654321"
+        private val brevmottakerOrganisasjon =
+            DomainUtil.lagBrevmottakerOrganisasjon(organisasjonsnummer = organisasjonsnummer)
+
+        @Test
+        fun `skal ikke kaste feil når det ikke er organisasjoner som brevmottakere`() {
+            // Arrange
+            val brev = DomainUtil.lagBrev(behandlingId = behandling.id, mottakere = DomainUtil.lagBrevmottakere())
+            every { brevRepository.findByIdOrNull(behandling.id) } returns brev
+
+            // Act & Assert
+            assertDoesNotThrow {
+                brevService.validerAtBrevmottakerOrganisasjonerEksisterer(behandling.id)
+            }
+        }
+
+        @Test
+        fun `skal ikke kaste feil når organisasjon eksisterer i Enhetsregisteret`() {
+            // Arrange
+            val brev =
+                DomainUtil.lagBrev(
+                    behandlingId = behandling.id,
+                    mottakere = DomainUtil.lagBrevmottakere(organisasjoner = listOf(brevmottakerOrganisasjon)),
+                )
+            every { brevRepository.findByIdOrNull(behandling.id) } returns brev
+            every { familieIntegrasjonerClient.hentOrganisasjon(organisasjonsnummer) } returns
+                Organisasjon(organisasjonsnummer, "Orgnavn")
+
+            // Act & Assert
+            assertDoesNotThrow {
+                brevService.validerAtBrevmottakerOrganisasjonerEksisterer(behandling.id)
+            }
+        }
+
+        @Test
+        fun `skal kaste feil når organisasjon ikke eksisterer i Enhetsregisteret`() {
+            // Arrange
+            val brev =
+                DomainUtil.lagBrev(
+                    behandlingId = behandling.id,
+                    mottakere = DomainUtil.lagBrevmottakere(organisasjoner = listOf(brevmottakerOrganisasjon)),
+                )
+            every { brevRepository.findByIdOrNull(behandling.id) } returns brev
+            every { familieIntegrasjonerClient.hentOrganisasjon(organisasjonsnummer) } throws
+                RuntimeException("Organisasjon ikke funnet")
+
+            // Act & Assert
+            val feil =
+                assertThrows<Feil> {
+                    brevService.validerAtBrevmottakerOrganisasjonerEksisterer(behandling.id)
+                }
+            assertThat(feil.message).contains(organisasjonsnummer)
+        }
     }
 
     @Nested

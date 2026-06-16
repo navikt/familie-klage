@@ -59,6 +59,7 @@ class FerdigstillBehandlingService(
         if (behandlingsresultat == IKKE_MEDHOLD || behandlingsresultat == IKKE_MEDHOLD_FORMKRAV_AVVIST) {
             when (behandling.årsak) {
                 ORDINÆR -> {
+                    brevService.validerAtBrevmottakerOrganisasjonerEksisterer(behandlingId)
                     brevService.lagBrevPdf(behandlingId)
                     brevService.validerRiktigSaksbehandlerSignatur(behandlingId)
                     opprettJournalførBrevTask(behandlingId, fagsak.eksternId, fagsak.fagsystem)
