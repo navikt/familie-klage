@@ -14,6 +14,7 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.blankett.LagSaksbehandlingsblankettTask
 import no.nav.familie.klage.brev.BrevService
+import no.nav.familie.klage.brevmottaker.domain.Brevmottakere
 import no.nav.familie.klage.distribusjon.DistribusjonService
 import no.nav.familie.klage.distribusjon.JournalførBrevTask
 import no.nav.familie.klage.distribusjon.SendTilKabalTask
@@ -106,6 +107,8 @@ class FerdigstillBehandlingServiceTest {
         every { taskService.save(capture(saveTaskSlot)) } answers { firstArg() }
         every { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id, any(), any()) } just Runs
         justRun { brevService.lagBrevPdf(any()) }
+        every { brevService.hentBrevmottakere(any()) } returns Brevmottakere()
+        justRun { brevService.validerAtBrevmottakerOrganisasjonerEksisterer(any()) }
         every { fagsystemVedtakService.opprettRevurdering(any()) } returns OpprettRevurderingResponse(Opprettet("opprettetId"))
         every { brevService.validerRiktigSaksbehandlerSignatur(any()) } just Runs
     }
@@ -244,5 +247,39 @@ class FerdigstillBehandlingServiceTest {
         // Assert
         assertThat(fagsystemRevurderingSlot.single()).isNotNull
         verify(exactly = 1) { fagsystemVedtakService.opprettRevurdering(behandling) }
+    }
+
+    @Test
+    fun `skal feile ved ferdigstillelse dersom brevmottaker-organisasjon ikke eksisterer`() {
+        // Arrange
+        every { brevService.validerAtBrevmottakerOrganisasjonerEksisterer(any()) } throws
+            Feil("Organisasjon med organisasjonsnummer 987654321 er registrert som brevmottaker, men eksisterer ikke lenger i Enhetsregisteret.")
+
+        // Act & Assert
+        assertThrows<Feil> {
+            ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
+        }
+    }
+
+    @Test
+    fun `skal ferdigstille behandling når brevmottaker-organisasjon eksisterer`() {
+        // Act
+        ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
+
+        // Assert
+        assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD)
+        verify { brevService.validerAtBrevmottakerOrganisasjonerEksisterer(behandling.id) }
+    }
+
+    @Test
+    fun `skal ikke validere brevmottaker-organisasjoner ved årsak HENVENDELSE_FRA_KABAL`() {
+        // Arrange
+        every { behandlingService.hentBehandling(any()) } returns behandling.copy(årsak = Klagebehandlingsårsak.HENVENDELSE_FRA_KABAL)
+
+        // Act
+        ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
+
+        // Assert
+        verify(exactly = 0) { brevService.validerAtBrevmottakerOrganisasjonerEksisterer(any()) }
     }
 }

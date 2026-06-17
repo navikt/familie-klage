@@ -34,6 +34,7 @@ import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.repository.findByIdOrThrow
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
+import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.klage.personopplysninger.PersonopplysningerService
 import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerDto
 import no.nav.familie.klage.vurdering.VurderingService
@@ -64,6 +65,7 @@ class BrevService(
     private val taskService: TaskService,
     private val brevmottakerUtleder: BrevmottakerUtleder,
     private val featureToggleService: FeatureToggleService,
+    private val familieIntegrasjonerClient: FamilieIntegrasjonerClient,
 ) {
     fun hentBrev(behandlingId: UUID): Brev = brevRepository.findByIdOrThrow(behandlingId)
 
@@ -445,4 +447,17 @@ class BrevService(
             }
         }
     }
+
+    fun validerAtBrevmottakerOrganisasjonerEksisterer(behandlingId: UUID) {
+        val brevmottakere = hentBrevmottakere(behandlingId)
+        val organisasjonSomIkkeEksisterer =
+            brevmottakere.organisasjoner.find { !organisasjonEksisterer(it.organisasjonsnummer) }
+        feilHvis(organisasjonSomIkkeEksisterer != null) {
+            "Organisasjon med organisasjonsnummer ${organisasjonSomIkkeEksisterer!!.organisasjonsnummer} " +
+                "er registrert som brevmottaker, men eksisterer ikke lenger i Enhetsregisteret. " +
+                "Fjern organisasjonen som brevmottaker for å ferdigstille behandlingen."
+        }
+    }
+
+    private fun organisasjonEksisterer(organisasjonsnummer: String): Boolean = runCatching { familieIntegrasjonerClient.hentOrganisasjon(organisasjonsnummer) }.isSuccess
 }
