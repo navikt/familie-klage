@@ -21,6 +21,7 @@ enum class Toggle(
     // Release
     MANUELL_BREVMOTTAKER_ORGANISASJON("familie-klage.manuell-brevmottaker-organisasjon"),
     BRUK_SØKER_PERSONOPPLYSNINGER("familie-klage.bruk-soker-personopplysninger"),
+    FILTRER_HISTORISKE_NAVN("familie-klage.filtere-historiske-navn"),
     ;
 
     companion object {

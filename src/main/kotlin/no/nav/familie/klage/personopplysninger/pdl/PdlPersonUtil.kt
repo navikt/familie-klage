@@ -1,5 +1,8 @@
 package no.nav.familie.klage.personopplysninger.pdl
 
+import no.nav.familie.klage.infrastruktur.exception.Feil
+import org.springframework.http.HttpStatus
+
 fun Navn.visningsnavn(): String =
     if (mellomnavn == null) {
         "$fornavn $etternavn"
@@ -14,7 +17,27 @@ fun Personnavn.visningsnavn(): String =
         "$fornavn $mellomnavn $etternavn"
     }
 
-fun List<Navn>.gjeldende(): Navn = this.single()
+@Deprecated("Bruk gjeldende() istedenfor")
+fun List<Navn>.gjeldendeGammel(): Navn = this.single()
+
+fun List<Navn>.gjeldende(): Navn {
+    val ikkeHistoriskeNavn = this.filter { !it.metadata.historisk }
+    if (ikkeHistoriskeNavn.isEmpty()) {
+        throw Feil(
+            message = "Fant ingen gjeldende navn for personen. Forventet minst ett.",
+            frontendFeilmelding = "Fant ikke det gjeldende navnet til personen.",
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
+        )
+    }
+    if (ikkeHistoriskeNavn.size > 1) {
+        throw Feil(
+            message = "Fant flere (${this.size}) gjeldende navn for personen. Forventet kun ett.",
+            frontendFeilmelding = "Fant ikke det gjeldende navnet til personen.",
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
+        )
+    }
+    return ikkeHistoriskeNavn.single()
+}
 
 fun List<Dødsfall>.gjeldende(): Dødsfall? = this.firstOrNull()
 

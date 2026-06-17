@@ -1,6 +1,8 @@
 package no.nav.familie.klage.personopplysninger
 
 import no.nav.familie.klage.fagsak.FagsakService
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.personopplysninger.dto.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.dto.Folkeregisterpersonstatus
 import no.nav.familie.klage.personopplysninger.dto.FullmaktDto
@@ -12,6 +14,7 @@ import no.nav.familie.klage.personopplysninger.pdl.Fullmakt
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.klage.personopplysninger.pdl.PdlPerson
 import no.nav.familie.klage.personopplysninger.pdl.gjeldende
+import no.nav.familie.klage.personopplysninger.pdl.gjeldendeGammel
 import no.nav.familie.klage.personopplysninger.pdl.visningsnavn
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.cache.annotation.Cacheable
@@ -25,6 +28,7 @@ class PersonopplysningerService(
     private val pdlClient: PdlClient,
     private val integrasjonerClient: PersonopplysningerIntegrasjonerClient,
     private val fullmaktService: FullmaktService,
+    private val featureToggleService: FeatureToggleService,
 ) {
     @Cacheable("hentPersonopplysninger", cacheManager = "shortCache", key = "'fagsakEier:' + #behandlingId")
     fun hentPersonopplysningerFagsakEier(behandlingId: UUID): PersonopplysningerDto {
@@ -48,7 +52,12 @@ class PersonopplysningerService(
         val fullmakt = fullmaktService.hentFullmakt(ident)
         return PersonopplysningerDto(
             personIdent = ident,
-            navn = pdlPerson.navn.gjeldende().visningsnavn(),
+            navn =
+                if (featureToggleService.isEnabled(Toggle.FILTRER_HISTORISKE_NAVN)) {
+                    pdlPerson.navn.gjeldende().visningsnavn()
+                } else {
+                    pdlPerson.navn.gjeldendeGammel().visningsnavn()
+                },
             fødselsdato = pdlPerson.fødselsdato.gjeldende()?.let { it.fødselsdato ?: LocalDate.of(it.fødselsår, 1, 1) },
             kjønn =
                 Kjønn.valueOf(
