@@ -94,6 +94,7 @@ data class PdlPerson(
 )
 
 data class Metadata(
+    val master: String,
     val historisk: Boolean,
 )
 

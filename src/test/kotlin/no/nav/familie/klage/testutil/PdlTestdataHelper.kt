@@ -14,7 +14,7 @@ import no.nav.familie.klage.personopplysninger.pdl.VergemaalEllerFremtidsfullmak
 import java.time.LocalDate
 
 object PdlTestdataHelper {
-    val metadataGjeldende = Metadata(historisk = false)
+    val metadataGjeldende = Metadata(master = "PDL", historisk = false)
 
     fun lagKjønn(kjønnType: KjønnType = KjønnType.KVINNE) = Kjønn(kjønnType)
 
@@ -23,12 +23,13 @@ object PdlTestdataHelper {
         mellomnavn: String? = "mellomnavn",
         etternavn: String = "Etternavn",
         historisk: Boolean = false,
+        master: String = "PDL",
     ): Navn =
         Navn(
             fornavn,
             mellomnavn,
             etternavn,
-            Metadata(historisk = historisk),
+            Metadata(master = master, historisk = historisk),
         )
 
     fun pdlNavn(navn: List<Navn> = emptyList()) =
