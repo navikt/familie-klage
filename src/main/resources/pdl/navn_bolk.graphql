@@ -8,6 +8,7 @@ query($identer: [ID!]!){
                 mellomnavn
                 etternavn
                 metadata {
+                    master
                     historisk
                 }
             }

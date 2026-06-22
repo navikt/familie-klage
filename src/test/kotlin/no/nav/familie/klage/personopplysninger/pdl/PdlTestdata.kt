@@ -4,7 +4,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 object PdlTestdata {
-    private val metadataGjeldende = Metadata(false)
+    private val metadataGjeldende = Metadata("PDL", false)
 
     private const val IDENT = "2"
 
