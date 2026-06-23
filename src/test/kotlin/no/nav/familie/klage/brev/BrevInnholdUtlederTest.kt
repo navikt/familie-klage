@@ -49,6 +49,7 @@ internal class BrevInnholdUtlederTest {
             folkeregisterpersonstatus = Folkeregisterpersonstatus.BOSATT,
             dødsdato = null,
             fullmakt = listOf(),
+            harFullmaktTilgang = true,
             egenAnsatt = false,
             vergemål = listOf(),
         )

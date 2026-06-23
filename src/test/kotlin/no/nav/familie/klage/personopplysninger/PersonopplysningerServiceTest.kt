@@ -8,6 +8,7 @@ import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.personopplysninger.dto.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.dto.Folkeregisterpersonstatus
 import no.nav.familie.klage.personopplysninger.dto.Kjønn
+import no.nav.familie.klage.personopplysninger.fullmakt.FullmaktResultat
 import no.nav.familie.klage.personopplysninger.fullmakt.FullmaktService
 import no.nav.familie.klage.personopplysninger.pdl.Dødsfall
 import no.nav.familie.klage.personopplysninger.pdl.Fullmakt
@@ -53,7 +54,7 @@ internal class PersonopplysningerServiceTest {
         every { pdlClient.hentPerson(any(), any()) } returns lagPdlPerson()
         every { pdlClient.hentNavnBolk(any(), any()) } returns navnBolkResponse()
         every { integrasjonerClient.egenAnsatt(any()) } returns true
-        every { fullmaktService.hentFullmakt(any()) } returns listOf(fullmakt())
+        every { fullmaktService.hentFullmakt(any()) } returns FullmaktResultat(listOf(fullmakt()), harTilgang = true)
         every { featureToggleService.isEnabled(any()) } returns true
     }
 

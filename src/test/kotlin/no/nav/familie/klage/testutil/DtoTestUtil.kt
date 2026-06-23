@@ -106,6 +106,7 @@ object DtoTestUtil {
         folkeregisterpersonstatus: Folkeregisterpersonstatus? = null,
         dødsdato: LocalDate? = null,
         fullmakt: List<FullmaktDto> = emptyList(),
+        harFullmaktTilgang: Boolean = true,
         egenAnsatt: Boolean = false,
         vergemål: List<VergemålDto> = emptyList(),
     ) = PersonopplysningerDto(
@@ -117,6 +118,7 @@ object DtoTestUtil {
         folkeregisterpersonstatus = folkeregisterpersonstatus,
         dødsdato = dødsdato,
         fullmakt = fullmakt,
+        harFullmaktTilgang = harFullmaktTilgang,
         egenAnsatt = egenAnsatt,
         vergemål = vergemål,
     )
