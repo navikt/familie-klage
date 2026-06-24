@@ -3,12 +3,9 @@ package no.nav.familie.klage.søk
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.infrastruktur.sikkerhet.TilgangService
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.klage.personopplysninger.pdl.gjeldende
-import no.nav.familie.klage.personopplysninger.pdl.gjeldendeGammel
 import no.nav.familie.klage.personopplysninger.pdl.visningsnavn
 import no.nav.familie.klage.søk.dto.PersonIdentDto
 import no.nav.familie.klage.søk.dto.PersonTreffDto
@@ -32,7 +29,6 @@ class SøkController(
     private val pdlClient: PdlClient,
     private val eregService: EregService,
     private val fagsakService: FagsakService,
-    private val featureToggleService: FeatureToggleService,
 ) {
     @PostMapping("person")
     fun søkPerson(
@@ -43,12 +39,7 @@ class SøkController(
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
         tilgangService.validerTilgangTilPersonMedRelasjoner(personIdent, AuditLoggerEvent.UPDATE)
         val person = pdlClient.hentPerson(personIdent, fagsak.stønadstype)
-        val navn =
-            if (featureToggleService.isEnabled(Toggle.FILTRER_HISTORISKE_NAVN)) {
-                person.navn.gjeldende().visningsnavn()
-            } else {
-                person.navn.gjeldendeGammel().visningsnavn()
-            }
+        val navn = person.navn.gjeldende().visningsnavn()
         val result = PersonTreffDto(personIdent, navn)
         return Ressurs.success(result)
     }
