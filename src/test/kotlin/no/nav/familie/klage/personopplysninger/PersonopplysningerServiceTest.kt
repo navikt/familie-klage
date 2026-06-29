@@ -4,7 +4,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.klage.fagsak.FagsakService
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
 import no.nav.familie.klage.personopplysninger.dto.Adressebeskyttelse
 import no.nav.familie.klage.personopplysninger.dto.Folkeregisterpersonstatus
 import no.nav.familie.klage.personopplysninger.dto.Kjønn
@@ -40,10 +39,9 @@ internal class PersonopplysningerServiceTest {
     private val pdlClient = mockk<PdlClient>()
     private val integrasjonerClient = mockk<PersonopplysningerIntegrasjonerClient>()
     private val fullmaktService = mockk<FullmaktService>()
-    private val featureToggleService = mockk<FeatureToggleService>()
 
     private val personopplysningerService =
-        PersonopplysningerService(fagsakService, pdlClient, integrasjonerClient, fullmaktService, featureToggleService)
+        PersonopplysningerService(fagsakService, pdlClient, integrasjonerClient, fullmaktService)
 
     private val fagsak = fagsak()
 
@@ -55,7 +53,6 @@ internal class PersonopplysningerServiceTest {
         every { pdlClient.hentNavnBolk(any(), any()) } returns navnBolkResponse()
         every { integrasjonerClient.egenAnsatt(any()) } returns true
         every { fullmaktService.hentFullmakt(any()) } returns FullmaktResultat(listOf(fullmakt()), harTilgang = true)
-        every { featureToggleService.isEnabled(any()) } returns true
     }
 
     private fun fullmakt() = Fullmakt(LocalDate.now(), null, "01010199999", "fullmakt etternavn", MotpartsRolle.FULLMEKTIG, listOf("område"))

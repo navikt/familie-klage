@@ -17,9 +17,6 @@ fun Personnavn.visningsnavn(): String =
         "$fornavn $mellomnavn $etternavn"
     }
 
-@Deprecated("Bruk gjeldende() istedenfor")
-fun List<Navn>.gjeldendeGammel(): Navn = this.single()
-
 fun List<Navn>.gjeldende(): Navn {
     val masterOgNavn =
         this
