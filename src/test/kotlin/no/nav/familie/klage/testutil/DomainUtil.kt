@@ -342,6 +342,7 @@ object DomainUtil {
         folkeregisterpersonstatus = Folkeregisterpersonstatus.BOSATT,
         dødsdato = null,
         fullmakt = emptyList(),
+        harFullmaktTilgang = true,
         egenAnsatt = false,
         vergemål = emptyList(),
     )
@@ -370,6 +371,7 @@ object DomainUtil {
         folkeregisterpersonstatus: Folkeregisterpersonstatus = Folkeregisterpersonstatus.BOSATT,
         dødsdato: LocalDate? = null,
         fullmakt: List<FullmaktDto> = emptyList(),
+        harFullmaktTilgang: Boolean = true,
         egenAnsatt: Boolean = false,
         vergemål: List<VergemålDto> = emptyList(),
     ) = PersonopplysningerDto(
@@ -381,6 +383,7 @@ object DomainUtil {
         folkeregisterpersonstatus = folkeregisterpersonstatus,
         dødsdato = dødsdato,
         fullmakt = fullmakt,
+        harFullmaktTilgang = harFullmaktTilgang,
         egenAnsatt = egenAnsatt,
         vergemål = vergemål,
     )

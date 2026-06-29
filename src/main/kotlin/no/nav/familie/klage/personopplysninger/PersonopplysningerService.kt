@@ -10,7 +10,6 @@ import no.nav.familie.klage.personopplysninger.dto.Kjønn
 import no.nav.familie.klage.personopplysninger.dto.PersonopplysningerDto
 import no.nav.familie.klage.personopplysninger.dto.VergemålDto
 import no.nav.familie.klage.personopplysninger.fullmakt.FullmaktService
-import no.nav.familie.klage.personopplysninger.pdl.Fullmakt
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.klage.personopplysninger.pdl.PdlPerson
 import no.nav.familie.klage.personopplysninger.pdl.gjeldende
@@ -21,6 +20,7 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.util.UUID
+import no.nav.familie.klage.personopplysninger.pdl.Fullmakt as PdlFullmakt
 
 @Service
 class PersonopplysningerService(
@@ -49,7 +49,7 @@ class PersonopplysningerService(
     ): PersonopplysningerDto {
         val egenAnsatt = integrasjonerClient.egenAnsatt(ident)
         val pdlPerson = pdlClient.hentPerson(ident, stønadstype)
-        val fullmakt = fullmaktService.hentFullmakt(ident)
+        val fullmaktResultat = fullmaktService.hentFullmakt(ident)
         return PersonopplysningerDto(
             personIdent = ident,
             navn =
@@ -71,13 +71,14 @@ class PersonopplysningerService(
                     .gjeldende()
                     ?.let { Folkeregisterpersonstatus.fraPdl(it) },
             dødsdato = pdlPerson.dødsfall.gjeldende()?.dødsdato,
-            fullmakt = mapFullmakt(fullmakt),
+            fullmakt = mapFullmakt(fullmaktResultat.fullmakt),
+            harFullmaktTilgang = fullmaktResultat.harTilgang,
             egenAnsatt = egenAnsatt,
             vergemål = mapVergemål(pdlPerson),
         )
     }
 
-    private fun mapFullmakt(fullmakt: List<Fullmakt>) =
+    private fun mapFullmakt(fullmakt: List<PdlFullmakt>) =
         fullmakt
             .map {
                 FullmaktDto(

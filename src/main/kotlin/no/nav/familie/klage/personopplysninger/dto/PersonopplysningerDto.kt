@@ -17,6 +17,7 @@ data class PersonopplysningerDto(
     val folkeregisterpersonstatus: Folkeregisterpersonstatus?,
     val dødsdato: LocalDate?,
     val fullmakt: List<FullmaktDto>,
+    val harFullmaktTilgang: Boolean,
     val egenAnsatt: Boolean,
     val vergemål: List<VergemålDto>,
 )
