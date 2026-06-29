@@ -6,6 +6,7 @@ import no.nav.familie.klage.behandling.domain.StegType
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.oppgave.OpprettKabalEventOppgaveTask
 import no.nav.familie.klage.oppgave.OpprettOppgavePayload
+import no.nav.familie.kontrakter.felles.klage.BehandlingEventType
 import no.nav.familie.kontrakter.felles.oppgave.Behandlingstype
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
@@ -45,7 +46,7 @@ class BehandlingFeilregistrertTask(
         val årsakFeilregistrert =
             behandlingService
                 .hentKlageresultatDto(behandlingId)
-                .single()
+                .single { it.type == BehandlingEventType.BEHANDLING_FEILREGISTRERT }
                 .årsakFeilregistrert ?: error("Fant ikke årsak for feilregistrering")
 
         return OpprettKabalEventOppgaveTask.opprettTask(
