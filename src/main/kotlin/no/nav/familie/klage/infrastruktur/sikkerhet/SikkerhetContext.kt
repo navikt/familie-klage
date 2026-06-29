@@ -21,16 +21,16 @@ object SikkerhetContext {
      * @param strict hvis true - skal kaste feil hvis token ikke inneholder NAVident
      */
     fun hentSaksbehandler(strict: Boolean = false): String =
-        hentClaimFraToken<String>("NAVident")
+        hentClaimFraToken("NAVident")
             ?: if (strict) error("Finner ikke NAVident i token") else SYSTEM_FORKORTELSE
 
     fun hentSaksbehandlerNavn(strict: Boolean = false): String =
-        hentClaimFraToken<String>("name")
+        hentClaimFraToken("name")
             ?: if (strict) error("Finner ikke navn på innlogget bruker") else SYSTEM_NAVN
 
-    fun hentGrupperFraToken(): List<String> = hentClaimFraToken<List<String>>("groups") ?: emptyList()
+    fun hentGrupperFraToken(): List<String> = hentClaimFraToken("groups") ?: emptyList()
 
-    fun <T> hentClaimFraToken(claim: String): T? = runCatching { hentJwt()!!.getClaim<T>(claim)!! }.getOrNull()
+    fun <T : Any> hentClaimFraToken(claim: String): T? = runCatching { hentJwt()!!.getClaim<T>(claim)!! }.getOrNull()
 
     fun hentJwt(): Jwt? = (SecurityContextHolder.getContext().authentication as? JwtAuthenticationToken)?.token
 
