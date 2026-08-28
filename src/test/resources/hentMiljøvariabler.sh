@@ -1,30 +1,44 @@
- # Check the status of nais device
- NAIS_STATUS=$(nais device status)
+#!/bin/bash
+# Henter miljøvariabler for ApplicationLocal/ApplicationLocalPostgres med nais-cli.
+# NB: ApplicationLocal forkaster første linje på stdout og leser verdiene fra linje to – behold statuslinja.
 
- if [[ "$NAIS_STATUS" != *"Connected"* ]]; then
-   echo "Naisdevice er ikke tilkoblet. Start naisdevice og velg connect. Status må være grønn."
-   exit 1
- fi
+TEAM=teamfamilie
+MILJO=dev-gcp
+SECRET=azuread-familie-klage-lokal
+BEGRUNNELSE="Lokal kjoering av familie-klage"
 
- # Check the status of gcloud auth print-identity-token
- if ! gcloud auth print-identity-token > /dev/null 2>&1; then
-   echo "Ikke logget inn på gcloud. Kjør nais login"
-   exit 1
- fi
-
-kubectl config use-context dev-gcp
-AZURE_SECRET=$(kubectl -n teamfamilie get secrets | grep "azuread-familie-klage-lokal" | grep -v "frontend" |  sed 's/^\([a-zA-Z0-9-]*\).*/\1/'| head -n 1);
-
-PODVARIABLER="$(kubectl -n teamfamilie get secret "$AZURE_SECRET" -o json | jq '.data | map_values(@base64d)')"
-
-AZURE_APP_CLIENT_ID="$(echo "$PODVARIABLER" | grep "AZURE_APP_CLIENT_ID" | sed 's/:/=/1' | tr -d '",'| tr -d ' "')"
-AZURE_APP_CLIENT_SECRET="$(echo "$PODVARIABLER" | grep "AZURE_APP_CLIENT_SECRET" | sed 's/:/=/1' | tr -d '",'| tr -d ' "')"
-AZURE_OPENID_CONFIG_ISSUER="$(echo "$PODVARIABLER" | grep "AZURE_OPENID_CONFIG_ISSUER" | sed 's/:/=/1' | tr -d '",'| tr -d ' "')"
-AZURE_OPENID_CONFIG_JWKS_URI="$(echo "$PODVARIABLER" | grep "AZURE_OPENID_CONFIG_JWKS_URI" | sed 's/:/=/1' | tr -d '",'| tr -d ' "')"
-
-if [ -z "$AZURE_APP_CLIENT_ID" ]
-then
-      exit 1
-else
-      printf "%s;%s;%s;%s" "$AZURE_APP_CLIENT_ID" "$AZURE_APP_CLIENT_SECRET" "$AZURE_OPENID_CONFIG_ISSUER" "$AZURE_OPENID_CONFIG_JWKS_URI"
+if [[ "$(nais device status)" != *"Connected"* ]]; then
+  echo "Naisdevice er ikke tilkoblet. Start naisdevice og velg connect. Status må være grønn."
+  exit 1
 fi
+
+# nais-cli skriver feilmeldinger til stdout, så vi fanger dem og viser dem videre.
+if ! SECRET_JSON=$(nais secret get "$SECRET" -e "$MILJO" -t "$TEAM" \
+  --with-values --reason "$BEGRUNNELSE" -o json 2>&1); then
+  printf '%s\n' "Klarte ikke hente secreten $SECRET:" "$SECRET_JSON" \
+    "Er du på naisdevice og logget inn med 'nais login -y'?"
+  exit 1
+fi
+
+AZURE_KV=$(printf '%s\n' "$SECRET_JSON" | jq -r '.data[] | "\(.key)=\(.value)"')
+
+# Alle fire må være med: ApplicationLocal splitter på ';' og indekserer [1] uten sjekk,
+# så en manglende verdi ville gitt IndexOutOfBounds i stedet for en lesbar feilmelding.
+FELTER=()
+MANGLER=""
+for NOKKEL in AZURE_APP_CLIENT_ID AZURE_APP_CLIENT_SECRET AZURE_OPENID_CONFIG_ISSUER AZURE_OPENID_CONFIG_JWKS_URI; do
+  LINJE=$(printf '%s\n' "$AZURE_KV" | grep "^$NOKKEL=" | head -1)
+  if [[ -z "$LINJE" ]]; then
+    MANGLER="$MANGLER $NOKKEL"
+  else
+    FELTER+=("$LINJE")
+  fi
+done
+
+if [[ -n "$MANGLER" ]]; then
+  printf '%s\n' "Manglet følgende nøkler i $SECRET:$MANGLER"
+  exit 1
+fi
+
+echo "Henter miljøvariabler med nais-cli..."
+printf '%s;%s;%s;%s' "${FELTER[0]}" "${FELTER[1]}" "${FELTER[2]}" "${FELTER[3]}"
