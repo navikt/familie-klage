@@ -4,6 +4,7 @@ import no.nav.familie.log.NavSystemtype
 import no.nav.familie.log.filter.LogFilter
 import no.nav.familie.log.filter.RequestTimeFilter
 import no.nav.familie.sikkerhet.context.FamilieFellesSpringSecurityKonfigurasjon
+import no.nav.familie.tilgangsmaskin.TilgangsmaskinKlientConfig
 import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
@@ -24,9 +25,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
     "no.nav.familie.klage",
     "no.nav.familie.sikkerhet",
     "no.nav.familie.unleash",
-    "no.nav.familie.felles.tokenklient",
+    // Kun entraid-pakka: resten av tokenklient (sts, tokenx) har @Components som krever
+    // config klage ikke har (bl.a. STS_URL), og TokenX brukes ikke i klage.
+    "no.nav.familie.felles.tokenklient.entraid",
 )
-@Import(FamilieFellesSpringSecurityKonfigurasjon::class)
+@Import(
+    FamilieFellesSpringSecurityKonfigurasjon::class,
+    TilgangsmaskinKlientConfig::class,
+)
 @EnableScheduling
 class ApplicationConfig {
     private val logger = LoggerFactory.getLogger(this::class.java)

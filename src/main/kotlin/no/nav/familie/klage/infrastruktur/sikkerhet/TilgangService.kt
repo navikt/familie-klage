@@ -26,6 +26,7 @@ import java.util.UUID
 @Service
 class TilgangService(
     private val personopplysningerIntegrasjonerClient: PersonopplysningerIntegrasjonerClient,
+    private val tilgangsmaskinSkyggeService: TilgangsmaskinSkyggeService,
     private val rolleConfig: RolleConfig,
     private val cacheManager: CacheManager,
     private val auditLogger: AuditLogger,
@@ -165,7 +166,10 @@ class TilgangService(
 
     private fun harTilgangTilPersonMedRelasjoner(personIdent: String): Tilgang =
         harSaksbehandlerTilgang("validerTilgangTilPersonMedBarn", personIdent) {
-            personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(personIdent)
+            personopplysningerIntegrasjonerClient
+                .sjekkTilgangTilPersonMedRelasjoner(personIdent)
+                // Skygges inne i cache-lambdaen, slik at vi kun skygger på faktiske kall mot familie-integrasjoner.
+                .also { tilgang -> tilgangsmaskinSkyggeService.skyggeSjekkTilgangTilPersonMedRelasjoner(personIdent, tilgang) }
         }
 
     /**
