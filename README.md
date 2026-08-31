@@ -8,12 +8,14 @@ Se pom.xml for java-versjon. Bygging gjøres ved å kjøre `mvn clean install`.
 Dersom man vil gjøre autentiserte kall mot andre tjenester eller vil kjøre applikasjonen sammen med frontend, må man sette opp følgende miljø-variabler:
 
 #### Client id & client secret
-secret kan hentes fra cluster med (husk `nais login` først):
+Secretene hentes med [nais-cli](https://cli.nais.io). Du må være på naisdevice og ha kjørt `nais login -y`, som logger
+deg inn i både gcloud og login.nais.io. Uthenting av secret-verdier logges. `--reason` (minst 10 tegn) er valgfritt – utelater du flagget, blir du spurt om begrunnelse.
+Merk at `nais secret get` uten `--with-values` ikke finner plattform-secrets som disse.
 ```bash
-kubectl -n teamfamilie get secret azuread-familie-klage-lokal -o json | jq '.data | map_values(@base64d)'
+nais secret get azuread-familie-klage-lokal -e dev-gcp -t teamfamilie --with-values --reason "Lokal utvikling av familie-klage"
 ```
 ```bash
-kubectl -n teamfamilie get secret azuread-familie-klage-frontend-lokal -o json | jq '.data | map_values(@base64d)'
+nais secret get azuread-familie-klage-frontend-lokal -e dev-gcp -t teamfamilie --with-values --reason "Lokal utvikling av familie-klage"
 ```
 
 Variablene under legges inn under ApplicationLocal -> Edit Configurations -> Environment Variables.
