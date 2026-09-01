@@ -41,9 +41,12 @@ internal class TilgangServiceTest {
     private val familieBASakClient = mockk<FamilieBASakClient>()
     private val familieKSSakClient = mockk<FamilieKSSakClient>()
 
+    private val tilgangsmaskinSkyggeService = mockk<TilgangsmaskinSkyggeService>(relaxed = true)
+
     private val tilgangService =
         TilgangService(
             personopplysningerIntegrasjonerClient,
+            tilgangsmaskinSkyggeService,
             rolleConfig,
             cacheManager,
             auditLogger,

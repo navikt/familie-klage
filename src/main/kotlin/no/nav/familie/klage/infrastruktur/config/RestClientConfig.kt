@@ -4,10 +4,13 @@ import no.nav.familie.felles.tokenklient.entraid.EntraIDRestClientFactory
 import no.nav.familie.klage.infrastruktur.sikkerhet.SikkerhetContext
 import no.nav.familie.log.interceptor.ConsumerIdClientInterceptor
 import no.nav.familie.log.interceptor.MdcValuesPropagatingClientInterceptor
+import no.nav.familie.tilgangsmaskin.TilgangsmaskinKlientConfig
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.web.client.RestClient
+import java.time.Duration
 
 @Configuration
 class RestClientConfig(
@@ -50,6 +53,25 @@ class RestClientConfig(
     fun ksSakRestClient(
         @Value("\${FAMILIE_KS_SAK_SCOPE}") scope: String,
     ): RestClient = entraIDRestClientFactory.lagOboRestKlient(scope) { SikkerhetContext.hentJwt()?.tokenValue ?: error("OBO-kall uten innlogget bruker") }
+
+    /** Tilgangsmaskinen (OBO-only: bulk-endepunktet avviser maskin-til-maskin-token) */
+    @Bean(TilgangsmaskinKlientConfig.TILGANGSMASKIN_OBO_REST_CLIENT)
+    fun tilgangsmaskinOboRestClient(
+        @Value("\${TILGANGSMASKIN_SCOPE}") scope: String,
+    ): RestClient {
+        val requestFactory =
+            SimpleClientHttpRequestFactory().apply {
+                setConnectTimeout(Duration.ofSeconds(2))
+                setReadTimeout(Duration.ofSeconds(5))
+            }
+        return entraIDRestClientFactory
+            .lagOboRestKlient(scope) {
+                SikkerhetContext.hentJwt()?.tokenValue
+                    ?: throw IllegalStateException("Kall mot Tilgangsmaskinen krever OBO-token, men fant ingen JWT i konteksten")
+            }.mutate()
+            .requestFactory(requestFactory)
+            .build()
+    }
 
     /** PDL (CC-only: systemkall) */
     @Bean("pdlRestClient")

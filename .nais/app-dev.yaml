@@ -81,6 +81,9 @@ spec:
           namespace: klage
         - application: repr-api
           namespace: repr
+        - application: populasjonstilgangskontroll
+          namespace: tilgangsmaskin
+          cluster: dev-gcp
         - application: logging
           namespace: nais-system
       external:
