@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.6</version>
+        <version>4.1.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <repositories>
@@ -26,16 +26,16 @@
 
     <properties>
         <java.version>25</java.version>
-        <kotlin.version>2.3.21</kotlin.version>
-        <springdoc.version>3.0.3</springdoc.version>
-        <mockk-jvm.version>1.14.9</mockk-jvm.version>
+        <kotlin.version>2.4.10</kotlin.version>
+        <springdoc.version>3.1.0</springdoc.version>
+        <mockk-jvm.version>1.14.11</mockk-jvm.version>
         <felles.version>4.20260818093920_16ad74a</felles.version>
-        <prosessering.version>2.20260511102627_928cb38</prosessering.version>
+        <prosessering.version>2.20260817115650_f13f507</prosessering.version>
         <start-class>no.nav.familie.klage.ApplicationKt</start-class>
-        <kontrakter.version>4.0_20260505124916_025d466</kontrakter.version>
-        <saksstatistikk-klage.version>2.0_20260323170751_4c02e3c</saksstatistikk-klage.version>
-        <testcontainers.version>1.21.4</testcontainers.version>
-        <mock-oauth2-server.version>3.0.3</mock-oauth2-server.version>
+        <kontrakter.version>4.0_20260821102510_33ea755</kontrakter.version>
+        <saksstatistikk-klage.version>2.0_20260831102321_6c105e6</saksstatistikk-klage.version>
+        <testcontainers.version>2.0.5</testcontainers.version>
+        <mock-oauth2-server.version>6.0.2</mock-oauth2-server.version>
     </properties>
 
     <dependencyManagement>
@@ -122,7 +122,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.11</version>
+            <version>42.7.13</version>
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -313,7 +313,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.5</version>
+                <version>3.5.6</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -367,7 +367,7 @@
                 <!-- For å få dependency graph i SLSA som pushes av docker-build-push parameter byosbom -->
                 <groupId>org.cyclonedx</groupId>
                 <artifactId>cyclonedx-maven-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>2.9.3</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
