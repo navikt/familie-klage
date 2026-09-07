@@ -151,6 +151,9 @@ data class NyBrevmottakerOrganisasjonDto(
         get() = NyBrevmottakerDto.Type.ORGANISASJON
 
     override fun valider() {
+        if (organisasjonsnavn.isBlank()) {
+            throw ApiFeil.badRequest("Organisasjonsnavn kan ikke være tomt.")
+        }
         if (mottakerRolle != null && mottakerRolle !in setOf(INSTITUSJON, FULLMAKT)) {
             throw ApiFeil.badRequest("Organisasjon må ha mottakerrolle $INSTITUSJON eller $FULLMAKT.")
         }

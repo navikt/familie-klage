@@ -16,6 +16,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.http.HttpStatus
 
 class NyBrevmottakerDtoKtTest {
@@ -184,6 +185,20 @@ class NyBrevmottakerDtoKtTest {
             val exception = assertThrows<ApiFeil> { dto.valider() }
             assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(exception.message).isEqualTo("Organisasjon må ha mottakerrolle INSTITUSJON eller FULLMAKT.")
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = ["", " "])
+        fun `skal kaste feil hvis organisasjonsnavn er blank`(
+            organisasjonsnavn: String,
+        ) {
+            // Arrange
+            val dto = DtoTestUtil.lagNyBrevmottakerOrganisasjonDto(organisasjonsnavn = organisasjonsnavn)
+
+            // Act & Assert
+            val exception = assertThrows<ApiFeil> { dto.valider() }
+            assertThat(exception.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
+            assertThat(exception.message).isEqualTo("Organisasjonsnavn kan ikke være tomt.")
         }
     }
 
