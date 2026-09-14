@@ -128,11 +128,10 @@ class FerdigstillBehandlingServiceTest {
         assertThat(fagsystemRevurderingSlot.single()).isNull()
         assertThat(stegSlot.captured).isEqualTo(StegType.KABAL_VENTER_SVAR)
 
-        verify(exactly = 4) { taskService.save(any()) }
+        verify(exactly = 3) { taskService.save(any()) }
         assertThat(saveTaskSlot.map { it.type }).containsExactly(
             JournalførBrevTask.TYPE,
             LagSaksbehandlingsblankettTask.TYPE,
-            BehandlingsstatistikkTask.TYPE,
             BehandlingsstatistikkTask.TYPE,
         )
         verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id, any(), any()) }
@@ -151,11 +150,10 @@ class FerdigstillBehandlingServiceTest {
         assertThat(fagsystemRevurderingSlot.single()).isNull()
         assertThat(stegSlot.captured).isEqualTo(StegType.KABAL_VENTER_SVAR)
 
-        verify(exactly = 4) { taskService.save(any()) }
+        verify(exactly = 3) { taskService.save(any()) }
         assertThat(saveTaskSlot.map { it.type }).containsExactly(
             SendTilKabalTask.TYPE,
             LagSaksbehandlingsblankettTask.TYPE,
-            BehandlingsstatistikkTask.TYPE,
             BehandlingsstatistikkTask.TYPE,
         )
         verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id, fagsak.eksternId, fagsak.fagsystem) }

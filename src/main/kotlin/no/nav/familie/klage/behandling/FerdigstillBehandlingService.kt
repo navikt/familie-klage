@@ -92,15 +92,6 @@ class FerdigstillBehandlingService(
                 fagsystem = fagsak.fagsystem,
             ),
         )
-        if (behandlingsresultat == IKKE_MEDHOLD) {
-            taskService.save(
-                BehandlingsstatistikkTask.opprettSendtTilKATask(
-                    behandlingId = behandlingId,
-                    eksternFagsakId = fagsak.eksternId,
-                    fagsystem = fagsak.fagsystem,
-                ),
-            )
-        }
         taskService.save(
             BehandlingsstatistikkTask.opprettFerdigTask(
                 behandlingId = behandlingId,
