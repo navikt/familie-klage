@@ -30,7 +30,7 @@ object SikkerhetContext {
 
     fun hentGrupperFraToken(): List<String> = hentClaimFraToken<List<String>>("groups") ?: emptyList()
 
-    fun <T> hentClaimFraToken(claim: String): T? = runCatching { hentJwt()!!.getClaim<T>(claim)!! }.getOrNull()
+    fun <T : Any> hentClaimFraToken(claim: String): T? = runCatching { hentJwt()!!.getClaim<T>(claim)!! }.getOrNull()
 
     fun hentJwt(): Jwt? = (SecurityContextHolder.getContext().authentication as? JwtAuthenticationToken)?.token
 
