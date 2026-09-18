@@ -98,6 +98,7 @@ FAMILIE_DOKUMENT_URL: http://familie-dokument
 FAMILIE_INTEGRASJONER_URL: https://familie-integrasjoner.${ON_PREM_URL_ENV}-fss-pub.nais.io
 TILGANGSMASKIN_API_URL: http://populasjonstilgangskontroll.tilgangsmaskin
 PDL_URL: https://pdl-api.${ON_PREM_URL_ENV}-fss-pub.nais.io
+EREG_URL: https://ereg-services.${ON_PREM_URL_ENV}-fss-pub.nais.io
 REPR_API_URL: http://repr-api.repr
 
 KABAL_URL: http://kabal-api.klage

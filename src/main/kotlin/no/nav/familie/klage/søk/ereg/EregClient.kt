@@ -10,23 +10,25 @@ import java.net.URI
 
 @Component
 class EregClient(
-    @Value("\${FAMILIE_EF_PROXY_URL}")
-    private val familieEfProxyUri: URI,
-    @Qualifier("efProxyRestClient")
+    @Value("\${EREG_URL}")
+    private val eregUri: URI,
+    @Qualifier("utenAuthRestClient")
     private val restClient: RestClient,
 ) {
-    fun hentOrganisasjoner(organisasjonsnumre: List<String>): List<OrganisasjonDto> {
+    fun hentOrganisasjoner(organisasjonsnumre: List<String>): List<OrganisasjonDto> = organisasjonsnumre.map(::hentOrganisasjon)
+
+    private fun hentOrganisasjon(organisasjonsnummer: String): OrganisasjonDto {
         val uri =
             UriComponentsBuilder
-                .fromUri(familieEfProxyUri)
-                .pathSegment("api/ereg")
-                .queryParam("organisasjonsnumre", organisasjonsnumre)
+                .fromUri(eregUri)
+                .pathSegment("v1", "organisasjon", organisasjonsnummer)
                 .build()
                 .toUri()
+
         return restClient
             .get()
             .uri(uri)
             .retrieve()
-            .body<List<OrganisasjonDto>>()!!
+            .body<OrganisasjonDto>()!!
     }
 }
