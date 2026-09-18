@@ -93,6 +93,7 @@ spec:
         - host: familie-integrasjoner.dev-fss-pub.nais.io
         - host: familie-ef-infotrygd.dev-fss-pub.nais.io
         - host: familie-ef-proxy.dev-fss-pub.nais.io
+        - host: ereg-services.dev-fss-pub.nais.io
   azure:
     application:
       enabled: true
