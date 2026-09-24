@@ -92,13 +92,17 @@ class FerdigstillBehandlingService(
                 fagsystem = fagsak.fagsystem,
             ),
         )
-        taskService.save(
-            BehandlingsstatistikkTask.opprettFerdigTask(
-                behandlingId = behandlingId,
-                eksternFagsakId = fagsak.eksternId,
-                fagsak.fagsystem,
-            ),
-        )
+        // Klager som oversendes til KA avsluttes med SENDT_TIL_KA fra SendTilKabalTask, siden klagebehandlingen
+        // fortsetter i Kabal. En FERDIG-hendelse her ville kommet før oversendelsen og gitt feil rekkefølge i statistikken.
+        if (behandlingsresultat != IKKE_MEDHOLD) {
+            taskService.save(
+                BehandlingsstatistikkTask.opprettFerdigTask(
+                    behandlingId = behandlingId,
+                    eksternFagsakId = fagsak.eksternId,
+                    fagsak.fagsystem,
+                ),
+            )
+        }
     }
 
     /**

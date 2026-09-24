@@ -11,6 +11,7 @@ import no.nav.familie.klage.behandling.domain.FagsystemRevurdering
 import no.nav.familie.klage.behandling.domain.PåklagetVedtak
 import no.nav.familie.klage.behandling.domain.PåklagetVedtakstype
 import no.nav.familie.klage.behandling.domain.StegType
+import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkHendelse
 import no.nav.familie.klage.behandlingsstatistikk.BehandlingsstatistikkTask
 import no.nav.familie.klage.blankett.LagSaksbehandlingsblankettTask
 import no.nav.familie.klage.brev.BrevService
@@ -128,11 +129,10 @@ class FerdigstillBehandlingServiceTest {
         assertThat(fagsystemRevurderingSlot.single()).isNull()
         assertThat(stegSlot.captured).isEqualTo(StegType.KABAL_VENTER_SVAR)
 
-        verify(exactly = 3) { taskService.save(any()) }
+        verify(exactly = 2) { taskService.save(any()) }
         assertThat(saveTaskSlot.map { it.type }).containsExactly(
             JournalførBrevTask.TYPE,
             LagSaksbehandlingsblankettTask.TYPE,
-            BehandlingsstatistikkTask.TYPE,
         )
         verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id, any(), any()) }
     }
@@ -150,13 +150,36 @@ class FerdigstillBehandlingServiceTest {
         assertThat(fagsystemRevurderingSlot.single()).isNull()
         assertThat(stegSlot.captured).isEqualTo(StegType.KABAL_VENTER_SVAR)
 
-        verify(exactly = 3) { taskService.save(any()) }
+        verify(exactly = 2) { taskService.save(any()) }
         assertThat(saveTaskSlot.map { it.type }).containsExactly(
             SendTilKabalTask.TYPE,
             LagSaksbehandlingsblankettTask.TYPE,
-            BehandlingsstatistikkTask.TYPE,
         )
         verify { oppgaveTaskService.lagFerdigstillOppgaveForBehandlingTask(behandling.id, fagsak.eksternId, fagsak.fagsystem) }
+    }
+
+    @Test
+    fun `skal ikke sende ferdig-hendelse til statistikk når klagen skal oversendes til KA`() {
+        // Act
+        ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
+
+        // Assert
+        assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD)
+        assertThat(saveTaskSlot.map { it.type }).doesNotContain(BehandlingsstatistikkTask.TYPE)
+    }
+
+    @Test
+    fun `skal sende ferdig-hendelse til statistikk når klagen ikke oversendes til KA`() {
+        // Arrange
+        every { formService.formkravErOppfyltForBehandling(any()) } returns false
+
+        // Act
+        ferdigstillBehandlingService.ferdigstillKlagebehandling(behandlingId = behandling.id)
+
+        // Assert
+        assertThat(behandlingsresultatSlot.captured).isEqualTo(BehandlingResultat.IKKE_MEDHOLD_FORMKRAV_AVVIST)
+        val statistikkTask = saveTaskSlot.single { it.type == BehandlingsstatistikkTask.TYPE }
+        assertThat(statistikkTask.metadata["hendelse"]).isEqualTo(BehandlingsstatistikkHendelse.FERDIG.name)
     }
 
     @Test
