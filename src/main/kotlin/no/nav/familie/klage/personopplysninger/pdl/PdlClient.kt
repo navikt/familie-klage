@@ -1,6 +1,7 @@
 package no.nav.familie.klage.personopplysninger.pdl
 
 import no.nav.familie.klage.infrastruktur.config.PdlConfig
+import no.nav.familie.klage.infrastruktur.exception.PdlNotFoundException
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.beans.factory.annotation.Qualifier
@@ -61,6 +62,38 @@ class PdlClient(
     }
 
     /**
+     * Henter relasjonene som inngår i tilgangskontrollen av en person med relasjoner. Slås alltid opp med tema ENF,
+     * slik familie-integrasjoner gjør i `tilgang/person-med-relasjoner`.
+     *
+     * @throws PdlNotFoundException hvis personen ikke finnes i PDL
+     */
+    fun hentPersonMedRelasjoner(personIdent: String): PdlPersonMedRelasjoner = feilsjekkOgReturnerPersonFraBolk(personIdent, hentPersonBolkMedRelasjoner(listOf(personIdent)))
+
+    /**
+     * Henter relasjonene som inngår i tilgangskontrollen for flere personer, se [hentPersonMedRelasjoner].
+     */
+    fun hentPersonerMedRelasjoner(personIdenter: List<String>): Map<String, PdlPersonMedRelasjoner> =
+        personIdenter.chunked(MAKS_ANTALL_IDENTER_I_BOLK).fold(emptyMap()) { resultat, identer ->
+            resultat + feilsjekkOgReturnerData(hentPersonBolkMedRelasjoner(identer))
+        }
+
+    private fun hentPersonBolkMedRelasjoner(personIdenter: List<String>): PdlBolkResponse<PdlPersonMedRelasjoner> {
+        val pdlPersonRequest =
+            PdlPersonBolkRequest(
+                variables = PdlPersonBolkRequestVariables(personIdenter),
+                query = PdlConfig.bolkRelasjonerQuery,
+            )
+        return restClient
+            .post()
+            .uri(pdlConfig.pdlUri)
+            .contentType(MediaType.APPLICATION_JSON)
+            .headers { it.addAll(httpHeaders(Tema.ENF)) }
+            .body(pdlPersonRequest)
+            .retrieve()
+            .body<PdlBolkResponse<PdlPersonMedRelasjoner>>()!!
+    }
+
+    /**
      * @param ident Ident til personen, samme hvilke type (Folkeregisterident, aktørid eller npid)
      * @param historikk default false, tar med historikk hvis det er ønskelig
      * @return liste med folkeregisteridenter
@@ -108,4 +141,8 @@ class PdlClient(
             Stønadstype.BARNETRYGD -> Tema.BAR
             Stønadstype.KONTANTSTØTTE -> Tema.KON
         }
+
+    companion object {
+        private const val MAKS_ANTALL_IDENTER_I_BOLK = 100
+    }
 }

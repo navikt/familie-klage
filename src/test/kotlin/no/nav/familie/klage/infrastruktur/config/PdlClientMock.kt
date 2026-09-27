@@ -7,8 +7,10 @@ import no.nav.familie.klage.personopplysninger.pdl.AdressebeskyttelseGradering
 import no.nav.familie.klage.personopplysninger.pdl.Fødselsdato
 import no.nav.familie.klage.personopplysninger.pdl.KjønnType
 import no.nav.familie.klage.personopplysninger.pdl.PdlClient
+import no.nav.familie.klage.personopplysninger.pdl.PdlForelderBarnRelasjon
 import no.nav.familie.klage.personopplysninger.pdl.PdlIdent
 import no.nav.familie.klage.personopplysninger.pdl.PdlIdenter
+import no.nav.familie.klage.personopplysninger.pdl.PdlPersonMedRelasjoner
 import no.nav.familie.klage.personopplysninger.pdl.VergeEllerFullmektig
 import no.nav.familie.klage.personopplysninger.pdl.VergemaalEllerFremtidsfullmakt
 import no.nav.familie.klage.testutil.PdlTestdataHelper.lagKjønn
@@ -34,6 +36,16 @@ class PdlClientMock {
         every { pdlClient.hentNavnBolk(any(), any()) } answers { firstArg<List<String>>().associateWith { pdlNavn(listOf(lagNavn())) } }
 
         every { pdlClient.hentPerson(any(), any()) } returns opprettPdlPerson()
+
+        every { pdlClient.hentPersonMedRelasjoner(any()) } returns PdlPersonMedRelasjoner(forelderBarnRelasjon = emptyList(), sivilstand = emptyList())
+        every { pdlClient.hentPersonMedRelasjoner(SØKER_MED_BARN_UTEN_TILGANG) } returns
+            PdlPersonMedRelasjoner(
+                forelderBarnRelasjon = listOf(PdlForelderBarnRelasjon(relatertPersonsIdent = BARN_UTEN_TILGANG, relatertPersonsRolle = "BARN")),
+                sivilstand = emptyList(),
+            )
+        every { pdlClient.hentPersonerMedRelasjoner(any()) } answers {
+            firstArg<List<String>>().associateWith { PdlPersonMedRelasjoner(forelderBarnRelasjon = emptyList(), sivilstand = emptyList()) }
+        }
 
         every {
             pdlClient.hentPersonidenter(
@@ -61,6 +73,10 @@ class PdlClientMock {
 
     companion object {
         private const val ANNEN_FORELDER_FNR = "17097926735"
+
+        /** Søker med et barn som [TilgangsmaskinKlientMock] avviser tilgang til. */
+        const val SØKER_MED_BARN_UTEN_TILGANG = "01010112345"
+        const val BARN_UTEN_TILGANG = "ikkeTilgangBarn"
 
         fun opprettPdlPerson() =
             pdlPerson(
