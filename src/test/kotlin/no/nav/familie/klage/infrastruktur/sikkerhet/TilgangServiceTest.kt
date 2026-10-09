@@ -12,15 +12,20 @@ import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.felles.domain.BehandlerRolle
 import no.nav.familie.klage.felles.dto.Tilgang
 import no.nav.familie.klage.infrastruktur.config.RolleConfigTestUtil
+import no.nav.familie.klage.infrastruktur.exception.Feil
 import no.nav.familie.klage.infrastruktur.exception.ManglerTilgang
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.integrasjoner.FamilieBASakClient
 import no.nav.familie.klage.integrasjoner.FamilieKSSakClient
+import no.nav.familie.klage.personopplysninger.PersonMedRelasjonerService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerIntegrasjonerClient
 import no.nav.familie.klage.testutil.BrukerContextUtil.testWithBrukerContext
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
+import no.nav.familie.tilgangsmaskin.Avvisningskode
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -32,7 +37,10 @@ import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager
 
 internal class TilgangServiceTest {
+    private val personMedRelasjonerService = mockk<PersonMedRelasjonerService>()
+    private val tilgangsmaskinTilgangskontrollKlient = mockk<TilgangsmaskinTilgangskontrollKlient>()
     private val personopplysningerIntegrasjonerClient = mockk<PersonopplysningerIntegrasjonerClient>()
+    private val featureToggleService = mockk<FeatureToggleService>()
     private val rolleConfig = RolleConfigTestUtil.rolleConfig
     private val cacheManager = ConcurrentMapCacheManager()
     private val auditLogger = mockk<AuditLogger>(relaxed = true)
@@ -41,12 +49,12 @@ internal class TilgangServiceTest {
     private val familieBASakClient = mockk<FamilieBASakClient>()
     private val familieKSSakClient = mockk<FamilieKSSakClient>()
 
-    private val tilgangsmaskinSkyggeService = mockk<TilgangsmaskinSkyggeService>(relaxed = true)
-
     private val tilgangService =
         TilgangService(
+            personMedRelasjonerService,
+            tilgangsmaskinTilgangskontrollKlient,
             personopplysningerIntegrasjonerClient,
-            tilgangsmaskinSkyggeService,
+            featureToggleService,
             rolleConfig,
             cacheManager,
             auditLogger,
@@ -65,6 +73,14 @@ internal class TilgangServiceTest {
     internal fun setUp() {
         mockFagsakOgBehandling(fagsakEf, behandlingEf)
         mockFagsakOgBehandling(fagsakBa, behandlingBa)
+        every { featureToggleService.isEnabled(Toggle.SKAL_BRUKE_TILGANGSMASKINEN) } returns true
+    }
+
+    private fun mockTilgangTilPersonMedRelasjoner(vararg tilganger: PersonTilgang) {
+        val søker = tilganger.first().personIdent
+        val identer = tilganger.map { it.personIdent }.toSet()
+        every { personMedRelasjonerService.hentIdenterForPersonMedRelasjoner(søker) } returns identer
+        every { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(identer) } returns tilganger.toList()
     }
 
     private fun mockFagsakOgBehandling(
@@ -191,13 +207,13 @@ internal class TilgangServiceTest {
                 val fagsak = fagsak()
                 every { fagsakService.hentFagsak(fagsak.id) } returns fagsak
 
-                every { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentFagsakEierIdent()) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
+                mockTilgangTilPersonMedRelasjoner(PersonTilgang.avvist(fagsak.hentFagsakEierIdent(), Avvisningskode.AVVIST_SKJERMING, "Ingen tilgang"))
 
                 // Act & Assert
                 testWithBrukerContext {
                     val manglerTilgangException = assertThrows<ManglerTilgang> { tilgangService.validerTilgangTilFagsak(fagsak.id, AuditLoggerEvent.ACCESS) }
 
-                    verify(exactly = 1) { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentFagsakEierIdent()) }
+                    verify(exactly = 1) { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(setOf(fagsak.hentFagsakEierIdent())) }
                     assertThat(manglerTilgangException.message)
                         .isEqualTo(
                             "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
@@ -213,12 +229,12 @@ internal class TilgangServiceTest {
                 val fagsak = fagsak()
                 every { fagsakService.hentFagsak(fagsak.id) } returns fagsak
 
-                every { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentFagsakEierIdent()) } returns Tilgang(harTilgang = true)
+                mockTilgangTilPersonMedRelasjoner(PersonTilgang.medTilgang(fagsak.hentFagsakEierIdent()))
 
                 // Act & Assert
                 testWithBrukerContext {
                     assertDoesNotThrow { tilgangService.validerTilgangTilFagsak(fagsak.id, AuditLoggerEvent.ACCESS) }
-                    verify(exactly = 1) { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentFagsakEierIdent()) }
+                    verify(exactly = 1) { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(setOf(fagsak.hentFagsakEierIdent())) }
                 }
             }
         }
@@ -386,13 +402,13 @@ internal class TilgangServiceTest {
                 val behandling = behandling(fagsak)
 
                 every { fagsakService.hentFagsakForBehandling(behandling.id) } returns fagsak
-                every { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentFagsakEierIdent()) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
+                mockTilgangTilPersonMedRelasjoner(PersonTilgang.avvist(fagsak.hentFagsakEierIdent(), Avvisningskode.AVVIST_SKJERMING, "Ingen tilgang"))
 
                 // Act & Assert
                 testWithBrukerContext {
                     val manglerTilgangException = assertThrows<ManglerTilgang> { tilgangService.validerTilgangTilBehandling(behandling.id, AuditLoggerEvent.ACCESS) }
 
-                    verify(exactly = 1) { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentFagsakEierIdent()) }
+                    verify(exactly = 1) { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(setOf(fagsak.hentFagsakEierIdent())) }
                     assertThat(manglerTilgangException.message)
                         .isEqualTo(
                             "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
@@ -409,14 +425,190 @@ internal class TilgangServiceTest {
                 val behandling = behandling(fagsak)
 
                 every { fagsakService.hentFagsakForBehandling(behandling.id) } returns fagsak
-                every { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentFagsakEierIdent()) } returns Tilgang(harTilgang = true)
+                mockTilgangTilPersonMedRelasjoner(PersonTilgang.medTilgang(fagsak.hentFagsakEierIdent()))
 
                 // Act & Assert
                 testWithBrukerContext {
                     assertDoesNotThrow { tilgangService.validerTilgangTilBehandling(behandling.id, AuditLoggerEvent.ACCESS) }
-                    verify(exactly = 1) { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsak.hentFagsakEierIdent()) }
+                    verify(exactly = 1) { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(setOf(fagsak.hentFagsakEierIdent())) }
                 }
             }
         }
+    }
+
+    @Nested
+    inner class ValiderTilgangTilPersonMedRelasjoner {
+        private val søker = "01010199999"
+        private val barn = "01011099999"
+        private val annenForelder = "02020299999"
+
+        @Test
+        fun `skal ikke kaste feil når saksbehandler har tilgang til personen og alle relasjonene`() {
+            // Arrange
+            mockTilgangTilPersonMedRelasjoner(
+                PersonTilgang.medTilgang(søker),
+                PersonTilgang.medTilgang(barn),
+                PersonTilgang.medTilgang(annenForelder),
+            )
+
+            // Act & Assert
+            testWithBrukerContext {
+                assertDoesNotThrow { tilgangService.validerTilgangTilPersonMedRelasjoner(søker, AuditLoggerEvent.ACCESS) }
+            }
+        }
+
+        @Test
+        fun `skal kaste feil når saksbehandler mangler tilgang til en av relasjonene`() {
+            // Arrange
+            mockTilgangTilPersonMedRelasjoner(
+                PersonTilgang.medTilgang(søker),
+                PersonTilgang.avvist(barn, Avvisningskode.AVVIST_STRENGT_FORTROLIG_ADRESSE, BEGRUNNELSE_STRENGT_FORTROLIG),
+                PersonTilgang.medTilgang(annenForelder),
+            )
+
+            // Act
+            val manglerTilgang =
+                testWithBrukerContext {
+                    assertThrows<ManglerTilgang> { tilgangService.validerTilgangTilPersonMedRelasjoner(søker, AuditLoggerEvent.ACCESS) }
+                }
+
+            // Assert
+            assertThat(manglerTilgang.frontendFeilmelding).isEqualTo("Mangler tilgang til opplysningene. Årsak: $BEGRUNNELSE_STRENGT_FORTROLIG")
+            assertThat(manglerTilgang.message).doesNotContain(barn)
+        }
+
+        @Test
+        fun `skal slå sammen ulike begrunnelser og fjerne duplikater`() {
+            // Arrange
+            mockTilgangTilPersonMedRelasjoner(
+                PersonTilgang.avvist(søker, Avvisningskode.AVVIST_SKJERMING, BEGRUNNELSE_SKJERMING),
+                PersonTilgang.avvist(barn, Avvisningskode.AVVIST_STRENGT_FORTROLIG_ADRESSE, BEGRUNNELSE_STRENGT_FORTROLIG),
+                PersonTilgang.avvist(annenForelder, Avvisningskode.AVVIST_STRENGT_FORTROLIG_ADRESSE, BEGRUNNELSE_STRENGT_FORTROLIG),
+            )
+
+            // Act
+            val manglerTilgang =
+                testWithBrukerContext {
+                    assertThrows<ManglerTilgang> { tilgangService.validerTilgangTilPersonMedRelasjoner(søker, AuditLoggerEvent.ACCESS) }
+                }
+
+            // Assert
+            assertThat(manglerTilgang.frontendFeilmelding)
+                .isEqualTo("Mangler tilgang til opplysningene. Årsak: $BEGRUNNELSE_SKJERMING. $BEGRUNNELSE_STRENGT_FORTROLIG")
+        }
+
+        @Test
+        fun `skal kaste den opprinnelige feilen når tilgangssjekken feiler`() {
+            // Arrange
+            val feil = Feil(message = "Fikk ikke gyldig svar fra Tilgangsmaskinen for 1 av 1 identer.", frontendFeilmelding = "Prøv igjen senere.")
+            every { personMedRelasjonerService.hentIdenterForPersonMedRelasjoner(søker) } returns setOf(søker)
+            every { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(setOf(søker)) } throws feil
+
+            // Act
+            val kastetFeil =
+                testWithBrukerContext {
+                    assertThrows<Feil> { tilgangService.validerTilgangTilPersonMedRelasjoner(søker, AuditLoggerEvent.ACCESS) }
+                }
+
+            // Assert
+            assertThat(kastetFeil).isSameAs(feil)
+        }
+
+        @Test
+        fun `skal ikke bruke tilgang cachet fra den andre kilden når toggle endres`() {
+            // Arrange
+            mockTilgangTilPersonMedRelasjoner(PersonTilgang.avvist(søker, Avvisningskode.AVVIST_SKJERMING, BEGRUNNELSE_SKJERMING))
+            every { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(søker) } returns Tilgang(harTilgang = true)
+            testWithBrukerContext {
+                assertThrows<ManglerTilgang> { tilgangService.validerTilgangTilPersonMedRelasjoner(søker, AuditLoggerEvent.ACCESS) }
+            }
+            every { featureToggleService.isEnabled(Toggle.SKAL_BRUKE_TILGANGSMASKINEN) } returns false
+
+            // Act & Assert
+            testWithBrukerContext {
+                assertDoesNotThrow { tilgangService.validerTilgangTilPersonMedRelasjoner(søker, AuditLoggerEvent.ACCESS) }
+            }
+            verify(exactly = 1) { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(setOf(søker)) }
+            verify(exactly = 1) { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(søker) }
+        }
+
+        @Test
+        fun `skal cache tilgangen per saksbehandler`() {
+            // Arrange
+            mockTilgangTilPersonMedRelasjoner(PersonTilgang.medTilgang(søker), PersonTilgang.medTilgang(barn))
+            testWithBrukerContext { tilgangService.validerTilgangTilPersonMedRelasjoner(søker, AuditLoggerEvent.ACCESS) }
+
+            // Act
+            testWithBrukerContext { tilgangService.validerTilgangTilPersonMedRelasjoner(søker, AuditLoggerEvent.ACCESS) }
+            testWithBrukerContext(preferredUsername = "Annen saksbehandler") {
+                tilgangService.validerTilgangTilPersonMedRelasjoner(søker, AuditLoggerEvent.ACCESS)
+            }
+
+            // Assert
+            verify(exactly = 2) { personMedRelasjonerService.hentIdenterForPersonMedRelasjoner(søker) }
+            verify(exactly = 2) { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(setOf(søker, barn)) }
+        }
+    }
+
+    @Nested
+    inner class ValiderTilgangTilPersonMedRelasjonerNårTilgangsmaskinenErSkruddAv {
+        private val søker = "01010199999"
+
+        @BeforeEach
+        fun setUp() {
+            every { featureToggleService.isEnabled(Toggle.SKAL_BRUKE_TILGANGSMASKINEN) } returns false
+        }
+
+        @Test
+        fun `skal sjekke tilgang mot familie-integrasjoner og ikke mot Tilgangsmaskinen`() {
+            // Arrange
+            every { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(søker) } returns Tilgang(harTilgang = true)
+
+            // Act & Assert
+            testWithBrukerContext {
+                assertDoesNotThrow { tilgangService.validerTilgangTilPersonMedRelasjoner(søker, AuditLoggerEvent.ACCESS) }
+            }
+            verify(exactly = 1) { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(søker) }
+            verify(exactly = 0) { personMedRelasjonerService.hentIdenterForPersonMedRelasjoner(any()) }
+            verify(exactly = 0) { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(any()) }
+        }
+
+        @Test
+        fun `skal kaste feil dersom saksbehandler ikke har tilgang til fagsak når fagsystem er EF`() {
+            // Arrange
+            every { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(fagsakEf.hentFagsakEierIdent()) } returns
+                Tilgang(harTilgang = false, begrunnelse = BEGRUNNELSE_SKJERMING)
+
+            // Act
+            val manglerTilgang =
+                testWithBrukerContext {
+                    assertThrows<ManglerTilgang> { tilgangService.validerTilgangTilFagsak(fagsakEf.id, AuditLoggerEvent.ACCESS) }
+                }
+
+            // Assert
+            assertThat(manglerTilgang.frontendFeilmelding).isEqualTo("Mangler tilgang til opplysningene. Årsak: $BEGRUNNELSE_SKJERMING")
+            verify(exactly = 0) { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(any()) }
+        }
+
+        @Test
+        fun `skal kaste feil med begrunnelsen fra familie-integrasjoner når saksbehandler mangler tilgang`() {
+            // Arrange
+            every { personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(søker) } returns
+                Tilgang(harTilgang = false, begrunnelse = BEGRUNNELSE_STRENGT_FORTROLIG)
+
+            // Act
+            val manglerTilgang =
+                testWithBrukerContext {
+                    assertThrows<ManglerTilgang> { tilgangService.validerTilgangTilPersonMedRelasjoner(søker, AuditLoggerEvent.ACCESS) }
+                }
+
+            // Assert
+            assertThat(manglerTilgang.frontendFeilmelding).isEqualTo("Mangler tilgang til opplysningene. Årsak: $BEGRUNNELSE_STRENGT_FORTROLIG")
+        }
+    }
+
+    companion object {
+        private const val BEGRUNNELSE_STRENGT_FORTROLIG = "Du har ikke tilgang til brukere med strengt fortrolig adresse (kode 6)"
+        private const val BEGRUNNELSE_SKJERMING = "Du har ikke tilgang til Nav-ansatte og deres nærmeste familie"
     }
 }

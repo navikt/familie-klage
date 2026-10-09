@@ -37,6 +37,21 @@ inline fun <reified DATA : Any, reified T : Any> feilsjekkOgReturnerData(
     return data
 }
 
+/**
+ * Som [feilsjekkOgReturnerData], men for oppslag av én person i bolk, der en person som ikke finnes gir [PdlNotFoundException].
+ */
+inline fun <reified T : Any> feilsjekkOgReturnerPersonFraBolk(
+    personIdent: String,
+    pdlResponse: PdlBolkResponse<T>,
+): T {
+    if (pdlResponse.data?.personBolk?.any { it.ident == personIdent && it.code == PDL_BOLK_KODE_IKKE_FUNNET } == true) {
+        throw PdlNotFoundException()
+    }
+    return feilsjekkOgReturnerData(pdlResponse).getValue(personIdent)
+}
+
+const val PDL_BOLK_KODE_IKKE_FUNNET = "not_found"
+
 inline fun <reified T : Any> feilsjekkOgReturnerData(pdlResponse: PdlBolkResponse<T>): Map<String, T> {
     if (pdlResponse.data == null) {
         secureLogger.error("Data fra pdl er null ved bolkoppslag av ${T::class} fra PDL: ${pdlResponse.errorMessages()}")
