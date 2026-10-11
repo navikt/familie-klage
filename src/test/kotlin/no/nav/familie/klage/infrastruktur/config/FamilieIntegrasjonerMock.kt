@@ -68,12 +68,6 @@ class FamilieIntegrasjonerMock(
                 .willReturn(okJson(jsonMapper.writeValueAsString(lagIkkeTilgangResponse()))),
             post(urlEqualTo(integrasjonerConfig.tilgangRelasjonerUri.path))
                 .willReturn(okJson(jsonMapper.writeValueAsString(Tilgang(true, null)))),
-            post(urlEqualTo(integrasjonerConfig.tilgangPersonUri.path))
-                .withRequestBody(matching(".*ikkeTilgang.*"))
-                .atPriority(1)
-                .willReturn(okJson(jsonMapper.writeValueAsString(listOf(lagIkkeTilgangResponse())))),
-            post(urlEqualTo(integrasjonerConfig.tilgangPersonUri.path))
-                .willReturn(okJson(jsonMapper.writeValueAsString(listOf(Tilgang(true, null))))),
             post(urlEqualTo(integrasjonerConfig.arbeidsfordelingUri.path))
                 .willReturn(okJson(jsonMapper.writeValueAsString(arbeidsfordeling))),
             post(urlEqualTo(integrasjonerConfig.arbeidsfordelingMedRelasjonerUri.path))

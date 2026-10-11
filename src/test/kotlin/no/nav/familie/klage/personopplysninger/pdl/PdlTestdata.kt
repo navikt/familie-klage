@@ -34,6 +34,22 @@ object PdlTestdata {
                 ),
         )
 
+    val pdlPersonerMedRelasjonerBolk =
+        PersonBolk(
+            personBolk =
+                listOf(
+                    PersonDataBolk(
+                        ident = IDENT,
+                        code = "ok",
+                        person =
+                            PdlPersonMedRelasjoner(
+                                forelderBarnRelasjon = listOf(PdlForelderBarnRelasjon(relatertPersonsIdent = "3", relatertPersonsRolle = "BARN")),
+                                sivilstand = listOf(PdlSivilstand(relatertVedSivilstand = "4")),
+                            ),
+                    ),
+                ),
+        )
+
     val pdlPersonData =
         PdlPersonData(
             PdlPerson(

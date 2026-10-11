@@ -21,4 +21,13 @@ class PdlDtoTest {
 
         assertThat(dtoFelter).isEqualTo(spørringsfelter["data"])
     }
+
+    @Test
+    fun `personerMedRelasjonerBolk inneholder samme felter som blir spurt om i query`() {
+        val spørringsfelter = PdlTestUtil.parseSpørring("/pdl/hent_personer_relasjoner.graphql")
+
+        val dtoFelter = PdlTestUtil.finnFeltStruktur(PdlTestdata.pdlPersonerMedRelasjonerBolk)!!
+
+        assertThat(dtoFelter).isEqualTo(spørringsfelter["data"])
+    }
 }

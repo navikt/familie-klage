@@ -26,6 +26,8 @@ class PdlConfig(
 
         val hentIdentQuery = graphqlQuery("/pdl/hent_ident.graphql")
 
+        val bolkRelasjonerQuery = graphqlQuery("/pdl/hent_personer_relasjoner.graphql")
+
         private fun graphqlQuery(path: String) =
             PdlConfig::class.java
                 .getResource(path)

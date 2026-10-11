@@ -22,12 +22,6 @@ class IntegrasjonerConfig(
             .pathSegment(PATH_TILGANG_RELASJONER)
             .build()
             .toUri()
-    val tilgangPersonUri: URI =
-        UriComponentsBuilder
-            .fromUri(integrasjonUri)
-            .pathSegment(PATH_TILGANG_PERSON)
-            .build()
-            .toUri()
 
     val adressebeskyttelse: URI =
         UriComponentsBuilder
@@ -115,7 +109,6 @@ class IntegrasjonerConfig(
     companion object {
         private const val PATH_PING = "api/ping"
         private const val PATH_TILGANG_RELASJONER = "api/tilgang/person-med-relasjoner"
-        private const val PATH_TILGANG_PERSON = "api/tilgang/v2/personer"
         private const val PATH_ADRESSEBESKYTTELSE = "api/personopplysning/strengeste-adressebeskyttelse-for-person-med-relasjoner"
         private const val PATH_EGEN_ANSATT = "api/egenansatt"
         private const val PATH_ARBEIDSFORDELING = "api/arbeidsfordeling/enhet/ENF"

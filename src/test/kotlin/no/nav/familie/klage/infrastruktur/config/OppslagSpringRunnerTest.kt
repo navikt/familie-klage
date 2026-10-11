@@ -55,6 +55,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
     "mock-ereg",
     "mock-inntekt",
     "mock-fullmakt",
+    "mock-tilgangsmaskin",
     "mock-featuretoggle",
 )
 abstract class OppslagSpringRunnerTest {

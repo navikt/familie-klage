@@ -14,19 +14,25 @@ import no.nav.familie.klage.infrastruktur.config.RolleConfig
 import no.nav.familie.klage.infrastruktur.config.getNullable
 import no.nav.familie.klage.infrastruktur.config.getValue
 import no.nav.familie.klage.infrastruktur.exception.ManglerTilgang
+import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
+import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.integrasjoner.FamilieBASakClient
 import no.nav.familie.klage.integrasjoner.FamilieKSSakClient
+import no.nav.familie.klage.personopplysninger.PersonMedRelasjonerService
 import no.nav.familie.klage.personopplysninger.PersonopplysningerIntegrasjonerClient
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
+import org.springframework.cache.Cache
 import org.springframework.cache.CacheManager
 import org.springframework.stereotype.Service
 import java.util.UUID
 
 @Service
 class TilgangService(
+    private val personMedRelasjonerService: PersonMedRelasjonerService,
+    private val tilgangsmaskinTilgangskontrollKlient: TilgangsmaskinTilgangskontrollKlient,
     private val personopplysningerIntegrasjonerClient: PersonopplysningerIntegrasjonerClient,
-    private val tilgangsmaskinSkyggeService: TilgangsmaskinSkyggeService,
+    private val featureToggleService: FeatureToggleService,
     private val rolleConfig: RolleConfig,
     private val cacheManager: CacheManager,
     private val auditLogger: AuditLogger,
@@ -164,13 +170,27 @@ class TilgangService(
             else -> throw IllegalArgumentException("Ugyldig fagsystem: $eksternFagsakId. Validering av tilgang til ekstern fagsak støttes kun for BA og KS.")
         }
 
+    // Tilgangene caches per kilde, slik at en endring av togglen tar effekt med en gang.
     private fun harTilgangTilPersonMedRelasjoner(personIdent: String): Tilgang =
-        harSaksbehandlerTilgang("validerTilgangTilPersonMedBarn", personIdent) {
-            personopplysningerIntegrasjonerClient
-                .sjekkTilgangTilPersonMedRelasjoner(personIdent)
-                // Skygges inne i cache-lambdaen, slik at vi kun skygger på faktiske kall mot familie-integrasjoner.
-                .also { tilgang -> tilgangsmaskinSkyggeService.skyggeSjekkTilgangTilPersonMedRelasjoner(personIdent, tilgang) }
+        if (featureToggleService.isEnabled(Toggle.SKAL_BRUKE_TILGANGSMASKINEN)) {
+            harSaksbehandlerTilgang(TILGANGSMASKINEN_CACHE, personIdent) {
+                val identer = personMedRelasjonerService.hentIdenterForPersonMedRelasjoner(personIdent)
+                tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(identer).tilTilgang()
+            }
+        } else {
+            harSaksbehandlerTilgang(FAMILIE_INTEGRASJONER_CACHE, personIdent) {
+                personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(personIdent)
+            }
         }
+
+    private fun List<PersonTilgang>.tilTilgang(): Tilgang {
+        val begrunnelser = mapNotNull { it.avvisning?.begrunnelse }.distinct()
+        return if (begrunnelser.isEmpty()) {
+            Tilgang(harTilgang = true)
+        } else {
+            Tilgang(harTilgang = false, begrunnelse = begrunnelser.joinToString(separator = ". "))
+        }
+    }
 
     /**
      * Sjekker cache om tilgangen finnes siden tidligere, hvis ikke hentes verdiet med [hentVerdi]
@@ -184,8 +204,13 @@ class TilgangService(
         hentVerdi: () -> Tilgang,
     ): Tilgang {
         val cache = cacheManager.getCache(cacheName) ?: error("Finner ikke cache=$cacheName")
-        return cache.get(Pair(verdi, SikkerhetContext.hentSaksbehandler(true))) {
-            hentVerdi()
+        // Cachen pakker inn feil fra hentVerdi. Vi kaster den opprinnelige feilen slik at den håndteres som vanlig.
+        return try {
+            cache.get(Pair(verdi, SikkerhetContext.hentSaksbehandler(true))) {
+                hentVerdi()
+            }
+        } catch (e: Cache.ValueRetrievalException) {
+            throw e.cause ?: e
         } ?: error("Finner ikke verdi fra cache=$cacheName")
     }
 
@@ -283,5 +308,10 @@ class TilgangService(
             }
 
         return rollerForBruker.contains(minimumsrolle)
+    }
+
+    companion object {
+        const val TILGANGSMASKINEN_CACHE = "validerTilgangTilPersonMedBarnITilgangsmaskinen"
+        const val FAMILIE_INTEGRASJONER_CACHE = "validerTilgangTilPersonMedBarn"
     }
 }

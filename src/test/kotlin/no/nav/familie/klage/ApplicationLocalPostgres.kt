@@ -39,6 +39,7 @@ fun main(args: Array<String>) {
             "mock-ereg",
             "mock-inntekt",
             "mock-fullmakt",
+            "mock-tilgangsmaskin",
             "mock-featuretoggle",
         ).properties(properties)
         .run(*args)

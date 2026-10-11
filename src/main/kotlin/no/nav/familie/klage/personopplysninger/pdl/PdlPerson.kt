@@ -1,6 +1,7 @@
 package no.nav.familie.klage.personopplysninger.pdl
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import no.nav.familie.kontrakter.felles.personopplysning.FORELDERBARNRELASJONROLLE
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -82,6 +83,28 @@ data class PersonBolk<T>(
 data class PdlNavn(
     val navn: List<Navn>,
 )
+
+data class PdlPersonMedRelasjoner(
+    val forelderBarnRelasjon: List<PdlForelderBarnRelasjon>,
+    val sivilstand: List<PdlSivilstand>,
+)
+
+data class PdlForelderBarnRelasjon(
+    val relatertPersonsIdent: String?,
+    val relatertPersonsRolle: String,
+) {
+    fun erBarn(): Boolean = relatertPersonsRolle == FORELDERBARNRELASJONROLLE.BARN.name
+
+    override fun toString(): String = "PdlForelderBarnRelasjon(relatertPersonsIdent=${relatertPersonsIdent?.maskert()}, relatertPersonsRolle=$relatertPersonsRolle)"
+}
+
+data class PdlSivilstand(
+    val relatertVedSivilstand: String?,
+) {
+    override fun toString(): String = "PdlSivilstand(relatertVedSivilstand=${relatertVedSivilstand?.maskert()})"
+}
+
+private fun String.maskert(): String = "*".repeat(length)
 
 data class PdlPerson(
     val adressebeskyttelse: List<Adressebeskyttelse>,
