@@ -11,8 +11,7 @@ class PersonMedRelasjonerService(
 ) {
     /**
      * Henter identene som saksbehandler må ha tilgang til for å få tilgang til personen: personen selv, barna,
-     * personer relatert via sivilstand og barnas andre foreldre. Tilsvarer relasjonene familie-integrasjoner
-     * sjekker i `tilgang/person-med-relasjoner`.
+     * personer relatert via sivilstand og barnas andre foreldre.
      */
     fun hentIdenterForPersonMedRelasjoner(personIdent: String): Set<String> {
         val person = pdlClient.hentPersonMedRelasjoner(personIdent)

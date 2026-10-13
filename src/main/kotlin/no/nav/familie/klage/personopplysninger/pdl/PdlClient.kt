@@ -62,8 +62,7 @@ class PdlClient(
     }
 
     /**
-     * Henter relasjonene som inngår i tilgangskontrollen av en person med relasjoner. Slås alltid opp med tema ENF,
-     * slik familie-integrasjoner gjør i `tilgang/person-med-relasjoner`.
+     * Henter relasjonene som inngår i tilgangskontrollen av en person med relasjoner. Slås alltid opp med tema ENF.
      *
      * @throws PdlNotFoundException hvis personen ikke finnes i PDL
      */

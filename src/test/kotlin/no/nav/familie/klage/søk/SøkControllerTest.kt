@@ -1,12 +1,9 @@
 package no.nav.familie.klage.søk
 
-import io.mockk.every
 import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
 import no.nav.familie.klage.infrastruktur.config.PdlClientMock.Companion.SØKER_MED_BARN_UTEN_TILGANG
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.søk.dto.PersonIdentDto
 import no.nav.familie.klage.søk.dto.PersonTreffDto
 import no.nav.familie.klage.testutil.DomainUtil
@@ -15,7 +12,6 @@ import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Status
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,9 +26,6 @@ class SøkControllerTest : OppslagSpringRunnerTest() {
     @Autowired
     private lateinit var behandlingRepository: BehandlingRepository
 
-    @Autowired
-    private lateinit var featureToggleService: FeatureToggleService
-
     private val fagsak =
         DomainUtil
             .fagsakDomain(eksternId = "1", stønadstype = Stønadstype.OVERGANGSSTØNAD)
@@ -44,11 +37,6 @@ class SøkControllerTest : OppslagSpringRunnerTest() {
         testoppsettService.lagreFagsak(fagsak)
         behandlingRepository.insert(behandling)
         headers.setBearerAuth(onBehalfOfToken())
-    }
-
-    @AfterEach
-    internal fun tearDown() {
-        every { featureToggleService.isEnabled(Toggle.SKAL_BRUKE_TILGANGSMASKINEN) } returns true
     }
 
     @Test
@@ -82,34 +70,6 @@ class SøkControllerTest : OppslagSpringRunnerTest() {
         assertThat(body.status).isEqualTo(Status.IKKE_TILGANG)
         assertThat(body.frontendFeilmelding)
             .isEqualTo("Mangler tilgang til opplysningene. Årsak: Du har ikke tilgang til brukere med strengt fortrolig adresse (kode 6)")
-    }
-
-    @Test
-    internal fun `skal finne person via søk når familie-integrasjoner gir tilgang og togglen for Tilgangsmaskinen er av`() {
-        // Arrange
-        every { featureToggleService.isEnabled(Toggle.SKAL_BRUKE_TILGANGSMASKINEN) } returns false
-
-        // Act
-        val response = søkPerson(PersonIdentDto(SØKER_MED_BARN_UTEN_TILGANG, behandling.id))
-
-        // Assert
-        assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(response.body!!.status).isEqualTo(Status.SUKSESS)
-    }
-
-    @Test
-    internal fun `skal ikke få tilgang til person når familie-integrasjoner avviser og togglen for Tilgangsmaskinen er av`() {
-        // Arrange
-        every { featureToggleService.isEnabled(Toggle.SKAL_BRUKE_TILGANGSMASKINEN) } returns false
-
-        // Act
-        val response = søkPerson(PersonIdentDto("ikkeTilgang", behandling.id))
-
-        // Assert
-        assertThat(response.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
-        val body = response.body!!
-        assertThat(body.status).isEqualTo(Status.IKKE_TILGANG)
-        assertThat(body.frontendFeilmelding).isEqualTo("Mangler tilgang til opplysningene. Årsak: Mock sier: Du har ikke tilgang til person ikkeTilgang")
     }
 
     private fun søkPerson(personIdentDto: PersonIdentDto): ResponseEntity<Ressurs<PersonTreffDto>> =

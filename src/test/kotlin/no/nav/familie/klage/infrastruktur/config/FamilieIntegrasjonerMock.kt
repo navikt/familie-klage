@@ -4,7 +4,6 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.equalTo
 import com.github.tomakehurst.wiremock.client.WireMock.get
-import com.github.tomakehurst.wiremock.client.WireMock.matching
 import com.github.tomakehurst.wiremock.client.WireMock.okJson
 import com.github.tomakehurst.wiremock.client.WireMock.patch
 import com.github.tomakehurst.wiremock.client.WireMock.post
@@ -15,7 +14,6 @@ import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching
 import no.nav.familie.klage.arbeidsfordeling.Arbeidsfordelingsenhet
 import no.nav.familie.klage.felles.dto.EgenAnsattResponse
-import no.nav.familie.klage.felles.dto.Tilgang
 import no.nav.familie.klage.infrastruktur.config.PdfMock.PDFA_AS_BASE64_STRING
 import no.nav.familie.klage.mappe.statiskDummyMapper
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
@@ -62,12 +60,6 @@ class FamilieIntegrasjonerMock(
                 .willReturn(okJson(jsonMapper.writeValueAsString(saksbehandler))),
             post(urlEqualTo(integrasjonerConfig.egenAnsattUri.path))
                 .willReturn(okJson(jsonMapper.writeValueAsString(egenAnsatt))),
-            post(urlEqualTo(integrasjonerConfig.tilgangRelasjonerUri.path))
-                .withRequestBody(matching(".*ikkeTilgang.*"))
-                .atPriority(1)
-                .willReturn(okJson(jsonMapper.writeValueAsString(lagIkkeTilgangResponse()))),
-            post(urlEqualTo(integrasjonerConfig.tilgangRelasjonerUri.path))
-                .willReturn(okJson(jsonMapper.writeValueAsString(Tilgang(true, null)))),
             post(urlEqualTo(integrasjonerConfig.arbeidsfordelingUri.path))
                 .willReturn(okJson(jsonMapper.writeValueAsString(arbeidsfordeling))),
             post(urlEqualTo(integrasjonerConfig.arbeidsfordelingMedRelasjonerUri.path))
@@ -189,14 +181,6 @@ class FamilieIntegrasjonerMock(
                         ),
                     ),
                 ),
-        )
-
-    private fun lagIkkeTilgangResponse() =
-        Tilgang(
-            false,
-            "Mock sier: Du har " +
-                "ikke tilgang " +
-                "til person ikkeTilgang",
         )
 
     @Bean("mock-integrasjoner")
