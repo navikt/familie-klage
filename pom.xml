@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.6</version>
+        <version>4.1.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <repositories>
@@ -32,7 +32,7 @@
         <felles.version>4.20260818093920_16ad74a</felles.version>
         <prosessering.version>2.20260511102627_928cb38</prosessering.version>
         <start-class>no.nav.familie.klage.ApplicationKt</start-class>
-        <kontrakter.version>4.0_20260505124916_025d466</kontrakter.version>
+        <kontrakter.version>4.0_20261014103049_c61507f</kontrakter.version>
         <saksstatistikk-klage.version>2.0_20260323170751_4c02e3c</saksstatistikk-klage.version>
         <testcontainers.version>1.21.4</testcontainers.version>
         <mock-oauth2-server.version>3.0.3</mock-oauth2-server.version>
