@@ -8,6 +8,7 @@ import no.nav.familie.klage.personopplysninger.pdl.PdlClient
 import no.nav.familie.klage.personopplysninger.pdl.PdlForelderBarnRelasjon
 import no.nav.familie.klage.personopplysninger.pdl.PdlPersonMedRelasjoner
 import no.nav.familie.klage.personopplysninger.pdl.PdlSivilstand
+import no.nav.familie.kontrakter.felles.Tema
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -19,19 +20,19 @@ class PersonMedRelasjonerServiceTest {
     @Test
     fun `skal returnere personen, barna, personer relatert via sivilstand og barnas andre foreldre`() {
         // Arrange
-        every { pdlClient.hentPersonMedRelasjoner(SØKER) } returns
+        every { pdlClient.hentPersonMedRelasjoner(SØKER, TEMA) } returns
             personMedRelasjoner(
                 forelderBarnRelasjon = listOf(barnRelasjon(BARN_1), barnRelasjon(BARN_2), forelderRelasjon(SØKERS_MOR, "MOR")),
                 sivilstand = listOf(PdlSivilstand(EKTEFELLE), PdlSivilstand(relatertVedSivilstand = null)),
             )
-        every { pdlClient.hentPersonerMedRelasjoner(listOf(BARN_1, BARN_2)) } returns
+        every { pdlClient.hentPersonerMedRelasjoner(listOf(BARN_1, BARN_2), TEMA) } returns
             mapOf(
                 BARN_1 to personMedRelasjoner(forelderBarnRelasjon = listOf(forelderRelasjon(SØKER, "MOR"), forelderRelasjon(ANNEN_FORELDER, "FAR"))),
                 BARN_2 to personMedRelasjoner(forelderBarnRelasjon = listOf(forelderRelasjon(SØKER, "MOR"), forelderRelasjon(relatertPersonsIdent = null, rolle = "FAR"))),
             )
 
         // Act
-        val identer = personMedRelasjonerService.hentIdenterForPersonMedRelasjoner(SØKER)
+        val identer = personMedRelasjonerService.hentIdenterForPersonMedRelasjoner(SØKER, TEMA)
 
         // Assert
         assertThat(identer).containsExactlyInAnyOrder(SØKER, BARN_1, BARN_2, EKTEFELLE, ANNEN_FORELDER)
@@ -40,26 +41,26 @@ class PersonMedRelasjonerServiceTest {
     @Test
     fun `skal bare slå opp personen når personen ikke har barn`() {
         // Arrange
-        every { pdlClient.hentPersonMedRelasjoner(SØKER) } returns personMedRelasjoner(sivilstand = listOf(PdlSivilstand(EKTEFELLE)))
+        every { pdlClient.hentPersonMedRelasjoner(SØKER, TEMA) } returns personMedRelasjoner(sivilstand = listOf(PdlSivilstand(EKTEFELLE)))
 
         // Act
-        val identer = personMedRelasjonerService.hentIdenterForPersonMedRelasjoner(SØKER)
+        val identer = personMedRelasjonerService.hentIdenterForPersonMedRelasjoner(SØKER, TEMA)
 
         // Assert
         assertThat(identer).containsExactlyInAnyOrder(SØKER, EKTEFELLE)
-        verify(exactly = 0) { pdlClient.hentPersonerMedRelasjoner(any()) }
+        verify(exactly = 0) { pdlClient.hentPersonerMedRelasjoner(any(), any()) }
     }
 
     @Test
     fun `skal kaste feil når PDL ikke svarer for alle barna`() {
         // Arrange
-        every { pdlClient.hentPersonMedRelasjoner(SØKER) } returns
+        every { pdlClient.hentPersonMedRelasjoner(SØKER, TEMA) } returns
             personMedRelasjoner(forelderBarnRelasjon = listOf(barnRelasjon(BARN_1), barnRelasjon(BARN_2)))
-        every { pdlClient.hentPersonerMedRelasjoner(listOf(BARN_1, BARN_2)) } returns
+        every { pdlClient.hentPersonerMedRelasjoner(listOf(BARN_1, BARN_2), TEMA) } returns
             mapOf(BARN_1 to personMedRelasjoner(forelderBarnRelasjon = listOf(forelderRelasjon(SØKER, "MOR"))))
 
         // Act
-        val feil = assertThrows<Feil> { personMedRelasjonerService.hentIdenterForPersonMedRelasjoner(SØKER) }
+        val feil = assertThrows<Feil> { personMedRelasjonerService.hentIdenterForPersonMedRelasjoner(SØKER, TEMA) }
 
         // Assert
         assertThat(feil.message).isEqualTo("Fikk ikke svar fra PDL for 1 av 2 barn ved henting av barnas foreldre.")
@@ -78,6 +79,7 @@ class PersonMedRelasjonerServiceTest {
     ) = PdlForelderBarnRelasjon(relatertPersonsIdent = relatertPersonsIdent, relatertPersonsRolle = rolle)
 
     companion object {
+        private val TEMA = Tema.BAR
         private const val SØKER = "01010112345"
         private const val BARN_1 = "01011512345"
         private const val BARN_2 = "01011812345"

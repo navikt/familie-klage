@@ -40,7 +40,7 @@ class VedleggController(
         @PathVariable dokumentInfoId: String,
     ): ByteArray {
         val (journalpost, personIdent) = finnJournalpostOgPersonIdent(journalpostId)
-        tilgangService.validerTilgangTilPersonMedRelasjoner(personIdent, AuditLoggerEvent.ACCESS)
+        tilgangService.validerTilgangTilPersonMedRelasjoner(personIdent, journalpost.hentTema(), AuditLoggerEvent.ACCESS)
         return journalpostService.hentDokument(journalpost, dokumentInfoId)
     }
 
@@ -55,12 +55,8 @@ class VedleggController(
 
                     BrukerIdType.AKTOERID -> {
                         pdlClient
-                            .hentPersonidenter(
-                                it.id,
-                                Tema.valueOf(
-                                    journalpost.tema ?: error("Tema er null for journalpostId=$journalpostId"),
-                                ),
-                            ).identer
+                            .hentPersonidenter(it.id, journalpost.hentTema())
+                            .identer
                             .first()
                             .ident
                     }
@@ -72,4 +68,6 @@ class VedleggController(
             } ?: error("Kan ikke hente journalpost=$journalpostId uten bruker")
         return Pair(journalpost, personIdent)
     }
+
+    private fun Journalpost.hentTema(): Tema = Tema.valueOf(tema ?: error("Tema er null for journalpostId=$journalpostId"))
 }

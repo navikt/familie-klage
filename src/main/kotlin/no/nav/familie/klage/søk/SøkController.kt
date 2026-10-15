@@ -37,7 +37,7 @@ class SøkController(
         val personIdent = personIdentDto.personIdent
         val behandlingId = personIdentDto.behandlingId
         val fagsak = fagsakService.hentFagsakForBehandling(behandlingId)
-        tilgangService.validerTilgangTilPersonMedRelasjoner(personIdent, AuditLoggerEvent.UPDATE)
+        tilgangService.validerTilgangTilPersonMedRelasjoner(personIdent, fagsak.stønadstype.tilTema(), AuditLoggerEvent.UPDATE)
         val person = pdlClient.hentPerson(personIdent, fagsak.stønadstype)
         val navn = person.navn.gjeldende().visningsnavn()
         val result = PersonTreffDto(personIdent, navn)

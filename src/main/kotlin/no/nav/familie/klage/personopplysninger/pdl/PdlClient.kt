@@ -31,7 +31,7 @@ class PdlClient(
                 .post()
                 .uri(pdlConfig.pdlUri)
                 .contentType(MediaType.APPLICATION_JSON)
-                .headers { it.addAll(httpHeaders(mapTilTema(stønadstype))) }
+                .headers { it.addAll(httpHeaders(stønadstype.tilTema())) }
                 .body(pdlPersonRequest)
                 .retrieve()
                 .body<PdlResponse<PdlPersonData>>()!!
@@ -54,7 +54,7 @@ class PdlClient(
                 .post()
                 .uri(pdlConfig.pdlUri)
                 .contentType(MediaType.APPLICATION_JSON)
-                .headers { it.addAll(httpHeaders(mapTilTema(stønadstype))) }
+                .headers { it.addAll(httpHeaders(stønadstype.tilTema())) }
                 .body(pdlPersonRequest)
                 .retrieve()
                 .body<PdlBolkResponse<PdlNavn>>()!!
@@ -62,21 +62,30 @@ class PdlClient(
     }
 
     /**
-     * Henter relasjonene som inngår i tilgangskontrollen av en person med relasjoner. Slås alltid opp med tema ENF.
+     * Henter relasjonene som inngår i tilgangskontrollen av en person med relasjoner.
      *
      * @throws PdlNotFoundException hvis personen ikke finnes i PDL
      */
-    fun hentPersonMedRelasjoner(personIdent: String): PdlPersonMedRelasjoner = feilsjekkOgReturnerPersonFraBolk(personIdent, hentPersonBolkMedRelasjoner(listOf(personIdent)))
+    fun hentPersonMedRelasjoner(
+        personIdent: String,
+        tema: Tema,
+    ): PdlPersonMedRelasjoner = feilsjekkOgReturnerPersonFraBolk(personIdent, hentPersonBolkMedRelasjoner(listOf(personIdent), tema))
 
     /**
      * Henter relasjonene som inngår i tilgangskontrollen for flere personer, se [hentPersonMedRelasjoner].
      */
-    fun hentPersonerMedRelasjoner(personIdenter: List<String>): Map<String, PdlPersonMedRelasjoner> =
+    fun hentPersonerMedRelasjoner(
+        personIdenter: List<String>,
+        tema: Tema,
+    ): Map<String, PdlPersonMedRelasjoner> =
         personIdenter.chunked(MAKS_ANTALL_IDENTER_I_BOLK).fold(emptyMap()) { resultat, identer ->
-            resultat + feilsjekkOgReturnerData(hentPersonBolkMedRelasjoner(identer))
+            resultat + feilsjekkOgReturnerData(hentPersonBolkMedRelasjoner(identer, tema))
         }
 
-    private fun hentPersonBolkMedRelasjoner(personIdenter: List<String>): PdlBolkResponse<PdlPersonMedRelasjoner> {
+    private fun hentPersonBolkMedRelasjoner(
+        personIdenter: List<String>,
+        tema: Tema,
+    ): PdlBolkResponse<PdlPersonMedRelasjoner> {
         val pdlPersonRequest =
             PdlPersonBolkRequest(
                 variables = PdlPersonBolkRequestVariables(personIdenter),
@@ -86,7 +95,7 @@ class PdlClient(
             .post()
             .uri(pdlConfig.pdlUri)
             .contentType(MediaType.APPLICATION_JSON)
-            .headers { it.addAll(httpHeaders(Tema.ENF)) }
+            .headers { it.addAll(httpHeaders(tema)) }
             .body(pdlPersonRequest)
             .retrieve()
             .body<PdlBolkResponse<PdlPersonMedRelasjoner>>()!!
@@ -124,21 +133,12 @@ class PdlClient(
         ident: String,
         stønadstype: Stønadstype,
         historikk: Boolean = false,
-    ): PdlIdenter = hentPersonidenter(ident, mapTilTema(stønadstype), historikk)
+    ): PdlIdenter = hentPersonidenter(ident, stønadstype.tilTema(), historikk)
 
     private fun httpHeaders(tema: Tema): org.springframework.http.HttpHeaders =
         org.springframework.http.HttpHeaders().apply {
             add("Tema", tema.name)
             add("behandlingsnummer", tema.behandlingsnummer)
-        }
-
-    private fun mapTilTema(stønadstype: Stønadstype): Tema =
-        when (stønadstype) {
-            Stønadstype.OVERGANGSSTØNAD -> Tema.ENF
-            Stønadstype.SKOLEPENGER -> Tema.ENF
-            Stønadstype.BARNETILSYN -> Tema.ENF
-            Stønadstype.BARNETRYGD -> Tema.BAR
-            Stønadstype.KONTANTSTØTTE -> Tema.KON
         }
 
     companion object {
