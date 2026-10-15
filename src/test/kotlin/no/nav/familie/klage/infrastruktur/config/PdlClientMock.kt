@@ -37,13 +37,13 @@ class PdlClientMock {
 
         every { pdlClient.hentPerson(any(), any()) } returns opprettPdlPerson()
 
-        every { pdlClient.hentPersonMedRelasjoner(any()) } returns PdlPersonMedRelasjoner(forelderBarnRelasjon = emptyList(), sivilstand = emptyList())
-        every { pdlClient.hentPersonMedRelasjoner(SØKER_MED_BARN_UTEN_TILGANG) } returns
+        every { pdlClient.hentPersonMedRelasjoner(any(), any()) } returns PdlPersonMedRelasjoner(forelderBarnRelasjon = emptyList(), sivilstand = emptyList())
+        every { pdlClient.hentPersonMedRelasjoner(SØKER_MED_BARN_UTEN_TILGANG, any()) } returns
             PdlPersonMedRelasjoner(
                 forelderBarnRelasjon = listOf(PdlForelderBarnRelasjon(relatertPersonsIdent = BARN_UTEN_TILGANG, relatertPersonsRolle = "BARN")),
                 sivilstand = emptyList(),
             )
-        every { pdlClient.hentPersonerMedRelasjoner(any()) } answers {
+        every { pdlClient.hentPersonerMedRelasjoner(any(), any()) } answers {
             firstArg<List<String>>().associateWith { PdlPersonMedRelasjoner(forelderBarnRelasjon = emptyList(), sivilstand = emptyList()) }
         }
 

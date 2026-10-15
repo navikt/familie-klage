@@ -14,12 +14,10 @@ import no.nav.familie.klage.infrastruktur.config.RolleConfig
 import no.nav.familie.klage.infrastruktur.config.getNullable
 import no.nav.familie.klage.infrastruktur.config.getValue
 import no.nav.familie.klage.infrastruktur.exception.ManglerTilgang
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.klage.integrasjoner.FamilieBASakClient
 import no.nav.familie.klage.integrasjoner.FamilieKSSakClient
 import no.nav.familie.klage.personopplysninger.PersonMedRelasjonerService
-import no.nav.familie.klage.personopplysninger.PersonopplysningerIntegrasjonerClient
+import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.cache.Cache
@@ -31,8 +29,6 @@ import java.util.UUID
 class TilgangService(
     private val personMedRelasjonerService: PersonMedRelasjonerService,
     private val tilgangsmaskinTilgangskontrollKlient: TilgangsmaskinTilgangskontrollKlient,
-    private val personopplysningerIntegrasjonerClient: PersonopplysningerIntegrasjonerClient,
-    private val featureToggleService: FeatureToggleService,
     private val rolleConfig: RolleConfig,
     private val cacheManager: CacheManager,
     private val auditLogger: AuditLogger,
@@ -43,9 +39,10 @@ class TilgangService(
 ) {
     fun validerTilgangTilPersonMedRelasjoner(
         personIdent: String,
+        tema: Tema,
         event: AuditLoggerEvent,
     ) {
-        val tilgang = harTilgangTilPersonMedRelasjoner(personIdent)
+        val tilgang = harTilgangTilPersonMedRelasjoner(personIdent, tema)
         auditLogger.log(Sporingsdata(event, personIdent, tilgang))
         if (!tilgang.harTilgang) {
             throw ManglerTilgang(
@@ -156,7 +153,7 @@ class TilgangService(
         }
 
         Fagsystem.EF -> {
-            harTilgangTilPersonMedRelasjoner(fagsak.hentFagsakEierIdent())
+            harTilgangTilPersonMedRelasjoner(fagsak.hentFagsakEierIdent(), fagsak.stønadstype.tilTema())
         }
     }
 
@@ -170,17 +167,13 @@ class TilgangService(
             else -> throw IllegalArgumentException("Ugyldig fagsystem: $eksternFagsakId. Validering av tilgang til ekstern fagsak støttes kun for BA og KS.")
         }
 
-    // Tilgangene caches per kilde, slik at en endring av togglen tar effekt med en gang.
-    private fun harTilgangTilPersonMedRelasjoner(personIdent: String): Tilgang =
-        if (featureToggleService.isEnabled(Toggle.SKAL_BRUKE_TILGANGSMASKINEN)) {
-            harSaksbehandlerTilgang(TILGANGSMASKINEN_CACHE, personIdent) {
-                val identer = personMedRelasjonerService.hentIdenterForPersonMedRelasjoner(personIdent)
-                tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(identer).tilTilgang()
-            }
-        } else {
-            harSaksbehandlerTilgang(FAMILIE_INTEGRASJONER_CACHE, personIdent) {
-                personopplysningerIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(personIdent)
-            }
+    private fun harTilgangTilPersonMedRelasjoner(
+        personIdent: String,
+        tema: Tema,
+    ): Tilgang =
+        harSaksbehandlerTilgang(TILGANGSMASKINEN_CACHE, personIdent) {
+            val identer = personMedRelasjonerService.hentIdenterForPersonMedRelasjoner(personIdent, tema)
+            tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(identer).tilTilgang()
         }
 
     private fun List<PersonTilgang>.tilTilgang(): Tilgang {
@@ -312,6 +305,5 @@ class TilgangService(
 
     companion object {
         const val TILGANGSMASKINEN_CACHE = "validerTilgangTilPersonMedBarnITilgangsmaskinen"
-        const val FAMILIE_INTEGRASJONER_CACHE = "validerTilgangTilPersonMedBarn"
     }
 }

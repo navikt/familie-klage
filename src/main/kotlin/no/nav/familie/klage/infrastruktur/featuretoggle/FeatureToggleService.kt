@@ -21,9 +21,6 @@ enum class Toggle(
     // Release
     MANUELL_BREVMOTTAKER_ORGANISASJON("familie-klage.manuell-brevmottaker-organisasjon"),
     BRUK_SØKER_PERSONOPPLYSNINGER("familie-klage.bruk-soker-personopplysninger"),
-
-    // NAV-31079
-    SKAL_BRUKE_TILGANGSMASKINEN("familie-klage.skal-bruke-tilgangsmaskinen"),
     ;
 
     companion object {
