@@ -20,7 +20,7 @@ class FullmaktClient(
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     fun hentFullmakt(ident: String): List<FullmaktResponse> {
-        val url = URI.create("$fullmaktUrl/api/internbruker/fullmakt/fullmaktsgiver")
+        val url = URI.create("$fullmaktUrl/api/v2/internbruker/fullmakt/bruker-som-fullmaktsgiver/alle-fullmakter")
         val fullmaktResponse =
             restClient
                 .post()
@@ -42,18 +42,6 @@ data class FullmaktResponse(
     val gyldigFraOgMed: LocalDate,
     val gyldigTilOgMed: LocalDate?,
     val fullmektig: String,
-    val fullmektigsNavn: String?,
-    val omraade: List<Område>,
+    val leserettigheter: List<String>,
+    val skriverettigheter: List<String>,
 )
-
-data class Område(
-    val tema: String,
-    val handling: List<Handling>,
-)
-
-@Suppress("unused")
-enum class Handling {
-    LES,
-    KOMMUNISER,
-    SKRIV,
-}

@@ -45,7 +45,7 @@ class PersonopplysningerService(
     ): PersonopplysningerDto {
         val egenAnsatt = integrasjonerClient.egenAnsatt(ident)
         val pdlPerson = pdlClient.hentPerson(ident, stønadstype)
-        val fullmaktResultat = fullmaktService.hentFullmakt(ident)
+        val fullmaktResultat = fullmaktService.hentFullmakt(ident, stønadstype)
         return PersonopplysningerDto(
             personIdent = ident,
             navn = pdlPerson.navn.gjeldende().visningsnavn(),
