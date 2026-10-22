@@ -4,8 +4,6 @@ import io.mockk.every
 import io.mockk.mockk
 import no.nav.familie.klage.personopplysninger.fullmakt.FullmaktClient
 import no.nav.familie.klage.personopplysninger.fullmakt.FullmaktResponse
-import no.nav.familie.klage.personopplysninger.fullmakt.Handling
-import no.nav.familie.klage.personopplysninger.fullmakt.Område
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -25,8 +23,8 @@ class FullmaktClientMock {
                     LocalDate.now().minusYears(1),
                     LocalDate.now().plusYears(1),
                     "01010199999",
-                    "Navn",
-                    listOf(Område("ENF", listOf(Handling.LES))),
+                    listOf("ENF"),
+                    emptyList(),
                 ),
             )
 
