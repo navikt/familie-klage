@@ -25,7 +25,7 @@ class FullmaktService(
             val fullmaktResponse = fullmaktClient.hentFullmakt(ident)
             val fullmektigesNavn = hentNavn(fullmaktResponse.map { it.fullmektig }, stønadstype)
 
-            return FullmaktResultat(
+            FullmaktResultat(
                 fullmakt =
                     fullmaktResponse.map {
                         Fullmakt(
@@ -39,7 +39,7 @@ class FullmaktService(
                     },
                 harTilgang = true,
             )
-        } catch (e: HttpClientErrorException.Forbidden) {
+        } catch (_: HttpClientErrorException.Forbidden) {
             logger.warn("Saksbehandler mangler tilgang til fullmakt i repr-api (403)")
             FullmaktResultat(fullmakt = emptyList(), harTilgang = false)
         }
@@ -48,16 +48,21 @@ class FullmaktService(
         identer: List<String>,
         stønadstype: Stønadstype,
     ): Map<String, String> =
-        identer
-            .distinct()
-            .takeIf { it.isNotEmpty() }
-            ?.let { pdlClient.hentNavnBolk(it, stønadstype) }
-            ?.mapValues {
-                it.value.navn
-                    .gjeldende()
-                    .visningsnavn()
-            }
-            ?: emptyMap()
+        try {
+            identer
+                .distinct()
+                .takeIf { it.isNotEmpty() }
+                ?.let { pdlClient.hentNavnBolk(it, stønadstype) }
+                ?.mapValues {
+                    it.value.navn
+                        .gjeldende()
+                        .visningsnavn()
+                }
+                ?: emptyMap()
+        } catch (e: Exception) {
+            logger.warn("Kunne ikke hente navn på fullmektig fra PDL", e)
+            emptyMap()
+        }
 }
 
 data class FullmaktResultat(
