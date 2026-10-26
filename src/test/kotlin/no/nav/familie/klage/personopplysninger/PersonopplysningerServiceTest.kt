@@ -52,7 +52,7 @@ internal class PersonopplysningerServiceTest {
         every { pdlClient.hentPerson(any(), any()) } returns lagPdlPerson()
         every { pdlClient.hentNavnBolk(any(), any()) } returns navnBolkResponse()
         every { integrasjonerClient.egenAnsatt(any()) } returns true
-        every { fullmaktService.hentFullmakt(any()) } returns FullmaktResultat(listOf(fullmakt()), harTilgang = true)
+        every { fullmaktService.hentFullmakt(any(), any()) } returns FullmaktResultat(listOf(fullmakt()), harTilgang = true)
     }
 
     private fun fullmakt() = Fullmakt(LocalDate.now(), null, "01010199999", "fullmakt etternavn", MotpartsRolle.FULLMEKTIG, listOf("område"))
@@ -71,7 +71,7 @@ internal class PersonopplysningerServiceTest {
         assertThat(personopplysninger.egenAnsatt).isTrue
         assertThat(personopplysninger.vergemål).hasSize(1)
 
-        verify(exactly = 1) { fullmaktService.hentFullmakt(personopplysninger.personIdent) }
+        verify(exactly = 1) { fullmaktService.hentFullmakt(personopplysninger.personIdent, fagsak.stønadstype) }
     }
 
     @Test
@@ -80,7 +80,7 @@ internal class PersonopplysningerServiceTest {
 
         assertThat(personopplysninger.fullmakt.single().navn).isEqualTo("fullmakt etternavn")
 
-        verify(exactly = 1) { fullmaktService.hentFullmakt(personopplysninger.personIdent) }
+        verify(exactly = 1) { fullmaktService.hentFullmakt(personopplysninger.personIdent, fagsak.stønadstype) }
     }
 
     @Test
