@@ -3,7 +3,7 @@ package no.nav.familie.klage.journalpost
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
-import no.nav.familie.klage.infrastruktur.config.IntegrasjonerConfig
+import io.mockk.mockk
 import no.nav.familie.klage.infrastruktur.exception.ManglerTilgang
 import no.nav.familie.klage.integrasjoner.FamilieIntegrasjonerClient
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
@@ -26,9 +26,11 @@ class JournalpostServiceIntegrasjonsTest {
         val integrasjonUri = URI.create(wiremockServerItem.baseUrl())
         familieIntegrasjonerClient =
             FamilieIntegrasjonerClient(
-                restClient = RestClient.builder().build(),
-                integrasjonUri = integrasjonUri,
-                integrasjonerConfig = IntegrasjonerConfig(integrasjonUri),
+                restClientFss = RestClient.builder().build(),
+                integrasjonFssUri = integrasjonUri,
+                restClientGcp = RestClient.builder().build(),
+                integrasjonGcpUri = integrasjonUri,
+                featureToggleService = mockk(relaxed = true),
             )
         journalpostService = JournalpostService(familieIntegrasjonerClient)
     }

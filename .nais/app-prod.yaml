@@ -65,6 +65,7 @@ spec:
         - application: familie-prosessering
     outbound:
       rules:
+        - application: familie-integrasjoner
         - application: familie-tilbake
         - application: familie-ef-sak
         - application: familie-ks-sak
