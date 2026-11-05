@@ -2,8 +2,6 @@ package no.nav.familie.klage.integrasjoner
 
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
-import no.nav.familie.klage.infrastruktur.featuretoggle.FeatureToggleService
-import no.nav.familie.klage.infrastruktur.featuretoggle.Toggle
 import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
@@ -20,43 +18,27 @@ import no.nav.familie.kontrakter.felles.saksbehandler.Saksbehandler
 import no.nav.familie.log.NavHttpHeaders
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpClientErrorException
-import org.springframework.web.client.RestClient
 import org.springframework.web.client.body
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 @Component
 class FamilieIntegrasjonerClient(
-    @Qualifier("integrasjonerRestClient") private val restClientFss: RestClient,
-    @Value("\${FAMILIE_INTEGRASJONER_URL}")
-    private val integrasjonFssUri: URI,
-    @Qualifier("integrasjonerGcpRestClient") private val restClientGcp: RestClient,
-    @Value("\${FAMILIE_INTEGRASJONER_GCP_URL}")
-    private val integrasjonGcpUri: URI,
-    private val featureToggleService: FeatureToggleService,
+    private val integrasjonerClientProvider: IntegrasjonerClientProvider,
 ) {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
-
-    private fun hentIntegrasjonKlient(): Pair<URI, RestClient> =
-        if (featureToggleService.isEnabled(Toggle.BRUK_FAMILIE_INTEGRASJONER_I_GCP)) {
-            integrasjonGcpUri to restClientGcp
-        } else {
-            integrasjonFssUri to restClientFss
-        }
 
     // lagre brev
     fun arkiverDokument(
         arkiverDokumentRequest: ArkiverDokumentRequest,
         saksbehandler: String?,
     ): ArkiverDokumentResponse {
-        val (integrasjonUri, restClient) = hentIntegrasjonKlient()
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
         return restClient
             .post()
             .uri(URI.create("$integrasjonUri/api/arkiv/v4"))
@@ -70,7 +52,7 @@ class FamilieIntegrasjonerClient(
     }
 
     fun hentSaksbehandlerInfo(navIdent: String): Saksbehandler {
-        val (integrasjonUri, restClient) = hentIntegrasjonKlient()
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
         return restClient
             .get()
             .uri(URI.create("$integrasjonUri/api/saksbehandler/$navIdent"))
@@ -86,7 +68,7 @@ class FamilieIntegrasjonerClient(
         journalpostId: String,
         distribusjonstype: Distribusjonstype,
     ): String {
-        val (integrasjonUri, restClient) = hentIntegrasjonKlient()
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
         val journalpostRequest =
             DistribuerJournalpostRequest(
                 journalpostId = journalpostId,
@@ -111,7 +93,7 @@ class FamilieIntegrasjonerClient(
         adresse: ManuellAdresse?,
         fagsystem: Fagsystem,
     ): String {
-        val (integrasjonUri, restClient) = hentIntegrasjonKlient()
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
         val journalpostRequest =
             DistribuerJournalpostRequest(
                 journalpostId = journalpostId,
@@ -131,7 +113,7 @@ class FamilieIntegrasjonerClient(
     }
 
     fun finnJournalposter(journalposterForBrukerRequest: JournalposterForBrukerRequest): List<Journalpost> {
-        val (integrasjonUri, restClient) = hentIntegrasjonKlient()
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
         return restClient
             .post()
             .uri(URI.create("$integrasjonUri/api/journalpost"))
@@ -144,7 +126,7 @@ class FamilieIntegrasjonerClient(
     }
 
     fun hentJournalpost(journalpostId: String): Journalpost {
-        val (integrasjonUri, restClient) = hentIntegrasjonKlient()
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
         try {
             return restClient
                 .get()
@@ -165,7 +147,7 @@ class FamilieIntegrasjonerClient(
         journalpostId: String,
         dokumentInfoId: String,
     ): ByteArray {
-        val (integrasjonUri, restClient) = hentIntegrasjonKlient()
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
         return restClient
             .get()
             .uri(
@@ -182,7 +164,7 @@ class FamilieIntegrasjonerClient(
     }
 
     fun hentOrganisasjon(orgNummer: String): Organisasjon {
-        val (integrasjonUri, restClient) = hentIntegrasjonKlient()
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
         val uri =
             UriComponentsBuilder
                 .fromUri(integrasjonUri)

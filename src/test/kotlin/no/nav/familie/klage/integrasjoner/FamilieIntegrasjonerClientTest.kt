@@ -42,11 +42,13 @@ class FamilieIntegrasjonerClientTest {
 
     private val client =
         FamilieIntegrasjonerClient(
-            restClientFss = restClientBuilder.defaultHeader("X-Test-Cluster", "fss").build(),
-            integrasjonFssUri = URI.create(baseUrl),
-            restClientGcp = restClientGcpBuilder.defaultHeader("X-Test-Cluster", "gcp").build(),
-            integrasjonGcpUri = URI.create(baseUrlGcp),
-            featureToggleService = featureToggleService,
+            IntegrasjonerClientProvider(
+                restClientFss = restClientBuilder.defaultHeader("X-Test-Cluster", "fss").build(),
+                integrasjonFssUri = URI.create(baseUrl),
+                restClientGcp = restClientGcpBuilder.defaultHeader("X-Test-Cluster", "gcp").build(),
+                integrasjonGcpUri = URI.create(baseUrlGcp),
+                featureToggleService = featureToggleService,
+            ),
         )
 
     @ParameterizedTest
