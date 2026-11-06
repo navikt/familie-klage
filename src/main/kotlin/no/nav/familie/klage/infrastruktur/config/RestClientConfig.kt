@@ -24,6 +24,11 @@ class RestClientConfig(
         @Value("\${FAMILIE_INTEGRASJONER_SCOPE}") scope: String,
     ): RestClient = entraIDRestClientFactory.lagHybridRestKlient(scope) { SikkerhetContext.hentJwt()?.tokenValue }
 
+    @Bean("integrasjonerGcpRestClient")
+    fun integrasjonerGcpRestClient(
+        @Value("\${FAMILIE_INTEGRASJONER_GCP_SCOPE}") scope: String,
+    ): RestClient = entraIDRestClientFactory.lagHybridRestKlient(scope) { SikkerhetContext.hentJwt()?.tokenValue }
+
     /** repr-api / fullmakt (dual-mode: OBO for saksbehandler, CC for systembruker) */
     @Bean("reprApiRestClient")
     fun reprApiRestClient(

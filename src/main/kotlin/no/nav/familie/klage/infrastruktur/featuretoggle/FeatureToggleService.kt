@@ -19,6 +19,7 @@ enum class Toggle(
     UTVIKLER_MED_VEILEDERRROLLE("familie.ef.sak.utviklere-med-veilederrolle", "Permission"),
 
     // Release
+    BRUK_FAMILIE_INTEGRASJONER_I_GCP("familie-klage.bruk-familie-integrasjoner-i-gcp"),
     MANUELL_BREVMOTTAKER_ORGANISASJON("familie-klage.manuell-brevmottaker-organisasjon"),
     BRUK_SØKER_PERSONOPPLYSNINGER("familie-klage.bruk-soker-personopplysninger"),
     ;

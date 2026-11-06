@@ -1,7 +1,6 @@
 package no.nav.familie.klage.integrasjoner
 
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
-import no.nav.familie.klage.infrastruktur.config.IntegrasjonerConfig
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -19,44 +18,30 @@ import no.nav.familie.kontrakter.felles.saksbehandler.Saksbehandler
 import no.nav.familie.log.NavHttpHeaders
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpClientErrorException
-import org.springframework.web.client.RestClient
 import org.springframework.web.client.body
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 @Component
 class FamilieIntegrasjonerClient(
-    @Qualifier("integrasjonerRestClient") private val restClient: RestClient,
-    @Value("\${FAMILIE_INTEGRASJONER_URL}")
-    private val integrasjonUri: URI,
-    private val integrasjonerConfig: IntegrasjonerConfig,
+    private val integrasjonerClientProvider: IntegrasjonerClientProvider,
 ) {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
-
-    private val dokuarkivUri: URI =
-        UriComponentsBuilder
-            .fromUri(integrasjonUri)
-            .pathSegment("api/arkiv")
-            .build()
-            .toUri()
-    private val journalpostURI: URI = integrasjonerConfig.journalPostUri
-    private val saksbehandlerUri: URI = integrasjonerConfig.saksbehandlerUri
 
     // lagre brev
     fun arkiverDokument(
         arkiverDokumentRequest: ArkiverDokumentRequest,
         saksbehandler: String?,
-    ): ArkiverDokumentResponse =
-        restClient
+    ): ArkiverDokumentResponse {
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
+        return restClient
             .post()
-            .uri(URI.create("$dokuarkivUri/v4"))
+            .uri(URI.create("$integrasjonUri/api/arkiv/v4"))
             .contentType(MediaType.APPLICATION_JSON)
             .headers { headerMedSaksbehandler(saksbehandler, it) }
             .body(arkiverDokumentRequest)
@@ -64,22 +49,26 @@ class FamilieIntegrasjonerClient(
             .body<Ressurs<ArkiverDokumentResponse>>()!!
             .data
             ?: error("Kunne ikke arkivere dokument med fagsakid ${arkiverDokumentRequest.fagsakId}")
+    }
 
-    fun hentSaksbehandlerInfo(navIdent: String): Saksbehandler =
-        restClient
+    fun hentSaksbehandlerInfo(navIdent: String): Saksbehandler {
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
+        return restClient
             .get()
-            .uri(URI.create("$saksbehandlerUri/$navIdent"))
+            .uri(URI.create("$integrasjonUri/api/saksbehandler/$navIdent"))
             .headers { it.addAll(HttpHeaders().medContentTypeJsonUTF8()) }
             .retrieve()
             .body<Ressurs<Saksbehandler>>()!!
             .data
             ?: error("Kunne ikke hente saksbehandlerinfo for saksbehandler med ident=$navIdent")
+    }
 
     // sende brev til bruker
     fun distribuerBrev(
         journalpostId: String,
         distribusjonstype: Distribusjonstype,
     ): String {
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
         val journalpostRequest =
             DistribuerJournalpostRequest(
                 journalpostId = journalpostId,
@@ -89,7 +78,7 @@ class FamilieIntegrasjonerClient(
             )
         return restClient
             .post()
-            .uri(integrasjonerConfig.distribuerDokumentUri)
+            .uri(URI.create("$integrasjonUri/api/dist/v1"))
             .contentType(MediaType.APPLICATION_JSON)
             .body(journalpostRequest)
             .retrieve()
@@ -104,6 +93,7 @@ class FamilieIntegrasjonerClient(
         adresse: ManuellAdresse?,
         fagsystem: Fagsystem,
     ): String {
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
         val journalpostRequest =
             DistribuerJournalpostRequest(
                 journalpostId = journalpostId,
@@ -114,7 +104,7 @@ class FamilieIntegrasjonerClient(
             )
         return restClient
             .post()
-            .uri(integrasjonerConfig.distribuerDokumentUri)
+            .uri(URI.create("$integrasjonUri/api/dist/v1"))
             .contentType(MediaType.APPLICATION_JSON)
             .body(journalpostRequest)
             .retrieve()
@@ -122,22 +112,25 @@ class FamilieIntegrasjonerClient(
             .getDataOrThrow()
     }
 
-    fun finnJournalposter(journalposterForBrukerRequest: JournalposterForBrukerRequest): List<Journalpost> =
-        restClient
+    fun finnJournalposter(journalposterForBrukerRequest: JournalposterForBrukerRequest): List<Journalpost> {
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
+        return restClient
             .post()
-            .uri(journalpostURI)
+            .uri(URI.create("$integrasjonUri/api/journalpost"))
             .contentType(MediaType.APPLICATION_JSON)
             .body(journalposterForBrukerRequest)
             .retrieve()
             .body<Ressurs<List<Journalpost>>>()!!
             .data
             ?: error("Kunne ikke hente vedlegg for ${journalposterForBrukerRequest.brukerId.id}")
+    }
 
     fun hentJournalpost(journalpostId: String): Journalpost {
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
         try {
             return restClient
                 .get()
-                .uri(URI.create("$journalpostURI?journalpostId=$journalpostId"))
+                .uri(URI.create("$integrasjonUri/api/journalpost?journalpostId=$journalpostId"))
                 .retrieve()
                 .body<Ressurs<Journalpost>>()!!
                 .getDataOrThrow()
@@ -153,13 +146,14 @@ class FamilieIntegrasjonerClient(
     fun hentDokument(
         journalpostId: String,
         dokumentInfoId: String,
-    ): ByteArray =
-        restClient
+    ): ByteArray {
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
+        return restClient
             .get()
             .uri(
                 UriComponentsBuilder
                     .fromUriString(
-                        "$journalpostURI/hentdokument/" +
+                        "$integrasjonUri/api/journalpost/hentdokument/" +
                             "$journalpostId/$dokumentInfoId",
                     ).queryParam("variantFormat", Dokumentvariantformat.ARKIV)
                     .build()
@@ -167,12 +161,14 @@ class FamilieIntegrasjonerClient(
             ).retrieve()
             .body<Ressurs<ByteArray>>()!!
             .getDataOrThrow()
+    }
 
     fun hentOrganisasjon(orgNummer: String): Organisasjon {
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
         val uri =
             UriComponentsBuilder
-                .fromUri(integrasjonerConfig.hentOrganisasjonUri)
-                .pathSegment(orgNummer)
+                .fromUri(integrasjonUri)
+                .pathSegment("api/organisasjon", orgNummer)
                 .build()
                 .toUri()
         return restClient

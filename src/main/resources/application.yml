@@ -22,6 +22,7 @@ FAMILIE_EF_PROXY_SCOPE: api://${DEPLOY_ENV}-fss.teamfamilie.familie-ef-proxy/.de
 FAMILIE_KS_SAK_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-ks-sak/.default
 FAMILIE_BA_SAK_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-ba-sak/.default
 FAMILIE_INTEGRASJONER_SCOPE: api://${DEPLOY_ENV}-fss.teamfamilie.familie-integrasjoner/.default
+FAMILIE_INTEGRASJONER_GCP_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-integrasjoner/.default
 TILGANGSMASKIN_SCOPE: api://${DEPLOY_ENV}-gcp.tilgangsmaskin.populasjonstilgangskontroll/.default
 
 
@@ -96,6 +97,7 @@ FAMILIE_BREV_API_URL: http://familie-brev
 FAMILIE_DOKUMENT_URL: http://familie-dokument
 
 FAMILIE_INTEGRASJONER_URL: https://familie-integrasjoner.${ON_PREM_URL_ENV}-fss-pub.nais.io
+FAMILIE_INTEGRASJONER_GCP_URL: http://familie-integrasjoner
 TILGANGSMASKIN_API_URL: http://populasjonstilgangskontroll.tilgangsmaskin
 PDL_URL: https://pdl-api.${ON_PREM_URL_ENV}-fss-pub.nais.io
 EREG_URL: https://ereg-services.${ON_PREM_URL_ENV}-fss-pub.nais.io

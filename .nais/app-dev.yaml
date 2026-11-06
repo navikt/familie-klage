@@ -69,6 +69,7 @@ spec:
           namespace: etterlatte
     outbound:
       rules:
+        - application: familie-integrasjoner
         - application: familie-ef-sak
         - application: familie-ks-sak
         - application: familie-ba-sak

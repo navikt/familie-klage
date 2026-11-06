@@ -2,36 +2,31 @@ package no.nav.familie.klage.oppgave
 
 import no.nav.familie.klage.behandling.enhet.Enhet
 import no.nav.familie.klage.felles.util.medContentTypeJsonUTF8
-import no.nav.familie.klage.infrastruktur.config.IntegrasjonerConfig
 import no.nav.familie.klage.infrastruktur.exception.ApiFeil
 import no.nav.familie.klage.infrastruktur.exception.IntegrasjonException
+import no.nav.familie.klage.integrasjoner.IntegrasjonerClientProvider
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.familie.kontrakter.felles.saksbehandler.Saksbehandler
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpClientErrorException
-import org.springframework.web.client.RestClient
 import org.springframework.web.client.body
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 @Component
 class OppgaveClient(
-    @Qualifier("integrasjonerRestClient") private val restClient: RestClient,
-    integrasjonerConfig: IntegrasjonerConfig,
+    private val integrasjonerClientProvider: IntegrasjonerClientProvider,
 ) {
-    private val oppgaveUri: URI = integrasjonerConfig.oppgaveUri
-    private val saksbehandlerUri: URI = integrasjonerConfig.saksbehandlerUri
-
     fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): Long {
-        val uri = URI.create("$oppgaveUri/opprett")
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
+        val uri = URI.create("$integrasjonUri/api/oppgave/opprett")
         val respons =
             restClient
                 .post()
@@ -44,7 +39,8 @@ class OppgaveClient(
     }
 
     fun finnOppgaveMedId(oppgaveId: Long): Oppgave {
-        val uri = URI.create("$oppgaveUri/$oppgaveId")
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
+        val uri = URI.create("$integrasjonUri/api/oppgave/$oppgaveId")
         val respons =
             restClient
                 .get()
@@ -55,7 +51,8 @@ class OppgaveClient(
     }
 
     fun ferdigstillOppgave(oppgaveId: Long) {
-        val uri = URI.create("$oppgaveUri/$oppgaveId/ferdigstill")
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
+        val uri = URI.create("$integrasjonUri/api/oppgave/$oppgaveId/ferdigstill")
         val respons =
             restClient
                 .patch()
@@ -68,7 +65,8 @@ class OppgaveClient(
     }
 
     fun oppdaterOppgave(oppgave: Oppgave): Long {
-        val uri = URI.create("$oppgaveUri/${oppgave.id!!}/oppdater")
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
+        val uri = URI.create("$integrasjonUri/api/oppgave/${oppgave.id!!}/oppdater")
         val respons =
             restClient
                 .patch()
@@ -85,7 +83,8 @@ class OppgaveClient(
         saksbehandler: String?,
         versjon: Int? = null,
     ): Long {
-        var uri = URI.create("$oppgaveUri/$oppgaveId/fordel")
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
+        var uri = URI.create("$integrasjonUri/api/oppgave/$oppgaveId/fordel")
 
         if (saksbehandler != null) {
             uri =
@@ -142,10 +141,11 @@ class OppgaveClient(
         enhetnummer: String,
         limit: Int,
     ): FinnMappeResponseDto {
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
         val uri =
             UriComponentsBuilder
-                .fromUri(oppgaveUri)
-                .pathSegment("mappe", "sok")
+                .fromUri(integrasjonUri)
+                .pathSegment("api", "oppgave", "mappe", "sok")
                 .queryParam("enhetsnr", enhetnummer)
                 .queryParam("limit", limit)
                 .build()
@@ -160,7 +160,8 @@ class OppgaveClient(
     }
 
     fun hentSaksbehandlerInfo(navIdent: String): Saksbehandler {
-        val uri = URI.create("$saksbehandlerUri/$navIdent")
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
+        val uri = URI.create("$integrasjonUri/api/saksbehandler/$navIdent")
         val respons =
             restClient
                 .get()
@@ -180,9 +181,10 @@ class OppgaveClient(
         // se https://favro.com/organization/98c34fb974ce445eac854de0/1844bbac3b6605eacc8f5543?card=NAV-10379.
         // Det blir dermed vanskelig å sette f.eks. tilordnet ressurs til "null" gjennom patch-endepunktet.
         val eksisterendeOppgave = finnOppgaveMedId(oppgaveId)
+        val (integrasjonUri, restClient) = integrasjonerClientProvider.hentKlient()
         val uri =
             UriComponentsBuilder
-                .fromUri(URI.create("$oppgaveUri/$oppgaveId/enhet/${nyEnhet.enhetsnummer}"))
+                .fromUri(URI.create("$integrasjonUri/api/oppgave/$oppgaveId/enhet/${nyEnhet.enhetsnummer}"))
                 .queryParam("fjernMappeFraOppgave", fjernMappeFraOppgave)
                 .queryParam("nullstillTilordnetRessurs", nullstillTilordnetRessurs)
                 .queryParam("versjon", eksisterendeOppgave.versjon)
