@@ -30,12 +30,12 @@
         <springdoc.version>3.2.0</springdoc.version>
         <mockk-jvm.version>1.14.11</mockk-jvm.version>
         <felles.version>4.20261026180911_c3ff6d9</felles.version>
-        <prosessering.version>2.20261027150838_57ccae7</prosessering.version>
+        <prosessering.version>2.20261102130928_50eba5f</prosessering.version>
         <start-class>no.nav.familie.klage.ApplicationKt</start-class>
-        <kontrakter.version>4.0_20261026123216_8087cb5</kontrakter.version>
+        <kontrakter.version>4.0_20261103100223_424278c</kontrakter.version>
         <saksstatistikk-klage.version>2.0_20261026123216_f55dd20</saksstatistikk-klage.version>
         <testcontainers.version>2.0.5</testcontainers.version>
-        <mock-oauth2-server.version>6.1.3</mock-oauth2-server.version>
+        <mock-oauth2-server.version>6.1.4</mock-oauth2-server.version>
     </properties>
 
     <dependencyManagement>
