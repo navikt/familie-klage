@@ -10,8 +10,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.actuate.info.InfoEndpoint
 import org.springframework.boot.resttestclient.exchange
+import org.springframework.context.ApplicationContext
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod.GET
 import org.springframework.http.HttpMethod.POST
@@ -21,6 +25,7 @@ import org.springframework.http.HttpStatus.UNAUTHORIZED
 
 class SecurityConfigTest(
     @param:Autowired private val rolleConfig: RolleConfig,
+    @param:Autowired private val applicationContext: ApplicationContext,
 ) : OppslagSpringRunnerTest() {
     private lateinit var behandlingUrl: String
 
@@ -33,6 +38,26 @@ class SecurityConfigTest(
 
     @Nested
     inner class PermitAll {
+        @ParameterizedTest
+        @ValueSource(strings = ["/internal/health/liveness", "/internal/health/readiness"])
+        fun `helseprober er tilgjengelige uten autentisering`(
+            path: String,
+        ) {
+            val response =
+                restTemplate.exchange<String>(
+                    url = localhost(path),
+                    method = GET,
+                    requestEntity = HttpEntity(null, headers),
+                )
+
+            assertThat(response.statusCode).isEqualTo(OK)
+        }
+
+        @Test
+        fun `info-endepunktet er deaktivert`() {
+            assertThat(applicationContext.getBeansOfType(InfoEndpoint::class.java)).isEmpty()
+        }
+
         @Test
         fun `ping er tilgjengelig uten autentisering`() {
             val response =
