@@ -39,8 +39,18 @@ class SecurityConfigTest(
     @Nested
     inner class PermitAll {
         @ParameterizedTest
-        @ValueSource(strings = ["/internal/health/liveness", "/internal/health/readiness"])
-        fun `helseprober er tilgjengelige uten autentisering`(
+        @ValueSource(
+            strings = [
+                "/internal",
+                "/internal/health",
+                "/internal/health/liveness",
+                "/internal/health/readiness",
+                "/internal/metrics",
+                "/internal/metrics/jvm.memory.used",
+                "/internal/prometheus",
+            ],
+        )
+        fun `offentlige internal-endepunkter er tilgjengelige uten autentisering`(
             path: String,
         ) {
             val response =
@@ -74,6 +84,21 @@ class SecurityConfigTest(
 
     @Nested
     inner class UtenToken {
+        @ParameterizedTest
+        @ValueSource(strings = ["/internal/info", "/internal/mappings", "/internal/status/isAlive", "/internal/healthcheck", "/internal/prometheus/other"])
+        fun `øvrige internal-endepunkter krever token`(
+            path: String,
+        ) {
+            val response =
+                restTemplate.exchange<String>(
+                    url = localhost(path),
+                    method = GET,
+                    requestEntity = HttpEntity(null, headers),
+                )
+
+            assertThat(response.statusCode).isEqualTo(UNAUTHORIZED)
+        }
+
         @Test
         fun `api-kall uten token returnerer 401`() {
             val response =

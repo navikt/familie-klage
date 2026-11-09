@@ -31,7 +31,10 @@ class SecurityConfig(
         http {
             csrf { disable() }
             authorizeHttpRequests {
-                authorize("/internal/**", permitAll)
+                authorize("/internal", permitAll)
+                authorize("/internal/health/**", permitAll)
+                authorize("/internal/metrics/**", permitAll)
+                authorize("/internal/prometheus", permitAll)
                 authorize("/swagger-ui.html", permitAll)
                 authorize("/swagger-ui/**", permitAll)
                 authorize("/v3/api-docs", permitAll)
