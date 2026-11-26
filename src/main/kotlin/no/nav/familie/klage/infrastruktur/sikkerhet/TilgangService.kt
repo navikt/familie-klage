@@ -195,20 +195,6 @@ class TilgangService(
         }
     }
 
-    /**
-     * For endepunkter som fagsystemene kaller med OBO-token eller maskin-til-maskin-token.
-     * Maskin-til-maskin-kall er forhåndsautorisert. For OBO-kall sjekkes tilgang til behandlingen og saksbehandlerrolle.
-     */
-    fun validerTilgangTilBehandlingForKallFraFagsystem(
-        behandlingId: UUID,
-        event: AuditLoggerEvent,
-    ) {
-        if (SikkerhetContext.erMaskinTilMaskinToken()) return
-
-        validerTilgangTilBehandling(behandlingId, event)
-        validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId)
-    }
-
     fun validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId: UUID) {
         validerHarRolleForBehandling(behandlingId, BehandlerRolle.SAKSBEHANDLER)
     }

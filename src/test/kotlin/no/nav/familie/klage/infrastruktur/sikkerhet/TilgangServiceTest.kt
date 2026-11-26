@@ -707,31 +707,6 @@ internal class TilgangServiceTest {
     }
 
     @Nested
-    inner class ValiderTilgangTilBehandlingForKallFraFagsystem {
-        @Test
-        fun `skal ikke sjekke tilgang for maskin-til-maskin-kall fra fagsystem`() {
-            // Act & Assert
-            testWithMaskinTilMaskinContext {
-                assertDoesNotThrow { tilgangService.validerTilgangTilBehandlingForKallFraFagsystem(behandlingBa.id, AuditLoggerEvent.UPDATE) }
-            }
-
-            verify(exactly = 0) { familieBASakClient.hentTilgangTilFagsak(any()) }
-        }
-
-        @Test
-        fun `skal kaste feil for saksbehandler uten tilgang til behandlingen`() {
-            // Arrange
-            every { fagsakService.hentFagsakForBehandling(behandlingBa.id) } returns fagsakBa
-            every { familieBASakClient.hentTilgangTilFagsak(fagsakBa.eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
-
-            // Act & Assert
-            testWithBrukerContext(groups = listOf(rolleConfig.ba.saksbehandler)) {
-                assertThrows<ManglerTilgang> { tilgangService.validerTilgangTilBehandlingForKallFraFagsystem(behandlingBa.id, AuditLoggerEvent.UPDATE) }
-            }
-        }
-    }
-
-    @Nested
     inner class FagsakForEksternIdOgFagsystem {
         @Test
         fun `skal ikke bruke BA-fagsak fra cache ved tilgangssjekk for KS-fagsak med samme eksterne id`() {
