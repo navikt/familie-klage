@@ -731,6 +731,29 @@ internal class TilgangServiceTest {
         }
     }
 
+    @Nested
+    inner class FagsakForEksternIdOgFagsystem {
+        @Test
+        fun `skal ikke bruke BA-fagsak fra cache ved tilgangssjekk for KS-fagsak med samme eksterne id`() {
+            // Arrange
+            val eksternId = "123"
+            val fagsakBaMedSammeId = fagsak(stønadstype = Stønadstype.BARNETRYGD, eksternId = eksternId)
+            val fagsakKsMedSammeId = fagsak(stønadstype = Stønadstype.KONTANTSTØTTE, eksternId = eksternId)
+            every { fagsakService.hentFagsakForEksternIdOgFagsystem(eksternId, Fagsystem.BA) } returns fagsakBaMedSammeId
+            every { fagsakService.hentFagsakForEksternIdOgFagsystem(eksternId, Fagsystem.KS) } returns fagsakKsMedSammeId
+            every { familieBASakClient.hentTilgangTilFagsak(eksternId) } returns Tilgang(harTilgang = true)
+            every { familieKSSakClient.hentTilgangTilFagsak(eksternId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
+
+            // Act & Assert
+            tilgangService.validerTilgangTilEksternFagsak(eksternId, Fagsystem.BA, AuditLoggerEvent.ACCESS)
+            assertThrows<ManglerTilgang> {
+                tilgangService.validerTilgangTilEksternFagsak(eksternId, Fagsystem.KS, AuditLoggerEvent.ACCESS)
+            }
+
+            verify(exactly = 1) { familieKSSakClient.hentTilgangTilFagsak(eksternId) }
+        }
+    }
+
     companion object {
         private const val BEGRUNNELSE_STRENGT_FORTROLIG = "Du har ikke tilgang til brukere med strengt fortrolig adresse (kode 6)"
         private const val BEGRUNNELSE_SKJERMING = "Du har ikke tilgang til Nav-ansatte og deres nærmeste familie"

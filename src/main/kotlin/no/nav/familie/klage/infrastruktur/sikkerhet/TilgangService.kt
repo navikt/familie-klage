@@ -321,7 +321,7 @@ class TilgangService(
         eksternFagsakId: String,
         fagsystem: Fagsystem,
     ): Fagsak? =
-        cacheManager.getNullable("fagsakForEksternIdOgFagsystem", eksternFagsakId) {
+        cacheManager.getNullable("fagsakForEksternIdOgFagsystem", Pair(eksternFagsakId, fagsystem)) {
             fagsakService.hentFagsakForEksternIdOgFagsystem(eksternFagsakId, fagsystem)
         }
 
