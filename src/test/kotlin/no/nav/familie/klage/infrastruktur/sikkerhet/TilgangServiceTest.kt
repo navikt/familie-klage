@@ -18,8 +18,10 @@ import no.nav.familie.klage.integrasjoner.FamilieBASakClient
 import no.nav.familie.klage.integrasjoner.FamilieKSSakClient
 import no.nav.familie.klage.personopplysninger.PersonMedRelasjonerService
 import no.nav.familie.klage.testutil.BrukerContextUtil.testWithBrukerContext
+import no.nav.familie.klage.testutil.BrukerContextUtil.testWithMaskinTilMaskinContext
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.fagsak
+import no.nav.familie.klage.testutil.DtoTestUtil.lagOpprettKlagebehandlingRequest
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
@@ -529,6 +531,114 @@ internal class TilgangServiceTest {
             // Assert
             verify(exactly = 2) { personMedRelasjonerService.hentIdenterForPersonMedRelasjoner(søker, tema) }
             verify(exactly = 2) { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(setOf(søker, barn)) }
+        }
+    }
+
+    @Nested
+    inner class ValiderTilgangTilÅOppretteKlage {
+        private val fagsakEier = "01010199999"
+        private val søker = "02020299999"
+        private val eksternFagsakId = "321"
+        private val baSaksbehandler = listOf(rolleConfig.ba.saksbehandler)
+
+        private fun lagRequest(
+            stønadstype: Stønadstype = Stønadstype.BARNETRYGD,
+            fagsystem: Fagsystem = Fagsystem.BA,
+        ) = lagOpprettKlagebehandlingRequest(
+            ident = fagsakEier,
+            søkerIdent = søker,
+            stønadstype = stønadstype,
+            eksternFagsakId = eksternFagsakId,
+            fagsystem = fagsystem,
+        )
+
+        @Test
+        fun `skal avvise maskin-til-maskin-kall siden opprettelse krever innlogget saksbehandler`() {
+            // Act & Assert
+            testWithMaskinTilMaskinContext {
+                assertThrows<ManglerTilgang> { tilgangService.validerTilgangTilÅOppretteKlage(lagRequest()) }
+            }
+
+            verify(exactly = 0) { familieBASakClient.hentTilgangTilFagsak(any()) }
+            verify(exactly = 0) { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(any()) }
+        }
+
+        @Test
+        fun `skal ikke kaste feil når saksbehandler har tilgang til fagsaken, fagsakeier og søker`() {
+            // Arrange
+            every { familieBASakClient.hentTilgangTilFagsak(eksternFagsakId) } returns Tilgang(harTilgang = true)
+            every { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(setOf(fagsakEier, søker)) } returns
+                listOf(PersonTilgang.medTilgang(fagsakEier), PersonTilgang.medTilgang(søker))
+
+            // Act & Assert
+            testWithBrukerContext(groups = baSaksbehandler) {
+                assertDoesNotThrow { tilgangService.validerTilgangTilÅOppretteKlage(lagRequest()) }
+            }
+        }
+
+        @Test
+        fun `skal kaste feil når saksbehandler mangler tilgang til søker selv om fagsaken er tilgjengelig`() {
+            // Arrange
+            every { familieBASakClient.hentTilgangTilFagsak(eksternFagsakId) } returns Tilgang(harTilgang = true)
+            every { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(setOf(fagsakEier, søker)) } returns
+                listOf(
+                    PersonTilgang.medTilgang(fagsakEier),
+                    PersonTilgang.avvist(søker, Avvisningskode.AVVIST_STRENGT_FORTROLIG_ADRESSE, BEGRUNNELSE_STRENGT_FORTROLIG),
+                )
+
+            // Act
+            val manglerTilgang =
+                testWithBrukerContext(groups = baSaksbehandler) {
+                    assertThrows<ManglerTilgang> { tilgangService.validerTilgangTilÅOppretteKlage(lagRequest()) }
+                }
+
+            // Assert
+            assertThat(manglerTilgang.frontendFeilmelding).isEqualTo("Mangler tilgang til opplysningene. Årsak: $BEGRUNNELSE_STRENGT_FORTROLIG")
+        }
+
+        @Test
+        fun `skal kaste feil når saksbehandler mangler tilgang til den eksterne fagsaken`() {
+            // Arrange
+            every { familieBASakClient.hentTilgangTilFagsak(eksternFagsakId) } returns Tilgang(harTilgang = false, begrunnelse = "Ingen tilgang")
+            every { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(setOf(fagsakEier, søker)) } returns
+                listOf(PersonTilgang.medTilgang(fagsakEier), PersonTilgang.medTilgang(søker))
+
+            // Act & Assert
+            testWithBrukerContext(groups = baSaksbehandler) {
+                assertThrows<ManglerTilgang> { tilgangService.validerTilgangTilÅOppretteKlage(lagRequest()) }
+            }
+        }
+
+        @Test
+        fun `skal kaste feil når saksbehandler bare har veilederrolle`() {
+            // Act
+            val manglerTilgang =
+                testWithBrukerContext(groups = listOf(rolleConfig.ba.veileder)) {
+                    assertThrows<ManglerTilgang> { tilgangService.validerTilgangTilÅOppretteKlage(lagRequest()) }
+                }
+
+            // Assert
+            assertThat(manglerTilgang.frontendFeilmelding).isEqualTo("Mangler nødvendig saksbehandlerrolle for å opprette klage")
+            verify(exactly = 0) { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(any()) }
+        }
+
+        @Test
+        fun `skal sjekke fagsakeier med relasjoner for EF`() {
+            // Arrange
+            every { personMedRelasjonerService.hentIdenterForPersonMedRelasjoner(fagsakEier, Tema.ENF) } returns setOf(fagsakEier)
+            every { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(setOf(fagsakEier)) } returns listOf(PersonTilgang.medTilgang(fagsakEier))
+            every { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(setOf(fagsakEier, søker)) } returns
+                listOf(PersonTilgang.medTilgang(fagsakEier), PersonTilgang.medTilgang(søker))
+
+            // Act & Assert
+            testWithBrukerContext(groups = listOf(rolleConfig.ef.saksbehandler)) {
+                assertDoesNotThrow {
+                    tilgangService.validerTilgangTilÅOppretteKlage(lagRequest(stønadstype = Stønadstype.OVERGANGSSTØNAD, fagsystem = Fagsystem.EF))
+                }
+            }
+
+            verify(exactly = 1) { personMedRelasjonerService.hentIdenterForPersonMedRelasjoner(fagsakEier, Tema.ENF) }
+            verify(exactly = 0) { familieBASakClient.hentTilgangTilFagsak(any()) }
         }
     }
 

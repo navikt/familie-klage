@@ -93,6 +93,7 @@ class EksternBehandlingController(
     fun opprettBehandling(
         @RequestBody opprettKlageBehandlingDto: OpprettKlagebehandlingRequest,
     ): ResponseEntity<Ressurs<String>> {
+        tilgangService.validerTilgangTilÅOppretteKlage(opprettKlageBehandlingDto)
         opprettBehandlingService.opprettBehandling(opprettKlageBehandlingDto)
         return ResponseEntity.ok(Ressurs.success("Opprettet"))
     }
@@ -100,7 +101,10 @@ class EksternBehandlingController(
     @PostMapping("/v2/opprett")
     fun opprettBehandlingV2(
         @RequestBody opprettKlageBehandlingDto: OpprettKlagebehandlingRequest,
-    ): Ressurs<UUID> = Ressurs.success(opprettBehandlingService.opprettBehandling(opprettKlageBehandlingDto))
+    ): Ressurs<UUID> {
+        tilgangService.validerTilgangTilÅOppretteKlage(opprettKlageBehandlingDto)
+        return Ressurs.success(opprettBehandlingService.opprettBehandling(opprettKlageBehandlingDto))
+    }
 
     @PatchMapping("{behandlingId}/gjelder-tilbakekreving")
     fun oppdaterOppgaveTilÅGjeldeTilbakekreving(

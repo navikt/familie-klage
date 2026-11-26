@@ -34,6 +34,26 @@ object BrukerContextUtil {
         SecurityContextHolder.setContext(SecurityContextImpl(JwtAuthenticationToken(jwt)))
     }
 
+    fun <T> testWithMaskinTilMaskinContext(fn: () -> T): T {
+        try {
+            val appId = UUID.randomUUID().toString()
+            val jwt =
+                Jwt
+                    .withTokenValue("mock-token")
+                    .header("alg", "RS256")
+                    .issuedAt(Instant.now())
+                    .expiresAt(Instant.now().plusSeconds(3600))
+                    .claim("oid", appId)
+                    .claim("sub", appId)
+                    .claim("roles", listOf("access_as_application"))
+                    .build()
+            SecurityContextHolder.setContext(SecurityContextImpl(JwtAuthenticationToken(jwt)))
+            return fn()
+        } finally {
+            clearBrukerContext()
+        }
+    }
+
     fun <T> testWithBrukerContext(
         preferredUsername: String = "A",
         groups: List<String> = emptyList(),
