@@ -166,5 +166,9 @@ class BehandlingController(
     @GetMapping("{behandlingId}/hent-klager-ikke-medhold-formkrav-avvist")
     fun hentKlager(
         @PathVariable behandlingId: UUID,
-    ): Ressurs<List<Klagebehandlingsresultat>> = Ressurs.success(behandlingService.hentKlagerIkkeMedholdFormkravAvvist(behandlingId))
+    ): Ressurs<List<Klagebehandlingsresultat>> {
+        tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
+        return Ressurs.success(behandlingService.hentKlagerIkkeMedholdFormkravAvvist(behandlingId))
+    }
 }
