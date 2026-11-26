@@ -110,6 +110,7 @@ class EksternBehandlingController(
     fun oppdaterOppgaveTilÅGjeldeTilbakekreving(
         @PathVariable behandlingId: UUID,
     ) {
+        tilgangService.validerTilgangTilBehandlingForKallFraFagsystem(behandlingId, AuditLoggerEvent.UPDATE)
         oppgaveService.oppdaterOppgaveTilÅGjeldeTilbakekreving(behandlingId)
     }
 }
