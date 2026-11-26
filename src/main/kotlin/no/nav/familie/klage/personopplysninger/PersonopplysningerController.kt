@@ -33,6 +33,7 @@ class PersonopplysningerController(
         @PathVariable behandlingId: UUID,
     ): Ressurs<PersonopplysningerFagsakEierOgSøkerDto> {
         tilgangService.validerTilgangTilBehandling(behandlingId, AuditLoggerEvent.ACCESS)
+        tilgangService.validerTilgangTilSøker(behandlingId, AuditLoggerEvent.ACCESS)
         tilgangService.validerHarVeilederrolleTilStønadForBehandling(behandlingId)
         val dto =
             PersonopplysningerFagsakEierOgSøkerDto(

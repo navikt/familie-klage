@@ -2,14 +2,18 @@ package no.nav.familie.klage.infrastruktur.sikkerhet
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import no.nav.familie.klage.behandling.BehandlingService
 import no.nav.familie.klage.behandling.domain.Behandling
 import no.nav.familie.klage.fagsak.FagsakService
 import no.nav.familie.klage.fagsak.domain.Fagsak
+import no.nav.familie.klage.fagsak.domain.FagsakPerson
+import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.felles.domain.AuditLogger
 import no.nav.familie.klage.felles.domain.AuditLoggerEvent
 import no.nav.familie.klage.felles.domain.BehandlerRolle
+import no.nav.familie.klage.felles.domain.Sporingsdata
 import no.nav.familie.klage.felles.dto.Tilgang
 import no.nav.familie.klage.infrastruktur.config.RolleConfigTestUtil
 import no.nav.familie.klage.infrastruktur.exception.Feil
@@ -639,6 +643,66 @@ internal class TilgangServiceTest {
 
             verify(exactly = 1) { personMedRelasjonerService.hentIdenterForPersonMedRelasjoner(fagsakEier, Tema.ENF) }
             verify(exactly = 0) { familieBASakClient.hentTilgangTilFagsak(any()) }
+        }
+    }
+
+    @Nested
+    inner class ValiderTilgangTilSøker {
+        private val fagsakEier = "01010199999"
+        private val søker = "02020299999"
+        private val fagsakMedAnnenSøker =
+            fagsak(
+                stønadstype = Stønadstype.BARNETRYGD,
+                fagsakEier = FagsakPerson(identer = setOf(PersonIdent(fagsakEier))),
+                søker = FagsakPerson(identer = setOf(PersonIdent(søker))),
+            )
+        private val behandlingMedAnnenSøker = behandling(fagsakMedAnnenSøker)
+
+        @BeforeEach
+        fun setUp() {
+            every { fagsakService.hentFagsakForBehandling(behandlingMedAnnenSøker.id) } returns fagsakMedAnnenSøker
+        }
+
+        @Test
+        fun `skal ikke sjekke tilgang på nytt når søker er fagsakeier`() {
+            // Arrange
+            every { fagsakService.hentFagsakForBehandling(behandlingBa.id) } returns fagsakBa
+
+            // Act & Assert
+            testWithBrukerContext {
+                assertDoesNotThrow { tilgangService.validerTilgangTilSøker(behandlingBa.id, AuditLoggerEvent.ACCESS) }
+            }
+
+            verify(exactly = 0) { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(any()) }
+        }
+
+        @Test
+        fun `skal kaste feil og logge oppslaget på søker når saksbehandler mangler tilgang til søker`() {
+            // Arrange
+            val sporingsdata = slot<Sporingsdata>()
+            every { auditLogger.log(capture(sporingsdata)) } returns Unit
+            every { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(setOf(søker)) } returns
+                listOf(PersonTilgang.avvist(søker, Avvisningskode.AVVIST_STRENGT_FORTROLIG_ADRESSE, BEGRUNNELSE_STRENGT_FORTROLIG))
+
+            // Act
+            testWithBrukerContext {
+                assertThrows<ManglerTilgang> { tilgangService.validerTilgangTilSøker(behandlingMedAnnenSøker.id, AuditLoggerEvent.ACCESS) }
+            }
+
+            // Assert
+            assertThat(sporingsdata.captured.personIdent).isEqualTo(søker)
+            assertThat(sporingsdata.captured.tilgang.harTilgang).isFalse()
+        }
+
+        @Test
+        fun `skal ikke kaste feil når saksbehandler har tilgang til søker`() {
+            // Arrange
+            every { tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(setOf(søker)) } returns listOf(PersonTilgang.medTilgang(søker))
+
+            // Act & Assert
+            testWithBrukerContext {
+                assertDoesNotThrow { tilgangService.validerTilgangTilSøker(behandlingMedAnnenSøker.id, AuditLoggerEvent.ACCESS) }
+            }
         }
     }
 

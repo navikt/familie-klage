@@ -169,6 +169,32 @@ class TilgangService(
         }
     }
 
+    /**
+     * Sjekker tilgang til søker når søker er en annen person enn fagsakeier.
+     * Tilgang til fagsakeier sjekkes i [validerTilgangTilBehandling].
+     */
+    fun validerTilgangTilSøker(
+        behandlingId: UUID,
+        event: AuditLoggerEvent,
+    ) {
+        val fagsak = hentFagsakForBehandling(behandlingId)
+        val søkerIdent = fagsak.hentSøkerIdent()
+        if (søkerIdent == fagsak.hentFagsakEierIdent()) return
+
+        val tilgang = harTilgangTilPersoner(setOf(søkerIdent))
+
+        auditLogger.log(Sporingsdata(event, søkerIdent, tilgang, custom1 = CustomKeyValue("behandling", behandlingId.toString())))
+
+        if (!tilgang.harTilgang) {
+            throw ManglerTilgang(
+                melding =
+                    "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
+                        "har ikke tilgang til søker på behandling=$behandlingId",
+                frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}",
+            )
+        }
+    }
+
     fun validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId: UUID) {
         validerHarRolleForBehandling(behandlingId, BehandlerRolle.SAKSBEHANDLER)
     }
