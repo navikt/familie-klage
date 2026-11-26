@@ -178,9 +178,9 @@ class TilgangService(
         event: AuditLoggerEvent,
     ) {
         val fagsak = hentFagsakForBehandling(behandlingId)
-        val søkerIdent = fagsak.hentSøkerIdent()
-        if (søkerIdent == fagsak.hentFagsakEierIdent()) return
+        if (fagsak.erSøkerFagsakEier()) return
 
+        val søkerIdent = fagsak.hentSøkerIdent()
         val tilgang = harTilgangTilPersoner(setOf(søkerIdent))
 
         auditLogger.log(Sporingsdata(event, søkerIdent, tilgang, custom1 = CustomKeyValue("behandling", behandlingId.toString())))
