@@ -79,6 +79,7 @@ object DtoTestUtil {
 
     fun lagOpprettKlagebehandlingRequest(
         ident: String = "123",
+        søkerIdent: String = ident,
         stønadstype: Stønadstype = Stønadstype.BARNETRYGD,
         eksternFagsakId: String = "321",
         fagsystem: Fagsystem = Fagsystem.BA,
@@ -89,6 +90,7 @@ object DtoTestUtil {
     ): OpprettKlagebehandlingRequest =
         OpprettKlagebehandlingRequest(
             ident = ident,
+            søkerIdent = søkerIdent,
             stønadstype = stønadstype,
             eksternFagsakId = eksternFagsakId,
             fagsystem = fagsystem,

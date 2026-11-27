@@ -4,12 +4,14 @@ import no.nav.familie.klage.behandling.BehandlingRepository
 import no.nav.familie.klage.fagsak.domain.PersonIdent
 import no.nav.familie.klage.felles.domain.SporbarUtils
 import no.nav.familie.klage.infrastruktur.config.OppslagSpringRunnerTest
+import no.nav.familie.klage.infrastruktur.config.RolleConfig
 import no.nav.familie.klage.kabal.KlageresultatRepository
 import no.nav.familie.klage.testutil.DomainUtil
 import no.nav.familie.klage.testutil.DomainUtil.behandling
 import no.nav.familie.klage.testutil.DomainUtil.klageresultat
 import no.nav.familie.klage.testutil.DomainUtil.vurdering
 import no.nav.familie.klage.testutil.DtoTestUtil.lagOpprettKlagebehandlingRequest
+import no.nav.familie.klage.testutil.TokenUtil
 import no.nav.familie.klage.vurdering.VurderingRepository
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Status
@@ -177,6 +179,14 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
 
     @Nested
     inner class OpprettBehandling {
+        @Autowired
+        private lateinit var rolleConfigForTest: RolleConfig
+
+        @BeforeEach
+        fun setUpToken() {
+            headers.setBearerAuth(onBehalfOfToken(role = rolleConfigForTest.ba.saksbehandler))
+        }
+
         @Test
         fun `skal opprette behandling og returnere UUID`() {
             // Arrange
@@ -198,6 +208,63 @@ internal class EksternBehandlingControllerTest : OppslagSpringRunnerTest() {
             assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
             assertThat(response.body?.status).isEqualTo(Status.SUKSESS)
             assertThat(response.body?.data).isNotNull()
+        }
+
+        @Test
+        fun `skal gi 403 og ikke opprette behandling når saksbehandler mangler tilgang til søker`() {
+            // Arrange
+            val opprettKlagebehandlingRequest = lagOpprettKlagebehandlingRequest(søkerIdent = "ikkeTilgang")
+
+            // Act
+            val response =
+                restTemplate.exchange(
+                    localhost(uri = "$baseUrl/v2/opprett"),
+                    HttpMethod.POST,
+                    HttpEntity(opprettKlagebehandlingRequest, headers),
+                    object : ParameterizedTypeReference<Ressurs<UUID>>() {},
+                )
+
+            // Assert
+            assertThat(response.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
+            assertThat(behandlingRepository.count()).isZero()
+        }
+
+        @Test
+        fun `skal gi 403 når saksbehandler ikke har saksbehandlerrolle for stønadstypen`() {
+            // Arrange
+            headers.setBearerAuth(onBehalfOfToken(role = rolleConfigForTest.ba.veileder))
+
+            // Act
+            val response =
+                restTemplate.exchange(
+                    localhost(uri = "$baseUrl/v2/opprett"),
+                    HttpMethod.POST,
+                    HttpEntity(lagOpprettKlagebehandlingRequest(), headers),
+                    object : ParameterizedTypeReference<Ressurs<UUID>>() {},
+                )
+
+            // Assert
+            assertThat(response.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
+            assertThat(behandlingRepository.count()).isZero()
+        }
+
+        @Test
+        fun `skal gi 403 og ikke opprette behandling for maskin-til-maskin-kall`() {
+            // Arrange
+            headers.setBearerAuth(TokenUtil.clientToken(mockOAuth2Server, clientId = "familie-ba-sak", accessAsApplication = true))
+
+            // Act
+            val response =
+                restTemplate.exchange(
+                    localhost(uri = "$baseUrl/v2/opprett"),
+                    HttpMethod.POST,
+                    HttpEntity(lagOpprettKlagebehandlingRequest(), headers),
+                    object : ParameterizedTypeReference<Ressurs<UUID>>() {},
+                )
+
+            // Assert
+            assertThat(response.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
+            assertThat(behandlingRepository.count()).isZero()
         }
     }
 }

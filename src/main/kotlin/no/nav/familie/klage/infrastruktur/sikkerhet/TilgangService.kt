@@ -19,6 +19,7 @@ import no.nav.familie.klage.integrasjoner.FamilieKSSakClient
 import no.nav.familie.klage.personopplysninger.PersonMedRelasjonerService
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.klage.Fagsystem
+import no.nav.familie.kontrakter.felles.klage.OpprettKlagebehandlingRequest
 import no.nav.familie.kontrakter.felles.klage.Stønadstype
 import org.springframework.cache.Cache
 import org.springframework.cache.CacheManager
@@ -123,6 +124,77 @@ class TilgangService(
         }
     }
 
+    /**
+     * Fagsystemene oppretter klager med OBO-token på vegne av en saksbehandler. Opprettelsen krever NAVident
+     * (se OppgaveTaskService), så maskin-til-maskin-kall avvises. Saksbehandler må ha saksbehandlerrolle,
+     * tilgang til fagsaken og tilgang til både fagsakeier og søker.
+     */
+    fun validerTilgangTilÅOppretteKlage(request: OpprettKlagebehandlingRequest) {
+        if (SikkerhetContext.erMaskinTilMaskinToken()) {
+            throw ManglerTilgang(
+                melding = "Opprettelse av klage krever innlogget saksbehandler, men kallet har maskin-til-maskin-token",
+                frontendFeilmelding = "Opprettelse av klage krever innlogget saksbehandler",
+            )
+        }
+
+        if (!harTilgangTilGittRolle(request.stønadstype, BehandlerRolle.SAKSBEHANDLER)) {
+            throw ManglerTilgang(
+                melding =
+                    "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} har ikke tilgang " +
+                        "til å opprette klage for stønadstype=${request.stønadstype}",
+                frontendFeilmelding = "Mangler nødvendig saksbehandlerrolle for å opprette klage",
+            )
+        }
+
+        val tilgangTilFagsak =
+            when (request.fagsystem) {
+                Fagsystem.BA, Fagsystem.KS -> hentTilgangTilEksternFagsak(request.eksternFagsakId, request.fagsystem)
+                Fagsystem.EF -> harTilgangTilPersonMedRelasjoner(request.ident, request.stønadstype.tilTema())
+            }
+        val personIdenter = setOf(request.ident, request.søkerIdent)
+        val tilgangTilPersoner = harTilgangTilPersoner(personIdenter)
+        val tilgang = slåSammen(tilgangTilFagsak, tilgangTilPersoner)
+
+        personIdenter.forEach {
+            auditLogger.log(Sporingsdata(AuditLoggerEvent.CREATE, it, tilgang, custom1 = CustomKeyValue("eksternFagsakId", request.eksternFagsakId)))
+        }
+
+        if (!tilgang.harTilgang) {
+            throw ManglerTilgang(
+                melding =
+                    "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
+                        "har ikke tilgang til å opprette klage for eksternFagsakId=${request.eksternFagsakId}",
+                frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}",
+            )
+        }
+    }
+
+    /**
+     * Sjekker tilgang til søker når søker er en annen person enn fagsakeier.
+     * Tilgang til fagsakeier sjekkes i [validerTilgangTilBehandling].
+     */
+    fun validerTilgangTilSøker(
+        behandlingId: UUID,
+        event: AuditLoggerEvent,
+    ) {
+        val fagsak = hentFagsakForBehandling(behandlingId)
+        if (fagsak.erSøkerFagsakEier()) return
+
+        val søkerIdent = fagsak.hentSøkerIdent()
+        val tilgang = harTilgangTilPersoner(setOf(søkerIdent))
+
+        auditLogger.log(Sporingsdata(event, søkerIdent, tilgang, custom1 = CustomKeyValue("behandling", behandlingId.toString())))
+
+        if (!tilgang.harTilgang) {
+            throw ManglerTilgang(
+                melding =
+                    "Saksbehandler ${SikkerhetContext.hentSaksbehandler()} " +
+                        "har ikke tilgang til søker på behandling=$behandlingId",
+                frontendFeilmelding = "Mangler tilgang til opplysningene. ${tilgang.utledÅrsakstekst()}",
+            )
+        }
+    }
+
     fun validerHarSaksbehandlerrolleTilStønadForBehandling(behandlingId: UUID) {
         validerHarRolleForBehandling(behandlingId, BehandlerRolle.SAKSBEHANDLER)
     }
@@ -176,6 +248,20 @@ class TilgangService(
             tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(identer).tilTilgang()
         }
 
+    private fun harTilgangTilPersoner(personIdenter: Set<String>): Tilgang =
+        harSaksbehandlerTilgang(TILGANGSMASKINEN_PERSONER_CACHE, personIdenter) {
+            tilgangsmaskinTilgangskontrollKlient.sjekkTilgangTilPersoner(personIdenter).tilTilgang()
+        }
+
+    private fun slåSammen(vararg tilganger: Tilgang): Tilgang {
+        val begrunnelser = tilganger.mapNotNull { it.begrunnelse }.distinct()
+        return if (tilganger.all { it.harTilgang }) {
+            Tilgang(harTilgang = true)
+        } else {
+            Tilgang(harTilgang = false, begrunnelse = begrunnelser.joinToString(separator = ". ").ifBlank { null })
+        }
+    }
+
     private fun List<PersonTilgang>.tilTilgang(): Tilgang {
         val begrunnelser = mapNotNull { it.avvisning?.begrunnelse }.distinct()
         return if (begrunnelser.isEmpty()) {
@@ -221,7 +307,7 @@ class TilgangService(
         eksternFagsakId: String,
         fagsystem: Fagsystem,
     ): Fagsak? =
-        cacheManager.getNullable("fagsakForEksternIdOgFagsystem", eksternFagsakId) {
+        cacheManager.getNullable("fagsakForEksternIdOgFagsystem", Pair(eksternFagsakId, fagsystem)) {
             fagsakService.hentFagsakForEksternIdOgFagsystem(eksternFagsakId, fagsystem)
         }
 
@@ -305,5 +391,6 @@ class TilgangService(
 
     companion object {
         const val TILGANGSMASKINEN_CACHE = "validerTilgangTilPersonMedBarnITilgangsmaskinen"
+        const val TILGANGSMASKINEN_PERSONER_CACHE = "validerTilgangTilPersonerITilgangsmaskinen"
     }
 }
